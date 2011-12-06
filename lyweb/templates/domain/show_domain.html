@@ -1,0 +1,41 @@
+{% if domain %}
+<table>
+  <thead>
+    <tr>
+      <td>Item</td>
+      <td>Detail</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ID</td>
+      <td>{{ domain.id }}</td>
+    </tr>
+
+    <tr>
+      <td>Name</td>
+      <td>{{ domain.name }}</td>
+    </tr>
+
+    <tr>
+      <td>Status</td>
+      <td><img src="{{ MEDIA_URL }}themes/icons/DomainStatus/{{ domain.status }}.png"  alt="{{ domain.get_status_display }}"/></td>
+    </tr>
+
+    <tr>
+      <td>Update Time</td>
+      <td>{{ domain.updated|date:"Y-m-d H:i" }}</td>
+    </tr>
+
+    <tr>
+      <td>Control</td>
+      <td>
+        <a href="{% url domain:run domain.id %}">run</a> |
+        <a href="{% url domain:stop domain.id %}">stop</a> |
+        <a href="{% url domain:reboot domain.id %}">reboot</a>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+{% endif %}

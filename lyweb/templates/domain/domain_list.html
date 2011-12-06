@@ -1,0 +1,39 @@
+{% if domains %}
+<table>
+  <thead>
+    <tr>
+      <td>Name</td>
+      <td>Node</td>
+      <td>Status</td>
+      <td>IP</td>
+      <td>MAC</td>
+      <td>Updated</td>
+      <td>Action</td>
+    </tr>
+  </thead>
+  <tbody>
+    {% for d in domains %}
+    <tr>
+      <td><a href="">{{ d.name }}</a></td>
+      {% if d.node %}
+      <td><a href="{% url node:view d.node.id %}">{{ d.node.ip }}</a></td>
+      {% else %}
+      <td>None</td>
+      {% endif %}
+      <td><img src="{{ MEDIA_URL }}themes/icons/DomainStatus/{{ d.status }}.png"  alt="{{ d.get_status_display }}"/></td>
+      <td><a href="http://{{ d.ip }}:8001">{{ d.ip }}:8001</a></td>
+      <td>{{ d.mac }}</td>
+      <td>{{ d.updated|date:"Y-m-d H:i" }}</td>
+      <td>
+        <a href="{% url domain:run d.id %}">run</a> |
+        <a href="{% url domain:stop d.id %}">stop</a> |
+        <a href="{% url domain:reboot d.id %}">reboot</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>Have not found any domains !</p>
+{% endif %}
+<p>You can <a href="{% url domain:simple_create %}">create</a> a new domain .</p>

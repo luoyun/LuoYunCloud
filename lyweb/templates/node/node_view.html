@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block main %}
+{% if node %}
+<table>
+
+  <thead>
+    <tr>
+      <td>Item</td>
+      <td>Detail</td>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>id</td>
+      <td>{{ node.id }}</td>
+    </tr>
+
+    <tr>
+      <td>status</td>
+      <td>{{ node.get_status_display }}</td>
+    </tr>
+
+    <tr>
+      <td>hostname</td>
+      <td>{{ node.hostname }}</td>
+    </tr>
+
+    <tr>
+      <td>ip</td>
+      <td>{{ node.ip }}</td>
+    </tr>
+
+    <tr>
+      <td>port</td>
+      <td>{{ node.port }}</td>
+    </tr>
+
+    <tr>
+      <td>hypervisor</td>
+      <td>{{ node.hypervisor }}</td>
+    </tr>
+
+    <tr>
+      <td>hypervisor_version</td>
+      <td>{{ node.hypervisor_version }}</td>
+    </tr>
+
+    <tr>
+      <td>libversion</td>
+      <td>{{ node.libversion }}</td>
+    </tr>
+
+    <tr>
+      <td>max_memory</td>
+      <td>{{ node.max_memory }}</td>
+    </tr>
+
+    <tr>
+      <td>max_cpus</td>
+      <td>{{ node.max_cpus }}</td>
+    </tr>
+
+    <tr>
+      <td>cpu_model</td>
+      <td>{{ node.cpu_model }}</td>
+    </tr>
+
+    <tr>
+      <td>cpu_mhz</td>
+      <td>{{ node.cpu_mhz }}</td>
+    </tr>
+
+    <tr>
+      <td>load_average</td>
+      <td>{{ node.load_average }}</td>
+    </tr>
+
+    <tr>
+      <td>free_memory</td>
+      <td>{{ node.free_memory }}</td>
+    </tr>
+
+    <tr>
+      <td>created</td>
+      <td>{{ node.created|date:"Y-m-d H:i" }}</td>
+    </tr>
+
+    <tr>
+      <td>updated</td>
+      <td>{{ node.updated|date:"Y-m-d H:i" }}</td>
+    </tr>
+  </tbody>
+
+</table>
+{% else %}
+<p>Have not found the node !</p>
+{% endif %}
+<p>You can <a href="{% url node:register %}">register</a> a new node.</p>
+{% endblock %}

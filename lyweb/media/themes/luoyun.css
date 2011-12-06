@@ -1,0 +1,158 @@
+body {
+    /*color: green;*/
+}
+
+#container {
+    margin: 0 auto;
+    width: 980px;
+}
+
+h2, h3, h4, h5, h6 {
+    color: indigo;
+}
+
+h1 {
+    font-size: 1.6em;
+}
+
+h2 {
+    font-size: 1.4em;
+}
+
+p:first-letter {
+    font-size: 2em;
+}
+
+#header {
+    margin: 0;
+    padding: 5px;
+    /*background-image: url(/media/themes/icons/other/header_background.jpg);*/
+    /*background-color: lightblue;*/
+    background: -moz-linear-gradient(top,  #ebf1f6 0%, #89c3eb 22%, #d5ebfb 100%); /* FF3.6+ */
+    -moz-border-radius: 5px;
+    /*color: white;*/
+}
+
+#header h2 {
+    margin: 5px;
+    /*text-transform: uppercase;*/
+    /*font-variant: small-caps;*/
+    /*word-spacing: 1em;*/
+    /*letter-spacing: 5px;*/
+    /*text-decoration: underline overline blink;*/
+    /*direction: rtl;
+    unicode-bidi: bidi-override;*/
+}
+
+#header h2 a {
+    color: darkgreen;
+    font-family: "DejaVu Sans", "Microsoft YaHei","Hiragino Sans GB",STHeiti,Tahoma,SimHei,sans-serif;
+    font-weight: 100;
+    font-style: italic;
+    font-size: 1.2em;
+    text-shadow: 5px 5px 10px black;
+    text-decoration: none;
+}
+
+#header .user a {
+    font-size: 1.2em;
+    color: gold;
+}
+
+#main {
+    margin: 10px 0 10px 0;
+    /*padding: 10px;*/
+    /*border: 1px solid #DFE6ED;*/
+    background-color: white;
+}
+
+#footer {
+    padding: 10px 0;
+    border: 1px solid #DFE6ED;
+    text-align: center;
+    background-color: #EDF5FF;
+}
+
+#footer span {
+    margin: 2px 5px 2px 5px;
+}
+
+#login {
+    float: right;
+}
+
+#navigator {
+    /*font-size: 26px;*/
+    line-height: 2em;
+    /*-moz-border-radius: 20px;*/
+    padding: 0 20px 0 20px;
+    color: snow;
+}
+
+#navigator a {
+    font-size: 1.2em;
+    margin: 2px 5px 2px 5px;
+    padding: 5px;
+    border: 1px solid transparent;
+}
+
+#navigator a:hover {
+    font-size: 120%;
+    color: green;
+    /*background-color: blue;*/
+    border-color: darkgreen;
+    text-decoration: none;
+}
+
+table {
+    border-collapse:collapse;
+}
+
+thead {
+    background-color: #EDF5FF;
+}
+
+th {
+    border:#ccc solid 1px;
+    padding: 5px;
+}
+
+td {
+    border:#ccc solid 1px;
+    padding:10px;
+}
+
+tr:hover {
+    background-color: green;
+}
+
+td:hover {
+    background-color: red;
+}
+
+
+input:focus {
+    background-color: green;
+    font-weight: bold;
+}
+
+input:active {
+    background-color: red;
+}
+
+img {
+    border: 0 none;
+    margin: 0px 5px 0px 2px;
+}
+
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+/* Hides from IE-mac \*/
+* html .clearfix {height: 1%;}
+/* End hide from IE-mac */

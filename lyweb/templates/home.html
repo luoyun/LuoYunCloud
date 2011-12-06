@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block main %}
+<script>
+  $(document).ready(function () {
+    update_node_list();
+    update_domain_list();
+    setInterval("update_node_list()", 6000);
+    setInterval("update_domain_list()", 6000);
+  });
+
+  function update_node_list() { 
+    $.ajax({
+      type: "GET",
+      url: "/node/node_list/ajax/",
+      success: function(msg){
+        $("#node-list").html(msg);
+      }
+    });
+  }
+
+  function update_domain_list() { 
+    $.ajax({
+      type: "GET",
+      url: "/ajax/domain_list/",
+      success: function(msg){
+        $("#domain-list").html(msg);
+      }
+    });
+  }
+
+</script> 
+
+<p>Would be going ... ... ! </p>
+
+{% if images %}
+<h1>Image List</h1>
+<table>
+  <thead>
+    <tr>
+      <td>Image Name</td>
+      <td>Size</td>
+      <td>Update Time</td>
+    </tr>
+  </thead>
+  <tbody>
+    {% for i in images %}
+    <tr>
+      <td><a href="{% url image:view i.id %}">{{ i.name }}</a></td>
+      <td>{{ i.size }}</td>
+      <td>{{ i.updated|date:"Y-m-d H:i" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>Have not found any images. Please register first!</p>
+{% endif %}
+
+<div id="node-list">
+</div>
+
+<div id="domain-list">
+</div>
+
+
+{% endblock %}

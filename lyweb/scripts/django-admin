@@ -1,0 +1,16 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+
+# 说明：此文件拷贝自 django/bin/django-admin.py
+# 修改：添加 lib/ 目录做为 Python 的一个加载目录
+
+import os,sys
+
+# __file__ 是可以执行文件的路径名
+sys.path.insert(0,os.path.dirname(os.path.realpath(__file__))+"/../lib")
+
+from django.core import management
+
+if __name__ == "__main__":
+    management.execute_from_command_line()

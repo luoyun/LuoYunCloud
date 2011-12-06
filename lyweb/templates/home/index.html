@@ -1,0 +1,52 @@
+{% extends "home/base.html" %}
+{% block content %}
+<div id="luoyun-info" class="clearfix">
+
+  <div id="image">
+    <h2>Appliance</h2>
+    <p>Total: <a href="{% url image:index %}"><span id="images-total">{{ images_total }}</span></a></p>
+  </div>
+
+  <div id="node">
+    <h2>Node</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Total</th>
+          <th>Active</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="{% url node:index %}"><span id="nodes-total">{{ nodes_total }}</span></a></td>
+          <td><a href="{% url node:index %}"><span id="nodes-running">{{ nodes_running }}</span></a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="domain">
+    <h2>Instance</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Total</th>
+          <th>Active</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="{% url domain:index %}"><span id="domains-total">{{ domains_total }}</span></a></td>
+          <td><a href="{% url domain:index %}"><span id="domains-running">{{ domains_running }}</span></a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+<!--
+  <div id="chinese">
+朝辞白帝彩云间， 千里江陵一日还。
+两岸猿声啼不住， 轻舟已过万重山。
+  </div>-->
+</div>
+{% endblock %}

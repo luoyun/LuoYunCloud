@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block main %}
+{% if images %}
+<table>
+  <thead>
+    <tr>
+      <td>Image Name</td>
+      <td>Size</td>
+      <td>Update Time</td>
+    </tr>
+  </thead>
+  <tbody>
+    {% for i in images %}
+    <tr>
+      <td><img src="{{ MEDIA_URL }}themes/icons/ImageType/{{ i.type }}.png"/><a href="{% url image:view i.id %}">{{ i.name }}</a></td>
+      <td>{{ i.size }}</td>
+      <td>{{ i.updated|date:"Y-m-d H:i" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>Have not found any images. Please register first!</p>
+{% endif %}
+<p>You can <a href="{% url image:register %}">register</a> a new image.</p>
+{% endblock %}

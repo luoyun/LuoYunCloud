@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+{% if user.is_authenticated %}
+<p>current user: {{ user }}<p>
+<p>If you want to relogin, <a href="{% url account:logout %}?next={% url account:login %}">logout</a> first please.</p>
+
+{% else %}
+
+<fieldset>
+<legend>Login</legend>
+
+{% if form.errors %}
+<p style="color: red;">{{ form.errors }}</p>
+{% endif %}
+
+<form action="{% url home:login %}" method="post">{% csrf_token %}
+<p><label for="id_username">Username:</label> <input id="id_username" type="text" name="username" maxlength="30" /></p>
+<p><label for="id_password">Password:</label> <input type="password" name="password" id="id_password" /></p>
+<p><input id="login_submit" type="submit" value="Login"/></p>
+</form>
+</fieldset>
+{% endif %}
+
+
+{% endblock %}

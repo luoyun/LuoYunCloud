@@ -1,0 +1,4 @@
+sudo killall httpd
+echo "sleep 1 ... ..."
+sleep 1
+sudo httpd -f /opt/LuoYunSrc/tools/httpd.conf
