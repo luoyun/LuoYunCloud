@@ -8,7 +8,7 @@
     {% block head %}{% endblock %}
     <title>{% block title %}{{ title }}{% if title %} - {% endif %}LuoYun{% endblock %}</title>
   </head>
-
+{% load i18n %}
   <body>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.7.min.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/luoyun.js"></script>
@@ -16,7 +16,7 @@
     <div id="container">
 
       <div id="header">
-        <h2><a href="/">LuoYun - Find your cloud !</a></h2>
+        <h2><a href="/">{% trans 'LuoYun - Find your cloud !' %}</a></h2>
         <div id="login">
           {% if user.is_authenticated %}
             Welcome, <span class="user"><a href="">{{ user }}</a></span>
@@ -24,16 +24,27 @@
               <span class="configure"><a href="{% url admin:index %}">Configure</a></span>
             {% endif %}
             <span class="logout"><a href="{% url home:logout %}">Sign Out</a></span>
-          {% else %}
+            {% else %}
             <span class="login"><a href="{% url home:login %}">Sign In</a></span>
-          {% endif %}
+            {% endif %}
+            <div id="select-language">
+              <form action="/i18n/setlang/" method="post">{% csrf_token %}
+                <input name="next" type="hidden" value="{{request.path}}" />
+                <select name="language">
+                  {% for lang in LANGUAGES %}
+                  <option value="{{ lang.0 }}" {%ifequal lang.0 request.LANGUAGE_CODE%}selected="selected"{%endifequal%}>{{ lang.1 }}</option>
+                  {% endfor %}
+                </select>
+                <input type="submit" value="Go" />
+              </form> 
+            </div>
         </div>
         <div id="navigator">
-          <span><a href="/">Home</a></span>
-          <span><a href="{% url image:index %}">Image</a></span>
-          <span><a href="{% url node:index %}">Node</a></span>
-          <span><a href="{% url domain:index %}">Domain</a></span>
-          <span><a href="{% url job:index %}">Job</a></span>
+          <span><a href="/">{% trans 'Home' %}</a></span>
+          <span><a href="{% url image:index %}">{% trans 'Image' %}</a></span>
+          <span><a href="{% url node:index %}">{% trans 'Node' %}</a></span>
+          <span><a href="{% url domain:index %}">{% trans 'Domain' %}</a></span>
+          <span><a href="{% url job:index %}">{% trans 'Job' %}</a></span>
         </div>
       </div>
 

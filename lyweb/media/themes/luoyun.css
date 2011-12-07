@@ -104,6 +104,10 @@ p:first-letter {
     text-decoration: none;
 }
 
+#select-language {
+    float: right;
+}
+
 table {
     border-collapse:collapse;
 }

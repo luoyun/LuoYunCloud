@@ -1,0 +1,50 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-12-06 19:32+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: app/home/views.py:27
+msgid "Welcome To LuoYun"
+msgstr "欢迎使用 LuoYun"
+
+#: app/home/views.py:71
+msgid "Login"
+msgstr ""
+
+#: templates/base.html:19
+msgid "LuoYun - Find your cloud !"
+msgstr "LuoYun - 发现您的云！"
+
+#: templates/base.html:43
+msgid "Home"
+msgstr "首页"
+
+#: templates/base.html:44
+msgid "Image"
+msgstr "云系统"
+
+#: templates/base.html:45
+msgid "Node"
+msgstr "节点"
+
+#: templates/base.html:46
+msgid "Domain"
+msgstr "虚拟机"
+
+#: templates/base.html:47
+msgid "Job"
+msgstr "任务历史"

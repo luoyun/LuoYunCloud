@@ -1,3 +1,5 @@
+from django.utils.translation import ugettext as _
+
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
@@ -22,7 +24,8 @@ def index(request):
     nodes_running = len(Node.objects.filter(status = 2))
     domains_running = len(Domain.objects.filter(status = 2))
 
-    return {'images': images,
+    return {'title': _('Welcome To LuoYun'),
+            'images': images,
             'images_total': len(images),
             'nodes': nodes,
             'nodes_total': len(nodes),
@@ -65,7 +68,7 @@ def login (request):
         form = AuthenticationForm(request)
 
     request.session.set_test_cookie()
-    return { 'title':'Login', 'form':form }
+    return { 'title':_('Login'), 'form':form }
 
 
 

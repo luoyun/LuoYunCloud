@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
+    url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'', include('lyweb.app.home.urls', namespace='home')),
     url(r'^image/', include('lyweb.app.image.urls', namespace='image')),

@@ -1,3 +1,4 @@
+# coding: utf-8
 # Django settings for lyweb project.
 
 import os, sys
@@ -40,6 +41,13 @@ TIME_ZONE = 'Asia/Shanghai'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
+
+LANGUAGES = (
+    ('zh-cn', u'简体中文'),
+    ('zh-tw', u'繁體中文'),
+    ('en', 'English'),
+)
+
 
 SITE_ID = 1
 
@@ -109,6 +117,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.locale.LocaleMiddleware', # i18n support
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
