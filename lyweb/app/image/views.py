@@ -15,7 +15,7 @@ def index(request):
 
     images = Image.objects.all()
 
-    return { 'images': images }
+    return { 'request': request, 'images': images }
 
 
 @login_required

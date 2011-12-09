@@ -1,11 +1,15 @@
 body {
-    /*color: green;*/
+    background-color: transparent;
+    color: #333333;
+    font: 12px/18px "Lucida Grande","Lucida Sans Unicode",Helvetica,Arial,Verdana,sans-serif;
+    /*background: url("/media/img/bg.png") repeat-y scroll center top #ECECEC;*/
 }
 
-#container {
-    margin: 0 auto;
-    width: 980px;
+html, body, div, ul, ol, li, dl, dt, dd, h1, h2, h3, h4, h5, h6, pre, form, p, blockquote, fieldset, input, abbr, article, aside, command, details, figcaption, figure, footer, header, hgroup, mark, meter, nav, output, progress, section, summary, time {
+    margin: 0;
+    padding: 0;
 }
+
 
 h2, h3, h4, h5, h6 {
     color: indigo;
@@ -19,93 +23,9 @@ h2 {
     font-size: 1.4em;
 }
 
-p:first-letter {
-    font-size: 2em;
-}
-
-#header {
-    margin: 0;
-    padding: 5px;
-    /*background-image: url(/media/themes/icons/other/header_background.jpg);*/
-    /*background-color: lightblue;*/
-    background: -moz-linear-gradient(top,  #ebf1f6 0%, #89c3eb 22%, #d5ebfb 100%); /* FF3.6+ */
-    -moz-border-radius: 5px;
-    /*color: white;*/
-}
-
-#header h2 {
-    margin: 5px;
-    /*text-transform: uppercase;*/
-    /*font-variant: small-caps;*/
-    /*word-spacing: 1em;*/
-    /*letter-spacing: 5px;*/
-    /*text-decoration: underline overline blink;*/
-    /*direction: rtl;
-    unicode-bidi: bidi-override;*/
-}
-
-#header h2 a {
-    color: darkgreen;
-    font-family: "DejaVu Sans", "Microsoft YaHei","Hiragino Sans GB",STHeiti,Tahoma,SimHei,sans-serif;
-    font-weight: 100;
-    font-style: italic;
-    font-size: 1.2em;
-    text-shadow: 5px 5px 10px black;
-    text-decoration: none;
-}
-
-#header .user a {
-    font-size: 1.2em;
-    color: gold;
-}
-
-#main {
-    margin: 10px 0 10px 0;
-    /*padding: 10px;*/
-    /*border: 1px solid #DFE6ED;*/
-    background-color: white;
-}
-
-#footer {
-    padding: 10px 0;
-    border: 1px solid #DFE6ED;
-    text-align: center;
-    background-color: #EDF5FF;
-}
-
-#footer span {
-    margin: 2px 5px 2px 5px;
-}
-
-#login {
-    float: right;
-}
-
-#navigator {
-    /*font-size: 26px;*/
-    line-height: 2em;
-    /*-moz-border-radius: 20px;*/
-    padding: 0 20px 0 20px;
-    color: snow;
-}
-
-#navigator a {
-    font-size: 1.2em;
-    margin: 2px 5px 2px 5px;
-    padding: 5px;
-    border: 1px solid transparent;
-}
-
-#navigator a:hover {
-    font-size: 120%;
-    color: green;
-    /*background-color: blue;*/
-    border-color: darkgreen;
-    text-decoration: none;
-}
-
-#select-language {
-    float: right;
+a {
+    outline:none;
+    blr:expression(this.onFocus=this.blur()); /* for IE6, IE7 */
 }
 
 table {
@@ -135,6 +55,7 @@ td:hover {
 }
 
 
+
 input:focus {
     background-color: green;
     font-weight: bold;
@@ -144,11 +65,16 @@ input:active {
     background-color: red;
 }
 
+
+
 img {
     border: 0 none;
     margin: 0px 5px 0px 2px;
 }
 
+ul {
+    list-style: none outside none;
+}
 
 .clearfix:after {
     content: ".";
@@ -160,3 +86,120 @@ img {
 /* Hides from IE-mac \*/
 * html .clearfix {height: 1%;}
 /* End hide from IE-mac */
+
+
+
+/* Begin Pager */
+
+#pager {
+    margin: 0 auto;
+    width: 980px;
+}
+
+/* End Pager */
+
+
+
+
+
+
+/* Begin Header */
+
+#header {
+    margin: 5px 0;
+    padding: 13px 15px 0px;
+    background: url("/media/img/top_home_banner.png") repeat-x scroll 0 0 transparent;
+    height: 56px;
+    width: 100%;
+    z-index: 4;
+    /*font: 12px/18px "Lucida Grande","Lucida Sans Unicode",Helvetica,Arial,Verdana,sans-serif;*/
+    /*text-align: left;*/
+}
+
+#welcome-info {
+    float: left;
+}
+
+#welcome-info a {
+    color: white;
+    font-family: "DejaVu Sans", "Microsoft YaHei", 宋体, "Hiragino Sans GB",STHeiti,Tahoma,SimHei,sans-serif;
+    font-style: italic;
+    font-size: 1.6em;
+    text-shadow: 5px 5px 10px black;
+    text-decoration: none;
+}
+
+#navigator {
+    float: left;
+    font-size: 1.1em;
+    /*line-height: 2em;*/
+    /*-moz-border-radius: 20px;*/
+    padding: 0 20px 0 20px;
+}
+
+#navigator li {
+    /*display: table-cell;*/
+    display:inline-block;    /* firefox等标准浏览器识别*/
+    *display:inline;      /* 只有ie6和ie7识别*/
+    zoom:1;               /* 触发ie6和ie7下的haslayout */
+    overflow: hidden;
+}
+
+#navigator a {
+    font-size: 1.2em;
+    margin: 2px 5px;
+    padding: 5px;
+    /*border: 1px solid transparent;*/
+    color: snow;
+    text-decoration: none;
+}
+
+#navigator a:hover {
+    color: darkblue;
+    background-color: snow;
+    /*text-decoration: none;*/
+}
+
+#select-language {
+    float: right;
+}
+
+#login {
+    text-align: right;
+}
+
+/* End Header */
+
+
+
+
+/* Begin Main */
+
+#main {
+    margin: 10px 0 10px 0;
+    /*padding: 10px;*/
+    /*border: 1px solid #DFE6ED;*/
+    background-color: white;
+}
+
+/* End Main */
+
+
+
+
+
+/* Begin Footer */
+
+#footer {
+    padding: 15px 0;
+    border-top: 1px solid #DFE6ED;
+    text-align: center;
+    /*background-color: #EDF5FF;*/
+}
+
+#footer span {
+    margin: 2px 5px 2px 5px;
+}
+
+/* End Footer */
+

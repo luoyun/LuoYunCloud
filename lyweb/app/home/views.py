@@ -12,6 +12,7 @@ from lyweb.util import render_to, build_form
 from lyweb.app.image.models import Image
 from lyweb.app.node.models import Node
 from lyweb.app.domain.models import Domain
+from lyweb.app.job.models import Job
 
 
 @render_to("home/index.html")
@@ -20,28 +21,21 @@ def index(request):
     images = Image.objects.all()
     nodes = Node.objects.all()
     domains = Domain.objects.all()
+    jobs = Job.objects.all()[:3]
 
     nodes_running = len(Node.objects.filter(status = 2))
     domains_running = len(Domain.objects.filter(status = 2))
 
-    return {'title': _('Welcome To LuoYun'),
-            'images': images,
-            'images_total': len(images),
-            'nodes': nodes,
-            'nodes_total': len(nodes),
-            'nodes_running': nodes_running,
-            'domains': domains,
-            'domains_total': len(domains),
-            'domains_running': domains_running}
-
-
-@render_to('home/ajax_domain_list.html')
-def ajax_domain_list(request):
-
-    domains = Domain.objects.all()
-
-    return { 'domains': domains }
-
+    return { 'title': _('Welcome To LuoYun'),
+             'images': images,
+             'images_total': len(images),
+             'nodes': nodes,
+             'nodes_total': len(nodes),
+             'nodes_running': nodes_running,
+             'domains': domains,
+             'domains_total': len(domains),
+             'domains_running': domains_running,
+             'jobs': jobs }
 
 
 @render_to('home/login.html')
@@ -78,3 +72,11 @@ def logout(request):
     previous_url = request.GET.get('next')
     logout(request)
     return HttpResponseRedirect(previous_url or '/')
+
+
+@render_to('home/ajax_new_jobs.html')
+def ajax_new_jobs(request):
+
+    jobs = Job.objects.all()[:3]
+
+    return { 'jobs': jobs }

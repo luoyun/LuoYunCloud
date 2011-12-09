@@ -1,0 +1,9 @@
+{% if jobs %}
+{% load i18n %}
+  <ul>
+{% for j in jobs %}
+    <li>{{ j.started|date:"Y-m-d H:i" }}: {{ j.user }}{% trans "'s job" %} {{ j.id }} {% trans "is" %} {{ j.get_status_display }} </li>
+{% endfor %}
+  </ul>
+{% endif %}
+

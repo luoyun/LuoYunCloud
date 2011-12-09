@@ -105,6 +105,17 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'av^qx*10ua03jiiw!$pt5uh#4_jd4m_v@g4e7#8okt*ae8#(pt'
 
+# Template process
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+#    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+#    'django.core.context_processors.static',
+    'django.core.context_processors.request',
+#    'django.contrib.messages.context_processors.messages',
+)
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -172,3 +183,4 @@ LOGGING = {
 }
 
 
+#SESSION_COOKIE_DOMAIN="luoyun.ylinux.org"

@@ -13,50 +13,65 @@
     <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.7.min.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/luoyun.js"></script>
 
-    <div id="container">
+    <div id="pager">
 
       <div id="header">
-        <h2><a href="/">{% trans 'LuoYun - Find your cloud !' %}</a></h2>
-        <div id="login">
-          {% if user.is_authenticated %}
-            Welcome, <span class="user"><a href="">{{ user }}</a></span>
-            {% if user.is_staff %}
-              <span class="configure"><a href="{% url admin:index %}">Configure</a></span>
-            {% endif %}
-            <span class="logout"><a href="{% url home:logout %}">Sign Out</a></span>
-            {% else %}
-            <span class="login"><a href="{% url home:login %}">Sign In</a></span>
-            {% endif %}
-            <div id="select-language">
-              <form action="/i18n/setlang/" method="post">{% csrf_token %}
-                <input name="next" type="hidden" value="{{request.path}}" />
-                <select name="language">
-                  {% for lang in LANGUAGES %}
-                  <option value="{{ lang.0 }}" {%ifequal lang.0 request.LANGUAGE_CODE%}selected="selected"{%endifequal%}>{{ lang.1 }}</option>
-                  {% endfor %}
-                </select>
-                <input type="submit" value="Go" />
-              </form> 
-            </div>
+        <div id="welcome-info">
+          <a href="/">{% trans "LuoYun - Find your cloud !" %}</a>
         </div>
         <div id="navigator">
-          <span><a href="/">{% trans 'Home' %}</a></span>
-          <span><a href="{% url image:index %}">{% trans 'Image' %}</a></span>
-          <span><a href="{% url node:index %}">{% trans 'Node' %}</a></span>
-          <span><a href="{% url domain:index %}">{% trans 'Domain' %}</a></span>
-          <span><a href="{% url job:index %}">{% trans 'Job' %}</a></span>
+          <ul>
+            <li><a href="/">{% trans "Home" %}</a></li>
+            <li><a href="{% url image:index %}">{% trans "Image" %}</a></li>
+            <li><a href="{% url node:index %}">{% trans "Node" %}</a></li>
+            <li><a href="{% url domain:index %}">{% trans "Domain" %}</a></li>
+            <li><a href="{% url job:index %}">{% trans "Job" %}</a></li>
+          </ul>
+        </div>
+        <div id="select-language">
+          <form action="/i18n/setlang/" method="post">{% csrf_token %}
+            <input name="next" type="hidden" />
+            <select name="language">
+              {% for lang in LANGUAGES %}
+              <!--<option value="{{ lang.0 }}" {% ifequal lang.0 request.LANGUAGE_CODE %}selected="selected"{% endifequal %}>{{ lang.1 }}</option>-->
+              {% ifequal request.LANGUAGE_CODE "en" %}
+              <option value="{{ lang.0 }}" {% ifequal lang.0 "zh-cn" %}selected="selected"{% endifequal %}>{{ lang.1 }}</option>
+              {% else %}
+              <option value="{{ lang.0 }}" {% ifequal lang.0 "en" %}selected="selected"{% endifequal %}>{{ lang.1 }}</option>
+              {% endifequal %}
+              {% endfor %}
+            </select>
+            {% ifequal request.LANGUAGE_CODE "en" %}
+            <input type="submit" value="选择" />
+            {% else %}
+            <input type="submit" value="Go" />
+            {% endifequal %}
+          </form> 
         </div>
       </div>
 
       <div id="main" class="clearfix">
-        <noscript><p class="nojs">Sorry, your browser does not support JavaScript!</p></noscript>
+        <noscript><p class="nojs">{% trans "Sorry, your browser does not support JavaScript!" %}</p></noscript>
+        <div id="login">
+          {% if user.is_authenticated %}
+          {% trans "Welcome, " %}<span class="user"><a href="">{{ user }}</a></span>
+          <!--
+              {% if user.is_staff %}
+              <span class="configure"><a href="{% url admin:index %}">{% trans 'Configure Center' %}</a></span>
+              {% endif %}
+          -->
+          <span class="logout"><a href="{% url home:logout %}">{% trans "Sign Out" %}</a></span>
+          {% else %}
+          <span class="login"><a href="{% url home:login %}">{% trans "Sign In" %}</a></span>
+          {% endif %}
+        </div>
         {% block main %}{% endblock %}
       </div>
 
       <div id="footer">
-        <span class="copyright">Copyright &copy <a href="http://www.luoyun.com">LuoYun</a></span>
-        <span class="about"><a href="/about">About</a></span>
-        <span class="contact"><a href="/contact">Contact</a></span>
+        <span class="copyright">{% trans "Copyright" %} &copy <a href="http://www.luoyun.com">{% trans "LuoYun Inc." %}</a></span>
+        <span class="about"><a href="/about">{% trans "About" %}</a></span>
+        <span class="contact"><a href="/contact">{% trans "Contact" %}</a></span>
       </div>
       
     </div>

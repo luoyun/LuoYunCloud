@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-06 19:32+0800\n"
+"POT-Creation-Date: 2011-12-09 11:23+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,34 +17,162 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: app/home/views.py:27
+#: app/home/views.py:29
 msgid "Welcome To LuoYun"
 msgstr "欢迎使用 LuoYun"
 
-#: app/home/views.py:71
+#: app/home/views.py:65
 msgid "Login"
-msgstr ""
+msgstr "登录"
 
-#: templates/base.html:19
+#: app/job/models.py:7 app/job/models.py:18 app/job/models.py:27
+msgid "UNKNOWN"
+msgstr "未知"
+
+#: app/job/models.py:8
+msgid "PREPARE"
+msgstr "等待"
+
+#: app/job/models.py:9
+msgid "RUNNING"
+msgstr "运行"
+
+#: app/job/models.py:10
+msgid "FINISHED"
+msgstr "完成"
+
+#: app/job/models.py:11
+msgid "FAILED"
+msgstr "失败"
+
+#: app/job/models.py:12
+msgid "STOPED"
+msgstr "停止"
+
+#: app/job/models.py:13
+msgid "PENDING"
+msgstr "未决"
+
+#: app/job/models.py:14
+msgid "TIMEOUT"
+msgstr "超时"
+
+#: app/job/models.py:19
+msgid "RUN"
+msgstr "运行"
+
+#: app/job/models.py:20
+msgid "STOP"
+msgstr "停止"
+
+#: app/job/models.py:21
+msgid "SUSPEND"
+msgstr "暂停"
+
+#: app/job/models.py:22
+msgid "SAVE"
+msgstr "保存"
+
+#: app/job/models.py:23
+msgid "REBOOT"
+msgstr "重启"
+
+#: app/job/models.py:28
+msgid "NODE"
+msgstr "计算节点"
+
+#: app/job/models.py:29
+msgid "DOMAIN"
+msgstr "虚拟系统"
+
+#: templates/base.html:20
 msgid "LuoYun - Find your cloud !"
-msgstr "LuoYun - 发现您的云！"
+msgstr "落云 - 发现您的云！"
 
-#: templates/base.html:43
+#: templates/base.html:24
 msgid "Home"
 msgstr "首页"
 
-#: templates/base.html:44
+#: templates/base.html:25
 msgid "Image"
 msgstr "云系统"
 
-#: templates/base.html:45
+#: templates/base.html:26
 msgid "Node"
-msgstr "节点"
+msgstr "计算节点"
 
-#: templates/base.html:46
+#: templates/base.html:27
 msgid "Domain"
-msgstr "虚拟机"
+msgstr "虚拟系统"
 
-#: templates/base.html:47
+#: templates/base.html:28
 msgid "Job"
-msgstr "任务历史"
+msgstr "任务"
+
+#: templates/base.html:54
+msgid "Sorry, your browser does not support JavaScript!"
+msgstr "抱歉，您的浏览器不支持 JavaScript ， 或您关闭了 JavaScript 支持！"
+
+#: templates/base.html:57
+msgid "Welcome, "
+msgstr "当前用户: "
+
+#: templates/base.html:60
+msgid "Configure Center"
+msgstr "管理"
+
+#: templates/base.html:63
+msgid "Sign Out"
+msgstr "退出"
+
+#: templates/base.html:65
+msgid "Sign In"
+msgstr "登录"
+
+#: templates/base.html:72
+msgid "Copyright"
+msgstr "版权所有"
+
+#: templates/base.html:72
+msgid "LuoYun Inc."
+msgstr "落云科技"
+
+#: templates/base.html:73
+msgid "About"
+msgstr "关于我们"
+
+#: templates/base.html:74
+msgid "Contact"
+msgstr "联系我们"
+
+#: templates/home/ajax_new_jobs.html:5
+msgid "'s job"
+msgstr "的任务"
+
+#: templates/home/ajax_new_jobs.html:5
+msgid "is"
+msgstr "是"
+
+#: templates/home/index.html:42
+msgid ""
+"\n"
+"Description for image.\n"
+msgstr ""
+
+#: templates/home/index.html:47
+msgid ""
+"\n"
+"Description for node.\n"
+msgstr ""
+
+#: templates/home/index.html:52
+msgid ""
+"\n"
+"Description for domain.\n"
+msgstr ""
+
+#~ msgid "Describe information of above"
+#~ msgstr "描述上面信息"
+
+#~ msgid "Newest Jobs"
+#~ msgstr "正在发生的事情"

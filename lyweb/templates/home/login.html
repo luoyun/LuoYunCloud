@@ -4,7 +4,7 @@
 
 {% if user.is_authenticated %}
 <p>current user: {{ user }}<p>
-<p>If you want to relogin, <a href="{% url account:logout %}?next={% url account:login %}">logout</a> first please.</p>
+<p>If you want to relogin, <a href="/accounts/logout/?next=/accounts/login/">logout</a> first please.</p>
 
 {% else %}
 

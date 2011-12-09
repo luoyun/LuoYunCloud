@@ -1,52 +1,98 @@
 {% extends "home/base.html" %}
+{% load i18n %}
 {% block content %}
+
+<div id="system-info" class="clearfix">
+  <div id="new-jobs">
+  </div>
+</div>
+
 <div id="luoyun-info" class="clearfix">
 
-  <div id="image">
+  <div id="image" class="element-entry hover">
     <h2>Appliance</h2>
+    <div>
+      <a href="/image/"><img class="zoneimage" src="/media/img/image.png"></img></a>
+    </div>
     <p>Total: <a href="{% url image:index %}"><span id="images-total">{{ images_total }}</span></a></p>
   </div>
 
-  <div id="node">
+  <div id="node" class="element-entry">
     <h2>Node</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Total</th>
-          <th>Active</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><a href="{% url node:index %}"><span id="nodes-total">{{ nodes_total }}</span></a></td>
-          <td><a href="{% url node:index %}"><span id="nodes-running">{{ nodes_running }}</span></a></td>
-        </tr>
-      </tbody>
-    </table>
+    <div>
+      <a href="/node/"><img class="zoneimage" src="/media/img/node.png"></img></a>
+    </div>
+    <p>Total: <a href="{% url node:index %}"><span id="nodes-total">{{ nodes_total }}</span></a></p>
+    <p>Running: <a href="{% url node:index %}"><span id="nodes-running">{{ nodes_running }}</span></a></p>
   </div>
 
-  <div id="domain">
+  <div id="domain" class="element-entry">
     <h2>Instance</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Total</th>
-          <th>Active</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><a href="{% url domain:index %}"><span id="domains-total">{{ domains_total }}</span></a></td>
-          <td><a href="{% url domain:index %}"><span id="domains-running">{{ domains_running }}</span></a></td>
-        </tr>
-      </tbody>
-    </table>
+    <div>
+      <a href="/domain/"><img class="zoneimage" src="/media/img/domain.png"></img></a>
+    </div>
+    <p>Total: <a href="{% url domain:index %}"><span id="domains-total">{{ domains_total }}</span></a></p>
+    <p>Running:: <a href="{% url domain:index %}"><span id="domains-running">{{ domains_running }}</span></a></p>
   </div>
 
-<!--
-  <div id="chinese">
-朝辞白帝彩云间， 千里江陵一日还。
-两岸猿声啼不住， 轻舟已过万重山。
-  </div>-->
 </div>
+
+<div id="zone-info">
+  <div id="image-info" style="display: inline;">
+    <p>{% blocktrans %}
+Description for image.
+{% endblocktrans %}</p>
+  </div>
+  <div id="node-info" style="display: none;">
+    <p>{% blocktrans %}
+Description for node.
+{% endblocktrans %}</p>
+  </div>
+  <div id="domain-info" style="display: none;">
+    <p>{% blocktrans %}
+Description for domain.
+{% endblocktrans %}</p>
+  </div>
+</div>
+
+<script>
+$(".element-entry").hover(
+  function () {
+
+    var cur = $(this).attr("id");
+
+    $("#" + cur).addClass("hover");
+    $("#" + cur + "-info").css("display", "inline");
+
+    var ele = new Array();
+    ele[0] = "image";
+    ele[1] = "node";
+    ele[2] = "domain";
+    for ( i = 0; i < ele.length; i++)
+    { 
+      if ( cur != ele[i] ) {
+        $("#" + ele[i]).removeClass("hover");
+        $("#" + ele[i] + "-info").css("display", "none");
+      }
+    }
+  },
+  function () {
+    //action for move out
+  }
+);
+
+function get_new_jobs() { 
+  $.ajax({
+    type: "GET",
+    url: "/ajax_new_jobs/",
+    success: function(msg){
+      $("#new-jobs").html(msg);
+    }
+  });
+};
+
+get_new_jobs();
+setInterval("get_new_jobs()", 6000);
+
+</script>
 {% endblock %}

@@ -1,30 +1,32 @@
+from django.utils.translation import ugettext as _
+
 from django.db import models
 from django.contrib.auth.models import User
 
 JOB_STATUS = (
-    (0, 'UNKNOWN'),
-    (1, 'PREPARE'),
-    (2, 'RUNNING'),
-    (3, 'FINISHED'),
-    (4, 'FAILED'),
-    (5, 'STOPED'),
-    (10, 'PENDING'),
-    (11, 'TIMEOUT'),
+    (0, _('UNKNOWN')),
+    (1, _('PREPARE')),
+    (2, _('RUNNING')),
+    (3, _('FINISHED')),
+    (4, _('FAILED')),
+    (5, _('STOPED')),
+    (10, _('PENDING')),
+    (11, _('TIMEOUT')),
 )
 
 JOB_ACTION = (
-    (0, 'UNKNOWN'),
-    (1, 'RUN'),
-    (2, 'STOP'),
-    (3, 'SUSPEND'),
-    (4, 'SAVE'),
-    (5, 'REBOOT'),
+    (0, _('UNKNOWN')),
+    (1, _('RUN')),
+    (2, _('STOP')),
+    (3, _('SUSPEND')),
+    (4, _('SAVE')),
+    (5, _('REBOOT')),
 )
 
 JOB_TARGET_TYPE = (
-    (0, 'UNKNOWN'),
-    (1, 'NODE'),
-    (2, 'DOMAIN'),
+    (0, _('UNKNOWN')),
+    (1, _('NODE')),
+    (2, _('DOMAIN')),
 )
 
 class Job(models.Model):
