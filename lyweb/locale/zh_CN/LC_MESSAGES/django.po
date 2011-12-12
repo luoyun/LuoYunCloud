@@ -157,7 +157,7 @@ msgstr "是"
 msgid ""
 "\n"
 "Description for image.\n"
-msgstr ""
+msgstr "描述"
 
 #: templates/home/index.html:47
 msgid ""

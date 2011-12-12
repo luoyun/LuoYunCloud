@@ -6,8 +6,8 @@
 <div id="add">
   <form action="{% url image:add %}" method="post">{% csrf_token %}
     <div class="form-header">
-      <h1>Add a new appliance</h1>
-      <p>This the common func</p>
+      <h1>{% trans "Add a new appliance" %}</h1>
+      <p>{% trans "This the common func" %}</p>
     </div>
 
     <div class="form-element">
@@ -73,8 +73,7 @@
     {% endif %}
 
     <div class="form-footer">
-      <button type="submit">Submit</button>
-      <!--<input type="submit" value={% trans "Submit" %} />-->
+      <button type="submit">{% trans "Submit" %}</button>
     </div>
   </form>
 </div>
