@@ -31,6 +31,11 @@
     </tr>
 
     <tr>
+      <td>Status</td>
+      <td>{{ image.get_status_display }}</td>
+    </tr>
+
+    <tr>
       <td>Size</td>
       <td>{{ image.size }}</td>
     </tr>
@@ -55,5 +60,5 @@
 {% else %}
 <p>Have not found the image !</p>
 {% endif %}
-<p>You can <a href="{% url image:register %}">register</a> a new image.</p>
+<p>You can <a href="{% url image:add %}">add</a> a new image.</p>
 {% endblock %}

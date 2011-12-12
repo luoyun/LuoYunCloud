@@ -47,23 +47,18 @@ td {
 }
 
 tr:hover {
-    background-color: green;
+    background-color: lightblue;
 }
-
-td:hover {
-    background-color: red;
-}
-
-
 
 input:focus {
-    background-color: green;
+    background-color: lightblue;
     font-weight: bold;
 }
 
+/*
 input:active {
-    background-color: red;
-}
+    background-color: yellow;
+}*/
 
 
 
@@ -108,7 +103,8 @@ ul {
 #header {
     margin: 5px 0;
     padding: 13px 15px 0px;
-    background: url("/media/img/top_home_banner.png") repeat-x scroll 0 0 transparent;
+    /*background: url("/media/img/top_home_banner.png") repeat-x scroll 0 0 transparent;*/
+    background: url("/media/img/luoyun_header_bg_1.png") no-repeat scroll 0 0 transparent;
     height: 56px;
     width: 100%;
     z-index: 4;
@@ -162,6 +158,7 @@ ul {
 
 #select-language {
     float: right;
+    margin-right: 30px;
 }
 
 #login {
@@ -203,3 +200,9 @@ ul {
 
 /* End Footer */
 
+
+
+/* Common style */
+.error-msg {
+    color: red;
+}

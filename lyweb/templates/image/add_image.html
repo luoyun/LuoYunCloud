@@ -1,0 +1,81 @@
+{% extends "image/base.html" %}
+{% load i18n %}
+
+{% block main %}
+
+<div id="add">
+  <form action="{% url image:add %}" method="post">{% csrf_token %}
+    <div class="form-header">
+      <h1>Add a new appliance</h1>
+      <p>This the common func</p>
+    </div>
+
+    <div class="form-element">
+      <div class="left">
+        <label for="id_name">{% trans "Image Name:" %}<span class="small">{% trans "Any name you want." %}</span></label>
+      </div>
+      <div class="right">
+        <input id="id_name" type="text" name="name" maxlength="30" value="{{ name }}"/>
+        {% if name_error %}<div class="field-error">{{ name_error }}</div>{% endif %}
+      </div>
+    </div>
+
+    <div class="form-element">
+      <div class="left">
+        <label for="id_filetype">{% trans "Image filetype:" %}<span class="small">{% trans "Select type of the image." %}</span></label>
+      </div>
+      <div class="right">
+        <select name="filetype" id="id_filetype">
+          {% for k, v in IMAGE_TYPE %}
+          {% ifnotequal k 0 %}
+          <option value="{{ k }}" {% ifequal k filetype %}selected="selected"{% endifequal %}>{{ v }}</option>
+          {% endifnotequal %}
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="form-element">
+      <div class="left">
+        <label for="id_filename">{% trans "Filename:" %}<span class="small">{% trans "Select the image." %}</span></label>
+      </div>
+      <div class="right">
+        <select name="filename" id="id_filename">
+          {% for f in IMAGE_LIST %}
+          <option value="{{ f }}" {% ifequal f filename %}selected="selected"{% endifequal %}>{{ f }}</option>
+          {% endfor %}
+        </select>
+        {% if filename_error %}<div class="field-error">{{ filename_error }}</div>{% endif %}
+      </div>
+    </div>
+
+    <div class="form-element">
+      <div class="left">
+        <label for="id_catalog">{% trans "Image catalog:" %}<span class="small">{% trans "The catalog" %}</span></label>
+      </div>
+      <div class="right">
+        <select name="catalog" id="id_catalog">
+          {% for c in catalogs %}
+          <option value="{{ c.id }}" {% ifequal c.id catalog %}selected="selected"{% endifequal %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+        {% if catalog_error %}<div class="field-error">{{ catalog_error }}</div>{% endif %}
+      </div>
+      <div class="addon">
+        <a href="{% url image:add_catalog %}">{% trans "Add New Catalog" %}</a>
+      </div>
+    </div>
+
+    {% if submit_error %}
+    <div class="submit-error">
+      <p>{{ submit_error }}</p>
+    </div>
+    {% endif %}
+
+    <div class="form-footer">
+      <button type="submit">Submit</button>
+      <!--<input type="submit" value={% trans "Submit" %} />-->
+    </div>
+  </form>
+</div>
+{% endblock %}

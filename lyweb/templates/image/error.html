@@ -1,0 +1,10 @@
+{% extends "image/base.html" %}
+{% load i18n %}
+
+{% block main %}
+<div id="error">
+  {% if error %}
+  <p class="error-msg">{{ error }}</p>
+  {% endif %}
+</div>
+{% endblock %}

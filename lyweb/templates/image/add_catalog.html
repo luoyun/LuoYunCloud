@@ -1,0 +1,48 @@
+{% extends "image/base.html" %}
+{% load i18n %}
+
+{% block main %}
+
+<div id="add">
+  <form action="{% url image:add_catalog %}" method="post">{% csrf_token %}
+    <div class="form-header">
+      <h1>Add a new catalog</h1>
+      <p>This the common func</p>
+    </div>
+
+    <div class="form-element">
+      <div class="left">
+        <label for="id_name">{% trans "Name:" %}<span class="small">{% trans "The name" %}</span></label>
+      </div>
+      <div class="right">
+        <input id="id_name" type="text" name="name" maxlength="30" value="{{ name }}" />
+        {% if name_error %}<div class="field-error">{{ name_error }}</div>{% endif %}
+      </div>
+    </div>
+
+    <div class="form-element">
+      <div class="left">
+        <label for="id_summary">{% trans "Summary:" %}<span class="small">{% trans "The summary" %}</span></label>
+      </div>
+      <div class="right">
+        <input id="id_summary" type="text" name="summary" maxlength="128" value="{{ summary }}"/>
+        {% if summary_error %}<div class="field-error">{{ summary_error }}</div>{% endif %}
+      </div>
+    </div>
+
+    <div class="form-element clearfix">
+      <div class="left">
+        <label for="id_description">{% trans "Description:" %}<span class="small">{% trans "The description" %}</span></label>
+      </div>
+      <div class="right">
+        <textarea rows="6" cols="30" name="description" id="id_description">{{ description }}</textarea>
+        {% if description_error %}<div class="field-error">{{ description_error }}</div>{% endif %}
+      </div>
+    </div>
+
+    <div class="form-footer">
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

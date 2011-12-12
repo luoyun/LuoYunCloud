@@ -783,7 +783,7 @@ db_get_image (LyDBConn *db, int id)
      int rec_count;
      char sql[LINE_MAX];
 
-     sprintf(sql, "SELECT name, type, checksum_type, \
+     sprintf(sql, "SELECT name, filetype, checksum_type, \
 checksum_value, size, extract(epoch FROM created), \
 extract(epoch FROM updated) from image where id = %d;", id);
 

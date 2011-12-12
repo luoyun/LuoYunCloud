@@ -1,3 +1,5 @@
+import os, hashlib
+
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
@@ -36,3 +38,17 @@ def lyw_struct_pack(cmdtype, length):
     cmd = struct.pack('ii', cmdtype, length)
 
     return cmd
+
+
+def checksum_md5(path):
+    # Fix Me: test file exist
+    fp = open(path)
+    checksum = hashlib.md5()
+    # Fix Me: Maybe can show progress in the future
+    while True:
+        buffer = fp.read(8192)
+        if not buffer: break
+        checksum.update(buffer)
+    fp.close()
+
+    return checksum.hexdigest()

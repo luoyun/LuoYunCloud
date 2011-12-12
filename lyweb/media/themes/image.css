@@ -1,0 +1,83 @@
+/* Begin common style */
+
+#error {
+    margin: 100px;
+    height: 300px;
+}
+
+/* End common style */
+
+
+/* Begin add style */
+
+#add {
+    margin: 50px auto;
+    padding: 10px;
+    text-align: center;
+    width: 600px;
+    border: solid 1px #b7ddf2;
+    background: #ebf4fb;
+}
+
+#add .form-header {
+    margin: 0 auto 50px;
+    border-bottom: solid 1px #b7ddf2;
+    width: 80%;
+}
+
+#add .form-element {
+    clear: both;
+    /*margin: 15px auto;*/
+    padding: 10px;
+    /*border: 1px solid #DFE6ED;*/
+}
+
+#add .form-element .small {
+    display: block;
+    font-size: 0.9em;
+    color: gray;
+}
+
+#add .left {
+    float: left;
+    text-align: right;
+    margin-right: 20px;
+    width: 40%;
+}
+
+#add .right {
+    float: left;
+    text-align: left;
+}
+
+#add .field-error {
+    clear: both;
+    color: red;
+}
+
+#add .form-footer {
+    margin: 50px auto 10px;
+    width: 125px;
+}
+
+#add .submit-error {
+    clear: both;
+    border: 1px solid #DFE6ED;
+    background-color: red;
+}
+#add .submit-error p {
+    color: white;
+}
+
+#add button {
+    width:120px;
+    height:48px;
+    border: none;
+    background:url(/media/img/button.png) no-repeat;
+}
+
+/* End add style */
+
+
+
+

@@ -1,0 +1,20 @@
+{% extends "image/base.html" %}
+{% load i18n %}
+
+{% block main %}
+
+{% if error %}
+<div class="error">{{ error }}</div>
+{% else %}
+<div id="catalog">
+  <ul>
+    <li>ID: {{ catalog.id }}</li>
+    <li>Name: {{ catalog.name }}</li>
+    <li>Summary: {{ catalog.summary }}</li>
+    <li>Description: {{ catalog.description }}</li>
+    <li>Created Time: {{ catalog.created }}</li>
+    <li>Updated Time: {{ catalog.uupated }}</li>
+  </ul>
+</div>
+{% endif %}
+{% endblock %}
