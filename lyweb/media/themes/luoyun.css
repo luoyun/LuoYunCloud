@@ -104,7 +104,7 @@ ul {
     margin: 5px 0;
     padding: 13px 15px 0px;
     /*background: url("/media/img/top_home_banner.png") repeat-x scroll 0 0 transparent;*/
-    background: url("/media/img/luoyun_header_bg_1.png") no-repeat scroll 0 0 transparent;
+    background: url("/media/img/home_header_bg.png") no-repeat scroll 0 0 transparent;
     height: 56px;
     width: 100%;
     z-index: 4;
@@ -117,7 +117,7 @@ ul {
 }
 
 #welcome-info a {
-    color: white;
+    /*color: white;*/
     font-family: "DejaVu Sans", "Microsoft YaHei", 宋体, "Hiragino Sans GB",STHeiti,Tahoma,SimHei,sans-serif;
     font-style: italic;
     font-size: 1.6em;
@@ -146,7 +146,7 @@ ul {
     margin: 2px 5px;
     padding: 5px;
     /*border: 1px solid transparent;*/
-    color: snow;
+    /*color: snow;*/
     text-decoration: none;
 }
 
