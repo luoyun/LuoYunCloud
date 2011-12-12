@@ -17,15 +17,15 @@
 
       <div id="header">
         <div id="welcome-info">
-          <a href="/">{% trans "LuoYun - Find your cloud !" %}</a>
+          <a href="/">{% trans "LuoYun - Build your own cloud !" %}</a>
         </div>
         <div id="navigator">
           <ul>
             <li><a href="/">{% trans "Home" %}</a></li>
-            <li><a href="{% url image:index %}">{% trans "Image" %}</a></li>
-            <li><a href="{% url node:index %}">{% trans "Node" %}</a></li>
-            <li><a href="{% url domain:index %}">{% trans "Domain" %}</a></li>
-            <li><a href="{% url job:index %}">{% trans "Job" %}</a></li>
+            <li><a href="{% url image:index %}">{% trans "Appliances" %}</a></li>
+            <li><a href="{% url node:index %}">{% trans "Instances" %}</a></li>
+            <li><a href="{% url domain:index %}">{% trans "Servers" %}</a></li>
+            <li><a href="{% url job:index %}">{% trans "Actions" %}</a></li>
           </ul>
         </div>
         <div id="select-language">
@@ -57,7 +57,7 @@
           {% trans "Welcome, " %}<span class="user"><a href="">{{ user }}</a></span>
           <!--
               {% if user.is_staff %}
-              <span class="configure"><a href="{% url admin:index %}">{% trans 'Configure Center' %}</a></span>
+              <span class="configure"><a href="{% url admin:index %}">{% trans 'Control Center' %}</a></span>
               {% endif %}
           -->
           <span class="logout"><a href="{% url home:logout %}">{% trans "Sign Out" %}</a></span>

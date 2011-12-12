@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-09 11:23+0800\n"
+"POT-Creation-Date: 2011-12-10 15:23+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 
 #: app/home/views.py:29
 msgid "Welcome To LuoYun"
@@ -86,28 +86,28 @@ msgid "DOMAIN"
 msgstr "虚拟系统"
 
 #: templates/base.html:20
-msgid "LuoYun - Find your cloud !"
-msgstr "落云 - 发现您的云！"
+msgid "LuoYun - Build your own cloud !"
+msgstr "落云 - 构造自己的云！"
 
 #: templates/base.html:24
 msgid "Home"
 msgstr "首页"
 
 #: templates/base.html:25
-msgid "Image"
-msgstr "云系统"
+msgid "Appliance"
+msgstr "应用系统"
 
 #: templates/base.html:26
-msgid "Node"
-msgstr "计算节点"
+msgid "Instance"
+msgstr "虚拟设备"
 
 #: templates/base.html:27
-msgid "Domain"
-msgstr "虚拟系统"
+msgid "Server"
+msgstr "服务节点"
 
 #: templates/base.html:28
-msgid "Job"
-msgstr "任务"
+msgid "Actions"
+msgstr "操作记录"
 
 #: templates/base.html:54
 msgid "Sorry, your browser does not support JavaScript!"
@@ -118,8 +118,8 @@ msgid "Welcome, "
 msgstr "当前用户: "
 
 #: templates/base.html:60
-msgid "Configure Center"
-msgstr "管理"
+msgid "Control Center"
+msgstr "管理中心"
 
 #: templates/base.html:63
 msgid "Sign Out"
@@ -153,26 +153,54 @@ msgstr "的任务"
 msgid "is"
 msgstr "是"
 
+#: templates/home/index.html:13
+msgid "Appliances"
+msgstr "应用库"
+
+#: templates/home/index.html:21
+msgid "Instances"
+msgstr "虚拟机"
+
+#: templates/home/index.html:30
+msgid "Servers"
+msgstr "服务节点"
+
 #: templates/home/index.html:42
 msgid ""
-"\n"
-"Description for image.\n"
-msgstr "描述"
-
-#: templates/home/index.html:47
-msgid ""
-"\n"
-"Description for node.\n"
+"A Virtual Appliance is a software package that combines both the operating "
+"system and some specific software application. The operation system is "
+"trimmed down to only support the software application. It doesn't have all "
+"the components that an operating system normally provides. The software "
+"application is well integrated with the operating system and pre-configured "
+"as much as possible. The service provided by the software application "
+"usually starts automatically when the operating system starts."
 msgstr ""
+"虚拟化应用系统集成了计算机操作系统和应用软件。操作系统经过简化，只保留了运行"
+"应用软件所需的模块。应用软件与操作系统紧密结合，并针对操作系统进行了最大程度"
+"的预配置。应用软件所提供的服务通常随操作系统的启动而自动启动。"
 
-#: templates/home/index.html:52
+#: templates/home/index.html:45
 msgid ""
-"\n"
-"Description for domain.\n"
+"A server is a physical computer that's installed with virtualization "
+"software and capable of running virtual machines. In Luoyun Computing Cloud, "
+"all the servers are controlled by the cloud and serve the purpose of hosting "
+"all the instances of Virtual Appliances. Regular users don't need to "
+"interact directly with the servers. Users with administration privilage can "
+"configure the servers to manage how the servers are used in the cloud."
 msgstr ""
+"服务器是安装有虚拟化平台软件、能够运行虚拟机的计算机硬件。在落云云计算系统"
+"中，所有的服务器用来安装并运行虚拟化应用系统。服务器由“云”控制，普通用户不需"
+"要直接接触。有管理权限的超级用户可以对服务器进行配置来管理服务器在“云“中的使"
+"用。"
 
-#~ msgid "Describe information of above"
-#~ msgstr "描述上面信息"
-
-#~ msgid "Newest Jobs"
-#~ msgstr "正在发生的事情"
+#: templates/home/index.html:48
+msgid ""
+"An instance is a Virtual Machine that's installed with a Virtual Appliance. "
+"The instance contains a copy of Virtual Appliance software. So multiple "
+"instances can use same Virtual Appliance without affecting each other. In "
+"Luoyun Computing Cloud, all the instances are managed via web UI. The cloud "
+"monitors all the instances and report status on the web UI as well."
+msgstr ""
+"虚拟设备是安装有虚拟化应用系统的虚拟机。多个虚拟设备可以安装相同的虚拟化应用"
+"系统，彼此之间不会产生任何干扰。在落云云计算系统中，用户通过网络浏览器来管理"
+"虚拟设备以及监视虚拟设备的状态。"

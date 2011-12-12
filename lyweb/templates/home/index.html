@@ -10,24 +10,15 @@
 <div id="luoyun-info" class="clearfix">
 
   <div id="image" class="element-entry hover">
-    <h2>Appliance</h2>
+    <h2>{% trans "Appliances" %}</h2>
     <div>
       <a href="/image/"><img class="zoneimage" src="/media/img/image.png"></img></a>
     </div>
     <p>Total: <a href="{% url image:index %}"><span id="images-total">{{ images_total }}</span></a></p>
   </div>
 
-  <div id="node" class="element-entry">
-    <h2>Node</h2>
-    <div>
-      <a href="/node/"><img class="zoneimage" src="/media/img/node.png"></img></a>
-    </div>
-    <p>Total: <a href="{% url node:index %}"><span id="nodes-total">{{ nodes_total }}</span></a></p>
-    <p>Running: <a href="{% url node:index %}"><span id="nodes-running">{{ nodes_running }}</span></a></p>
-  </div>
-
   <div id="domain" class="element-entry">
-    <h2>Instance</h2>
+    <h2>{% trans "Instances" %}</h2>
     <div>
       <a href="/domain/"><img class="zoneimage" src="/media/img/domain.png"></img></a>
     </div>
@@ -35,23 +26,26 @@
     <p>Running:: <a href="{% url domain:index %}"><span id="domains-running">{{ domains_running }}</span></a></p>
   </div>
 
+  <div id="node" class="element-entry">
+    <h2>{% trans "Servers" %}</h2>
+    <div>
+      <a href="/node/"><img class="zoneimage" src="/media/img/node.png"></img></a>
+    </div>
+    <p>Total: <a href="{% url node:index %}"><span id="nodes-total">{{ nodes_total }}</span></a></p>
+    <p>Running: <a href="{% url node:index %}"><span id="nodes-running">{{ nodes_running }}</span></a></p>
+  </div>
+
 </div>
 
 <div id="zone-info">
   <div id="image-info" style="display: inline;">
-    <p>{% blocktrans %}
-Description for image.
-{% endblocktrans %}</p>
+    <p>{% blocktrans %}A Virtual Appliance is a software package that combines both the operating system and some specific software application. The operation system is trimmed down to only support the software application. It doesn't have all the components that an operating system normally provides. The software application is well integrated with the operating system and pre-configured as much as possible. The service provided by the software application usually starts automatically when the operating system starts.{% endblocktrans %}</p>
   </div>
   <div id="node-info" style="display: none;">
-    <p>{% blocktrans %}
-Description for node.
-{% endblocktrans %}</p>
+    <p>{% blocktrans %}A server is a physical computer that's installed with virtualization software and capable of running virtual machines. In Luoyun Computing Cloud, all the servers are controlled by the cloud and serve the purpose of hosting all the instances of Virtual Appliances. Regular users don't need to interact directly with the servers. Users with administration privilage can configure the servers to manage how the servers are used in the cloud.{% endblocktrans %}</p>
   </div>
   <div id="domain-info" style="display: none;">
-    <p>{% blocktrans %}
-Description for domain.
-{% endblocktrans %}</p>
+    <p>{% blocktrans %}An instance is a Virtual Machine that's installed with a Virtual Appliance. The instance contains a copy of Virtual Appliance software. So multiple instances can use same Virtual Appliance without affecting each other. In Luoyun Computing Cloud, all the instances are managed via web UI. The cloud monitors all the instances and report status on the web UI as well.{% endblocktrans %}</p>
   </div>
 </div>
 
