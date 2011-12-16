@@ -363,7 +363,8 @@ def edit_image(request, id):
 
 
 
-@login_required
+@permission_required('image.delete_image')
+#@login_required
 @render_to('image/delete_image.html')
 def delete_image(request, id):
 
