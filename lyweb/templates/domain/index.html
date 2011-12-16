@@ -1,59 +1,64 @@
-{% extends "base.html" %}
+{% extends "domain/domain_base.html" %}
+{% load i18n %}
 
-{% block main %}
-<script>
-  $(document).ready(function () {
-    setInterval("get_domain_list()", 6000);
-  });
+{% block lymain %}
 
-  function get_domain_list() { 
-    $.ajax({
-      type: "GET",
-      url: "/domain/domain_list/ajax/",
-      success: function(msg){
-        $("#main").html(msg);
-      }
-    });
-  }
+<div id="domain-main" class="clearfix">
+  <div class="sidebar float-left">
+    <div class="add-button"><a href="{% url domain:add %}">Create</a></div>
+
+    <div class="menu">
+      <span class="normal current" id="c0">{% trans "All" %} ({{ total }})</span>
+      {% for c, n in catalogs %}
+      <span class="normal" id="c{{ c.id }}">{{ c.name }} ({{ n }})</span>
+      {% endfor %}
+    </div>
+    <div class="addon">
+      <span><a href="{% url domain:add_catalog %}">{% trans "Add Catalog" %}</a></span>
+    </div>
+  </div>
+
+  <div class="close-main float-left">
+    {% for d in domains %}
+    <div class="domain clearfix">
+
+      <div class="left">
+        <div class="logo">
+          <a href="{% url domain:view d.id %}"><img src="{{ d.image.logo_uri }}"  alt="Image Picture" /></a>
+        </div>
+        <div class="status">
+          <img src="{{ MEDIA_URL }}themes/icons/DomainStatus/{{ d.status }}.png"  alt="{{ d.get_status_display }}"/>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="desc">
+          <h2>{{ d.id }} - {{ d.name }}</h2>
+          <p>upload by {{ d.user }}</p>
+        </div>
+        <div class="action">
+          <span><a href="{% url domain:edit d.id %}"><img src="/media/img/action_config.png" alt="Edit" /></a></span>
+          <span><a href="{% url domain:delete d.id %}"><img src="/media/img/action_delete.png" alt="Delete" /></a></span>
+          <span><a href="{% url domain:start d.id %}"><img src="/media/img/action_start.png" alt="Start" /></a></span>
+          <span><a href="{% url domain:stop d.id %}"><img src="/media/img/action_stop.png" alt="Stop" /></a></span>
+        </div>
+      </div>
+
+    </div>
+    {% endfor %}
+
+    {% if not images %}
+    <div class="first-warning">
+      <p>Have not found any domains. Please <a href="{% url domain:add %}">create</a> first!</p>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<script type="text/javascript">
+  lyDomainMenuElementSwitch();
+  lyHover("#lyentry .sidebar .menu .normal");
 </script>
 
-{% if domains %}
-<table>
-  <thead>
-    <tr>
-      <td>Name</td>
-      <td>Node</td>
-      <td>Status</td>
-      <td>IP</td>
-      <td>MAC</td>
-      <td>Updated</td>
-      <td>Action</td>
-    </tr>
-  </thead>
-  <tbody>
-    {% for d in domains %}
-    <tr>
-      <td><a href="">{{ d.name }}</a></td>
-      {% if d.node %}
-      <td><a href="{% url node:view d.node.id %}">{{ d.node.ip }}</a></td>
-      {% else %}
-      <td>None</td>
-      {% endif %}
-      <td><img src="{{ MEDIA_URL }}themes/icons/DomainStatus/{{ d.status }}.png"  alt="{{ d.get_status_display }}"/></td>
-      <td><a href="http://{{ d.ip }}:8001">{{ d.ip }}:8001</a></td>
-      <td>{{ d.mac }}</td>
-      <td>{{ d.updated|date:"Y-m-d H:i" }}</td>
-      <td>
-        <a href="{% url domain:run d.id %}">run</a> |
-        <a href="{% url domain:stop d.id %}">stop</a> |
-        <a href="{% url domain:reboot d.id %}">reboot</a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p>Have not found any domains !</p>
-{% endif %}
-<p>You can <a href="{% url domain:simple_create %}">create</a> a new domain .</p>
 {% endblock %}

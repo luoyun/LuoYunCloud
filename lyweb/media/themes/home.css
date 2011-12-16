@@ -1,8 +1,3 @@
-html, body {
-    background: none repeat scroll 0 0 #FFFFFF;
-}
-
-
 /* Begin system-info */
 #system-info {
     margin: 10px auto;
@@ -18,9 +13,11 @@ html, body {
 
 
 /* Begin luoyun-info */
-
+#lyhome {
+    padding-bottom: 50px;
+}
 #luoyun-info {
-    margin: 0 auto;
+    margin: 0 auto -5px auto;
     padding: 10px auto;
     /*border: 1px solid #DFE6ED;*/
     width: 760px;
@@ -35,22 +32,34 @@ html, body {
     padding: 5px;
     margin: 5px;
     width: 220px;
-    height: 220px;
+    height: 180px;
     text-align: center;
+    /*
     border: 1px solid transparent;
-    _border-color:tomato; /*For IE6-*/
-    _filter:chroma(color=tomato);/*For IE6-*/
+    _border-color:tomato;
+    _filter:chroma(color=tomato);
+    */
+
+    background-image: url("/media/img/luoyun_element_bg2.png");
+    background-repeat: no-repeat;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src="/media/img/luoyun_element_bg2.png"); /* For IE6, transparent suppor of PNG */
 }
 
 #luoyun-info .hover {
+    /*
+    background-color: #E6F0F2;
     border-top: 1px solid #DFE6ED;
     border-left: 1px solid #DFE6ED;
     border-right: 1px solid #DFE6ED;
+    */
     /*
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
     */
+    background-image: url("/media/img/luoyun_element_bg.png");
+    background-repeat: no-repeat;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src="/media/img/luoyun_element_bg.png"); /* For IE6, transparent suppor of PNG */
 }
 
 #images-total, #nodes-total, #domains-total {
@@ -95,10 +104,11 @@ html, body {
 #zone-info {
     margin: 0 auto 10px;
     padding: 10px auto;
-    border-top: 1px dotted lightblue;
+    /*border-top: 1px dotted lightblue;*/
     width: 760px;
     height: 200px;
     /*background-color: #EDF5FF;*/
+    background-color: #E6F0F2;
 }
 
 /* End zone-info */

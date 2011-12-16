@@ -1,9 +1,9 @@
-{% extends "image/base.html" %}
+{% extends "image/image_base.html" %}
 {% load i18n %}
 
-{% block main %}
+{% block lymain %}
 
-<div id="add">
+<div class="lyform">
   <form action="{% url image:add_catalog %}" method="post">{% csrf_token %}
     <div class="form-header">
       <h1>Add a new catalog</h1>

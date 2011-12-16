@@ -1,7 +1,12 @@
-{% extends "image/base.html" %}
+{% extends "image/image_base.html" %}
 {% load i18n %}
 
-{% block main %}
+{% block lyentry-nav %}
+<li>{{ catalog }}</li>
+{% endblock %}
+
+
+{% block lymain %}
 
 {% if error %}
 <div class="error">{{ error }}</div>

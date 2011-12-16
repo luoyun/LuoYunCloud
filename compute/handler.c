@@ -375,9 +375,9 @@ __prepare_domain_env( DomainControlHandler *DCH,
      }
 
      char decompress_img_path[LINE_MAX];
-     sprintf(decompress_img_path, "%s/%d/images/%d_%d_%s",
+     sprintf(decompress_img_path, "%s/%d/images/%s.image",
              DCH->sc->root_path, DCH->dip->id,
-             ii.type, ii.id, ii.checksum_value);
+             ii.checksum_value);
 
      if ( !check_file(decompress_img_path) )
           logprintfl(LYDEBUG, "%s exist\n",
@@ -400,8 +400,8 @@ __prepare_domain_env( DomainControlHandler *DCH,
                //sprintf( img_url, "http://%s/images/%d_%d_%s",
                //         DCH->sc->cts_ip, ii.type,
                //         ii.id, ii.checksum_value );
-               sprintf( img_url, "http://corei5/images/%d_%d_%s",
-                        ii.type, ii.id, ii.checksum_value );
+               sprintf( img_url, "http://corei5/images/%d/%s.image",
+                        ii.id, ii.checksum_value );
                if (0 != ly_dl(img_url, compress_img_path))
                     return -2;
           }

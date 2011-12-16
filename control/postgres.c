@@ -134,8 +134,7 @@ db_get_nodes (LyDBConn *db, ComputeNodeQueue *qp)
      int row, rec_count;
 
      char sql[] = "SELECT id, hostname, ip, port, \
-arch, status, hypervisor, hypervisor_version, \
-libversion, network_type, max_memory, max_cpus, \
+arch, status, hypervisor, network_type, max_memory, max_cpus, \
 cpu_model, cpu_mhz, extract(epoch FROM updated) from node;";
 
      //logdebug("%s\n", sql);
@@ -157,10 +156,10 @@ cpu_model, cpu_mhz, extract(epoch FROM updated) from node;";
      /*
        id, hostname, ip, port, arch, status, hypervisor,
        0,  1,        2,  3,    4,    5,      6,
-       hypervisor_version, libversion, network_type,
-       7,                  8,          9,
+       network_type,
+       7,
        max_memory, max_cpus, cpu_model, cpu_mhz, updated
-       10,         11,       12,        13,      14
+       8,         9,       10,        11,      12
      */
      int node_exist;
      int err = 0;
@@ -215,14 +214,12 @@ cpu_model, cpu_mhz, extract(epoch FROM updated) from node;";
           ninfo->arch = atoi(PQgetvalue(res, row, 4));
           ninfo->status = atoi(PQgetvalue(res, row, 5));
           ninfo->hypervisor = atoi(PQgetvalue(res, row, 6));
-          ninfo->hypervisor_version = atoi(PQgetvalue(res, row, 7));
-          ninfo->libversion = atoi(PQgetvalue(res, row, 8));
-          ninfo->network_type = atoi(PQgetvalue(res, row, 9));
-          ninfo->max_memory = atoi(PQgetvalue(res, row, 10));
-          ninfo->max_cpus = atoi(PQgetvalue(res, row, 11));
-          strcpy(ninfo->cpu_model, PQgetvalue(res, row, 12));
-          ninfo->cpu_mhz = atoi(PQgetvalue(res, row, 13));
-          ninfo->updated = atol(PQgetvalue(res, row, 14));
+          ninfo->network_type = atoi(PQgetvalue(res, row, 7));
+          ninfo->max_memory = atoi(PQgetvalue(res, row, 8));
+          ninfo->max_cpus = atoi(PQgetvalue(res, row, 9));
+          strcpy(ninfo->cpu_model, PQgetvalue(res, row, 10));
+          ninfo->cpu_mhz = atoi(PQgetvalue(res, row, 11));
+          ninfo->updated = atol(PQgetvalue(res, row, 12));
 
           // TODO: active_flag should have multitype value.
           ninfo->active_flag = 0;
@@ -257,14 +254,13 @@ db_update_node (PGconn *conn, ComputeNodeItem *nitem)
      sprintf(sql,
 "UPDATE node SET hostname = '%s', \
 ip = '%s', port = %d, arch = %d, status = %d, \
-hypervisor = %d, hypervisor_version = %ld, libversion = %ld, \
+hypervisor = %d, \
 network_type = %d, max_memory = %lld, max_cpus = %d, \
 cpu_model = '%s', load_average = %d, free_memory = %lld, \
 updated = %ld::abstime::timestamp \
 WHERE id = %d;",
           ni->hostname, ni->ip, ni->port, ni->arch,
           ni->status, ni->hypervisor,
-          ni->hypervisor_version, ni->libversion,
           ni->network_type, ni->max_memory, ni->max_cpus,
           ni->cpu_model, ni->load_average, ni->free_memory,
           ni->updated, nitem->n_id);
@@ -304,16 +300,15 @@ db_node_register (LyDBConn *db, ComputeNodeItem *nitem)
 
      sprintf(sql, "INSERT INTO node ( \
 hostname, ip, port, arch, status, hypervisor, \
-hypervisor_version, libversion, network_type, \
+network_type, \
 max_memory, max_cpus, cpu_model, load_average, \
-free_memory, created, updated ) VALUES ( \
+free_memory, created, updated, config ) VALUES ( \
 '%s', '%s', %d, %d, %d, %d, \
-%lu, %lu, %d, \
+%d, \
 %lld, %d, '%s', %d, \
-%lld, %ld::abstime::timestamp, %ld::abstime::timestamp );",
+%lld, %ld::abstime::timestamp, %ld::abstime::timestamp, '' );",
           ni->hostname, ni->ip, ni->port, ni->arch,
           ni->status, ni->hypervisor,
-          ni->hypervisor_version, ni->libversion,
           ni->network_type, ni->max_memory, ni->max_cpus,
           ni->cpu_model, ni->load_average, 
           ni->free_memory, ni->created, ni->updated);
@@ -573,8 +568,8 @@ db_get_domain (LyDBConn *db, int id)
      int rec_count;
      char sql[LINE_MAX];
 
-     sprintf(sql, "SELECT status, name, uuid, node_id, \
-diskimg_id, kernel_id, initrd_id, boot, cpus, memory, \
+     sprintf(sql, "SELECT status, name, node_id, \
+image_id, cpus, memory, \
 extract(epoch FROM created), extract(epoch FROM updated) \
 from domain where id = %d;", id);
 
@@ -599,24 +594,20 @@ from domain where id = %d;", id);
      }
 
      /*
-       status, name, uuid, node_id, diskimg_id, kernel_id,
-       0       1     2     3        4           5
-       initrd_id, boot, cpus, memory, created, updated
-       6          7     8     9       10       11
+       status, name, node_id, image_id,
+       0       1     2        3
+       cpus, memory, created, updated
+       4     5       6        7
      */
      dip->status = atoi(PQgetvalue(res, 0, 0));
      dip->id = id;
      strcpy(dip->name, PQgetvalue(res, 0, 1));
-     strcpy(dip->uuid, PQgetvalue(res, 0, 2));
-     dip->node = atoi(PQgetvalue(res, 0, 3));
-     dip->diskimg = atoi(PQgetvalue(res, 0, 4));
-     dip->kernel = atoi(PQgetvalue(res, 0, 5));
-     dip->initrd = atoi(PQgetvalue(res, 0, 6));
-     strcpy(dip->boot, PQgetvalue(res, 0, 7));
-     dip->cpus = atoi(PQgetvalue(res, 0, 8));
-     dip->memory = atol(PQgetvalue(res, 0, 9));
-     dip->created = atol(PQgetvalue(res, 0, 10));
-     dip->updated = atol(PQgetvalue(res, 0, 11));
+     dip->node = atoi(PQgetvalue(res, 0, 2));
+     dip->diskimg = atoi(PQgetvalue(res, 0, 3));
+     dip->cpus = atoi(PQgetvalue(res, 0, 4));
+     dip->memory = atol(PQgetvalue(res, 0, 5));
+     dip->created = atol(PQgetvalue(res, 0, 6));
+     dip->updated = atol(PQgetvalue(res, 0, 7));
 
 
      PQclear(res);
@@ -733,10 +724,10 @@ db_update_domain_status (LyDBConn *db, DomainInfo *dip)
 
      char sql[LINE_MAX];
 
-     sprintf(sql, "UPDATE domain SET uuid = '%s', \
+     sprintf(sql, "UPDATE domain SET \
 node_id = %d, status = %d, ip = '%s', \
 updated = %ld::abstime::timestamp WHERE id = %d;",
-             dip->uuid, dip->node, dip->status, dip->ip,
+             dip->node, dip->status, dip->ip,
              dip->updated, dip->id);
 
      //logprintfl(LYDEBUG, "SQL = { %s }\n", sql);

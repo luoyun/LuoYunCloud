@@ -1,3 +1,5 @@
+from django.utils.translation import ugettext as _
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -14,40 +16,72 @@ DOMAIN_STATUS = (
     (4, 'MIGERATE'),
 )
 
+NETWORK_TYPE = (
+    (0, 'UNKNOWN'),
+    (1, 'STATIC'),
+    (2, 'DHCP'),
+)
+
+
+class AppCatalog(models.Model):
+
+    '''
+    What's the catalog of domain
+    '''
+    name = models.CharField(_('Catalog Name'), blank=False, max_length = 64, unique = True)
+    summary = models.CharField(_('Summary'), max_length=128)
+    description = models.TextField(_('Description about the image'), blank=True,  default='')
+
+    user = models.ForeignKey(User, related_name = 'user_domains', verbose_name = 'User')
+    position = models.IntegerField(_('Position'), blank=True, default=0, help_text=_('Position catalog sequence'))
+
+    created = models.DateTimeField(_('Created Time'), auto_now_add = True)
+    updated = models.DateTimeField(_('Updated Time'), auto_now = True)
+
+    class Meta:
+        ordering = ['-updated']
+        db_table = 'app_catalog'
+
+    def __unicode__(self):
+        return self.name
+
+
 
 class Domain(models.Model):
 
-    name = models.CharField('Domain Name', max_length = 32)
-    uuid = models.CharField('Domain UUID', max_length = 64, blank = True)
-    description = models.TextField('Description', blank = True, default = '')
+    name = models.CharField(_('Name'), max_length = 32)
+    summary = models.CharField(_('Summary'), max_length=128)
+    description = models.TextField(_('Description'), blank = True, default = '')
+
+    cpus = models.IntegerField(_('CPUs'), default = 1, blank = True)
+    memory = models.IntegerField(_('Memory size'), default = 0, blank = True)
+
+    user = models.ForeignKey(User, verbose_name = 'User')
+    catalog = models.ForeignKey(AppCatalog, verbose_name = 'AppCatalog', blank = True, null = True)
+
+    image = models.ForeignKey(Image, related_name = 'image_domains', verbose_name = 'Disk Image', blank = True)
     node = models.ForeignKey(Node, related_name = 'node_domains', verbose_name = 'Node', blank = True, null = True)
-    user = models.ForeignKey(User, related_name = 'user_domains', verbose_name = 'User')
 
-    diskimg = models.ForeignKey(Image, related_name = 'diskimg_domains', verbose_name = 'Disk Image', blank = True)
-    kernel = models.ForeignKey(Image, related_name = 'kernel_domains', verbose_name = 'Kernel Image', blank = True, null = True)
-    initrd = models.ForeignKey(Image, related_name = 'initrd_domains', verbose_name = 'Initrd Image', blank = True, null = True)
-    #Fixed me: need storage, network, device(usb, pci, input, ...) Object
-    #network = models.ManyToManyField(Network, related_name = 'network_domains', verbose_name = 'Network', blank = True)
+    # Network for cloud control, sometimes it's just the only network
+    network = models.IntegerField(_('Network Type'), default = 0, choices = NETWORK_TYPE)
+    ip = models.CharField(_('IP'), max_length = 32, blank = True, null = True)
+    netmask = models.CharField(_('Netmask'), max_length = 32, blank = True, null = True)
+    gateway = models.CharField(_('Gateway'), max_length = 32, blank = True, null = True)
+    mac = models.CharField(_('MAC'), max_length = 32, blank = True, null = True)
 
-    # The first network should be list here, others can used
-    # as addons.
-    ip = models.CharField('Domain IP', max_length = 32, 
-                          blank = True, null = True)
-    mac = models.CharField('Domain MAC', max_length = 32,
-                           blank = True, null = True)
+    # Config path, save user, network, storage, other devices information
+    config = models.CharField(_('Config File'), max_length=256, default = "")
 
-    # boot order : disk , cd , network etc.
-    boot = models.CharField('Boot order', max_length = 128, default = 'cd, disk')
-    cpus = models.IntegerField('CPUs', default = 1, blank = True)
-    memory = models.IntegerField('Memory size', default = 0, blank = True)
+    status = models.IntegerField(_('Status'), default = 0, choices = DOMAIN_STATUS)
 
-    status = models.IntegerField('Domain Status', default = 0, choices = DOMAIN_STATUS)
-
-    created = models.DateTimeField('Created', auto_now_add = True)
-    updated = models.DateTimeField('Updated', auto_now = True)
+    created = models.DateTimeField(_('Created'), auto_now_add = True)
+    updated = models.DateTimeField(_('Updated'), auto_now = True)
 
     class Meta:
         ordering = ['-updated']
         db_table = 'domain'
-        verbose_name = 'Domain'
-        verbose_name_plural = 'Domain'
+        verbose_name = _('Domain')
+        verbose_name_plural = _('Domain')
+
+    def __unicode__(self):
+        return self.name

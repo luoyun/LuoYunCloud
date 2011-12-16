@@ -18,24 +18,25 @@ from lyweb.app.job.models import Job
 @render_to("home/index.html")
 def index(request):
 
-    images = Image.objects.all()
-    nodes = Node.objects.all()
-    domains = Domain.objects.all()
-    jobs = Job.objects.all()[:3]
+    YD = {'title': _('Welcome To LuoYun')}
 
-    nodes_running = len(Node.objects.filter(status = 2))
-    domains_running = len(Domain.objects.filter(status = 2))
+    # For IE6
+    if request.META.get('HTTP_USER_AGENT', '').find('MSIE 6.0') != -1:
+        YD['IE6'] = True
 
-    return { 'title': _('Welcome To LuoYun'),
-             'images': images,
-             'images_total': len(images),
-             'nodes': nodes,
-             'nodes_total': len(nodes),
-             'nodes_running': nodes_running,
-             'domains': domains,
-             'domains_total': len(domains),
-             'domains_running': domains_running,
-             'jobs': jobs }
+    YD['images'] = Image.objects.all()
+    YD['nodes'] = Node.objects.all()
+    YD['domains'] = Domain.objects.all()
+    YD['jobs'] = Job.objects.all()[:3]
+
+    YD['images_total'] = len(YD['images'])
+    YD['nodes_total'] = len(YD['nodes'])
+    YD['domains_total'] = len(YD['domains'])
+
+    YD['nodes_running'] = len(Node.objects.filter(status = 2))
+    YD['domains_running'] = len(Domain.objects.filter(status = 2))
+
+    return YD
 
 
 @render_to('home/login.html')

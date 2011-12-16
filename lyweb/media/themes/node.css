@@ -1,0 +1,10 @@
+#lynode {
+    min-height:800px;/*IE7/FF/Chrome ...*/
+    height:100%;/*IE6/IE7/FF*/
+    _height:800px;/*IE6*/
+}
+
+#lynode table {
+    margin: 50px auto;
+    width: 720px;
+}

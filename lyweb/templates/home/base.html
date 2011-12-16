@@ -1,5 +1,10 @@
 {% extends "base.html" %}
+
 {% block head %}<link rel="stylesheet" href="{{ MEDIA_URL }}themes/home.css" />{% endblock %}
-{% block main %}
-{% block content %}{% endblock %}
+
+
+{% block lyentry %}
+<div id="lyhome">
+  {% block lymain %}{% endblock %}
+</div>
 {% endblock %}

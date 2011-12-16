@@ -1,21 +1,6 @@
-{% extends "base.html" %}
+{% extends "job/job_base.html" %}
 
-{% block main %}
-<script>
-  $(document).ready(function () {
-    setInterval("get_job_list()", 6000);
-  });
-
-  function get_job_list() { 
-    $.ajax({
-      type: "GET",
-      url: "/job/job_list/ajax/",
-      success: function(msg){
-        $("#main").html(msg);
-      }
-    });
-  }
-</script>
+{% block lymain %}
 
 {% if jobs %}
 <table>
@@ -49,6 +34,9 @@
   </tbody>
 </table>
 {% else %}
-<p>Have not found any jobs !</p>
+<div class="first-warning">
+  <p>Have not found any jobs !</p>
+</div>
 {% endif %}
+
 {% endblock %}

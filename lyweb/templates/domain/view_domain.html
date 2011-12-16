@@ -1,0 +1,88 @@
+{% extends "domain/domain_base.html" %}
+{% load i18n %}
+
+{% block lyentry-nav %}
+{% if domain.catalog %}
+<li><a href="{% url domain:view_catalog domain.catalog.id %}">{{ domain.catalog }}</a></li>
+{% endif %}
+<li>{{ domain }}</li>
+{% endblock %}
+
+
+{% block lymain %}
+
+{% if DoesNotExist %}
+
+<div class="ly-notexist-error">
+  <p>The instance (id = {{ ID }}) does not exist !</p>
+</div>
+
+{% else %}
+
+<div id="domain-desc" class="clearfix">
+  <div id="domain-desc-logo">
+    <div class="domain-logo">
+      <a href="{% url domain:view domain.id %}"><img src="{{ domain.image.logo_uri }}"  alt="Domain Picture" /></a>
+    </div>
+  </div>
+  <div id="domain-desc-detail">
+    <h2>{{ domain.name }}</h2>
+    <p>{{ domain.summary }}</p>
+    <ul>
+      <li>ID: {{ domain.id }}</li>
+      <li>Status: {{ domain.get_status_display }}</li>
+      <li>Update Time: {{ domain.updated|date:"Y-m-d H:i" }}</li>
+    </ul>
+    <p>
+      <span class="edit"><a href="{% url domain:edit domain.id %}">Edit</a></span>
+      <span class="delete"><a href="{% url domain:delete domain.id %}">Delete</a></span>
+    </p>
+  </div>
+</div>
+<div id="domain-about">
+  <div id="domain-about-tab">
+    <ul>
+      <li id="description" class="element hover">Description</li>
+      <li id="status" class="element">System status</li>
+    </ul>
+  </div>
+  <div id="domain-about-content">
+    <div id="description-content">
+      <p>Domain About Content</p>
+    </div>
+    <div id="status-content" style="display: none">
+      <p>domain system status</p>
+    </div>
+  </div>
+</div>
+
+{% endif %} {# End DoesNotExist #}
+
+
+<script>
+$("#image-about-tab li").hover(
+  function () {
+
+    var cur = $(this).attr("id");
+
+    $("#" + cur).addClass("hover");
+    $("#" + cur + "-content").css("display", "inline");
+
+    var ele = new Array();
+    ele[0] = "description";
+    ele[1] = "instances";
+    for ( i = 0; i < ele.length; i++)
+    { 
+      if ( cur != ele[i] ) {
+        $("#" + ele[i]).removeClass("hover");
+        $("#" + ele[i] + "-content").css("display", "none");
+      }
+    }
+  },
+  function () {
+    //action for move out
+  }
+);
+</script>
+
+{% endblock %}

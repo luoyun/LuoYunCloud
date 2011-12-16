@@ -1,83 +1,98 @@
-/* Begin common style */
+/* Begin home of image */
 
-#error {
-    margin: 100px;
-    height: 300px;
+#lyentry .close-main {
+    padding: 30px 0 0 10px;
 }
 
-/* End common style */
-
-
-/* Begin add style */
-
-#add {
-    margin: 50px auto;
-    padding: 10px;
-    text-align: center;
-    width: 600px;
-    border: solid 1px #b7ddf2;
-    background: #ebf4fb;
-}
-
-#add .form-header {
-    margin: 0 auto 50px;
-    border-bottom: solid 1px #b7ddf2;
-    width: 80%;
-}
-
-#add .form-element {
-    clear: both;
-    /*margin: 15px auto;*/
-    padding: 10px;
-    /*border: 1px solid #DFE6ED;*/
-}
-
-#add .form-element .small {
-    display: block;
-    font-size: 0.9em;
-    color: gray;
-}
-
-#add .left {
+.image {
     float: left;
-    text-align: right;
-    margin-right: 20px;
-    width: 40%;
+
+    margin: 20px 0;
+    padding: 10px;
+    width: 132px;
+    height: 180px;
+
+    border: 1px solid transparent;
+    _border-color:tomato;
+    _filter:chroma(color=tomato);
+
 }
 
-#add .right {
-    float: left;
-    text-align: left;
-}
-
-#add .field-error {
-    clear: both;
-    color: red;
-}
-
-#add .form-footer {
-    margin: 50px auto 10px;
-    width: 125px;
-}
-
-#add .submit-error {
-    clear: both;
+.close-main .hover {
     border: 1px solid #DFE6ED;
-    background-color: red;
 }
-#add .submit-error p {
+
+.close-main .image-action {
+    display: none;
+}
+
+.image {
+    text-align: center;
+}
+.image .name {
+    font-size: 18px;
+    text-align: center;
+    display: block;
+}
+
+.image img {
+    width: 100px;
+    height: 100px;
+}
+
+.image-action img {
+    width: 22px;
+    height: 22px;
+}
+
+/* End home of image */
+
+
+
+
+/* Start image view */
+#image-view {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid green;
+}
+
+
+#image-desc {
+    margin: 10px;
+}
+
+#image-desc-logo, #image-desc-detail {
+    float: left;
+    margin: 20px;
+}
+
+#image-about {
+    clear: both;
+    margin: 10px 10px 0 10px;
+}
+
+#image-about-tab {
+    width: 300px;
+}
+
+#image-about-tab .element {
+    padding: 5px 10px;
+    border: 1px solid green;
+    /*display: table-cell;*/
+    display:inline-block;    /* firefox等标准浏览器识别*/
+    *display:inline;      /* 只有ie6和ie7识别*/
+    zoom:1;               /* 触发ie6和ie7下的haslayout */
+    overflow: hidden;
+}
+
+#image-about-tab .hover {
+    background: blue;
     color: white;
 }
 
-#add button {
-    width:120px;
-    height:48px;
-    border: none;
-    background:url(/media/img/button.png) no-repeat;
+#image-about-content {
+    border: 1px solid green;
+    height: 100px;
 }
-
-/* End add style */
-
-
-
-
+/* End image view */

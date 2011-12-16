@@ -1,0 +1,32 @@
+{% if images %}
+
+
+{% for i in images %}
+<div class="image">
+  <span class="name">{{ i.name }}</span>
+  <div class="image-logo">
+    <a href="{% url image:view i.id %}"><img src="{{ i.logo_uri }}"  alt="Image Picture" /></a>
+  </div>
+  <div class="image-desc">
+    <div class="image-action">
+      <span><a href="{{ i.url_path }}"><img src="/media/img/action_download.gif" alt="Download" /></a></span>
+      <span><a href="{% url image:edit i.id %}"><img src="/media/img/action_config.png" alt="Edit" /></a></span>
+      <span><a href="{% url image:delete i.id %}"><img src="/media/img/action_delete.png" alt="Delete" /></a></span>
+      <span><a href="{% url domain:add_from_image i.id %}"><img src="/media/img/action_create.png" alt="Create Instance" /></a></span>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+
+
+{% else %}
+
+<p>None images have found in "{{ catalog }}"</p>
+
+{% endif %}
+
+
+<script>
+lyImageHover("#lyentry .close-main .image");
+</script>

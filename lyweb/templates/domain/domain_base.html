@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ MEDIA_URL }}themes/domain.css" />
+<script type="text/javascript" src="{{ MEDIA_URL }}js/domain.js"></script>
+{% endblock %}
+
+{% block lyinner-nav %}
+<li><a href="/domain/">{% trans "Instances" %}</a></li>
+{% block lyentry-nav %}{% endblock %}
+{% endblock %}
+
+{% block lyentry %}
+<div id="lydomain">
+  {% block lymain %}{% endblock %}
+</div>
+{% endblock %}

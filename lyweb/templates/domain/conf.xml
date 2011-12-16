@@ -20,7 +20,7 @@
     <emulator>/usr/bin/qemu-kvm</emulator>
     <disk type='file' device='disk'>
       <driver name='qemu' type='raw'/>
-      <source file='/opt/LuoYun_Node/{{ domain.id }}/images/{{ domain.diskimg.path }}'/>
+      <source file='/opt/LuoYun_Node/{{ domain.id }}/images/{{ domain.image.checksum_value }}.image'/>
       <target dev='hda' bus='ide'/>
       <address type='drive' controller='0' bus='0' unit='0'/>
     </disk>

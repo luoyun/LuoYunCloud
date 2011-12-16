@@ -1,0 +1,17 @@
+{% extends "domain/domain_base.html" %}
+{% load i18n %}
+
+{% block lymain %}
+
+
+<div class="action-return">
+  
+  {% if delete_error %}
+  <div class="error">{{ delete_error }}</div>
+  {% else %}
+  <p>{% trans "Delete success !" %}</p>
+  {% endif %}
+
+</div>
+
+{% endblock %}

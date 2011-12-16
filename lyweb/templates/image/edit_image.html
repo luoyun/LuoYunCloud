@@ -1,0 +1,105 @@
+{% extends "image/image_base.html" %}
+{% load i18n %}
+
+{% block lymain %}
+
+{% if DoesNotExist %}
+
+<div class="ly-notexist-error">
+  <p>The image (id = {{ ID }}) does not exist !</p>
+</div>
+
+{% else %}
+
+<div class="luoyun-inner-nav">
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="{% url image:index %}">Appliance</a></li>
+    <li><a href="{% url image:view_catalog image.catalog.id %}">{{ image.catalog }}</a></li>
+    <li class="current">Edit <a href="{% url image:view image.id %}">{{ image }}</a></li>
+  </ul>
+</div>
+
+<div class="lyform">
+  <form action="{% url image:edit image.id %}" method="post">{% csrf_token %}
+    <div class="form-header">
+      <h1>{% trans "Edit profile of appliance" %} <span class="image-name">{{ image }}</span></h1>
+      <p>{% trans "This the common func" %}</p>
+    </div>
+
+    <div class="form-element">
+      <div class="left">
+        <label for="id_name">{% trans "Image Name:" %}<span class="small">{% trans "Any name you want." %}</span></label>
+      </div>
+      <div class="right">
+        <input id="id_name" type="text" name="name" maxlength="30" value="{{ image }}"/>
+        {% if name_error %}<div class="field-error">{{ name_error }}</div>{% endif %}
+      </div>
+    </div>
+    <!-- go on with file change
+    <div class="form-element">
+      <div class="left">
+        <label for="id_filetype">{% trans "Image filetype:" %}<span class="small">{% trans "Select type of the image." %}</span></label>
+      </div>
+      <div class="right">
+        <select name="filetype" id="id_filetype">
+          {% for k, v in IMAGE_TYPE %}
+          {% ifnotequal k 0 %}
+          <option value="{{ k }}" {% ifequal k image.filetype %}selected="selected"{% endifequal %}>{{ v }}</option>
+          {% endifnotequal %}
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    -->
+
+    <div class="form-element">
+      <div class="left">
+        <label for="id_catalog">{% trans "Image catalog:" %}<span class="small">{% trans "The catalog" %}</span></label>
+      </div>
+      <div class="right">
+        <select name="catalog" id="id_catalog">
+          {% for c in catalogs %}
+          <option value="{{ c.id }}" {% ifequal c.id image.catalog.id %}selected="selected"{% endifequal %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+        {% if catalog_error %}<div class="field-error">{{ catalog_error }}</div>{% endif %}
+      </div>
+      <div class="addon">
+        <a href="{% url image:add_catalog %}">{% trans "Add New Catalog" %}</a>
+      </div>
+    </div>
+    <!-- go on with file change
+    <div class="form-element">
+      <div class="left">
+        <label for="id_origin">{% trans "Image origin:" %}<span class="small">{% trans "The origin" %}</span></label>
+      </div>
+      <div class="right">
+        <select name="origin" id="id_origin">
+          {% for o in origins %}
+          <option value="{{ o.id }}" {% ifequal o.id image.origin.id %}selected="selected"{% endifequal %}>{{ o }}</option>
+          {% endfor %}
+        </select>
+        {% if origin_error %}<div class="field-error">{{ origin_error }}</div>{% endif %}
+      </div>
+      <div class="addon">
+        <a href="{% url image:add_origin %}">{% trans "Add New Origin" %}</a>
+      </div>
+    </div>
+    -->
+    {% if submit_error %}
+    <div class="submit-error">
+      <p>{{ submit_error }}</p>
+    </div>
+    {% endif %}
+
+    <div class="form-footer">
+      <button type="submit">{% trans "Submit" %}</button>
+    </div>
+  </form>
+</div>
+
+
+{% endif %} {# End DoesNotExist #}
+
+{% endblock %}

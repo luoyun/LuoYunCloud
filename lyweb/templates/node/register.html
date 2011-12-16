@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "node/base.html" %}
 
-{% block main %}
+{% block lymain %}
 <form action="{% url node:register %}" method="post">{% csrf_token %}
   {{ form.as_p }}
   <input type="submit" value="Submit" />

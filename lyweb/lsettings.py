@@ -114,6 +114,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 #    'django.core.context_processors.static',
     'django.core.context_processors.request',
 #    'django.contrib.messages.context_processors.messages',
+    'lyweb.context_processors.browser',
 )
 
 # List of callables that know how to import templates from various sources.

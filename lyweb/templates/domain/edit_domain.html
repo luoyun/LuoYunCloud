@@ -1,0 +1,75 @@
+{% extends "domain/domain_base.html" %}
+{% load i18n %}
+
+
+{% block lyentry-nav %}
+{% if domain.catalog %}
+<li><a href="{% url domain:view domain.catalog.id %}">{{ domain.catalog }}</a></li>
+{% endif %}
+<li>{{ domain }}</li>
+{% endblock %}
+
+
+{% block lymain %}
+<div class="lyform">
+  <form action="" method="post">{% csrf_token %}
+    <div class="form-header">
+      <h1>{% trans "Edit Instance" %}</h1>
+      <p>{% trans "This the common func" %}</p>
+    </div>
+
+    <div class="form-element">
+      <div class="left">
+        <label for="id_image">{% trans "Appliance:" %}<span class="small">{% trans "Select a appliance" %}</span></label>
+      </div>
+      <div class="right">
+        <select name="image" id="id_image">
+          {% for i in images %}
+          <option value="{{ i.id }}" {% ifequal i.id domain.image.id %}selected="selected"{% endifequal %}>{{ i }}</option>
+          {% endfor %}
+        </select>
+        {% if image_error %}<div class="field-error">{{ image_error }}</div>{% endif %}
+      </div>
+    </div>
+
+    <div class="form-element">
+      <div class="left">
+        <label for="id_name">{% trans "Instance Name:" %}<span class="small">{% trans "Give a name for Instance" %}</span></label>
+      </div>
+      <div class="right">
+        <input id="id_name" type="text" name="name" maxlength="30" value="{{ domain.name }}"/>
+        {% if name_error %}<div class="field-error">{{ name_error }}</div>{% endif %}
+      </div>
+    </div>
+
+    <div class="form-element">
+      <div class="left">
+        <label for="id_catalog">{% trans "Instance catalog:" %}<span class="small">{% trans "Select your catalog" %}</span></label>
+      </div>
+      <div class="right">
+        <select name="catalog" id="id_catalog">
+          <option value="0">{% trans "Default" %}</option>
+          {% for c in catalogs %}
+          <option value="{{ c.id }}" {% ifequal c.id domain.catalog.id %}selected="selected"{% endifequal %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+        {% if catalog_error %}<div class="field-error">{{ catalog_error }}</div>{% endif %}
+      </div>
+      <div class="addon">
+        <a href="{% url domain:add_catalog %}">{% trans "New Catalog" %}</a>
+      </div>
+    </div>
+
+    {% if submit_error %}
+    <div class="submit-error">
+      <p>{{ submit_error }}</p>
+    </div>
+    {% endif %}
+
+    <div class="form-footer">
+      <button type="submit">{% trans "Submit" %}</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

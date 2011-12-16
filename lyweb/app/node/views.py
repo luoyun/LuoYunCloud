@@ -1,3 +1,5 @@
+from django.utils.translation import ugettext as _
+
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
@@ -18,7 +20,7 @@ import struct
 @render_to('node/index.html')
 def index(request):
 
-    nodes = Node.objects.all().order_by('-ip')
+    nodes = Node.objects.all()
 
     return { 'nodes': nodes }
 
