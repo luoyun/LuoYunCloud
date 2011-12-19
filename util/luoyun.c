@@ -389,3 +389,23 @@ int str_filter_white_space( char *str )
      return 0;
 }
 
+
+
+int
+lyu_system_call(char *cmd)
+{
+     int ret;
+
+     ret = system(cmd);
+
+     if (ret == -1)
+     {
+          logprintfl(LYERROR, "system call error: %s", cmd);
+          return -3;
+     } else if (ret != 0) {
+          logprintfl(LYERROR, "cmd error: %s", cmd);
+          return -4;
+     }
+
+     return 0;
+}

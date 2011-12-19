@@ -210,5 +210,8 @@ int lyu_decompress_bzip2 ( const char *srcfile,
 int lyu_decompress_gz ( const char *srcfile,
                         const char *dstfile );
 int str_filter_white_space( char *str );
+
+
+int lyu_system_call(char *cmd);
 #endif
 

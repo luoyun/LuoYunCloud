@@ -434,19 +434,25 @@ __write_conf_to_img (DomainControlHandler *DCH,
      unsigned long long offset;
      dk_set_boot_partition_offset(img_path, &offset);
 
+     char nametemp[32] = "/tmp/LuoYun_XXXXXX";
      char *mount_path;
-     // Fix me: tempnam is dangerous
-     mount_path = tempnam("/tmp", "LuoYun_");
+     mount_path = mkdtemp(nametemp);
+     if (mount_path == NULL)
+     {
+          logerror("can not get a tmpdir for mount_path");
+          return -1;
+     }
+
      if ( lyu_make_sure_dir_exist(mount_path) != 0 )
           return -1;
 
      // TODO: should not use system call !
      char cmd[1024];
+
      sprintf(cmd, "mount -o loop,offset=%lld %s %s",
              offset, img_path, mount_path);
-     logprintfl(LYDEBUG, "system call: \"%s\"\n", cmd);
-     printf("[DD] %s\n", cmd);
-     system(cmd);
+     if ( lyu_system_call(cmd) )
+          return -3;
 
      sprintf(cmd, "%s/LuoYun/", mount_path);
      if ( lyu_make_sure_dir_exist(cmd) != 0 )
@@ -458,23 +464,25 @@ __write_conf_to_img (DomainControlHandler *DCH,
      if (fp == NULL)
      {
           perror("open error");
-     } else {
-          fprintf(fp, "CONTROL_SERVER_IP = %s\n"
-                  "CONTROL_SERVER_PORT = %d\n"
-                  "DOMAIN_ID = %d\n"
-                  "NODE_ID = %d\n",
-                  DCH->sc->cts_ip, DCH->sc->cts_port,
-                  DCH->dip->id, DCH->dip->node);
-          fclose(fp);
      }
+     fprintf(fp,
+             "CONTROL_SERVER_IP = %s\n"
+             "CONTROL_SERVER_PORT = %d\n"
+             "DOMAIN_ID = %d\n"
+             "NODE_ID = %d\n",
+             DCH->sc->cts_ip, DCH->sc->cts_port,
+             DCH->dip->id, DCH->dip->node);
+     fclose(fp);
 
      sprintf(cmd, "umount %s", mount_path);
-     logprintfl(LYDEBUG, "system call: \"%s\"\n", cmd);
-     system(cmd);
+     if ( lyu_system_call(cmd) )
+          return -3;
 
-     // TODO: make sure the mount_path have umount!
-
-     // TODO: unlink the mount path
+     if ( unlink(mount_path) )
+     {
+          logerror("remove %s error", mount_path);
+          return -4;
+     }
 
      free(mount_path);
 
