@@ -1,7 +1,19 @@
-#ifndef __LUOYUN_INCLUDE_control_server_H
-#define __LUOYUN_INCLUDE_control_server_H
+#ifndef __LUOYUN_INCLUDE_control_lyclc_H
+#define __LUOYUN_INCLUDE_control_lyclc_H
 
+#include <pthread.h>
 #include "util/luoyun.h"
+
+
+#define PROGRAM_NAME "lyclc"
+#define PROGRAM_VERSION "0.1"
+
+#define DEFAULT_CONFIG_PATH "/etc/LuoYun/lyclc.conf"
+#define DEFAULT_LOG_PATH "/var/log/lyclc.log"
+
+
+
+
 
 #include <libpq-fe.h>
 
@@ -12,10 +24,12 @@ typedef struct LyDBConn_t {
 
 
 typedef struct ComputeNodeItem_t {
-     int n_id;                 /* node id in database */
-     ComputeNodeInfo *n_info;  /* info of compute node */
-     struct ComputeNodeItem_t *n_next;     /* next job */
-     struct ComputeNodeItem_t *n_prev;     /* prev job */
+     int id;   /* ID in DB */
+     int sfd;  /* socket for keep alive */
+     time_t updated;
+     ComputeNodeInfo node;  /* info of compute node */
+     struct ComputeNodeItem_t *n_next;     /* next node */
+     struct ComputeNodeItem_t *n_prev;     /* prev node */
 } ComputeNodeItem;
 
 
@@ -42,6 +56,7 @@ typedef enum JobStatus_t {
      JOB_S_CANCLED = 5,
      JOB_S_PENDING = 10,
      JOB_S_TIMEOUT = 11,
+     JOB_S_QUERYING = 12,
 } JobStatus;
 
 typedef enum JobTarget_t {
@@ -60,13 +75,17 @@ typedef enum JobAction_t {
      JOB_ACTION_REBOOT = 5,
 } JobAction;
 
+#define DEFAULT_JOB_TIMEOUT 1200
+#define NODE_JOB_TIMEOUT 1200
+#define DOMAIN_JOB_TIMEOUT 1200
+
 typedef struct Job_t {
      int j_id;                 /* id in database */
      JobStatus j_status;       /* status of this job */
 
      time_t j_created;         /* created time */
      time_t j_started;         /* started time */
-     time_t j_ended;           /* ended time */
+     time_t j_ended;           /* old: ended time */
 
      JobTarget j_target_type;
      int j_target_id;
@@ -75,7 +94,7 @@ typedef struct Job_t {
 
      //LySockHead *j_sockhead;
      pthread_t j_tid;          /* thread id of job */
-     //int j_socket;             /* the socket from connect */
+     int j_sfd;                /* the socket from connect */
      struct Job_t *j_next;     /* next job */
      struct Job_t *j_prev;     /* prev job */
 } Job;
@@ -92,4 +111,4 @@ typedef struct JobQueue_t {
 } JobQueue;
 
 
-#endif /* __LUOYUN_INCLUDE_control_server_H */
+#endif /* __LUOYUN_INCLUDE_control_lyclc_H */

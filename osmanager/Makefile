@@ -9,7 +9,7 @@ INCLUDES := -I $(SC_SRC_DIR) -I$(shell pg_config --includedir)
 RM = /bin/rm -f
 
 # FILE_BN : file basename
-FILE_BN = server
+FILE_BN = osmanager
 OBJ = $(addsuffix .o, $(FILE_BN))
 
 
@@ -29,7 +29,7 @@ all : build
 
 
 build : $(OBJ)
-	$(CC) $(LDFLAGS) -o osmanager server.o \
+	$(CC) $(LDFLAGS) -o osmanager osmanager.o \
 ../util/misc.o ../util/luoyun.o
 
 

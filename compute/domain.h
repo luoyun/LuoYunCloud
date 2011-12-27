@@ -9,18 +9,17 @@
 
 #include "util/misc.h"
 #include "util/luoyun.h"
-#include "compute/server.h"
+#include "compute/lynode.h"
+#include "compute/options.h"
 
 
-virConnectPtr libvirtd_connect (LyComputeServerConfig *sc);
+virConnectPtr libvirtd_connect(CpConfig *c);
 
-int set_hypervisor (LyComputeServerConfig *sc);
-int set_hypervisor_version (LyComputeServerConfig *sc);
-int set_libversion (LyComputeServerConfig *sc);
-int set_hostname (LyComputeServerConfig *sc);
-int set_max_cpus (LyComputeServerConfig *sc);
-int set_node_mixture (LyComputeServerConfig *sc);
-int set_free_memory (LyComputeServerConfig *sc);
+int set_hypervisor (CpConfig *c);
+int set_hostname (CpConfig *c);
+int set_max_cpus (CpConfig *c);
+int set_node_mixture (CpConfig *c);
+int set_free_memory (CpConfig *c);
 
 #if 0
 /* 下列三个函数最好返回 DomainPtr */

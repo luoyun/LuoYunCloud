@@ -8,8 +8,6 @@ __empty_node(ComputeNodeInfo *node)
      *(node->ip) = '\0';
      node->arch = CPU_ARCH_UNKNOWN;
      node->hypervisor = HYPERVISOR_IS_UNKNOWN;
-     node->hypervisor_version = 0;
-     node->libversion = 0;
      node->network_type = 0;
      node->max_memory = 0;
      node->max_cpus = 0;
@@ -79,39 +77,34 @@ unsigned long long __free_memory()
 }
 
 
-int
-init_node_info (LyComputeServerConfig *sc)
+int init_node_info(CpConfig *c)
 {
-     if (sc->conn == NULL)
+     if (c->conn == NULL)
      {
           logprintfl(LYERROR, "must connect to libvirtd first.\n");
           return -1;
      }
 
-     sc->node = malloc( sizeof(ComputeNodeInfo) );
-     if (NULL == sc->node)
+     c->node = malloc( sizeof(ComputeNodeInfo) );
+     if (NULL == c->node)
      {
           logprintfl(LYERROR, "node info malloc error.\n");
           return -2;
      }
 
-     __empty_node(sc->node);
-
-     time(&sc->node->updated);
+     __empty_node(c->node);
 
      int ret = 0;
-     ret += set_hypervisor(sc);
-     ret += set_hypervisor_version(sc);
-     ret += set_libversion(sc);
-     ret += set_hostname(sc);
-     //ret += set_max_cpus(sc);
-     ret += set_node_mixture(sc);
-     //ret += set_free_memory(sc);
-     sc->node->free_memory = __free_memory();
+     ret += set_hypervisor(c);
+     ret += set_hostname(c);
+     //ret += set_max_cpus(c);
+     ret += set_node_mixture(c);
+     //ret += set_free_memory(c);
+     c->node->free_memory = __free_memory();
 
      // use KB
-     //if (sc->node->free_memory)
-     //     sc->node->free_memory /= 1024;
+     //if (c->node->free_memory)
+     //     c->node->free_memory /= 1024;
 
      if ( 0 != ret )
      {
@@ -133,7 +126,6 @@ node_dynamic_status (LyComputeServerConfig *sc)
           return -1;
      }
 
-     time(&sc->node->updated);
      // TODO: active_flag should have multitype value
      sc->node->active_flag = 1;
 
@@ -168,9 +160,6 @@ print_node_info (ComputeNodeInfo *N)
 
           "\tarch = %d\n"
           "\thypervisor = %d\n"
-          "\thypervisor_version = %d\n"
-
-          "\tlibversion = %d\n"
           "\tnetwork_type = %d\n"
 
           "\tmax_memory = %d\n"
@@ -184,8 +173,7 @@ print_node_info (ComputeNodeInfo *N)
           /*"\tupdated = %d\n"*/
           "}\n",
           N->status, N->hostname, N->ip, N->port,
-          N->arch, N->hypervisor, N->hypervisor_version,
-          N->libversion, N->network_type,
+          N->arch, N->hypervisor, N->network_type,
           N->max_memory, N->max_cpus, N->cpu_model,
           N->cpu_mhz, N->load_average, N->free_memory);
 }

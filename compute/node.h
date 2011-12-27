@@ -10,7 +10,7 @@
 #include "compute/domain.h"
 
 
-int init_node_info (LyComputeServerConfig *sc);
+int init_node_info (CpConfig *c);
 int node_dynamic_status (LyComputeServerConfig *sc);
 void print_node_info (ComputeNodeInfo *N);
 

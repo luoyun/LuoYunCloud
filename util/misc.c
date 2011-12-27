@@ -11,7 +11,7 @@ char logFile[MAX_PATH];
 pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 
-int check_file(char *file) {
+int file_exist(char *file) {
   int rc;
   struct stat mystat;
   
@@ -418,49 +418,50 @@ int diff (const char * path1, const char * path2)
 /* read file 'path' into a new string */
 char * file2str (const char * path)
 {
-    char * content = NULL;
-    int file_size;
+     char * content = NULL;
+     int file_size;
 
-    struct stat mystat;
-    if (stat (path, &mystat) < 0) {
-        logprintfl (LYERROR, "error: file2str() could not stat file %s\n", path);
-        return content;
-    }
-    file_size = mystat.st_size;
+     struct stat mystat;
+     if (stat (path, &mystat) < 0){
+          logerror("%s: stat file %s failed.\n", __func__, path);
+          return content;
+     }
+     file_size = mystat.st_size;
 
-    if ( (content = malloc (file_size+1)) == NULL ) {
-        logprintfl (LYERROR, "error: file2str() out of memory reading file %s\n", path);
-        return content;
-    }
+     if ( (content = malloc (file_size+1)) == NULL ) {
+          logerror("%s: allocate memory failed.\n", __func__);
+          return content;
+     }
 
-    int fp;
-    if ( ( fp = open (path, O_RDONLY) ) < 1 ) {
-        logprintfl (LYERROR, "error: file2str() failed to open file %s\n", path);
-        free (content);
-        content = NULL;
-        return content;
-    }
+     int fp;
+     if ( ( fp = open (path, O_RDONLY) ) < 1 )
+     {
+          logerror("%s: open %s failed.\n", __func__, path);
+          free (content);
+          content = NULL;
+          return content;
+     }
 
-    int bytes;
-    int bytes_total = 0;
-    int to_read = (SSIZE_MAX)<file_size?(SSIZE_MAX):file_size;
-    char * p = content;
-    while ( (bytes = read (fp, p, to_read)) > 0) {
-        bytes_total += bytes;
-        p += bytes;
-        if (to_read > (file_size-bytes_total)) {
-            to_read = file_size-bytes_total;
-        }
-    }
-    close(fp);
+     int bytes;
+     int bytes_total = 0;
+     int to_read = (SSIZE_MAX)<file_size?(SSIZE_MAX):file_size;
+     char * p = content;
+     while ( (bytes = read (fp, p, to_read)) > 0) {
+          bytes_total += bytes;
+          p += bytes;
+          if (to_read > (file_size-bytes_total)) {
+               to_read = file_size-bytes_total;
+          }
+     }
+     close(fp);
 
-    if ( bytes < 0 ) {
-        logprintfl (LYERROR, "error: file2str() failed to read file %s\n", path);
-        free (content);
-        content = NULL;
-        return content;
-    }
+     if ( bytes < 0 ) {
+          logerror("%s: read from %s failed.\n", __func__, path);
+          free (content);
+          content = NULL;
+          return content;
+     }
 
-    * p = '\0';
-    return content;
+     * p = '\0';
+     return content;
 }

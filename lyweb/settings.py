@@ -183,4 +183,4 @@ LOGGING = {
 }
 
 
-SESSION_COOKIE_DOMAIN="luoyun.ylinux.org"
+#SESSION_COOKIE_DOMAIN="luoyun.ylinux.org"

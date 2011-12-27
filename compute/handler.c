@@ -3,422 +3,287 @@
 #include "compute/handler.h"
 #include "util/disk.h"
 
-
 static int __send_respond (int socket, int status);
-static int __send_request (int socket, int action,
-                           int datalen, void *data);
-static int __get_respond (int socket,
-                          LySockRespond *respond,
-                          int datalen,
-                          void *data );
 
-static int __tell_control_server (LyComputeServerConfig *sc,
-                                  int action,
-                                  int datalen,
-                                  void *data);
+static int __domain_run (CpConfig *C, int id);
+static int __domain_stop (CpConfig *C, int id);
+static int __domain_suspend (CpConfig *C, int id);
+static int __domain_save (CpConfig *C, int id);
+static int __domain_reboot (CpConfig *C, int id);
 
-static void *__domain_control ( void *arg );
-static void __domain_run (DomainControlHandler *DCH);
-static void __domain_stop (DomainControlHandler *DCH);
-static void __domain_suspend (DomainControlHandler *DCH);
-static void __domain_save (DomainControlHandler *DCH);
-static void __domain_reboot (DomainControlHandler *DCH);
+static int __prepare_domain_env(CpConfig *C, int id);
+static int __write_conf_to_img (CpConfig *C, int id);
 
-static int __prepare_domain_env(DomainControlHandler *DCH,
-                                char *conf_path);
 
-static int __write_conf_to_img (DomainControlHandler *DCH,
-                                char *img_path);
-
-/* send request to control server */
-static int
-__send_request ( int sk, int action,
-                 int datalen, void *data )
+/* Get the value of variable in a domain.conf like file,
+ * save value string to varvalue buffer
+ * Return 0 if OK, else are error. */
+static int __read_config(const char *filename, const char *varname, char *varvalue, int maxlen)
 {
-     LySockRequest request;
-     request.from = LST_COMPUTE_S;
-     request.to = LST_CONTROL_S;
-     request.type = 0;
-     request.action = action;
-     request.datalen = datalen;
-
-     int err;
-     err = send(sk, &request, sizeof(LySockRequest), 0);
-     if (datalen)
-          err += send(sk, data, datalen, 0);
-
-     if ( -1 == err )
+     FILE *fp;
+     fp = fopen(filename, "r");
+     if ( fp == NULL )
      {
-          logprintfl(LYERROR, "%s: send request err\n",
-                     __func__);
-          return -2;
-     }
-
-     return 0;
-}
-
-
-/* send request to control server */
-static int
-__get_respond ( int sk, LySockRespond *respond,
-                int datalen, void *data )
-{
-     int recvlen;
-     recvlen = recv(sk, respond, sizeof(LySockRespond), 0);
-     if (recvlen != sizeof(LySockRespond))
-     {
-          logprintfl(LYERROR, "%s: read respond err\n",
-                     __func__);
+          logerror( _("Can not open config file: %s\n"), filename);
           return -1;
      }
 
-     // TODO: check respond is correct or not.
+     int ret = 0;
+     int i, j, begin_tag, end_tag;
+     char line[LY_LINE_MAX];
+     char *kstr;
+     char *vstr;
 
-     if (!datalen)
-          return 0;
+     varvalue[0] = '\0'; /* Init string */
 
-     if (respond->datalen != datalen)
+     while ( 1 )
      {
-          logprintfl(LYERROR, "%s: datalen not match, "
-                     "respond->datalen = %d, but your "
-                     "want %d\n", respond->datalen,
-                     datalen);
-          return -2;
+          if ( fgets(line, LINE_MAX, fp ) == NULL )
+               break;
+
+          if ( str_filter_white_space(line) != 0 ) continue;
+
+          vstr = strstr(line, "=");
+          if ( vstr == NULL )
+               continue;
+          else
+               vstr ++;
+
+          if ( (kstr = strstr(line, varname)) != NULL )
+          {
+               begin_tag = end_tag = 0;
+               j = 0;
+
+               for (i = 0; i < maxlen && vstr[i] != '\0'; i++)
+               {
+                    if (vstr[i] == '\"')
+                    {
+                         if (begin_tag)
+                              end_tag = 1;
+                         else
+                              begin_tag = 1;
+                    }
+
+                    else {
+                         varvalue[j++] = vstr[i];
+                    }
+               }
+
+               if (begin_tag)
+                    if (!end_tag)
+                    {
+                         logerror(_("The \" in config file doest not match.\n"));
+                         ret = -1;
+                    }
+
+               varvalue[j] = '\0';
+
+               break;
+          }
      }
 
-     recvlen = recv(sk, data, datalen, 0);
-     if (recvlen != datalen)
-     {
-          logprintfl(LYERROR, "%s: read respond data err, "
-                     "recvlen = %d, datalen = %d\n",
-                     __func__, recvlen, datalen);
-          return -3;
-     }
-
-     return 0;
+     fclose(fp);
+     return ret;
 }
 
-
-static int
-__tell_control_server ( LyComputeServerConfig *sc, int action,
-                        int datalen, void *data )
-{
-     logdebug("%s:%d:%s tell control server, uid=%d, gid=%d\n",
-              __FILE__, __LINE__, __func__, getuid(), getgid());
-
-     int sk, err;
-     sk = connect_to_host(sc->cts_ip, sc->cts_port);
-     if ( sk <= 0 ) return -1;
-
-     err = __send_request(sk, action, datalen, data);
-
-     //TODO: read the respond
-
-     close(sk);
-     return err;
-}
 
 /* send respond to control server */
-static int
-__send_respond (int socket, int status)
+static int __send_respond (int socket, int status)
 {
-
-     LySockRespond respond;
+     LyRespond respond;
      respond.status = status;
-     respond.from = LST_COMPUTE_S;
-     respond.to = LST_CONTROL_S;
-     respond.used_time = 0;
-     respond.datalen = 0;
+     respond.length = 0;
 
-     int err;
-
-     err = send(socket, &respond, sizeof(LySockRespond), 0);
-     if ( -1 == err )
+     if(ly_send(socket, &respond, sizeof(LyRespond), 0, SEND_TIMEOUT))
      {
-          logprintfl(LYERROR, "%s: could not send respond "
-                     "to control server\n", __func__);
-     } else {
-          logprintfl(LYDEBUG, "%s: send respond to control "
-                     "server success, status = %d\n",
-                     __func__, status);
-     }
-
-     return err;
-}
-
-
-int
-hl_control_domain ( LyComputeServerConfig *sc,
-                    LySockRequestHandler *RH )
-{
-     logsimple("START %s:%d:%s\n",
-               __FILE__, __LINE__, __func__);
-
-     if (RH->request->datalen <= 0)
-     {
-          logprintfl(LYERROR,
-                     "%s:%d:%s => request format err,"
-                     "datalen = %d\n",
-                     __FILE__, __LINE__, __func__,
-                     RH->request->datalen);
+          logerror(_("Send domain control respond failed.\n"));
           return -1;
      }
 
-     DomainInfo *dip;
-     dip = malloc( sizeof(DomainInfo) );
-     if ( dip == NULL )
-     {
-          logprintfl(LYERROR, "%s: malloc dip err\n",
-                     __func__);
-          return -2;
-     }
-
-     int recvlen;
-     recvlen = recv(RH->sk, dip, sizeof(DomainInfo), 0);
-     if ( recvlen != sizeof(DomainInfo) )
-     {
-          logprintfl(LYERROR, "get request data error,"
-                     " read len = %d, data len = %d\n",
-                     recvlen, sizeof(DomainInfo));
-          free(dip);
-          return -2;
-     }
-
-     logprintfl(LYDEBUG, "LA_CONTROL_DOMAIN: id = %d\n",
-                dip->id);
-
-
-     // do domain control
-     DomainControlHandler *DCH;
-     DCH = malloc(sizeof(DomainControlHandler));
-     if (DCH == NULL)
-     {
-          logprintfl(LYERROR, "%s: malloc dip err\n",
-                     __func__);
-          free(dip);
-          return -3;
-     }
-     DCH->sc = sc;
-     DCH->action = RH->request->action;
-     DCH->dip = dip;
-     pthread_t domain_control_tid;
-     int status = pthread_create(&domain_control_tid, NULL,
-                                 __domain_control, DCH);
-
-     status = __send_respond(RH->sk, status);
-     //free(dip);
-     return status;
+     return 0;
 }
 
 
-void *
-__domain_control(void *arg)
+
+static int __domain_run(CpConfig *C, int id)
 {
-     DomainControlHandler *DCH;
-     DCH = (DomainControlHandler *) arg;
+     logdebug(_("START %s\n"), __func__);
 
-     switch (DCH->action) {
-     case LA_DOMAIN_RUN:
-          __domain_run(DCH);
-          break;
-     case LA_DOMAIN_STOP:
-          __domain_stop(DCH);
-          break;
-     case LA_DOMAIN_SUSPEND:
-          __domain_suspend(DCH);
-          break;
-     case LA_DOMAIN_SAVE:
-          __domain_save(DCH);
-          break;
-     case LA_DOMAIN_REBOOT:
-          __domain_reboot(DCH);
-          break;
-     default:
-          logprintfl(LYERROR, "%s: unknown action of request",
-                     __func__);
-     }
-
-     free(DCH->dip);
-     free(DCH);
-     pthread_exit((void *)0);
-}
-
-
-static void __domain_run (DomainControlHandler *DCH)
-{
-     logsimple("START %s:%d:%s\n",
-               __FILE__, __LINE__, __func__);
-
-     //lyu_print_compute_server_config(DCH->sc);
-
-     char conf_path[LINE_MAX] = {'\0'};
-     int err;
-     err = __prepare_domain_env(DCH, conf_path);
-     // TODO: check it
-     if (err != 0 || *conf_path == '\0')
-     {
-          logprintfl(LYERROR, "%s: prepare domain env err\n");
-     } else {
-          char *xml = file2str(conf_path);
-          virDomainPtr domain;
-          domain = create_transient_domain (
-               DCH->sc->conn, xml);
-          if ( domain == NULL )
-               err = 1;
-     }
-
-     // TODO: wait the status of domain
-     //sleep(10);
-
-     // TODO: dynamic get status of domain
-     if (!err)
-     {
-          DCH->dip->status = DOMAIN_S_RUNNING;
-          strcpy(DCH->dip->ip, "preparing ...");
-     }
-
-     __tell_control_server(DCH->sc, LA_DOMAIN_STATUS,
-                           sizeof(DomainInfo), DCH->dip);
-}
-
-static void __domain_stop (DomainControlHandler *DCH)
-{
-     logsimple("START %s:%d:%s\n",
-               __FILE__, __LINE__, __func__);
-
-     if (domain_stop (DCH->sc->conn, DCH->dip->name))
-     {
-          logprintfl(LYERROR, "%s: stop domain err\n",
-                     __func__);
-     } else {
-          logprintfl(LYDEBUG, "%s: stop domain success\n",
-                     __func__);
-     }
-
-     // TODO: wait the status of domain
-     sleep(10);
-     // TODO: dynamic get status of domain
-     DCH->dip->status = DOMAIN_S_STOP;
-     __tell_control_server(DCH->sc, LA_DOMAIN_STATUS,
-                           sizeof(DomainInfo), DCH->dip);
-}
-
-static void __domain_suspend (DomainControlHandler *DCH)
-{
-     logsimple("START %s:%d:%s\n",
-               __FILE__, __LINE__, __func__);
-
-}
-
-static void __domain_save (DomainControlHandler *DCH)
-{
-     logsimple("START %s:%d:%s\n",
-               __FILE__, __LINE__, __func__);
-
-}
-
-static void __domain_reboot (DomainControlHandler *DCH)
-{
-     logsimple("START %s:%d:%s\n",
-               __FILE__, __LINE__, __func__);
-
-}
-
-static int
-__prepare_domain_env( DomainControlHandler *DCH,
-                      char *conf_path )
-{
-     logsimple("START %s:%d:%s\n",
-               __FILE__, __LINE__, __func__);
-
-     int sk, err;
-     sk = connect_to_host(DCH->sc->cts_ip, DCH->sc->cts_port);
-     if ( sk <= 0 ) return -1;
+     int fd;
      
-     err = __send_request(sk, LA_CP_GET_IMAGE_INFO,
-                          sizeof(DCH->dip->diskimg),
-                          &DCH->dip->diskimg);
-     if (err)
+     // save the current dir
+     if ((fd = open(".", O_RDONLY)) < 0)
      {
-          close(sk);
+          logerror(_("Open current dir failed.\n"));
           return -1;
      }
 
-     LySockRespond respond;
-     ImageInfo ii;
-     err = __get_respond(sk, &respond,
-                         sizeof(ImageInfo), &ii);
-     if (err)
+     char lpath[LY_PATH_MAX];
+     snprintf(lpath, LY_PATH_MAX, "%s/%d", C->root_path, id);
+
+     lyu_make_sure_dir_exist(lpath);
+
+     if (chdir(lpath) < 0)
      {
-          close(sk);
-          return -2;
+          logerror(_("Change working directory to %s failed.\n"), lpath);
+          return -1;
      }
 
-     // download configure file
-     sprintf(conf_path, "%s/%d/domain.conf",
-             DCH->sc->root_path, DCH->dip->id);
+     int ret = 0;
 
-     if ( !check_file(conf_path) )
-          logprintfl(LYDEBUG, "%s exist\n", conf_path);
+     if (__prepare_domain_env(C, id))
+          logdebug(_("Prepare domain environment failed.\n"));
      else {
-          char conf_url[LINE_MAX];
-          sprintf(conf_url, "%s/%d/",
-                  DCH->sc->root_path, DCH->dip->id);
-          lyu_make_sure_dir_exist(conf_url);
+          char libvirtd_conf[] = LIBVIRTD_CONFIG;
+          char *xml = file2str(libvirtd_conf);
 
-          //sprintf( conf_url, "http://%s/domain/%d/conf/",
-          //         DCH->sc->cts_ip, DCH->dip->id );
-          sprintf( conf_url, "http://corei5/domain/%d/conf/",
-                   DCH->dip->id );
-          if ( 0 != ly_dl(conf_url, conf_path) )
+          virDomainPtr domain;
+
+          domain = create_transient_domain(C->conn, xml);
+
+          free(xml);
+
+          if ( domain == NULL )
+               ret = -1;
+     }
+
+
+     if (fchdir(fd) < 0)
+     {
+          logdebug(_("Restore working directory failed.\n"));
+          ret = -1;
+     }
+
+     return ret;
+}
+
+
+
+static int __domain_stop (CpConfig *C, int id)
+{
+     logdebug("%s: STOP domian %d.\n", __func__, id);
+
+     char dconf[LY_PATH_MAX];
+     snprintf(dconf, LY_PATH_MAX, "%s/%d/%s", C->root_path, id, DOMAIN_CONFIG_FILE);
+
+     if ( file_exist(dconf) )
+     {
+          logdebug(_("%s does not exist.\n"), dconf);
+          return -1;
+     }
+
+     char name[LY_NAME_MAX];
+     if(__read_config(dconf, "NAME", name, LY_NAME_MAX))
+     {
+          logerror(_("Get value of NAME from %s failed.\n"), dconf);
+          return -1;
+     }
+
+
+     if (domain_stop (C->conn, name))
+     {
+          logerror(_("Stop domain \"%s\"[%d] failed.\n"), name, id);
+          return -1;
+     }
+
+     logerror(_("Stop domain \"%s\"[%d] success.\n"), name, id);
+
+     return 0;
+}
+
+
+
+static int __domain_suspend(CpConfig *C, int id)
+{
+     loginfo(_("%s: SUSPEND %d have not completed.\n"), __func__, id);
+     return -1;
+
+}
+
+static int __domain_save(CpConfig *C, int id)
+{
+     loginfo(_("%s: SAVE %d have not completed.\n"), __func__, id);
+     return -1;
+}
+
+static int __domain_reboot(CpConfig *C, int id)
+{
+     loginfo(_("%s: REBOOT %d have not completed.\n"), __func__, id);
+     return -1;
+}
+
+static int __prepare_domain_env(CpConfig *C, int id)
+{
+     logdebug(_("Prepare domian environment.\n"));
+
+     int ret;
+     char uri[LY_PATH_MAX];
+
+     // Prepare domain.conf
+     char domain_conf[] = "domain.conf";
+
+     if ( !file_exist(domain_conf) )
+          logdebug(_("%s exist, skeep download.\n"), domain_conf);
+     else {
+          snprintf(uri, LY_PATH_MAX, DOMAIN_CONFIG_URI_TEMP, id);
+          if ( 0 != ly_dl(uri, domain_conf) )
                return -1;
      }
 
-     char decompress_img_path[LINE_MAX];
-     sprintf(decompress_img_path, "%s/%d/images/%s.image",
-             DCH->sc->root_path, DCH->dip->id,
-             ii.checksum_value);
 
-     if ( !check_file(decompress_img_path) )
-          logprintfl(LYDEBUG, "%s exist\n",
-                     decompress_img_path);
+     // Prepare config of libvirtd
+     char libvirtd_conf[] = "domain_libvirtd.xml";
+     if ( !file_exist(libvirtd_conf) )
+          logdebug(_("%s exist, skeep download.\n"), libvirtd_conf);
      else {
-          // TODO: should use compress type
-          char compress_img_path[LINE_MAX];
-          sprintf(compress_img_path, "%s.gz",
-                  decompress_img_path);
-
-          if ( !check_file(compress_img_path) )
-               logprintfl(LYDEBUG, "%s exist\n",
-                          compress_img_path);
-          else {
-               char img_url[LINE_MAX];
-               sprintf( img_url, "%s/%d/images/",
-                        DCH->sc->root_path, DCH->dip->id);
-               lyu_make_sure_dir_exist(img_url);
-
-               //sprintf( img_url, "http://%s/images/%d_%d_%s",
-               //         DCH->sc->cts_ip, ii.type,
-               //         ii.id, ii.checksum_value );
-               sprintf( img_url, "http://corei5/images/%d/%s.image",
-                        ii.id, ii.checksum_value );
-               if (0 != ly_dl(img_url, compress_img_path))
-                    return -2;
+          ret = __read_config(domain_conf, "IMAGE_LIBVIRTD_CONFIG_URI", uri, LY_PATH_MAX);
+          if (ret)
+          {
+               logerror(_("Get value of IMAGE_LIBVIRTD_CONFIG_URI from %s failed.\n"), uri);
+               return -1;
           }
+
+          //logdebug(_("IMAGE_LIBVIRTD_CONFIG_URI: \"%s\"\n"), uri);
+
+          if ( 0 != ly_dl(uri, libvirtd_conf) )
+               return -1;
+     }
+
+
+     // Prepare boot disk
+     char boot_disk_gz[] = OS_DISK_FILE_GZ;
+     char boot_disk[] = OS_DISK_FILE;
+     if ( !file_exist(boot_disk) )
+     {
+          logdebug(_("%s exist. skeep download.\n"), boot_disk);
+          // TODO: should check md5sum
+     }
+     else {
+          // GET IMAGE URI
+          ret = __read_config(domain_conf, "IMAGE_URI", uri, LY_PATH_MAX);
+          if (ret)
+          {
+               logerror(_("Get value of IMAGE_URI from %s failed.\n"), domain_conf);
+               return -1;
+          }
+
+          //logdebug(_("IMAGE_URI: \"%s\"\n"), uri);
+
+          if ( 0 != ly_dl(uri, boot_disk_gz) )
+               return -1;
 
           //if (0 != lyu_decompress_bzip2(compress_img_path,
           //                             decompress_img_path))
-          if (0 != lyu_decompress_gz(compress_img_path,
-                                     decompress_img_path))
+          if (0 != lyu_decompress_gz(boot_disk_gz, boot_disk))
           {
-               logprintfl(LYDEBUG, "%s: decompress error\n",
-                          __func__);
-               return -3;
+               logerror(_("Decompress %s failed.\n"), boot_disk_gz);
+               return -1;
           }
+
      }
 
      // write the dynamic conf to disk img
-     __write_conf_to_img(DCH, decompress_img_path);
+     __write_conf_to_img(C, id);
 
      // TODO: auto create conf file by DomainInfo
 
@@ -427,65 +292,141 @@ __prepare_domain_env( DomainControlHandler *DCH,
 
 
 /* Write the dynamic configure to img file */
-static int
-__write_conf_to_img (DomainControlHandler *DCH, 
-                     char *img_path)
+static int __write_conf_to_img (CpConfig *C, int id)
 {
-     unsigned long long offset;
-     dk_set_boot_partition_offset(img_path, &offset);
+     int ret = -1;
 
      char nametemp[32] = "/tmp/LuoYun_XXXXXX";
      char *mount_path;
      mount_path = mkdtemp(nametemp);
      if (mount_path == NULL)
      {
-          logerror("can not get a tmpdir for mount_path");
+          logerror(_("Can not get a tmpdir for mount_path"));
           return -1;
      }
 
      if ( lyu_make_sure_dir_exist(mount_path) != 0 )
-          return -1;
+          goto clean2;
+
+     char boot_disk[] = OS_DISK_FILE;
+     unsigned long long offset;
+     offset = dk_get_boot_offset(boot_disk);
+     if (offset <= 0)
+          goto clean2;
 
      // TODO: should not use system call !
-     char cmd[1024];
+     char buf[1024];
 
-     sprintf(cmd, "mount -o loop,offset=%lld %s %s",
-             offset, img_path, mount_path);
-     if ( lyu_system_call(cmd) )
-          return -3;
+     sprintf(buf, "mount -o loop,offset=%lld %s %s",
+             offset, boot_disk, mount_path);
+     if ( lyu_system_call(buf) )
+          goto clean2;
 
-     sprintf(cmd, "%s/LuoYun/", mount_path);
-     if ( lyu_make_sure_dir_exist(cmd) != 0 )
-          return -1;
+     sprintf(buf, "%s/LuoYun/", mount_path);
+     if ( lyu_make_sure_dir_exist(buf) != 0 )
+          goto clean;
 
-     FILE *fp;
-     sprintf(cmd, "%s/LuoYun/LuoYun.conf", mount_path);
-     fp = fopen(cmd, "w+");
-     if (fp == NULL)
+     // GET the config of domain
+     // TODO: make sure it was modified.
+     sprintf(buf, "%s/LuoYun/LuoYun.conf", mount_path);
+     // Download LuoYun.conf
+     char uri[LY_PATH_MAX];
+     char domain_conf[] = "domain.conf";
+     ret = __read_config(domain_conf, "OSMANAGER_CONFIG", uri, LY_PATH_MAX);
+     if (ret)
      {
-          perror("open error");
-     }
-     fprintf(fp,
-             "CONTROL_SERVER_IP = %s\n"
-             "CONTROL_SERVER_PORT = %d\n"
-             "DOMAIN_ID = %d\n"
-             "NODE_ID = %d\n",
-             DCH->sc->cts_ip, DCH->sc->cts_port,
-             DCH->dip->id, DCH->dip->node);
-     fclose(fp);
-
-     sprintf(cmd, "umount %s", mount_path);
-     if ( lyu_system_call(cmd) )
-          return -3;
-
-     if ( unlink(mount_path) )
-     {
-          logerror("remove %s error", mount_path);
-          return -4;
+          logerror(_("Get value of OSMANAGER_CONFIG from %s failed.\n"), domain_conf);
+          goto clean;
      }
 
-     free(mount_path);
+     if ( 0 != ly_dl(uri, buf) )
+          ret = -1;
 
-     return 0;
 
+clean:
+     sprintf(buf, "umount %s", mount_path);
+     if ( lyu_system_call(buf) )
+     {
+          logerror(_("Umount %s error.\n"), mount_path);
+          ret = -1;
+     }
+
+     if ( rmdir(mount_path) )
+     {
+          logerror(_("Remove directory \"%s\' error"), mount_path);
+          ret = -1;
+     }
+
+clean2:
+     //free(mount_path);
+     return ret;
 }
+
+
+
+int hl_domain_control(CpConfig *C,
+                      int S, /* socket */
+                      int datalen /* request data length */)
+{
+     loginfo("START %s\n", __func__);
+
+     int ret = -1;
+
+     if (C == NULL)
+     {
+          logerror(_("CpConfig is NULL\n"));
+          return __send_respond(S, RESPOND_STATUS_FAILED);
+     }
+
+     DomainControlData D;
+
+
+     if (datalen != sizeof(D))
+     {
+          logerror(_("Can not found DomainControlData: (%d) != (%d)\n"), datalen, sizeof(D));
+          return __send_respond(S, RESPOND_STATUS_FAILED);
+     }
+
+     ret = recv(S, &D, sizeof(D), 0);
+     if ( ret != sizeof(D) )
+     {
+          logerror(_("Recv request data failed: (%d) != (%d)\n"), ret, sizeof(D));
+          return __send_respond(S, RESPOND_STATUS_FAILED);
+     }
+
+     logdebug(_("Start domain control, action = %d\n"), D.action);
+
+     switch (D.action) {
+
+     case LA_DOMAIN_RUN:
+          ret = __domain_run(C, D.id);
+          break;
+
+     case LA_DOMAIN_STOP:
+          ret = __domain_stop(C, D.id);
+          break;
+
+     case LA_DOMAIN_SUSPEND:
+          ret = __domain_suspend(C, D.id);
+          break;
+
+     case LA_DOMAIN_SAVE:
+          ret = __domain_save(C, D.id);
+          break;
+
+     case LA_DOMAIN_REBOOT:
+          ret = __domain_reboot(C, D.id);
+          break;
+
+     default:
+          logerror(_("unknown action: %d"), D.action);
+
+     }
+
+     if (ret)
+          return __send_respond(S, RESPOND_STATUS_FAILED);
+     else
+          return __send_respond(S, RESPOND_STATUS_OK);
+}
+
+

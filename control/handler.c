@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <unistd.h> /* gethostname */
 #include <netdb.h> /* struct hostent */
+#include <sys/epoll.h>
 
 #include "util/misc.h"
 #include "util/luoyun.h"
@@ -51,44 +52,191 @@ __send_respond ( int sk, int status,
 }
 
 
-int
-hl_new_job ( LyDBConn *db,
-             LySockRequestHandler *RH,
-             JobQueue *qp )
-{
-     logdebug("LA_WEB_NEW_JOB %s:%d:%s\n",
-              __FILE__, __LINE__, __func__);
 
-     if (RH->request->datalen <= 0)
+int hl_node_register(LyDBConn *db, ComputeNodeQueue *qp,
+                     LyRequest *request,
+                     int efd, int S /* keep alive socket */)
+{
+     int ret;
+
+     ret = make_socket_non_blocking(S);
+     if (ret == -1)
+          return -1;
+
+     // TODO: need authorize
+
+     if ( request->length != sizeof(ComputeNodeInfo) )
      {
-          logprintfl(LYERROR,
-                     "%s:%d:%s => request format err,"
-                     "datalen = %d\n",
-                     __FILE__, __LINE__, __func__,
-                     RH->request->datalen);
+          logerror(_("The length of request data(%d) and ComputeNodeInfo(%d) doest not match.\n"), request->length, sizeof(ComputeNodeInfo));
           return -1;
      }
 
-     int job_id;
-     int recvlen;
-     recvlen = recv(RH->sk, &job_id, sizeof(int), 0);
-     if ( recvlen != sizeof(int) )
+     ComputeNodeItem *nitem;
+     nitem = calloc(1, sizeof(ComputeNodeItem));
+     if ( nitem == NULL )
      {
-          logerror("get job id error, "
-                   "read len = %d, data len = %d\n",
-                   recvlen, sizeof(int));
-          return -2;
+          logerror(_("malloc error for ComputeNodeItem.\n"));
+          return -1;
+     }
+
+     nitem->sfd = S;
+     if(ly_recv(S, &(nitem->node), sizeof(ComputeNodeInfo), 0, RECV_TIMEOUT))
+     {
+          logerror(_("Recv register request data failed.\n"));
+          return -1;
+     } else
+          logdebug(_("Recv register request data success.\n"));
+
+     LyRespond respond;
+     respond.length = 0;
+
+     ret = node_register(db, qp, nitem);
+     if (ret)
+     {
+          respond.status = RESPOND_STATUS_FAILED;
+     } else {
+          respond.status = RESPOND_STATUS_OK;
+     }
+
+     // TODO: send should have a retry mechanism
+     ret = send(S, &respond, sizeof(LyRespond), 0);
+     if (ret == -1)
+     {
+          logerror(_("Send respond to compute node error.\n"));
+          return -1;
+     }
+
+     loginfo(_("register compute node success.\n"));
+
+     struct epoll_event ev;
+     ev.data.fd = S;
+     ev.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
+     ret = epoll_ctl (efd, EPOLL_CTL_ADD, S, &ev);
+     if (ret == -1)
+     {
+          logerror(_("Add keep alive socket to epoll error.\n"));
+          return -1;
+     }
+
+     return 0;
+}
+
+
+int hl_instance_register(LyDBConn *db, LyInstanceQueue *qp,
+                         LyRequest *request,
+                         int efd, int S /* connect socket */)
+{
+     int ret;
+
+     ret = make_socket_non_blocking(S);
+     if (ret == -1)
+          return -1;
+
+     // TODO: need authorize
+
+     if ( request->length != sizeof(DomainInfo) )
+     {
+          logerror(_("The length of request data(%d) and DomainInfo(%d) doest not match.\n"), request->length, sizeof(DomainInfo));
+          return -1;
+     }
+
+     LyInstance *ins;
+     ins = calloc(1, sizeof(LyInstance));
+     if ( ins == NULL )
+     {
+          logerror(_("Allocate memory for LyInstance failed.\n"));
+          return -1;
+     }
+
+     ins->sfd = S;
+
+     if(ly_recv(S, &(ins->di), sizeof(DomainInfo), 0, RECV_TIMEOUT))
+     {
+          logerror(_("Recv instance register request data failed.\n"));
+          return -1;
+     } else
+          logdebug(_("Recv instance register request data success.\n"));
+
+     LyRespond respond;
+     respond.length = 0;
+
+     ret = instance_register(db, qp, ins);
+
+     if (ret)
+     {
+          respond.status = RESPOND_STATUS_FAILED;
+          logdebug(_("Register instance %s failed.\n"), ins->di.ip);
+     } else {
+          respond.status = RESPOND_STATUS_OK;
+          logdebug(_("Register instance %s success.\n"), ins->di.ip);
+     }
+
+     // TODO: send should have a retry mechanism
+     ret = send(S, &respond, sizeof(LyRespond), 0);
+     if (ret == -1)
+     {
+          logerror(_("Send respond to compute node error.\n"));
+          return -1;
+     }
+
+
+     struct epoll_event ev;
+     ev.data.fd = S;
+     ev.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
+     ret = epoll_ctl (efd, EPOLL_CTL_ADD, S, &ev);
+     if (ret == -1)
+     {
+          logerror(_("Add keep alive socket to epoll error.\n"));
+          return -1;
+     }
+
+     return 0;
+}
+
+int hl_instance_delete(LyDBConn *db, int S)
+{
+     // update domain
+     DomainInfo di;
+     // Fix me, should make sure first.
+     di.status = DOMAIN_S_STOP;
+
+     return db_update_instance(db, &di);
+}
+
+
+int hl_new_job(LyDBConn *db, JobQueue *qp,
+               int S, /* socket */
+               int datalen /* request data length */)
+{
+     logdebug(_("Start %s.\n"), __func__);
+
+     if (datalen <= 0)
+     {
+          logerror(_("%s: request data length is %d.\n"), __func__, datalen);
+          return -1;
+     }
+
+     int32_t job_id;
+     if(ly_recv(S, &job_id, 4, 0, RECV_TIMEOUT))
+     {
+          logerror(_("Get job id failed.\n"));
+          return -1;
      }
 
      pthread_rwlock_wrlock(&qp->q_lock);
      Job *jp = db_get_job(db, qp, job_id);
      pthread_rwlock_unlock(&qp->q_lock);
 
+
      if ( jp == NULL )
           return -1;
      else
           logdebug("New job %d: status = %d\n",
                    jp->j_id, jp->j_status);
+
+     // Run the job
+     //if (jp->status == JOB_S_PREPARE)
+     //     job_run(db, nqp, jqp, jp);
 
      return 0;
 }
@@ -193,17 +341,16 @@ hl_node_status ( LySockRequestHandler *RH,
           return -1;
      }
 
-     ComputeNodeInfo *ninfo;
-     ninfo = malloc( sizeof(ComputeNodeInfo) );
-     if ( ninfo == NULL )
+     ComputeNodeItem *nitem;
+     nitem = calloc(1, sizeof(ComputeNodeItem));
+     if ( nitem == NULL )
      {
-          logprintfl(LYERROR, "updata node: malloc err\n");
-          return -2;
+         logprintfl(LYERROR, "%s: malloc error\n", __func__);
+         return -4;
      }
-     memset(ninfo, 0, sizeof(ComputeNodeInfo));
 
      int recvlen;
-     recvlen = recv(RH->sk, ninfo,
+     recvlen = recv(RH->sk, &(nitem->node),
                     sizeof(ComputeNodeInfo), 0);
      if ( recvlen != sizeof(ComputeNodeInfo) )
      {
@@ -213,19 +360,10 @@ hl_node_status ( LySockRequestHandler *RH,
           return -3;
      }
 
-     ComputeNodeItem *nitem;
-     nitem = malloc( sizeof(ComputeNodeItem) );
-     if ( nitem == NULL )
-     {
-         logprintfl(LYERROR, "%s: malloc error\n", __func__);
-         free(ninfo);
-         return -4;
-     }
-     nitem->n_info = ninfo;
-     nitem->n_id = 0;
 
-     int err;
-     err = node_update_or_register(qp, nitem);
+     int err = 0;
+     //TODO:
+     //err = node_update_or_register(qp, nitem);
 
      LySockRespond respond;
      respond.status = err;

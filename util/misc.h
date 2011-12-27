@@ -76,7 +76,7 @@ int loginfo(const char *format, ...);
 int logwarn(const char *format, ...);
 
 int check_directory(char *dir);
-int check_file(char *file);
+int file_exist(char *file);
 
 int touch (const char * path);
 int diff (const char * path1, const char * path2);

@@ -3,10 +3,4 @@
 *~
 *#
 *.bak
-*.db
-compute_server
-control_server
-cscope.out
 *.log
-django
-Django*

@@ -1,0 +1,17 @@
+ID={{ domain.id }}
+NAME="{{ domain.name }}"
+CPUS={{ domain.cpus }}
+MEMORY={{ domain.memory }}
+
+IMAGE_ID = {{ domain.image.id }}
+IMAGE_URI = "{{ HOST_URL }}{{ domain.image.url_path }}"
+IMAGE_LIBVIRTD_CONFIG_URI = "{{ HOST_URL }}{% url domain:conf domain.id %}"
+
+OSMANAGER_CONFIG = "{{ HOST_URL }}{% url domain:osmanager_config domain.id %}"
+
+IP = {{ domain.ip }}
+NETMASK = {{ domain.netmask }}
+GATEWAY = {{ domain.gateway }}
+MAC = {{ domain.mac }}
+
+CREATED = "{{ domain.created }}"

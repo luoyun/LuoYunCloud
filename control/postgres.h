@@ -2,8 +2,8 @@
 #define __LUOYUN_INCLUDE_POSTGRES_H
 
 
-#include "control/job_manager.h"
-#include "control/server.h"
+#include "job_manager.h"
+#include "lyclc.h"
 
 
 /* connect to postgresql server */
@@ -13,16 +13,24 @@ PGconn * db_connect ( const char *dbname,
 
 
 /* method about job */
+int db_get_jobs2(LyDBConn *db, JobQueue *qp);
+
+// old method
 int db_get_jobs(LyDBConn *db, JobQueue *qp);
 Job *db_get_job (LyDBConn *db, JobQueue *qp, int id);
 int db_update_job_status (LyDBConn *db, Job *jp);
 
 
 /* method about node */
-int db_get_nodes (LyDBConn *db, ComputeNodeQueue *qp);
+int db_get_nodes(LyDBConn *db, ComputeNodeQueue *qp);
+int db_update_node(LyDBConn *db, ComputeNodeItem *nitem);
+int db_update_node_status(LyDBConn *db, ComputeNodeItem *nitem);
 int db_node_register (LyDBConn *db, ComputeNodeItem *nitem);
-int db_update_node_status ( LyDBConn *db,
-                            ComputeNodeItem *nitem );
+int db_node_get_id(LyDBConn *db, const char *ip);
+
+
+/* method about instance */
+int db_update_instance(LyDBConn *db, DomainInfo *dip);
 
 
 /* method about domain */
@@ -35,9 +43,6 @@ int db_update_domains (LyDBConn *db, ComputeNodeQueue *qp);
 ImageInfo *db_get_image (LyDBConn *db, int id);
 
 
-#if 0
-int db_update_node (PGconn *conn, ComputeNodeItem *nitem);
-#endif
 
 
 

@@ -40,7 +40,7 @@ int node_insert(ComputeNodeQueue *qp, ComputeNodeItem *np)
 
      for (lnp = qp->q_head; lnp != NULL; lnp = lnp->n_next)
      {
-          if (lnp->n_id == np->n_id)
+          if (lnp->id == np->id)
           {
                node_exist = 1;
                break;
@@ -73,7 +73,7 @@ int node_append (ComputeNodeQueue *qp, ComputeNodeItem *np)
 
      for (lnp = qp->q_head; lnp != NULL; lnp = lnp->n_next)
      {
-          if (lnp->n_id == np->n_id)
+          if (lnp->id == np->id)
           {
                node_exist = 1;
                break;
@@ -146,59 +146,13 @@ put_node_queue (LyDBConn *db, ComputeNodeQueue *qp)
 
      for (np = qp->q_head; np != NULL; np = np->n_next)
      {
-          if (!np->n_id) /* = 0 */
-          {
-               db_node_register(db, np);
-          } else if (np->n_info->active_flag) {
-               // TODO: maybe update all info about node
-               db_update_node_status(db, np);
-          }
+          db_update_node(db, np);
      }
 
      pthread_rwlock_unlock(&qp->q_lock);
      return 0;
 }
 
-
-
-/* if the status is NODE_S_RUNNING and time is out, 
-   then change status to NODE_S_UNKNOWN */
-int
-node_timeout_check (ComputeNodeQueue *qp, int timeout)
-{
-     //logdebug("START %s:%d:%s\n",
-     //         __FILE__, __LINE__, __func__);
-
-     if ( timeout < 10 )
-          timeout = 30;
-
-     pthread_rwlock_wrlock(&qp->q_lock);
-
-     ComputeNodeItem *nitem;
-     time_t now;
-
-     for ( nitem = qp->q_head;
-           nitem != NULL;
-           nitem = nitem->n_next )
-     {
-          now = time(&now);
-
-          if ( (now - nitem->n_info->updated) < timeout )
-               continue;
-
-          if ( nitem->n_info->status == NODE_S_RUNNING )
-          {
-               logdebug("Node %d is timeout\n", nitem->n_id);
-               nitem->n_info->status = NODE_S_UNKNOWN;
-               nitem->n_info->updated = now;
-               nitem->n_info->active_flag = 1;
-               qp->q_pflag = 1;
-          }
-     }
-
-     pthread_rwlock_unlock(&qp->q_lock);
-     return 0;
-}
 
 
 int print_node_queue (ComputeNodeQueue *qp)
@@ -207,28 +161,25 @@ int print_node_queue (ComputeNodeQueue *qp)
 
      if (qp == NULL)
      {
-          logprintfl(LYDEBUG, "node queue is empty.\n");
+          logdebug(_("node queue is empty.\n"));
           return 0;
      }
 
      if (pthread_rwlock_rdlock(&qp->q_lock) != 0)
      {
-          logprintfl(LYERROR, "can not lock node queue.\n");
+          logerror(_("can not lock node queue.\n"));
           return -1;
      }
 
-     logsimple("Current node list:\n");
+     logsimple(_("Current Node Queue:\n"));
 
      for (np = qp->q_head; np != NULL; np = np->n_next)
      {
-          logsimple("\t- "
-                    "node %d is %s, "
-                    "%s:%d, free memory: %lld\n",
-                    np->n_id,
-                    __node_status_string(np->n_info->status),
-                    np->n_info->ip,
-                    np->n_info->port,
-                    np->n_info->free_memory);
+          logsimple(_("  - NODE %d, %s:%d is %s, "
+                      "free memory: %lld, socket fd: %d\n"),
+                    np->id, np->node.ip, np->node.port,
+                    __node_status_string(np->node.status),
+                    np->node.free_memory, np->sfd);
      }
 
      pthread_rwlock_unlock(&qp->q_lock);
@@ -236,54 +187,103 @@ int print_node_queue (ComputeNodeQueue *qp)
 }
 
 
-int
-node_update_or_register ( ComputeNodeQueue *qp,
-                          ComputeNodeItem *nitem )
+
+int node_register( LyDBConn *db,
+                   ComputeNodeQueue *qp,
+                   ComputeNodeItem *nitem )
 {
      pthread_rwlock_wrlock(&qp->q_lock);
 
      ComputeNodeItem *np;
-     int node_exist = 0;
-     int err = 0;
+     int ret = 0;
 
      for (np = qp->q_head; np != NULL; np = np->n_next)
      {
-          if ( !strcmp(np->n_info->ip, nitem->n_info->ip) )
+          if ( !strcmp(np->node.ip, nitem->node.ip) )
           {
-               node_exist = 1;
+               // Update node
+               nitem->n_next = np->n_next;
+               nitem->n_prev = np->n_prev;
+               nitem->id = np->id;
+               memcpy(np, nitem, sizeof(ComputeNodeItem));
+
+               ret = db_update_node(db, np);
+               goto clean;
+          }
+     }
+
+     // Register node
+     ret = db_node_register(db, nitem);
+     if (ret)
+     {
+          logerror(_("Register node to DB error.\n"));
+          goto clean;
+     }
+
+     // Update node id
+     if (!nitem->id)
+     {
+          nitem->id = db_node_get_id(db, nitem->node.ip);
+          if (nitem->id <= 0)
+          {
+               //TODO:
+          }
+     }
+
+     /* Append to queue */
+     nitem->n_next = NULL;
+     nitem->n_prev = qp->q_tail;
+     if (qp->q_tail != NULL)
+          qp->q_tail->n_next = nitem;
+     else
+          qp->q_head = nitem;
+     qp->q_tail = nitem;
+
+
+clean:
+     pthread_rwlock_unlock(&qp->q_lock);
+     return ret;
+}
+
+
+
+int node_remove2(LyDBConn *db, ComputeNodeQueue *qp,
+                 int S /* socket fd */)
+{
+     pthread_rwlock_wrlock(&qp->q_lock);
+
+     ComputeNodeItem *np;
+     int ret = -1;
+
+     for (np = qp->q_head; np != NULL; np = np->n_next)
+     {
+          if ( np->sfd == S )
+          {
+               np->node.status = NODE_S_STOP;
+               ret = db_update_node(db, np);
+               /* No need to care the return value */
+               if (np == qp->q_head) {
+                    qp->q_head = np->n_next;
+                    if (qp->q_tail == np)
+                         qp->q_tail = NULL;
+               } else if (np == qp->q_tail) {
+                    qp->q_tail = np->n_prev;
+                    if (qp->q_head == np)
+                         qp->q_head = NULL;
+               } else {
+                    np->n_prev->n_next = np->n_next;
+                    np->n_next->n_prev = np->n_prev;
+               }
+               // TODO: should thread safe
+               free(np); /* Import */
                break;
           }
      }
 
-     if (node_exist)
-     {
-          memcpy( np->n_info, nitem->n_info,
-                  sizeof(ComputeNodeInfo) );
-          free(nitem);
-          // TODO: np->n_info->active_flag !
-          if (np->n_info->active_flag)
-          {
-               // TODO: update the whole info
-               qp->q_pflag = 1;
-          }
-     } else {
-          if (nitem->n_id)
-               nitem->n_id = 0;
-          /* Append to queue */
-          nitem->n_next = NULL;
-          nitem->n_prev = qp->q_tail;
-          if (qp->q_tail != NULL)
-               qp->q_tail->n_next = nitem;
-          else
-               qp->q_head = nitem;
-          qp->q_tail = nitem;
-
-          qp->q_pflag = 1;
-     }
-
      pthread_rwlock_unlock(&qp->q_lock);
-     return err;
+     return ret;
 }
+
 
 
 /* Find node to run domain */
@@ -300,17 +300,39 @@ find_node (ComputeNodeQueue *qp)
 
      for (; np != NULL; np = np->n_next)
      {
-          if (np->n_info->status != NODE_S_RUNNING)
+          if (np->node.status != NODE_S_RUNNING)
                continue;
 
           if (great_node == NULL)
                great_node = np;
-          else if ( np->n_info->free_memory > 
-                    great_node->n_info->free_memory )
+          else if ( np->node.free_memory > 
+                    great_node->node.free_memory )
                great_node = np;
      }
 
      pthread_rwlock_unlock(&qp->q_lock);
 
      return great_node;
+}
+
+
+int get_node_id_by_sfd(ComputeNodeQueue *qp, int sfd)
+{
+     int id = -1;
+     ComputeNodeItem *np;
+
+     pthread_rwlock_wrlock(&qp->q_lock);
+
+     for (np = qp->q_head; np != NULL; np = np->n_next)
+     {
+          if (np->sfd == sfd)
+          {
+               id = np->id;
+               break;
+          }
+     }
+
+     pthread_rwlock_unlock(&qp->q_lock);
+
+     return id;
 }

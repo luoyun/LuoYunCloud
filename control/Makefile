@@ -9,7 +9,7 @@ INCLUDES := -I $(SC_SRC_DIR) -I$(shell pg_config --includedir)
 RM = /bin/rm -f
 
 # FILE_BN : file basename
-FILE_BN = server postgres job_manager node_manager handler
+FILE_BN = lyclc postgres job_manager node_manager handler options instance_manager
 OBJ = $(addsuffix .o, $(FILE_BN))
 
 
@@ -29,13 +29,13 @@ all : build
 
 
 build : $(OBJ)
-	$(CC) $(LDFLAGS) -o control_server server.o \
+	$(CC) $(LDFLAGS) -o lyclc lyclc.o \
 ../util/misc.o ../util/luoyun.o postgres.o job_manager.o \
-node_manager.o handler.o
+node_manager.o handler.o options.o instance_manager.o
 
 
 test : build
 
 
 clean :
-	@$(RM) *.o control_server cscope.out *.log
+	@$(RM) *.o lyclc cscope.out *.log

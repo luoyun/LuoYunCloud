@@ -10,14 +10,8 @@
 #include "util/download.h"
 
 
-typedef struct DomainControlHandler_t {
-     LyComputeServerConfig *sc;
-     int action;
-     DomainInfo *dip;
-} DomainControlHandler;
-
-
-int hl_control_domain ( LyComputeServerConfig *sc,
-                        LySockRequestHandler *RH );
+int hl_domain_control(CpConfig *C,
+                      int S, /* socket */
+                      int datalen /* request data length */);
 
 #endif /* __LUOYUN_INCLUDE_compute_handler_H */

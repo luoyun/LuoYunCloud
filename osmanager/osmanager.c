@@ -10,24 +10,26 @@
 #include <arpa/inet.h>
 #include <unistd.h> /* gethostname */
 #include <netdb.h> /* struct hostent */
-
+#include <sys/epoll.h>
 #include <pthread.h>
 
 
 #include "util/luoyun.h"
 #include "util/misc.h"
 #include "util/lyerrno.h"
-#include "compute/domain.h"
-#include "compute/node.h"
-#include "compute/handler.h"
+#include "osmanager/osmanager.h"
+
+#define MAX_EVENTS 10
 
 
-#include "compute/server.h"
+/* global queue */
+LyOsManagerConfig *g_sc = NULL;
+
 
 /* Parse the config file of compute server */
 int
-lyu_compute_server_config ( const char *file,
-                            LyComputeServerConfig *sc )
+__parse_config ( const char *file,
+                       LyOsManagerConfig *sc )
 {
      FILE *fp;
      char line[LINE_MAX];
@@ -37,7 +39,9 @@ lyu_compute_server_config ( const char *file,
      fp = fopen(file, "r");
      if ( fp == NULL )
      {
-          logprintfl(LYERROR, _("Can not open config file: %s\n"), file);
+          logprintfl(LYERROR,
+                     _("Can not open config file: %s\n"),
+                     file);
           return FILE_OPEN_ERROR;
      }
 
@@ -54,20 +58,17 @@ lyu_compute_server_config ( const char *file,
           else
                vstr++;
 
-          if ( (kstr = strstr(line, "HOST_IP")) != NULL )
-               strcpy(sc->host_ip, vstr);
-
-          else if ( (kstr = strstr(line, "HOST_PORT")) != NULL )
-               sc->host_port = atoi(vstr);
-
-          else if ( (kstr = strstr(line, "CONTROL_SERVER_IP")) != NULL )
+          if ( (kstr = strstr(line, "CONTROL_SERVER_IP")) != NULL )
                strcpy(sc->cts_ip, vstr);
 
           else if ( (kstr = strstr(line, "CONTROL_SERVER_PORT")) != NULL )
                sc->cts_port = atoi(vstr);
 
-          else if ( (kstr = strstr(line, "ROOT_PATH")) != NULL )
-               strcpy(sc->root_path, vstr);
+          else if ( (kstr = strstr(line, "DOMAIN_ID")) != NULL )
+               sc->domain_id = atoi(vstr);
+
+          else if ( (kstr = strstr(line, "NODE_ID")) != NULL )
+               sc->node_id = atoi(vstr);
 
           else
                logprintfl(LYERROR, _("Not support grammar: %s\n"), line);
@@ -77,49 +78,53 @@ lyu_compute_server_config ( const char *file,
      return 0;
 }
 
+
+
+
 int
-lyu_print_compute_server_config ( LyComputeServerConfig *sc )
+__print_config ( LyOsManagerConfig *sc )
 {
      logsimple(
-          "LyComputeServerConfig = {\n"
+          "LyOsManagerConfig = {\n"
           "  host_ip = %s\n"
           "  host_port = %d\n"
           "  cts_ip = %s\n"
           "  cts_port = %d\n"
-          "  root_path = %s\n"
-          "  conn = %d\n"
-          "  node = ...\n"
+          "  domain_id = %d\n"
+          "  node_id = %d\n"
           "}\n",
           sc->host_ip, sc->host_port,
           sc->cts_ip, sc->cts_port,
-          sc->root_path, sc->conn);
+          sc->domain_id, sc->node_id);
 
      return 0;
 }
 
-/* global queue */
-LyComputeServerConfig *g_sc = NULL;
 
 
-int update_compute_node_info (LyComputeServerConfig *sc)
+int update_os_info (LyOsManagerConfig *sc)
 {
      int sk, err;
 
      sk = connect_to_host(sc->cts_ip, sc->cts_port);
      if ( sk <= 0 ) return -1;
 
+     // TODO: would be change to VosInfo !!!
+     DomainInfo di;
+     di.status = DOMAIN_S_RUNNING;
+     di.id = sc->domain_id;
+     di.node_id = sc->node_id;
+     strcpy(di.ip, sc->host_ip);
+
      LySockRequest request;
-     request.from = LST_COMPUTE_S;
+     request.from = LST_VOS_S;
      request.to = LST_CONTROL_S;
      request.type = 0;
-     request.action = LA_CP_UPDATE_STATUS;
-     request.datalen = sizeof(ComputeNodeInfo);
-
-     //logsimple("N = { ip = %s, port = %d }\n",
-     //          sc->node->ip, sc->node->port);
+     request.action = LA_DOMAIN_STATUS;
+     request.datalen = sizeof(DomainInfo);
 
      err = send(sk, &request, sizeof(LySockRequest), 0);
-     err += send(sk, sc->node, sizeof(ComputeNodeInfo), 0);
+     err += send(sk, &di, sizeof(DomainInfo), 0);
 
      if ( -1 == err )
      {
@@ -138,128 +143,157 @@ int update_compute_node_info (LyComputeServerConfig *sc)
 void * __update_status_manager (void *arg)
 {
      logprintfl(LYDEBUG, "Update status manager started.\n");
-     LyComputeServerConfig *sc;
-     sc = (LyComputeServerConfig *)arg;
+
+     LyOsManagerConfig *sc;
+     sc = (LyOsManagerConfig *)arg;
+
      int timeout = 0;
      for(;;)
      {
           if ( !timeout )
           {
-               logprintfl(LYDEBUG, "COMPUTE NODE: update status\n");
-               node_dynamic_status(sc);
-               update_compute_node_info(sc);
+               logprintfl(LYDEBUG, "OsManager: update status\n");
+               update_os_info(sc);
                timeout = 6;
           } else {
                sleep(1);
                timeout--;
           }
      }
+
      //pthread_exit((void *)0);
 }
 
 
-void *__request_handler (void *arg)
+static int __register_instance(OSMConfig *C, int efd)
 {
-     LySockRequestHandler *RH;
-     RH = (LySockRequestHandler *)arg;
+     loginfo(_("START register instance.\n"));
 
-     switch (RH->request->action) {
+     int sfd = 0, ret = 0;
+     int retry = 0;
 
-     case LA_DOMAIN_RUN:
-     case LA_DOMAIN_STOP:
-     case LA_DOMAIN_SUSPEND:
-     case LA_DOMAIN_SAVE:
-     case LA_DOMAIN_REBOOT:
-          hl_control_domain(g_sc, RH);
-          break;
-                    
-     default:
-          logprintfl(LYERROR, "Unknown request action: %d\n",
-                     RH->request->action);
+     LyRequest header;
+     header.type = RQTYPE_INSTANCE_REGISTER;
+     header.from = RQTARGET_INSTANCE;
+     header.length = sizeof(DomainInfo);
+
+     // TODO: would be change to VosInfo !!!
+     DomainInfo di;
+     di.status = DOMAIN_S_RUNNING;
+     di.id = C->domain_id;
+     strcpy(di.ip, C->host_ip);
+     //di.port = C->host_port;
+
+     while(retry++ < REGISTER_RETRY_NUMBER)
+     {
+          loginfo(_("Sleep %d seconds before register.\n"), retry);
+          sleep(retry);
+
+          if (sfd <= 0)
+          {
+               sfd = connect_to_host(C->cts_ip, C->cts_port);
+               if ( sfd <= 0 )
+                    continue;
+          }
+
+          // Send request
+          if (ly_send(sfd, &header, sizeof(LyRequest), 0, SEND_TIMEOUT))
+               continue;
+
+          // Send request data
+          if (ly_send(sfd, &di, sizeof(DomainInfo), 0, SEND_TIMEOUT))
+               continue;
+
+          // Get respond
+          LyRespond respond;
+          if (ly_recv(sfd, &respond, sizeof(LyRespond), 0, RECV_TIMEOUT))
+               continue;
+
+          if (respond.status != RESPOND_STATUS_OK)
+          {
+               logerror(_("Register respond.status = %d\n"), respond.status);
+               break;
+          }
+
+          struct epoll_event ev;
+          ev.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
+          ev.data.fd = sfd;
+          ret = epoll_ctl(efd, EPOLL_CTL_ADD, sfd, &ev);
+          if ( ret < 0)
+          {
+               logerror("Add keep alive to epoll error.\n");
+               continue;
+          } else {
+               loginfo("Add keep alive to epoll success.\n");
+               ret = 0;
+               break;
+          }
+
      }
 
-
-     close(RH->sk);
-     free(RH->request);
-     free(RH);
-
-     pthread_exit((void *)0);
+     return ret;
 }
+
 
 
 int main (int argc, char *argv[])
 {
-
-#if 0
      if ( argc < 3 )
      {
           printf("Usage: %s IP PORT\n", argv[0]);
           return -1;
      }
-#endif
+
      // TODO: already_running();
 
 
      /* Parse configure */
-     g_sc = malloc( sizeof(LyComputeServerConfig) );
+     g_sc = malloc( sizeof(LyOsManagerConfig) );
      if (g_sc == NULL)
      {
-          logprintfl(LYERROR, "g_sc malloc error.\n");
+          logprintfl(LYERROR, "%s: g_sc malloc error.\n",
+                     __func__);
           return -2;
      }
-     *g_sc->host_ip = '\0';
-     g_sc->host_port = 0;
      *g_sc->cts_ip = '\0';
      g_sc->cts_port = 0;
-     *g_sc->root_path = '\0';
-     g_sc->conn = NULL;
-     g_sc->node = NULL;
-     const char *c_file = "/etc/LuoYun/compute_server.conf";
-     lyu_compute_server_config( c_file, g_sc );
+     strcpy(g_sc->host_ip, argv[1]);
+     g_sc->host_port = atoi(argv[2]);
 
-     if ( g_sc->host_ip == NULL ||
-          g_sc->host_port == 0 )
+     const char *c_file = "/LuoYun/LuoYun.conf";
+     __parse_config( c_file, g_sc );
+
+     /* Daemonize the progress */
+     lyu_daemonize("/tmp/osmanager.log", LYDEBUG);
+
+
+
+     int efd;
+     efd = epoll_create(MAX_EVENTS);
+     if (efd == -1)
      {
-          logprintfl(LYDEBUG, "compute_config file error.\n");
-          return -3;
+          perror("epoll_create");
+          return -1;
      }
+#if 0
+     struct epoll_event ev, events[MAX_EVENTS];
+#endif
+     /* Register instance and keep alive */
+     __register_instance(g_sc, efd);
 
-     if ( *(g_sc->root_path) == '\0' )
-          sprintf(g_sc->root_path, "/opt/LuoYun_Node/");
 
-     libvirtd_connect(g_sc);
+     __print_config(g_sc);
 
-     init_node_info(g_sc);
-     if (g_sc->node == NULL)
-          return -4;
-
-     // Now, node is starting
-     g_sc->node->status = NODE_S_RUNNING;
-
-     lyu_print_compute_server_config(g_sc);
-
-     // Fix Me: ip and port used by both g_sc and g_sc->node
-     strcpy(g_sc->node->ip, g_sc->host_ip);
-     g_sc->node->port = g_sc->host_port;
-     print_node_info(g_sc->node);
-
-     /* TODO: Test control server is alive ? */
-
+#if 0
      /* Run __update_status_manager thread */
      pthread_t update_manager_tid;
      pthread_create(&update_manager_tid, NULL, __update_status_manager, g_sc);
-
-
-     /* Daemonize the progress */
-     //lyu_daemonize("/tmp/control.log");
-
+#endif
 
      /* Create a socket and listen on it */
      // TODO: ugly listen on socket.
-     char service[30];
-     sprintf(service, "%d", g_sc->host_port);
      int sfd;
-     sfd = create_socket(g_sc->host_ip, service);
+     sfd = create_socket(argv[1], argv[2]);
 
 
      int nsfd; /* new socket connect */
@@ -270,7 +304,7 @@ int main (int argc, char *argv[])
 
      LySockRequest *request;
      LySockRequestHandler *RH;
-     pthread_t handler_tid;
+     //pthread_t handler_tid;
      int recvlen;
 
      for (;;)
@@ -326,8 +360,9 @@ int main (int argc, char *argv[])
           RH->request = request;
           RH->sk = nsfd;
 
-          pthread_create(&handler_tid, NULL,
-                         __request_handler, RH);
+          //pthread_create(&handler_tid, NULL,
+          //               __request_handler, RH);
+          close(nsfd);
      }
 
      close(sfd);

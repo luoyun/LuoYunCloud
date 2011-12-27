@@ -1,6 +1,10 @@
 #ifndef __LUOYUN_INCLUDE_osmanager_server_H
 #define __LUOYUN_INCLUDE_osmanager_server_H
 
+
+#define REGISTER_RETRY_NUMBER 100
+
+
 typedef struct LyOsManagerConfig_t {
      char cts_ip[MAX_IP_LEN]; /* control server ip */
      int cts_port;            /* control server port */
@@ -10,6 +14,9 @@ typedef struct LyOsManagerConfig_t {
      int host_port;
      char host_mac[MAX_MAC_LEN];
 } LyOsManagerConfig;
+
+
+typedef LyOsManagerConfig OSMConfig;
 
 
 

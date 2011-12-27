@@ -1,4 +1,5 @@
 # LYWEB configure
+HOST_URL = 'http://corei5'
 IMAGE_ROOT_URL = 'http://corei5/images/'
 LY_IMAGE_PATH = '/opt/LuoYun/images/'
 LY_IMAGE_UPLOAD_PATH = '/opt/LuoYun/upload/'
@@ -97,5 +98,6 @@ LST_COMPUTE_S = 3
 
 # LuoYun socket action
 LA_WEB_NEW_JOB = 11
+RQTYPE_NEW_JOB = 10
 
 

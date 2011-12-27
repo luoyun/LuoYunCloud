@@ -1,11 +1,5 @@
-*.pyc
 *.o
 *~
 *#
-*.bak
-*.db
 cscope.out
-*.log
-django
-Django*
 osmanager

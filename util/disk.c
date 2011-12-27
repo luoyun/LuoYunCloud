@@ -121,23 +121,21 @@ xread(int fd, void *buf, size_t count)
 }
 #endif
 
-int
-dk_set_boot_partition_offset (const char *disk_device,
-                              unsigned long long *offset)
+unsigned long long dk_get_boot_offset(const char *disk_device)
 {
      int fd;
-     char MBRbuffer[1024];
 
      if ((fd = open(disk_device, O_RDONLY)) < 0) {
-          logprintfl(LYERROR, "You will not be able to read "
-                     "the partition table from %s.\n",
-                     disk_device);
+          logerror(_("Read partition table from %s failed.\n"), disk_device);
           return -1;
      }
 
+     char MBRbuffer[1024];
+
      if (512 != read(fd, MBRbuffer, 512)) {
-          logprintfl(LYERROR, "unable read from %s\n",
-                     disk_device);
+          logerror(_("Read data from %s failed.\n"), disk_device);
+          close(fd);
+          return -1;
      }
 
      close(fd);
@@ -150,15 +148,16 @@ dk_set_boot_partition_offset (const char *disk_device,
 
           if (p->boot_ind == 0x80)
           {
-               *offset = get_start_sect(p) * 512;
-               return 0;
+               return get_start_sect(p) * 512;
           }
 
+#if 0
+          /* Found the error boot flag, Just for Linux */
           if (p->boot_ind != 0 && p->boot_ind != 0x80)
           {
-               logprintfl(LYDEBUG, "ERR boot flag: %x\n",
-                    p->boot_ind);
+               logerror(_("ERR boot flag: %x\n"), p->boot_ind);
           }
+#endif
 
      }
 

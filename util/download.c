@@ -16,11 +16,11 @@ int ly_dl (const char *url, const char *file)
 {
      if ((fp = fopen (file, "w")) == NULL)
      {
-          logprintfl(LYERROR, "can not open file: %s\n", file);
+          logerror("Can not open file: %s\n", file);
           return -1;
      }
 
-     logprintfl(LYDEBUG, "download \"%s\" to \"%s\".\n", url, file);
+     logdebug("Download \"%s\" => \"%s\"\n", url, file);
 
      CURL *curl;
 

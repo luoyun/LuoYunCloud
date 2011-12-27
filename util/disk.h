@@ -48,9 +48,7 @@ struct pte {
 } ptes[MAXIMUM_PARTS];
 
 
-int dk_set_boot_partition_offset (
-     const char *disk_device,
-     unsigned long long *offset );
+unsigned long long dk_get_boot_offset(const char *disk_device);
 
 int dk_read_dpt(const char *disk_device);
 

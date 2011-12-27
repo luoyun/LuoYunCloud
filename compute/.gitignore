@@ -4,8 +4,7 @@
 *#
 *.bak
 *.db
-compute_server
-control_server
+lynode
 cscope.out
 *.log
 django

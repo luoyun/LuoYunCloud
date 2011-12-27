@@ -17,12 +17,13 @@ from lyweb.LuoYunConf import LY_CLC_DAEMON as DS # Daemon Server
 from lyweb.LuoYunConf import LYWEB_DOMAIN_LIFECYCLE_FLAG, LYWEB_DOMAIN_CONTROL_FLAG
 from lyweb.LuoYunConf import LYCMD_TYPE
 
+import lyweb.LuoYunConf as lyc
 from lyweb.LuoYunConf import LYWEB_JOB_TARGET_TYPE
 from lyweb.LuoYunConf import LYWEB_JOB_ACTION
 from lyweb.LuoYunConf import LYWEB_JOB_STATUS
 from lyweb.app.job.util import new_job
 
-from lyweb.LuoYunConf import LST_WEB_S, LST_CONTROL_S, LA_WEB_NEW_JOB
+from lyweb.LuoYunConf import LST_WEB_S, LST_CONTROL_S, RQTYPE_NEW_JOB
 
 import struct
 
@@ -65,6 +66,24 @@ def get_domain_conf(request, id):
 
     return { 'domain': domain }
 
+# The config of domain
+@render_to('domain/config.txt')
+def get_domain_config(request, id):
+
+    domain = Domain.objects.get(pk=id)
+
+    return { 'domain': domain, 'HOST_URL': lyc.HOST_URL }
+
+# The config of osmanager
+@render_to('domain/LuoYun.conf')
+def osmanager_config(request, id):
+
+    domain = Domain.objects.get(pk=id)
+
+    return { 'domain': domain,
+             'CONTROL_SERVER_IP': lyc.LY_CLC_DAEMON_HOST,
+             'CONTROL_SERVER_PORT': lyc.LY_CLC_DAEMON_PORT }
+
 
 @login_required
 def domain_control(request, id, control):
@@ -86,8 +105,8 @@ def domain_control(request, id, control):
     target_type = LYWEB_JOB_TARGET_TYPE.get('domain', 0)
     action = LYWEB_JOB_ACTION.get(control, 0)
     job = new_job(request.user, target_type, id, action)
-    sockhead = struct.pack('iiiiii', LST_WEB_S, LST_CONTROL_S,
-                           0, LA_WEB_NEW_JOB, 4, job.id)
+    sockhead = struct.pack('iiii', LST_WEB_S, RQTYPE_NEW_JOB, 4, job.id)
+    ##sockhead = struct.pack('iiii', LST_WEB_S, RQTYPE_NEW_JOB, 4, 1)
     try:
         DS.sendall(sockhead)
     except:

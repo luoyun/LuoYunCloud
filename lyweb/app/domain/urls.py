@@ -8,6 +8,8 @@ urlpatterns = patterns('lyweb.app.domain.views',
     url(r'^(?P<id>\d+)/stop/$', 'domain_control', {'control': 'stop'}, name='stop'),
     url(r'^(?P<id>\d+)/reboot/$', 'domain_control', {'control': 'reboot'}, name='reboot'),
     url(r'^(?P<id>\d+)/conf/$', 'get_domain_conf', name='conf'),
+    url(r'^(?P<id>\d+)/config/$', 'get_domain_config', name='config'),
+    url(r'^(?P<id>\d+)/osmanager_config/$', 'osmanager_config', name='osmanager_config'),
 
     url(r'^domain_list/ajax/$', 'domain_list', name='domain_list_ajax'),
 

@@ -17,20 +17,20 @@ void __customErrorFunc(void *userdata, virErrorPtr err)
 
 
 virConnectPtr
-libvirtd_connect (LyComputeServerConfig *sc)
+libvirtd_connect (CpConfig *c)
 {
 
-     if (sc->conn != NULL)
+     if (c->conn != NULL)
      {
           logprintfl(LYERROR, "conneted already.\n");
-          return sc->conn;
+          return c->conn;
      }
 
      virSetErrorFunc(NULL, __customErrorFunc);
 
      char *URI = "qemu:///system";
-     sc->conn = virConnectOpen(URI);
-     if (NULL == sc->conn)
+     c->conn = virConnectOpen(URI);
+     if (NULL == c->conn)
      {
           logprintfl(LYERROR, "Connet to %s error.\n", URI);
           return NULL;
@@ -40,16 +40,16 @@ libvirtd_connect (LyComputeServerConfig *sc)
           logprintfl(LYINFO, "Connect to %s success!\n", URI);
      }
 
-     return sc->conn;
+     return c->conn;
 }
 
 
 
 int
-set_hypervisor (LyComputeServerConfig *sc)
+set_hypervisor (CpConfig *c)
 {
      const char *type;
-     type = virConnectGetType(sc->conn);
+     type = virConnectGetType(c->conn);
      if (NULL == type)
      {
           logprintfl(LYERROR, "virConnectGetType() error.\n");
@@ -57,37 +57,9 @@ set_hypervisor (LyComputeServerConfig *sc)
      }
 
      if ( !strcmp("QEMU", type) )
-          sc->node->hypervisor = HYPERVISOR_IS_KVM;
+          c->node->hypervisor = HYPERVISOR_IS_KVM;
 
      //free(type);
-
-     return 0;
-}
-
-int
-set_hypervisor_version (LyComputeServerConfig *sc)
-{
-
-     if ( 0 != virConnectGetVersion(
-               sc->conn, &(sc->node->hypervisor_version)) )
-     {
-          logprintfl(LYERROR, "virConnectGetVersion err\n");
-          return -1;
-     }
-
-     return 0;
-}
-
-
-int
-set_libversion (LyComputeServerConfig *sc)
-{
-     if ( 0 != virConnectGetLibVersion(
-               sc->conn, &(sc->node->libversion)) )
-     {
-          logprintfl(LYERROR, "virConnectGetLibVersion err\n");
-          return -1;
-     }
 
      return 0;
 }
@@ -109,11 +81,11 @@ static int set_uri(Node *node)
 
 
 int
-set_hostname (LyComputeServerConfig *sc)
+set_hostname (CpConfig *c)
 {
-     strcpy(sc->node->hostname,
-            virConnectGetHostname(sc->conn));
-     if (NULL == sc->node->hostname)
+     strcpy(c->node->hostname,
+            virConnectGetHostname(c->conn));
+     if (NULL == c->node->hostname)
      {
           logprintfl(LYERROR, "virConnectGetHostname err\n");
           return -1;
@@ -124,11 +96,11 @@ set_hostname (LyComputeServerConfig *sc)
 
 
 int
-set_max_cpus (LyComputeServerConfig *sc)
+set_max_cpus (CpConfig *c)
 {
-     sc->node->max_cpus = 
-          virConnectGetMaxVcpus(sc->conn, NULL);
-     if (-1 == sc->node->max_cpus)
+     c->node->max_cpus = 
+          virConnectGetMaxVcpus(c->conn, NULL);
+     if (-1 == c->node->max_cpus)
      {
           logprintfl(LYERROR, "virConnectGetMaxVcpus err\n");
           return -1;
@@ -139,7 +111,7 @@ set_max_cpus (LyComputeServerConfig *sc)
 
 
 int
-set_node_mixture (LyComputeServerConfig *sc)
+set_node_mixture (CpConfig *c)
 {
      virNodeInfo *nf;
      nf = malloc(sizeof(virNodeInfo));
@@ -150,16 +122,16 @@ set_node_mixture (LyComputeServerConfig *sc)
      }
 
      /* success = 0, failed = -1 */
-     if ( 0 != virNodeGetInfo(sc->conn, nf) )
+     if ( 0 != virNodeGetInfo(c->conn, nf) )
      {
           logprintfl(LYERROR, "virNodeGetInfo err\n");
           return -2;
      }
 
-     strcpy(sc->node->cpu_model, nf->model);
-     sc->node->max_memory = nf->memory;
-     sc->node->max_cpus = nf->cpus;
-     sc->node->cpu_mhz = nf->mhz;
+     strcpy(c->node->cpu_model, nf->model);
+     c->node->max_memory = nf->memory;
+     c->node->max_cpus = nf->cpus;
+     c->node->cpu_mhz = nf->mhz;
      //sc->node->numaNodes = nf->nodes;
      //node->sockets = nf->sockets;
      //node->coresPerSocket = nf->cores;
@@ -170,10 +142,10 @@ set_node_mixture (LyComputeServerConfig *sc)
 }
 
 int
-set_free_memory (LyComputeServerConfig *sc)
+set_free_memory (CpConfig *c)
 {
      //TODO: used virNodeGetMemoryStats
-     sc->node->free_memory = virNodeGetFreeMemory(sc->conn);
+     c->node->free_memory = virNodeGetFreeMemory(c->conn);
      return 0;
 }
 

@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
      //dk_print_dpt(argv[1]);
      dk_read_dpt(argv[1]);
      unsigned long long offset;
-     dk_set_boot_partition_offset(argv[1], &offset);
+     offset = dk_get_boot_offset(argv[1]);
      printf("==> boot partition offset: %lld\n", offset);
 
 /*

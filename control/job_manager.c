@@ -5,6 +5,53 @@
 #include "control/postgres.h"
 
 
+static int __get_domain_action(int job_action)
+{
+     switch (job_action) {
+
+     case JOB_ACTION_RUN:
+          return LA_DOMAIN_RUN;
+
+     case JOB_ACTION_STOP:
+          return LA_DOMAIN_STOP;
+
+     case JOB_ACTION_SUSPEND:
+          return LA_DOMAIN_SUSPEND;
+
+     case JOB_ACTION_SAVE:
+          return LA_DOMAIN_SAVE;
+
+     case JOB_ACTION_REBOOT:
+          return LA_DOMAIN_REBOOT;
+
+     default:
+          logerror(_("%s: unknown job action!"), __func__);
+          return -1;
+     }
+}
+
+
+static int __get_domain_status(int domain_action)
+{
+     switch (domain_action) {
+
+     case LA_DOMAIN_RUN:
+          return DOMAIN_S_RUNNING;
+
+     case LA_DOMAIN_STOP:
+          return DOMAIN_S_STOP;
+
+     case LA_DOMAIN_SUSPEND:
+          return DOMAIN_S_SUSPEND;
+
+     case LA_DOMAIN_SAVE:
+     case LA_DOMAIN_REBOOT:
+     default:
+          return DOMAIN_S_UNKNOWN;
+     }
+}
+
+
 static void
 __job_remove (JobQueue *qp, Job *jp)
 {
@@ -41,8 +88,7 @@ __job_is_running (LyDBConn *db, JobQueue *qp, Job *jp)
 static void
 __job_is_timeout (LyDBConn *db, JobQueue *qp, Job *jp)
 {
-     logdebug("%s:%d:%s job %d is timeout\n",
-              __FILE__, __LINE__, __func__, jp->j_id);
+     logdebug(_("Job %d is timeout.\n"), jp->j_id);
 
      //pthread_rwlock_wrlock(&qp->q_lock);
 
@@ -59,8 +105,7 @@ __job_is_timeout (LyDBConn *db, JobQueue *qp, Job *jp)
 static void
 __job_is_failed (LyDBConn *db, JobQueue *qp, Job *jp)
 {
-     logdebug("%s:%d:%s job %d is failed\n",
-              __FILE__, __LINE__, __func__, jp->j_id);
+     logdebug(_("Job %d is failed.\n"), jp->j_id);
 
      //pthread_rwlock_wrlock(&qp->q_lock);
      
@@ -78,8 +123,7 @@ __job_is_failed (LyDBConn *db, JobQueue *qp, Job *jp)
 static void
 __job_is_unknown (LyDBConn *db, JobQueue *qp, Job *jp)
 {
-     logdebug("%s:%d:%s job %d is unknown\n",
-              __FILE__, __LINE__, __func__, jp->j_id);
+     logdebug(_("Job %d is unknown.\n"), jp->j_id);
 
      //pthread_rwlock_wrlock(&qp->q_lock);
      
@@ -98,6 +142,7 @@ __job_is_unknown (LyDBConn *db, JobQueue *qp, Job *jp)
 static void
 __job_is_finished (LyDBConn *db, JobQueue *qp, Job *jp)
 {
+     logdebug(_("Job %d is finished.\n"), jp->j_id);
      //pthread_rwlock_wrlock(&qp->q_lock);
      
      time(&jp->j_ended);
@@ -248,41 +293,30 @@ Job *create_job(int sk, LySockHead *sh)
 }
 
 
-int job_queue_print(JobQueue *qp)
+void print_job_queue(JobQueue *qp)
 {
-     logdebug("START %s:%d:%s\n",
-              __FILE__, __LINE__, __func__);
-
      Job *jp;
 
      if (qp == NULL)
      {
           logprintfl(LYDEBUG, "queue is empty.\n");
-          return 0;
+          return;
      }
 
      if (pthread_rwlock_rdlock(&qp->q_lock) != 0)
      {
           logprintfl(LYERROR, "can not lock queue.\n");
-          return -1;
+          return;
      }
 
+     logsimple("Current Job Queue:\n");
      for (jp = qp->q_head; jp != NULL; jp = jp->j_next)
      {
-          logsimple("{"
-                    "j_id = %d, "
-                    "j_status = %d, "
-                    "j_created = %ld, "
-                    "j_started = %ld"
-                    "}\n", 
-                    jp->j_id,
-                    jp->j_status,
-                    jp->j_created,
-                    jp->j_started);
+          logsimple("  - Job %d : status = %d, started = %ld\n", jp->j_id, jp->j_status, jp->j_started);
      }
 
      pthread_rwlock_unlock(&qp->q_lock);
-     return 0;
+     return;
 }
 
 
@@ -290,21 +324,19 @@ int job_queue_print(JobQueue *qp)
 int
 get_job_queue (LyDBConn *db, JobQueue *qp)
 {
-     logdebug("START %s:%d:%s\n",
-              __FILE__, __LINE__, __func__);
+     logdebug("START %s\n", __func__);
 
      int err;
 
      pthread_rwlock_wrlock(&qp->q_lock);
      qp->q_gflag = 0;
-     err = db_get_jobs(db, qp);
+     err = db_get_jobs2(db, qp);
      if (err)
      {
-          logerror("%s:%d:%s get job queue from DB error\n",
-                   __FILE__, __LINE__, __func__);
+          logerror("%s: get job queue error\n", __func__);
      }
-     pthread_rwlock_unlock(&qp->q_lock);
 
+     pthread_rwlock_unlock(&qp->q_lock);
      return err;
 }
 
@@ -334,23 +366,20 @@ put_job_queue (LyDBConn *db, JobQueue *qp)
 }
 
 
-/* if the status is JOB_S_RUNNING and time is out, 
-   then change status to JOB_S_TIMEOUT */
-int
-job_dispatch ( LyDBConn *db,
-               ComputeNodeQueue *nqp,
-               JobQueue *jqp )
+
+/* job_dispatch: Do with job queue at once
+ */
+int job_dispatch ( LyDBConn *db,
+                   ComputeNodeQueue *nqp,
+                   JobQueue *jqp )
 {
-     //logsimple("START %s:%d:%s\n",
-     //          __FILE__, __LINE__, __func__);
+     logdebug(_("Start %s.\n"), __func__);
 
      // TODO: blank queue
      if (jqp->q_head == NULL)
           return 0;
 
-     int timeout = 1200;
-     int interval;
-     int update_interval = 6;
+     int timeout;
      time_t now;
      Job *jp;
 
@@ -370,14 +399,16 @@ job_dispatch ( LyDBConn *db,
                break;
 
           case JOB_S_RUNNING:
-               time(&now);
-               interval = now - jp->j_started;
+               //time(&now);
+               if (jp->j_target_type == JOB_TARGET_DOMAIN)
+                    timeout = DOMAIN_JOB_TIMEOUT;
+               else if (jp->j_target_type == JOB_TARGET_NODE)
+                    timeout = NODE_JOB_TIMEOUT;
+               else
+                    timeout = DEFAULT_JOB_TIMEOUT;
 
-               if (interval > timeout)
+               if ((now - jp->j_started) > timeout)
                     __job_is_timeout(db, jqp, jp);
-               else if (interval > update_interval)
-                    __job_is_running(db, jqp, jp);
-
                break;
 
           case JOB_S_FINISHED:
@@ -386,6 +417,10 @@ job_dispatch ( LyDBConn *db,
           case JOB_S_PENDING:
           case JOB_S_TIMEOUT:
                __job_is_finished(db, jqp, jp);
+               break;
+
+          case JOB_S_QUERYING:
+               // TODO: should to querying
                break;
 
           default:
@@ -411,6 +446,7 @@ job_run ( LyDBConn *db,
           break;
      case JOB_TARGET_DOMAIN:
           domain_job_run(db, nqp, jqp, jp);
+          //logdebug("Run domain job, but have not completed yet.\n");
           break;
 
      default:
@@ -421,13 +457,19 @@ job_run ( LyDBConn *db,
 }
 
 
-int
-domain_job_run ( LyDBConn *db,
-                 ComputeNodeQueue *nqp,
-                 JobQueue *jqp, Job *jp )
+int domain_job_run ( LyDBConn *db,
+                     ComputeNodeQueue *nqp,
+                     JobQueue *jqp, Job *jp )
 {
-     logdebug("%s:%d:%s run job %d\n",
-              __FILE__, __LINE__, __func__, jp->j_id);
+     // Does nodes ready ?
+     if (nqp->q_head == NULL)
+     {
+          logdebug(_("Have and node could run job %d yet.\n"), jp->j_id);
+          return -1;
+     }
+
+     logdebug(_("Starting run job %d\n"), jp->j_id);
+     int ret = -1;
 
      __job_is_running(db, jqp, jp);
 
@@ -442,21 +484,20 @@ domain_job_run ( LyDBConn *db,
 
      ComputeNodeItem *nitem;
      int new_domain = 1;
-     if ( dip->node > 0 )
+     if ( dip->node_id > 0 )
      {
           // does the node of domain is running ?
           if (pthread_rwlock_rdlock(&nqp->q_lock) != 0)
           {
-               logerror("can not lock node queue.\n");
-               free(dip);
-               return -2;
+               logerror(_("Can not lock node queue.\n"));
+               goto clean;
           }
 
           for (nitem = nqp->q_head;
                nitem != NULL;
                nitem = nitem->n_next)
-               if (nitem->n_id == dip->node &&
-                    nitem->n_info->status == NODE_S_RUNNING)
+               if (nitem->id == dip->node_id &&
+                    nitem->node.status == NODE_S_RUNNING)
                {
                     new_domain = 0;
                     break;
@@ -471,98 +512,103 @@ domain_job_run ( LyDBConn *db,
           nitem = find_node(nqp);
           if (nitem == NULL)
           {
+               logerror(_("Can't find a node to run domain %d.\n"), dip->id);
                // TODO: should wait resource! not failed!
-               logerror("can't find node to run domain\n");
                __job_is_failed(db, jqp, jp);
-               free(dip);
-               return -2;
+               goto clean;
           }
      }
 
      // now, nitem is the node.
-     dip->node = nitem->n_id;
+     dip->node_id = nitem->id;
 
      // connect to compute node
-     int sk, err;
-     sk = connect_to_host(nitem->n_info->ip,
-                          nitem->n_info->port);
-     if ( sk <= 0 )
+     int sfd;
+     sfd = connect_to_host(nitem->node.ip, nitem->node.port);
+     if ( sfd <= 0 )
      {
-          logdebug("failed to connect to %s:%d\n",
-                   nitem->n_info->ip, nitem->n_info->port);
-          free(dip);
+          logdebug(_("Connect to %s:%d failed.\n"),
+                   nitem->node.ip, nitem->node.port);
           __job_is_failed(db, jqp, jp);
-          return -1;
+          goto clean;
      }
 
-     LySockRequest request;
-     request.from = LST_CONTROL_S;
-     request.to = LST_COMPUTE_S;
-     request.type = 0;
-     if (jp->j_action == JOB_ACTION_RUN)
-          request.action = LA_DOMAIN_RUN;
-     else if (jp->j_action == JOB_ACTION_STOP)
-          request.action = LA_DOMAIN_STOP;
-     else if (jp->j_action == JOB_ACTION_SUSPEND)
-          request.action = LA_DOMAIN_SUSPEND;
-     else if (jp->j_action == JOB_ACTION_SAVE)
-          request.action = LA_DOMAIN_SAVE;
-     else if (jp->j_action == JOB_ACTION_REBOOT)
-          request.action = LA_DOMAIN_REBOOT;
-     else {
-          logerror("%s: unknown job action!", __func__);
-          close(sk);
-          free(dip);
-          __job_is_failed(db, jqp, jp);
-          return -1;
-     }
-     request.datalen = sizeof(DomainInfo);
+     // TODO: request connect should run in a thread, and
+     // update job status dynamically.
+     LyRequest request;
+     request.type = RQTYPE_DOMAIN_CONTROL;
+     request.from = RQTARGET_CONTROL;
+     request.length = sizeof(DomainControlData);
 
      // send request
-     err = send(sk, &request, sizeof(LySockRequest), 0);
-     err += send(sk, dip, sizeof(DomainInfo), 0);
-     if ( -1 == err )
+     if(ly_send(sfd, &request, sizeof(LyRequest), 0, SEND_TIMEOUT))
      {
-          logerror("%s:%d:%s send msg to %s:%d error\n",
-                   __FILE__, __LINE__, __func__,
-                   nitem->n_info->ip, nitem->n_info->port);
-          close(sk);
-          free(dip);
+          logerror(_("Send domain control request header failed.\n"));
+          close(sfd);
           __job_is_failed(db, jqp, jp);
-          return -2;
+          goto clean;
      }
 
-     // recv the respond
-     LySockRespond respond;
-     int recvlen;
-     recvlen = recv(sk, &respond, sizeof(LySockRespond), 0);
+
+     DomainControlData dcd;
+     dcd.id = jp->j_target_id;
+     // Make sure the action of Domain Control
+     dcd.action = __get_domain_action(jp->j_action);
+     if (dcd.action < 0)
+     {
+          __job_is_failed(db, jqp, jp);
+          goto clean;
+     }
+
+     if (ly_send(sfd, &dcd, sizeof(DomainControlData), 0, SEND_TIMEOUT))
+     {
+          logerror(_("Send domain control request data failed: (%d) != (%d)\n"), ret, sizeof(DomainControlData));
+          close(sfd);
+          __job_is_failed(db, jqp, jp);
+          goto clean;
+     }
+
+
+     // Get respond
+     // TODO: this maybe a loop, for dynamic job status show.
+     LyRespond respond;
+     while(1)
+     {
+          if(ly_recv(sfd, &respond, sizeof(LyRespond), 0, RECV_TIMEOUT))
+          {
+               logerror(_("Get domain control respond error.\n"));
+               close(sfd);
+               __job_is_failed(db, jqp, jp);
+               goto clean;
+          }
+
+          break;
+          // TODO: stop just specify status
+     }
 
      // close connect
-     close(sk);
+     close(sfd);
 
-     if (recvlen != sizeof(LySockRespond))
-     {
-          logerror("%s: read respond err\n", __func__);
-          free(dip);
-          __job_is_failed(db, jqp, jp);
-          return -3;
-     }
 
      // if run job failed, then finished the job
      if (respond.status != 0)
      {
           logdebug("start job %d on node %s:%d is failed, "
                    "respond status is %d\n",
-                   jp->j_id, nitem->n_info->ip,
-                   nitem->n_info->port, respond.status);
+                   jp->j_id, nitem->node.ip,
+                   nitem->node.port, respond.status);
           __job_is_failed(db, jqp, jp);
      } else {
           logdebug("start job %d on node %s:%d is success\n",
-                   jp->j_id, nitem->n_info->ip,
-                   nitem->n_info->port);
-          __job_is_running(db, jqp, jp);
+                   jp->j_id, nitem->node.ip,
+                   nitem->node.port);
+          __job_is_finished(db, jqp, jp);
+          dip->status = __get_domain_status(dcd.action);
+          ret = db_update_domain_status(db, dip);
      }
 
+
+clean:
      free(dip);
-     return respond.status;
+     return ret;
 }

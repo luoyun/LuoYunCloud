@@ -9,7 +9,7 @@ INCLUDES := -I $(SC_SRC_DIR) -I$(shell pg_config --includedir)
 RM = /bin/rm -f
 
 # FILE_BN : file basename
-FILE_BN = server domain node handler
+FILE_BN = lynode domain node handler options
 OBJ = $(addsuffix .o, $(FILE_BN))
 
 
@@ -29,9 +29,9 @@ all : build
 
 
 build : $(OBJ)
-	$(CC) $(LDFLAGS) -o compute_server server.o \
+	$(CC) $(LDFLAGS) -o lynode lynode.o \
 ../util/misc.o ../util/luoyun.o ../util/disk.o \
-domain.o node.o handler.o ../util/download.o
+domain.o node.o handler.o ../util/download.o options.o
 
 
 
@@ -39,4 +39,4 @@ test : build
 
 
 clean :
-	@$(RM) *.o compute_server cscope.out *.log
+	@$(RM) *.o lynode cscope.out *.log

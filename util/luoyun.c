@@ -78,8 +78,14 @@ void lyu_os_runtime_info(void)
 
 
 /* ref APUE2 */
-void lyu_daemonize(const char *log)
+void lyu_daemonize(const char *log, int loglevel)
 {
+     if (loglevel == LYDEBUG)
+          printf(_("Run as daemon, log to %s.\n"), log);
+
+     // TODO: check log file exist
+
+
      pid_t pid;
      struct rlimit rl;
      struct sigaction sa;
@@ -144,7 +150,7 @@ void lyu_daemonize(const char *log)
      fd2 = dup(0);
 #endif
      /* Initialize the log file */
-     logfile(log, LYDEBUG);
+     logfile(log, loglevel);
 }
 
 
@@ -223,6 +229,55 @@ int create_socket(const char *node, const char *service)
      return sfd;
 }
 
+int create_and_bind (char *port)
+{
+     struct addrinfo hints;
+     struct addrinfo *result, *rp;
+     int s, sfd;
+
+     memset (&hints, 0, sizeof (struct addrinfo));
+     hints.ai_family = AF_UNSPEC;     /* Return IPv4 and IPv6 choices */
+     hints.ai_socktype = SOCK_STREAM; /* We want a TCP socket */
+     hints.ai_flags = AI_PASSIVE;     /* All interfaces */
+
+     s = getaddrinfo (NULL, port, &hints, &result);
+     if (s != 0)
+     {
+          logerror("getaddrinfo: %s\n", gai_strerror (s));
+          return -1;
+     }
+
+     for (rp = result; rp != NULL; rp = rp->ai_next)
+     {
+          sfd = socket (rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+          /* Fix me: Enable address reuse, for DEBUG */
+          int on = 1;
+          setsockopt( sfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on) );
+          if (sfd == -1)
+               continue;
+
+          s = bind (sfd, rp->ai_addr, rp->ai_addrlen);
+          if (s == 0)
+          {
+               /* We managed to bind successfully! */
+               break;
+          }
+
+          close (sfd);
+     }
+
+     if (rp == NULL)
+     {
+          perror(_("Bind error"));
+          return -1;
+     }
+
+     freeaddrinfo (result);
+
+     return sfd;
+}
+
+
 
 int
 connect_to_host (char *host, int port)
@@ -246,6 +301,30 @@ connect_to_host (char *host, int port)
 
      return sk;
 }
+
+
+int make_socket_non_blocking(int sfd)
+{
+     int flags, s;
+
+     flags = fcntl (sfd, F_GETFL, 0);
+     if (flags == -1)
+     {
+          perror ("fcntl");
+          return -1;
+     }
+
+     flags |= O_NONBLOCK;
+     s = fcntl (sfd, F_SETFL, flags);
+     if (s == -1)
+     {
+          perror ("fcntl");
+          return -1;
+     }
+
+     return 0;
+}
+
 
 
 int lyu_make_sure_dir_exist (const char *dir)
@@ -343,8 +422,7 @@ int
 lyu_decompress_gz ( const char *srcfile,
                     const char *dstfile )
 {
-     logsimple("START %s:%d:%s\n",
-               __FILE__, __LINE__, __func__);
+     logdebug("START %s:%d\n", __func__, __LINE__);
 
 #define GZ_BUF_SIZE 10240
 
@@ -394,18 +472,82 @@ int str_filter_white_space( char *str )
 int
 lyu_system_call(char *cmd)
 {
-     int ret;
+     logdebug(_("System call \"%s\".\n"), cmd);
 
-     ret = system(cmd);
-
-     if (ret == -1)
+     if (system(cmd))
      {
-          logprintfl(LYERROR, "system call error: %s", cmd);
-          return -3;
-     } else if (ret != 0) {
-          logprintfl(LYERROR, "cmd error: %s", cmd);
-          return -4;
+          logerror(_("Exec system call \"%s\" failed.\n"), cmd);
+          return -1;
      }
 
      return 0;
 }
+
+
+/* If I can, recv buf only once */
+int ly_recv(int sfd, void *buf, size_t length, int flags, int timeout)
+{
+     int ret;
+     int try = 0;
+     int index = 0;
+
+     do {
+
+          ret = recv(sfd, buf + index, length, flags);
+          if (ret == -1)
+          {
+               logdebug("recv try %d times\n", try);
+               sleep(1);
+               try++;
+          } else if (ret == 0) {
+               /* Maybe the client have closed */
+               break;
+          }else if (ret <= length) {
+               index += ret;
+               logdebug("recv [%d/%d]\n", length, index);
+          }
+          
+     } while (try < timeout && index < length );
+
+     //logdebug("try = %d, timeout = %d, index = %d, length = %d\n", try, timeout, index, length);
+
+     if (index == length)
+          return 0;
+     else
+          return -1;
+}
+
+
+/* If I can, send buf only once */
+int ly_send(int sfd, const void *buf, size_t length, int flags, int timeout)
+{
+     int ret;
+     int try = 0;
+     int index = 0;
+     size_t bs = length;
+
+     do {
+          ret = send(sfd, buf + index, bs, flags);
+          if (ret == -1)
+          {
+               logdebug("send try %d times\n", try);
+               sleep(1);
+               try++;
+          } else {
+               index += ret;
+               if (ret == bs)
+                    break;
+
+               bs -= ret;
+               logdebug("send [%d/%d]\n", length, index);
+          }
+     } while (try < timeout && bs > 0);
+
+     //logdebug("try = %d, timeout = %d, index = %d, length = %d\n", try, timeout, index, length);
+     if (index == length)
+          return 0;
+     else
+          return -1;
+}
+
+

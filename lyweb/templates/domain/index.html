@@ -24,7 +24,7 @@
 
       <div class="left">
         <div class="logo">
-          <a href="{% url domain:view d.id %}"><img src="{{ d.image.logo_uri }}"  alt="Image Picture" /></a>
+          <a href="{% url domain:view d.id %}"><img src="/media/img/EVE-icon.png"  alt="Image Picture" /></a>
         </div>
         <div class="status">
           <img src="{{ MEDIA_URL }}themes/icons/DomainStatus/{{ d.status }}.png"  alt="{{ d.get_status_display }}"/>
