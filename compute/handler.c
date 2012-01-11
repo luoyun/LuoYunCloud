@@ -186,7 +186,7 @@ static int __domain_stop (CpConfig *C, int id)
           return -1;
      }
 
-     logerror(_("Stop domain \"%s\"[%d] success.\n"), name, id);
+     loginfo(_("Stop domain \"%s\"[%d] success.\n"), name, id);
 
      return 0;
 }

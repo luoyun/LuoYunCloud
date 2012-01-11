@@ -131,7 +131,7 @@ int db_get_nodes(LyDBConn *db, ComputeNodeQueue *qp)
      int row, rec_count;
 
      char sql[LINE_MAX];
-     sprintf(sql, "SELECT id, ip, port, status from node where status != %d;", NODE_S_STOP);
+     sprintf(sql, "SELECT id, ip, 3261, status from node where status != %d;", NODE_S_STOP);
 
      logdebug("%s: exec SQL = \"%s\"\n", __func__, sql);
 
@@ -204,19 +204,11 @@ int db_update_node(LyDBConn *db, ComputeNodeItem *nitem)
 
      char sql[LINE_MAX];
 
-     time_t now;
-     time(&now);
-
-     sprintf(sql, "UPDATE node SET max_memory = %ld, \
-hostname = '%s', port = %d, arch = %d, status = %d, \
-hypervisor = %d, network_type = %d, max_cpus = %d, \
-cpu_model = '%s', updated = %ld::abstime::timestamp \
-WHERE ip = '%s';",
-             ni.max_memory, ni.hostname,
-             ni.port, ni.arch,
-             ni.status, ni.hypervisor,
-             ni.network_type, ni.max_cpus,
-             ni.cpu_model, now, ni.ip);
+     sprintf(sql, "UPDATE node SET memory = %ld, \
+hostname = '%s', arch = %d, status = %d, cpus = %d, \
+cpu_model = '%s', updated = 'now' WHERE ip = '%s';",
+             ni.max_memory, ni.hostname, ni.arch, ni.status,
+             ni.max_cpus, ni.cpu_model, ni.ip);
      int err = 0;
      PGresult *res;
 
@@ -242,8 +234,7 @@ db_node_register (LyDBConn *db, ComputeNodeItem *nitem)
 {
      ComputeNodeInfo *ni = &(nitem->node);
 
-     logdebug(_("%s: register %s:%d\n"), 
-              __func__, ni->ip, ni->port);
+     logdebug(_("%s: register %s\n"), __func__, ni->ip);
 
      char sql[LINE_MAX];
      PGresult *res;
@@ -274,38 +265,15 @@ db_node_register (LyDBConn *db, ComputeNodeItem *nitem)
           goto clean;
      }
 
-
-     // Now Register New Node;
-     time_t now;
-     time(&now);
-
      sprintf(sql,
-#if __WORDSIZE == 64
 "INSERT INTO node ( \
-hostname, ip, port, arch, status, hypervisor, \
-network_type, \
-max_memory, max_cpus, cpu_model, load_average, \
-free_memory, created, updated, config ) VALUES ( \
+hostname, ip, arch, status, memory, cpus, \
+cpu_model, cpu_mhz, created, updated ) VALUES ( \
 '%s', '%s', %d, %d, %d, %d, \
-%d, \
-%ld, %d, '%s', %d, \
-%ld, %ld::abstime::timestamp, %ld::abstime::timestamp, '' );",
-#else
-"INSERT INTO node ( \
-hostname, ip, port, arch, status, hypervisor, \
-network_type, \
-max_memory, max_cpus, cpu_model, load_average, \
-free_memory, created, updated, config ) VALUES ( \
-'%s', '%s', %d, %d, %d, %d, \
-%d, \
-%lld, %d, '%s', %d, \
-%lld, %ld::abstime::timestamp, %ld::abstime::timestamp, '' );",
-#endif
-          ni->hostname, ni->ip, ni->port, ni->arch,
-          ni->status, ni->hypervisor,
-          ni->network_type, ni->max_memory, ni->max_cpus,
-          ni->cpu_model, ni->load_average, 
-          ni->free_memory, now, now);
+'%s', %d, 'now', 'now' );",
+          ni->hostname, ni->ip, ni->arch,
+          ni->status, ni->max_memory, ni->max_cpus,
+          ni->cpu_model, 0 );
 
      logdebug(_("SQL = { %s }\n"), sql);
      pthread_mutex_lock(&db->lock);
@@ -479,18 +447,13 @@ db_update_job_status (LyDBConn *db, Job *jp)
      logdebug(_("%s: update status of job %d\n"),
               __func__, jp->j_id);
 
-     time_t now;
-     time(&now);
-
      char sql[LINE_MAX];
      PGresult *res;
      int err = 0;
 
      sprintf(sql, "UPDATE job SET status = %d, \
-started = %ld::abstime::timestamp, \
-ended = %ld::abstime::timestamp WHERE id = %d;",
-             jp->j_status, (long)jp->j_started,
-             now, jp->j_id);
+started = %ld::abstime::timestamp, ended = 'now' WHERE id = %d;",
+             jp->j_status, (long)jp->j_started, jp->j_id);
  
      logdebug(_("SQL = \"%s\"\n"), sql);
 
@@ -634,8 +597,8 @@ DomainInfo *db_get_domain (LyDBConn *db, int id)
      int rec_count;
      char sql[LINE_MAX];
 
-     sprintf(sql, "SELECT node_id, image_id, cpus, memory \
-from domain where id = %d;", id);
+     sprintf(sql, "SELECT node_id, appliance_id, cpus,\
+ memory from instance where id = %d;", id);
 
      pthread_mutex_lock(&db->lock);
      res = PQexec(db->conn, sql);
