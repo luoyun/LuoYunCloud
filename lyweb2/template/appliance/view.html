@@ -1,0 +1,38 @@
+<%inherit file="appliance_base.html" />
+
+<%block name="lymain">
+
+<%
+   if appliance.logoname:
+       appliance.logourl = '%s%s/%s' % (APPLIANCE_TOP_URL, appliance.id, appliance.logoname)
+   else:
+       appliance.logourl = '%simg/appliance.png' % THEME_URL
+%>
+
+<div id="image-desc" class="clearfix">
+  <div id="image-desc-logo">
+    <div class="image-logo">
+      <a href="/appliance/${appliance.id}"><img src="${appliance.logourl}"  alt="Image Picture" /></a>
+    </div>
+  </div>
+  <div id="image-desc-detail">
+    <h2>${appliance.name}</h2>
+    <p>${appliance.summary}</p>
+    <ul>
+      <li>ID: ${appliance.id}</li>
+      <li>Checksum: ${appliance.checksum}</li>
+      <li>Size: ${appliance.filesize}</li>
+      <li>Create Time: ${ fulltime(appliance.created) }</li>
+      <li>Update Time: ${ fulltime(appliance.updated) }</li>
+    </ul>
+    <div class="appliance-action">
+      % if current_user and current_user.id == appliance.user_id:
+      <span class="edit"><a href="/appliance/${appliance.id}/edit">${_("Edit")}</a></span>
+      <span class="delete"><a href="/appliance/${appliance.id}/delete">${_("Delete")}</a></span>
+      % endif
+      <span class="delete"><a href="/appliance/${appliance.id}/create_instance">${_("Create Instance")}</a></span>
+    </div>
+  </div>
+</div>
+
+</%block>

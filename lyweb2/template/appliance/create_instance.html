@@ -1,0 +1,38 @@
+<%inherit file="appliance_base.html"/>
+
+<%block name="lymain">
+
+<div class="lyform">
+  <form action="/instance/add" method="POST">
+
+    <div class="form-header">
+      <h1>${_("Create a new instance from")} ${ appliance.name }</h1>
+      <p>${_("This the common func")}</p>
+    </div>
+
+    <div class="form-element" style="display: none">
+      <select name="appliance" id="id_appliance">
+        <option value="${ appliance.id }" selected="selected"></option>
+      </select>
+    </div>
+
+    <div class="form-element">
+      <label for="id_name">${_("Instance Name:")}</label>
+      <input id="id_name" type="text" name="name" maxlength="30" value="${ name }"/>
+      %if name_error:
+      <div class="field-error">${ name_error }</div>
+      %endif
+    </div>
+
+    %if submit_error:
+    <div class="submit-error">{{ submit_error }}</div>
+    %endif
+
+    <div class="form-footer">
+      <button type="submit">${_("Submit")}</button>
+    </div>
+  </form>
+</div>
+
+
+</%block>

@@ -1,0 +1,9 @@
+<%inherit file="/base.html"/>
+
+<%block name="header">
+The 404 error !
+</%block>
+
+<%block name="lyentry">
+The <span class="request_uri">${ request.full_url() }</span> have not found on the server !
+</%block>

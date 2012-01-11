@@ -1,0 +1,312 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-01-11 17:16+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: template/appliance/view.html:30 template/wiki/view_topic.html:12
+#: template/account/user_list.html:35 template/instance/view.html:30
+msgid "Edit"
+msgstr "编辑"
+
+#: template/appliance/view.html:31 template/account/user_list.html:34
+#: template/instance/view.html:31
+msgid "Delete"
+msgstr "删除"
+
+#: template/appliance/view.html:33
+msgid "Create Instance"
+msgstr "创建实例"
+
+#: template/appliance/edit.html:9
+msgid "Edit appliance"
+msgstr "编辑实例"
+
+#: template/appliance/edit.html:10 template/appliance/create_instance.html:10
+#: template/instance/edit.html:10 template/instance/add.html:10
+msgid "This the common func"
+msgstr "这是通用模块"
+
+#: template/appliance/edit.html:14
+msgid "Appliance Name:"
+msgstr "应用名字"
+
+#: template/appliance/edit.html:23 template/wiki/edit_topic.html:14
+#: template/wiki/new_topic.html:14
+msgid "Image catalog:"
+msgstr "应用分类"
+
+#: template/appliance/edit.html:44 template/appliance/create_instance.html:32
+#: template/instance/edit.html:32 template/instance/add.html:42
+msgid "Submit"
+msgstr "提交"
+
+#: template/appliance/index.html:18
+msgid "Upload"
+msgstr "上传"
+
+#: template/appliance/index.html:21 template/instance/index.html:20
+msgid "All"
+msgstr "全部"
+
+#: template/appliance/index.html:28 template/wiki/index.html:8
+msgid "Add Catalog"
+msgstr "新建目录"
+
+#: template/appliance/add_catalog.html:9 template/wiki/edit_topic.html:8
+#: template/wiki/new_topic.html:8 template/wiki/add_catalog.html:9
+msgid "* Name:"
+msgstr "* 名字"
+
+#: template/appliance/add_catalog.html:15 template/wiki/add_catalog.html:15
+msgid "Summary:"
+msgstr "概括"
+
+#: template/appliance/add_catalog.html:21 template/wiki/edit_topic.html:28
+#: template/wiki/new_topic.html:28 template/wiki/add_catalog.html:21
+msgid "Description:"
+msgstr "详细描述"
+
+#: template/appliance/delete_success.html:5
+msgid "Delete appliance success"
+msgstr "删除应用成功"
+
+#: template/appliance/create_instance.html:9
+msgid "Create a new instance from"
+msgstr "创建新虚拟机"
+
+#: template/appliance/create_instance.html:20 template/instance/edit.html:14
+#: template/instance/add.html:30
+msgid "Instance Name:"
+msgstr "虚拟机名字"
+
+#: template/wiki/index.html:9
+msgid "New Topic"
+msgstr "发表文章"
+
+#: template/wiki/index.html:27
+msgid "by"
+msgstr "由"
+
+#: template/wiki/index.html:29
+msgid "update"
+msgstr "更新"
+
+#: template/job/index.html:10 template/account/view_user.html:13
+msgid "ID"
+msgstr ""
+
+#: template/job/index.html:11
+msgid "User"
+msgstr "用戶"
+
+#: template/job/index.html:12
+msgid "Status"
+msgstr "状态"
+
+#: template/job/index.html:13
+msgid "Completed"
+msgstr "完成"
+
+#: template/job/index.html:14
+msgid "Target Type"
+msgstr "对象"
+
+#: template/job/index.html:15
+msgid "Target ID"
+msgstr "对象ID"
+
+#: template/job/index.html:16
+msgid "Action"
+msgstr "动作"
+
+#: template/home/index.html:7
+msgid "The total users of this system: "
+msgstr "当前总用戶数："
+
+#: template/home/index.html:21 template/base.html:31
+msgid "Appliances"
+msgstr "应用库"
+
+#: template/home/index.html:29 template/base.html:32
+msgid "Instances"
+msgstr "虚拟机"
+
+#: template/home/index.html:38 template/base.html:33
+msgid "Servers"
+msgstr "节点"
+
+#: template/home/index.html:50
+msgid ""
+"A Virtual Appliance is a software package that combines both the operating "
+"system and some specific software application. The operation system is "
+"trimmed down to only support the software application. It doesn't have all "
+"the components that an operating system normally provides. The software "
+"application is well integrated with the operating system and pre-configured "
+"as much as possible. The service provided by the software application "
+"usually starts automatically when the operating system starts."
+msgstr ""
+"虚拟化应用系统集成了计算机操作系统和应用软件。操作系统经过简化，只保留了运行"
+"应用软件所需的模块。应用软件与操作系统紧密结合，并针对操作系统进行了最大程度"
+"的预配置。应用软件所提供的服务通常随操作系统的启动而自动启动。"
+
+#: template/home/index.html:53
+msgid ""
+"A server is a physical computer that's installed with virtualization "
+"software and capable of running virtual machines. In Luoyun Computing Cloud, "
+"all the servers are controlled by the cloud and serve the purpose of hosting "
+"all the instances of Virtual Appliances. Regular users don't need to "
+"interact directly with the servers. Users with administration privilage can "
+"configure the servers to manage how the servers are used in the cloud."
+msgstr ""
+"服务器是安装有虚拟化平台软件、能够运行虚拟机的计算机硬件。在落云云计算系统"
+"中，所有的服务器用来安装并运行虚拟化应用系统。服务器由“云”控制，普通用户不需"
+"要直接接触。有管理权限的超级用户可以对服务器进行配置来管理服务器在“云“中的使"
+"用。"
+
+#: template/home/index.html:56
+msgid ""
+"An instance is a Virtual Machine that's installed with a Virtual Appliance. "
+"The instance contains a copy of Virtual Appliance software. So multiple "
+"instances can use same Virtual Appliance without affecting each other. In "
+"Luoyun Computing Cloud, all the instances are managed via web UI. The cloud "
+"monitors all the instances and report status on the web UI as well."
+msgstr ""
+"虚拟设备是安装有虚拟化应用系统的虚拟机。多个虚拟设备可以安装相同的虚拟化应用"
+"系统，彼此之间不会产生任何干扰。在落云云计算系统中，用户通过网络浏览器来管理"
+"虚拟设备以及监视虚拟设备的状态。"
+
+#: template/base.html:26
+msgid "LuoYun"
+msgstr "落云"
+
+#: template/base.html:30
+msgid "Home"
+msgstr "首页"
+
+#: template/base.html:34
+msgid "Actions"
+msgstr "任务"
+
+#: template/base.html:35
+msgid "Wiki"
+msgstr "讨论"
+
+#: template/base.html:41
+msgid "Welcome, "
+msgstr "欢迎，"
+
+#: template/base.html:42
+msgid "Sign Out"
+msgstr "退出"
+
+#: template/base.html:44
+msgid "Sign In"
+msgstr "登录"
+
+#: template/account/view_user.html:9 template/account/login.html:38
+#: template/account/register.html:13
+msgid "Username"
+msgstr "用户名"
+
+#: template/account/view_user.html:17
+msgid "Date Joined"
+msgstr "注册时间"
+
+#: template/account/view_user.html:21
+msgid "Last Login"
+msgstr "最后登录时间"
+
+#: template/account/view_user.html:25
+msgid "Email"
+msgstr "邮件地址"
+
+#: template/account/view_user.html:29
+msgid "Locale"
+msgstr "语言"
+
+#: template/account/view_user.html:33
+msgid "First Name"
+msgstr "名字"
+
+#: template/account/view_user.html:37
+#, fuzzy
+msgid "Last Name"
+msgstr "姓"
+
+#: template/account/view_user.html:43
+msgid "Have not found this user !"
+msgstr "没有发现这个用户 ！"
+
+#: template/account/login.html:34
+msgid "Sign in LuoYun System"
+msgstr "登录落云系统"
+
+#: template/account/login.html:46 template/account/register.html:21
+msgid "Password"
+msgstr "密码"
+
+#: template/account/register.html:9
+msgid "LuoYun User Register"
+msgstr "用戶注册"
+
+#: template/account/register.html:30
+msgid "Password Confirm"
+msgstr "密码校验"
+
+#: template/account/chat.html:9
+msgid "Sign out"
+msgstr "退出"
+
+#: template/instance/view.html:32
+msgid "Run"
+msgstr "运行"
+
+#: template/instance/view.html:33
+msgid "Stop"
+msgstr "停止"
+
+#: template/instance/view.html:37
+msgid "Virtual Machine Configure"
+msgstr "虚拟机配置"
+
+#: template/instance/view.html:38
+msgid "Libvirtd Configure"
+msgstr "libvirtd 配置"
+
+#: template/instance/view.html:39
+msgid "Osmanager Configure"
+msgstr "osmanager 配置"
+
+#: template/instance/edit.html:9
+msgid "Edit Instance"
+msgstr "编辑"
+
+#: template/instance/edit.html:20
+msgid "Cpu Number:"
+msgstr "CPU个数"
+
+#: template/instance/edit.html:26
+msgid "Memory:"
+msgstr "内存大小"
+
+#: template/instance/add.html:9
+msgid "Create a new instance"
+msgstr "创建新虚拟机"
+
+#: template/instance/add.html:14
+msgid "Appliance catalog:"
+msgstr "应用分类"

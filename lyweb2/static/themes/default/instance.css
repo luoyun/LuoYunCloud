@@ -1,0 +1,9 @@
+#view-instance .logo,
+#view-instance .description {
+    float: left;
+    margin: 20px;
+}
+
+#view-instance .action span {
+    margin: 10px;
+}

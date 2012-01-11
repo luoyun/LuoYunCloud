@@ -1,0 +1,46 @@
+<%inherit file="instance_base.html" />
+
+<%block name="lymain">
+
+<div class="lyform">
+  <form action="" method="POST">
+
+    <div class="form-header">
+      <h1>${_("Edit Instance")}</h1>
+      <p>${_("This the common func")}</p>
+    </div>
+
+    <div class="form-element">
+      <label for="id_name">${_("Instance Name:")}</label>
+      <input id="id_name" type="text" name="name" maxlength="30" value="${ instance.name }"/>
+      ${ name_error }
+    </div>
+
+    <div class="form-element">
+      <label for="id_cpus">${_("Cpu Number:")}</label>
+      <input id="id_cpus" type="text" name="cpus" value="${ instance.cpus }"/>
+      ${ cpus_error }
+    </div>
+
+    <div class="form-element">
+      <label for="id_memory">${_("Memory:")}</label>
+      <input id="id_memory" type="text" name="memory" value="${ instance.memory }"/>
+      ${ memory_error }
+    </div>
+
+    <div class="form-footer">
+      <button type="submit">${_("Submit")}</button>
+      ${ submit_error }
+    </div>
+  </form>
+</div>
+
+<script type="text/javascript">
+  %if addmethod:
+  lyImageDefaultSelectUploadFile(${ addmethod });
+  %endif
+
+  lyImageSelectUploadFile();
+</script>
+
+</%block>

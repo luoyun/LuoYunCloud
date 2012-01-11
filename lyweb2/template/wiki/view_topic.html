@@ -1,0 +1,20 @@
+<%inherit file="wiki_base.html"/>
+
+<%block name="lymain">
+
+<div class="topic">
+  <div class="topic-name">
+    <h2>${ topic.name }</h2>
+  </div>
+  <div class="topic-info">
+    <span>${ fulltime(topic.updated) } updated by ${ topic.user.username }</span>
+% if current_user.id == 1 or current_user.id == topic.user_id:
+    <span><a href="/wiki/topic/${ topic.id }/edit">${ _("Edit") }</a></span>
+% endif
+  </div>
+  <div class="topic-body">
+    ${ topic.body_html }
+  </div>
+</div>
+
+</%block>

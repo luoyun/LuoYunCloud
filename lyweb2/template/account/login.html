@@ -1,0 +1,60 @@
+<%inherit file="account_base.html" />
+
+<%block name="lyentry">
+
+<%doc>
+
+{% if user.is_authenticated %}
+<p>current user: {{ user }}<p>
+<p>If you want to relogin, <a href="/accounts/logout/?next=/accounts/login/">logout</a> first please.</p>
+
+{% else %}
+
+<fieldset>
+<legend>Login</legend>
+
+{% if form.errors %}
+<p style="color: red;">{{ form.errors }}</p>
+{% endif %}
+
+<form action="{% url home:login %}" method="post">{% csrf_token %}
+<p><label for="id_username">Username:</label> <input id="id_username" type="text" name="username" maxlength="30" /></p>
+<p><label for="id_password">Password:</label> <input type="password" name="password" id="id_password" /></p>
+<p><input id="login_submit" type="submit" value="Login"/></p>
+</form>
+</fieldset>
+{% endif %}
+
+</%doc>
+
+<div class="lyform">
+  <form method="POST" action="/account/login">
+
+    <div class="form-header">
+      <h1>${_("Sign in LuoYun System")}</h1>
+    </div>
+
+    <div class="form-element">
+      <label for="username">${_("Username")}</label>
+      <input id="username" type="text" name="username" maxlength="30" value="${username}"/>
+    </div>
+    % if username_error:
+    <div class="submit-error">${ username_error }</div>
+    % endif
+
+    <div class="form-element">
+      <label for="password">${_("Password")}</label>
+      <input id="password" type="password" name="password" value="${password}"/>
+    </div>
+    % if password_error:
+    <div class="submit-error">${ password_error }</div>
+    % endif
+
+    <div class="form-footer">
+      <input id="login_submit" type="submit" value="Login"/>
+    </div>
+
+  </form>
+</div>
+
+</%block>

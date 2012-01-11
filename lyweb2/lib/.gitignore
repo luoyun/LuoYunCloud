@@ -1,0 +1,10 @@
+*.pyc
+*.o
+*~
+*#
+*.bak
+*.db
+cscope.out
+*.log
+mako
+tornado

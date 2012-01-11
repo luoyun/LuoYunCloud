@@ -1,0 +1,39 @@
+<%inherit file="account_base.html" />
+
+<%block name="lyentry">
+
+%if current_user:
+
+    <div id="nav">
+      <b>${ current_user.username }</b> -
+      <a href="/account/logout">${ _("Sign out") }</a>
+    </div>
+
+    <div id="body">
+      <div id="inbox">
+        % for m in messages:
+        <div class="message" id="m${ m.id }">
+          <span>${m.from_user}</span>
+          <span>${m.body}</span>
+        </div>
+        % endfor
+      </div>
+      <div id="input">
+        <form action="/a/message/new" method="post" id="messageform">
+          <table>
+            <tr>
+              <td><input name="body" id="message" style="width:500px"/></td>
+              <td style="padding-left:5px">
+                <input type="submit" value="${ _("Post") }"/>
+                <input type="hidden" name="next" value="${ request.path }"/>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+
+%else:
+<p>Anonymous user does not have profile !</p>
+%endif
+
+</%block>

@@ -1,0 +1,87 @@
+<%inherit file="home_base.html"/>
+
+<%block name="lymain">
+
+<div id="system-info" class="clearfix">
+  % if total_user:
+  <p>${ _("The total users of this system: ") } <a href="/account/user_list">${ total_user }</a></p>
+  % endif
+  <div id="new-jobs">
+    <ul>
+      % for j in jobs:
+      <li>${ fulltime(j.started) }: ${ j.user.username } run job ${ j.id }.</li>
+      % endfor
+    </ul>
+  </div>
+</div>
+
+<div id="luoyun-info" class="clearfix">
+
+  <div id="image" class="element-entry hover">
+    <h2>${_("Appliances")}</h2>
+    <div>
+      <a href="/appliance"><img class="zoneimage" src="${THEME_URL}img/image.png"></img></a>
+    </div>
+    <p>Total: <a href="/appliance"><span id="images-total">${ images_total }</span></a></p>
+  </div>
+
+  <div id="domain" class="element-entry">
+    <h2>${_("Instances")}</h2>
+    <div>
+      <a href="/instance"><img class="zoneimage" src="${THEME_URL}img/domain.png"></img></a>
+    </div>
+    <p>Total: <a href="/instance"><span id="domains-total">${ domains_total }</span></a></p>
+    <p>Running:: <a href="/instance"><span id="domains-running">${ domains_running }</span></a></p>
+  </div>
+
+  <div id="node" class="element-entry">
+    <h2>${_("Servers")}</h2>
+    <div>
+      <a href="/node"><img class="zoneimage" src="${THEME_URL}img/node.png"></img></a>
+    </div>
+    <p>Total: <a href="/server"><span id="nodes-total">${ nodes_total }</span></a></p>
+    <p>Running: <a href="/server"><span id="nodes-running">${ nodes_running }</span></a></p>
+  </div>
+
+</div>
+
+<div id="zone-info">
+  <div id="image-info" style="display: inline;">
+    <p>${_("A Virtual Appliance is a software package that combines both the operating system and some specific software application. The operation system is trimmed down to only support the software application. It doesn't have all the components that an operating system normally provides. The software application is well integrated with the operating system and pre-configured as much as possible. The service provided by the software application usually starts automatically when the operating system starts.")}</p>
+  </div>
+  <div id="node-info" style="display: none;">
+    <p>${_("A server is a physical computer that's installed with virtualization software and capable of running virtual machines. In Luoyun Computing Cloud, all the servers are controlled by the cloud and serve the purpose of hosting all the instances of Virtual Appliances. Regular users don't need to interact directly with the servers. Users with administration privilage can configure the servers to manage how the servers are used in the cloud.")}</p>
+  </div>
+  <div id="domain-info" style="display: none;">
+    <p>${_("An instance is a Virtual Machine that's installed with a Virtual Appliance. The instance contains a copy of Virtual Appliance software. So multiple instances can use same Virtual Appliance without affecting each other. In Luoyun Computing Cloud, all the instances are managed via web UI. The cloud monitors all the instances and report status on the web UI as well.")}</p>
+  </div>
+</div>
+
+<script>
+$(".element-entry").hover(
+  function () {
+
+    var cur = $(this).attr("id");
+
+    $("#" + cur).addClass("hover");
+    $("#" + cur + "-info").css("display", "inline");
+
+    var ele = new Array();
+    ele[0] = "image";
+    ele[1] = "node";
+    ele[2] = "domain";
+    for ( i = 0; i < ele.length; i++)
+    { 
+      if ( cur != ele[i] ) {
+        $("#" + ele[i]).removeClass("hover");
+        $("#" + ele[i] + "-info").css("display", "none");
+      }
+    }
+  },
+  function () {
+    //action for move out
+  }
+);
+</script>
+
+</%block>

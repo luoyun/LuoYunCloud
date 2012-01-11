@@ -1,0 +1,39 @@
+<%inherit file="wiki_base.html"/>
+
+<%block name="lymain">
+
+<form action="" method="post">
+
+  <div class="form-element">
+    <label for="id_name">${_("* Name:")}</label>
+    <input id="id_name" type="text" name="name" maxlength="60" value="${ topic.name }"/>
+    ${ name_error }
+  </div>
+
+  <div class="form-element">
+    <label for="id_catalog">${_("Image catalog:")}</label>
+    <select name="catalog" id="id_catalog">
+      % for c in catalogs:
+      <option value="${ c.id }" 
+% if c.id == topic.catalog_id:
+selected="selected"
+% endif
+>${ c.name }</option>
+      % endfor
+    </select>
+    ${ catalog_error }
+  </div>
+
+  <div class="form-element">
+    <label for="id_body">${_("Description:")}</label>
+    <textarea id="id_body" name="body">${ topic.body }</textarea>
+    ${ body_error }
+  </div>
+
+  <div class="form-footer">
+    <input type="submit" value="${ _('Update Topic') }"/>
+    ${ submit_error }
+  </div>
+</form>
+
+</%block>

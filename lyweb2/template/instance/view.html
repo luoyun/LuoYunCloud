@@ -1,0 +1,45 @@
+<%inherit file="instance_base.html"/>
+
+<%block name="lymain">
+
+<%
+   if instance.logo:
+       instance.logourl = '/path/to/not/exist'
+   else:
+       instance.logourl = '%simg/appliance.png' % THEME_URL
+
+%>
+
+
+<div id="view-instance" class="clearfix">
+  <div class="logo">
+    <a href="/instance/${instance.id}"><img src="${instance.logourl}" alt="Instance Picture" /></a>
+  </div>
+  <div class="description">
+    <h2>${instance.name}</h2>
+    <p>${instance.summary}</p>
+    <ul>
+      <li>ID: ${ instance.id }</li>
+      <li>CPU numbers: ${ instance.cpus }</li>
+      <li>Memory: ${ instance.memory }</li>
+      <li>Create Time: ${ fulltime(instance.created) }</li>
+      <li>Update Time: ${ fulltime(instance.updated) }</li>
+    </ul>
+    <div class="action">
+      % if current_user and current_user.id == instance .user_id:
+      <span class="edit"><a href="/instance/${ instance.id }/edit">${_("Edit")}</a></span>
+      <span class="delete"><a href="/instance/${ instance.id }/delete">${_("Delete")}</a></span>
+      <span class="run"><a href="/instance/${ instance.id }/run">${_("Run")}</a></span>
+      <span class="stop"><a href="/instance/${ instance.id }/stop">${_("Stop")}</a></span>
+      % endif
+    </div>
+    <ul>
+      <li><a href="/instance/${ instance.id }/config">${ _("Virtual Machine Configure") }</a></li>
+      <li><a href="/instance/${ instance.id }/libvirtd_conf">${ _("Libvirtd Configure") }</a></li>
+      <li><a href="/instance/${ instance.id }/osmanager_conf">${ _("Osmanager Configure") }</a></li>
+    </ul>
+  </div>
+</div>
+
+
+</%block>

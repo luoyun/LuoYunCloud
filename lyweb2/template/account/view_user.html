@@ -1,0 +1,46 @@
+<%inherit file="account_base.html" />
+
+<%block name="lyentry">
+
+%if user:
+<table>
+  <tbody>
+    <tr>
+      <td>${ _("Username") }</td>
+      <td>${user.username}</td>
+    </tr>
+    <tr>
+      <td>${ _("ID") }</td>
+      <td>${user.id}</td>
+    </tr>
+    <tr>
+      <td>${ _("Date Joined") }</td>
+      <td>${user.date_joined}</td>
+    </tr>
+    <tr>
+      <td>${ _("Last Login") }</td>
+      <td>${user.last_login}</td>
+    </tr>
+    <tr>
+      <td>${ _("Email") }</td>
+      <td>${user.prefs.email}</td>
+    </tr>
+    <tr>
+      <td>${ _("Locale") }</td>
+      <td>${user.prefs.locale}</td>
+    </tr>
+    <tr>
+      <td>${ _("First Name") }</td>
+      <td>${user.prefs.first_name}</td>
+    </tr>
+    <tr>
+      <td>${ _("Last Name") }</td>
+      <td>${user.prefs.last_name}</td>
+    </tr>
+  </tbody>
+</table>
+%else:
+<p>${ _("Have not found this user !") }</p>
+%endif
+
+</%block>

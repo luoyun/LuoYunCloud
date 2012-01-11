@@ -1,0 +1,45 @@
+<%inherit file="account_base.html" />
+
+<%block name="lyentry">
+
+<div class="lyform">
+  <form method="POST" action="/account/register">
+
+    <div class="form-header">
+      <h1>${_("LuoYun User Register")}</h1>
+    </div>
+
+    <div class="form-element">
+      <label for="username">${_("Username")}</label>
+      <input id="username" type="text" name="username" maxlength="30" value="${username}"/>
+    </div>
+    % if username_error:
+    <div class="submit-error">${ username_error }</div>
+    % endif
+
+    <div class="form-element">
+      <label for="password">${_("Password")}</label>
+      <input id="password" type="password" name="password" value="${password}"/>
+    </div>
+
+    % if password_error:
+    <div class="submit-error">${ password_error }</div>
+    % endif
+
+    <div class="form-element">
+      <label for="password2">${_("Password Confirm")}</label>
+      <input id="password2" type="password" name="password2"/>
+    </div>
+
+    %if submit_error:
+    <div class="submit-error">${ submit_error }</div>
+    %endif
+
+    <div class="form-footer">
+      <input id="register_submit" type="submit" value="${_("Register")}"/>
+    </div>
+
+  </form>
+</div>
+
+</%block>

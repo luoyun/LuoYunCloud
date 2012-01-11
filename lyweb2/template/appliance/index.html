@@ -1,0 +1,47 @@
+<%inherit file="appliance_base.html"/>
+
+<%block name="lymain">
+
+<%
+   for a in appliances:
+       if a.logoname:
+           a.logourl = '%s%s/%s' % (APPLIANCE_TOP_URL, a.id, a.logoname)
+       else:
+           a.logourl = '%simg/appliance.png' % THEME_URL
+
+   app_total = len(appliances)
+%>
+
+<div id="image-main" class="clearfix">
+
+  <div class="sidebar float-left">
+    <div class="add-button"><a href="/appliance/upload">${_("Upload")}</a></div>
+
+    <div class="menu">
+      <span class="normal current" id="c0">${ _("All") } (${ app_total })</span>
+      % for c in catalogs:
+      <span class="normal" id="c0">${ c.name } (${ len(c.apps) })</span>
+      % endfor
+    </div>
+
+    <div class="addon">
+      <a href="/appliance/add_catalog">${_("Add Catalog")}</a>
+    </div>
+  </div>
+
+  <div class="close-main float-right">
+    % for app in appliances:
+    <div class="appliance">
+      <div class="logo">
+        <a href="/appliance/${app.id}"><img src="${app.logourl}"  alt="Image Picture" /></a>
+      </div>
+      <div class="desc">
+        <span class="appid">${ app.id }</span>
+        <span class="name">${ app.name }</span>
+      </div>
+    </div>
+    % endfor
+  </div>
+</div>
+
+</%block>

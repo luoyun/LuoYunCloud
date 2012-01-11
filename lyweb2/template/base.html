@@ -1,0 +1,111 @@
+## coding: utf-8
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+##    <link rel="SHORTCUT ICON" href="${THEME_URL}images/favicon.ico" />
+    <link rel="stylesheet" href="${THEME_URL}luoyun.css" />
+    <script type="text/javascript" src="${STATIC_URL}js/jquery-1.7.min.js"></script>
+    <script type="text/javascript" src="${STATIC_URL}js/luoyun.js"></script>
+    <%block name="head"/>
+    <title>${title}
+%if title:
+ - 
+%endif
+ LuoYun</title>
+  </head>
+
+  <body>
+    <noscript><p class="nojs">Sorry, your browser does not support JavaScript!</p></noscript>
+
+    <div id="pager">
+
+      <div id="header">
+        <div id="welcome-info">
+          <a href="/">${_("LuoYun")}</a>
+        </div>
+        <div id="navigator">
+          <ul>
+            <li><a href="/">${_("Home")}</a></li>
+            <li><a href="/appliance">${_("Appliances")}</a></li>
+            <li><a href="/instance">${_("Instances")}</a></li>
+            <li><a href="/node">${_("Servers")}</a></li>
+            <li><a href="/job">${_("Actions")}</a></li>
+            <li><a href="/wiki">${_("Wiki")}</a></li>
+          </ul>
+        </div>
+
+        <div id="login">
+          %if current_user:
+          ${_("Welcome, ")}<span class="user"><a href="/account/profile">${ current_user.username }</a></span>
+          <span class="logout"><a href="/account/logout">${_("Sign Out")}</a></span>
+          %else:
+          <span class="login"><a href="/account/login">${_("Sign In")}</a></span>
+          %endif
+        </div>
+
+
+        <div id="select-language">
+          <form action="/i18n/setlang" method="post">
+##            <input name="next" type="hidden" />
+<%doc>
+            <select name="language">
+              %for lang in LANGUAGES:
+              <option value="${lang[0]}"
+%if lang[0] != locale.code:
+selected="selected"
+%endif
+>${lang[1]}</option>
+              %endfor
+            </select>
+            <input type="submit" value=
+% if locale.code == 'zh_CN':
+Go
+% else:
+选择
+% endif
+/>
+</%doc>
+            <select name="language" style="display: none;">
+              % for lang in LANGUAGES:
+              <option value="${lang[0]}"
+% if lang[0] != locale.code:
+selected="selected"
+% endif
+>${lang[1]}</option>
+              % endfor
+            </select>
+            <input type="submit" value=
+% if locale.code == 'zh_CN':
+"English"
+% else:
+"简体中文"
+% endif
+/>
+          </form> 
+        </div>
+      </div>
+
+      <div id="main" class="clearfix box5">
+## The main entry of LuoYun System
+        <div id="lyentry">
+          <%block name="lyentry"/>
+        </div>
+
+      </div>
+
+      <div id="footer">
+        <span class="copyright">Copyright &copy <a href="http://www.luoyun.co">LuoYun Inc.</a></span>
+        <span class="about"><a href="/about">About</a></span>
+        <span class="contact"><a href="/contact">Contact</a></span>
+        <span class="request_time">${request.request_time()}</span>
+      </div>
+
+    </div>
+
+<script type="text/javascript">
+  lySetCurrentNavigator();
+</script>
+  </body>
+</html>

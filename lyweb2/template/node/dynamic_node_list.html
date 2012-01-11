@@ -1,0 +1,26 @@
+% if nodes:
+<table>
+  <thead>
+    <tr>
+      <td>Hostname</td>
+      <td>IP</td>
+      <td>Status</td>
+      <td>Max Memory (KB)</td>
+    </tr>
+  </thead>
+  <tbody>
+    % for n in nodes:
+    <tr>
+      <td>${ n.hostname }</td>
+      <td><a href="">${ n.ip }</a></td>
+      <td><img src="${ THEME_URL }icons/NodeStatus/${ n.status }.png"  alt="Stauts Image"/></td>
+      <td>${ n.memory }</td>
+    </tr>
+    % endfor
+  </tbody>
+</table>
+% else:
+<div class="first-warning">
+  <p>Have not found any nodes. Please register first!</p>
+</div>
+% endif

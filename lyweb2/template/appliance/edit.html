@@ -1,0 +1,57 @@
+<%inherit file="appliance_base.html" />
+
+<%block name="lymain">
+
+<div class="lyform">
+  <form action="" method="POST">
+
+    <div class="form-header">
+      <h1>${_("Edit appliance")}</h1>
+      <p>${_("This the common func")}</p>
+    </div>
+
+    <div class="form-element">
+      <label for="id_name">${_("Appliance Name:")}</label>
+      <input id="id_name" type="text" name="name" maxlength="30" value="${ appliance.name }"/>
+    </div>
+
+    %if name_error:
+    <div class="field-error">${ name_error }</div>
+    %endif
+
+    <div class="form-element">
+      <label for="id_catalog">${_("Image catalog:")}</label>
+      <select name="catalog" id="id_catalog">
+        %for c in catalogs:
+        <option value="${ c.id }" 
+%if c.id == catalog:
+selected="selected"
+%endif
+>${ c.name }</option>
+        %endfor
+      </select>
+    </div>
+
+    %if catalog_error:
+    <div class="field-error">${ catalog_error }</div>
+    %endif
+
+    %if submit_error:
+    <div class="submit-error">{{ submit_error }}</div>
+    %endif
+
+    <div class="form-footer">
+      <button type="submit">${_("Submit")}</button>
+    </div>
+  </form>
+</div>
+
+<script type="text/javascript">
+  %if addmethod:
+  lyImageDefaultSelectUploadFile(${ addmethod });
+  %endif
+
+  lyImageSelectUploadFile();
+</script>
+
+</%block>

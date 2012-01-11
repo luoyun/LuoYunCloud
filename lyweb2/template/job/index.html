@@ -1,0 +1,44 @@
+<%inherit file="job_base.html"/>
+
+<%block name="lymain">
+
+<div id="job-main">
+  % if jobs:
+  <table>
+    <thead>
+      <tr>
+        <td>${ _("ID") }</td>
+        <td>${ _("User") }</td>
+        <td>${ _("Status") }</td>
+        <td>${ _("Completed") }</td>
+        <td>${ _("Target Type") }</td>
+        <td>${ _("Target ID") }</td>
+        <td>${ _("Action") }</td>
+      </tr>
+    </thead>
+    <tbody>
+      % for j in jobs:
+      <tr>
+        <td>${ j.id }</td>
+        <td>${ j.user.username }</td>
+        <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png"  alt="Stauts Image"/></td>
+        <td>${ fulltime(j.ended) }</td>
+        <td>${ j.target_type }</td>
+        <td>${ j.target_id }</td>
+        <td>${ j.action_str }</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  % else:
+  <div class="first-warning">
+    <p>Have not found any jobs.</p>
+  </div>
+  % endif
+</div>
+
+<script type="text/javascript">
+  nodeListUpdater.poll();
+</script>
+
+</%block>
