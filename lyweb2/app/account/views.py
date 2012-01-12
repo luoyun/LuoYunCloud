@@ -208,3 +208,58 @@ class UserList(LyRequestHandler):
         self.render( 'account/user_list.html',
                      title = 'User List',
                      users = users )
+
+
+class ResetPassword(LyRequestHandler):
+
+    @authenticated
+    def get(self, id):
+
+        emsg = self.check_permission(id)
+        if emsg:
+            return self.write(emsg)
+
+        self.render( 'account/reset_password.html',
+                     title = 'Reset Password',
+                     user = self.user )
+
+    @authenticated
+    def post(self, id):
+
+        emsg = self.check_permission(id)
+        if emsg:
+            return self.write(emsg)
+
+        d = { 'title': 'Reset Password' }
+
+        password = self.get_argument('password', '')
+        if len(password) < 6:
+            d['password_error'] = 'password must have more than 6 characters !'
+            return self.render('account/reset_password.html', **d)
+
+        salt = md5(str(random.random())).hexdigest()[:12]
+        hsh = encrypt_password(salt, password)
+        enc_password = "%s$%s" % (salt, hsh)
+
+        try:
+            self.db.execute(
+                'UPDATE auth_user SET password=%s;',
+                enc_password )
+        except Exception, emsg:
+            d['submit_error'] = 'UPDATE failed: %s' % emsg
+            return self.render('account/reset_password.html', **d)
+        self.redirect('/account/profile')
+
+
+    def check_permission(self, id):
+        
+        if self.current_user.id != int(id):
+            return 'Don not do this !'
+
+        self.user = self.db.get(
+            'SELECT * from auth_user WHERE id=%s;', id)
+
+        if not self.user:
+            return 'Have not found user %s' % id
+        
+        return None

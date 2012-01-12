@@ -62,6 +62,7 @@ handlers = [
     (r'/account/online_total', account.Online),
     (r'/account/user_list', account.UserList),
     (r'/account/([0-9]+)', account.User),
+    (r'/account/([0-9]+)/reset_password', account.ResetPassword),
 
     # Application
     (r'/appliance', appliance.Index),

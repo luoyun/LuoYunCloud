@@ -17,7 +17,7 @@ import lydb
 from tornado.options import define, options
 define("port", default=8888, help="run on the given port", type=int)
 define("dbhost", default="localhost", help="database host")
-define("dbname", default="lyweb", help="database name")
+define("dbname", default="luoyun", help="database name")
 define("dbuser", default="luoyun", help="database user")
 define("dbpassword", default="luoyun", help="database password")
 

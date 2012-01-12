@@ -3,6 +3,11 @@
 <%block name="lyentry">
 
 %if current_user:
+
+<div class="reset-password">
+  <a href="/account/${ current_user.id }/reset_password">${ _("Reset password") }</a>
+</div>
+
 <table>
   <thead>
     <tr>

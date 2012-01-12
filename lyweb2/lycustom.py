@@ -46,8 +46,6 @@ class LyRequestHandler(RequestHandler):
             xsrf_form_html=self.xsrf_form_html,
             reverse_url=self.application.reverse_url,
 
-            #has_permission=self.has_permission,
-
             LANGUAGES=settings.LANGUAGES,
             STATIC_URL=settings.STATIC_URL,
             THEME_URL=settings.THEME_URL,
@@ -128,6 +126,9 @@ FROM auth_user WHERE id = %s;",
 
         if not user:
             user = self.current_user
+
+        if not user:
+            return False
 
         user_perms = self.db.query(
             'SELECT * from user_permissions WHERE user_id=%s;',

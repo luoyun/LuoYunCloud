@@ -41,7 +41,8 @@
           ${_("Welcome, ")}<span class="user"><a href="/account/profile">${ current_user.username }</a></span>
           <span class="logout"><a href="/account/logout">${_("Sign Out")}</a></span>
           %else:
-          <span class="login"><a href="/account/login">${_("Sign In")}</a></span>
+          <span class="login"><a href="/account/login">${_("Sign In")}</a></span> |
+          <span class="register"><a href="/account/register">${ _("Register") }</a></span>
           %endif
         </div>
 
