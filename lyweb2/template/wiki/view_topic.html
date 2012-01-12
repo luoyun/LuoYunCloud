@@ -8,8 +8,10 @@
   </div>
   <div class="topic-info">
     <span>${ fulltime(topic.updated) } updated by ${ topic.user.username }</span>
+% if current_user:
 % if current_user.id == 1 or current_user.id == topic.user_id:
     <span><a href="/wiki/topic/${ topic.id }/edit">${ _("Edit") }</a></span>
+% endif
 % endif
   </div>
   <div class="topic-body">

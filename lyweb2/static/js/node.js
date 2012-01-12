@@ -9,7 +9,6 @@ var nodeListUpdater = {
     },
 
     onSuccess: function(response) {
-        alert(response);
         $("#node-main").html(response);
         window.setTimeout(nodeListUpdater.poll, 0);
     },

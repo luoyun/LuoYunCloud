@@ -134,7 +134,7 @@ class Register(LyRequestHandler):
             return self.redirect('/')
         except Exception, emsg:
             d['submit_error'] = 'System error: %s' % emsg
-            self.render('account/register.html', d)
+            self.render('account/register.html', **d)
 
 
 class Profile(LyRequestHandler):

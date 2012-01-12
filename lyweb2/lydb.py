@@ -64,7 +64,8 @@ class Connection(object):
         self.close()
         self._db = psycopg2.connect(self._db_args)
         #self._db = MySQLdb.connect(**self._db_args)
-        self._db.autocommit = True
+        # TODO: autocommit issue on version 2.0.X of psycopg2
+        #self._db.autocommit = True
 
     def query(self, query, *parameters):
         """Returns a row list for the given query and parameters."""
@@ -158,7 +159,9 @@ class Connection(object):
 
     def _execute(self, cursor, query, parameters):
         try:
-            return cursor.execute(query, parameters)
+            #return cursor.execute(query, parameters)
+            cursor.execute(query, parameters)
+            return self._db.commit()
         except OperationalError:
             logging.error("Error connecting to PostgreSQL on %s", self.host)
             self.close()
