@@ -3,7 +3,7 @@
 
 #include "util/luoyun.h"
 
-#define DOMAIN_CONFIG_URI_TEMP "http://luoyun.co/instance/%d/config"
+#define DOMAIN_CONFIG_URI_TEMP "http://luoyun.ylinux.org/instance/%d/config"
 
 #define OS_DISK_FILE_GZ "os.img.gz"
 #define OS_DISK_FILE "os.img"
