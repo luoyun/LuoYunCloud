@@ -269,7 +269,7 @@ db_node_register (LyDBConn *db, ComputeNodeItem *nitem)
 "INSERT INTO node ( \
 hostname, ip, arch, status, memory, cpus, \
 cpu_model, cpu_mhz, created, updated ) VALUES ( \
-'%s', '%s', %d, %d, %d, %d, \
+'%s', '%s', %d, %d, %ld, %d, \
 '%s', %d, 'now', 'now' );",
           ni->hostname, ni->ip, ni->arch,
           ni->status, ni->max_memory, ni->max_cpus,
@@ -740,16 +740,21 @@ db_update_domain_status (LyDBConn *db, DomainInfo *dip)
 {
      logdebug(_("START %s\n"), __func__);
 
-     time_t now;
-     time(&now);
+     char ip[32] = { '\0' };
+     if ( strlen(dip->ip) < 6 )
+     {
+          strncpy(ip, "0.0.0.0", 16);
+     } else {
+          strncpy(ip, dip->ip, 32);
+     }
 
      char sql[LINE_MAX];
 
-     sprintf(sql, "UPDATE domain SET \
+     sprintf(sql, "UPDATE instance SET \
 node_id = %d, status = %d, ip = '%s', \
-updated = %ld::abstime::timestamp WHERE id = %d;",
-             dip->node_id, dip->status, dip->ip,
-             now, dip->id);
+updated = 'now' WHERE id = %d;",
+             dip->node_id, dip->status, ip,
+             dip->id);
 
      logdebug(_("Exec SQL \"%s\"\n"), sql);
 
@@ -847,7 +852,7 @@ db_update_instance(LyDBConn *db, DomainInfo *dip)
      time_t now;
      time(&now);
 
-     sprintf(sql, "UPDATE domain SET status = %d, ip = '%s', \
+     sprintf(sql, "UPDATE instance SET status = %d, ip = '%s', \
 updated = %ld::abstime::timestamp WHERE id = %d;",
              dip->status, dip->ip, now, dip->id);
 
