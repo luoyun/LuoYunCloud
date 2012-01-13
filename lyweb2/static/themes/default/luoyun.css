@@ -98,6 +98,8 @@ ul {
     background: url("img/home_header_bg.png") no-repeat scroll 0 0 transparent;
     _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src="img/home_header_bg.png"); /* For IE6, transparent suppor of PNG */
     _background-image: none; /* IE6 */
+    position: relative;
+    z-index: 2;
 }
 
 #header a, #header input {
@@ -158,10 +160,12 @@ ul {
     text-decoration: none;
 }
 
-#navigator a:hover {
+#navigator li:hover {
     color: darkblue;
     background-color: snow;
     /*text-decoration: none;*/
+
+    border-radius: 5px;
 }
 
 #select-language {

@@ -30,15 +30,14 @@
 #image, #node, #domain {
     float: left;
     padding: 5px;
-    margin: 5px;
+    margin: 5px 5px -5px;
     width: 220px;
-    height: 180px;
+    height: 200px;
     text-align: center;
-    /*
+
     border: 1px solid transparent;
     _border-color:tomato;
     _filter:chroma(color=tomato);
-    */
 
     /*background-image: url("/media/img/luoyun_element_bg2.png");
     background-repeat: no-repeat;*/
@@ -46,17 +45,13 @@
 }
 
 #luoyun-info .hover {
-    /*
     background-color: #E6F0F2;
     border-top: 1px solid #DFE6ED;
     border-left: 1px solid #DFE6ED;
     border-right: 1px solid #DFE6ED;
-    */
-    /*
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
-    */
     /*background-image: url("/media/img/luoyun_element_bg.png");
     background-repeat: no-repeat;*/
     /*filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src="/media/img/luoyun_element_bg.png");*/ /* For IE6, transparent suppor of PNG */
@@ -103,12 +98,13 @@
 
 #zone-info {
     margin: 0 auto 10px;
-    padding: 10px auto;
     /*border-top: 1px dotted lightblue;*/
     width: 760px;
     height: 200px;
-    /*background-color: #EDF5FF;*/
     background-color: #E6F0F2;
+    padding: 30px 10px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
 }
 
 /* End zone-info */
