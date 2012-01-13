@@ -99,6 +99,7 @@ handlers = [
     # Wiki
     (r'/wiki', wiki.Index),
     (r'/wiki/topic/([0-9]+)', wiki.ViewTopic),
+    (r'/wiki/topic/([0-9]+)/source', wiki.ViewTopicSource),
     (r'/wiki/topic/([0-9]+)/edit', wiki.EditTopic),
     (r'/wiki/topic/add', wiki.NewTopic),
     (r'/wiki/catalog/add', wiki.AddCatalog),

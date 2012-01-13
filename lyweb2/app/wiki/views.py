@@ -42,6 +42,20 @@ class ViewTopic(LyRequestHandler):
         self.render('wiki/view_topic.html', **d)
 
 
+
+class ViewTopicSource(LyRequestHandler):
+
+    def get(self, id):
+
+        t = self.db.get('SELECT * from topic WHERE id=%s;', id)
+        if not t:
+            return self.write('Have not found topic %s' % id)
+
+        self.set_header("Content-Type", "text/plain")
+        self.write(t.body)
+
+
+
 class NewTopic(LyRequestHandler):
 
     d = { 'title': 'Add new topic' }

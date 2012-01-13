@@ -62,3 +62,13 @@
     height: 400px !important;
     width: 60% !important;
 }
+
+.topic-body pre {
+    background-color: #EDF5FF;
+    border: 1px solid #DFE6ED;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 15px;
+    overflow: auto; overflow-y:hidden
+    width: 80%;
+}
