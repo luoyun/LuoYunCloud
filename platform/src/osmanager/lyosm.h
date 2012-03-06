@@ -2,7 +2,7 @@
 #define __LY_INCLUDE_OSMANAGER_LYOSM_H
 
 #define PROGRAM_NAME "lyosm"
-#define PROGRAM_VERSION "0.1"
+#define PROGRAM_VERSION "0.2"
 
 #define DEFAULT_OSM_INSTALL_PATH "./LuoYun/"
 #define DEFAULT_OSM_CONF_PATH DEFAULT_OSM_INSTALL_PATH "conf/luoyun.conf"
