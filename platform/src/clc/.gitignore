@@ -1,9 +1,7 @@
-*.pyc
 *.o
 *~
 *#
 *.bak
-*.db
 lyclc
 cscope.out
 *.log

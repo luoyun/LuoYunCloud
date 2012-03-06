@@ -1,0 +1,3 @@
+use following command to tidy source code.
+
+indent -kr -nut -nce -nbbo *.[ch]

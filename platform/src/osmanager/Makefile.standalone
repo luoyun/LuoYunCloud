@@ -1,0 +1,51 @@
+##
+## Copyright (C) 2012 LuoYun Co. 
+##
+##           Authors:
+##                    lijian.gnu@gmail.com 
+##                    zengdongwu@hotmail.com
+##  
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##  
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##  
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+##  
+##
+
+top_srcdir = ..
+
+CC = gcc
+CPPFLAGS := -I$(top_srcdir)
+CFLAGS = -Wall -g -std=gnu99 -D_GNU_SOURCE
+LDFLAGS = -lm -luuid -lgcrypt
+HEADERS = $(wildcard *.h)
+SOURCES = $(wildcard *.c)
+
+RM = /bin/rm -f
+
+OSM_PROG = lyosm
+OSM_OBJ = $(subst %.c,%.o,$(SOURCES))
+
+.PHONY : build clean
+
+build : $(OSM_PROG)
+
+#
+# use make -pf/dev/null to see all the implicit rules
+#
+#$(OSM_OBJ) :  $(HEADERS) Makefile.standalone
+
+$(OSM_PROG) : $(OSM_OBJ) $(SOURCES) $(HEADERS) Makefile.standalone
+	$(CC) $(LDFLAGS) -o $@ $(OSM_OBJ)
+
+clean :
+	@$(RM) *.o *~ $(OSM_PROG)

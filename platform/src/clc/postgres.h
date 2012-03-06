@@ -1,49 +1,42 @@
-#ifndef __LUOYUN_INCLUDE_POSTGRES_H
-#define __LUOYUN_INCLUDE_POSTGRES_H
+#ifndef __LY_INCLUDE_CLC_POSTGRES_H
+#define __LY_INCLUDE_CLC_POSTGRES_H
 
+#include "../luoyun/luoyun.h"
+#include "lyjob.h"
 
-#include "job_manager.h"
-#include "lyclc.h"
+#define DB_NODE_FIND_BY_TAG  1
+#define DB_NODE_FIND_BY_IP   2
+#define DB_NODE_FIND_BY_ID   3
 
+/* node info from db */
+typedef struct DBNodeRegInfo_t {
+    int id;
+    int status;
+    int tag;
+    char * ip;
+    char * secret;
+    int enabled;
+}DBNodeRegInfo;
+int db_node_reginfo_free(DBNodeRegInfo * nf);
 
-/* connect to postgresql server */
-PGconn * db_connect ( const char *dbname,
-                      const char *username,
-                      const char *password);
+int db_node_exist(int type, void * data);
+int db_node_find(int type, void * data, DBNodeRegInfo * db_nf);
+int db_node_find_secret(int type, void * data, char ** secret);
+int db_node_update_secret(int type, void * data, char * secret);
+int db_node_update(int type, void * data, NodeInfo * nf);
+int db_node_update_status(int type, void * data, int status);
+int db_node_enable(int id, int enable);
+int db_node_insert(NodeInfo *nf);
+int db_node_instance_control_get(NodeCtrlInstance *ci, int *node_id);
+int db_job_get(LYJobInfo * job);
+int db_job_get_all(void);
+int db_job_update_status(LYJobInfo * job);
+int db_instance_find_secret(int id, char ** secret);
+int db_instance_update_secret(int id, char * secret);
+int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id);
+int db_instance_find_ip_by_status(int status, char * ins_ip[], int size);
 
+int ly_db_init();
+void ly_db_close();
 
-/* method about job */
-int db_get_jobs2(LyDBConn *db, JobQueue *qp);
-
-// old method
-int db_get_jobs(LyDBConn *db, JobQueue *qp);
-Job *db_get_job (LyDBConn *db, JobQueue *qp, int id);
-int db_update_job_status (LyDBConn *db, Job *jp);
-
-
-/* method about node */
-int db_get_nodes(LyDBConn *db, ComputeNodeQueue *qp);
-int db_update_node(LyDBConn *db, ComputeNodeItem *nitem);
-int db_update_node_status(LyDBConn *db, ComputeNodeItem *nitem);
-int db_node_register (LyDBConn *db, ComputeNodeItem *nitem);
-int db_node_get_id(LyDBConn *db, const char *ip);
-
-
-/* method about instance */
-int db_update_instance(LyDBConn *db, DomainInfo *dip);
-
-
-/* method about domain */
-DomainInfo *db_get_domain (LyDBConn *db, int id);
-int db_update_domain_status (LyDBConn *db, DomainInfo *dip);
-int db_update_domains (LyDBConn *db, ComputeNodeQueue *qp);
-
-
-/* method about image */
-ImageInfo *db_get_image (LyDBConn *db, int id);
-
-
-
-
-
-#endif /* End __LUOYUN_INCLUDE_POSTGRES_H */
+#endif

@@ -1,0 +1,9 @@
+*.a
+*.o
+*~
+*#
+*.gz
+*.bak
+cscope.out
+*.log
+ding-libs-0.1.3

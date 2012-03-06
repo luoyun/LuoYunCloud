@@ -1,873 +1,686 @@
-#include "control/postgres.h"
-#include "util/luoyun.h"
+/*
+** Copyright (C) 2012 LuoYun Co. 
+**
+**           Authors:
+**                    lijian.gnu@gmail.com 
+**                    zengdongwu@hotmail.com
+**  
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+**  
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**  
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+**  
+*/
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <pthread.h>
+#include <libpq-fe.h>
 
-PGconn *
-db_connect ( const char *dbname,
-             const char *username,
-             const char *password)
+#include "../util/logging.h"
+#include "lyclc.h"
+#include "lyjob.h"
+#include "postgres.h"
+
+PGconn * _db_conn = NULL;
+pthread_mutex_t _db_lock;
+
+static PGresult * __db_select(char *sql)
 {
-     logdebug("START %s:%d:%s\n",
-              __FILE__, __LINE__, __func__);
-     PGconn *conn = NULL;
-     char conninfo[LINE_MAX];
+    PGresult *res;
 
-     sprintf(conninfo, "dbname=%s user=%s password=%s",
-             dbname, username, password);
+    pthread_mutex_lock(&_db_lock);
+    res = PQexec(_db_conn, sql);
+    pthread_mutex_unlock(&_db_lock);
 
-     logdebug("Connect DB use { %s }\n", conninfo);
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        logerror(_("db exec failed: %s\n"), PQerrorMessage(_db_conn));
+        PQclear(res);
+        return NULL;
+    }
 
-     conn = PQconnectdb(conninfo);
-
-     if (PQstatus(conn) == CONNECTION_BAD) {
-          logprintfl(LYERROR, "unable to connect to the database: %s\n", PQerrorMessage(conn));
-          return NULL;
-     }
-
-     return conn;
+    return res;
 }
 
-
-int
-db_get_jobs (LyDBConn *db, JobQueue *qp)
+static int __db_exec(char *sql)
 {
-     logsimple("START %s:%d:%s\n",
-               __FILE__, __LINE__, __func__);
+    PGresult *res;
 
-     PGresult *res;
-     int row, rec_count;
+    pthread_mutex_lock(&_db_lock);
+    res = PQexec(_db_conn, sql);
+    pthread_mutex_unlock(&_db_lock);
 
-     char sql[LINE_MAX];
-     sprintf(sql, "SELECT id, status, \
-extract(epoch FROM created), extract(epoch FROM created), \
-target_type, target_id, action from job \
-where status = %d or status = %d;",
-             JOB_S_PREPARE, JOB_S_RUNNING);
+    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
+        logerror(_("db exec failed: %s\n"), PQerrorMessage(_db_conn));
+        PQclear(res);
+        return -1;
+    }
 
-     //logprintfl(LYDEBUG, "%s: SQL = %s\n", __func__, sql);
-
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-          logprintfl(LYERROR, "%s: get jobs failed: %s\n",
-                     __func__, PQerrorMessage(db->conn));
-          return -1;
-     }
-
-     rec_count = PQntuples(res);
-
-     //logprintfl(LYDEBUG, "found %d new jobs.\n", rec_count);
-
-     int err = 0;
-     int job_id, job_status, job_exist;
-     Job *jp;
-     /* id, status, created, started, 
-        0,   1,       2,        3,   
-        target_type, target_id, action
-        4,           5          6         */
-     for (row = 0; row < rec_count; row++) {
-
-          job_id = atoi(PQgetvalue(res, row, 0));
-          job_status = atoi(PQgetvalue(res, row, 1));
-          job_exist = 0;
-
-          logsimple("\t[ job %d , status = %d\n",
-                    job_id, job_status);
-
-          for (jp = qp->q_head; jp != NULL; jp = jp->j_next)
-          {
-               // Fix me, just id ?
-               if ( jp->j_id == job_id &&
-                    jp->j_status == job_status )
-               {
-                    job_exist = 1;
-                    break;
-               }
-          }
-
-          /* If job exist, continue */
-          if (job_exist) continue;
-
-          // Create new job
-          Job *jp = malloc(sizeof(Job));
-          if (jp == NULL)
-          {
-               logdebug("%s%d%s job malloc error.\n",
-                        __FILE__, __LINE__, __func__);
-               err = -2;
-               break;
-          }
-          jp->j_id = job_id;
-          jp->j_status = job_status;
-          jp->j_created = atol(PQgetvalue(res, row, 2));
-          jp->j_started = atol(PQgetvalue(res, row, 3));
-          jp->j_target_type = atoi(PQgetvalue(res, row, 4));
-          jp->j_target_id = atoi(PQgetvalue(res, row, 5));
-          jp->j_action = atoi(PQgetvalue(res, row, 6));
-
-          /* Append new job to queue */
-          jp->j_next = NULL;
-          jp->j_prev = qp->q_tail;
-          if (qp->q_tail != NULL)
-               qp->q_tail->j_next = jp;
-          else
-               qp->q_head = jp;
-          qp->q_tail = jp;
-          qp->q_count++; /* Maybe useful after */
-     }
-
-     PQclear(res);
-     return err;
+    PQclear(res);
+    return 0;
 }
 
-
-/* Summary: get all nodes from DB 
-   Return: 0 is OK, others on error */
-int db_get_nodes(LyDBConn *db, ComputeNodeQueue *qp)
+/* return db id if exists */
+int db_node_exist(int type, void * data)
 {
-     PGresult *res;
-     int row, rec_count;
+    if (data == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);        
+        return -1;
+    }
 
-     char sql[LINE_MAX];
-     sprintf(sql, "SELECT id, ip, 3261, status from node where status != %d;", NODE_S_STOP);
+    int ret;
+    char sql[LINE_MAX];
+    if (type == DB_NODE_FIND_BY_IP)
+        ret = snprintf(sql, LINE_MAX,
+                       "SELECT id from node where ip = '%s';", (char *)data);
+    else if (type == DB_NODE_FIND_BY_ID)
+        ret = snprintf(sql, LINE_MAX,
+                       "SELECT id from node where id = %d;", *(int *)data);
+    else {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     logdebug("%s: exec SQL = \"%s\"\n", __func__, sql);
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);        
+        return -1;
+    }
 
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
+    PGresult *res = __db_select(sql);
+    if (res == NULL)
+        return -1;
 
-     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-          logerror("SQL exec error: sql = \"%s\", error = \"%s\"\n", sql, PQerrorMessage(db->conn));
-          return -1;
-     }
+    ret = PQntuples(res);
+    if (ret > 1) {
+        logerror(_("DB have multi node with same tag\n"));
+        ret = -1;
+    }
+    else if (ret == 1) {
+        ret = atoi(PQgetvalue(res, 0, 0));
+        if (ret <= 0) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            ret = -1;
+        }
+    }
 
-     rec_count = PQntuples(res);
-
-     //logdebug("found %d nodes.\n", rec_count);
-
-     /* id, ip, port, status
-        0   1   2     3     */
-     int err = 0;
-     char ip[32]; /* eg 192.168.0.1 */
-     ComputeNodeItem *np;
-
-start:
-     for (row = 0; row < rec_count; row++) {
-
-          // TODO: if created was too old would be drop.
-          strcpy(ip, PQgetvalue(res, row, 1));
-
-          // Does it exist ?
-          for (np = qp->q_head; np != NULL; np = np->n_next)
-               if ( !strcmp(np->node.ip, ip) )
-                    goto start;
-
-          // Create new node
-          np = calloc(1, sizeof(ComputeNodeItem));
-          if (np == NULL)
-          {
-               logerror("node: malloc error.\n");
-               err = -1;
-               break;
-          }
-
-          np->id = atoi(PQgetvalue(res, row, 0));
-          strcpy(np->node.ip, ip);
-          np->node.port = atoi(PQgetvalue(res, row, 2));
-          np->node.status = NODE_S_NEED_QUERY;
-
-          // Add node to queue
-          np->n_next = NULL;
-          np->n_prev = qp->q_tail;
-          if (qp->q_tail != NULL)
-               qp->q_tail->n_next = np;
-          else
-               qp->q_head = np;
-          qp->q_tail = np;
-
-     }
-
-     PQclear(res);
-     return err;
+    PQclear(res);
+    return ret;
 }
 
-
-/* Summary: updated all information for node */
-int db_update_node(LyDBConn *db, ComputeNodeItem *nitem)
+/* return db id if exists */
+int db_node_find_secret(int type, void * data, char ** secret)
 {
-     logdebug(_("START %s\n"), __func__);
+    if (data == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     ComputeNodeInfo ni = nitem->node;
+    int ret;
+    char sql[LINE_MAX];
+    if (type == DB_NODE_FIND_BY_IP)
+        ret = snprintf(sql, LINE_MAX,
+                       "SELECT id, key from node where ip = '%s';",
+                       (char *)data);
+    else if (type == DB_NODE_FIND_BY_ID)
+        ret = snprintf(sql, LINE_MAX,
+                       "SELECT id, key from node where id = %d;",
+                       *(int *)data);
+    else {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     char sql[LINE_MAX];
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     sprintf(sql, "UPDATE node SET memory = %ld, \
-hostname = '%s', arch = %d, status = %d, cpus = %d, \
-cpu_model = '%s', updated = 'now' WHERE ip = '%s';",
-             ni.max_memory, ni.hostname, ni.arch, ni.status,
-             ni.max_cpus, ni.cpu_model, ni.ip);
-     int err = 0;
-     PGresult *res;
+    PGresult *res = __db_select(sql);
+    if (res == NULL)
+        return -1;
 
-     logdebug(_("SQL = \"%s\"\n"), sql);
+    ret = PQntuples(res);
+    if (ret > 1) {
+        logerror(_("DB have multi node with same tag\n"));
+        ret = -1;
+    }
+    else if (ret == 1) {
+        ret = atoi(PQgetvalue(res, 0, 0));
+        if (ret <= 0) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            ret = -1;
+        }
+        char * s = PQgetvalue(res, 0, 1);
+        if (s && strlen(s))
+            *secret = strdup(s);
+    }
 
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-          logerror(_("%s: update failed: %s\n"),
-                   __func__, PQerrorMessage(db->conn));
-          err = -1;
-     }
-
-     PQclear(res);
-     return err;
+    PQclear(res);
+    return ret;
 }
 
-
-int
-db_node_register (LyDBConn *db, ComputeNodeItem *nitem)
+/* return the number of entries found */
+int db_node_find(int type, void * data, DBNodeRegInfo * db_nf)
 {
-     ComputeNodeInfo *ni = &(nitem->node);
+    if (data == NULL || db_nf == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);        
+        return -1;
+    }
 
-     logdebug(_("%s: register %s\n"), __func__, ni->ip);
+    int ret;
+    char sql[LINE_MAX];
+    if (type == DB_NODE_FIND_BY_IP)
+        ret = snprintf(sql, LINE_MAX,
+                       "SELECT id, status, ip, key, isenable from node "
+                       "where ip = '%s' order by key DESC;", (char *)data);
+    else if (type == DB_NODE_FIND_BY_ID)
+        ret = snprintf(sql, LINE_MAX,
+                       "SELECT id, status, ip, key, isenable from node "
+                       "where id = %d order by key DESC;", *(int *)data);
+    else {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     char sql[LINE_MAX];
-     PGresult *res;
-     int err = -1;
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);        
+        return -1;
+    }
 
-     sprintf(sql, "SELECT id from node where ip = '%s';",
-             ni->ip);
+    PGresult *res = __db_select(sql);
+    if (res == NULL)
+        return -1;
 
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
+    ret = PQntuples(res);
+    if (ret >= 1) {
+        db_nf->id = atoi(PQgetvalue(res, 0, 0));
+        db_nf->status = atoi(PQgetvalue(res, 0, 1));
+        char * s = PQgetvalue(res, 0, 2);
+        if (s && strlen(s))
+            db_nf->ip = strdup(s);
+        s = PQgetvalue(res, 0, 3);
+        if (s && strlen(s))
+            db_nf->secret = strdup(s);
+        s = PQgetvalue(res, 0, 4);
+        db_nf->enabled = s[0] == 't' ? 1 : 0;
+    }
+    if (ret > 1) {
+        char * s = PQgetvalue(res, 1, 3);
+        if (s && strlen(s))
+            ret = 1;
+        /* do not allow more than 1 entry with same ip and NULL key */
+    }
+    if (ret > 1)
+        logerror(_("DB have multi node with same tag\n"));
 
-     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-          logerror(_("%s: select failed: %s\n"),
-                     __func__, PQerrorMessage(db->conn));
-          goto clean;
-     }
-
-     if ( PQntuples(res) == 1 )
-     {
-          logdebug(_("%s: node have exist, id = %d\n"),
-                   __func__, atoi(PQgetvalue(res, 0, 0)));
-          // Need update db
-          err = db_update_node(db, nitem);
-          goto clean;
-     } else if ( PQntuples(res) > 1 ) {
-          logerror(_("%s: DB have multi node has same ip\n"));
-          goto clean;
-     }
-
-     sprintf(sql,
-"INSERT INTO node ( \
-hostname, ip, arch, status, memory, cpus, \
-cpu_model, cpu_mhz, created, updated ) VALUES ( \
-'%s', '%s', %d, %d, %ld, %d, \
-'%s', %d, 'now', 'now' );",
-          ni->hostname, ni->ip, ni->arch,
-          ni->status, ni->max_memory, ni->max_cpus,
-          ni->cpu_model, 0 );
-
-     logdebug(_("SQL = { %s }\n"), sql);
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-          logerror(_("register node failed: %s\n"),
-                   PQerrorMessage(db->conn));
-     } else
-          err = 0;
-
-clean:
-     PQclear(res);
-     return err;
+    PQclear(res);
+    return ret;
 }
 
-
-/* Get node id in DB by node's ip
- * Return id if success, error on -1.
- */
-int db_node_get_id(LyDBConn *db, const char *ip)
+int db_node_reginfo_free(DBNodeRegInfo * nf)
 {
-     int id = -1;
-     char sql[LINE_MAX];
-     PGresult *res;
-
-     sprintf(sql, "SELECT id from node where ip = '%s';", ip);
-
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-          logerror(_("%s: select failed: %s\n"),
-                     __func__, PQerrorMessage(db->conn));
-          goto clean;
-     }
-
-     if (PQntuples(res) == 1)
-     {
-          id = atoi(PQgetvalue(res, 0, 0));
-     } else if ( PQntuples(res) > 1 ) {
-          logerror(_("%s: DB have multi node has same ip\n"));
-     }
-
-clean:
-     PQclear(res);
-     return id;
+    if (nf == NULL)
+        return -1;
+    if (nf->ip)
+        free(nf->ip);
+    if (nf->secret)
+        free(nf->secret);
+    return 0;
 }
 
-
-/* Summary: update the status of node */
-int
-db_update_node_status (LyDBConn *db, ComputeNodeItem *nitem)
+int db_node_update_secret(int type, void * data, char * secret)
 {
-     logdebug("START %s\n", __func__);
+    if (data == NULL || secret == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     char sql[LINE_MAX];
-     PGresult *res;
-     int err = 0;
+    int ret;
+    char sql[LINE_MAX];
+    if (type == DB_NODE_FIND_BY_ID)
+        ret = snprintf(sql, LINE_MAX,
+                       "UPDATE node SET key = '%s', " 
+                       "updated = 'now' WHERE id= %d;",
+                       secret, *(int *)data);
+    else {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     time_t now;
-     time(&now);
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     sprintf(sql, "UPDATE node SET status = %d, \
-updated = %ld::abstime::timestamp WHERE ip = '%s';",
-             nitem->node.status, now, nitem->node.ip);
-
-     logdebug(_("SQL = \"%s\"\n"), sql);
-
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-          logerror("%s: update node status failed: %s\n",
-                   __func__, PQerrorMessage(db->conn));
-          err = -1;
-     }
-
-     PQclear(res);
-     return err;
+    return __db_exec(sql);
 }
 
-
-int db_get_jobs2(LyDBConn *db, JobQueue *qp)
+int db_node_update(int type, void * data, NodeInfo * nf) 
 {
-     logdebug(_("START %s\n"), __func__);
+    if (data == NULL || nf == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     PGresult *res;
-     int row, rec_count;
+    int ret;
+    char sql[LINE_MAX];
+    if (type == DB_NODE_FIND_BY_IP)
+        ret = snprintf(sql, LINE_MAX,
+                       "UPDATE node SET memory = %d, "
+                       "hostname = '%s', arch = %d, cpus = %d, "
+                       "cpu_model = '%s', cpu_mhz = %d, status = %d, "
+                       "updated = 'now' WHERE ip = '%s';",
+                       nf->max_memory,
+                       nf->hostname, nf->arch, nf->max_cpus,
+                       nf->cpu_model, nf->cpu_mhz, nf->status,
+                       nf->ip);
+    else if (type == DB_NODE_FIND_BY_ID)
+        ret = snprintf(sql, LINE_MAX,
+                       "UPDATE node SET memory = %d, "
+                       "hostname = '%s', arch = %d, cpus = %d, "
+                       "cpu_model = '%s', cpu_mhz = %d, status = %d, "
+                       "ip = '%s', updated = 'now' WHERE id = %d;",
+                       nf->max_memory,
+                       nf->hostname, nf->arch, nf->max_cpus,
+                       nf->cpu_model, nf->cpu_mhz, nf->status,
+                       nf->ip, *(int *)data);
+    else {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     char sql[LINE_MAX];
-     sprintf(sql, "SELECT id, status, \
-extract(epoch FROM created), extract(epoch FROM created), \
-target_type, target_id, action from job \
-where status = %d or status = %d;",
-             JOB_S_PREPARE, JOB_S_RUNNING);
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     logdebug(_("Exec SQL = \"%s\"\n"), sql);
-
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-          logerror(_("%s: get jobs failed: %s\n"),
-                   __func__, PQerrorMessage(db->conn));
-          return -1;
-     }
-
-     rec_count = PQntuples(res);
-     logdebug(_("found %d new jobs.\n"), rec_count);
-
-     int err = 0;
-     int job_id;
-     Job *jp;
-     /* id, status, created, started, 
-        0,  1,      2,       3,   
-        target_type, target_id, action
-        4,           5          6         */
-start:
-     for (row = 0; row < rec_count; row++) {
-
-          job_id = atoi(PQgetvalue(res, row, 0));
-
-          for (jp = qp->q_head; jp != NULL; jp = jp->j_next)
-               // Fix me, just id ?
-               if ( jp->j_id == job_id )
-                    goto start;
-
-          // Create new job
-          Job *jp = calloc(1, sizeof(Job));
-          if (jp == NULL)
-          {
-               logdebug("%s: job malloc error.\n", __func__);
-               err = -2;
-               break;
-          }
-          jp->j_id = job_id;
-          jp->j_status = atoi(PQgetvalue(res, row, 1));
-          //jp->j_status = JOB_S_QUERYING;
-          jp->j_created = atol(PQgetvalue(res, row, 2));
-          //jp->j_started = atol(PQgetvalue(res, row, 3));
-          jp->j_target_type = atoi(PQgetvalue(res, row, 4));
-          jp->j_target_id = atoi(PQgetvalue(res, row, 5));
-          jp->j_action = atoi(PQgetvalue(res, row, 6));
-
-          /* Append new job to queue */
-          jp->j_next = NULL;
-          jp->j_prev = qp->q_tail;
-          if (qp->q_tail != NULL)
-               qp->q_tail->j_next = jp;
-          else
-               qp->q_head = jp;
-          qp->q_tail = jp;
-          qp->q_count++; /* Maybe useful after */
-     }
-
-     PQclear(res);
-     return err;
+    return __db_exec(sql);
 }
 
-
-
-/* Summary: update the status of job */
-int
-db_update_job_status (LyDBConn *db, Job *jp)
+int db_node_enable(int id, int enable)
 {
-     logdebug(_("%s: update status of job %d\n"),
-              __func__, jp->j_id);
+    char sql[LINE_MAX];
+    int ret = snprintf(sql, LINE_MAX,
+                       "UPDATE node SET isenable = '%s', "
+                       "updated = 'now' WHERE id= %d;",
+                       enable ? "True" : "False", id);
 
-     char sql[LINE_MAX];
-     PGresult *res;
-     int err = 0;
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     sprintf(sql, "UPDATE job SET status = %d, \
-started = %ld::abstime::timestamp, ended = 'now' WHERE id = %d;",
-             jp->j_status, (long)jp->j_started, jp->j_id);
+    return __db_exec(sql);
+}
+
+/* upon successful completion, id of new entry is returned */
+int db_node_insert(NodeInfo * nf)
+{
+    char sql[LINE_MAX];
+    if (snprintf(sql, LINE_MAX,
+                 "INSERT INTO node (hostname, ip, arch, memory, "
+                 "status, cpus, cpu_model, "
+                 "cpu_mhz, created, updated) "
+                 "VALUES ('%s', '%s', %d, %d, "
+                 "%d, %d, '%s', "
+                 "%d, 'now', 'now');",
+                 nf->hostname, nf->ip, nf->arch, nf->max_memory,
+                 nf->status, nf->max_cpus, nf->cpu_model,
+                 nf->cpu_mhz) >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);        
+        return -1;
+    }
+    if (__db_exec(sql) < 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    if (snprintf(sql, LINE_MAX,
+                 "SELECT id from node where ip = '%s' order by id DESC; ",
+                 nf->ip) >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+    PGresult *res = __db_select(sql);
+    if (res == NULL)
+        return -1;
+    int ret = atoi(PQgetvalue(res, 0, 0));
+    PQclear(res);
+    return ret;
+}
+
+int db_node_update_status(int type, void * data, int status)
+{
+    if (data == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    int ret;
+    char sql[LINE_MAX];
+    if (type == DB_NODE_FIND_BY_ID)
+        ret = snprintf(sql, LINE_MAX,
+                       "UPDATE node SET status = %d, "
+                       "updated = 'now' WHERE id= %d;",
+                       status, *(int *)data);
+    else {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+    return __db_exec(sql);
+}
+
+int db_job_get(LYJobInfo * job)
+{
+    char sql[LINE_MAX];
+    if (snprintf(sql, LINE_MAX,
+                 "SELECT status, "
+                 "extract(epoch FROM created), "
+                 "extract(epoch FROM started), "
+                 "extract(epoch FROM ended), "
+                 "target_type, target_id, action "
+                 "from job where id = %d;",
+                 job->j_id) >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+    PGresult * res = __db_select(sql);
+    if (res == NULL)
+        return -1;
+
+    int ret = PQntuples(res);
+    if (ret == 1) {
+        job->j_status = atoi(PQgetvalue(res, 0, 0));
+        job->j_created = atol(PQgetvalue(res, 0, 1));
+        job->j_started = atol(PQgetvalue(res, 0, 2));
+        job->j_ended = atol(PQgetvalue(res, 0, 3));
+        job->j_target_type = atoi(PQgetvalue(res, 0, 4));
+        job->j_target_id = atoi(PQgetvalue(res, 0, 5));
+        job->j_action = atoi(PQgetvalue(res, 0, 6));
+        ret = 0;
+    }
+    else if (ret > 1) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        ret = -1;
+    }
+    else {
+        logerror(_("no record for job %d in db\n"), job->j_id);
+        ret = -1;
+    }
+
+    PQclear(res);
+    return ret;
+}
+
+int db_job_get_all(void)
+{
+    char sql[LINE_MAX];
+    if (snprintf(sql, LINE_MAX,
+                 "SELECT id, status, "
+                 "extract(epoch FROM created), "
+                 "extract(epoch FROM started), "
+                 "target_type, target_id, action "
+                 "from job "
+                 "where (status >= %d and status < %d) or status = %d;",
+                 LY_S_INITIATED, LY_S_RUNNING_LAST_STATUS,
+                 LY_S_PENDING) >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+    PGresult * res = __db_select(sql);
+    if (res == NULL)
+        return -1;
+
+    int ret = PQntuples(res);
+    int r;
+    for (r = 0; r < ret; r++) {
+        LYJobInfo * job = malloc(sizeof(LYJobInfo));
+        if (job == NULL)
+            return -1;
+        job->j_id = atoi(PQgetvalue(res, r, 0));
+        job->j_status = atoi(PQgetvalue(res, r, 1));
+        job->j_created = atol(PQgetvalue(res, r, 2));
+        job->j_started = atol(PQgetvalue(res, r, 3));
+        job->j_target_type = atoi(PQgetvalue(res, r, 4));
+        job->j_target_id = atoi(PQgetvalue(res, r, 5));
+        job->j_action = atoi(PQgetvalue(res, r, 6));
+        job_insert(job);
+    }
+
+    PQclear(res);
+    return ret;
+}
+
+int db_job_update_status(LYJobInfo * job)
+{
+    char sql[LINE_MAX];
+    if (snprintf(sql, LINE_MAX,
+                 "UPDATE job SET status = %d, "
+                 "started = %ld::abstime::timestamp, "
+                 "ended = 'now' WHERE status != %d and id = %d;",
+                  job->j_status, (long)job->j_started,
+                  job->j_status, job->j_id) >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+    return __db_exec(sql);
+
+}
+
+int db_instance_find_secret(int id, char ** secret)
+{
+    char sql[LINE_MAX];
+    int ret = snprintf(sql, LINE_MAX,
+                       "SELECT key from instance where id = %d;",
+                       id);
+
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    PGresult *res = __db_select(sql);
+    if (res == NULL)
+        return -1;
+
+    ret = PQntuples(res);
+    if (ret > 1) {
+        logerror(_("DB have multi node with same tag\n"));
+        ret = -1;
+    }
+    else if (ret == 1) {
+        char * s = PQgetvalue(res, 0, 0);
+        if (s && strlen(s))
+            *secret = strdup(s);
+    }
+
+    PQclear(res);
+    return ret;
+}
+
+int db_instance_update_secret(int id, char * secret)
+{
+    if (secret == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    char sql[LINE_MAX];
+    int ret = snprintf(sql, LINE_MAX,
+                       "UPDATE instance SET key = '%s', "
+                       "updated = 'now' WHERE id= %d;",
+                       secret, id);
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    return __db_exec(sql);
+}
+
+int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
+{
+    char s_ip[100];
+    if (ii->ip == NULL || ii->ip[0] == '\0' || ii->ip[0] == ' ')
+        s_ip[0] = '\0';
+    else
+        snprintf(s_ip, 100, "ip = '%s',", ii->ip);
+
+    char s_status[20];
+    if (ii->status == DOMAIN_S_UNKNOWN)
+        s_status[0] = '\0';
+    else
+        snprintf(s_status, 20, "status = %d,", ii->status);
+
+    char s_node_id[20];
+    if (node_id > 0)
+        snprintf(s_node_id, 20, "node_id = %d,", node_id);
+    else if (node_id == 0)
+        snprintf(s_node_id, 20, "node_id = NULL,");
+    else
+        s_node_id[0] = '\0';
+
+    char sql[LINE_MAX];
+    if (snprintf(sql, LINE_MAX, "UPDATE instance SET %s %s %s "
+                                "updated = 'now' WHERE id = %d;",
+                                s_ip, s_status, s_node_id,
+                                instance_id) >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
  
-     logdebug(_("SQL = \"%s\"\n"), sql);
-
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-          logerror(_("%s: update job status failed: %s\n"),
-                   __func__, PQerrorMessage(db->conn));
-          err = -1;
-     }
-
-     PQclear(res);
-     return err;
+    return __db_exec(sql);
 }
 
-
-/* Summary: check the status of domain in DB 
-   Return: 0 on OK, others on error */
-int
-db_update_domains (LyDBConn *db, ComputeNodeQueue *qp)
+int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
 {
-     logdebug("%s:%d:%s check the status of all domains\n",
-              __FILE__, __LINE__, __func__);
+    char sql[LINE_MAX];
+    if (snprintf(sql, LINE_MAX,
+                 "SELECT instance.name, instance.cpus, instance.memory, "
+                 "instance.ip, instance.mac, instance.node_id, "
+                 "instance.appliance_id, appliance.name, "
+                 "appliance.checksum, instance.status "
+                 "from instance, appliance "
+                 "where instance.id = %d and "
+                 "appliance.id = instance.appliance_id;",
+                 ci->ins_id) >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+    PGresult * res = __db_select(sql);
+    if (res == NULL)
+        return -1;
 
-     DomainInfo *dip;
-     dip = malloc( sizeof(DomainInfo) );
-     if ( dip == NULL )
-     {
-          logerror("%s: malloc dip err.\n", __func__);
-          return -1;
-     }
+    int ret = PQntuples(res);
+    if (ret == 1) {
+        char * s = PQgetvalue(res, 0, 0);
+        if (s && strlen(s))
+            ci->ins_name = strdup(s);
+        ci->ins_vcpu = atoi(PQgetvalue(res, 0, 1));
+        ci->ins_mem = atoi(PQgetvalue(res, 0, 2));
+        if (ci->ins_mem < 2048)
+            ci->ins_mem = ci->ins_mem << 10;
+        s = PQgetvalue(res, 0, 3);
+        if (s && strlen(s))
+            ci->ins_ip = strdup(s);
+        s = PQgetvalue(res, 0, 4);
+        if (s && strlen(s))
+            ci->ins_mac = strdup(s);
+        *node_id = atoi(PQgetvalue(res, 0, 5));
+        ci->app_id = atoi(PQgetvalue(res, 0, 6));
+        s = PQgetvalue(res, 0, 7);
+        if (s && strlen(s))
+            ci->app_name = strdup(s);
+        ci->app_checksum = malloc(33);
+        if (ci->app_checksum)
+            strncpy(ci->app_checksum, PQgetvalue(res, 0, 8), 32);
+        ci->app_checksum[32] = 0;
+        ci->ins_status = atoi(PQgetvalue(res, 0, 9));
+        ci->osm_tag = ci->ins_id;
+        ret = 0;
+    }
+    else if (ret > 1) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        ret = -1;
+    }
+    else {
+        logerror(_("no record for instance %d in db\n"), ci->ins_id);
+        ret = -1;
+    }
 
-     PGresult *res;
-     int rec_count;
-     char sql[LINE_MAX];
-
-     sprintf(sql, "SELECT id, node_id, status, \
-extract(epoch FROM updated) from domain where \
-status = %d;", DOMAIN_S_RUNNING);
-
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-          logerror("exec SQL error: %s\n",
-                   PQerrorMessage(db->conn));
-          PQclear(res);
-          return -2;
-     }
-
-     rec_count = PQntuples(res);
-
-     /*
-       id, node_id, status, updated
-       0   1        2       3
-     */
-     int err = 0, row;
-     int domain_id, node_id;
-     //int status;
-     int find_node = 0;
-     time_t now, updated;
-     ComputeNodeItem *np;
-     PGresult *update_res;
-     time(&now);
-     for (row = 0; row < rec_count; row++) {
-          domain_id = atoi(PQgetvalue(res, row, 0));
-          node_id = atoi(PQgetvalue(res, row, 1));
-          //status = atoi(PQgetvalue(res, row, 2));
-          updated = atol(PQgetvalue(res, row, 3));
-
-          //logdebug("check domain %d: [ status = %d,"
-          //         "node_id = %d, updated = %ld ]\n",
-          //         domain_id, atoi(PQgetvalue(res, row, 2)),
-          //         node_id, updated);
-
-          // Find the node
-          pthread_rwlock_wrlock(&qp->q_lock);
-          for (np = qp->q_head; np != NULL; np = np->n_next)
-          {
-               if (np->node.status != NODE_S_RUNNING)
-                    continue;
-
-               if (np->id == node_id)
-               {
-                    find_node = 1;
-                    break;
-               }
-          }
-          pthread_rwlock_unlock(&qp->q_lock);
-
-          // TODO: configure the interval time
-          if ( find_node && (now - updated) < 360 )
-               continue;
-
-          sprintf(sql, "UPDATE domain SET ip = 'unset', \
-status = %d, updated = %ld::abstime::timestamp \
-WHERE id = %d;",
-                  DOMAIN_S_UNKNOWN,
-                  now, domain_id);
-
-          logdebug("%s\n", sql);
-
-          // Update the domain status in DB
-          pthread_mutex_lock(&db->lock);
-          update_res = PQexec(db->conn, sql);
-          pthread_mutex_unlock(&db->lock);
-
-          if (PQresultStatus(update_res) != PGRES_TUPLES_OK)
-          {
-               logerror("update status of domain %d was "
-                        "failed: %s\n", domain_id,
-                        PQerrorMessage(db->conn));
-               err += 1;
-          }
-          PQclear(update_res);
-     }
-
-     PQclear(res);
-     return 0;
+    PQclear(res);
+    return ret;
 }
 
-
-/* Summary: get domain info from DB 
-   Return: NULL is error, others on OK */
-DomainInfo *db_get_domain (LyDBConn *db, int id)
+int db_instance_find_ip_by_status(int status, char * ins_ip[], int size)
 {
-     logdebug("START %s\n", __func__);
+    char sql[LINE_MAX];
+    int ret = snprintf(sql, LINE_MAX,
+                       "SELECT ip from instance where status = %d;",
+                       status);
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     DomainInfo *dip;
-     dip = calloc(1, sizeof(DomainInfo));
-     if ( dip == NULL )
-     {
-          logerror(_("%s: allocate malloc for DomainInfo error.\n"), __func__);
-          return NULL;
-     }
+    PGresult *res = __db_select(sql);
+    if (res == NULL)
+        return -1;
 
-     PGresult *res;
-     int rec_count;
-     char sql[LINE_MAX];
+    ret = PQntuples(res);
+    int i, j;
+    for (i = j = 0; i< ret; i++) {
+        char * s = PQgetvalue(res, i, 0);
+        if (s && strlen(s) && strcmp(s, "0.0.0.0")) {
+            if (j < size)
+                ins_ip[j] = strdup(s);
+            j++;
+        }
+    }
 
-     sprintf(sql, "SELECT node_id, appliance_id, cpus,\
- memory from instance where id = %d;", id);
-
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-          logerror(_("Exec SQL \"%s\" failed: %s\n"),
-                   sql, PQerrorMessage(db->conn));
-          free(dip);
-          goto clean;
-     }
-
-     rec_count = PQntuples(res);
-     if (rec_count != 1)
-     {
-          logerror(_("%s: more domain found.\n"), __func__);
-          free(dip);
-          goto clean;
-     }
-
-     /*node_id, image_id, cpus, memory
-       0        1         2     3    */
-     dip->id = id;
-     dip->node_id = atoi(PQgetvalue(res, 0, 0));
-     dip->image_id = atoi(PQgetvalue(res, 0, 1));
-     dip->cpus = atoi(PQgetvalue(res, 0, 2));
-     // Fix me: does the atol safe ?
-     dip->memory = atol(PQgetvalue(res, 0, 3));
-
-clean:
-     PQclear(res);
-     return dip;
+    PQclear(res);
+    return j;
 }
 
-
-/* Summary: get job info from DB 
-   Return: NULL is error, others on OK */
-Job *
-db_get_job (LyDBConn *db, JobQueue *qp, int id)
+int ly_db_init(void)
 {
-     logdebug("%s:%d:%s job id = %d\n",
-              __FILE__, __LINE__, __func__, id);
+    char conninfo[LINE_MAX];
 
-     PGresult *res;
-     char sql[LINE_MAX];
+    sprintf(conninfo, "dbname=%s user=%s password=%s",
+            g_c->db_name, g_c->db_user, g_c->db_pass);
 
-     sprintf(sql, "SELECT status, \
-extract(epoch FROM created), extract(epoch FROM started), \
-extract(epoch FROM ended), target_type, target_id, action \
-from job where id = %d;", id);
+    _db_conn = PQconnectdb(conninfo);
 
-     //logdebug("%s: SQL = %s\n", __func__, sql);
+    if (PQstatus(_db_conn) == CONNECTION_BAD) {
+        logerror(_("unable to connect to the database: %s\n"),
+                 PQerrorMessage(_db_conn));
+        return -1;
+    }
 
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-          logerror("%s: get job %d failed: %s\n",
-                   __func__, id, PQerrorMessage(db->conn));
-          free(res);
-          return NULL;
-     }
-
-     int rec_count;
-     rec_count = PQntuples(res);
-     if (rec_count != 1)
-     {
-          logprintfl(LYERROR, "%s: more job found.\n",
-                     __func__);
-          PQclear(res);
-          return NULL;
-     }
-
-     int job_status, job_exist;
-     Job *jp;
-
-     /* status, created, started, ended,
-        0       1        2        3
-        target_type, target_id, action
-        4,           5          6 */
-
-     job_status = atoi(PQgetvalue(res, 0, 0));
-     job_exist = 0;
-
-     for (jp = qp->q_head; jp != NULL; jp = jp->j_next)
-     {
-          if ( jp->j_id == id &&
-               jp->j_status == job_status )
-          {
-               job_exist = 1;
-               break;
-          }
-     }
-
-     /* If job exist, return the job */
-     if (job_exist)
-     {
-          free(res);
-          return jp;
-     }
-
-     // Create new job
-     jp = malloc(sizeof(Job));
-     if (jp == NULL)
-     {
-          logprintfl(LYERROR, "%s: job malloc error.\n",
-                     __func__);
-          return NULL;
-     }
-
-     jp->j_id = id;
-     jp->j_status = job_status;
-     jp->j_created = atol(PQgetvalue(res, 0, 1));
-     jp->j_started = atol(PQgetvalue(res, 0, 2));
-     jp->j_ended = atol(PQgetvalue(res, 0, 3));
-     jp->j_target_type = atoi(PQgetvalue(res, 0, 4));
-     jp->j_target_id = atoi(PQgetvalue(res, 0, 5));
-     jp->j_action = atoi(PQgetvalue(res, 0, 6));
-
-     /* Append new job to queue */
-     jp->j_next = NULL;
-     jp->j_prev = qp->q_tail;
-     if (qp->q_tail != NULL)
-          qp->q_tail->j_next = jp;
-     else
-          qp->q_head = jp;
-     qp->q_tail = jp;
-     qp->q_count++; /* Maybe useful after */
-
-     PQclear(res);
-     return jp;
+    pthread_mutex_init(&_db_lock, NULL);
+    return 0;
 }
 
-
-/* Summary: update the status of domain */
-int
-db_update_domain_status (LyDBConn *db, DomainInfo *dip)
+void ly_db_close(void)
 {
-     logdebug(_("START %s\n"), __func__);
-
-     char ip[32] = { '\0' };
-     if ( strlen(dip->ip) < 6 )
-     {
-          strncpy(ip, "0.0.0.0", 16);
-     } else {
-          strncpy(ip, dip->ip, 32);
-     }
-
-     char sql[LINE_MAX];
-
-     sprintf(sql, "UPDATE instance SET \
-node_id = %d, status = %d, ip = '%s', \
-updated = 'now' WHERE id = %d;",
-             dip->node_id, dip->status, ip,
-             dip->id);
-
-     logdebug(_("Exec SQL \"%s\"\n"), sql);
-
-     int err = 0;
-     PGresult *res;
-
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-          logerror(_("Update status for domain %d failed: %s\n"), dip->id, PQerrorMessage(db->conn));
-          err = -1;
-     }
-
-     PQclear(res);
-     return err;
-}
-
-
-/* Summary: get domain info from DB 
-   Return: NULL is error, others on OK */
-ImageInfo *
-db_get_image (LyDBConn *db, int id)
-{
-     logsimple("START %s:%d:%s\n",
-               __FILE__, __LINE__, __func__);
-
-     ImageInfo *iip;
-     iip = malloc( sizeof(ImageInfo) );
-     if ( iip == NULL )
-     {
-          logprintfl(LYERROR, "%s: malloc err.\n", __func__);
-          return NULL;
-     }
-
-     PGresult *res;
-     int rec_count;
-     char sql[LINE_MAX];
-
-     sprintf(sql, "SELECT name, filetype, checksum_type, \
-checksum_value, size, extract(epoch FROM created), \
-extract(epoch FROM updated) from image where id = %d;", id);
-
-     logprintfl(LYDEBUG, "%s\n", sql);
-
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-          logprintfl(LYERROR, "get image failed: %s\n",
-                     PQerrorMessage(db->conn));
-          PQclear(res);
-          return NULL;
-     }
-
-     rec_count = PQntuples(res);
-     if (rec_count != 1)
-     {
-          logprintfl(LYERROR, "%s: more image found.\n",
-                     __func__);
-          PQclear(res);
-          return NULL;
-     }
-
-     /* name, type, checksum_type, checksum_value,
-        0     1     2              3
-        size, created, updated
-        4     5        6 */
-     strcpy(iip->name, PQgetvalue(res, 0, 0));
-     iip->type = atoi(PQgetvalue(res, 0, 1));
-     iip->checksum_type = atoi(PQgetvalue(res, 0, 2));
-     strcpy(iip->checksum_value, PQgetvalue(res, 0, 3));
-     iip->size = atol(PQgetvalue(res, 0, 4));     iip->created = atol(PQgetvalue(res, 0, 5));
-     iip->updated = atol(PQgetvalue(res, 0, 6));
-
-     iip->id = id;
-
-     PQclear(res);
-     return iip;
-}
-
-
-/* Summary: update the status of node */
-int
-db_update_instance(LyDBConn *db, DomainInfo *dip)
-{
-     logdebug("START %s\n", __func__);
-
-     char sql[LINE_MAX];
-     PGresult *res;
-     int err = 0;
-
-     time_t now;
-     time(&now);
-
-     sprintf(sql, "UPDATE instance SET status = %d, ip = '%s', \
-updated = %ld::abstime::timestamp WHERE id = %d;",
-             dip->status, dip->ip, now, dip->id);
-
-     logdebug(_("SQL = \"%s\"\n"), sql);
-
-     pthread_mutex_lock(&db->lock);
-     res = PQexec(db->conn, sql);
-     pthread_mutex_unlock(&db->lock);
-
-     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-          logerror("%s: update instance failed: %s\n",
-                   __func__, PQerrorMessage(db->conn));
-          err = -1;
-     }
-
-     PQclear(res);
-     return err;
+    PQfinish(_db_conn);
 }

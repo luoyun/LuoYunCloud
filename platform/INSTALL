@@ -1,0 +1,54 @@
+To build the LuoYun cloud applications from the source files,
+
+#######################################################################
+Example step by step setup commands,
+
+sh-4.1# mkdir /opt/LuoYun2_Src
+sh-4.1# cd /opt/LuoYun2_Src/
+sh-4.1# cp /home/dongwu/luoyun-cloud/luoyun-cloud-0.1.tar.gz .
+sh-4.1# tar xzf luoyun-cloud-0.1.tar.gz 
+sh-4.1# cd luoyun-cloud-0.1
+sh-4.1# ./configure --prefix=/opt/LuoYun2_Src/Install 
+...
+sh-4.1# make
+...
+sh-4.1# make install
+sh-4.1# cd /opt/LuoYun2_Src/Install/
+sh-4.1# bin/lyclc -d
+...
+sh-4.1# bin/lynode -d
+...
+
+#######################################################################
+
+Here's the standard description,
+
+1. The first step is to run the configure script, which can be as
+   simple as
+
+    ./configure
+
+   However, it's recommeneded to specify a prefix so that when doing
+   "make install", all the files are installed into the specified 
+   directory. Developers in LuoYun Corp. use the following command as
+   root,
+
+    ./configure --prefix=/opt/luoyun
+
+2. The second step is very simple, just run "make"
+
+    make
+
+3. The third step is to install the applications ans supporting files,
+
+    make install
+
+   If you have specified "prefix" in the first step, all the files will
+   be installed to the specified directory. Otherwise, the files will be
+   installed to directories per Linux standard. For example, executables
+   will be installed into /usr/local/bin, config files go to /etc, etc.
+
+
+Enjoy!
+
+

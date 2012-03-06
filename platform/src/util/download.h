@@ -5,11 +5,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <curl/curl.h>
-//#include <curl/types.h>
+/* #include <curl/types.h> */
 #include <curl/easy.h>
 
-#include "util/misc.h"
+#include "misc.h"
 
-int ly_dl (const char *url, const char *file);
+/*
+** download file,
+** function is not thread-safe
+*/
+int lyutil_download(const char *uri, const char *name);
 
 #endif

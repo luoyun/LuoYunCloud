@@ -1,50 +1,27 @@
-#ifndef INCLUDE_NODE_DOMAIN_H
-#define INCLUDE_NODE_DOMAIN_H
+#ifndef  __LY_INCLUDE_COMPUTE_DOMAIN_H
+#define  __LY_INCLUDE_COMPUTE_DOMAIN_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <libvirt/libvirt.h>
 #include <libvirt/virterror.h>
+#include "lynode.h"
 
-#include "util/misc.h"
-#include "util/luoyun.h"
-#include "compute/lynode.h"
-#include "compute/options.h"
+#define HYPERVISOR_URI_KVM "qemu:///system"
+#define HYPERVISOR_URI_XEN "xen:///"
 
-
-virConnectPtr libvirtd_connect(CpConfig *c);
-
-int set_hypervisor (CpConfig *c);
-int set_hostname (CpConfig *c);
-int set_max_cpus (CpConfig *c);
-int set_node_mixture (CpConfig *c);
-int set_free_memory (CpConfig *c);
+int libvirt_connect(int driver);
+void libvirt_close(void);
+int libvirt_hypervisor(void);
+char * libvirt_hostname(void);
+int libvirt_max_cpus(void);
+int libvirt_node_info(NodeInfo * ni);
+unsigned int libvirt_free_memory(void);
+int libvirt_domain_active(char * name);
+virDomainPtr libvirt_domain_create(char * xml);
+int libvirt_domain_stop(char * name);
+int libvirt_domain_reboot(char * name);
 
 #if 0
-/* 下列三个函数最好返回 DomainPtr */
-virDomainPtr connect_domain_by_id(Node *node, int id);
-virDomainPtr connect_domain_by_name(Node *node, char *name);
-virDomainPtr connect_domain_by_UUID(Node *node, char *UUID);
-
-
-
-int *id_list_of_active_domains(Node *node, int *num);
-char **name_list_of_inactive_domains(Node *node, int *num);
-int list_domains(NodePtr node);
-char **list_domain_names(NodePtr node);
-
-const char *domain_state_by_name(NodePtr node, char *name);
-
-
-int vir_domain_control_shutdown(NodePtr node, char *name);
-int vir_domain_control_reboot(NodePtr node, char *name);
-int vir_domain_control_start(NodePtr node, char *name);
+int libvirt_domain_save(char * name, int idonweb)
 #endif
 
-virDomainPtr domain_connect (virConnectPtr conn, char *name);
-virDomainPtr create_transient_domain( virConnectPtr conn,
-                                      char *xml );
-int domain_stop (virConnectPtr conn, char *name);
-
-#endif /* end INCLUDE_NODE_DOMAIN_H */
+#endif

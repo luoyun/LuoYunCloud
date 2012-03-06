@@ -1,179 +1,176 @@
-#include "compute/node.h"
+/*
+** Copyright (C) 2012 LuoYun Co. 
+**
+**           Authors:
+**                    lijian.gnu@gmail.com 
+**                    zengdongwu@hotmail.com
+**  
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+**  
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**  
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+**  
+*/
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-int
-__empty_node(ComputeNodeInfo *node)
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+
+#include "../luoyun/luoyun.h"
+#include "../util/logging.h"
+#include "../util/lypacket.h"
+#include "../util/lyutil.h"
+#include "../util/lyxml.h"
+#include "domain.h"
+#include "handler.h"
+#include "node.h"
+
+
+/*
+** function to send out node report
+**
+** the function will be used as logging callback,
+** no any logging function is allowed here
+*/
+void ly_node_send_report(int type, char * msg)
 {
-     node->status = NODE_S_UNKNOWN;
-     *(node->hostname) = '\0';
-     *(node->ip) = '\0';
-     node->arch = CPU_ARCH_UNKNOWN;
-     node->hypervisor = HYPERVISOR_IS_UNKNOWN;
-     node->network_type = 0;
-     node->max_memory = 0;
-     node->max_cpus = 0;
-     *(node->cpu_model) = '\0';
-     node->cpu_mhz = 0;
-     node->load_average = 0;
-     node->free_memory = 0;
+    if (g_c == NULL || g_c->node == NULL)
+        return;
 
-     //node->created
-     //node->updated
+    if (type >= LYERROR)
+        g_c->node->status = NODE_STATUS_ERROR;
+    else if (type == LYWARN && g_c->node->status != NODE_STATUS_ERROR)
+        g_c->node->status = NODE_STATUS_CHECK;
 
-     return 0;
+    if (g_c->wfd < 0) {
+        return;
+    }
+
+    LYReport r;
+    r.from = LY_ENTITY_NODE;
+    r.to = LY_ENTITY_CLC;
+    r.status = g_c->node->status;
+    r.msg = msg;
+    char * xml = lyxml_data_report(&r, NULL, 0);
+    if (xml == NULL)
+        return;
+    ly_packet_send(g_c->wfd, PKT_TYPE_NODE_REPORT, xml, strlen(xml));
+    free(xml);
+    return;
 }
 
-unsigned long long __free_memory()
+int ly_node_busy(void)
 {
-     //cat /proc/meminfo | grep MemFree | awk '{print $2}'
-
-     FILE *fp;
-     fp = fopen("/proc/meminfo", "r");
-     if (fp == NULL)
-     {
-          logerror("Read /proc/meminfo error\n");
-          return -1;
-     }
-
-     unsigned long long mem = 0;
-
-     char line[LINE_MAX];
-     char value[64];
-     int i;
-     char *kstr;
-     char *vstr;
-
-     while(1)
-     {
-          if (fgets(line, LINE_MAX, fp) == NULL)
-               break;
-
-          if (str_filter_white_space(line) != 0) continue;
-
-          vstr = strstr(line, ":");
-          if (vstr == NULL)
-               continue;
-          else
-               vstr++;
-
-          if ((kstr = strstr(line, "MemFree")) != NULL)
-          {
-               //printf("%s\n", vstr);
-               for(i=0; ; i++)
-               {
-                    if (vstr[i] == 'k' || vstr[i] == '\0')
-                         break;
-                    value[i] = vstr[i];
-               }
-               value[i] = '\0';
-               //printf("value = %s\n", value);
-               mem = atol(value);
-               break;
-          }
-     }
-
-     fclose(fp);
-
-     return mem;
+    int load = lyutil_load_average(LOAD_AVERAGE_LAST_1M);
+    return load > LY_NODE_LOAD_MAX ? 1 : 0;
 }
 
-
-int init_node_info(CpConfig *c)
+int ly_node_info_update()
 {
-     if (c->conn == NULL)
-     {
-          logprintfl(LYERROR, "must connect to libvirtd first.\n");
-          return -1;
-     }
+    if (g_c == NULL || g_c->node == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -255;
+    }
 
-     c->node = malloc( sizeof(ComputeNodeInfo) );
-     if (NULL == c->node)
-     {
-          logprintfl(LYERROR, "node info malloc error.\n");
-          return -2;
-     }
+    NodeInfo * nf = g_c->node;
+    if (g_c->node_ip != NULL) {
+        if (nf->ip == NULL || strcmp(g_c->node_ip, nf->ip) != 0) {
+            if (nf->ip)
+                free(nf->ip);
+            nf->ip = strdup(g_c->node_ip);
+        }
+    }
 
-     __empty_node(c->node);
+    nf->free_memory = lyutil_free_memory();
+    if (nf->free_memory == 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     int ret = 0;
-     ret += set_hypervisor(c);
-     ret += set_hostname(c);
-     //ret += set_max_cpus(c);
-     ret += set_node_mixture(c);
-     //ret += set_free_memory(c);
-     c->node->free_memory = __free_memory();
+    int load_average = lyutil_load_average(LOAD_AVERAGE_LAST_1M);
+    if (load_average < 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+    nf->load_average = load_average;
 
-     // use KB
-     //if (c->node->free_memory)
-     //     c->node->free_memory /= 1024;
+    nf->status = g_c->state;
 
-     if ( 0 != ret )
-     {
-          logprintfl(LYERROR, "init_node() error.\n");
-          return -2;
-     }
+    if (nf->status >= NODE_STATUS_ONLINE &&
+        nf->status != NODE_STATUS_ERROR &&
+        nf->status != NODE_STATUS_CHECK) {
+        if (load_average > LY_NODE_LOAD_MAX || ly_handler_busy())
+            nf->status = NODE_STATUS_BUSY;
+        else
+            nf->status = NODE_STATUS_READY;
+    }
 
-
-     return 0;
+    return 0;
 }
 
-
-int
-node_dynamic_status (LyComputeServerConfig *sc)
+NodeInfo * ly_node_info_init(void)
 {
-     if (sc->conn == NULL || sc->node == NULL)
-     {
-          logprintfl(LYERROR, "%s: LyComputeServerConfig have not init\n", __func__);
-          return -1;
-     }
+    NodeInfo * nf = malloc(sizeof(NodeInfo));
+    if (nf == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return NULL;
+    }
 
-     // TODO: active_flag should have multitype value
-     sc->node->active_flag = 1;
+    bzero(nf, sizeof(NodeInfo));
+    nf->status = NODE_STATUS_UNKNOWN;
+    nf->arch = CPU_ARCH_UNKNOWN;
+    nf->hypervisor = HYPERVISOR_IS_UNKNOWN;
+    nf->tag = -1;
 
-     int ret = 0;
-     //ret += set_max_cpus(sc);
-     //ret += set_free_memory(sc);
-     sc->node->free_memory = __free_memory();
+    int ret;
+    ret = libvirt_hypervisor();
+    if (ret < 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        goto failed;
+    }
+    nf->hypervisor = ret;
 
-     // use KB
-     //if (sc->node->free_memory)
-     //     sc->node->free_memory /= 1024;
+    ret = libvirt_node_info(nf);
+    if (ret < 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        goto failed;
+    }
 
-     if ( 0 != ret )
-     {
-          logprintfl(LYERROR, "init_node() error.\n");
-          return -2;
-     }
+    nf->hostname = libvirt_hostname();
+    if (nf->hostname == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        goto failed;
+    }
 
-     return 0;
-}
+    nf->free_memory = lyutil_free_memory();
+    if (nf->free_memory == 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        goto failed;
+    }
 
+    int load_average = lyutil_load_average(LOAD_AVERAGE_LAST_15M);
+    if (load_average < 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        goto failed;
+    }
+    nf->load_average = load_average;
 
-void
-print_node_info (ComputeNodeInfo *N)
-{
-     logsimple(
-          "node = {\n"
-          "\tstatus = %d\n"
-          "\thostname = %s\n"
-          "\tip = %s\n"
-          "\tport = %d\n"
+    return nf;
 
-          "\tarch = %d\n"
-          "\thypervisor = %d\n"
-          "\tnetwork_type = %d\n"
-
-          "\tmax_memory = %d\n"
-          "\tmax_cpus = %d\n"
-          "\tcpu_model = %s\n"
-
-          "\tcpu_mhz = %d\n"
-          "\tload_average = %d\n"
-          "\tfree_memory = %d\n"
-          /*"\tcreated = %d\n"*/
-          /*"\tupdated = %d\n"*/
-          "}\n",
-          N->status, N->hostname, N->ip, N->port,
-          N->arch, N->hypervisor, N->network_type,
-          N->max_memory, N->max_cpus, N->cpu_model,
-          N->cpu_mhz, N->load_average, N->free_memory);
+failed:
+    luoyun_node_info_cleanup(nf);
+    return NULL;
 }

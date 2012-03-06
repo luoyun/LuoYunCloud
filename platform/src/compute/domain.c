@@ -1,481 +1,311 @@
-#include "compute/domain.h"
-
-
-void __customErrorFunc(void *userdata, virErrorPtr err)
-{
-     logprintf("Failure of libvirt library call:\n");
-     logsimple("  Code: %d\n", err->code);
-     logsimple("  Domain: %d\n", err->domain);
-     logsimple("  Message: %s\n", err->message);
-     logsimple("  Level: %d\n", err->level);
-     logsimple("  str1: %s\n", err->str1);
-     logsimple("  str2: %s\n", err->str2);
-     logsimple("  str3: %s\n", err->str3);
-     logsimple("  int1: %d\n", err->int1);
-     logsimple("  int2: %d\n", err->int2);
-}
-
-
-virConnectPtr
-libvirtd_connect (CpConfig *c)
-{
-
-     if (c->conn != NULL)
-     {
-          logprintfl(LYERROR, "conneted already.\n");
-          return c->conn;
-     }
-
-     virSetErrorFunc(NULL, __customErrorFunc);
-
-     char *URI = "qemu:///system";
-     c->conn = virConnectOpen(URI);
-     if (NULL == c->conn)
-     {
-          logprintfl(LYERROR, "Connet to %s error.\n", URI);
-          return NULL;
-     }
-     else
-     {
-          logprintfl(LYINFO, "Connect to %s success!\n", URI);
-     }
-
-     return c->conn;
-}
-
-
-
-int
-set_hypervisor (CpConfig *c)
-{
-     const char *type;
-     type = virConnectGetType(c->conn);
-     if (NULL == type)
-     {
-          logprintfl(LYERROR, "virConnectGetType() error.\n");
-          return -1;
-     }
-
-     if ( !strcmp("QEMU", type) )
-          c->node->hypervisor = HYPERVISOR_IS_KVM;
-
-     //free(type);
-
-     return 0;
-}
-
-
 /*
-static int set_uri(Node *node)
-{
-     node->uri = virConnectGetURI(node->conn);
-     if (NULL == node->uri)
-     {
-          logprintfl(SCERROR, "set_uri() error.\n");
-          return -1;
-     }
-
-     return 0;
-}
+** Copyright (C) 2012 LuoYun Co. 
+**
+**           Authors:
+**                    lijian.gnu@gmail.com 
+**                    zengdongwu@hotmail.com
+**  
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+**  
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**  
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+**  
 */
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <pthread.h>
 
-int
-set_hostname (CpConfig *c)
+#include "../util/logging.h"
+#include "domain.h"
+
+static pthread_mutex_t virt_mutex = PTHREAD_MUTEX_INITIALIZER;
+virConnectPtr g_conn = NULL; 
+
+static inline void __this_lock(void)
 {
-     strcpy(c->node->hostname,
-            virConnectGetHostname(c->conn));
-     if (NULL == c->node->hostname)
-     {
-          logprintfl(LYERROR, "virConnectGetHostname err\n");
-          return -1;
-     }
-
-     return 0;
+    pthread_mutex_lock(&virt_mutex);
 }
 
-
-int
-set_max_cpus (CpConfig *c)
+static inline void __this_unlock(void)
 {
-     c->node->max_cpus = 
-          virConnectGetMaxVcpus(c->conn, NULL);
-     if (-1 == c->node->max_cpus)
-     {
-          logprintfl(LYERROR, "virConnectGetMaxVcpus err\n");
-          return -1;
-     }
-
-     return 0;
+    pthread_mutex_unlock(&virt_mutex);
 }
 
-
-int
-set_node_mixture (CpConfig *c)
+static void __customErrorFunc(void *userdata, virErrorPtr err)
 {
-     virNodeInfo *nf;
-     nf = malloc(sizeof(virNodeInfo));
-     if (NULL == nf)
-     {
-          logprintfl(LYERROR, "virNodeInfo malloc err\n");
-          return -1;
-     }
+    if (err->code == VIR_ERR_NO_DOMAIN) {
+        logdebug(_("domain not found\n"));
+        return;
+    }
 
-     /* success = 0, failed = -1 */
-     if ( 0 != virNodeGetInfo(c->conn, nf) )
-     {
-          logprintfl(LYERROR, "virNodeGetInfo err\n");
-          return -2;
-     }
-
-     strcpy(c->node->cpu_model, nf->model);
-     c->node->max_memory = nf->memory;
-     c->node->max_cpus = nf->cpus;
-     c->node->cpu_mhz = nf->mhz;
-     //sc->node->numaNodes = nf->nodes;
-     //node->sockets = nf->sockets;
-     //node->coresPerSocket = nf->cores;
-     //node->threadsPerCore = nf->threads;
-
-     free(nf);
-     return 0;
+    logprintf("Failure of libvirt library call:\n");
+    logsimple("  Code: %d\n", err->code);
+    logsimple("  Domain: %d\n", err->domain);
+    logsimple("  Message: %s\n", err->message);
+    logsimple("  Level: %d\n", err->level);
+    logsimple("  str1: %s\n", err->str1);
+    logsimple("  str2: %s\n", err->str2);
+    logsimple("  str3: %s\n", err->str3);
+    logsimple("  int1: %d\n", err->int1);
+    logsimple("  int2: %d\n", err->int2);
 }
 
-int
-set_free_memory (CpConfig *c)
+int libvirt_connect(int driver)
 {
-     //TODO: used virNodeGetMemoryStats
-     c->node->free_memory = virNodeGetFreeMemory(c->conn);
-     return 0;
+    if (g_conn != NULL) {
+        logwarn(_("conneted already.\n"));
+        return -1;
+    }
+
+    virSetErrorFunc(NULL, __customErrorFunc);
+
+    const char * URI;
+    if (driver == HYPERVISOR_IS_KVM)
+        URI = HYPERVISOR_URI_KVM;
+    else if (driver == HYPERVISOR_IS_XEN)
+        URI = HYPERVISOR_URI_XEN;
+    else {
+        logerror(_("unrecognized hypervisor driver(%d).\n"), driver);
+        return -1;
+    }
+
+    __this_lock();
+    g_conn = virConnectOpen(URI);
+    __this_unlock();
+    if (g_conn == NULL) {
+        logerror(_("Connet to %s error.\n"), URI);
+        return -1;
+    } 
+    else {
+        loginfo(_("Connect to %s success!\n"), URI);
+    }
+
+    return 0;
 }
 
-
-virDomainPtr
-domain_connect (virConnectPtr conn, char *name)
+void libvirt_close(void)
 {
-     virDomainPtr domain;
-     domain = virDomainLookupByName(conn, name);
-     if ( NULL == domain )
-     {
-          logprintfl(LYERROR, "%s: connet domain by name "
-                     "error, name = %s\n", __func__, name);
-     }
+    if (g_conn == NULL)
+        return;
 
-     return domain;
+    virConnectClose(g_conn);
+    __this_lock();
+    g_conn = NULL;
+    __this_unlock();
+    return;
 }
 
-
-virDomainPtr
-create_transient_domain(virConnectPtr conn, char *xml)
+int libvirt_hypervisor(void)
 {
-     virDomainPtr domain;
+    if (g_conn == NULL)
+        return -1;
 
-     domain = virDomainCreateXML(conn, xml, 0);
-     if ( NULL == domain )
-     {
-          logprintfl(LYERROR, "%s: run error.\n", __func__);
-     }
+    const char *type;
+    type = virConnectGetType(g_conn);
+    if (NULL == type) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-     return domain;
+    if (!strcasecmp("QEMU", type))
+        return HYPERVISOR_IS_KVM;
+    else if (!strcasecmp("XEN", type))
+        return HYPERVISOR_IS_XEN;
+    else
+        return HYPERVISOR_IS_UNKNOWN;
+
+    /* no need to free */
+    /* free(type); */
 }
 
-
-int
-domain_stop (virConnectPtr conn, char *name)
+char * libvirt_hostname(void)
 {
-     virDomainPtr domain;
-     domain = domain_connect(conn, name);
-     if ( NULL == domain )
-     {
-          logprintfl(LYERROR, "%s: can not connect to "
-                     "domian %s\n", __func__, name);
-          return -1;
-     }
+    if (g_conn == NULL)
+        return NULL;
 
-     if ( 0 != virDomainShutdown(domain))
-     {
-          logprintfl(LYERROR, "%s: shutdown domain err.\n",
-                     __func__);
-          return -2;
-     }
+    char * n = virConnectGetHostname(g_conn);
+    if (n)
+        return strdup(n);
+    else {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return NULL;
+    }
+}
 
-     return 0;
+int libvirt_max_cpus(void)
+{
+    if (g_conn == NULL)
+        return -1;
+
+    int max_cpus = virConnectGetMaxVcpus(g_conn, NULL);
+    if (max_cpus < 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+    return max_cpus;
+}
+
+int libvirt_node_info(NodeInfo * ni)
+{
+    if (g_conn == NULL)
+        return -1;
+
+    virNodeInfo *nf;
+    nf = malloc(sizeof(virNodeInfo));
+    if (nf == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    /* success = 0, failed = -1 */
+    if (virNodeGetInfo(g_conn, nf) < 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    __this_lock();
+    ni->cpu_model = strdup(nf->model);
+    ni->max_memory = nf->memory;
+    ni->max_cpus = nf->cpus;
+    ni->cpu_mhz = nf->mhz;
+    /*
+    ni->numaNodes = nf->nodes;
+    ni->sockets = nf->sockets;
+    ni->coresPerSocket = nf->cores;
+    ni->threadsPerCore = nf->threads;
+    */
+    __this_unlock();
+
+    free(nf);
+    return 0;
+}
+
+unsigned int libvirt_free_memory(void)
+{
+    if (g_conn == NULL)
+        return 0;
+
+    /* can also use virNodeGetMemoryStats */
+    int free_memory = virNodeGetFreeMemory(g_conn);
+    if (free_memory == 0)
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+    return free_memory;
+}
+
+int libvirt_domain_active(char * name)
+{
+    if (g_conn == NULL)
+        return 0;
+
+    virDomainPtr domain = virDomainLookupByName(g_conn, name);
+    int active = domain ? 1 : 0;
+    if (domain)
+        virDomainFree(domain);
+
+    return active;
+}
+
+virDomainPtr libvirt_domain_create(char * xml)
+{
+    if (g_conn == NULL)
+        return NULL;
+
+    virDomainPtr domain = virDomainCreateXML(g_conn, xml, 0);
+    if (domain == NULL) {
+        logerror(_("%s: creating domain error\n"), __func__);
+    }
+
+    return domain;
+}
+
+int libvirt_domain_stop(char * name)
+{
+    if (g_conn == NULL)
+        return -1;
+
+    virDomainPtr domain;
+    domain = virDomainLookupByName(g_conn, name);
+    if (domain == NULL) {
+        logerror(_("%s: connect domain by name(%s) error.\n"),
+                   __func__, name);
+        return -1;
+    }
+
+    if (virDomainShutdown(domain) != 0) {
+        logerror(_("%s: shutdown domain error.\n"), __func__);
+        virDomainFree(domain);
+        return -1;
+    }
+
+    virDomainFree(domain);
+    return 0;
+}
+
+int libvirt_domain_reboot(char * name)
+{
+    virDomainPtr domain;
+    domain = virDomainLookupByName(g_conn, name);
+    if (domain == NULL) {
+        logerror(_("%s: connect domain by name(%s) error.\n"),
+                   __func__, name);
+        return -1;
+    }
+
+    if (virDomainReboot(domain, 0) != 0) {
+        logerror(_("%s: reboot domain error.\n"), __func__);
+        virDomainFree(domain);
+        return -1;
+    }
+
+    return 0;
 }
 
 #if 0
-
-
-static int set_isEncrypted(Node *node)
+int libvirt_domain_save(char * name, int idonweb)
 {
-     node->isEncrypted = virConnectIsEncrypted(node->conn);
-     if (-1 == node->isEncrypted)
-     {
-          logprintfl(SCERROR, "set_isEncrypted() error.\n");
-          return -1;
-     }
+    virDomainPtr domain;
+    domain = virDomainLookupByName(g_conn, name);
+    if (domain == NULL) {
+        logerror(_("%s: connect domain by name(%s) error.\n"),
+                   __func__, name);
+        return -1;
+    }
 
-     return 0;
+    virDomainInfo info;
+
+    if (virDomainGetInfo(dom, &info) < 0) {
+        logprintfl(SCERROR, "Cannot check guest state\n");
+        return -3;
+    }
+
+    if (info.state == VIR_DOMAIN_SHUTOFF) {
+        logprintfl(SCERROR, "Not saving guest that isn't running\n");
+        return -4;
+    }
+    const char *filename = "";
+    if (virDomainSave(dom, filename) < 0) {
+        fprintf(stderr, "Unable to save guest to %s\n", filename);
+    }
+
+    fprintf(stdout, "Guest state saved to %s\n", filename);
+
+    virConnectClose(conn);
+    return 0;
+
 }
 
-
-static int set_isSecure(Node *node)
-{
-     node->isSecure = virConnectIsSecure(node->conn);
-     if (-1 == node->isSecure)
-     {
-          logprintfl(SCERROR, "set_isSecure() error.\n");
-          return -1;
-     }
-
-     return 0;
-}
-
-
-
-virDomainPtr connect_domain_by_name(Node *node, char *name)
-{
-     virDomainPtr domain;
-     domain = virDomainLookupByName(node->conn, name);
-     if ( NULL == domain )
-     {
-          logprintfl(SCERROR, "connet domain by name error, name = %s\n", name);
-     }
-
-     return domain;
-}
-
-
-virDomainPtr connect_domain_by_id(Node *node, int id)
-{
-     virDomainPtr domain;
-     domain = virDomainLookupByID(node->conn, id);
-     if ( NULL == domain )
-     {
-          logprintfl(SCERROR, "connet domain by id error, id = %d\n", id);
-     }
-
-     return domain;
-}
-
-
-virDomainPtr connect_domain_by_UUID(Node *node, char *UUID)
-{
-     virDomainPtr domain;
-     domain = virDomainLookupByUUIDString(node->conn, UUID);
-     if ( NULL == domain )
-     {
-          logprintfl(SCERROR, "connet domain by UUID error, UUID = %s\n", UUID);
-     }
-
-     return domain;
-}
-
-
-int *id_list_of_active_domains(Node *node, int *num)
-{
-     int *ids = NULL;
-
-     *num = virConnectNumOfDomains(node->conn);
-     ids = malloc( sizeof(int) * (*num) );
-     if ( NULL == ids )
-          logprintfl(SCERROR, "malloc error.\n");
-     else
-          *num = virConnectListDomains(node->conn, ids, *num);
-
-     return ids;
-}
-
-
-char **name_list_of_inactive_domains(Node *node, int *num)
-{
-     char **names = NULL;
-
-     *num = virConnectNumOfDefinedDomains(node->conn);
-     names = malloc( sizeof( char *) * (*num) );
-     if ( NULL == names )
-          logprintfl(SCERROR, "malloc error.\n");
-     else
-          *num = virConnectListDefinedDomains(
-               node->conn, names, *num);
-
-     return names;
-}
-
-
-int list_domains(NodePtr node)
-{
-     printf("List all domains:\n");
-     int i, num, *ids = NULL;
-     ids = id_list_of_active_domains(node, &num);
-     for ( i = 0; i < num; i++ )
-     {
-          printf("   %d\n", ids[i]);
-     }
-
-     char **names = NULL;
-     names = name_list_of_inactive_domains(node, &num);
-     for ( i = 0; i < num; i++ )
-     {
-          printf("   %s\n", names[i]);
-     }
-
-     return 0;
-}
-
-char **list_domain_names(NodePtr node)
-{
-     char **names = NULL;
-     int num_names;
-
-     int i, *ids = NULL;
-     int num_active, num_inactive;
-     ids = id_list_of_active_domains(node, &num_active);
-
-     char **inactive_names = NULL;
-     inactive_names = name_list_of_inactive_domains(node, &num_inactive);
-
-     num_names = num_active + num_inactive;
-     names = malloc( sizeof(char *) * num_names + 1 );
-
-     if ( NULL == names )
-     {
-          logprintfl(SCERROR, "list_domain_names(), malloc error.\n");
-          return NULL;
-     }
-
-     if ( NULL != ids )
-     {
-          virDomainPtr domain;
-          const char *name;
-          for ( i = 0; i < num_active; i++ )
-          {
-               domain = connect_domain_by_id(node, ids[i]);
-               name = virDomainGetName(domain);
-               names[i] = malloc(strlen(name) + 1);
-               strcpy(names[i], name);
-               virDomainFree(domain);
-          }
-     }
-
-     if ( NULL != inactive_names )
-     {
-          for ( i = num_active; i < num_names; i++ )
-          {
-               names[i] = inactive_names[i - num_active];
-          }
-     }
-
-     //*(names + num_names) = NULL;
-     *(names + i) = NULL;
-
-     return names;
-}
-
-
-const char *domain_state_by_name(NodePtr node, char *name)
-{
-     virDomainPtr domain;
-     domain = connect_domain_by_name(node, name);
-     if ( NULL == domain ) return "notexist";
-
-     virDomainInfo info;
-     virDomainGetInfo(domain, &info);
-
-     switch (info.state)
-     {
-     case VIR_DOMAIN_NOSTATE:
-          return "no state";
-     case VIR_DOMAIN_RUNNING:
-          return "running";
-     case VIR_DOMAIN_BLOCKED:
-          return "blocked";
-     case VIR_DOMAIN_PAUSED:
-          return "paused";
-     case VIR_DOMAIN_SHUTDOWN:
-          return "shutdown";
-     case VIR_DOMAIN_SHUTOFF:
-          return "shutoff";
-     case VIR_DOMAIN_CRASHED:
-          return "crashed";
-     default:
-          return "unknown";
-     }
-}
-
-
-
-
-
-int vir_domain_control_reboot(NodePtr node, char *name)
-{
-     virDomainPtr domain;
-     domain = connect_domain_by_name(node, name);
-     if ( NULL == domain )
-     {
-          logprintfl(SCERROR, "can not connect to domian: %s\n", name);
-          return -1;
-     }
-
-     if ( 0 != virDomainReboot(domain, 0))
-     {
-          logprintfl(SCERROR, "reboot domain error.\n");
-          return -2;
-     }
-
-     return 0;
-}
-
-
-int vir_domain_control_start(NodePtr node, char *name)
-{
-     virDomainPtr domain;
-     domain = connect_domain_by_name(node, name);
-     if ( NULL == domain )
-     {
-          logprintfl(SCERROR, "can not connect to domian: %s\n", name);
-          return -1;
-     }
-
-     if ( 0 != virDomainCreate(domain))
-     {
-          logprintfl(SCERROR, "start domain error.\n");
-          return -2;
-     }
-
-     return 0;
-}
-
-
-int vir_domain_control_save(NodePtr node, char *name, int idonweb)
-{
-     virDomainPtr domain;
-     domain = connect_domain_by_name(node, name);
-     if ( NULL == domain ) return -1;
-
-     virDomainInfo info;
-
-     if (virDomainGetInfo(dom, &info) < 0 )
-     {
-          logprintfl(SCERROR, "Cannot check guest state\n");
-          return -3;
-     }
-
-     if (info.state == VIR_DOMAIN_SHUTOFF)
-     {
-          logprintfl(SCERROR, "Not saving guest that isn't running\n");
-          return -4;
-     }
-     const char *filename = "";
-     if (virDomainSave(dom, filename) < 0)
-     {
-          fprintf(stderr, "Unable to save guest to %s\n", filename);
-     }
-
-     fprintf(stdout, "Guest state saved to %s\n", filename);
-
-     virConnectClose(conn);
-     return 0;
-
-}
 #endif
-

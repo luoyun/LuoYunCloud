@@ -1,45 +1,9 @@
-/* Some function that may be useful
-
-   ref: util/misc.h of Eucalyptus */
-
-
-#ifndef __LUOYU_UTIL_misc_INCLUDE_H
-#define __LUOYU_UTIL_misc_INCLUDE_H
-
-
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h> /* strlen, strcpy */
-#include <ctype.h> /* isspace */
-#include <stdarg.h>
-#include <sys/types.h>
-#define _FILE_OFFSET_BITS 64
-#include <sys/stat.h>
-#include <unistd.h>
-#include <time.h>
-#include <fcntl.h> /* open */
-#include <utime.h> /* utime */
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <dirent.h> /* opendir, etc */
-#include <errno.h> /* errno */
-#include <sys/time.h> /* gettimeofday */
-#include <limits.h>
-
-#include "luoyun.h"
-
+#ifndef __LY_INCLUDE_UTIL_MISC_H
+#define __LY_INCLUDE_UTIL_MISC_H
 
 typedef unsigned char boolean;
 #define TRUE 1
 #define FALSE 0
-
-#ifndef MAX_PATH
-#define MAX_PATH 4096
-#endif
 
 #define TIMERSTART(a) double a;                                 \
   {                                                             \
@@ -53,34 +17,23 @@ typedef unsigned char boolean;
     double b;                                                   \
     gettimeofday(&UBERSTOP, NULL);                              \
     b = UBERSTOP.tv_sec + (UBERSTOP.tv_usec / 1000000.0);       \
-    logprintfl(EUCADEBUG, "OP TIME (%s): %f\n", #a, b - a);     \
+    logprintfl(LYDEBUG, "OP TIME (%s): %f\n", #a, b - a);     \
   }
 
 
-enum {LYDEBUG, LYINFO, LYWARN, LYERROR, LYFATAL};
+int str_filter_white_space(char *str);
+int file_not_exist(char *file);
+char *file2str(const char *path);       /* read file 'path' into a new string */
+char *fp2str(FILE * fp);
+int touch(const char *path);
+int diff(const char *path1, const char *path2);
 
+char *system_output(char *shell_command);
+int system_call(char *cmd);
+int system_loop_mount(const char *src, const char *dest, const char *options);
+int system_loop_umount(const char *src, const char *dest);
 
-char * fp2str(FILE * fp);
-char * system_output(char * shell_command );
-
-/* dan's functions */
-int logfile(const char *file, int in_loglevel);
-int logsimple(const char *format, ...);
-int logprintf(const char *format, ...);
-int logprintfl(int level, const char *format, ...);
-
-int lylogprintfl(int level, const char *format, va_list ap);
-int logdebug(const char *format, ...);
-int logerror(const char *format, ...);
-int loginfo(const char *format, ...);
-int logwarn(const char *format, ...);
-
-int check_directory(char *dir);
-int file_exist(char *file);
-
-int touch (const char * path);
-int diff (const char * path1, const char * path2);
-char * file2str (const char * path); /* read file 'path' into a new string */
-
+/* print the useful information of current system. */
+void print_os_runtime_info(void);
 
 #endif

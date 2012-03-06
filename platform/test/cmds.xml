@@ -1,0 +1,168 @@
+# mcast from clc, no response required 
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<luoyun>
+  <from entity="clc"/>
+  <to entity="node"/>
+  <request id="1" action="join">
+    <reply required="no"/>
+    <parameters>
+      <host>"192.168.1.107"<host/>
+      <port>"1450"<port/>
+    </parameters>
+  </request>
+</luoyun>
+
+# register from node to clc, simple response required
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<luoyun>
+  <from entity="node"/>
+  <to entity="clc"/>
+  <request id="1" action="register">
+    <reply required="yes">
+      <result/>
+    </reply>
+    <parameters>
+      <status>"0"</status>
+      <host>
+        <name>"localhost"</name>
+        <ip>""</ip>
+      </host>
+      <port>"0"</port>
+      <arch>"0"</arch>
+      <hypervisor>"xen"</hypervisor>
+      <network>"0"</network>
+      <memory>
+        <total>"602112"</total>
+        <free>"459550720"</free>
+      </memory>
+      <cpu>
+        <model>"x86_64"</model>
+        <mhz>"2387"</mhz>
+      </cpu>
+      <vcpu>
+        <max>"1"</max>
+      </vcpu>
+      <load>
+        <average>"0"</average>
+      </load>
+    </parameters>
+  </request>
+</luoyun>
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<luoyun>
+  <from entity="clc"/>
+  <to entity="node"/>
+  <response id="1">
+    <result>"sucess"<result/>
+  </response>
+</luoyun>
+
+# run instance from clc to node, progressive responses required
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<luoyun>
+  <from entity="clc"/>
+  <to entity="node"/>
+  <request id="2" action="runinstance">
+    <reply required="yes">
+      <status/>
+      <result/>
+    </reply>
+    <parameters>
+      <instance id="1" type="new">
+        <name>"test"</name>
+        <vcpu>"1"</vcpu>
+        <memory>"1024"</memory>
+        <mac>"aa:bb:cc:dd:ee:ff"</mac>
+        <ip>""</ip>
+      </instance>
+      <appliance id="1">
+        <name>"ubantu"</name>
+        <uri>"http://localhost:8080/luoyun/1/root.gz"</uri>
+        <checksum>""</checksum>
+      </appliance>
+      <osmanager>
+        <clc>
+          <ip>"192.168.1.107"</ip>
+          <port>"1450"</ip>
+        </clc>
+      </osmanager>
+    </parameters>
+  </request>
+</luoyun>
+<luoyun>
+  <from entity="node"/>
+  <to entity="clc"/>
+  <response id="2">
+    <status>"doing"<status/>
+    <result>"<status update, e.g., downloading appliance file ...>"<result/>
+  </response>
+</luoyun>
+<luoyun>
+  <from entity="node"/>
+  <to entity="clc"/>
+  <response id="2">
+    <status>"done"<status/>
+    <result>"sucess"</result>
+  </response>
+</luoyun>
+
+# stop instance from clc to node, progressive responses required
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<luoyun>
+  <from entity="clc"/>
+  <to entity="node"/>
+  <request id="3" action="stopinstance">
+    <reply required="yes">
+      <status/>
+      <result/>
+    </reply>
+    <parameters>
+      <instance id="1">
+        <name>"test"</name>
+      </instance>
+    </parameters>
+  </request>
+</luoyun>
+<luoyun>
+  <from entity="node"/>
+  <to entity="clc"/>
+  <response id="3">
+    <status>"doing"<status/>
+    <result>"<status update, e.g., saving appliance file ...>"</result>
+  </response>
+</luoyun>
+<luoyun>
+  <from entity="node"/>
+  <to entity="clc"/>
+  <response id="3">
+    <status>"done"</status>
+    <result>"sucess"</result>
+  </response>
+</luoyun>
+
+# register from instance to clc, simple response required
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<luoyun>
+  <from entity="instance"/>
+  <to entity="clc"/>
+  <request id="1" action="register">
+    <reply required="yes">
+      <result/>
+    </reply>
+    <parameters>
+      <status>"0"</status>
+      <host>
+        <name>"localhost"</name>
+        <ip>""</ip>
+      </host>
+    </parameters>
+  </request>
+</luoyun>
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<luoyun>
+  <from entity="clc"/>
+  <to entity="instance"/>
+  <response id="1">
+    <result>"sucess"</result>
+  </response>
+</luoyun>

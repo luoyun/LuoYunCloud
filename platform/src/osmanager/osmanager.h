@@ -1,23 +1,43 @@
-#ifndef __LUOYUN_INCLUDE_osmanager_server_H
-#define __LUOYUN_INCLUDE_osmanager_server_H
+#ifndef __LY_INCLUDE_OSMANAGER_OSMANAGER_H
+#define __LY_INCLUDE_OSMANAGER_OSMANAGER_H
 
+#include "options.h"
+#include "lyauth.h"
+#include "lypacket.h"
 
-#define REGISTER_RETRY_NUMBER 100
+#define LY_OSM_EPOLL_WAIT 10000
 
+typedef struct OSMControl_t {
+    /* osm configuration */
+    OSMConfig config;
 
-typedef struct LyOsManagerConfig_t {
-     char cts_ip[MAX_IP_LEN]; /* control server ip */
-     int cts_port;            /* control server port */
-     int domain_id;           /* domain id in DB */
-     int node_id;             /* node id in DB */
-     char host_ip[MAX_IP_LEN];
-     int host_port;
-     char host_mac[MAX_MAC_LEN];
-} LyOsManagerConfig;
+    /* node authentication configuration */
+    AuthConfig auth;
 
+    /* tracking node state */
+    int state;
 
-typedef LyOsManagerConfig OSMConfig;
+    /* clc ip/port being used */
+    char * clc_ip;
+    int    clc_port;
+    char * osm_ip;
 
+    /* epoll file descriptors */
+    int efd;  /* event pool */
+    int mfd;  /* mcast socket */
+    int wfd;  /* work socket */
 
+    /* per socket packet receive struct */
+    LYPacketRecv mfd_pkt;  /* mcast socket packet */
+    LYPacketRecv wfd_pkt;  /* work socket packet */
 
-#endif /* End __LUOYUN_INCLUDE_osmanager_server_H */
+    /* control message buffer for mcast socket */
+    char * mfd_cmsg;
+    unsigned int mfd_cmsg_size;
+} OSMControl;
+
+extern OSMControl * g_c;
+
+#define LY_SAFE_FREE(p) { if(p) free(p); p = NULL; }
+
+#endif

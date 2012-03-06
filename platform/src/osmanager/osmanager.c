@@ -1,370 +1,240 @@
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
+/*
+** Copyright (C) 2012 LuoYun Co. 
+**
+**           Authors:
+**                    lijian.gnu@gmail.com 
+**                    zengdongwu@hotmail.com
+**  
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+**  
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**  
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+**  
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h> /* gethostname */
-#include <netdb.h> /* struct hostent */
-#include <sys/epoll.h>
-#include <pthread.h>
+#include <signal.h>
+#include <time.h>
 
+#include "../luoyun/luoyun.h"
+#include "lyosm.h"
+#include "osmanager.h"
+#include "options.h"
+#include "events.h"
+#include "osmutil.h"
 
-#include "util/luoyun.h"
-#include "util/misc.h"
-#include "util/lyerrno.h"
-#include "osmanager/osmanager.h"
+OSMControl * g_c = NULL;
 
-#define MAX_EVENTS 10
-
-
-/* global queue */
-LyOsManagerConfig *g_sc = NULL;
-
-
-/* Parse the config file of compute server */
-int
-__parse_config ( const char *file,
-                       LyOsManagerConfig *sc )
+static int __print_config(OSMConfig *c)
 {
-     FILE *fp;
-     char line[LINE_MAX];
-     char *kstr; /* point to the key string */
-     char *vstr; /* point to the value string */
+    printf("OSMControl :\n"
+             "  clc_ip = %s\n" "  clc_port = %d\n"
+             "  clc_mcast_ip = %s\n" "  clc_mcast_port = %d\n"
+             "  conf_path = %s\n"
+             "  log_path = %s\n"
+             "  verbose = %d\n" "  debug = %d\n" "  daemon = %d\n",
+             c->clc_ip, c->clc_port,
+             c->clc_mcast_ip, c->clc_mcast_port,
+             c->conf_path, c->log_path,
+             c->verbose, c->debug, c->daemon);
 
-     fp = fopen(file, "r");
-     if ( fp == NULL )
-     {
-          logprintfl(LYERROR,
-                     _("Can not open config file: %s\n"),
-                     file);
-          return FILE_OPEN_ERROR;
-     }
-
-     while ( 1 )
-     {
-          if ( fgets(line, LINE_MAX, fp) == NULL )
-               break;
-
-          if ( str_filter_white_space(line) != 0 ) continue;
-
-          vstr = strstr(line, "=");
-          if ( vstr == NULL )
-               continue;
-          else
-               vstr++;
-
-          if ( (kstr = strstr(line, "CONTROL_SERVER_IP")) != NULL )
-               strcpy(sc->cts_ip, vstr);
-
-          else if ( (kstr = strstr(line, "CONTROL_SERVER_PORT")) != NULL )
-               sc->cts_port = atoi(vstr);
-
-          else if ( (kstr = strstr(line, "DOMAIN_ID")) != NULL )
-               sc->domain_id = atoi(vstr);
-
-          else if ( (kstr = strstr(line, "NODE_ID")) != NULL )
-               sc->node_id = atoi(vstr);
-
-          else
-               logprintfl(LYERROR, _("Not support grammar: %s\n"), line);
-
-     }
-
-     return 0;
+    return 0;
 }
 
-
-
-
-int
-__print_config ( LyOsManagerConfig *sc )
+static void __main_clean(int keeppid)
 {
-     logsimple(
-          "LyOsManagerConfig = {\n"
-          "  host_ip = %s\n"
-          "  host_port = %d\n"
-          "  cts_ip = %s\n"
-          "  cts_port = %d\n"
-          "  domain_id = %d\n"
-          "  node_id = %d\n"
-          "}\n",
-          sc->host_ip, sc->host_port,
-          sc->cts_ip, sc->cts_port,
-          sc->domain_id, sc->node_id);
+    OSMConfig *c = &g_c->config;
 
-     return 0;
+    loginfo("%s exit normally\n", PROGRAM_NAME);
+    ly_epoll_close();
+    lyauth_free(&g_c->auth);
+    LY_SAFE_FREE(c->clc_ip)
+    LY_SAFE_FREE(c->clc_mcast_ip)
+    LY_SAFE_FREE(c->osm_secret)
+    LY_SAFE_FREE(c->log_path)
+    LY_SAFE_FREE(c->conf_path)
+    LY_SAFE_FREE(g_c->clc_ip)
+    LY_SAFE_FREE(g_c->osm_ip)
+    free(g_c);
+    logclose();
+    return;
 }
 
-
-
-int update_os_info (LyOsManagerConfig *sc)
+static void __sig_handler(int sig, siginfo_t *si, void *unused)
 {
-     int sk, err;
-
-     sk = connect_to_host(sc->cts_ip, sc->cts_port);
-     if ( sk <= 0 ) return -1;
-
-     // TODO: would be change to VosInfo !!!
-     DomainInfo di;
-     di.status = DOMAIN_S_RUNNING;
-     di.id = sc->domain_id;
-     di.node_id = sc->node_id;
-     strcpy(di.ip, sc->host_ip);
-
-     LySockRequest request;
-     request.from = LST_VOS_S;
-     request.to = LST_CONTROL_S;
-     request.type = 0;
-     request.action = LA_DOMAIN_STATUS;
-     request.datalen = sizeof(DomainInfo);
-
-     err = send(sk, &request, sizeof(LySockRequest), 0);
-     err += send(sk, &di, sizeof(DomainInfo), 0);
-
-     if ( -1 == err )
-     {
-          logprintfl(LYERROR, "%s: update node status err\n", __func__);
-          close(sk);
-          return -2;
-     }
-
-     // TODO: receive respond.
-
-     close(sk);
-     return 0;
+    loginfo("%s was signaled to exit...\n", PROGRAM_NAME);
+    __main_clean(0);
+    exit(0);
 }
 
-
-void * __update_status_manager (void *arg)
+int main(int argc, char *argv[])
 {
-     logprintfl(LYDEBUG, "Update status manager started.\n");
+    int ret, keeppidfile=1;
 
-     LyOsManagerConfig *sc;
-     sc = (LyOsManagerConfig *)arg;
+    lyauth_init();
 
-     int timeout = 0;
-     for(;;)
-     {
-          if ( !timeout )
-          {
-               logprintfl(LYDEBUG, "OsManager: update status\n");
-               update_os_info(sc);
-               timeout = 6;
-          } else {
-               sleep(1);
-               timeout--;
-          }
-     }
+    /* start initializeing g_c */
+    g_c = malloc(sizeof(OSMControl));
+    if (g_c == NULL) {
+        printf("malloc for g_c have a error.\n");
+        return -255;
+    }
+    bzero(g_c, sizeof(OSMControl));
+    g_c->mfd_cmsg = NULL;
+    g_c->efd = -1;
+    g_c->mfd = -1;
+    g_c->wfd = -1;
+    OSMConfig *c = &g_c->config;
 
-     //pthread_exit((void *)0);
-}
+    /* parse command line option and configuration file */
+    ret = osm_config(argc, argv, c);
+    if (ret == OSM_CONFIG_RET_HELP)
+        usage();
+    else if (ret == OSM_CONFIG_RET_VER)
+        printf("%s : Version %s\n", PROGRAM_NAME, PROGRAM_VERSION);
+    else if (ret == OSM_CONFIG_RET_ERR_CMD)
+        printf("command line parsing error, use -h option to display usage\n");
+    else if (ret == OSM_CONFIG_RET_ERR_NOCONF)
+        printf("missing osmanager config file\n");
+    else if (ret == OSM_CONFIG_RET_ERR_ERRCONF)
+        printf("can not find %s.\n", c->conf_path);
+    else if (ret == OSM_CONFIG_RET_ERR_CONF)
+        printf("reading config file %s returned error\n", c->conf_path);
+    else if (ret == OSM_CONFIG_RET_ERR_UNKNOWN)
+        printf("internal error\n");
 
+    /* exit if ret is not zero */
+    if (ret != 0)
+        goto out;
 
-static int __register_instance(OSMConfig *C, int efd)
-{
-     loginfo(_("START register instance.\n"));
+    /* init g_c */
+    g_c->clc_ip = strdup(c->clc_ip);
+    g_c->clc_port = c->clc_port;
+    if (c->osm_secret)
+        g_c->auth.secret = strdup(c->osm_secret);
+    g_c->state = OSM_STATUS_INIT;
 
-     int sfd = 0, ret = 0;
-     int retry = 0;
+    /* print out */
+    if (c->debug || c->verbose)
+        __print_config(c);
 
-     LyRequest header;
-     header.type = RQTYPE_INSTANCE_REGISTER;
-     header.from = RQTARGET_INSTANCE;
-     header.length = sizeof(DomainInfo);
+    /* Daemonize the progress */
+    if (c->daemon) {
+        if (c->debug || c->verbose)
+            printf("Run as daemon, log to %s.\n", c->log_path);
+        lyutil_daemonize();
+        logfile(c->log_path, c->debug ?
+                             LYDEBUG : c->verbose ? LYINFO : LYWARN);
+    }
+    else
+        logfile(NULL, c->debug ? LYDEBUG : c->verbose ? LYINFO : LYWARN);
 
-     // TODO: would be change to VosInfo !!!
-     DomainInfo di;
-     di.status = DOMAIN_S_RUNNING;
-     di.id = C->domain_id;
-     strcpy(di.ip, C->host_ip);
-     //di.port = C->host_port;
+    /* set up signal handler */
+    struct sigaction sa;
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_sigaction = __sig_handler;
+    if (sigaction(SIGTERM, &sa, NULL)) {
+        logsimple("Setting signal handler error.\n");
+        ret = -255;
+        goto out;
+    }
 
-     while(retry++ < REGISTER_RETRY_NUMBER)
-     {
-          loginfo(_("Sleep %d seconds before register.\n"), retry);
-          sleep(retry);
+    /* initialize g_c->efd */
+    if (ly_epoll_init(MAX_EVENTS) != 0) {
+        logsimple("ly_epoll_init failed.\n");
+        ret = -255;
+        goto out;
+    }
 
-          if (sfd <= 0)
-          {
-               sfd = connect_to_host(C->cts_ip, C->cts_port);
-               if ( sfd <= 0 )
+    /* start main event driven loop */
+    int i, n;
+    int wait = -1;
+    struct epoll_event events[MAX_EVENTS];
+    while (1) {
+        if (g_c->wfd < 0 && wait < 0) {
+            /* init osm state */
+            g_c->state = OSM_STATUS_INIT;
+            /* start osm registration */
+            if (ly_epoll_work_register() != 0) {
+                LY_SAFE_FREE(g_c->clc_ip)
+                loginfo("wait for mcast join...\n");
+                if (g_c->mfd < 0 && ly_epoll_mcast_register() != 0) {
+                    logerror("listening on clc mcast error.\n");
+                    ret = -1;
+                    break;
+                }
+            }
+            else if (ly_register_osm() != 0) {
+                /* close work socket */
+                ly_epoll_work_close();
+                wait = LY_OSM_EPOLL_WAIT;
+                logerror("failed registering osm. will try again\n");
+            }
+        }
+
+        logdebug("waiting ...\n");
+        n = epoll_wait(g_c->efd, events, MAX_EVENTS, wait);
+        if (wait > 0)
+            wait = -1;
+        loginfo("waiting ... got %d events\n", n);
+        for (i = 0; i < n; i++) {
+            if (LY_EVENT_MCAST_DATAIN(events[i])) {
+                /* mcast data received */
+                ret = ly_epoll_mcast_recv();
+                if (ret < 0) {
+                    logwarn("unexpected clc mcast data recevied.\n");
+                }
+                else if (ret == 0) {
+                    logdebug("ly_epoll_mcast_recv returns 0. do nothing.\n");
+                }
+                else {
+                    /* the clc ip/port are obtained from mcast */
+                    loginfo("new clc mcast data received. "
+                            "re-registering....\n");
+                    ly_epoll_mcast_close();
+                }
+            }
+            else if (LY_EVENT_WORK_DATAIN(events[i])) {
+                /* clc data received */
+                ret = ly_epoll_work_recv();
+                if (ret == 0) {
+                    logdebug("ly_epoll_work_recv return 0. continue...\n");
                     continue;
-          }
+                }
 
-          // Send request
-          if (ly_send(sfd, &header, sizeof(LyRequest), 0, SEND_TIMEOUT))
-               continue;
+                /* in all other cases, close work socket */
+                ly_epoll_work_close();
+                wait = LY_OSM_EPOLL_WAIT;
+                if (ret < 0)
+                    logwarn("unexpected work process error\n");
+                else
+                    logwarn("osm socket closed. will try again... \n");
+            }
+            else if (events[i].events & EPOLLRDHUP) {
+                /* work closed by clc */
+                logdebug("close by remote\n");
+                ly_epoll_work_close();
+            }
+            else {
+                logwarn("unexpected epoll event(%d) for %d\n",
+                         events[i].events, events[i].data.fd);
+            }
+        }
+    }
 
-          // Send request data
-          if (ly_send(sfd, &di, sizeof(DomainInfo), 0, SEND_TIMEOUT))
-               continue;
-
-          // Get respond
-          LyRespond respond;
-          if (ly_recv(sfd, &respond, sizeof(LyRespond), 0, RECV_TIMEOUT))
-               continue;
-
-          if (respond.status != RESPOND_STATUS_OK)
-          {
-               logerror(_("Register respond.status = %d\n"), respond.status);
-               break;
-          }
-
-          struct epoll_event ev;
-          ev.events = EPOLLIN | EPOLLET | EPOLLRDHUP;
-          ev.data.fd = sfd;
-          ret = epoll_ctl(efd, EPOLL_CTL_ADD, sfd, &ev);
-          if ( ret < 0)
-          {
-               logerror("Add keep alive to epoll error.\n");
-               continue;
-          } else {
-               loginfo("Add keep alive to epoll success.\n");
-               ret = 0;
-               break;
-          }
-
-     }
-
-     return ret;
-}
-
-
-
-int main (int argc, char *argv[])
-{
-     if ( argc < 3 )
-     {
-          printf("Usage: %s IP PORT\n", argv[0]);
-          return -1;
-     }
-
-     // TODO: already_running();
-
-
-     /* Parse configure */
-     g_sc = malloc( sizeof(LyOsManagerConfig) );
-     if (g_sc == NULL)
-     {
-          logprintfl(LYERROR, "%s: g_sc malloc error.\n",
-                     __func__);
-          return -2;
-     }
-     *g_sc->cts_ip = '\0';
-     g_sc->cts_port = 0;
-     strcpy(g_sc->host_ip, argv[1]);
-     g_sc->host_port = atoi(argv[2]);
-
-     const char *c_file = "/LuoYun/LuoYun.conf";
-     __parse_config( c_file, g_sc );
-
-     /* Daemonize the progress */
-     lyu_daemonize("/tmp/osmanager.log", LYDEBUG);
-
-
-
-     int efd;
-     efd = epoll_create(MAX_EVENTS);
-     if (efd == -1)
-     {
-          perror("epoll_create");
-          return -1;
-     }
-#if 0
-     struct epoll_event ev, events[MAX_EVENTS];
-#endif
-     /* Register instance and keep alive */
-     __register_instance(g_sc, efd);
-
-
-     __print_config(g_sc);
-
-#if 0
-     /* Run __update_status_manager thread */
-     pthread_t update_manager_tid;
-     pthread_create(&update_manager_tid, NULL, __update_status_manager, g_sc);
-#endif
-
-     /* Create a socket and listen on it */
-     // TODO: ugly listen on socket.
-     int sfd;
-     sfd = create_socket(argv[1], argv[2]);
-
-
-     int nsfd; /* new socket connect */
-     struct sockaddr nskaddr;
-     struct sockaddr_in *nskaddr_in;
-     socklen_t size_skaddr = sizeof(struct sockaddr);
-
-
-     LySockRequest *request;
-     LySockRequestHandler *RH;
-     //pthread_t handler_tid;
-     int recvlen;
-
-     for (;;)
-     {
-          nsfd = accept(sfd, &nskaddr, &size_skaddr);
-          if ( nsfd < 0 )
-          {
-               // TODO:
-               logprintfl(LYERROR, "accept error.\n");
-               sleep(1);
-               continue;
-          }
-
-          nskaddr_in = (struct sockaddr_in *)&nskaddr;
-          logprintfl(LYDEBUG, "FROM: %s:%d\n",
-                     inet_ntoa(nskaddr_in->sin_addr),
-                     ntohs(nskaddr_in->sin_port));
-
-          request = malloc( sizeof(LySockRequest) );
-          if (request == NULL)
-          {
-               logprintfl(LYERROR, "%s: malloc error, "
-                          "close connect\n", __func__);
-               close(nsfd);
-               continue;
-          }
-
-          recvlen = recv(nsfd, request,
-                         sizeof(LySockRequest), 0);
-          if ( recvlen != sizeof(LySockRequest) )
-          {
-               logprintfl(LYERROR, "read request error.\n");
-               close(nsfd);
-               continue;
-          }
-
-          logprintfl(LYDEBUG, "request = { "
-                     "form = %d, to = %d, type = %d, "
-                     "action = %d, datalen = %d }\n",
-                     request->from, request->to,
-                     request->type, request->action,
-                     request->datalen);
-
-          RH = malloc( sizeof(LySockRequestHandler) );
-          if (RH == NULL)
-          {
-               logprintfl(LYERROR, "%s: malloc RH err, "
-                          "close connect.\n", __func__);
-               close(nsfd);
-               continue;
-          }
-
-          RH->request = request;
-          RH->sk = nsfd;
-
-          //pthread_create(&handler_tid, NULL,
-          //               __request_handler, RH);
-          close(nsfd);
-     }
-
-     close(sfd);
-     return 0;
+out:
+    __main_clean(keeppidfile);
+    return ret;
 }

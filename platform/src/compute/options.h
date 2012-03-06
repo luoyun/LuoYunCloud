@@ -1,39 +1,60 @@
-#ifndef __LUOYUN_INCLUDE_compute_options_H
-#define __LUOYUN_INCLUDE_compute_options_H
+#ifndef __LY_INCLUDE_COMPUTE_OPTIONS_H
+#define __LY_INCLUDE_COMPUTE_OPTIONS_H
 
-#include "util/luoyun.h"
+#include "../luoyun/luoyun.h"
 
-#define DOMAIN_CONFIG_URI_TEMP "http://luoyun.ylinux.org/instance/%d/config"
+#define PROGRAM_NAME "lynode"
+#define PROGRAM_VERSION VERSION
 
-#define OS_DISK_FILE_GZ "os.img.gz"
-#define OS_DISK_FILE "os.img"
-#define LIBVIRTD_CONFIG "domain_libvirtd.xml"
-#define DOMAIN_CONFIG_FILE "domain.conf"
+typedef enum CLC_Auto_Connect_t {
+    UNKNOWN = 0,
+    ALWAYS = 1,
+    ONCE = 2,
+    DISABLE = 3,
+} CLC_Auto_Connect_Mode;
 
-/* compute node config */
-#include <libvirt/libvirt.h>
-typedef struct CpConfig_t {
-     char host_ip[MAX_IP_LEN];
-     int  host_port;
-     char cts_ip[MAX_IP_LEN]; /* control server ip */
-     int  cts_port;           /* control server port */
-     char root_path[MAX_PATH_LEN];
+/*
+** compute node configuration, populated based on lynode.conf and 
+** command line option
+*/
+typedef struct NodeConfig_t {
+    CLC_Auto_Connect_Mode auto_connect;
+    char *clc_ip;          /* cloud controller ip */
+    int  clc_port;         /* cloud controller port */
+    char *clc_mcast_ip;    /* cloud controller mcast ip */
+    int  clc_mcast_port;   /* cloud controller mcast port */
+    char *node_data_dir;   /* compute node data directory */
+    char *conf_path;       /* config file path */
+    char *sysconf_path;    /* sysconf file path */
+    char *log_path;        /* log file path */
+    char *osm_conf_path;   /* osmanage configuraton path inside instance */
+    char *osm_key_path;    /* osmanage key file path inside instance */
+    int  verbose;
+    int  debug;
+    int  daemon;
+    int  driver;
+} NodeConfig;
 
-     /* Needed init by step */
-     virConnectPtr conn;     /* libvirtd_connect() */
-     ComputeNodeInfo *node;  /* init_node_info() */
+/*
+** compute node dynamic configuration, populated based on lynode.sysconf
+*/
+typedef struct NodeSysConfig_t {
+    char *clc_ip;     /* cloud controller ip */
+    int  clc_port;    /* cloud controller port */
+    int  node_tag;    /* node unique identifier */
+    char * node_secret;	/* node secret, used for clc authentication */
+} NodeSysConfig;
 
-     char config[LINE_MAX]; /* Config file path */
-     char log[LINE_MAX];    /* log file path */
-     char verbose;
-     char debug;
-     char daemon;
-} CpConfig;
+#define NODE_CONFIG_RET_HELP		1
+#define NODE_CONFIG_RET_VER		2
+#define NODE_CONFIG_RET_ERR_CMD          -1
+#define NODE_CONFIG_RET_ERR_ERRCONF      -2
+#define NODE_CONFIG_RET_ERR_NOCONF       -3
+#define NODE_CONFIG_RET_ERR_CONF         -4
+#define NODE_CONFIG_RET_ERR_NOMEM        -5
+#define NODE_CONFIG_RET_ERR_UNKNOWN	-255
+int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s);
 
+void usage(void);
 
-
-int parse_opt(int argc, char *argv[], CpConfig *c);
-
-
-
-#endif /* End __LUOYUN_INCLUDE_compute_options_H */
+#endif

@@ -1,11 +1,7 @@
-*.pyc
 *.o
 *~
 *#
 *.bak
-*.db
 lynode
 cscope.out
 *.log
-django
-Django*
