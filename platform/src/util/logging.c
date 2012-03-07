@@ -175,7 +175,7 @@ int logprintfl(int level, const char *format, ...)
     if (logging) {
         file = LOGFH;
         fd = fileno(file);
-        if (fd > 0) {
+        if (fd >= 0) {
             rc = fstat(fd, &statbuf);
             if (!rc && ((int) statbuf.st_size > MAXLOGFILESIZE)) {
                 int i;
@@ -272,12 +272,13 @@ static int lylogprintfl(int level, const char *format, va_list ap)
     if (logging) {
         file = LOGFH;
         fd = fileno(file);
-        if (fd > 0) {
+        if (fd >= 0) {
             rc = fstat(fd, &statbuf);
             if (!rc && ((int) statbuf.st_size > MAXLOGFILESIZE)) {
                 int i;
                 char oldFile[MAX_PATH], newFile[MAX_PATH];
 
+                fclose(LOGFH);
                 rc = stat(logFile, &statbuf);
                 if (!rc && ((int) statbuf.st_size > MAXLOGFILESIZE)) {
                     for (i = 4; i >= 0; i--) {
@@ -290,7 +291,6 @@ static int lylogprintfl(int level, const char *format, va_list ap)
                     snprintf(newFile, MAX_PATH, "%s.%d", logFile, 0);
                     rename(oldFile, newFile);
                 }
-                fclose(LOGFH);
                 LOGFH = fopen(logFile, "a");
                 if (LOGFH) {
                     file = LOGFH;

@@ -162,7 +162,7 @@ static int lylogprintfl(int level, const char *format, va_list ap)
     if (logging) {
         file = LOGFH;
         fd = fileno(file);
-        if (fd > 0) {
+        if (fd >= 0) {
             rc = fstat(fd, &statbuf);
             if (!rc && ((int) statbuf.st_size > MAXLOGFILESIZE)) {
                 int i;
