@@ -621,7 +621,8 @@ static int __job_run(LYJobInfo * job)
         break;
 
     default:
-        logerror(_("run job, unknow job.\n"));
+        logerror(_("run job, unknown job.\n"));
+        job_update_status(job, JOB_S_FAILED);
         return -1;
     }
 
