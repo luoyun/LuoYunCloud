@@ -1,0 +1,23 @@
+node_dir=/home/dongwu/luoyun/luoyun-devel/platform/mybin/node_data
+for f in $(<${node_dir}/.lynode.pid) $(</var/run/.lyclc.pid)
+do
+  echo kill $f
+  kill $f
+done
+
+echo "wait for 5 seconds before restarting..."
+sleep 5
+
+echo "start..."
+if [ -f ${node_dir}/../bin/lynode ]
+then
+  ${node_dir}/../bin/lynode -d
+else
+  lynode -d
+fi
+if [ -f ${node_dir}/../bin/lyclc ]
+then
+  ${node_dir}/../bin/lyclc -d
+else
+   lyclc -d
+fi
