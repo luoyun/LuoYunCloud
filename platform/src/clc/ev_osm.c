@@ -254,14 +254,16 @@ int eh_process_osm_auth(int is_reply, void * data, int ent_id)
     }
 
     /* request challenging */
-    logdebug(_("clc sends out auth request\n"));
+    logdebug(_("clc prepare auth request\n"));
     if (lyauth_prepare(ac) < 0) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
 
+    logdebug(_("clc prepare auth packet\n"));
     bzero(ai->data, LUOYUN_AUTH_DATA_LEN);
     strncpy((char *)ai->data, ac->challenge, LUOYUN_AUTH_DATA_LEN);
+    logdebug(_("clc sends out auth request\n"));
     if (ly_packet_send(fd, PKT_TYPE_OSM_AUTH_REQUEST,
                        ai, sizeof(AuthInfo)) < 0) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);

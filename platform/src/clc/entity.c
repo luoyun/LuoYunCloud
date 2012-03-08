@@ -95,7 +95,7 @@ int ly_entity_new(int fd)
         return -1;
 
     /* entity must be cleaned and freed already*/
-    if (ent->entity)
+    if (ent->entity || ent->auth.challenge || ent->auth.secret)
         return -1;
 
     if (ent->pkt == NULL) {

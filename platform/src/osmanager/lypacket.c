@@ -62,7 +62,7 @@ int ly_packet_send(int fd, int32_t type, void * data, int32_t size)
     msg.msg_iovlen = 2;
     msg.msg_control = NULL;
     msg.msg_controllen = 0;
-    int datalen = sendmsg(fd, &msg, 0);
+    int datalen = sendmsg(fd, &msg, MSG_NOSIGNAL);
     if (datalen < size + sizeof(header))
         return -1;
 

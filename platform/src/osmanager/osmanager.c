@@ -115,14 +115,17 @@ void * __app_status_func(void * arg)
             waitpid(pid, &status, 0);
             if (WIFEXITED(status)) {
                 status = WEXITSTATUS(status);
-                if (status == 0 && g_app_status != 0) {
+                if ((status == 0 && g_app_status != 0) ||
+                    g_c->state != OSM_STATUS_APP_RUNNING) {
                     loginfo("checking applicaiton status: "
                             "application is running\n");
+                    g_c->state = OSM_STATUS_APP_RUNNING;
                     ly_osm_report(LY_S_APP_RUNNING);
                 }
                 else if (status != 0) {
                     loginfo("checking applicaiton status: "
                             "application returns %d\n", status);
+                    g_c->state = OSM_STATUS_APP_UNKNOWN;
                     ly_osm_report(LY_S_APP_RUNNING+status);
                 }
                 g_app_status = status;

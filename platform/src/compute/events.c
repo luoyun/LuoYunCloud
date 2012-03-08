@@ -465,18 +465,18 @@ int ly_epoll_work_recv(void)
     int size;
     void * buf = ly_packet_buf(pkt, &size);
     if (buf == NULL) {
-        logerror(_("ly_packet_buf returns NULL buffer\n"));
-        return -1;
+        logerror(_("ly_packet_buf returns NULL buffer. close socket\n"));
+        return 1;
     }
     if (size == 0) {
-        logwarn(_("ly_packet_buf returns 0 size buffer\n"));
-        return 0;
+        logerror(_("ly_packet_buf returns 0 size buffer. close socket\n"));
+        return 1;
     }
 
     int ret = recv(g_c->wfd, buf, size, 0);
     if (ret == -1) {
         logerror(_("recv error(%d) in %s. close socket.\n"), errno, __func__);
-        return -1;
+        return 1;
     }
     else if (ret == 0) {
         /* Maybe the client have closed */

@@ -404,8 +404,7 @@ int main(int argc, char *argv[])
                     logwarn(_("unexpected work process error\n"));
                 else {
                     reinit = 1;
-                    logwarn(_("node socket closed by clc. "
-                              "will try again... \n"));
+                    logwarn(_("node socket closed. will try again... \n"));
                  }
             }
             else if (events[i].events & EPOLLRDHUP) {

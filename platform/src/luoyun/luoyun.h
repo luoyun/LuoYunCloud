@@ -355,10 +355,12 @@ typedef struct NodeInfo_t {
 ** common data structure for authentication info
 */
 #define LUOYUN_AUTH_DATA_LEN 40
+#pragma pack(1)
 typedef struct AuthInfo_t {
     int tag;
     int8_t data[LUOYUN_AUTH_DATA_LEN];
 } AuthInfo;
+#pragma pack()
 
 /*
 ** common data structure for instance info
