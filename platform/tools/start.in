@@ -1,4 +1,4 @@
-node_dir=/home/dongwu/luoyun/luoyun-devel/platform/mybin/node_data
+node_dir=@DEFAULT_LYNODE_DATA_DIR@
 
 if [ -f ${node_dir}/../bin/lynode ]
 then

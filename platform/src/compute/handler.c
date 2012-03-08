@@ -36,6 +36,7 @@
 #include <errno.h>
 #include <pthread.h>
 
+#include <path_utils.h>
 #include "../luoyun/luoyun.h"
 #include "../util/logging.h"
 #include "../util/lypacket.h"
@@ -510,6 +511,22 @@ static int __domain_run(NodeCtrlInstance * ci)
             logerror(_("failed executing %s\n"), tmpstr1024);
             goto out_umount;
         }
+    }
+    char * d = strdup(g_c->config.osm_conf_path);
+    if (get_dirname(d, strlen(d), g_c->config.osm_conf_path) !=0 ) {
+        if (d) free(d);
+        logerror(_("get_dirname from %s error\n"), g_c->config.osm_conf_path);
+        goto out_umount;
+    }
+    if (snprintf(path, PATH_MAX, "%s/%s", mount_path, d) >= PATH_MAX) {
+        free(d);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        goto out_umount;
+    }
+    free(d);
+    if (lyutil_create_dir(path) != 0) {
+        logerror(_("failed creating directory of %s\n"), d);
+        goto out_umount;
     }
     if (snprintf(path, PATH_MAX, "%s/%s", mount_path,
                  g_c->config.osm_conf_path) >= PATH_MAX) {
