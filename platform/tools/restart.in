@@ -1,4 +1,4 @@
-node_dir=/home/dongwu/luoyun/luoyun-devel/platform/mybin/node_data
+node_dir=@DEFAULT_LYNODE_DATA_DIR@
 for f in $(<${node_dir}/.lynode.pid) $(</var/run/.lyclc.pid)
 do
   echo kill $f
