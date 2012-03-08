@@ -1,0 +1,12 @@
+if [ -f ${node_dir}/../bin/lynode ]
+then
+  ${node_dir}/../bin/lynode -d
+else
+  lynode -d
+fi
+if [ -f ${node_dir}/../bin/lyclc ]
+then
+  ${node_dir}/../bin/lyclc -d
+else
+  lyclc -d
+fi
