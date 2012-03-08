@@ -1,7 +1,7 @@
 #ifndef __LY_INCLUDE_CLC_OPTIONS_H
 #define __LY_INCLUDE_CLC_OPTIONS_H
 
-#include "../luoyun/luoyun.h"
+/* #include "../luoyun/luoyun.h" */
 
 #define PROGRAM_NAME "lyclc"
 #define PROGRAM_VERSION VERSION
@@ -11,18 +11,19 @@
 ** command line option
 */
 typedef struct CLCConfig_t {
-    char clc_ip[MAX_IP_LEN];    /* cloud controller ip */
-    int clc_port;               /* cloud controller port */
-    char clc_mcast_ip[MAX_IP_LEN];      /* cloud controller mcast ip */
-    int clc_mcast_port;         /* cloud controller mcast port */
-    char *db_name;              /* db name, e.g. lyweb */
-    char *db_user;              /* db user name */
-    char *db_pass;              /* db user password */
-    char *conf_path;            /* config file path */
-    char *log_path;             /* log file path */
-    int verbose;
-    int debug;
-    int daemon;
+    char *clc_ip;            /* cloud controller ip */
+    int   clc_port;          /* cloud controller port */
+    char *clc_mcast_ip;      /* cloud controller mcast ip */
+    int   clc_mcast_port;    /* cloud controller mcast port */
+    char *clc_data_dir;          /* clc data dir */
+    char *db_name;           /* db name, e.g. lyweb */
+    char *db_user;           /* db user name */
+    char *db_pass;           /* db user password */
+    char *conf_path;         /* config file path */
+    char *log_path;          /* log file path */
+    int   verbose;
+    int   debug;
+    int   daemon;
 } CLCConfig;
 
 

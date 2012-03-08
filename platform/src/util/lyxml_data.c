@@ -335,6 +335,11 @@ char * lyxml_data_reply_node_info(LYReply * reply, char * buf, unsigned int size
         "<tag>%d</tag>"\
         "<secret>%s</secret>"\
       "</osmanager>"\
+      "<storage>"\
+        "<ip>%s</ip>"\
+        "<method>%d</method>"\
+        "<parm>%s</parm>"\
+      "</storage>"\
     "</parameters>"\
   "</request>"\
 "</" LYXML_ROOT ">"
@@ -361,7 +366,10 @@ char * lyxml_data_instance_run(NodeCtrlInstance * ii, char * buf, unsigned int s
                        ii->app_checksum ? (char *)(BAD_CAST ii->app_checksum) : "",
                        ii->osm_clcip ? (char *)(BAD_CAST ii->osm_clcip) : "",
                        ii->osm_clcport, ii->osm_tag,
-                       ii->osm_secret ? (char *)(BAD_CAST ii->osm_secret) : "");
+                       ii->osm_secret ? (char *)(BAD_CAST ii->osm_secret) : "",
+                       ii->storage_ip ? (char *)(BAD_CAST ii->storage_ip) : "",
+                       ii->storage_method,
+                       ii->storage_parm ? (char *)(BAD_CAST ii->storage_parm) : "");
     if (len < 0 || len >= size)
         return NULL;
 

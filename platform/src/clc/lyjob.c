@@ -29,6 +29,10 @@
 #include <string.h>
 #include <stddef.h>
 #include <time.h>
+#include <limits.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "../luoyun/luoyun.h"
 #include "../util/logging.h"
@@ -148,12 +152,15 @@ int job_update_status(LYJobInfo * job, int status)
         ii.ip = "0.0.0.0";
         if (job->j_action == LY_A_NODE_RUN_INSTANCE && 
             status == LY_S_FINISHED_SUCCESS) {
+            /*
             int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, job->j_target_id);
             OSMInfo *oi = ly_entity_data(ent_id);
             ii.ip = oi->ip;
             ii.status = DOMAIN_S_SERVING;
             int node_id = ly_entity_db_id(job->j_ent_id);
             return db_instance_update_status(job->j_target_id, &ii, node_id);
+            */
+            return 0; /* done while processing osm report */
         }
         else if (job->j_action == LY_A_NODE_STOP_INSTANCE &&
                  (status == LY_S_FINISHED_SUCCESS ||
@@ -190,13 +197,25 @@ static int __job_start_instance(LYJobInfo * job)
         int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, job->j_target_id);
         if (ly_entity_is_registered(ent_id)) {
             ly_entity_print_osm();
-            job_update_status(job, JOB_S_FINISHED);
-            logdebug(_("instance %d started successfully\n"),
-                       job->j_target_id);
+            job_update_status(job, LY_S_WAITING_STARTING_SERVICE);
+            logdebug(_("instance %d started\n"), job->j_target_id);
         }
         else if (!ly_entity_is_online(ent_id)) {
-             loginfo(_("instance %d is offline\n"), 
-                       job->j_target_id);
+             loginfo(_("instance %d is offline\n"), job->j_target_id);
+             job_update_status(job, JOB_S_FAILED);
+             return -1;
+        }
+        /* continue waiting */
+        return 0;
+    }
+    else if (job->j_status == LY_S_WAITING_STARTING_SERVICE) {
+        int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, job->j_target_id);
+        if (ly_entity_is_serving(ent_id)) {
+            job_update_status(job, JOB_S_FINISHED);
+            logdebug(_("instance %d started serving\n"), job->j_target_id);
+        }
+        else if (!ly_entity_is_online(ent_id)) {
+             loginfo(_("instance %d is offline\n"), job->j_target_id);
              job_update_status(job, JOB_S_FAILED);
              return -1;
         }
@@ -265,6 +284,7 @@ static int __job_start_instance(LYJobInfo * job)
     }
     job->j_ent_id = ent_id;
 
+#if 1
     if (ci.ins_status == DOMAIN_S_NEW) {
         ci.osm_secret = lyauth_secret();
         if (ci.osm_secret == NULL) {
@@ -272,6 +292,33 @@ static int __job_start_instance(LYJobInfo * job)
             goto failed;
         }
     }
+#else
+    char path[PATH_MAX];
+    snprintf(path, PATH_MAX, "%s/%d", g_c->clc_data_dir, ci.ins_id);
+    ci.storage_method = STORAGE_NFS;
+    ci.storage_parm = strdup(path);
+    if (ci.ins_status == DOMAIN_S_NEW) {
+        ci.osm_secret = lyauth_secret();
+        if (ci.osm_secret == NULL) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            goto failed;
+        }
+        if (access(path, F_OK) != 0 && mkdir(path, 0700) != 0) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            goto failed;
+        }
+        snprintf(path, PATH_MAX, "%s/%d/scripts", g_c->clc_data_dir, ci.ins_id);
+        if (access(path, F_OK) != 0 && mkdir(path, 0700) != 0) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            goto failed;
+        }
+        snprintf(path, PATH_MAX, "%s/%d/data", g_c->clc_data_dir, ci.ins_id);
+        if (access(path, F_OK) != 0 && mkdir(path, 0700) != 0) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            goto failed;
+        }
+    }
+#endif
 
     char *xml = lyxml_data_instance_run(&ci, NULL, 0);
     if (xml == NULL) {

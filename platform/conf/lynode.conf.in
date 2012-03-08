@@ -5,7 +5,7 @@
 #
 # default is KVM
 #
-LYNODE_DRIVER = XEN 
+LYNODE_DRIVER = KVM
 
 #
 # LYNODE_SYSCONF_PATH porints the location of lynode.sysconf file,

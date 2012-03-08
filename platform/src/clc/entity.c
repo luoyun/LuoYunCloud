@@ -242,6 +242,14 @@ int ly_entity_is_registered(int id)
             LY_ENTITY_FLAG_STATUS_REGISTERED ? 1 : 0;
 }
 
+int ly_entity_is_serving(int id)
+{
+    if (g_entity_store == NULL || id < 0 || id >= LY_ENTITY_MAX)
+        return 0;
+    return ((g_entity_store + id)->flag & LY_ENTITY_FLAG_STATUS_MASK) >=
+            LY_ENTITY_FLAG_STATUS_SERVING ? 1 : 0;
+}
+
 int ly_entity_update(int id, int db_id, int status)
 {
     if (g_entity_store == NULL || id < 0 || id >= LY_ENTITY_MAX)

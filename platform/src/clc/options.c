@@ -175,7 +175,9 @@ static int __parse_oneitem_str(const char *k, char **v, int vlen,
         else if (debug_flag == 1)
             logdebug(_("%s has value %s\n"), k, s);
 
-        if (*v == NULL) {
+        if (s == NULL || strlen(s) == 0)
+            *v = NULL;
+        else if (*v == NULL) {
             *v = strdup(s);
             if (*v == NULL)
                 return CLC_CONFIG_RET_ERR_NOMEM;
@@ -230,16 +232,16 @@ static int __parse_config(CLCConfig * c)
         return CLC_CONFIG_RET_ERR_CONF;
     }
 
-    char *mcast = (char *) c->clc_mcast_ip;
-    char *clc = (char *) c->clc_ip;
-    if (__parse_oneitem_str("LYCLC_MCAST_IP", &mcast,
-                            sizeof(c->clc_mcast_ip), ini_config) ||
+    if (__parse_oneitem_str("LYCLC_MCAST_IP", &c->clc_mcast_ip,
+                            0, ini_config) ||
         __parse_oneitem_int("LYCLC_MCAST_PORT", &c->clc_mcast_port,
                             ini_config) ||
-        __parse_oneitem_str("LYCLC_IP", &clc,
-                            sizeof(c->clc_ip), ini_config) ||
+        __parse_oneitem_str("LYCLC_IP", &c->clc_ip,
+                            0, ini_config) ||
         __parse_oneitem_int("LYCLC_PORT", &c->clc_port,
                             ini_config) ||
+        __parse_oneitem_str("LYCLC_DATA_DIR", &c->clc_data_dir,
+                            0, ini_config) ||
         __parse_oneitem_str("LYCLC_DB_NAME", &c->db_name,
                             0, ini_config) ||
         __parse_oneitem_str("LYCLC_DB_USERNAME", &c->db_user,
@@ -362,10 +364,18 @@ int clc_config(int argc, char *argv[], CLCConfig * c)
         c->debug = 0;
     if (c->clc_port == 0)
         c->clc_port = DEFAULT_LYCLC_PORT;
-    if (c->clc_mcast_ip[0] == '\0')
-        strcpy(c->clc_mcast_ip, DEFAULT_LYCLC_MCAST_IP);
+    if (c->clc_mcast_ip) {
+        c->clc_mcast_ip = strdup(DEFAULT_LYCLC_MCAST_IP);
+        if (c->clc_mcast_ip == NULL)
+            return CLC_CONFIG_RET_ERR_NOMEM;
+    }
     if (c->clc_mcast_port == 0)
         c->clc_mcast_port = DEFAULT_LYCLC_MCAST_PORT;
+    if (c->clc_data_dir == NULL) {
+        c->clc_data_dir = strdup(DEFAULT_LYCLC_DATA_DIR);
+        if (c->clc_data_dir == NULL)
+            return CLC_CONFIG_RET_ERR_NOMEM;
+    }
     if (c->log_path == NULL) {
         c->log_path = strdup(DEFAULT_LYCLC_LOG_PATH);
         if (c->log_path == NULL)
@@ -400,7 +410,7 @@ int clc_config(int argc, char *argv[], CLCConfig * c)
         logsimple(_("cloud controller port is invalid\n"));
         return CLC_CONFIG_RET_ERR_CONF;
     }
-    if (c->clc_ip[0] != '\0' && __is_IP_valid(c->clc_ip, 0) == 0) {
+    if (c->clc_ip && __is_IP_valid(c->clc_ip, 0) == 0) {
         logsimple(_("cloud controller ip is invalid\n"));
         return CLC_CONFIG_RET_ERR_CONF;
     }

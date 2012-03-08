@@ -94,6 +94,12 @@ static void __main_clean(int keeppid)
         free(g_c->db_user);
     if (g_c->db_pass)
         free(g_c->db_pass);
+    if (g_c->clc_ip)
+        free(g_c->clc_ip);
+    if (g_c->clc_mcast_ip)
+        free(g_c->clc_mcast_ip);
+    if (g_c->clc_data_dir)
+        free(g_c->clc_data_dir);
     lyxml_cleanup();
     logclose();
     free(g_c);
@@ -102,6 +108,7 @@ static void __main_clean(int keeppid)
 
 static void __sig_handler(int sig, siginfo_t * si, void *unused)
 {
+    loginfo("%s was signaled to exit...\n", PROGRAM_NAME);
     __main_clean(0);
     exit(0);
 }
@@ -154,8 +161,15 @@ int main(int argc, char *argv[])
     if (c->debug)
         __print_config(c);
 
+    /* make sure data directory exists */
+    if (lyutil_create_dir(c->clc_data_dir)) {
+        printf(_("%s is not accessible\n"), c->clc_data_dir);
+        ret = -255;
+        goto out;
+    }
+
     /* get clc ip */
-    if (c->clc_ip[0] == '\0' && ly_clc_ip_get() < 0) {
+    if (c->clc_ip == NULL && ly_clc_ip_get() < 0) {
         logerror(_("CLC no proper network interface to use.\n"));
         goto out;
     }

@@ -32,6 +32,7 @@ int eh_process_node_auth(int is_reply, void * data, int ent_id);
 */
 int eh_process_osm_query(char *buf);
 int eh_process_osm_register(char * buf, int size, int ent_id);
+int eh_process_osm_report(char * buf, int size, int ent_id);
 int eh_process_osm_auth(int is_reply, void * data, int ent_id);
 
 #endif

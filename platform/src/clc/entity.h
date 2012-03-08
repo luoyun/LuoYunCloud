@@ -26,12 +26,13 @@ typedef struct LYEntity_t {
     void *entity;
 } LYEntity;
 
-#define LY_ENTITY_FLAG_STATUS_MASK 	0x03
-#define LY_ENTITY_FLAG_STATUS_OFFLINE 	0x0
-#define LY_ENTITY_FLAG_STATUS_ONLINE 	0x01
-#define LY_ENTITY_FLAG_STATUS_AUTHENTICATED	 0x02
-#define LY_ENTITY_FLAG_STATUS_REGISTERED	 0x03
-#define LY_ENTITY_FLAG_NODE_ENABLED	 0x04
+#define LY_ENTITY_FLAG_STATUS_MASK 		0x07
+#define LY_ENTITY_FLAG_STATUS_OFFLINE 		0x0
+#define LY_ENTITY_FLAG_STATUS_ONLINE 		0x01
+#define LY_ENTITY_FLAG_STATUS_AUTHENTICATED	0x02
+#define LY_ENTITY_FLAG_STATUS_REGISTERED	0x03
+#define LY_ENTITY_FLAG_STATUS_SERVING		0x04
+#define LY_ENTITY_FLAG_NODE_ENABLED	 	0x08
 
 int ly_entity_store_init(void);
 int ly_entity_new(int fd);
@@ -47,6 +48,7 @@ int ly_entity_find_by_db(int ent_type, int db_id);
 int ly_entity_is_online(int id);
 int ly_entity_is_authenticated(int id);
 int ly_entity_is_registered(int id);
+int ly_entity_is_serving(int id);
 int ly_entity_is_enabled(int id);
 int ly_entity_update(int id, int db_id, int status);
 int ly_entity_enable(int id, int db_id, int enable);

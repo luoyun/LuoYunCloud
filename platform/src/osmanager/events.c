@@ -110,6 +110,7 @@ static int __process_clc_reply(char *buf, int size)
         return 1;
     }
 
+    
     return 0;
 }
 
@@ -162,7 +163,7 @@ static int __process_work_authtication(int is_reply, void * buf, int len)
     }
 
     /* authetication completed */
-    if (ly_register_osm() != 0)
+    if (ly_osm_register() != 0)
         logerror("failed registering osm in %s\n", __func__);
     return 0;
 }
@@ -171,7 +172,7 @@ static int __process_work_authtication(int is_reply, void * buf, int len)
 static int __process_work_join(char * buf)
 {
     g_c->state = OSM_STATUS_INIT;
-    if (ly_register_osm() != 0)
+    if (ly_osm_register() != 0)
         logerror("failed registering osm in %s\n", __func__);
     return 0;
 }
@@ -285,8 +286,22 @@ int ly_epoll_work_recv(void)
     return 0;
 }
 
+int ly_osm_report(int status)
+{
+    if (g_c->wfd < 0)
+        return -1;
+
+    if (ly_packet_send(g_c->wfd, PKT_TYPE_OSM_REPORT,
+                       &status, sizeof(int)) < 0) {
+        logerror("packet send error(%d, %d)\n", __LINE__, errno);
+        return -1;
+    }
+
+    return 0;
+}
+
 /* register to clc */
-int ly_register_osm()
+int ly_osm_register()
 {
     if (g_c == NULL || g_c->wfd < 0)
         return -255;
@@ -450,6 +465,8 @@ int ly_epoll_mcast_recv()
     msg.msg_controllen = g_c->mfd_cmsg_size;
     int datalen = recvmsg(g_c->mfd, &msg, 0);
     if (datalen < 0) {
+        if (errno == EAGAIN)
+            return 0;
         logerror("recvmsg returns error(%d) in %s\n", errno, __func__);
         return -1;
     }

@@ -11,7 +11,11 @@ typedef struct OSMConfig_t {
     int   osm_tag;         /* unique id on clc */
     char *osm_secret;      /* secret to authenticate clc */
     char *conf_path;       /* configuration file */
+    char *scripts_dir;     /* dir of external scripts */
     char *key_path;        /* key file path */
+    char *storage_ip;      /* storage server ip */
+    int   storage_method;  /* storage method, NFS, ISCSI, etc */
+    char *storage_parm;      /* storage parameters */
     char *log_path;        /* log file path */
     int   verbose;
     int   debug;

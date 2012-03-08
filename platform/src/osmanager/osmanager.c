@@ -35,6 +35,7 @@
 #include "osmutil.h"
 
 OSMControl * g_c = NULL;
+int g_app_status = -1;
 
 static int __print_config(OSMConfig *c)
 {
@@ -64,6 +65,8 @@ static void __main_clean(int keeppid)
     LY_SAFE_FREE(c->osm_secret)
     LY_SAFE_FREE(c->log_path)
     LY_SAFE_FREE(c->conf_path)
+    LY_SAFE_FREE(c->storage_ip)
+    LY_SAFE_FREE(c->storage_parm)
     LY_SAFE_FREE(g_c->clc_ip)
     LY_SAFE_FREE(g_c->osm_ip)
     free(g_c);
@@ -76,6 +79,67 @@ static void __sig_handler(int sig, siginfo_t *si, void *unused)
     loginfo("%s was signaled to exit...\n", PROGRAM_NAME);
     __main_clean(0);
     exit(0);
+}
+
+#include <pthread.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <limits.h>
+void * __app_status_func(void * arg)
+{
+    char cmd[PATH_MAX];
+    snprintf(cmd, PATH_MAX, "%s/status", g_c->config.scripts_dir);
+    while(1) {
+
+        sleep(LY_OSM_STATUS_CHECK_INTVL);
+
+        if (g_c->wfd < 0) {
+            loginfo("work socket is not ready %s\n", cmd);
+            continue;
+        }
+
+        if (access(cmd, X_OK)) {
+            logerror("can not execute %s\n", cmd);
+            continue;
+        }
+
+        pid_t pid = vfork();
+        if (pid < 0) {
+            logerror("fork failed\n");
+            continue;
+        }
+
+        if (pid) {
+            int status;
+            waitpid(pid, &status, 0);
+            if (WIFEXITED(status)) {
+                status = WEXITSTATUS(status);
+                if (status == 0 && g_app_status != 0) {
+                    loginfo("checking applicaiton status: "
+                            "application is running\n");
+                    ly_osm_report(LY_S_APP_RUNNING);
+                }
+                else if (status != 0) {
+                    loginfo("checking applicaiton status: "
+                            "application returns %d\n", status);
+                    ly_osm_report(LY_S_APP_RUNNING+status);
+                }
+                g_app_status = status;
+            }
+            else {
+                ly_osm_report(LY_S_APP_UNKNOWN);
+                g_app_status = -1;
+            }
+            continue;
+        }
+
+        /* child process */
+        char *argv[] = {"status", g_c->config.conf_path, NULL};
+        execv(cmd, argv);
+        logerror("excv failed\n");
+        exit(127);
+    }
 }
 
 int main(int argc, char *argv[])
@@ -151,6 +215,14 @@ int main(int argc, char *argv[])
         goto out;
     }
 
+    /* start app status monitor thread */
+    pthread_t __app_status_tid;
+    if (pthread_create(&__app_status_tid, NULL,
+                       __app_status_func, NULL) != 0) {
+        logerror("threading __app_status_func, failed\n");
+        goto out;
+    }
+
     /* initialize g_c->efd */
     if (ly_epoll_init(MAX_EVENTS) != 0) {
         logsimple("ly_epoll_init failed.\n");
@@ -168,23 +240,23 @@ int main(int argc, char *argv[])
             g_c->state = OSM_STATUS_INIT;
             /* start osm registration */
             if (ly_epoll_work_register() != 0) {
+                /* failed connecting clc */
                 LY_SAFE_FREE(g_c->clc_ip)
                 loginfo("wait for mcast join...\n");
                 if (g_c->mfd < 0 && ly_epoll_mcast_register() != 0) {
-                    logerror("listening on clc mcast error.\n");
-                    ret = -1;
-                    break;
+                    logerror("listening on clc mcast error. will try again\n");
+                    wait = LY_OSM_EPOLL_WAIT;
                 }
             }
-            else if (ly_register_osm() != 0) {
-                /* close work socket */
+            else if (ly_osm_register() != 0) {
+                /* unexpected error. close work socket */
                 ly_epoll_work_close();
                 wait = LY_OSM_EPOLL_WAIT;
                 logerror("failed registering osm. will try again\n");
             }
         }
 
-        logdebug("waiting ...\n");
+        logdebug("waiting...\n");
         n = epoll_wait(g_c->efd, events, MAX_EVENTS, wait);
         if (wait > 0)
             wait = -1;
@@ -195,6 +267,8 @@ int main(int argc, char *argv[])
                 ret = ly_epoll_mcast_recv();
                 if (ret < 0) {
                     logwarn("unexpected clc mcast data recevied.\n");
+                    ly_epoll_mcast_close();
+                    wait = -1;
                 }
                 else if (ret == 0) {
                     logdebug("ly_epoll_mcast_recv returns 0. do nothing.\n");
@@ -204,6 +278,7 @@ int main(int argc, char *argv[])
                     loginfo("new clc mcast data received. "
                             "re-registering....\n");
                     ly_epoll_mcast_close();
+                    wait = -1;
                 }
             }
             else if (LY_EVENT_WORK_DATAIN(events[i])) {
@@ -216,11 +291,11 @@ int main(int argc, char *argv[])
 
                 /* in all other cases, close work socket */
                 ly_epoll_work_close();
-                wait = LY_OSM_EPOLL_WAIT;
                 if (ret < 0)
                     logwarn("unexpected work process error\n");
                 else
                     logwarn("osm socket closed. will try again... \n");
+                wait = LY_OSM_EPOLL_WAIT;
             }
             else if (events[i].events & EPOLLRDHUP) {
                 /* work closed by clc */
@@ -234,6 +309,7 @@ int main(int argc, char *argv[])
         }
     }
 
+    logerror("should never see this message\n");
 out:
     __main_clean(keeppidfile);
     return ret;

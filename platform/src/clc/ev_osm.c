@@ -27,13 +27,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include "../luoyun/luoyun.h"
 #include "../util/logging.h"
 #include "../util/lyutil.h"
+#include "../util/misc.h"
 #include "entity.h"
 #include "lyjob.h"
 #include "postgres.h"
+#include "lyclc.h"
 
 /* process osm query */
 int eh_process_osm_query(char *buf)
@@ -61,6 +64,53 @@ int eh_process_osm_query(char *buf)
         return -1;
     }
 
+    return 0;
+}
+
+/* process osm report */
+int eh_process_osm_report(char * buf, int size, int ent_id)
+{
+    logdebug(_("%s called\n"), __func__);
+
+    if (size != sizeof(int32_t)) {
+        logerror(_("unexpected osm report data size\n"));
+        return -1;
+    }
+
+    int status = *(int32_t *)buf;
+    logdebug(_("osm report: <%d>\n"), status);
+    if (status == LY_S_APP_RUNNING) {
+        loginfo(_("osm report: %d, %s\n"), status, "application running");
+        if (!ly_entity_is_serving(ent_id)) {
+            int db_id = ly_entity_db_id(ent_id);
+            InstanceInfo ii;
+            ii.status = DOMAIN_S_SERVING;
+            ii.ip = NULL;
+            if (db_instance_update_status(db_id, &ii, -1) < 0) {
+                logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+                return -1;
+            }
+
+            ly_entity_update(ent_id, -1, LY_ENTITY_FLAG_STATUS_SERVING);
+            loginfo(_("instance (tag:%d) is servicing\n"), db_id);
+        }
+    }
+    else {
+        loginfo(_("osm report: %d, %s\n"), status, "application in known state");
+        if (ly_entity_is_serving(ent_id)) {
+            int db_id = ly_entity_db_id(ent_id);
+            InstanceInfo ii;
+            ii.status = DOMAIN_S_RUNNING;
+            ii.ip = NULL;
+            if (db_instance_update_status(db_id, &ii, -1) < 0) {
+                logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+                return -1;
+            }
+
+            ly_entity_update(ent_id, -1, LY_ENTITY_FLAG_STATUS_REGISTERED);
+            loginfo(_("instance (tag:%d) is not servicing\n"), db_id);
+        }
+    }
     return 0;
 }
 
@@ -122,9 +172,18 @@ int eh_process_osm_register(char * buf, int size, int ent_id)
     loginfo(_("instance (tag:%d, ip:%s) registered successfully\n"),
               oi->tag, ip);
 
+#if 0
+    /* prepare storage for the instance */
+    int ins_id = oi->tag;
+    char cmd[PATH_MAX];
+    snprintf(cmd, PATH_MAX, "exportfs -o rw,no_root_squash %s:/%s/%d",
+                    ip, g_c->clc_data_dir, ins_id);
+         
+    if (system_call(cmd))
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+#endif    
     return 0;
 }
-
 
 /* process raw auth request from osmanager */
 int eh_process_osm_auth(int is_reply, void * data, int ent_id)

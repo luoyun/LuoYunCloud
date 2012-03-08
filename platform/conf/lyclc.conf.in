@@ -26,6 +26,15 @@ LYCLC_DB_USERNAME = @DEFAULT_CLC_DB_USER@
 LYCLC_DB_PASSWORD = @DEFAULT_CLC_DB_PASS@
 
 #
+# LYCLC_DATA_DIR points to the directory where all the data files for
+# instances are stored.
+#
+# Default setting is /opt/clc_data if prefix is not defined, otherwise
+# it is the $(prefix)/clc_data
+#
+LYCLC_DATA_DIR = @DEFAULT_LYCLC_DATA_DIR@
+
+#
 # log file
 #
 # Default setting is /var/log/lyclc.log if prefix is not defined, otherwise

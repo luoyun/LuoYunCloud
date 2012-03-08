@@ -218,6 +218,21 @@ static int __process_xml_request(xmlDocPtr doc, xmlNodePtr node)
     if (str != NULL) {
         ci.osm_secret = str;
     }
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/request/parameters/storage/ip");
+    if (str != NULL) {
+        ci.storage_ip = str;
+    }
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/request/parameters/storage/method");
+    if (str != NULL) {
+        ci.storage_method = atoi(str);
+    }
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/request/parameters/storage/parm");
+    if (str != NULL) {
+        ci.storage_parm = str;
+    }
 
     if (g_c->config.debug)
         luoyun_node_ctrl_instance_print(&ci);

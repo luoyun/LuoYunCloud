@@ -118,7 +118,12 @@ typedef enum LYActionStatus_t {
      LY_S_REGISTERING_CONFIG = 1005,
      LY_S_REGISTERING_REINIT = 1011,
      LY_S_REGISTERING_DONE_SUCCESS = 1021,
-     LY_S_REGISTERING_DONE_FAIL = 1022
+     LY_S_REGISTERING_DONE_FAIL = 1022,
+     /* 2000 - 2127 matches (2000 + <exit value of app status program>) */
+     LY_S_APP_RUNNING = 2000,
+     LY_S_APP_UNKNOWN = 2128,
+     LY_S_APP_STOPPED = 2129,
+     LY_S_APP_FAILED = 2130
 } LYActionStatus;
 #define JOB_IS_INITIATED(s) (s == LY_S_INITIATED)
 #define JOB_IS_STARTED(s) (s == LY_S_RUNNING)
@@ -190,6 +195,7 @@ typedef enum PacketType_t {
     PKT_TYPE_OSM = 40000,
     PKT_TYPE_OSM_REGISTER_REQUEST = 40001,
     PKT_TYPE_OSM_REGISTER_REPLY = 40002,
+    PKT_TYPE_OSM_REPORT = 40003,
     PKT_TYPE_OSM_AUTH_REQUEST = 40011,
     PKT_TYPE_OSM_AUTH_REPLY = 40012,
 } PacketType;
@@ -255,7 +261,9 @@ typedef enum OSMStatus_t {
     OSM_STATUS_UNREGISTERED = 7,
     OSM_STATUS_REGISTERING = 8,
     OSM_STATUS_REGISTERED = 9,
-    OSM_STATUS_APP_RUNNING = 15,
+    OSM_STATUS_APP_UNKNOWN = 100,
+    OSM_STATUS_APP_RUNNING = 101,
+    OSM_STATUS_APP_STOPPED = 102,
 } OSMStatus;
 
 /*
@@ -285,6 +293,12 @@ typedef enum ChecksumType_t {
     CHECKSUM_BY_SHA1 = 2,
 } ChecksumType;
 
+typedef enum StorageMethod_t {
+    STORAGE_NONE = 0,
+    STORAGE_NFS,
+    STORAGE_ISCSI,
+} StorageMethod;
+
 /*
 ** common data structure for instance control to node 
 */
@@ -306,13 +320,11 @@ typedef struct NodeCtrlInstance_t {
     int   osm_clcport;
     int   osm_tag;
     char *osm_secret;
+    char *storage_ip;
+    int   storage_method;
+    char *storage_parm;
     int   reply;                 /* flags about what kind of result to be returned */
 } NodeCtrlInstance;
-
-/* constant for NodeCtrlInstance ins_type*/
-#define LY_INSTANCE_TYPE_NEW		1
-#define LY_INSTANCE_TYPE_OLD		2
-#define LY_INSTANCE_TYPE_RECOVER	3
 
 /* flags used by InstanceCtrl result field */
 #define LUOYUN_REQUEST_REPLY_RESULT 0x01

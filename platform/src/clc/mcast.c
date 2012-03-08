@@ -103,6 +103,7 @@ out:
     return ret;
 }
 
+#if 0
 int __ucast_send_join(char *clcip, char *ins_ip)
 {
     struct sockaddr_in sock;
@@ -160,10 +161,11 @@ int __ucast_send_join_all(char *clcip)
     }
     return 0;
 }
+#endif
 
 int ly_mcast_send_join(void)
 {
-    if (g_c->clc_ip[0] != '\0') {
+    if (g_c->clc_ip) {
         if (__mcast_send_join(g_c->clc_ip) < 0) {
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
             return -1;

@@ -519,9 +519,13 @@ static int __domain_run(NodeCtrlInstance * ci)
     if (snprintf(tmpstr1024, 1024,
                  "CLC_IP=%s\nCLC_PORT=%d\n"
                  "CLC_MCAST_IP=%s\nCLC_MCAST_PORT=%d\n"
+                 "STORAGE_IP=%s\nSTORAGE_METHOD=%d\nSTORAGE_PARM=%s\n"
                  "TAG=%d\n",
                  ci->osm_clcip, ci->osm_clcport,
                  g_c->config.clc_mcast_ip, g_c->config.clc_mcast_port,
+                 ci->storage_ip ? ci->storage_ip : "",
+                 ci->storage_method,
+                 ci->storage_parm ? ci->storage_parm : "",
                  ci->osm_tag) >= 1024) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto out_umount;

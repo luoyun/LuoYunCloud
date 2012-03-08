@@ -53,6 +53,11 @@ AS_IF([test ["$prefix" == "NONE"] ], [DEFAULT_LYNODE_DATA_DIR="/opt/lynode_data"
 AC_SUBST(DEFAULT_LYNODE_DATA_DIR)
 AC_DEFINE_UNQUOTED([DEFAULT_LYNODE_DATA_DIR], ["${DEFAULT_LYNODE_DATA_DIR}"], [default lynode data dir])
 
+# lyclc data dir
+AS_IF([test ["$prefix" == "NONE"] ], [DEFAULT_LYCLC_DATA_DIR="/opt/clc_data"], [DEFAULT_LYCLC_DATA_DIR="${prefix%/}/clc_data"])
+AC_SUBST(DEFAULT_LYCLC_DATA_DIR)
+AC_DEFINE_UNQUOTED([DEFAULT_LYCLC_DATA_DIR], ["${DEFAULT_LYCLC_DATA_DIR}"], [default lyclc data dir])
+
 # lynode log file
 AS_IF([test ["$prefix" == "NONE"] ], [DEFAULT_LYNODE_LOG_PATH="/var/log/lynode.log"], [DEFAULT_LYNODE_LOG_PATH="${prefix%%/}/logs/lynode.log"])
 AC_SUBST(DEFAULT_LYNODE_LOG_PATH)
@@ -163,6 +168,9 @@ AC_CONFIG_FILES([
    src/osmanager/Makefile
    src/clc/Makefile
    src/luoyun/Makefile
+   tools/restart
+   tools/stop
+   tools/start
 ])
 
 AC_OUTPUT

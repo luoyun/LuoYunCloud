@@ -33,6 +33,7 @@ int ly_epoll_mcast_close(void);
 #define LY_EVENT_MCAST_DATAIN(ev) ((ev.events & EPOLLIN) && (ev.data.fd == g_c->mfd))
 
 /* send register requst to clc */
-int ly_register_osm(void);
+int ly_osm_register(void);
+int ly_osm_report(int status);
 
 #endif

@@ -198,12 +198,12 @@ int ly_epoll_entity_recv(int ent_id)
     int size;
     void * buf = ly_packet_buf(pkt, &size);
     if (buf == NULL) {
-        logerror(_("ly_packet_buf returns NULL buffer\n"));
-        return -1;
+        logerror(_("ly_packet_buf returns NULL buffer. close socket\n"));
+        return 1;
     }
     if (size == 0) {
-        logwarn(_("ly_packet_buf returns 0 size buffer\n"));
-        return 0;
+        logerror(_("ly_packet_buf returns 0 size buffer. close socket\n"));
+        return 1;
     }
 
     int len = recv(fd, buf, size, 0);
@@ -239,16 +239,20 @@ int ly_epoll_entity_recv(int ent_id)
 
         /* currenly we only support processing a complete packet */
         if (ret == 0) {
-            if (pkt->pkt_buf_received > 0)
+            if (pkt->pkt_buf_received > 0) {
                 loginfo(_("socket %d recv partial packet(len %d)\n"),
                            fd, pkt->pkt_buf_received);
+                __print_recv_buf(buf, len);
+            }
             break;
         }
 
         int type = ly_packet_type(pkt);
         loginfo(_("socket %d recv packet, type %d\n"), fd, type);
+        /*
         if (type == PKT_TYPE_UNKNOW)
             break;
+        */
 
         buf = ly_packet_data(pkt, &size);
         if (type == PKT_TYPE_WEB_NEW_JOB_REQUEST) {
@@ -294,7 +298,12 @@ int ly_epoll_entity_recv(int ent_id)
             ly_entity_init(ent_id, LY_ENTITY_OSM);
             ret = eh_process_osm_register(buf, size, ent_id);
             if (ret < 0)
-                logerror(_("instance packet process error in %s.\n"), __func__);
+                logerror(_("osm packet process error in %s.\n"), __func__);
+        }
+        else if (type == PKT_TYPE_OSM_REPORT) {
+            ret = eh_process_osm_report(buf, size, ent_id);
+            if (ret < 0)
+                logerror(_("osm packet process error in %s.\n"), __func__);
         }
         else if (type == PKT_TYPE_TEST_ECHO_REQUEST) {
             ret = __process_test_echo(buf, size, ent_id);

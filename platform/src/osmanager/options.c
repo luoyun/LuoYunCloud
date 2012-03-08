@@ -50,6 +50,7 @@ static struct option const long_opts[] = {
     {"debug", no_argument, NULL, 'd'},
     {"daemon", no_argument, NULL, 'D'},
     {"config", required_argument, NULL, 'c'},
+    {"scripts", required_argument, NULL, 's'},
     {"key", required_argument, NULL, 'k'},
     {"log", required_argument, NULL, 'l'},
     {GETOPT_HELP_OPTION_DECL},
@@ -67,7 +68,7 @@ static struct option const long_opts[] = {
 static int __parse_opt(int argc, char *argv[], OSMConfig * c)
 {
     int ret = 0, opt = 0;
-    const char *const short_options = "c:hdDk:l:V";
+    const char *const short_options = "c:hdDs:k:l:V";
 
     while (1) {
         /* getopt_long stores the option index here */
@@ -93,6 +94,12 @@ static int __parse_opt(int argc, char *argv[], OSMConfig * c)
         case 'l':
             c->log_path = strdup(optarg);
             if (c->log_path == NULL)
+                return OSM_CONFIG_RET_ERR_NOMEM;
+            break;
+
+        case 's':
+            c->scripts_dir= strdup(optarg);
+            if (c->scripts_dir == NULL)
                 return OSM_CONFIG_RET_ERR_NOMEM;
             break;
 
@@ -174,6 +181,12 @@ static int __parse_config (OSMConfig *c)
             c->clc_mcast_ip = strdup(vstr);
         else if ((kstr = strstr(line, "CLC_MCAST_PORT")) != NULL)
             c->clc_mcast_port = atoi(vstr);
+        else if ((kstr = strstr(line, "STORAGE_IP")) != NULL)
+            c->storage_ip = strdup(vstr);
+        else if ((kstr = strstr(line, "STORAGE_METHOD")) != NULL)
+            c->storage_method = atoi(vstr);
+        else if ((kstr = strstr(line, "STORAGE_PARM")) != NULL)
+            c->storage_parm = strdup(vstr);
         else if ((kstr = strstr(line, "TAG")) != NULL)
             c->osm_tag = atoi(vstr);
         else
@@ -229,6 +242,12 @@ int osm_config(int argc, char *argv[], OSMConfig *c)
             return OSM_CONFIG_RET_ERR_NOMEM;
     }
 
+    /* init scripts dir */
+    if (c->scripts_dir == NULL) {
+        c->scripts_dir = strdup(DEFAULT_OSM_SCRIPTS_DIR);
+        if (c->scripts_dir == NULL)
+            return OSM_CONFIG_RET_ERR_NOMEM;
+    }
     /* init key_path */
     if (c->key_path == NULL) {
         c->key_path = strdup(DEFAULT_OSM_KEY_PATH);

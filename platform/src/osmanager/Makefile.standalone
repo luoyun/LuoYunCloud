@@ -26,7 +26,7 @@ top_srcdir = ..
 CC = gcc
 CPPFLAGS := -I$(top_srcdir)
 CFLAGS = -Wall -g -std=gnu99 -D_GNU_SOURCE
-LDFLAGS = -lm -luuid -lgcrypt
+LDFLAGS = -lm -luuid -lgcrypt -lpthread
 HEADERS = $(wildcard *.h)
 SOURCES = $(wildcard *.c)
 

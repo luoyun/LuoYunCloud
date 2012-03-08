@@ -15,7 +15,7 @@ lyosm_SOURCES = events.c  events.h \
                 options.c options.h \
                 lyosm.h
 LIBS = 
-lyosm_LDFLAGS = -lm -luuid -lgcrypt
+lyosm_LDFLAGS = -lm -luuid -lgcrypt -lpthread
 
 CLEANFILES = *~
 

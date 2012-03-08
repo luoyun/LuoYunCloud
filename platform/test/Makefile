@@ -45,7 +45,7 @@ TEST_PROG = test_list test_lydl test_pidfile test_socket\
             test_getconf test_getfreemem test_getmem \
             test_vm test_xml test_md5 test_lynode test_pq \
             test_misc test_crypt test_echo test_clc \
-            test_nodeenable test_lyosm
+            test_nodeenable test_lyosm test_fileno
 TEST_OBJ = $(addsuffix .o, $(TEST_PROG))
 
 .PHONY : build clean
