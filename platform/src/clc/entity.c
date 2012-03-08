@@ -109,6 +109,9 @@ int ly_entity_new(int fd)
             return -1;
         }
     }
+    else 
+        ly_packet_reinit(ent->pkt);
+
 
     INIT_LIST_HEAD(&ent->list);
     ent->db_id = -1;

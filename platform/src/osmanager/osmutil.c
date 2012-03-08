@@ -216,35 +216,48 @@ void lyutil_daemonize()
 }
 
 /* 
-** util func to create direcotry if doesn't exist
-** when needed, it creates all the parent directories.
+** improved util func based on lyutil_create_dir
 */
-int lyutil_create_dir(const char *dir)
+int lyutil_create_file(const char *path, int dir_only)
 {
-    char *tmpdir;
+    char * tmp;
     int i, len;
 
-    tmpdir = malloc(strlen(dir) + 2);
-    if (tmpdir == NULL)
+    if (path == NULL)
         return -1;
 
-    strcpy(tmpdir, dir);
-    if (tmpdir[strlen(tmpdir) - 1] != '/')
-        strcat(tmpdir, "/");
+    len = strlen(path);
+    if (len == 0 || (path[len-1] == '/' && dir_only == 0))
+        return -1;
 
-    len = strlen(tmpdir);
+    tmp = strdup(path);
+    if (tmp == NULL)
+        return -1;
+
+    /* dir */
     for (i = 1; i < len; i++) {
-        if (tmpdir[i] == '/') {
-            tmpdir[i] = '\0';
-            if (access(tmpdir, R_OK) != 0) {
-                if (mkdir(tmpdir, 0755) == -1)
-                    return -1;
+        if (tmp[i] == '/') {
+            tmp[i] = '\0';
+            if (access(tmp, R_OK) != 0 &&
+                mkdir(tmp, 0755) == -1) {
+                free(tmp);
+                return -1;
             }
-            tmpdir[i] = '/';
+            tmp[i] = '/';
         }
     }
 
-    free(tmpdir);
+    /* file */
+    if (tmp[i-1] != '/' && dir_only == 0 && access(tmp, F_OK) != 0) {
+        int fd = creat(tmp, 0644);
+        if (fd < 0) {
+            free(tmp);
+            return -1;
+        }
+        close(fd);
+    }
+
+    free(tmp);
     return 0;
 }
 

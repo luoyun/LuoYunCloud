@@ -118,7 +118,7 @@ int setup_applaince_in_db()
                  "created, updated) "
                  "VALUES ('%s', %d, '%s',"
                  "'now', 'now');",
-                 "rhel56n1", 382438593, "cee85db41707fb5c56b3a7361294989e"
+                 "rhel56n1", 372804252, "01e0a38b3a2c1134da1fae8b960c2be1"
                  ) >= LINE_MAX) {
         printf("error in %s(%d)\n", __func__, __LINE__);
         return -1;

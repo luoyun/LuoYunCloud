@@ -35,6 +35,7 @@ int ly_packet_recv(LYPacketRecv * pkt, int size);
 int ly_packet_recv_done(LYPacketRecv * pkt);
 
 int ly_packet_init(LYPacketRecv * pkt);
+int ly_packet_reinit(LYPacketRecv * pkt);
 void ly_packet_cleanup(LYPacketRecv * pkt);
 void *ly_packet_data(LYPacketRecv * pkt, int *size);
 void *ly_packet_buf(LYPacketRecv * pkt, int *size);

@@ -33,7 +33,7 @@ int lyutil_set_keepalive(int sd, int time, int intvl, int probes);
 void lyutil_daemonize(void);
 
 /* directory manipulation */
-int lyutil_create_dir(const char *dir);
+int lyutil_create_file(const char *path, int dir_only);
 
 /* generate uuid string */
 #define LUOYUN_UUID_STR_LEN 40

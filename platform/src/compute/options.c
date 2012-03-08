@@ -354,7 +354,8 @@ Usage : %s [OPTION]\n\n\
              "                  default is " DEFAULT_LYNODE_LOG_PATH " \n"
              "  -D, --daemon    run as a daemon\n"
              "  -d, --debug     debug mode\n"
-             "  -v, --verbose   verbose mode\n"));
+             "  --verbose       verbose or\n"
+             "  --brief         brief logging\n"));
 
 }
 
@@ -404,22 +405,10 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
         if (c->conf_path == NULL)
             return NODE_CONFIG_RET_ERR_NOMEM;
     }
-    if (access(c->sysconf_path, F_OK) != 0) {
-        char * d = strdup(c->sysconf_path);
-        if (get_dirname(d, strlen(d), c->sysconf_path) !=0 ) {
-            if (d) free(d);
-            logsimple(_("get_dirname from %s error\n"), c->sysconf_path);
-            return NODE_CONFIG_RET_ERR_CONF;
-        }
-        if (lyutil_create_dir(d) != 0) {
-            free(d);
-            logsimple(_("failed creating directory of %s\n"), d);
-            return NODE_CONFIG_RET_ERR_CONF;
-        }
-        free(d);
-        if (touch(c->sysconf_path) != 0) {
-            logsimple(_("not able to create %s\n"), c->sysconf_path);
-            return NODE_CONFIG_RET_ERR_CONF;
+    if (access(c->sysconf_path, W_OK) != 0) {
+        if (lyutil_create_file(c->sysconf_path, 0) < 0) {
+            logsimple(_("not able to write to %s\n"), c->sysconf_path);
+            return NODE_CONFIG_RET_ERR_CMD;
         }
     }
     else {
@@ -496,23 +485,14 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
         return NODE_CONFIG_RET_ERR_CONF;
     }
     if (c->log_path) {
-        char * d = strdup(c->log_path);
-        if (get_dirname(d, strlen(d), c->log_path) !=0 ) {
-            if (d) free(d);
-            logsimple(_("get_dirname from %s error\n"), c->log_path);
-            return NODE_CONFIG_RET_ERR_CMD;
-        }
-        if (lyutil_create_dir(d) != 0) {
-            free(d);
-            logsimple(_("failed creating directory of %s\n"), d);
-            return NODE_CONFIG_RET_ERR_CMD;
-        }
-        free(d);
-        if (touch(c->log_path) != 0) {
+        if (access(c->log_path, F_OK) && lyutil_create_file(c->log_path, 0) < 0) {
             logsimple(_("not able to create %s\n"), c->log_path);
             return NODE_CONFIG_RET_ERR_CMD;
         }
+        if (access(c->log_path, W_OK)) {
+            logsimple(_("not able to write to %s\n"), c->log_path);
+            return NODE_CONFIG_RET_ERR_CMD;
+        }
     }
-
     return ret;
 }

@@ -415,21 +415,12 @@ int clc_config(int argc, char *argv[], CLCConfig * c)
         return CLC_CONFIG_RET_ERR_CONF;
     }
     if (c->log_path) {
-        char *d = strdup(c->log_path);
-        if (get_dirname(d, strlen(d), c->log_path) != 0) {
-            if (d)
-                free(d);
-            logsimple(_("get_dirname from %s error\n"), c->log_path);
-            return CLC_CONFIG_RET_ERR_CMD;
-        }
-        if (lyutil_create_dir(d) != 0) {
-            free(d);
-            logsimple(_("failed creating directory of %s\n"), d);
-            return CLC_CONFIG_RET_ERR_CMD;
-        }
-        free(d);
-        if (touch(c->log_path) != 0) {
+        if (access(c->log_path, F_OK) && lyutil_create_file(c->log_path, 0) < 0) {
             logsimple(_("not able to create %s\n"), c->log_path);
+            return CLC_CONFIG_RET_ERR_CMD;
+        }
+        if (access(c->log_path, W_OK)) {
+            logsimple(_("not able to write to %s\n"), c->log_path);
             return CLC_CONFIG_RET_ERR_CMD;
         }
     }

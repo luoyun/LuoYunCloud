@@ -169,6 +169,16 @@ int ly_packet_init(LYPacketRecv * pkt)
     return 0;
 }
 
+int ly_packet_reinit(LYPacketRecv * pkt)
+{
+    if (pkt->pkt_buf == NULL)
+        return ly_packet_init(pkt);
+
+    bzero(&pkt->pkt_header, sizeof(LYPacketHeader));
+    pkt->pkt_buf_received = 0;
+    return 0;
+}
+
 void ly_packet_cleanup(LYPacketRecv * pkt)
 {
     if (pkt->pkt_buf != NULL)

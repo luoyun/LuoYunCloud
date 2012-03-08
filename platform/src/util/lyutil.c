@@ -403,6 +403,53 @@ int lyutil_create_dir(const char *dir)
 }
 
 /* 
+** improved util func based on lyutil_create_dir
+*/
+int lyutil_create_file(const char *path, int dir_only)
+{
+    char * tmp;
+    int i, len;
+
+    if (path == NULL)
+        return -1;
+
+    len = strlen(path);
+    if (len == 0 || (path[len-1] == '/' && dir_only == 0))
+        return -1;
+
+    tmp = strdup(path);
+    if (tmp == NULL)
+        return -1;
+
+    /* dir */
+    for (i = 1; i < len; i++) {
+        if (tmp[i] == '/') {
+            tmp[i] = '\0';
+            if (access(tmp, R_OK) != 0 &&
+                mkdir(tmp, 0755) == -1) {
+                free(tmp);
+                return -1;
+            }
+            tmp[i] = '/';
+        }
+    }
+
+    /* file */
+    if (tmp[i-1] != '/' && dir_only == 0 && access(tmp, F_OK) != 0) {
+        int fd = creat(tmp, 0644);
+        if (fd < 0) {
+            free(tmp);
+            return -1;
+        }
+        close(fd);
+    }
+
+    free(tmp);
+    return 0;
+}
+
+
+/* 
 ** check lock file with pid of running process 
 ** return 0: not exist, 1: exist already, -1: error
 */
@@ -410,6 +457,12 @@ int lyutil_check_pid_file(const char *dir, const char *name)
 {
     if (dir == NULL || name == NULL)
         return -1;
+
+    /* check whether it's writable */
+    if (access(dir, W_OK)) {
+        logerror(_("directory %s not writable\n"), dir);
+        return -1;
+    }
 
     char path[MAX_PATH];
     if (snprintf(path, MAX_PATH, "%s/.%s.pid", dir, name) >= MAX_PATH) {
@@ -434,7 +487,7 @@ int lyutil_check_pid_file(const char *dir, const char *name)
         int pid;
         if (fscanf(fp, "%d", &pid) != 1) {
             fclose(fp);
-            return -1;
+            return 0;
         }
         fclose(fp);
 

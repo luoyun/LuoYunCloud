@@ -33,7 +33,6 @@
 
 #include "lypacket.h"
 
-#include "logging.h"
 int ly_packet_send(int fd, int32_t type, void * data, int32_t size)
 {
     if (fd < 0 || type <= 0 || data == NULL || size <= 0)
@@ -167,6 +166,16 @@ int ly_packet_init(LYPacketRecv * pkt)
 
     /* save space for making string */
     pkt->pkt_buf_size = LUOYUN_PACKET_SIZE_MAX - 1;
+    return 0;
+}
+
+int ly_packet_reinit(LYPacketRecv * pkt)
+{
+    if (pkt->pkt_buf == NULL)
+        return ly_packet_init(pkt);
+
+    bzero(&pkt->pkt_header, sizeof(LYPacketHeader));
+    pkt->pkt_buf_received = 0;
     return 0;
 }
 

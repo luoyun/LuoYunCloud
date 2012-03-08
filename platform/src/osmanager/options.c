@@ -255,29 +255,15 @@ int osm_config(int argc, char *argv[], OSMConfig *c)
             return OSM_CONFIG_RET_ERR_NOMEM;
     }
 
-    /* init conf_path */
+    /* init log_path */
     if (c->log_path == NULL) {
         c->log_path = strdup(DEFAULT_OSM_LOG_PATH);
         if (c->log_path == NULL)
             return OSM_CONFIG_RET_ERR_NOMEM;
-        char * d = strdup(c->log_path);
-        char * d_slash = rindex(d, '/');
-        if (d_slash == NULL ) {
-            if (d)
-                free(d);
-            return OSM_CONFIG_RET_ERR_UNKNOWN;
-        }
-        *d_slash = '\0';
-        if (lyutil_create_dir(d) != 0) {
-            free(d);
-            logsimple("failed creating directory %s\n", d);
-            return OSM_CONFIG_RET_ERR_UNKNOWN;
-        }
-        free(d);
-        if (touch(c->log_path) != 0) {
-            logsimple("not able to create %s\n", c->log_path);
-            return OSM_CONFIG_RET_ERR_UNKNOWN;
-        }
+    }
+    if (lyutil_create_file(c->log_path, 0) != 0) {
+        logsimple("failed creating file %s\n", c->log_path);
+        return OSM_CONFIG_RET_ERR_UNKNOWN;
     }
 
     /* parse config file */

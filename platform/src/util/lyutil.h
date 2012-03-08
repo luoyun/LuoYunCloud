@@ -36,6 +36,7 @@ void lyutil_daemonize(const char *log, int loglevel);
 
 /* directory manipulation */
 int lyutil_create_dir(const char *dir);
+int lyutil_create_file(const char *path, int dir_only);
 
 /* process lock file */
 int lyutil_check_pid_file(const char *dir, const char *name);
