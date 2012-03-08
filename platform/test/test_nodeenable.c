@@ -147,7 +147,7 @@ int find_node_to_enable()
     return id;
 }
 
-int setup_run_job_in_db(int id)
+int setup_run_job_in_db(int id, int isenable)
 {
     PGresult *res;
     char sql[1024];
@@ -157,7 +157,8 @@ int setup_run_job_in_db(int id)
                  "VALUES (%d, %d, "
                  "1, %d, %d, 'now', 'now');",
                  JOB_TARGET_NODE, id,
-                 LY_A_CLC_ENABLE_NODE, JOB_S_INITIATED) >= LINE_MAX) {
+                 isenable ? LY_A_CLC_ENABLE_NODE : LY_A_CLC_DISABLE_NODE,
+                 JOB_S_INITIATED) >= LINE_MAX) {
         printf("error in %s(%d)\n", __func__, __LINE__);
         return -1;
     }
@@ -207,21 +208,41 @@ int send_new_job_to_clc(int id)
     return 0;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
+    int node_id = -1, isenable = 1;
+    if (argc == 3) {
+        if (strcmp(argv[1], "disable") == 0) {
+            node_id = atoi(argv[2]);
+            isenable = 0;
+        }
+    }
+    if (argc != 1 && isenable) {
+        printf("wrong argument\n");
+        return -1;
+    }
+
     ly_db_init();
 
-    int node_id = find_node_to_enable();
-    printf("node to enable, %d\n", node_id);
-    if (node_id <= 0)
-        return 0;
-    int job_id = setup_run_job_in_db(node_id);
+    if (isenable) {
+        node_id = find_node_to_enable();
+        printf("node to enable, %d\n", node_id);
+        if (node_id <= 0)
+            return 0;
+    }
+    int job_id = setup_run_job_in_db(node_id, isenable);
     send_new_job_to_clc(job_id);
     int status = job_result(job_id);
     while (!JOB_IS_FINISHED(status)){
         status = job_result(job_id);
         printf("sleep 1\n");
         sleep(1);
+    }
+
+    if (isenable == 0) {
+        printf("done\n");
+        ly_db_close();
+        return 0;
     }
 
     printf("query node\n");

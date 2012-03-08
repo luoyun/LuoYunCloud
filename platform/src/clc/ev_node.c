@@ -61,6 +61,8 @@ static int __node_register_auth(NodeInfo * nf, int ent_id)
         if (strcmp(nf->ip, db_nf.ip) != 0)
             logwarn(_("tagged node ip changed from %s to %s\n"),
                        db_nf.ip, nf->ip);
+
+        ly_entity_enable(ent_id, db_nf.id, db_nf.enabled);
         ret = LY_S_REGISTERING_DONE_SUCCESS;
     }
     else if (found == 0) {

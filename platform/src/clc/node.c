@@ -41,7 +41,8 @@ int node_schedule()
         NodeInfo * ni = ly_entity_data_next(LY_ENTITY_NODE, &ent_curr);
         if (ni == NULL)
             break;
-        if (!ly_entity_is_registered(ent_curr))
+        if (!ly_entity_is_registered(ent_curr) ||
+            !ly_entity_is_enabled(ent_curr))
             continue;
         if (ni->free_memory > mem) {
             mem = ni->free_memory;

@@ -235,24 +235,27 @@ int main(int argc, char *argv[])
     int wait = -1;
     struct epoll_event events[MAX_EVENTS];
     while (1) {
-        if (g_c->wfd < 0 && wait < 0) {
+        if (g_c->wfd < 0 && g_c->clc_ip && wait < 0) {
             /* init osm state */
             g_c->state = OSM_STATUS_INIT;
             /* start osm registration */
             if (ly_epoll_work_register() != 0) {
                 /* failed connecting clc */
+                loginfo("failed connecting %s\n", g_c->clc_ip);
                 LY_SAFE_FREE(g_c->clc_ip)
-                loginfo("wait for mcast join...\n");
-                if (g_c->mfd < 0 && ly_epoll_mcast_register() != 0) {
-                    logerror("listening on clc mcast error. will try again\n");
-                    wait = LY_OSM_EPOLL_WAIT;
-                }
             }
             else if (ly_osm_register() != 0) {
                 /* unexpected error. close work socket */
+                logerror("failed registering osm. will try again\n");
                 ly_epoll_work_close();
                 wait = LY_OSM_EPOLL_WAIT;
-                logerror("failed registering osm. will try again\n");
+            }
+        }
+        if (g_c->wfd < 0 && g_c->mfd < 0 && g_c->clc_ip == NULL && wait < 0) {
+            loginfo("wait for mcast join...\n");
+            if (ly_epoll_mcast_register() != 0) {
+                logerror("listening on clc mcast error. will try again\n");
+                 wait = LY_OSM_EPOLL_WAIT;
             }
         }
 
@@ -268,7 +271,7 @@ int main(int argc, char *argv[])
                 if (ret < 0) {
                     logwarn("unexpected clc mcast data recevied.\n");
                     ly_epoll_mcast_close();
-                    wait = -1;
+                    wait = LY_OSM_EPOLL_WAIT;
                 }
                 else if (ret == 0) {
                     logdebug("ly_epoll_mcast_recv returns 0. do nothing.\n");

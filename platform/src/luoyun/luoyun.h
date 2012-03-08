@@ -57,6 +57,7 @@ typedef enum LYAction_t {
      */
      LY_A_CLC_SCAN_NODE = 101,
      LY_A_CLC_ENABLE_NODE = 102,
+     LY_A_CLC_DISABLE_NODE = 103,
      LY_A_CLC_REGISTER_NODE = 111,
 
      /* 

@@ -510,6 +510,31 @@ int __job_node_enable(LYJobInfo * job)
     return 0;
 }
 
+/* disable a node */
+int __job_node_disable(LYJobInfo * job)
+{
+    logdebug(_("disable node %d\n"), job->j_target_id);
+
+    /* node status also got reset */
+    if (db_node_enable(job->j_target_id, 0) < 0) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        job_update_status(job, JOB_S_FAILED);
+        return -1;
+    }
+
+    int ent_id= ly_entity_find_by_db(LY_ENTITY_NODE, job->j_target_id);
+    if (ly_entity_is_online(ent_id)) {
+        logdebug(_("node %d is online. disable it\n"), job->j_target_id);
+        ly_entity_enable(ent_id, -1, 0);
+    }
+    else {
+        logdebug(_("node %d is not online\n"), job->j_target_id);
+    }
+
+    job_update_status(job, JOB_S_FINISHED);
+    return 0;
+}
+
 /* query osm */
 static int __job_query_osm(LYJobInfo * job)
 {
@@ -556,6 +581,11 @@ static int __job_run(LYJobInfo * job)
     case LY_A_CLC_ENABLE_NODE:
         logdebug(_("run job, node enable.\n"));
         __job_node_enable(job);
+        break;
+
+    case LY_A_CLC_DISABLE_NODE:
+        logdebug(_("run job, node disable.\n"));
+        __job_node_disable(job);
         break;
 
     case LY_A_NODE_RUN_INSTANCE:
