@@ -104,7 +104,7 @@ void * __app_status_func(void * arg)
             continue;
         }
 
-        pid_t pid = vfork();
+        pid_t pid = fork();
         if (pid < 0) {
             logerror("fork failed\n");
             continue;
@@ -138,6 +138,7 @@ void * __app_status_func(void * arg)
         }
 
         /* child process */
+        ly_epoll_close();
         char *argv[] = {"status", g_c->config.conf_path, NULL};
         execv(cmd, argv);
         logerror("excv failed\n");
