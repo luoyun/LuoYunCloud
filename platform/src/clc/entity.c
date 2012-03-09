@@ -268,7 +268,7 @@ int ly_entity_update(int id, int db_id, int status)
         (g_entity_store + id)->flag &= ~LY_ENTITY_FLAG_STATUS_MASK;
         (g_entity_store + id)->flag |= status & LY_ENTITY_FLAG_STATUS_MASK;
     }
-    if (status >= 0)
+    if (db_id >= 0)
         (g_entity_store + id)->db_id = db_id;
 
     return 0;
