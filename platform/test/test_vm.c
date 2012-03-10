@@ -47,8 +47,8 @@ static const char *g_xenxml = "\
     <name>test</name>\
     <os>\
     <type>linux</type>\
-        <kernel>/home/dongwu/luoyun/luoyun-cloud/test/vmfiles/kernel</kernel>\
-        <initrd>/home/dongwu/luoyun/luoyun-cloud/test/vmfiles/ramdisk</initrd>\
+        <kernel>/home/dongwu/luoyun/xentest/rhel56n1/kernel</kernel>\
+        <initrd>/home/dongwu/luoyun/xentest/rhel56n1/initrd</initrd>\
         <root>/dev/sda1</root>\
         <cmdline> ro</cmdline>\
     </os>\
@@ -56,7 +56,7 @@ static const char *g_xenxml = "\
     <vcpu>1</vcpu>\
     <devices>\
         <disk type='file'>\
-            <source file='/home/dongwu/luoyun/luoyun-cloud/test/vmfiles/root'/>\
+            <source file='/home/dongwu/luoyun/xentest/rhel56n1/os.img'/>\
             <target dev='sda1'/>\
         </disk>\
         <interface type='bridge'>\
@@ -232,12 +232,12 @@ int main(int argc, char *argv[])
     const char *xml;
     if (c->driver == HYPERVISOR_IS_KVM) {
         xml = g_kvmxml;
-        xml = __build_kvm_xml_from_template();
+        // xml = __build_kvm_xml_from_template();
         name = g_kvmvmname;
     }
     else if (c->driver == HYPERVISOR_IS_XEN) {
         xml = g_xenxml;
-        xml = __build_xen_xml_from_template();
+        // xml = __build_xen_xml_from_template();
         printf(xml);
         name = g_xenvmname;
     }
@@ -255,11 +255,11 @@ int main(int argc, char *argv[])
     }
 
     /* wait for a while */
-    printf("domain created, let it run for a while...\n");
+    printf("\ndomain created, let it run for a while...\n");
     sleep(100);
 
     /* shutdown the domain */
-    if (libvirt_domain_stop((char *) name)) {
+    if (libvirt_domain_reboot((char *) name)) {
         logerror(_("Stop domain \"%s\"failed.\n"), name);
         return -1;
     }

@@ -634,6 +634,8 @@ out:
 
 static int __domain_stop(NodeCtrlInstance * ci)
 {
+    loginfo(_("%s is called\n"), __func__);
+
     char path_lock[PATH_MAX];
     if (snprintf(path_lock, PATH_MAX, "%s/%s",
                  g_c->config.node_data_dir, "instances") >= PATH_MAX) {
@@ -657,9 +659,25 @@ static int __domain_stop(NodeCtrlInstance * ci)
     }
     ret = libvirt_domain_stop(ci->ins_name);
     if (ret < 0) {
-        logerror(_("Stop domain %s failed.\n"), ci->ins_name);
+        logerror(_("stop domain %s failed\n"), ci->ins_name);
+        goto out;
     }
-
+    int wait = LY_NODE_STOP_INSTANCE_WAIT;
+    while (wait > 0) {
+        wait--;
+        if (libvirt_domain_active(ci->ins_name) == 0) {
+            loginfo(_("instance %s stopped.\n"), ci->ins_name);
+            ret = LY_S_FINISHED_SUCCESS;
+            goto out;
+        }
+        sleep(1);
+    }
+    if (libvirt_domain_poweroff(ci->ins_name) == 0) {
+        loginfo(_("instance %s forced off.\n"), ci->ins_name);
+        ret = LY_S_FINISHED_SUCCESS;
+        goto out;
+    }
+    ret = LY_S_FINISHED_FAILURE;
 out:
     if (__file_lock_put(path_lock, idstr) < 0) {
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
@@ -685,15 +703,47 @@ static int __domain_save(NodeCtrlInstance * ci)
 
 static int __domain_reboot(NodeCtrlInstance * ci)
 {
-    loginfo(_("%s: REBOOT %s have not completed.\n"), __func__,
-              ci->ins_name);
-    return -1;
+    loginfo(_("%s is called\n"), __func__);
+
+    char path_lock[PATH_MAX];
+    if (snprintf(path_lock, PATH_MAX, "%s/%s",
+                 g_c->config.node_data_dir, "instances") >= PATH_MAX) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return -1;
+    }
+    char idstr[10];
+    snprintf(idstr, 10, "%d", ci->ins_id);
+
+    int ret;
+    __send_response(g_c->wfd, ci, LY_S_RUNNING_WAITING);
+    logdebug(_("tring to gain access to instance files...\n"));
+    if (__file_lock_get(path_lock, idstr) < 0) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return -1;
+    }
+    if (libvirt_domain_active(ci->ins_name) == 0) {
+        loginfo(_("instance %s is not running.\n"), ci->ins_name);
+        ret = LY_S_FINISHED_INSTANCE_NOT_RUNNING;
+        goto out;
+    }
+    ret = libvirt_domain_reboot(ci->ins_name);
+    if (ret < 0) {
+        logerror(_("reboot domain %s failed\n"), ci->ins_name);
+        ret = LY_S_FINISHED_FAILURE;
+        goto out;
+    }
+    ret = LY_S_FINISHED_SUCCESS;
+    sleep(LY_NODE_REBOOT_INSTANCE_WAIT);
+out:
+    if (__file_lock_put(path_lock, idstr) < 0) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+    }
+    return ret;
 }
 
 static int __domain_destroy(NodeCtrlInstance * ci)
 {
-    if (ci == NULL || g_c == NULL)
-        return -255;
+    loginfo(_("%s is called\n"), __func__);
 
     char path_lock[PATH_MAX];
     if (snprintf(path_lock, PATH_MAX, "%s/%s",
@@ -718,12 +768,12 @@ static int __domain_destroy(NodeCtrlInstance * ci)
         return -1;
     }
     if (libvirt_domain_active(ci->ins_name)) {
-        logwarn(_("instance %s is still running. stop it first.\n"), ci->ins_name);
+        logwarn(_("instance %s is still running. stop it first\n"), ci->ins_name);
         ret = LY_S_FINISHED_INSTANCE_RUNNING;
         goto out;
     }
     if (access(path_clean, F_OK) != 0) {
-        logwarn(_("instance %s not exist.\n"), ci->ins_name);
+        logwarn(_("instance %s not exist\n"), ci->ins_name);
         ret = LY_S_FINISHED_INSTANCE_NOT_EXIST;
         goto out;
     }
@@ -738,8 +788,7 @@ out:
 
 static int __domain_query(NodeCtrlInstance * ci)
 {
-    if (ci == NULL || g_c == NULL)
-        return -255;
+    loginfo(_("%s is called\n"), __func__);
 
     char path[PATH_MAX];
     if (snprintf(path, PATH_MAX, "%s/%s/%d",

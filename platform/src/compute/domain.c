@@ -232,7 +232,10 @@ virDomainPtr libvirt_domain_create(char * xml)
     return domain;
 }
 
-int libvirt_domain_stop(char * name)
+#define __DOMAIN_OP_STOP       1
+#define __DOMAIN_OP_STOP_FORCE 2
+#define __DOMAIN_OP_REBOOT     3
+static int __domain_op_simple(char * name, int op)
 {
     if (g_conn == NULL)
         return -1;
@@ -240,37 +243,49 @@ int libvirt_domain_stop(char * name)
     virDomainPtr domain;
     domain = virDomainLookupByName(g_conn, name);
     if (domain == NULL) {
-        logerror(_("%s: connect domain by name(%s) error.\n"),
+        logerror(_("%s: connect domain by name(%s) error. "
+                   "domain may not exist\n"),
                    __func__, name);
         return -1;
     }
 
-    if (virDomainShutdown(domain) != 0) {
-        logerror(_("%s: shutdown domain error.\n"), __func__);
-        virDomainFree(domain);
+    int ret;
+    if (op == __DOMAIN_OP_STOP)
+        ret = virDomainShutdown(domain);
+    else if (op == __DOMAIN_OP_STOP_FORCE)
+        ret = virDomainDestroy(domain);
+    else if (op == __DOMAIN_OP_REBOOT)
+        ret = virDomainReboot(domain, 0);
+    else
+        ret = -1;
+    virDomainFree(domain);
+    return ret;
+}
+
+int libvirt_domain_stop(char * name)
+{
+    if (__domain_op_simple(name, __DOMAIN_OP_STOP) < 0) {
+        logerror(_("%s on %s error.\n"), __func__, name);
         return -1;
     }
+    return 0;
+}
 
-    virDomainFree(domain);
+int libvirt_domain_poweroff(char * name)
+{
+    if (__domain_op_simple(name, __DOMAIN_OP_STOP_FORCE) < 0) {
+        logerror(_("%s on %s error.\n"), __func__, name);
+        return -1;
+    }
     return 0;
 }
 
 int libvirt_domain_reboot(char * name)
 {
-    virDomainPtr domain;
-    domain = virDomainLookupByName(g_conn, name);
-    if (domain == NULL) {
-        logerror(_("%s: connect domain by name(%s) error.\n"),
-                   __func__, name);
+    if (__domain_op_simple(name, __DOMAIN_OP_REBOOT) < 0) {
+        logerror(_("%s on %s error.\n"), __func__, name);
         return -1;
     }
-
-    if (virDomainReboot(domain, 0) != 0) {
-        logerror(_("%s: reboot domain error.\n"), __func__);
-        virDomainFree(domain);
-        return -1;
-    }
-
     return 0;
 }
 

@@ -18,6 +18,7 @@ unsigned int libvirt_free_memory(void);
 int libvirt_domain_active(char * name);
 virDomainPtr libvirt_domain_create(char * xml);
 int libvirt_domain_stop(char * name);
+int libvirt_domain_poweroff(char * name);
 int libvirt_domain_reboot(char * name);
 
 #if 0

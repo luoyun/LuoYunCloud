@@ -118,7 +118,7 @@ int setup_applaince_in_db()
                  "created, updated) "
                  "VALUES ('%s', %d, '%s',"
                  "'now', 'now');",
-                 "rhel56n1", 372804252, "01e0a38b3a2c1134da1fae8b960c2be1"
+                 "rhel56n1", 372803101, "6219855488130d275d7abb43db7467f9"
                  ) >= LINE_MAX) {
         printf("error in %s(%d)\n", __func__, __LINE__);
         return -1;
@@ -248,6 +248,41 @@ int setup_stop_job_in_db()
                  "1, %d, %d, 'now', 'now');",
                  JOB_TARGET_INSTANCE, test_ins_id,
                  LY_A_NODE_STOP_INSTANCE, JOB_S_INITIATED) >= LINE_MAX) {
+        printf("error in %s(%d)\n", __func__, __LINE__);
+        return -1;
+    }
+    printf("%s\n", sql);
+    if (__db_exec(sql) < 0)
+        return -1;
+ 
+    snprintf(sql, 1024, "SELECT id from job order by id desc;");
+    res = __db_select(sql);
+    if (res == NULL)
+        return -1;
+    int job_id = atoi(PQgetvalue(res, 0, 0));
+    printf("job id = %d\n", job_id);
+    PQclear(res);
+    return job_id;
+}
+
+int setup_reboot_job_in_db()
+{
+    char sql[1024];
+    snprintf(sql, 1024, "SELECT id from instance where name = 'testn1';");
+    PGresult * res = __db_select(sql);
+    if (res == NULL)
+        return -1;
+    test_ins_id = atoi(PQgetvalue(res, 0, 0));
+    printf("test_ins_id = %d\n", test_ins_id);
+    PQclear(res);
+
+    if (snprintf(sql, 1024,
+                 "INSERT INTO job (target_type, target_id, "
+                 "user_id, action, status, created, started) "
+                 "VALUES (%d, %d, "
+                 "1, %d, %d, 'now', 'now');",
+                 JOB_TARGET_INSTANCE, test_ins_id,
+                 LY_A_NODE_REBOOT_INSTANCE, JOB_S_INITIATED) >= LINE_MAX) {
         printf("error in %s(%d)\n", __func__, __LINE__);
         return -1;
     }
@@ -525,6 +560,7 @@ enum {
    START,
    STOP,
    DESTROY,
+   REBOOT,
    ECHO,
 };
 
@@ -540,6 +576,8 @@ int main(int argc, char * argv[])
             cmd = STOP;
         else if (strcmp(argv[1], "destroy") == 0)
             cmd = DESTROY;
+        else if (strcmp(argv[1], "reboot") == 0)
+            cmd = REBOOT;
         else 
             cmd = ECHO;
     }
@@ -626,6 +664,18 @@ int main(int argc, char * argv[])
     if (cmd == ALL || cmd == STOP) {
         printf("stop instance\n");
         id = setup_stop_job_in_db();
+        send_new_job_to_clc(id);
+        status = job_result(id);
+        while (!JOB_IS_FINISHED(status)){
+            status = job_result(id);
+            printf("sleep 1\n");
+            sleep(1);
+        }
+    }
+
+    if (cmd == REBOOT) {
+        printf("reboot instance\n");
+        id = setup_reboot_job_in_db();
         send_new_job_to_clc(id);
         status = job_result(id);
         while (!JOB_IS_FINISHED(status)){

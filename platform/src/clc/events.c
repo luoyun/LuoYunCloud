@@ -116,7 +116,7 @@ static int __epoll_work_recv(int ent_id)
 
     int id = ly_entity_new(infd);
     if (id < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         close(infd);
         return -1;
     }
@@ -352,13 +352,13 @@ int ly_epoll_work_start(int port)
 
     ret = listen(listener, SOMAXCONN);
     if (ret < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto out;
     }
 
     int id = ly_entity_new(listener);
     if (id < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto out;
     }
     struct epoll_event ev;

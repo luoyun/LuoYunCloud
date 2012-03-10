@@ -224,7 +224,7 @@ static int __job_start_instance(LYJobInfo * job)
     }
  
     if (job_update_status(job, JOB_S_RUNNING) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
 
@@ -234,7 +234,7 @@ static int __job_start_instance(LYJobInfo * job)
     ci.req_id = job->j_id;
     ci.ins_id = job->j_target_id;
     if (db_node_instance_control_get(&ci, &node_id) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto failed;
     }
     /* ci.req_action = __job_get_target_action(job->j_action); */
@@ -331,7 +331,7 @@ static int __job_start_instance(LYJobInfo * job)
     if (ly_packet_send(ly_entity_fd(ent_id),
                        PKT_TYPE_CLC_INSTANCE_CONTROL_REQUEST,
                        xml, len) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         free(xml);
         goto failed;
     }
@@ -341,7 +341,7 @@ static int __job_start_instance(LYJobInfo * job)
     /* update instance with secret */
     if (ci.ins_status == DOMAIN_S_NEW &&
         db_instance_update_secret(ci.osm_tag, ci.osm_secret) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto failed;
     }
 
@@ -362,7 +362,7 @@ static int __job_control_instance_simple(LYJobInfo * job)
     logdebug(_("run job %d\n"), job->j_id);
 
     if (job_update_status(job, JOB_S_RUNNING) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
 
@@ -372,7 +372,7 @@ static int __job_control_instance_simple(LYJobInfo * job)
     ci.req_id = job->j_id;
     ci.ins_id = job->j_target_id;
     if (db_node_instance_control_get(&ci, &node_id) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto failed;
     }
     /* ci.req_action = __job_get_target_action(job->j_action); */
@@ -414,7 +414,7 @@ static int __job_control_instance_simple(LYJobInfo * job)
     if (ly_packet_send(ly_entity_fd(ent_id),
                        PKT_TYPE_CLC_INSTANCE_CONTROL_REQUEST,
                        xml, len) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         free(xml);
         goto failed;
     }
@@ -437,7 +437,7 @@ static int __job_query_node(LYJobInfo * job)
     logdebug(_("run job %d\n"), job->j_id);
 
     if (job_update_status(job, JOB_S_RUNNING) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
 
@@ -467,7 +467,7 @@ static int __job_query_node(LYJobInfo * job)
     if (ly_packet_send(ly_entity_fd(ent_id),
                        PKT_TYPE_CLC_NODE_CONTROL_REQUEST,
                        xml, len) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         free(xml);
         goto failed;
     }
@@ -495,7 +495,7 @@ int __job_node_enable(LYJobInfo * job)
 
     /* node status also got reset */
     if (db_node_enable(job->j_target_id, 1) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         job_update_status(job, JOB_S_FAILED);
         return -1;
     }
@@ -517,7 +517,7 @@ int __job_node_disable(LYJobInfo * job)
 
     /* node status also got reset */
     if (db_node_enable(job->j_target_id, 0) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         job_update_status(job, JOB_S_FAILED);
         return -1;
     }
@@ -544,7 +544,7 @@ static int __job_query_osm(LYJobInfo * job)
     logdebug(_("run job %d\n"), job->j_id);
 
     if (job_update_status(job, JOB_S_RUNNING) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
 
@@ -566,7 +566,7 @@ static int __job_query_osm(LYJobInfo * job)
     int fd = ly_entity_fd(ent_id);
     if (ly_packet_send(fd, PKT_TYPE_CLC_OSM_QUERY_REQUEST,
                        &job->j_id, sizeof(job->j_id)) < 0) {
-        printf("error in %s(%d).\n", __func__, __LINE__);
+        printf("error in %s(%d)\n", __func__, __LINE__);
         job_update_status(job, JOB_S_FAILED);
         return -1;
     }
