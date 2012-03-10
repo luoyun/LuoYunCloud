@@ -408,7 +408,6 @@ static int __job_control_instance_simple(LYJobInfo * job)
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto failed;
     }
-
     logdebug(_("sending instance control request ...\n"));
     int len = strlen(xml);
     if (ly_packet_send(ly_entity_fd(ent_id),
@@ -418,8 +417,16 @@ static int __job_control_instance_simple(LYJobInfo * job)
         free(xml);
         goto failed;
     }
-
     free(xml);
+
+    /* release instance entity for certain action */
+    if (job->j_action == LY_A_NODE_REBOOT_INSTANCE || 
+        job->j_action == LY_A_NODE_STOP_INSTANCE) {
+        ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, ci.ins_id);
+        loginfo(_("release entity %d\n"), ent_id);
+        ly_entity_release(ent_id);
+    }
+
     luoyun_node_ctrl_instance_cleanup(&ci);
     return 0;
 
