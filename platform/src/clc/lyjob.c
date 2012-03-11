@@ -76,6 +76,74 @@ int job_exist(LYJobInfo * job)
     return 0;
 }
 
+int job_check(LYJobInfo * job)
+{
+    if (job == NULL)
+        return -1;
+
+    if (job->j_action == LY_A_NODE_QUERY_INSTANCE ||
+        job->j_action == LY_A_NODE_QUERY ||
+        job->j_action == LY_A_OSM_QUERY)
+        return 0;
+
+    LYJobInfo *curr;
+    LYJobInfo *safe;
+    if (job->j_action == LY_A_CLC_ENABLE_NODE ||
+        job->j_action == LY_A_CLC_DISABLE_NODE) {
+        list_for_each_entry_safe(curr, safe, &(g_job_list), j_list) {
+            if (curr->j_target_type == job->j_target_type &&
+                curr->j_target_id == job->j_target_id &&
+                (curr->j_action == LY_A_CLC_ENABLE_NODE ||
+                 curr->j_action == LY_A_CLC_DISABLE_NODE)) {
+                /* allow only one enable/disable job at a time */
+                return LY_S_CANCEL_TARGET_BUSY;
+            }
+        }
+    }
+    else if (job->j_action == LY_A_NODE_RUN_INSTANCE) {
+        list_for_each_entry_safe(curr, safe, &(g_job_list), j_list) {
+            if (curr->j_target_type == job->j_target_type && 
+                curr->j_target_id == job->j_target_id && 
+                curr->j_action != LY_A_NODE_QUERY_INSTANCE)
+                /* no any control action actvie before running instance */
+                return LY_S_CANCEL_TARGET_BUSY;
+        }
+    }
+    else if (job->j_action == LY_A_NODE_DESTROY_INSTANCE) {
+        list_for_each_entry_safe(curr, safe, &(g_job_list), j_list) {
+            if (curr->j_target_type == job->j_target_type &&
+                curr->j_target_id == job->j_target_id) {
+                if (curr->j_action == job->j_action)
+                    /* allow only one active destroy action at a time */
+                    return LY_S_CANCEL_TARGET_BUSY;
+                else if (curr->j_action != LY_A_NODE_STOP_INSTANCE)
+                    /* any active action except stop should be cancelled */
+                    job_update_status(curr, LY_S_CANCEL_ACTION_REPLACED);
+            }
+        }
+    }
+    else if (job->j_target_type == JOB_TARGET_INSTANCE) {
+        /* for all other control action agaist instance */
+        list_for_each_entry_safe(curr, safe, &(g_job_list), j_list) {
+            if (curr->j_target_type == job->j_target_type &&
+                curr->j_target_id == job->j_target_id) {
+                if (curr->j_action == LY_A_NODE_QUERY_INSTANCE)
+                    /* always allow query to go through */
+                    continue;
+                if (curr->j_action == job->j_action ||
+                    JOB_IS_RUNNING(curr->j_status))
+                    /* same action or other control action that's active */
+                    return LY_S_CANCEL_TARGET_BUSY;
+                else
+                    /* inactive control action should be cancelled */
+                    job_update_status(curr, LY_S_CANCEL_ACTION_REPLACED);
+            }
+        }
+    }
+
+    return 0;
+}
+
 LYJobInfo * job_find(int id)
 {
     LYJobInfo *curr;
@@ -117,7 +185,9 @@ int job_update_status(LYJobInfo * job, int status)
     if (JOB_IS_STARTED(status))
         time(&job->j_started);
 
-    if (JOB_IS_FINISHED(status) || JOB_IS_TIMEOUT(status))
+    if (JOB_IS_FINISHED(status) ||
+        JOB_IS_TIMEOUT(status) ||
+        JOB_IS_CANCELLED(status))
         time(&job->j_ended);
 
     if (db_job_update_status(job) < 0)
@@ -131,12 +201,17 @@ int job_update_status(LYJobInfo * job, int status)
         return db_instance_update_status(job->j_target_id, &ii, node_id);
     }
 
-    if (JOB_IS_FINISHED(status) || JOB_IS_TIMEOUT(status)) {
+    if (JOB_IS_FINISHED(status) ||
+        JOB_IS_TIMEOUT(status) ||
+        JOB_IS_CANCELLED(status)) {
         /* job ended with various reason */
         job_remove(job);
 
-        /* check whether the job is for instance control */
-        if (job->j_target_type != JOB_TARGET_INSTANCE)
+        /* check whether any further action should be taken
+        ** as a result of job status change
+        */
+        if (JOB_IS_CANCELLED(status) ||
+            job->j_target_type != JOB_TARGET_INSTANCE)
             return 0;
 
         /* update instance info */

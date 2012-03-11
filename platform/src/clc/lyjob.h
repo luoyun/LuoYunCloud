@@ -27,6 +27,7 @@ typedef struct LYJobInfo_t {
 
 void job_print_queue();
 int job_exist(LYJobInfo * job);
+int job_check(LYJobInfo * job);
 LYJobInfo * job_find(int id);
 int job_insert(LYJobInfo * job);
 int job_remove(LYJobInfo * job);

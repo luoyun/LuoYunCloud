@@ -562,6 +562,7 @@ enum {
    DESTROY,
    REBOOT,
    ECHO,
+   SHELL,
 };
 
 int main(int argc, char * argv[])
@@ -578,6 +579,8 @@ int main(int argc, char * argv[])
             cmd = DESTROY;
         else if (strcmp(argv[1], "reboot") == 0)
             cmd = REBOOT;
+        else if (strcmp(argv[1], "shell") == 0)
+            cmd = SHELL;
         else 
             cmd = ECHO;
     }
@@ -603,6 +606,59 @@ int main(int argc, char * argv[])
     setup_instance_in_db();
 
     int id, status;
+    if (cmd == SHELL) {
+        printf("type command, s|o|r|d|x|i/m/n/|I/N\n");
+        char c = '\0';
+        printf("cmd> ");
+        while( c != 'x') {
+            scanf("%1c", &c);
+            if (c == 's')
+                id = setup_run_job_in_db();
+            else if (c == 'o')
+                id = setup_stop_job_in_db();
+            else if (c == 'r')
+                id = setup_reboot_job_in_db();
+            else if (c == 'd')
+                id = setup_destroy_job_in_db();
+            else if (c == 'i')
+                id = query_instance();
+            else if (c == 'm')
+                id = query_osm();
+            else if (c == 'n')
+                id = query_node();
+            else if (c == 'I') {
+                id = query_instance_result();
+                continue;
+            }
+            else if (c == 'N') {
+                id = query_node_result();
+                continue;
+            }
+            else if (c == 't') {
+                job_result(id);
+                continue;
+            }
+            else if (c == 'x')
+                break;
+            else if (c == '\n') {
+                printf("cmd> ");
+                continue;
+            }
+            else {
+                printf("\nunknow command...<%c>\n", c);
+                printf("type command, s|o|r|d|x|i/m/n/|I/N\n");
+                continue;
+            }
+            if (id <= 0) {
+                printf("invalide job id %d\n", id);
+                continue;
+            }
+            send_new_job_to_clc(id);
+            job_result(id);
+        }
+    }
+      
+
     if (cmd == ALL || cmd == START) {
         printf("run instance\n");
         id = setup_run_job_in_db();
@@ -705,7 +761,6 @@ int main(int argc, char * argv[])
     if (cmd == ALL) {
         printf("sleep 20 seconds before cleanning up database\n");
         sleep(20);
-
         reset_job_in_db();
 
         reset_instance_in_db();

@@ -32,6 +32,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>             /* gethostname */
 #include <netdb.h>              /* struct hostent */
+#include <time.h>
 #include <errno.h>
 #include <sys/epoll.h>
 /* in RHEL5, EPOLLRDHUP is not defined */
@@ -167,8 +168,26 @@ static int __process_web_job(char * buf, int size, int ent_id)
         return 0;
     }
 
+    int ret = job_check(job);
+    if (ret){
+        logwarn(_("job check for job %d returns %d\n"), job_id, ret);
+        if (!JOB_IS_CANCELLED(ret))
+            ret = LY_S_CANCEL_INTERNAL_ERROR;
+        /* can not use job_remove */
+        time(&job->j_started);
+        time(&job->j_ended);
+        job->j_status = ret;
+        db_job_update_status(job);
+        free(job);
+        return 0;
+    }
+
     if (job_insert(job) != 0) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        time(&job->j_started);
+        time(&job->j_ended);
+        job->j_status = LY_S_CANCEL_INTERNAL_ERROR;
+        db_job_update_status(job);
         free(job);
         return -1;
     }
