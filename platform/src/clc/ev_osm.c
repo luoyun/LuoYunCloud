@@ -97,7 +97,7 @@ int eh_process_osm_report(char * buf, int size, int ent_id)
     }
     else if (status == LY_S_APP_UNKNOWN) {
         loginfo(_("osm report: %d, %s\n"), status, "application no status");
-        if (!ly_entity_is_running(ent_id)) {
+        if (!ly_entity_is_running(ent_id) || ly_entity_is_serving(ent_id)) {
             int db_id = ly_entity_db_id(ent_id);
             InstanceInfo ii;
             ii.status = DOMAIN_S_RUNNING;
