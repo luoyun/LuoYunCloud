@@ -100,8 +100,10 @@ void * __app_status_func(void * arg)
         }
 
         if (access(cmd, X_OK)) {
-            logerror("can not execute %s\n", cmd);
-            continue;
+            ly_osm_report(LY_S_APP_UNKNOWN);
+            g_app_status = -1;
+            loginfo("can not execute %s\n", cmd);
+            return NULL;
         }
 
         pid_t pid = fork();

@@ -285,9 +285,9 @@ static int __job_start_instance(LYJobInfo * job)
     }
     else if (job->j_status == LY_S_WAITING_STARTING_SERVICE) {
         int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, job->j_target_id);
-        if (ly_entity_is_serving(ent_id)) {
+        if (ly_entity_is_running(ent_id)) {
             job_update_status(job, JOB_S_FINISHED);
-            logdebug(_("instance %d started serving\n"), job->j_target_id);
+            logdebug(_("instance %d started running\n"), job->j_target_id);
         }
         else if (!ly_entity_is_online(ent_id)) {
              loginfo(_("instance %d is offline\n"), job->j_target_id);
