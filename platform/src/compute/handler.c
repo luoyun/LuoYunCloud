@@ -249,8 +249,10 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         len = -2;
     }
     else if (hypervisor == HYPERVISOR_IS_XEN && fullvirt == 0) {
+        char ins_name[20];
+        snprintf(ins_name, 20, "i-%d", ci->ins_id);
         len = snprintf(buf, size, LIBVIRT_XML_TMPL_XEN_PARA, 
-                       ci->ins_id, ci->ins_name, path, path,
+                       ci->ins_id, ins_name, path, path,
                        ci->ins_mem, ci->ins_vcpu, path, ci->ins_mac);
     }
     logsimple("%d\n", len);
