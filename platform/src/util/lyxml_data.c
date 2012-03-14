@@ -321,6 +321,7 @@ char * lyxml_data_reply_node_info(LYReply * reply, char * buf, unsigned int size
         "<memory>%d</memory>"\
         "<mac>%s</mac>"\
         "<ip>%s</ip>"\
+        "<domain>%s</domain>"\
       "</instance>"\
       "<appliance id=\"%d\">"\
         "<name>%s</name>"\
@@ -360,6 +361,7 @@ char * lyxml_data_instance_run(NodeCtrlInstance * ii, char * buf, unsigned int s
                        ii->ins_vcpu, ii->ins_mem,
                        ii->ins_mac ? (char *)(BAD_CAST ii->ins_mac) : "",
                        ii->ins_ip ? (char *)(BAD_CAST ii->ins_ip) : "",
+                       ii->ins_domain ? (char *)(BAD_CAST ii->ins_domain) : "",
                        ii->app_id,
                        ii->app_name ? (char *)(BAD_CAST ii->app_name) : "",
                        ii->app_uri ? (char *)(BAD_CAST ii->app_uri) : "",
@@ -390,7 +392,7 @@ char * lyxml_data_instance_run(NodeCtrlInstance * ii, char * buf, unsigned int s
     "</reply>"\
     "<parameters>"\
       "<instance id=\"%d\">"\
-        "<name>%s</name>"\
+        "<domain>%s</domain>"\
       "</instance>"\
     "</parameters>"\
   "</request>"\
@@ -408,7 +410,7 @@ char * lyxml_data_instance_stop(NodeCtrlInstance * ii, char * buf, unsigned int 
                        LY_ENTITY_CLC, 
                        LY_ENTITY_NODE, 
                        ii->req_id, ii->req_action, ii->ins_id,
-                       ii->ins_name ? (char *)(BAD_CAST ii->ins_name) : "");
+                       ii->ins_domain ? (char *)(BAD_CAST ii->ins_domain) : "");
     if (len < 0 || len >= size)
         return NULL;
 
@@ -429,7 +431,7 @@ char * lyxml_data_instance_stop(NodeCtrlInstance * ii, char * buf, unsigned int 
     "</reply>"\
     "<parameters>"\
       "<instance id=\"%d\">"\
-        "<name>%s</name>"\
+        "<domain>%s</domain>"\
       "</instance>"\
     "</parameters>"\
   "</request>"\
@@ -447,7 +449,7 @@ char * lyxml_data_instance_other(NodeCtrlInstance * ii, char * buf, unsigned int
                        LY_ENTITY_CLC, 
                        LY_ENTITY_NODE, 
                        ii->req_id, ii->req_action, ii->ins_id,
-                       ii->ins_name ? (char *)(BAD_CAST ii->ins_name) : "");
+                       ii->ins_domain ? (char *)(BAD_CAST ii->ins_domain) : "");
     if (len < 0 || len >= size)
         return NULL;
 

@@ -242,17 +242,15 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
     int len = -1;
     if (hypervisor == HYPERVISOR_IS_KVM) {
         len = snprintf(buf, size, LIBVIRT_XML_TMPL_KVM, 
-                       ci->ins_id, ci->ins_name,
+                       ci->ins_id, ci->ins_domain,
                        ci->ins_mem, ci->ins_vcpu, path, ci->ins_mac);
     }
     else if (hypervisor == HYPERVISOR_IS_XEN && fullvirt) {
         len = -2;
     }
     else if (hypervisor == HYPERVISOR_IS_XEN && fullvirt == 0) {
-        char ins_name[20];
-        snprintf(ins_name, 20, "i-%d", ci->ins_id);
         len = snprintf(buf, size, LIBVIRT_XML_TMPL_XEN_PARA, 
-                       ci->ins_id, ins_name, path, path,
+                       ci->ins_id, ci->ins_domain, path, path,
                        ci->ins_mem, ci->ins_vcpu, path, ci->ins_mac);
     }
     logsimple("%d\n", len);
@@ -338,8 +336,8 @@ static int __domain_run(NodeCtrlInstance * ci)
         goto out;
     }
 
-    if (libvirt_domain_active(ci->ins_name)) {
-        loginfo(_("instance %s is running already\n"), ci->ins_name);
+    if (libvirt_domain_active(ci->ins_domain)) {
+        loginfo(_("instance %s is running already\n"), ci->ins_domain);
         ret = LY_S_FINISHED_INSTANCE_RUNNING;
         goto out_unlock;
     }
@@ -370,7 +368,7 @@ static int __domain_run(NodeCtrlInstance * ci)
             goto out_chdir;
         }
         logdebug(_("tring to gain access to appliance file...\n"));
-         __send_response(g_c->wfd, ci, LY_S_RUNNING_WAITING);
+        __send_response(g_c->wfd, ci, LY_S_RUNNING_WAITING);
         if (__file_lock_get(".", app_idstr) < 0) {
             logerror(_("error in %s(%d).\n"), __func__, __LINE__);
             goto out_chdir;
@@ -387,7 +385,20 @@ static int __domain_run(NodeCtrlInstance * ci)
             __file_lock_put("..", app_idstr);
             goto out_chdir;
         }
-        if (access(ci->app_name, F_OK)) {
+        int new_app = 1;
+        if (access(ci->app_name, F_OK) == 0) {
+            loginfo(_("appliance %s found locally\n"), ci->app_name);
+            loginfo(_("checking checksum ...\n"));
+            __send_response(g_c->wfd, ci, LY_S_RUNNING_CHECKING_APP);
+            if (lyutil_checksum(ci->app_name, ci->app_checksum)) {
+                logwarn(_("%s checksum(%s) failed. old appliance removed\n"),
+                          ci->app_name, ci->app_checksum);
+                unlink(ci->app_name);
+            }
+            else
+                new_app = 0;
+        }
+        if (new_app) {
             loginfo(_("downloading %s from %s ...\n"), ci->app_name, ci->app_uri);
             __send_response(g_c->wfd, ci, LY_S_RUNNING_DOWNLOADING_APP);
             if (lyutil_download(ci->app_uri, ci->app_name)) {
@@ -397,16 +408,14 @@ static int __domain_run(NodeCtrlInstance * ci)
                 __file_lock_put("..", app_idstr);
                 goto out_chdir;
             }
-        }
-        else
-            loginfo(_("appliance %s found locally\n"), ci->app_name);
-        loginfo(_("checking checksum ...\n"));
-        __send_response(g_c->wfd, ci, LY_S_RUNNING_CHECKING_APP);
-        if (lyutil_checksum(ci->app_name, ci->app_checksum)) {
-            logwarn(_("%s checksum(%s) failed.\n"), ci->app_name, ci->app_checksum);
-            unlink(ci->app_name);
-            __file_lock_put("..", app_idstr);
-            goto out_chdir;
+            loginfo(_("checking checksum ...\n"));
+            __send_response(g_c->wfd, ci, LY_S_RUNNING_CHECKING_APP);
+            if (lyutil_checksum(ci->app_name, ci->app_checksum)) {
+                logwarn(_("%s checksum(%s) failed.\n"), ci->app_name, ci->app_checksum);
+                unlink(ci->app_name);
+                __file_lock_put("..", app_idstr);
+                goto out_chdir;
+            }
         }
         if (__file_lock_put("..", app_idstr) < 0) {
             logerror(_("error in %s(%d).\n"), __func__, __LINE__);
@@ -549,7 +558,7 @@ static int __domain_run(NodeCtrlInstance * ci)
         goto out_umount;
     }
     close(fh);
-    if (ci->ins_status == DOMAIN_S_NEW) {
+    if (ci->osm_secret) {
         if (snprintf(path, PATH_MAX, "%s/%s", mount_path,
                      g_c->config.osm_key_path) >= PATH_MAX) {
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
@@ -594,7 +603,7 @@ static int __domain_run(NodeCtrlInstance * ci)
     domain = libvirt_domain_create(xml);
     free(xml);
     if (domain == NULL) {
-        logerror(_("error start domain %s\n"), ci->ins_name);
+        logerror(_("error start domain %s\n"), ci->ins_domain);
         goto out_insclean;
     }
 
@@ -656,28 +665,28 @@ static int __domain_stop(NodeCtrlInstance * ci)
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         return -1;
     }
-    if (libvirt_domain_active(ci->ins_name) == 0) {
-        loginfo(_("instance %s is not running.\n"), ci->ins_name);
+    if (libvirt_domain_active(ci->ins_domain) == 0) {
+        loginfo(_("instance %s is not running.\n"), ci->ins_domain);
         ret = LY_S_FINISHED_INSTANCE_NOT_RUNNING;
         goto out;
     }
-    ret = libvirt_domain_stop(ci->ins_name);
+    ret = libvirt_domain_stop(ci->ins_domain);
     if (ret < 0) {
-        logerror(_("stop domain %s failed\n"), ci->ins_name);
+        logerror(_("stop domain %s failed\n"), ci->ins_domain);
         goto out;
     }
     int wait = LY_NODE_STOP_INSTANCE_WAIT;
     while (wait > 0) {
         wait--;
-        if (libvirt_domain_active(ci->ins_name) == 0) {
-            loginfo(_("instance %s stopped.\n"), ci->ins_name);
+        if (libvirt_domain_active(ci->ins_domain) == 0) {
+            loginfo(_("instance %s stopped.\n"), ci->ins_domain);
             ret = LY_S_FINISHED_SUCCESS;
             goto out;
         }
         sleep(1);
     }
-    if (libvirt_domain_poweroff(ci->ins_name) == 0) {
-        loginfo(_("instance %s forced off.\n"), ci->ins_name);
+    if (libvirt_domain_poweroff(ci->ins_domain) == 0) {
+        loginfo(_("instance %s forced off.\n"), ci->ins_domain);
         ret = LY_S_FINISHED_SUCCESS;
         goto out;
     }
@@ -692,16 +701,16 @@ out:
 
 static int __domain_suspend(NodeCtrlInstance * ci)
 {
-    loginfo(_("%s: SUSPEND %s have not completed.\n"), __func__,
-              ci->ins_name);
+    loginfo(_("%s: SUSPEND %s have not completed.\n"),
+               __func__, ci->ins_domain);
     return -1;
 
 }
 
 static int __domain_save(NodeCtrlInstance * ci)
 {
-    loginfo(_("%s: SAVE % have not completed.\n"), __func__,
-              ci->ins_name);
+    loginfo(_("%s: SAVE % have not completed.\n"),
+              __func__, ci->ins_domain);
     return -1;
 }
 
@@ -725,14 +734,14 @@ static int __domain_reboot(NodeCtrlInstance * ci)
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         return -1;
     }
-    if (libvirt_domain_active(ci->ins_name) == 0) {
-        loginfo(_("instance %s is not running.\n"), ci->ins_name);
+    if (libvirt_domain_active(ci->ins_domain) == 0) {
+        loginfo(_("instance %s is not running.\n"), ci->ins_domain);
         ret = LY_S_FINISHED_INSTANCE_NOT_RUNNING;
         goto out;
     }
-    ret = libvirt_domain_reboot(ci->ins_name);
+    ret = libvirt_domain_reboot(ci->ins_domain);
     if (ret < 0) {
-        logerror(_("reboot domain %s failed\n"), ci->ins_name);
+        logerror(_("reboot domain %s failed\n"), ci->ins_domain);
         ret = LY_S_FINISHED_FAILURE;
         goto out;
     }
@@ -771,13 +780,14 @@ static int __domain_destroy(NodeCtrlInstance * ci)
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         return -1;
     }
-    if (libvirt_domain_active(ci->ins_name)) {
-        logwarn(_("instance %s is still running. stop it first\n"), ci->ins_name);
+    if (libvirt_domain_active(ci->ins_domain)) {
+        logwarn(_("instance %s is still running. stop it first\n"),
+                   ci->ins_domain);
         ret = LY_S_FINISHED_INSTANCE_RUNNING;
         goto out;
     }
     if (access(path_clean, F_OK) != 0) {
-        logwarn(_("instance %s not exist\n"), ci->ins_name);
+        logwarn(_("instance %s not exist\n"), ci->ins_domain);
         ret = LY_S_FINISHED_INSTANCE_NOT_EXIST;
         goto out;
     }
@@ -804,7 +814,7 @@ static int __domain_query(NodeCtrlInstance * ci)
 
     InstanceInfo ii;
     bzero(&ii, sizeof(InstanceInfo));
-    if (libvirt_domain_active(ci->ins_name))
+    if (libvirt_domain_active(ci->ins_domain))
         ii.status = DOMAIN_S_START;
     else if (access(path, F_OK) == 0)
         ii.status = DOMAIN_S_STOP;

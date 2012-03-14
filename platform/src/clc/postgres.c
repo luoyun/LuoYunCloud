@@ -578,7 +578,7 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
                  "SELECT instance.name, instance.cpus, instance.memory, "
                  "instance.ip, instance.mac, instance.node_id, "
                  "instance.appliance_id, appliance.name, "
-                 "appliance.checksum, instance.status "
+                 "appliance.checksum, instance.status, instance.key "
                  "from instance, appliance "
                  "where instance.id = %d and "
                  "appliance.id = instance.appliance_id;",
@@ -615,7 +615,13 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
             strncpy(ci->app_checksum, PQgetvalue(res, 0, 8), 32);
         ci->app_checksum[32] = 0;
         ci->ins_status = atoi(PQgetvalue(res, 0, 9));
+        s = PQgetvalue(res, 0, 10);
+        if (s && strlen(s))
+            ci->osm_secret = strdup(s);
         ci->osm_tag = ci->ins_id;
+        char ins_domain[20];
+        snprintf(ins_domain, 20, "i-%d", ci->ins_id);
+        ci->ins_domain = strdup(ins_domain);
         ret = 0;
     }
     else if (ret > 1) {

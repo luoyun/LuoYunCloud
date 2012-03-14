@@ -43,6 +43,7 @@ void luoyun_node_ctrl_instance_print(NodeCtrlInstance * ci)
               "ins_mem = %d\n"
               "ins_mac = %s\n"
               "ins_ip = %s\n"
+              "ins_domain = %s\n"
               "app_id = %d\n"
               "app_name = %s\n"
               "app_uri = %s\n"
@@ -56,10 +57,11 @@ void luoyun_node_ctrl_instance_print(NodeCtrlInstance * ci)
               "osm_secret = %s\n",
               ci->req_id, ci->req_action,
               ci->ins_id, ci->ins_status, ci->ins_name, ci->ins_vcpu,
-              ci->ins_mem, ci->ins_mac, ci->ins_ip,
+              ci->ins_mem, ci->ins_mac, ci->ins_ip, ci->ins_domain,
               ci->app_id, ci->app_name, ci->app_uri, ci->app_checksum, 
               ci->storage_ip, ci->storage_method, ci->storage_parm,
-              ci->osm_clcip, ci->osm_clcport, ci->osm_tag, ci->osm_secret);
+              ci->osm_clcip, ci->osm_clcport, ci->osm_tag,
+              ci->osm_secret ? "Not Empty" : "Empty");
     if (ci->ins_ip == NULL)
         logsimple("instance ip is NULL\n");
 }
@@ -74,6 +76,8 @@ void luoyun_node_ctrl_instance_cleanup(NodeCtrlInstance * ci)
         free(ci->ins_mac);
     if (ci->ins_ip)
         free(ci->ins_ip);
+    if (ci->ins_domain)
+        free(ci->ins_domain);
     if (ci->app_name)
         free(ci->app_name);
     if (ci->app_uri)
@@ -107,6 +111,8 @@ NodeCtrlInstance * luoyun_node_ctrl_instance_copy(NodeCtrlInstance * ci)
         ret->ins_mac = strdup(ci->ins_mac);
     if (ci->ins_ip)
         ret->ins_ip = strdup(ci->ins_ip);
+    if (ci->ins_domain)
+        ret->ins_domain = strdup(ci->ins_domain);
     if (ci->app_name)
         ret->app_name = strdup(ci->app_name);
     if (ci->app_uri)

@@ -144,9 +144,14 @@ static int __process_xml_request(xmlDocPtr doc, xmlNodePtr node)
     free(str);
     str = xml_xpath_text_from_ctx(xpathCtx,
                          "/" LYXML_ROOT "/request/parameters/instance/name");
+    if (str != NULL) {
+        ci.ins_name = str;
+    }
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/request/parameters/instance/domain");
     if (str == NULL)
         goto out;
-    ci.ins_name = str;
+    ci.ins_domain = str;
     str = xml_xpath_prop_from_ctx(xpathCtx,
                          "/" LYXML_ROOT "/request/parameters/instance", "status");
     if (str != NULL) {

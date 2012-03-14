@@ -359,25 +359,25 @@ static int __job_start_instance(LYJobInfo * job)
     }
     job->j_ent_id = ent_id;
 
-#if 1
-    if (ci.ins_status == DOMAIN_S_NEW) {
+    if (ci.ins_status == DOMAIN_S_NEW || ci.osm_secret == NULL) {
+        if (ci.osm_secret)
+            free(ci.osm_secret);
         ci.osm_secret = lyauth_secret();
         if (ci.osm_secret == NULL) {
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
             goto failed;
         }
+        if (db_instance_update_secret(ci.osm_tag, ci.osm_secret) < 0) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            goto failed;
+        }
     }
-#else
+#if 0
     char path[PATH_MAX];
     snprintf(path, PATH_MAX, "%s/%d", g_c->clc_data_dir, ci.ins_id);
     ci.storage_method = STORAGE_NFS;
     ci.storage_parm = strdup(path);
     if (ci.ins_status == DOMAIN_S_NEW) {
-        ci.osm_secret = lyauth_secret();
-        if (ci.osm_secret == NULL) {
-            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-            goto failed;
-        }
         if (access(path, F_OK) != 0 && mkdir(path, 0700) != 0) {
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
             goto failed;
@@ -412,14 +412,6 @@ static int __job_start_instance(LYJobInfo * job)
     }
 
     free(xml);
-
-    /* update instance with secret */
-    if (ci.ins_status == DOMAIN_S_NEW &&
-        db_instance_update_secret(ci.osm_tag, ci.osm_secret) < 0) {
-        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-        goto failed;
-    }
-
     luoyun_node_ctrl_instance_cleanup(&ci);
     return 0;
 
