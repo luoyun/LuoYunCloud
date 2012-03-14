@@ -120,13 +120,18 @@ static int __file_lock_get(char * lock_dir, char * lock_ext)
 {
     if (lock_dir == NULL)
         return -1;
-    if (access(lock_dir,  R_OK | W_OK | X_OK | F_OK) != 0)
+    if (access(lock_dir,  R_OK | W_OK | X_OK) != 0) {
+        logerror(_("error in %s(%d). errno:%d\n"),
+                    __func__, __LINE__, errno);
         return -1;
+    }
     char path[PATH_MAX];
     if (snprintf(path, PATH_MAX, "%s/.forlock", lock_dir) >= PATH_MAX)
         return -1;
     int fd = creat(path, S_IWUSR);
     if (fd < 0 ){
+        logerror(_("error in %s(%d). errno:%d\n"),
+                    __func__, __LINE__, errno);
         return -1;
     }
     close(fd);
@@ -135,15 +140,21 @@ static int __file_lock_get(char * lock_dir, char * lock_ext)
                  lock_dir, lock_ext) >= PATH_MAX)
         return -1;
     int time_warn = 30; 
+    int time_warn_cnt = 20; 
     while (link(path, link_path) < 0) {
         /* someone has the lock already */
         if (time_warn == 0) {
             logwarn(_("waited thread lock for 30 seconds."
                       "continue waiting...\n"));
             time_warn = 30;
+            time_warn_cnt--;
         }
         sleep(1);
         time_warn--;
+        if (time_warn_cnt <= 0) {
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+            return -1;
+        }
     }
     return 0; /* lock granted */
 }
@@ -152,14 +163,20 @@ static int __file_lock_put(char * lock_dir, char * lock_ext)
 {
     if (lock_dir == NULL)
         return -1;
-    if (access(lock_dir,  R_OK | W_OK | X_OK | F_OK) != 0)
+    if (access(lock_dir,  R_OK | W_OK | X_OK) != 0) {
+        logerror(_("error in %s(%d). errno:%d\n"),
+                    __func__, __LINE__, errno);
         return -1;
+    }
     char link_path[PATH_MAX];
     if (snprintf(link_path, PATH_MAX, "%s/.forlock.%s",
                  lock_dir, lock_ext) >= PATH_MAX)
         return -1;
-    if (unlink(link_path) < 0)
+    if (unlink(link_path) < 0) {
+        logerror(_("error in %s(%d). errno:%d\n"),
+                    __func__, __LINE__, errno);
         return -1;
+    }
     return 0; /* lock released */
 }
 
