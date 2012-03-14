@@ -358,62 +358,64 @@ static int __domain_run(NodeCtrlInstance * ci)
         goto out_unlock;
     }
 
-    /* work in appliances dir */
-    char app_idstr[10];
-    if (snprintf(app_idstr, 10, "%d", ci->app_id) >= 10 ) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-        goto out_chdir;
-    }
-    if (chdir(appdir) < 0) {
-        logerror(_("change working directory to %s failed.\n"), appdir);
-        goto out_chdir;
-    }
-    logdebug(_("tring to gain access to appliance file...\n"));
-     __send_response(g_c->wfd, ci, LY_S_RUNNING_WAITING);
-    if (__file_lock_get(".", app_idstr) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-        goto out_chdir;
-    }
-    if (access(app_idstr, F_OK)) {
-        if (mkdir(app_idstr, 0755) == -1) {
-            logerror(_("can not create directory: %s\n"), app_idstr);
-            __file_lock_put(".", app_idstr);
+    if (ci->ins_status == DOMAIN_S_NEW || access(ins_idstr, F_OK)) {
+        /* work in appliances dir */
+        char app_idstr[10];
+        if (snprintf(app_idstr, 10, "%d", ci->app_id) >= 10 ) {
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
             goto out_chdir;
         }
-    }
-    if (chdir(app_idstr) < 0) {
-        logerror(_("change working directory to %s failed.\n"), app_idstr);
-        __file_lock_put("..", app_idstr);
-        goto out_chdir;
-    }
-    if (access(ci->app_name, F_OK)) {
-        loginfo(_("downloading %s from %s ...\n"), ci->app_name, ci->app_uri);
-        __send_response(g_c->wfd, ci, LY_S_RUNNING_DOWNLOADING_APP);
-        if (lyutil_download(ci->app_uri, ci->app_name)) {
-            logwarn(_("downloading %s from %s failed.\n"), 
-                       ci->app_name, ci->app_uri);
+        if (chdir(appdir) < 0) {
+            logerror(_("change working directory to %s failed.\n"), appdir);
+            goto out_chdir;
+        }
+        logdebug(_("tring to gain access to appliance file...\n"));
+         __send_response(g_c->wfd, ci, LY_S_RUNNING_WAITING);
+        if (__file_lock_get(".", app_idstr) < 0) {
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+            goto out_chdir;
+        }
+        if (access(app_idstr, F_OK)) {
+            if (mkdir(app_idstr, 0755) == -1) {
+                logerror(_("can not create directory: %s\n"), app_idstr);
+                __file_lock_put(".", app_idstr);
+                goto out_chdir;
+            }
+        }
+        if (chdir(app_idstr) < 0) {
+            logerror(_("change working directory to %s failed.\n"), app_idstr);
+            __file_lock_put("..", app_idstr);
+            goto out_chdir;
+        }
+        if (access(ci->app_name, F_OK)) {
+            loginfo(_("downloading %s from %s ...\n"), ci->app_name, ci->app_uri);
+            __send_response(g_c->wfd, ci, LY_S_RUNNING_DOWNLOADING_APP);
+            if (lyutil_download(ci->app_uri, ci->app_name)) {
+                logwarn(_("downloading %s from %s failed.\n"), 
+                           ci->app_name, ci->app_uri);
+                unlink(ci->app_name);
+                __file_lock_put("..", app_idstr);
+                goto out_chdir;
+            }
+        }
+        else
+            loginfo(_("appliance %s found locally\n"), ci->app_name);
+        loginfo(_("checking checksum ...\n"));
+        __send_response(g_c->wfd, ci, LY_S_RUNNING_CHECKING_APP);
+        if (lyutil_checksum(ci->app_name, ci->app_checksum)) {
+            logwarn(_("%s checksum(%s) failed.\n"), ci->app_name, ci->app_checksum);
             unlink(ci->app_name);
             __file_lock_put("..", app_idstr);
             goto out_chdir;
         }
-    }
-    else
-        loginfo(_("appliance %s found locally\n"), ci->app_name);
-    loginfo(_("checking checksum ...\n"));
-    __send_response(g_c->wfd, ci, LY_S_RUNNING_CHECKING_APP);
-    if (lyutil_checksum(ci->app_name, ci->app_checksum)) {
-        logwarn(_("%s checksum(%s) failed.\n"), ci->app_name, ci->app_checksum);
-        unlink(ci->app_name);
-        __file_lock_put("..", app_idstr);
-        goto out_chdir;
-    }
-    if (__file_lock_put("..", app_idstr) < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-        goto out_chdir;
-    }
-    if (chdir("../..") < 0) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-        goto out_chdir;
+        if (__file_lock_put("..", app_idstr) < 0) {
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+            goto out_chdir;
+        }
+        if (chdir("../..") < 0) {
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+            goto out_chdir;
+        }
     }
 
     if (chdir(insdir) < 0) {
