@@ -667,6 +667,18 @@ int db_instance_find_ip_by_status(int status, char * ins_ip[], int size)
     return j;
 }
 
+int db_instance_init_status()
+{
+    char sql[LINE_MAX];
+    if (snprintf(sql, LINE_MAX, "UPDATE instance SET status = %d; ",
+                                DOMAIN_S_NEED_QUERY) >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    return __db_exec(sql);
+}
+
 int ly_db_init(void)
 {
     char conninfo[LINE_MAX];

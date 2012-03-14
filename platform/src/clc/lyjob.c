@@ -752,6 +752,10 @@ int job_init(void)
     }
 
     g_job_count = (unsigned int) ret;
+
+    /* init instance status in db */
+    db_instance_init_status();
+
     return 0;
 }
 
