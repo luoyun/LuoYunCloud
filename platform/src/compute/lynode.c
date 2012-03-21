@@ -128,9 +128,9 @@ int ly_sysconf_save(void)
         updated = 1;
         s->clc_port = g_c->clc_port;
     }
-    if (nf && s->node_tag != nf->tag) {
+    if (nf && s->node_tag != nf->host_tag) {
         updated = 1;
-        s->node_tag = nf->tag;
+        s->node_tag = nf->host_tag;
     }
     if (ac->secret) {
         if (s->node_secret == NULL ||
@@ -312,7 +312,7 @@ int main(int argc, char *argv[])
         goto out;
     }
     NodeInfo * nf = g_c->node;
-    nf->tag = s->node_tag;
+    nf->host_tag = s->node_tag;
     if (c->debug)
         luoyun_node_info_print(nf);
 
@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
     while (1) {
         if (g_c->clc_ip && g_c->wfd < 0 && wait < 0) {
             /* init node state */
-            if (nf->tag > 0)
+            if (nf->host_tag > 0)
                 g_c->state = NODE_STATUS_INITIALIZED;
             else
                 g_c->state = NODE_STATUS_UNINITIALIZED;

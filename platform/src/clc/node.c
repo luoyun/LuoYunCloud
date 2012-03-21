@@ -29,13 +29,13 @@
 #include <string.h>
 
 #include "../luoyun/luoyun.h"
+#include "../util/logging.h"
 #include "entity.h"
 #include "node.h"
 
 int node_schedule()
 {
     int ent_curr = -1;
-    unsigned int mem = 0;
     int ent_id = -1;
     while(1) {
         NodeInfo * ni = ly_entity_data_next(LY_ENTITY_NODE, &ent_curr);
@@ -44,9 +44,15 @@ int node_schedule()
         if (!ly_entity_is_registered(ent_curr) ||
             !ly_entity_is_enabled(ent_curr))
             continue;
-        if (ni->free_memory > mem) {
-            mem = ni->free_memory;
+        logdebug("%s:%d %d %d %d\n", __func__,
+                  ni->cpu_commit,
+                  NODE_SCHEDULE_CPU_LIMIT(ni->cpu_max),
+                  ni->mem_commit,
+                  NODE_SCHEDULE_MEM_LIMIT(ni->mem_max));
+        if (ni->cpu_commit < NODE_SCHEDULE_CPU_LIMIT(ni->cpu_max) &&
+            ni->mem_commit < NODE_SCHEDULE_MEM_LIMIT(ni->mem_max)) {
             ent_id = ent_curr;
+            break;
         }
     }
     return ent_id;

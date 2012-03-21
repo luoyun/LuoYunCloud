@@ -134,22 +134,26 @@ void luoyun_node_info_print(NodeInfo * nf)
 {
     logsimple("Node Info = {\n"
               "\tstatus = %d\n"
-              "\thostname = %s\n"
-              "\tip = %s\n"
-              "\tport = %d\n"
-              "\tarch = %d\n"
               "\thypervisor = %d\n"
-              "\tnetwork_type = %d\n"
-              "\tmax_memory = %d\n"
-              "\tmax_cpus = %d\n"
+              "\thost_name = %s\n"
+              "\thost_ip = %s\n"
+              "\thost_tag = %d\n"
+              "\tmem_max = %d\n"
+              "\tmem_free = %d\n"
+              "\tmem_commit = %d\n"
+              "\tcpu_arch = %d\n"
+              "\tcpu_max = %d\n"
               "\tcpu_model = %s\n"
               "\tcpu_mhz = %d\n"
-              "\tload_average = %d\n" "\tfree_memory = %d\n"
+              "\tcpu_commit = %d\n"
+              "\tload_average = %d\n"
               "}\n",
-              nf->status, nf->hostname, nf->ip, nf->port,
-              nf->arch, nf->hypervisor, nf->network_type,
-              nf->max_memory, nf->max_cpus, nf->cpu_model,
-              nf->cpu_mhz, nf->load_average, nf->free_memory);
+              nf->status, nf->hypervisor, 
+              nf->host_name, nf->host_ip, nf->host_tag,
+              nf->mem_max, nf->mem_free, nf->mem_commit,
+              nf->cpu_arch, nf->cpu_max, nf->cpu_model,
+              nf->cpu_mhz, nf->cpu_commit,
+              nf->load_average);
 }
 
 void luoyun_node_info_cleanup(NodeInfo * nf)
@@ -158,10 +162,10 @@ void luoyun_node_info_cleanup(NodeInfo * nf)
         return;
     if (nf->cpu_model)
         free(nf->cpu_model);
-    if (nf->hostname)
-        free(nf->hostname);
-    if (nf->ip)
-        free(nf->ip);
+    if (nf->host_name)
+        free(nf->host_name);
+    if (nf->host_ip)
+        free(nf->host_ip);
     bzero(nf, sizeof(NodeInfo));
 }
 

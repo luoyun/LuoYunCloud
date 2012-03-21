@@ -69,26 +69,7 @@ static void __print_recv_buf(char *buf)
 
 void print_node_info(NodeInfo * N)
 {
-    printf("node = {\n"
-           "\tstatus = %d\n"
-           "\thostname = %s\n"
-           "\tip = %s\n"
-           "\tport = %d\n"
-           "\tarch = %d\n"
-           "\thypervisor = %d\n"
-           "\tnetwork_type = %d\n"
-           "\tmax_memory = %d\n"
-           "\tmax_cpus = %d\n"
-           "\tcpu_model = %s\n"
-           "\tcpu_mhz = %d\n"
-           "\tload_average = %d\n" "\tfree_memory = %d\n"
-           /*"\tcreated = %d\n" */
-           /*"\tupdated = %d\n" */
-           "}\n",
-           N->status, N->hostname, N->ip, N->port,
-           N->arch, N->hypervisor, N->network_type,
-           N->max_memory, N->max_cpus, N->cpu_model,
-           N->cpu_mhz, N->load_average, N->free_memory);
+    return;
 }
 
 /* events processing initialization */

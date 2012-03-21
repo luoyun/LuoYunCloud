@@ -78,10 +78,8 @@ void print_node_info(NodeInfo * N)
            "\tstatus = %d\n"
            "\thostname = %s\n"
            "\tip = %s\n"
-           "\tport = %d\n"
            "\tarch = %d\n"
            "\thypervisor = %d\n"
-           "\tnetwork_type = %d\n"
            "\tmax_memory = %d\n"
            "\tmax_cpus = %d\n"
            "\tcpu_model = %s\n"
@@ -90,10 +88,10 @@ void print_node_info(NodeInfo * N)
            /*"\tcreated = %d\n" */
            /*"\tupdated = %d\n" */
            "}\n",
-           N->status, N->hostname, N->ip, N->port,
-           N->arch, N->hypervisor, N->network_type,
-           N->max_memory, N->max_cpus, N->cpu_model,
-           N->cpu_mhz, N->load_average, N->free_memory);
+           N->status, N->host_name, N->host_ip,
+           N->cpu_arch, N->hypervisor,
+           N->mem_max, N->cpu_max, N->cpu_model,
+           N->cpu_mhz, N->load_average, N->mem_free);
 }
 
 /* events processing initialization */

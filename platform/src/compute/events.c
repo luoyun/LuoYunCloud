@@ -282,7 +282,7 @@ static int __process_xml_response(xmlDoc *doc, xmlNode * node)
     }
     else if (status == LY_S_REGISTERING_REINIT) {
         loginfo(_("node registering failed. re-registering required\n"));
-        nf->tag = -1;
+        nf->host_tag = -1;
         if (ac->secret) {
             free(ac->secret);
             ac->secret = NULL;
@@ -309,7 +309,7 @@ static int __process_xml_response(xmlDoc *doc, xmlNode * node)
                          "/" LYXML_ROOT "/response/data/tag");
     if (str == NULL) 
         goto failed;
-    nf->tag = atoi(str);
+    nf->host_tag = atoi(str);
     free(str);
 
     if (ac->secret) {
@@ -435,7 +435,7 @@ static int __process_work_authtication(int is_reply, void * buf, int len)
 /* process unicast join request */
 static int __process_work_join(char * buf)
 {
-    if (g_c->node->tag > 0)
+    if (g_c->node->host_tag > 0)
         g_c->state = NODE_STATUS_INITIALIZED;
     else
         g_c->state = NODE_STATUS_UNINITIALIZED;
@@ -563,7 +563,7 @@ int ly_register_node()
         }
         
         AuthInfo ai;
-        ai.tag = nf->tag;
+        ai.tag = nf->host_tag;
         bzero(ai.data, LUOYUN_AUTH_DATA_LEN);
         strncpy((char *)ai.data, ac->challenge, LUOYUN_AUTH_DATA_LEN);
         if (ly_packet_send(g_c->wfd, PKT_TYPE_NODE_AUTH_REQUEST,

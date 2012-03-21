@@ -96,6 +96,7 @@ typedef enum LYActionStatus_t {
      LY_S_RUNNING_PREPARING_IMAGE = 215,
      LY_S_RUNNING_UNMOUNTING_IMAGE = 216,
      LY_S_RUNNING_STARTING_INSTANCE = 221,
+     LY_S_RUNNING_STOPPING = 250,
      LY_S_RUNNING_LAST_STATUS = 299,
      LY_S_FINISHED = 300,
      LY_S_FINISHED_SUCCESS = 301,
@@ -343,20 +344,20 @@ typedef struct NodeCtrlInstance_t {
 ** common data structure for node register info
 */
 typedef struct NodeInfo_t {
-    unsigned int max_memory;
-    unsigned int free_memory;
-    unsigned short max_cpus;
-    unsigned short cpu_mhz;
-    unsigned short load_average;
-    unsigned short port;
-    unsigned char status;
-    unsigned char arch;                /* cpu arch */
-    unsigned char hypervisor;
-    unsigned char network_type;
+    unsigned int status;
+    unsigned int hypervisor;
+    unsigned int mem_max;
+    unsigned int mem_free;
+    unsigned int mem_commit;
+    unsigned int cpu_max;
+    unsigned int cpu_commit;
+    unsigned int cpu_mhz;
+    unsigned int cpu_arch;          /* cpu arch */
     char *cpu_model;
-    char *hostname;
-    char *ip;                   /* eg 192.168.0.1 */
-    int tag;
+    char *host_name;
+    char *host_ip;                    /* eg 192.168.0.1 */
+    int   host_tag;
+    unsigned int load_average;
 } NodeInfo;
 
 /*
@@ -407,6 +408,7 @@ typedef struct LYReport_t {
    int to;
    int status;
    char * msg;
+   void * data; /* report specific data */
 } LYReport;
 
 /* helper functions */

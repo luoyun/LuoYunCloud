@@ -179,9 +179,9 @@ int libvirt_node_info(NodeInfo * ni)
 
     __this_lock();
     ni->cpu_model = strdup(nf->model);
-    ni->max_memory = nf->memory;
-    ni->max_cpus = nf->cpus;
+    ni->cpu_max = nf->cpus;
     ni->cpu_mhz = nf->mhz;
+    ni->mem_max = nf->memory;
     /*
     ni->numaNodes = nf->nodes;
     ni->sockets = nf->sockets;
@@ -192,6 +192,66 @@ int libvirt_node_info(NodeInfo * ni)
 
     free(nf);
     return 0;
+}
+
+int libvirt_node_info_update(NodeInfo * ni)
+{
+    if (g_conn == NULL)
+        return -1;
+
+    int ret = -1;
+    int cpu_commit = 0;
+    unsigned int mem_commit = 0;
+    int *activeDomains = NULL;
+
+    __this_lock();
+
+    int numDomains = virConnectNumOfDomains(g_conn);
+    if (numDomains <= 0) {
+        ret = numDomains;
+        goto out;
+    }
+
+    activeDomains = malloc(sizeof(int) * numDomains);
+    if (activeDomains == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        goto out;
+    }
+
+    numDomains = virConnectListDomains(g_conn, activeDomains, numDomains);
+    if (numDomains <= 0) {
+        ret = numDomains;
+        goto out;
+    }
+    for (int i = 0; i< numDomains; i++) {
+        /* skip id dom 0 */
+        if (activeDomains[i] == 0)
+            continue;
+        virDomainPtr d = virDomainLookupByID(g_conn, activeDomains[i]);
+	if (d == NULL) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            goto out;
+        }
+        virDomainInfo di;
+	if (virDomainGetInfo(d, &di)) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            goto out;
+        }
+        cpu_commit += di.nrVirtCpu;
+        mem_commit += di.maxMem;
+        virDomainFree(d);
+    }
+    ni->cpu_commit = cpu_commit;
+    ni->mem_commit = mem_commit;
+    ret = numDomains;
+
+out:
+    __this_unlock();
+
+    if (activeDomains)
+        free(activeDomains);
+
+    return ret;
 }
 
 unsigned int libvirt_free_memory(void)
@@ -219,17 +279,19 @@ int libvirt_domain_active(char * name)
     return active;
 }
 
-virDomainPtr libvirt_domain_create(char * xml)
+int libvirt_domain_create(char * xml)
 {
     if (g_conn == NULL)
-        return NULL;
+        return -1;
 
     virDomainPtr domain = virDomainCreateXML(g_conn, xml, 0);
     if (domain == NULL) {
         logerror(_("%s: creating domain error\n"), __func__);
+        return -1;
     }
+    virDomainFree(domain);
 
-    return domain;
+    return 0;
 }
 
 #define __DOMAIN_OP_STOP       1

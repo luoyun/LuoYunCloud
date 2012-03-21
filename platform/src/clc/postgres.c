@@ -284,20 +284,20 @@ int db_node_update(int type, void * data, NodeInfo * nf)
                        "hostname = '%s', arch = %d, cpus = %d, "
                        "cpu_model = '%s', cpu_mhz = %d, status = %d, "
                        "updated = 'now' WHERE ip = '%s';",
-                       nf->max_memory,
-                       nf->hostname, nf->arch, nf->max_cpus,
+                       nf->mem_max,
+                       nf->host_name, nf->cpu_arch, nf->cpu_max,
                        nf->cpu_model, nf->cpu_mhz, nf->status,
-                       nf->ip);
+                       nf->host_ip);
     else if (type == DB_NODE_FIND_BY_ID)
         ret = snprintf(sql, LINE_MAX,
                        "UPDATE node SET memory = %d, "
                        "hostname = '%s', arch = %d, cpus = %d, "
                        "cpu_model = '%s', cpu_mhz = %d, status = %d, "
                        "ip = '%s', updated = 'now' WHERE id = %d;",
-                       nf->max_memory,
-                       nf->hostname, nf->arch, nf->max_cpus,
+                       nf->mem_max,
+                       nf->host_name, nf->cpu_arch, nf->cpu_max,
                        nf->cpu_model, nf->cpu_mhz, nf->status,
-                       nf->ip, *(int *)data);
+                       nf->host_ip, *(int *)data);
     else {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
@@ -338,8 +338,8 @@ int db_node_insert(NodeInfo * nf)
                  "VALUES ('%s', '%s', %d, %d, "
                  "%d, %d, '%s', "
                  "%d, 'now', 'now');",
-                 nf->hostname, nf->ip, nf->arch, nf->max_memory,
-                 nf->status, nf->max_cpus, nf->cpu_model,
+                 nf->host_name, nf->host_ip, nf->cpu_arch, nf->mem_max,
+                 nf->status, nf->cpu_max, nf->cpu_model,
                  nf->cpu_mhz) >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);        
         return -1;
@@ -351,7 +351,7 @@ int db_node_insert(NodeInfo * nf)
 
     if (snprintf(sql, LINE_MAX,
                  "SELECT id from node where ip = '%s' order by id DESC; ",
-                 nf->ip) >= LINE_MAX) {
+                 nf->host_ip) >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }

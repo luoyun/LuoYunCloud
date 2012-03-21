@@ -322,7 +322,7 @@ int ly_entity_node_active(char * ip)
     list_for_each_entry(curr, &g_node_list, list) {
         NodeInfo * nf = curr->entity;
         if (ly_entity_is_registered(curr->id) &&
-            nf->ip && strcmp(nf->ip, ip) == 0)
+            nf->host_ip && strcmp(nf->host_ip, ip) == 0)
             return 1;
     }
     return 0;

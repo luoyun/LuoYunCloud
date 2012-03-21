@@ -337,6 +337,31 @@ static int __is_port_valid(int port)
     return 1;
 }
 
+#include <sys/types.h>
+#include <dirent.h>
+#include <unistd.h>
+static int __clean_lockfile(char * path)
+{
+    if (chdir(path))
+        return -1;
+
+    DIR * d = opendir(".");
+    if (d == NULL)
+        return -1;
+
+    struct dirent * r = readdir(d);
+    while (r) {
+        if (strncmp(r->d_name, ".forlock", 8) == 0) {
+            if (unlink(r->d_name))
+                return -1;
+        }
+        r = readdir(d);
+    }
+
+    closedir(d);
+    return 0;
+}
+
 void usage(void)
 {
 
@@ -459,10 +484,18 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
         logsimple(_("failed creating directory of %s\n"), path);
         return NODE_CONFIG_RET_ERR_CMD;
     }
+    if (__clean_lockfile(path) != 0) {
+        logsimple(_("failed cleaning directory of %s\n"), path);
+        return NODE_CONFIG_RET_ERR_CMD;
+    }
     if (snprintf(path, PATH_MAX, "%s/instances", c->node_data_dir) >= PATH_MAX)
         return NODE_CONFIG_RET_ERR_CONF;
     if (lyutil_create_dir(path) != 0) {
         logsimple(_("failed creating directory of %s\n"), path);
+        return NODE_CONFIG_RET_ERR_CMD;
+    }
+    if (__clean_lockfile(path) != 0) {
+        logsimple(_("failed cleaning directory of %s\n"), path);
         return NODE_CONFIG_RET_ERR_CMD;
     }
 

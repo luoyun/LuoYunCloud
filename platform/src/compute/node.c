@@ -72,6 +72,34 @@ void ly_node_send_report(int type, char * msg)
     return;
 }
 
+void ly_node_send_report_resource(void)
+{
+    if (g_c == NULL || g_c->node == NULL)
+        return;
+
+    if (g_c->wfd < 0)
+        return;
+
+    LYReport r;
+    r.from = LY_ENTITY_NODE;
+    r.to = LY_ENTITY_CLC;
+    if (ly_node_info_update() < 0)
+        r.status = LY_S_FINISHED_FAILURE;
+    else
+        r.status = LY_S_FINISHED_SUCCESS;
+    r.msg = NULL;
+    r.data = g_c->node;
+    logdebug(_("sending node info report...\n"));
+    char * xml = lyxml_data_report_node_info(&r, NULL, 0);
+    if (xml == NULL) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return;
+    }
+    ly_packet_send(g_c->wfd, PKT_TYPE_NODE_REPORT, xml, strlen(xml));
+    free(xml);
+    return;
+}
+                            
 int ly_node_busy(void)
 {
     int load = lyutil_load_average(LOAD_AVERAGE_LAST_1M);
@@ -87,15 +115,15 @@ int ly_node_info_update()
 
     NodeInfo * nf = g_c->node;
     if (g_c->node_ip != NULL) {
-        if (nf->ip == NULL || strcmp(g_c->node_ip, nf->ip) != 0) {
-            if (nf->ip)
-                free(nf->ip);
-            nf->ip = strdup(g_c->node_ip);
+        if (nf->host_ip == NULL || strcmp(g_c->node_ip, nf->host_ip) != 0) {
+            if (nf->host_ip)
+                free(nf->host_ip);
+            nf->host_ip = strdup(g_c->node_ip);
         }
     }
 
-    nf->free_memory = lyutil_free_memory();
-    if (nf->free_memory == 0) {
+    nf->mem_free = lyutil_free_memory();
+    if (nf->mem_free == 0) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
@@ -118,6 +146,11 @@ int ly_node_info_update()
             nf->status = NODE_STATUS_READY;
     }
 
+    if (libvirt_node_info_update(nf) < 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
     return 0;
 }
 
@@ -131,9 +164,9 @@ NodeInfo * ly_node_info_init(void)
 
     bzero(nf, sizeof(NodeInfo));
     nf->status = NODE_STATUS_UNKNOWN;
-    nf->arch = CPU_ARCH_UNKNOWN;
+    nf->cpu_arch = CPU_ARCH_UNKNOWN;
     nf->hypervisor = HYPERVISOR_IS_UNKNOWN;
-    nf->tag = -1;
+    nf->host_tag = -1;
 
     int ret;
     ret = libvirt_hypervisor();
@@ -149,14 +182,14 @@ NodeInfo * ly_node_info_init(void)
         goto failed;
     }
 
-    nf->hostname = libvirt_hostname();
-    if (nf->hostname == NULL) {
+    nf->host_name = libvirt_hostname();
+    if (nf->host_name == NULL) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto failed;
     }
 
-    nf->free_memory = lyutil_free_memory();
-    if (nf->free_memory == 0) {
+    nf->mem_free = lyutil_free_memory();
+    if (nf->mem_free == 0) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto failed;
     }

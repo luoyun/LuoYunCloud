@@ -138,26 +138,24 @@ char * lyxml_data_join(int id, char * host, int port,
     "</reply>"\
     "<parameters>"\
       "<status>%d</status>"\
+      "<hypervisor>%d</hypervisor>"\
       "<host>"\
         "<tag>%d</tag>"\
         "<name>%s</name>"\
         "<ip>%s</ip>"\
       "</host>"\
-      "<port>%d</port>"\
-      "<arch>%d</arch>"\
-      "<hypervisor>%d</hypervisor>"\
-      "<network>%d</network>"\
       "<memory>"\
         "<total>%u</total>"\
         "<free>%u</free>"\
+        "<commit>%u</commit>"\
       "</memory>"\
       "<cpu>"\
+        "<arch>%d</arch>"\
         "<model>%s</model>"\
         "<mhz>%d</mhz>"\
-      "</cpu>"\
-      "<vcpu>"\
         "<max>%d</max>"\
-      "</vcpu>"\
+        "<commit>%d</commit>"\
+      "</cpu>"\
       "<load>"\
         "<average>%d</average>"\
       "</load>"\
@@ -178,14 +176,16 @@ char * lyxml_data_node_register(NodeInfo * ni, char * buf, unsigned int size)
                        LY_ENTITY_CLC, 
                        lynode_new_request_id(),
                        LY_A_CLC_REGISTER_NODE,
-                       ni->status, ni->tag,
-                       ni->hostname ? (char *)(BAD_CAST ni->hostname) : "",
-                       ni->ip ? (char *)(BAD_CAST ni->ip) : "",
-                       ni->port,
-                       ni->arch, ni->hypervisor, ni->network_type,
-                       ni->max_memory, ni->free_memory,
+                       ni->status,
+                       ni->hypervisor,
+                       ni->host_tag,
+                       ni->host_name ? (char *)(BAD_CAST ni->host_name) : "",
+                       ni->host_ip ? (char *)(BAD_CAST ni->host_ip) : "",
+                       ni->mem_max, ni->mem_free, ni->mem_commit,
+                       ni->cpu_arch,
                        ni->cpu_model ? (char *)(BAD_CAST ni->cpu_model) : "",
-                       ni->cpu_mhz, ni->max_cpus, ni->load_average);
+                       ni->cpu_mhz, ni->cpu_max, ni->cpu_commit,
+                       ni->load_average);
     if (len < 0 || len >= size)
         return NULL;
 
@@ -270,8 +270,12 @@ char * lyxml_data_node_info(int req_id, char * buf, unsigned int size)
   "<response id=\"%d\" status=\"%d\">"\
     "<data>"\
       "<status>%d</status>"\
+      "<cpu>"\
+        "<commit>%d</commit>"\
+      "</cpu>"\
       "<memory>"\
         "<free>%u</free>"\
+        "<commit>%u</commit>"\
       "</memory>"\
       "<load>"\
         "<average>%d</average>"\
@@ -293,7 +297,9 @@ char * lyxml_data_reply_node_info(LYReply * reply, char * buf, unsigned int size
                        reply->from, reply->to,
                        reply->req_id, reply->status,
                        ni->status,
-                       ni->free_memory,
+                       ni->cpu_commit,
+                       ni->mem_free,
+                       ni->mem_commit,
                        ni->load_average);
     if (len < 0 || len >= size)
         return NULL;
@@ -583,6 +589,52 @@ char * lyxml_data_report(LYReport * r, char * buf, unsigned int size)
     int len = snprintf(buf, size, LUOYUN_XML_DATA_REPORT,
                        r->from, r->to, r->status,
                        r->msg ? (char *)(BAD_CAST r->msg) : "");
+    if (len < 0 || len >= size)
+        return NULL;
+
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+}
+
+
+/*
+** Node info report xml template
+*/
+#define LUOYUN_XML_DATA_REPORT_NODE_INFO \
+"<?xml version=\"1.0\" encoding=\"" LYXML_ENCODING "\"?>"\
+"<" LYXML_ROOT ">"\
+  "<from entity=\"%d\"/>"\
+  "<to entity=\"%d\"/>"\
+  "<report>"\
+    "<resource>"\
+      "<cpu>"\
+        "<commit>%d</commit>"\
+      "</cpu>"\
+      "<memory>"\
+        "<free>%u</free>"\
+        "<commit>%u</commit>"\
+      "</memory>"\
+      "<load>"\
+        "<average>%d</average>"\
+      "</load>"\
+    "</resource>"\
+  "</report>"\
+"</" LYXML_ROOT ">"
+
+char * lyxml_data_report_node_info(LYReport * r, char * buf, unsigned int size)
+{
+    if (r == NULL || r->data == NULL)
+        return NULL;
+
+    int caller_buf_flag = 1;
+    __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
+
+    NodeInfo * ni = r->data; 
+    int len = snprintf(buf, size, LUOYUN_XML_DATA_REPORT_NODE_INFO, 
+                       r->from, r->to,
+                       ni->cpu_commit,
+                       ni->mem_free,
+                       ni->mem_commit,
+                       ni->load_average);
     if (len < 0 || len >= size)
         return NULL;
 

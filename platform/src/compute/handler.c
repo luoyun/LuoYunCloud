@@ -95,6 +95,8 @@ static int __send_response(int socket, NodeCtrlInstance * ci, int status)
         r.msg = "starting instance domain";
     else if (status == LY_S_RUNNING_WAITING)
         r.msg = "waiting for resouces";
+    else if (status == LY_S_RUNNING_STOPPING)
+        r.msg = "instance shutting down";
     else
         r.msg = NULL;
 
@@ -616,15 +618,16 @@ static int __domain_run(NodeCtrlInstance * ci)
 
     /* start instance */
     __send_response(g_c->wfd, ci, LY_S_RUNNING_STARTING_INSTANCE);
-    virDomainPtr domain;
-    domain = libvirt_domain_create(xml);
-    free(xml);
-    if (domain == NULL) {
+    ret = libvirt_domain_create(xml);
+    if (ret < 0) {
         logerror(_("error start domain %s\n"), ci->ins_domain);
+        free(xml);
         goto out_insclean;
     }
+    free(xml);
 
     ret = LY_S_WAITING_STARTING_OSM;
+    ly_node_send_report_resource();
     goto out_chdir;
 
 out_umount:
@@ -692,6 +695,7 @@ static int __domain_stop(NodeCtrlInstance * ci)
         logerror(_("stop domain %s failed\n"), ci->ins_domain);
         goto out;
     }
+    __send_response(g_c->wfd, ci, LY_S_RUNNING_STOPPING);
     int wait = LY_NODE_STOP_INSTANCE_WAIT;
     while (wait > 0) {
         wait--;
@@ -713,6 +717,8 @@ out:
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
     }
 
+    if (ret == LY_S_FINISHED_SUCCESS)
+        ly_node_send_report_resource();
     return ret;
 }
 

@@ -61,5 +61,6 @@ char * lyxml_data_reply(LYReply * reply, char * buf, unsigned int size);
 char * lyxml_data_reply_instance_info(LYReply * reply, char * buf, unsigned int size);
 char * lyxml_data_reply_node_info(LYReply * reply, char * buf, unsigned int size);
 char * lyxml_data_report(LYReport * r, char * buf, unsigned int size);
+char * lyxml_data_report_node_info(LYReport * r, char * buf, unsigned int size);
 
 #endif
