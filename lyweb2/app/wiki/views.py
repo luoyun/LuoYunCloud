@@ -1,29 +1,41 @@
 # coding: utf-8
 
-import logging, datetime, time
-import tornado, markdown
+import logging, datetime, time, re
+import tornado
 from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
+
+from markdown import Markdown
+YMK = Markdown(extensions=['fenced_code', 'tables'])
 
 
 
 class Index(LyRequestHandler):
 
     def get(self):
-        catalogs = self.db.query('SELECT * from wiki_catalog;')
+
+        limit = 10
+
+        catalogs = self.db.query(
+            'SELECT * FROM wiki_catalog;')
 
         for c in catalogs:
+
             c.topics = self.db.query(
-                'SELECT * from topic WHERE catalog_id=%s;',
-                c.id )
+                'SELECT * FROM topic WHERE catalog_id=%s \
+LIMIT %s;',
+                c.id, limit )
+
             for t in c.topics:
+
                 t.user = self.db.get(
-                    'SELECT * from auth_user WHERE id=%s;',
+                    'SELECT * FROM auth_user WHERE id=%s;',
                     t.user_id )
 
         d = { 'title': 'Servers Home', 'catalogs': catalogs }
 
         self.render('wiki/index.html', **d)
+
 
 
 class ViewTopic(LyRequestHandler):
@@ -35,7 +47,12 @@ class ViewTopic(LyRequestHandler):
             return self.write('Have not found topic %s' % id)
 
         t.user = self.db.get(
-            'SELECT * from auth_user WHERE id=%s;', t.user_id)
+            'SELECT * FROM auth_user WHERE id=%s;',
+            t.user_id )
+
+        t.catalog = self.db.get(
+            'SELECT * FROM wiki_catalog WHERE id=%s;',
+            t.catalog_id )
 
         d = { 'title': t.name, 'topic': t }
 
@@ -58,11 +75,12 @@ class ViewTopicSource(LyRequestHandler):
 
 class NewTopic(LyRequestHandler):
 
-    d = { 'title': 'Add new topic' }
+    def prepare(self):
+        self.d = { 'title': 'Add new topic', 'ERROR': [] }
+        self.d['catalogs'] = self.db.query('SELECT * from wiki_catalog;')
 
     @authenticated
     def get(self):
-        self.d['catalogs'] = self.db.query('SELECT * from wiki_catalog;')
         self.render('wiki/new_topic.html', **self.d)
 
     @authenticated
@@ -75,62 +93,58 @@ class NewTopic(LyRequestHandler):
         d['body'] = self.get_argument('body', '')
 
         if not d['name']:
-            d['name_error'] = 'name can not be empty !'
+            d['ERROR'].append('name can not be empty !')
         if not self.d['catalog']:
-            d['catalog_error'] = 'no catalog selected !'
+            d['ERROR'].append('no catalog selected !')
         if not self.d['body']:
-            d['body_error'] = 'body can not be empty !'
+            d['ERROR'].append('body can not be empty !')
 
-        if not (d['name'] and d['body'] and d['catalog']):
+        if d['ERROR']:
             return self.render('wiki/new_topic.html', **d)
 
-        html = markdown.markdown(d['body'])
+        html = YMK.convert(d['body'])
 
         try:
-            self.db.execute(
+            r = self.db.query(
                 "INSERT INTO topic (name, body, body_html, \
 catalog_id, user_id, user_ip, created, updated) VALUES \
-(%s, %s, %s, %s, %s, %s, 'now', 'now');",
+(%s, %s, %s, %s, %s, %s, 'now', 'now') RETURNING id;",
                 d['name'], d['body'], html, d['catalog'],
                 self.current_user.id, self.request.remote_ip )
+
+            #print 'r = ', r
+            return self.redirect('/wiki/topic/%s' % r[0].id)
+
         except Exception, emsg:
             return self.write('Create new topic to DB failed: %s' % emsg)
-        
-        self.redirect('/wiki')
 
 
 class EditTopic(LyRequestHandler):
 
-    d = { 'title': 'Edit topic' }
-
     @authenticated
+    def prepare(self):
+
+        id = re.match('.*/([0-9]+)/.*', self.request.path).groups()[0]
+
+        t = self.db.get('SELECT * from topic WHERE id=%s;', id)
+        if not t:
+            self.write('Have not found topic %s' % id)
+            return self.finish()
+
+        if self.current_user.id not in [1, t.user_id]:
+            self.write('You have not permission to edit this topic !')
+            return self.finish()
+
+        self.d = { 'title': 'Edit topic', 'ERROR': [], 'topic': t,
+                   'catalogs': self.db.query('SELECT * from wiki_catalog;') }
+
+
     def get(self, id):
-
-        self.d['topic'] = self.db.get(
-            'SELECT * from topic WHERE id=%s;', id )
-        if not self.d['topic']:
-            return self.write('Have not found topic %s' % id)
-
-        if not (self.current_user.id == 1 or
-                self.current_user.id == self.d['topic'].user_id):
-            return self.write('You have not permission to edit this topic !')
-
-        self.d['catalogs'] = self.db.query('SELECT * from wiki_catalog;')
-
         self.render('wiki/edit_topic.html', **self.d)
 
-    @authenticated
+
     def post(self, id):
 
-        self.d['topic'] = self.db.get(
-            'SELECT * from topic WHERE id=%s;', id )
-        if not self.d['topic']:
-            return self.write('Have not found topic %s' % id)
-
-        if not (self.current_user.id == 1 or
-                self.current_user.id == self.d['topic'].user_id):
-            return self.write('You have not permission to edit this topic !')
-        
         d = self.d
 
         d['name'] = self.get_argument('name', '')
@@ -138,16 +152,16 @@ class EditTopic(LyRequestHandler):
         d['body'] = self.get_argument('body', '')
 
         if not d['name']:
-            d['name_error'] = 'name can not be empty !'
+            d['ERROR'].append('name can not be empty !')
         if not self.d['catalog']:
-            d['catalog_error'] = 'no catalog selected !'
+            d['ERROR'].append('no catalog selected !')
         if not self.d['body']:
-            d['body_error'] = 'body can not be empty !'
+            d['ERROR'].append('body can not be empty !')
 
-        if not (d['name'] and d['body'] and d['catalog']):
+        if d['ERROR']:
             return self.render('wiki/new_topic.html', **d)
 
-        html = markdown.markdown(d['body'])
+        html = YMK.convert(d['body'])
 
         try:
             self.db.execute(
@@ -156,41 +170,51 @@ body_html=%s, catalog_id=%s, user_ip=%s, updated='now' \
 WHERE id=%s;",
                 d['name'], d['body'], html, d['catalog'],
                 self.request.remote_ip, id )
+
+            return self.redirect('/wiki/topic/%s' % id)
+
         except Exception, emsg:
             return self.write('Update topic failed: %s' % emsg)
+
+
+class DeleteTopic(LyRequestHandler):
+
+    @authenticated
+    def get(self, id):
+
+        t = self.db.get('SELECT id, user_id from topic WHERE id=%s;', id)
+        if not t:
+            return self.write('Have not found topic %s' % id)
+
+        if self.current_user.id not in [1, t.user_id]:
+            return self.write('You have not permission to edit this topic !')
+
+        self.db.execute('DELETE FROM topic WHERE id=%s;', id)
+        self.write('Delete topic %s success !' % id)
+
+
+
+class ViewCatalog(LyRequestHandler):
+
+
+    def get(self, id):
+
+        c = self.db.get(
+            'SELECT * FROM wiki_catalog WHERE id=%s;', id )
+
+        if not c:
+            return self.write(u'No catalog %s !' % id)
+
+        ts = self.db.query(
+            'SELECT * FROM topic WHERE catalog_id=%s;', id)
+
+        for t in ts:
+            t.user = self.db.get(
+                'SELECT * FROM auth_user WHERE id=%s;',
+                t.user_id )
         
-        self.redirect('/wiki/topic/%s' % id)
+        self.render( 'wiki/view_catalog.html',
+                     catalog = c, topics = ts,
+                     title = u'View catalog %s' % id )
 
 
-class AddCatalog(LyRequestHandler):
-
-    d = { 'title': 'Add appliance catalog' }
-
-    @authenticated
-    def get(self):
-
-        # TODO: just admin could add catalog
-
-        self.render('wiki/add_catalog.html', **self.d)
-
-    @authenticated
-    def post(self):
-
-        d = self.d
-
-        d['name'] = self.get_argument('name', '')
-        d['summary'] = self.get_argument('summary', '')
-        d['description'] = self.get_argument('description', '')
-
-        if not d['name']:
-            d['name_error'] = 'Name is required !'
-            return self.render('appliance/add_catalog.html', **d)
-
-        try:
-            self.db.execute(
-                "INSERT INTO wiki_catalog (name, summary, description, created, updated) VALUES (%s, %s, %s, 'now', 'now');",
-                d['name'], d['summary'], d['description'] )
-        except Exception, emsg:
-            return self.write('Add catalog to DB failed: %s' % emsg)
-
-        self.redirect('/wiki')

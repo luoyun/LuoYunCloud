@@ -1,106 +1,148 @@
-// lyImageDefaultSelectUploadFile({{ addmethod }})
-function lyImageDefaultSelectUploadFile (addmethod) {
-    // Error
-    //alert(addmethod);
-    $("#id_addmethod").get(0).selectedIndex = addmethod - 1;
-    for (i=1; i<= 2; i++) {
-        if (i.toString() == addmethod) {
-            $("#addmethod" + addmethod).css("display", "block");
-        } else {
-            $("#addmethod" + i).css("display", "none");
-        }
-    }
-}
+function Uploading() {
+    $(function() {
 
+        $("form").uploadProgress({
+            /* scripts locations for safari */
+            jqueryPath: "${STATIC_URL}js/jquery-1.7.min.js",
+            uploadProgressPath: "${STATIC_URL}js/jquery.uploadProgress.js",
 
+            start: function() {
+                var t = new Date();
+                var seconds = t.getHours() * 3600;
+                seconds += t.getMinutes() * 60;
+                seconds += t.getSeconds();
 
-// lyImageSelectUploadMethod
-function lyImageSelectUploadFile () {
+                $('body').data('start_time', seconds);
 
-    $("#id_addmethod").change( function () {
-        v = $(this).val();
-        for (i=1; i<= 2; i++) {
-            if (i.toString() == v) {
-                $("#addmethod" + v).css("display", "block");
-            } else {
-                $("#addmethod" + i).css("display", "none");
-            }
-        }
+                $("#uploading").show();
+            },
+
+            /* function called each time bar is updated */
+            uploading: function(upload) {
+
+                var t = new Date();
+                var now = t.getHours() * 3600;
+                now += t.getMinutes() * 60;
+                now += t.getSeconds();
+
+                var start = $('body').data('start_time');
+
+                var rate = Math.floor( (upload.received) / (now - start) )
+
+                var remain = Math.floor( (upload.size - upload.received) / rate ) 
+
+                if ( rate > 1048576 )
+                    rate = ( rate / 1048576 ).toFixed(2) + 'M/s'
+                else if ( rate > 1024 )
+                    rate = ( rate / 1024 ).toFixed(2) + 'Kb/s'
+                else
+                    rate = rate + 'B/s'
+
+                if ( remain > 3600 )
+                    remain = Math.floor( remain / 3600 ) + 'h'
+                else if ( remain > 60 )
+                    remain = Math.floor( remain / 60 ) + 'm'
+                else
+                    remain = remain + 's'
+                
+                
+
+                $('#percents').html(upload.percents+'%' + ' (' + rate + ', remain ' + remain + ')');
+            },
+
+            success: function(upload) { $("#uploading").hide(); },
+
+            /* selector or element that will be updated */
+            progressBar: "#progressbar",
+
+            /* progress reports url */
+            progressUrl: "/progress",
+
+            /* how often will bar be updated */
+            interval: 1000,
+        });
     });
 
-
-    //$("#id_filename").change( function () {
-    //    v = $(this).find("option:selected").text();
-    //    $("#id_name").val(v);
-    //});
 }
 
+function ApplianceHover() {
 
-// Bind some event on catalog element
-function lyImageCatalogEvent(catalogs) {
-    //alert(catalogs.toString());
-    $("#catalogs li").hover(
-        function () {
-            var cur = $(this).attr("id");
+    return false;
 
-            $("#" + cur).addClass("hover");
+    $(".appliance").each( function () {
+        var $obj = $(this);
+        var $info = $obj.find(".appliance-base-info")
+        //$info.show();
+        URL = $obj.find(".logo a").attr("href");
 
-            for ( i = 0; i < catalogs.length; i++)
-            { 
-                if ( cur != catalogs[i] ) {
-                    $("#" + catalogs[i]).removeClass("hover");
+        $obj.qtip({
+            //content: $info
+            //content:  "show appliance-base-info"
+            content: {
+                text: "Loading ...",
+                ajax: {
+                    url: URL + '?ajax=1'
                 }
-            }
-        },
-        function () {
-            //action for move out
-        }
-    );
-
-    $("#catalogs li").click( function() {
-        var cid = $(this).attr("id").replace(/^c(\d+).*$/, '$1');
-        var curl = "/image/catalog_ajax/" + cid + "/";
-        //alert(curl);
-        $.ajax({
-            url: curl,
-            success: function(data) {
-                //$(this).addClass("done");
-                $("#image-main-right").html(data);
-            }
+            },
+            show: {
+                event: 'click',
+                solo: true,
+                modal: true
+            },
+            hide: false
         });
-    });
+    })
 }
 
-
-// Switch between Menu Element
-function lyImageMenuElementSwitch () {
-
-    $("#lyentry .menu .normal").click( function() {
-        var curelement = $(this);
-        var cid = $(this).attr("id").replace(/^c(\d+).*$/, '$1');
-        var curl = "/image/catalog_ajax/" + cid + "/";
-        //alert(curl);
-        $.ajax({
-            url: curl,
-            success: function(data) {
-                curelement.addClass("current");
-                curelement.siblings().removeClass("current");
-                $("#lyentry .close-main").html(data);
-            }
-        });
-    });
-}
-
-
-function lyImageHover (id) {
-    $(id).hover(
+function ApplianceHoverOld() {
+    $(".sidemain .appliance").hover(
         function () {
-            $(this).addClass("hover");
-            $(this).find(".image-action").css("display", "block");
+
+            obj = $(this);
+
+            if (obj.find(".appliance-base-info").length > 0) {
+                $(".appliance-base-info").hide();
+                obj.find(".appliance-base-info").show();
+                return;
+            }
+
+            URL = obj.find(".logo a").attr("href");
+            $.ajax({
+                url: URL + '?ajax=1',
+                type: 'GET',
+                success: function (data) {
+                    obj.append(data);
+                    $(".appliance-base-info").hide();
+                    obj.find(".appliance-base-info").show();
+                    ApplianceDeleteInIndex(); // TODO
+                }
+            });
         },
         function () {
-            $(this).removeClass("hover");
-            $(this).find(".image-action").css("display", "none");
+            $(this).find(".appliance-base-info").hide();
         }
     );
 }
+
+
+function DeleteInstance() {
+
+    $(".instance-list .delete").qtip({
+
+        content: {
+            text: "Loading ...",
+            ajax: {
+                url:  $(this).attr('href')
+            }
+        },
+        show: {
+            event: 'click', // Show it on click...
+            solo: true, // ...and hide all other tooltips...
+            modal: true // ...and make it modal
+        },
+        hide: false
+
+    });
+
+}
+

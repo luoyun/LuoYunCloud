@@ -1,87 +1,108 @@
 <%inherit file="home_base.html"/>
 
-<%block name="lymain">
+<%block name="main">
 
-<div id="system-info" class="clearfix">
-  % if total_user:
-  <p>${ _("The total users of this system: ") } <a href="/account/user_list">${ total_user }</a></p>
+
+<div id="banner">
+  % if current_user:
+  <div id="create-instance">
+    <a class="button qtiplink" 
+       title="${ _('Create a new instance') }" 
+       href="/appliance">${ _("Create New Instance") }</a>
+  </div>
   % endif
-  <div id="new-jobs">
-    <ul>
-      % for j in jobs:
-      <li>${ fulltime(j.started) }: ${ j.user.username } run job ${ j.id }.</li>
-      % endfor
-    </ul>
+<%doc>
+  <div class="info">
+    <span>${ _("Total Appliance") }
+      <a class="qtiplink" 
+         title="${ _('View all appliance') }" 
+         href="/appliance"><span class="count">
+          ${ TOTAL_APPLIANCE }</span></a></span>
+    <span>${ _("Total Instance") }<span class="count">
+        ${ TOTAL_INSTANCE }</span></span>
   </div>
+</%doc>
 </div>
 
-<div id="luoyun-info" class="clearfix">
 
-  <div id="image" class="element-entry hover">
-    <h2>${_("Appliances")}</h2>
-    <div>
-      <a href="/appliance"><img class="zoneimage" src="${THEME_URL}img/image.png"></img></a>
-    </div>
-    <p>Total: <a href="/appliance"><span id="images-total">${ images_total }</span></a></p>
+<div id="instance-list" class="clearfix">
+  <h2>${ _("Instances List") }</h2>
+<%doc>
+  <div class="sort-method">
+    <span>${ _("Current instances, sorted by") }</span>
+    <span><a href="/">${ _("Default") }</a></span>
+    <span>
+      <a title="${ _('Sorted by updated') }" 
+         href="/?by=updated">${ _("Updated") }</a></span>
   </div>
+</%doc>
 
-  <div id="domain" class="element-entry">
-    <h2>${_("Instances")}</h2>
-    <div>
-      <a href="/instance"><img class="zoneimage" src="${THEME_URL}img/domain.png"></img></a>
-    </div>
-    <p>Total: <a href="/instance"><span id="domains-total">${ domains_total }</span></a></p>
-    <p>Running:: <a href="/instance"><span id="domains-running">${ domains_running }</span></a></p>
-  </div>
+  % for I in INSTANCE_LIST:
+  <div class="instance">
 
-  <div id="node" class="element-entry">
-    <h2>${_("Servers")}</h2>
-    <div>
-      <a href="/node"><img class="zoneimage" src="${THEME_URL}img/node.png"></img></a>
+    <div class="logo">
+      <a href="/instance/${I.id}">
+        <img src="${ instance_logo_url(I.logo) }" /></a>
     </div>
-    <p>Total: <a href="/server"><span id="nodes-total">${ nodes_total }</span></a></p>
-    <p>Running: <a href="/server"><span id="nodes-running">${ nodes_running }</span></a></p>
+
+    <div class="info">
+
+      <span class="id">${ I.id }</span>
+      <span class="status">
+        % if I.status not in [0, 1, 2, 4, 5, 9, 245, 255]:
+        <img src="${ THEME_URL }icons/InstanceStatus/running.gif"/>
+        % else:
+        <img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png"  alt="Stauts Image"/>
+        % endif
+        <span class="status-string" style="display: none;">${ instance_status(I.status) }</span>
+      </span>
+
+      % if I.status in [4, 5]:
+      <span class="ip">
+        <a href="/proxy?host=${ I.ip }&port=8080" title="${ _('Service is running') }">${ I.ip }</a>
+      </span>
+      % endif
+
+    </div>
+
+    <div class="hide" style="display: none;">
+      <h2>${ _("Instance ") }${ I.id }</h2>
+
+      <table>
+        <tbody>
+          <tr>
+            <td>${ _("Name") }</td>
+            <td>${ I.name }</td>
+          </tr>
+          <tr>
+            <td>${ _("Owner") }</td>
+            <td>${ I.user.username }</td>
+          </tr>
+          <tr>
+            <td>${ _("Status") }</td>
+            <td>${ instance_status(I.status) }</td>
+          </tr>
+          <tr>
+            <td>${ _("IP") }</td>
+            <td>${ I.ip }</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+
   </div>
+  % endfor
+
+  ${ page_html }
 
 </div>
 
-<div id="zone-info">
-  <div id="image-info" style="display: inline;">
-    <p>${_("A Virtual Appliance is a software package that combines both the operating system and some specific software application. The operation system is trimmed down to only support the software application. It doesn't have all the components that an operating system normally provides. The software application is well integrated with the operating system and pre-configured as much as possible. The service provided by the software application usually starts automatically when the operating system starts.")}</p>
-  </div>
-  <div id="node-info" style="display: none;">
-    <p>${_("A server is a physical computer that's installed with virtualization software and capable of running virtual machines. In Luoyun Computing Cloud, all the servers are controlled by the cloud and serve the purpose of hosting all the instances of Virtual Appliances. Regular users don't need to interact directly with the servers. Users with administration privilage can configure the servers to manage how the servers are used in the cloud.")}</p>
-  </div>
-  <div id="domain-info" style="display: none;">
-    <p>${_("An instance is a Virtual Machine that's installed with a Virtual Appliance. The instance contains a copy of Virtual Appliance software. So multiple instances can use same Virtual Appliance without affecting each other. In Luoyun Computing Cloud, all the instances are managed via web UI. The cloud monitors all the instances and report status on the web UI as well.")}</p>
-  </div>
-</div>
 
 <script type="text/javascript">
-$(".element-entry").hover(
-  function () {
-
-    var cur = $(this).attr("id");
-
-    $("#" + cur).addClass("hover");
-    $("#" + cur + "-info").css("display", "inline");
-
-    var ele = new Array();
-    ele[0] = "image";
-    ele[1] = "node";
-    ele[2] = "domain";
-    for ( i = 0; i < ele.length; i++)
-    { 
-      if ( cur != ele[i] ) {
-        $("#" + ele[i]).removeClass("hover");
-        $("#" + ele[i] + "-info").css("display", "none");
-      }
-    }
-  },
-  function () {
-    //action for move out
-  }
-);
+  InstanceLogoHover();
+  InstanceStatusHover();
 </script>
 
 </%block>

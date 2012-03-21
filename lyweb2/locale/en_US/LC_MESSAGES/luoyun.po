@@ -1,0 +1,398 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-03-17 12:34+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: template/job/index.html:10 template/account/view_user.html:13
+#: template/instance/view.html:52 template/appliance/view.html:35
+#: template/appliance/view_by_ajax.html:11
+msgid "ID"
+msgstr ""
+
+#: template/job/index.html:11
+msgid "User"
+msgstr ""
+
+#: template/job/index.html:12
+msgid "Status"
+msgstr ""
+
+#: template/job/index.html:13
+msgid "Completed"
+msgstr ""
+
+#: template/job/index.html:14
+msgid "Target Type"
+msgstr ""
+
+#: template/job/index.html:15
+msgid "Target ID"
+msgstr ""
+
+#: template/job/index.html:16
+msgid "Action"
+msgstr ""
+
+#: template/wiki/add_catalog.html:6
+msgid "Create a new catalog"
+msgstr ""
+
+#: template/wiki/add_catalog.html:21 template/wiki/edit_catalog.html:21
+#: template/wiki/new_topic.html:21 template/wiki/edit_topic.html:19
+#: template/appliance/add_catalog.html:9
+msgid "* Name:"
+msgstr ""
+
+#: template/wiki/add_catalog.html:30 template/wiki/edit_catalog.html:30
+#: template/appliance/add_catalog.html:15
+msgid "Summary:"
+msgstr ""
+
+#: template/wiki/add_catalog.html:39 template/wiki/edit_catalog.html:39
+#: template/wiki/new_topic.html:47 template/wiki/edit_topic.html:46
+#: template/appliance/add_catalog.html:21
+msgid "Description:"
+msgstr ""
+
+#: template/wiki/index.html:11 template/wiki/view_catalog.html:18
+#: template/appliance/index.html:24
+msgid "Add Catalog"
+msgstr ""
+
+#: template/wiki/index.html:16 template/wiki/view_catalog.html:27
+msgid "New Topic"
+msgstr ""
+
+#: template/wiki/index.html:33 template/wiki/view_catalog.html:41
+msgid "by"
+msgstr ""
+
+#: template/wiki/index.html:35 template/wiki/view_catalog.html:43
+msgid "update"
+msgstr ""
+
+#: template/wiki/edit_catalog.html:6
+msgid "Edit catalog"
+msgstr ""
+
+#: template/wiki/view_catalog.html:6 template/wiki/view_topic.html:6
+#: template/instance/view.html:14 template/appliance/view.html:6
+#: template/appliance/edit.html:6 template/base.html:35
+msgid "Home"
+msgstr ""
+
+#: template/wiki/view_catalog.html:7 template/wiki/view_topic.html:7
+#: template/base.html:38
+msgid "Wiki"
+msgstr ""
+
+#: template/wiki/view_catalog.html:8 template/wiki/view_topic.html:10
+#: template/instance/view.html:15 template/appliance/view.html:8
+msgid "View"
+msgstr ""
+
+#: template/wiki/view_catalog.html:22
+msgid "Edit Catalog"
+msgstr ""
+
+#: template/wiki/view_topic.html:21 template/wiki/edit_topic.html:6
+#: template/account/user_list.html:35 template/instance/view.html:82
+#: template/instance/view_by_ajax.html:25 template/appliance/view.html:50
+#: template/appliance/edit.html:8 template/appliance/view_by_ajax.html:20
+msgid "Edit"
+msgstr ""
+
+#: template/wiki/view_topic.html:22 template/account/user_list.html:34
+#: template/instance/view.html:83 template/instance/view_by_ajax.html:26
+#: template/appliance/view.html:51 template/appliance/view.html:66
+#: template/appliance/view_by_ajax.html:21
+msgid "Delete"
+msgstr ""
+
+#: template/wiki/view_topic.html:25
+msgid "Source"
+msgstr ""
+
+#: template/wiki/new_topic.html:7
+msgid "Create a new topic"
+msgstr ""
+
+#: template/wiki/new_topic.html:30 template/wiki/edit_topic.html:28
+msgid "Image catalog:"
+msgstr ""
+
+#: template/account/login.html:34
+msgid "Sign in LuoYun System"
+msgstr ""
+
+#: template/account/login.html:38 template/account/view_user.html:9
+#: template/account/register.html:13
+msgid "Username"
+msgstr ""
+
+#: template/account/login.html:46 template/account/register.html:21
+#: template/account/reset_password.html:13
+msgid "Password"
+msgstr ""
+
+#: template/account/view_user.html:17
+msgid "Date Joined"
+msgstr ""
+
+#: template/account/view_user.html:21
+msgid "Last Login"
+msgstr ""
+
+#: template/account/view_user.html:25
+msgid "Email"
+msgstr ""
+
+#: template/account/view_user.html:29
+msgid "Locale"
+msgstr ""
+
+#: template/account/view_user.html:33
+msgid "First Name"
+msgstr ""
+
+#: template/account/view_user.html:37
+msgid "Last Name"
+msgstr ""
+
+#: template/account/view_user.html:43
+msgid "Have not found this user !"
+msgstr ""
+
+#: template/account/register.html:9
+msgid "LuoYun User Register"
+msgstr ""
+
+#: template/account/register.html:30 template/account/reset_password.html:22
+msgid "Password Confirm"
+msgstr ""
+
+#: template/account/profile.html:8
+msgid "Reset password"
+msgstr ""
+
+#: template/account/reset_password.html:9
+msgid "Reset password for "
+msgstr ""
+
+#: template/account/chat.html:9
+msgid "Sign out"
+msgstr ""
+
+#: template/instance/index.html:20
+msgid "All"
+msgstr ""
+
+#: template/instance/view.html:53
+msgid "Appliance"
+msgstr ""
+
+#: template/instance/view.html:54
+msgid "CPU numbers"
+msgstr ""
+
+#: template/instance/view.html:55
+msgid "Memory"
+msgstr ""
+
+#: template/instance/view.html:56 template/appliance/view.html:41
+#: template/appliance/view_by_ajax.html:13
+msgid "Create Time"
+msgstr ""
+
+#: template/instance/view.html:57 template/appliance/view.html:43
+#: template/appliance/view_by_ajax.html:14
+msgid "Update Time"
+msgstr ""
+
+#: template/instance/view.html:63
+msgid "Virtual Machine Configure"
+msgstr ""
+
+#: template/instance/view.html:64
+msgid "Libvirtd Configure"
+msgstr ""
+
+#: template/instance/view.html:65
+msgid "Osmanager Configure"
+msgstr ""
+
+#: template/instance/view.html:73 template/instance/view_by_ajax.html:22
+msgid "Run"
+msgstr ""
+
+#: template/instance/view.html:75 template/instance/view_by_ajax.html:20
+msgid "Stop"
+msgstr ""
+
+#: template/instance/view.html:79
+msgid "Query"
+msgstr ""
+
+#: template/instance/edit.html:6
+msgid "Edit Instance"
+msgstr ""
+
+#: template/instance/edit.html:19 template/instance/add.html:37
+#: template/appliance/create_instance.html:28
+msgid "Instance Name:"
+msgstr ""
+
+#: template/instance/edit.html:28
+msgid "Cpu Number:"
+msgstr ""
+
+#: template/instance/edit.html:37 template/instance/view_by_ajax.html:10
+msgid "Memory:"
+msgstr ""
+
+#: template/instance/view_by_ajax.html:9
+msgid "CPU numbers:"
+msgstr ""
+
+#: template/instance/add.html:6
+msgid "Create a new instance"
+msgstr ""
+
+#: template/instance/add.html:20
+msgid "Appliance catalog:"
+msgstr ""
+
+#: template/appliance/index.html:25
+msgid "Upload"
+msgstr ""
+
+#: template/appliance/index.html:34
+msgid "Sorted by"
+msgstr ""
+
+#: template/appliance/index.html:35 template/home/index.html:26
+msgid "Default"
+msgstr ""
+
+#: template/appliance/index.html:36 template/home/index.html:27
+msgid "Updated"
+msgstr ""
+
+#: template/appliance/index.html:63 template/appliance/view.html:78
+msgid "Are you sure ?"
+msgstr ""
+
+#: template/appliance/delete_success.html:5
+msgid "Delete appliance success"
+msgstr ""
+
+#: template/appliance/view.html:7 template/appliance/edit.html:7
+#: template/base.html:36
+msgid "Appliances"
+msgstr ""
+
+#: template/appliance/view.html:37
+msgid "Checksum"
+msgstr ""
+
+#: template/appliance/view.html:39 template/appliance/view_by_ajax.html:12
+msgid "Size"
+msgstr ""
+
+#: template/appliance/view.html:53 template/appliance/view_by_ajax.html:23
+msgid "Create Instance"
+msgstr ""
+
+#: template/appliance/view.html:61
+msgid "Instance-List"
+msgstr ""
+
+#: template/appliance/edit.html:12
+msgid "Edit appliance"
+msgstr ""
+
+#: template/appliance/edit.html:25
+msgid "Appliance Name"
+msgstr ""
+
+#: template/appliance/edit.html:34
+msgid "Catalog"
+msgstr ""
+
+#: template/appliance/edit.html:51
+msgid "Logo Image"
+msgstr ""
+
+#: template/appliance/create_instance.html:7
+msgid "Create a new instance from"
+msgstr ""
+
+#: template/base.html:24
+msgid "Sorry, your browser does not support JavaScript!"
+msgstr ""
+
+#: template/base.html:31
+msgid "LuoYun"
+msgstr ""
+
+#: template/base.html:48
+msgid "Welcome, "
+msgstr ""
+
+#: template/base.html:49
+msgid "Sign Out"
+msgstr ""
+
+#: template/base.html:51
+msgid "Sign In"
+msgstr ""
+
+#: template/base.html:52
+msgid "Register"
+msgstr ""
+
+#: template/base.html:88
+msgid "Copyright"
+msgstr ""
+
+#: template/base.html:88
+msgid "LuoYun Inc."
+msgstr ""
+
+#: template/base.html:89
+msgid "About"
+msgstr ""
+
+#: template/base.html:90
+msgid "Contact"
+msgstr ""
+
+#: template/home/index.html:7
+msgid "Create New Instance"
+msgstr ""
+
+#: template/home/index.html:25
+msgid "Current instances, sorted by"
+msgstr ""
+
+#: template/node/index.html:28
+msgid "Enable"
+msgstr ""
+
+#: template/node/index.html:30
+msgid "Disable"
+msgstr ""

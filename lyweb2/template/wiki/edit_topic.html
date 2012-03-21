@@ -1,39 +1,60 @@
 <%inherit file="wiki_base.html"/>
 
-<%block name="lymain">
+<%block name="main">
 
-<form action="" method="post">
+<div class="lrform edit-topic">
+  <h2>${ _("Edit") } ${ topic.name }</h2>
+  <form action="" method="post">
 
-  <div class="form-element">
-    <label for="id_name">${_("* Name:")}</label>
-    <input id="id_name" type="text" name="name" maxlength="60" value="${ topic.name }"/>
-    ${ name_error }
-  </div>
-
-  <div class="form-element">
-    <label for="id_catalog">${_("Image catalog:")}</label>
-    <select name="catalog" id="id_catalog">
-      % for c in catalogs:
-      <option value="${ c.id }" 
-% if c.id == topic.catalog_id:
-selected="selected"
-% endif
->${ c.name }</option>
+    % if ERROR:
+    <ol>
+      % for e in ERROR:
+      <li>${ e }</li>
       % endfor
-    </select>
-    ${ catalog_error }
-  </div>
+    </ol>
+    % endif
 
-  <div class="form-element">
-    <label for="id_body">${_("Description:")}</label>
-    <textarea id="id_body" name="body">${ topic.body }</textarea>
-    ${ body_error }
-  </div>
+    <div class="item">
+      <div class="c1">
+        <label for="id_name">${_("* Name:")}</label>
+      </div>
+      <div class="c2">
+        <input id="id_name" type="text" name="name" maxlength="60" value="${ topic.name }"/>
+      </div>
+    </div>
+    
+    <div class="item">
+      <div class="c1">
+        <label for="id_catalog">${_("Image catalog:")}</label>
+      </div>
+      <div class="c2">
+        <select name="catalog" id="id_catalog">
+          % for c in catalogs:
+          <option value="${ c.id }" 
+                  % if c.id == topic.catalog_id:
+                  selected="selected"
+                  % endif
+                  >${ c.name }</option>
 
-  <div class="form-footer">
-    <input type="submit" value="${ _('Update Topic') }"/>
-    ${ submit_error }
-  </div>
-</form>
+          % endfor
+        </select>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="c1">
+        <label for="id_body">${_("Description:")}</label>
+      </div>
+      <div class="c2">
+        <textarea id="id_body" name="body">${ topic.body }</textarea>
+      </div>
+    </div>
+
+    <div class="submit">
+      <input type="submit" value="${ _('Update Topic') }"/>
+    </div>
+
+  </form>
+</div>
 
 </%block>

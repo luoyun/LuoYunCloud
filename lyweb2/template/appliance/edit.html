@@ -1,57 +1,66 @@
 <%inherit file="appliance_base.html" />
 
-<%block name="lymain">
+<%block name="main">
 
-<div class="lyform">
-  <form action="" method="POST">
-
-    <div class="form-header">
-      <h1>${_("Edit appliance")}</h1>
-      <p>${_("This the common func")}</p>
-    </div>
-
-    <div class="form-element">
-      <label for="id_name">${_("Appliance Name:")}</label>
-      <input id="id_name" type="text" name="name" maxlength="30" value="${ appliance.name }"/>
-    </div>
-
-    %if name_error:
-    <div class="field-error">${ name_error }</div>
-    %endif
-
-    <div class="form-element">
-      <label for="id_catalog">${_("Image catalog:")}</label>
-      <select name="catalog" id="id_catalog">
-        %for c in catalogs:
-        <option value="${ c.id }" 
-%if c.id == catalog:
-selected="selected"
-%endif
->${ c.name }</option>
-        %endfor
-      </select>
-    </div>
-
-    %if catalog_error:
-    <div class="field-error">${ catalog_error }</div>
-    %endif
-
-    %if submit_error:
-    <div class="submit-error">{{ submit_error }}</div>
-    %endif
-
-    <div class="form-footer">
-      <button type="submit">${_("Submit")}</button>
-    </div>
-  </form>
+<div class="inner-navigator">
+  <span><a href="/">${ _("Home") }</a></span>&gt;
+  <span><a href="/appliance">${ _("Appliances") }</a></span>&gt;
+  <span>${ _("Edit") } ${ appliance.name }</span>
 </div>
 
-<script type="text/javascript">
-  %if addmethod:
-  lyImageDefaultSelectUploadFile(${ addmethod });
-  %endif
+<div class="lrform edit-appliance">
+  <h2>${_("Edit appliance")}</h2>
+  <form method="POST" enctype="multipart/form-data">
 
-  lyImageSelectUploadFile();
-</script>
+    % if ERROR:
+    <ol>
+      % for e in ERROR:
+      <li>${ e }</li>
+      % endfor
+    </ol>
+    % endif
+
+    <div class="item">
+      <div class="c1">
+        <label for="id_name">${ _("Appliance Name") }</label>
+      </div>
+      <div class="c2">
+        <input id="id_name" type="text" name="name" maxlength="30" value="${ name }"/>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="c1">
+        <label for="id_catalog">${ _("Catalog") }</label>
+      </div>
+      <div class="c2">
+        <select name="catalog" id="id_catalog">
+          %for c in catalogs:
+          <option value="${ c.id }" 
+                  %if c.id == catalog_id:
+                  selected="selected"
+                  %endif
+                  >${ c.name }</option>
+          %endfor
+        </select>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="c1">
+        <label for="id_logo">${ _("Logo Image") }</label>
+      </div>
+      <div class="c2">
+        <input name="logo" type="file"/>
+      </div>
+    </div>
+
+
+    <div class="submit">
+      <input type="submit" value="${ _('Submit') }"/>
+    </div>
+
+  </form>
+</div>
 
 </%block>

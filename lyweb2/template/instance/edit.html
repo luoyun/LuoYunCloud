@@ -1,36 +1,55 @@
 <%inherit file="instance_base.html" />
 
-<%block name="lymain">
+<%block name="main">
 
-<div class="lyform">
-  <form action="" method="POST">
+<div class="inner-navigator">
+  <span><a href="/">${ _("Home") }</a></span>&gt;
+  <span><a href="/instance/${ instance.id }">${ instance.name }</a></span>&gt;
+  <span>${ _("Edit ") }</span>
+</div>
 
-    <div class="form-header">
-      <h1>${_("Edit Instance")}</h1>
-      <p>${_("This the common func")}</p>
+
+<div class="lrform edit-instance">
+  <h2>${_("Edit Instance")}</h2>
+  <form method="POST">
+
+    % if ERROR:
+    <ol>
+      % for e in ERROR:
+      <li>${ e }</li>
+      % endfor
+    </ol>
+    % endif
+
+    <div class="item">
+      <div class="c1">
+        <label for="id_name">${_("Instance Name:")}</label>
+        </div>
+      <div class="c2">
+        <input id="id_name" type="text" name="name" maxlength="30" value="${ instance.name }"/>
+      </div>
     </div>
 
-    <div class="form-element">
-      <label for="id_name">${_("Instance Name:")}</label>
-      <input id="id_name" type="text" name="name" maxlength="30" value="${ instance.name }"/>
-      ${ name_error }
+    <div class="item">
+      <div class="c1">
+        <label for="id_cpus">${_("Cpu Number:")}</label>
+      </div>
+      <div class="c2">
+        <input id="id_cpus" type="text" name="cpus" value="${ instance.cpus }"/>
+      </div>
     </div>
 
-    <div class="form-element">
-      <label for="id_cpus">${_("Cpu Number:")}</label>
-      <input id="id_cpus" type="text" name="cpus" value="${ instance.cpus }"/>
-      ${ cpus_error }
+    <div class="item">
+      <div class="c1">
+        <label for="id_memory">${_("Memory:")}</label>
+      </div>
+      <div class="c2">
+        <input id="id_memory" type="text" name="memory" value="${ instance.memory }"/>
+      </div>
     </div>
 
-    <div class="form-element">
-      <label for="id_memory">${_("Memory:")}</label>
-      <input id="id_memory" type="text" name="memory" value="${ instance.memory }"/>
-      ${ memory_error }
-    </div>
-
-    <div class="form-footer">
-      <button type="submit">${_("Submit")}</button>
-      ${ submit_error }
+    <div class="submit">
+      <input type="submit" value="${ _('Submit') }"/>
     </div>
   </form>
 </div>

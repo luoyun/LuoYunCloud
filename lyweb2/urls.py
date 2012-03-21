@@ -3,7 +3,7 @@
 import os
 import tornado.web
 
-from lycustom import LyNotFoundHandler
+from lycustom import LyNotFoundHandler, LyProxyHandler
 
 import app.home.views as home
 import app.account.views as account
@@ -12,18 +12,23 @@ import app.instance.views as instance
 import app.node.views as node
 import app.job.views as job
 import app.wiki.views as wiki
+import app.admin.views as admin
 
 
 curdir = os.path.dirname(__file__)
 
+import settings
+from settings import JOB_ACTION
+
 
 LYJOB_ACTION = {
     'unknown': 0,
-    'run': 1,
-    'stop': 2,
+    'run': JOB_ACTION['RUN_INSTANCE'],
+    'stop': JOB_ACTION['STOP_INSTANCE'],
     'suspend': 3,
     'save': 4,
     'reboot': 5,
+    'query': JOB_ACTION['QUERY_INSTANCE'],
 }
 
 
@@ -37,10 +42,14 @@ settings = {
     'debug': True,
 
     # Global settings about LuoYun System
-    'appliance_top_dir': '/opt/LuoYun/appliance/',
-    'appliance_top_url': '/appliances/',
-    'control_server_ip': '192.168.1.100',
+    'appliance_top_dir': '/opt/LuoYun/data/appliance/',
+    'appliance_top_url': '/dl/appliance/',
+    'control_server_ip': '192.168.1.11',
     'control_server_port': 1369,
+
+    'THEME_URL': settings.THEME_URL,
+    'STATIC_URL': settings.STATIC_URL,
+    'LANGUAGES': settings.LANGUAGES,
 
     'LYJOB_ACTION': LYJOB_ACTION,
 }
@@ -72,11 +81,10 @@ handlers = [
     (r'/appliance/([0-9]+)/delete', appliance.Delete),
     (r'/appliance/([0-9]+)/create_instance', appliance.CreateInstance),
 
-    (r'/appliance/add_catalog', appliance.AddCatalog),
+    #(r'/appliance/add_catalog', appliance.AddCatalog),
 
 
     # Instance
-    (r'/instance', instance.Index),
     (r'/instance/add', instance.Add),
     (r'/instance/([0-9]+)', instance.View),
     (r'/instance/([0-9]+)/edit', instance.Edit),
@@ -91,9 +99,11 @@ handlers = [
     # Node
     (r'/node', node.Index),
     (r'/node/dynamic_list', node.DynamicList),
+    (r'/node/([0-9]+)', node.Action),
 
     # Job
     (r'/job', job.Index),
+    (r'/job/([0-9]+)/status', job.JobStatus),
 
 
     # Wiki
@@ -101,8 +111,21 @@ handlers = [
     (r'/wiki/topic/([0-9]+)', wiki.ViewTopic),
     (r'/wiki/topic/([0-9]+)/source', wiki.ViewTopicSource),
     (r'/wiki/topic/([0-9]+)/edit', wiki.EditTopic),
+    (r'/wiki/topic/([0-9]+)/delete', wiki.DeleteTopic),
     (r'/wiki/topic/add', wiki.NewTopic),
-    (r'/wiki/catalog/add', wiki.AddCatalog),
+    (r'/wiki/catalog/([0-9]+)', wiki.ViewCatalog),
+
+
+    # Admin
+    (r'/admin', admin.Index),
+    (r'/admin/appliance', admin.Appliance),
+    (r'/admin/appliance/add_catalog', admin.ApplianceAddCatalog),
+    (r'/admin/wiki', admin.Wiki),
+    (r'/admin/wiki/add_catalog', admin.WikiAddCatalog),
+    (r'/admin/wiki/catalog/([0-9]+)/edit', admin.WikiEditCatalog),
+
+    # Utils
+    (r'/proxy', LyProxyHandler),
 
     (r'/(.*)', LyNotFoundHandler),
 ]

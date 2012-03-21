@@ -24,6 +24,7 @@ def check_password(raw_password, enc_password):
 
 
 class Login(LyRequestHandler):
+
     def get(self):
         self.render("account/login.html")
 
@@ -37,7 +38,7 @@ class Login(LyRequestHandler):
             username )
 
         d = { 'username': username, 'password': password,
-              'user': user }
+              'user': user, 'ERROR': [] }
 
         if user:
             if check_password(password, user.password):
@@ -46,10 +47,10 @@ class Login(LyRequestHandler):
                 #self.write("Have not completed ! d = %s" % d)
                 self.redirect('/')
             else:
-                d['password_error'] = 'Password is wrong.'
+                d['ERROR'].append( _('Password is wrong.') )
                 self.render('account/login.html', **d)
         else:
-            d['username_error'] = 'Have not found user.'
+            d['ERROR'].append( _('Have not found user.') )
             self.render('account/login.html', **d)
 
     def save_session(self, user_id):
@@ -69,6 +70,9 @@ class Login(LyRequestHandler):
 (session_key, session_data, expire_date) \
 VALUES (%s, %s, now()::timestamp + '14 day');",
             session_key, session_data )
+
+
+
 
 
 class Logout(LyRequestHandler):
@@ -99,18 +103,18 @@ class Register(LyRequestHandler):
         username = self.get_argument('username', '')
         password = self.get_argument('password', '')
 
-        d = { 'username': username }
+        d = { 'username': username, 'ERROR': [] }
 
         user = self.db.get(
             'SELECT * from auth_user WHERE username=%s;',
             username )
 
         if user:
-            d['username_error'] = 'This username is taked.'
+            d['ERROR'].append( _('This username is taked.') )
             return self.render('account/register.html', **d)
 
         if len(password) < 6:
-            d['password_error'] = 'password must have more than 6 characters !'
+            d['ERROR'].append( _('password must have more than 6 characters !') )
             return self.render('account/register.html', **d)
 
         salt = md5(str(random.random())).hexdigest()[:12]
@@ -132,9 +136,12 @@ class Register(LyRequestHandler):
                 "INSERT INTO user_profile (user_id) VALUES (%s);",
                 user.id )
             return self.redirect('/')
+
         except Exception, emsg:
-            d['submit_error'] = 'System error: %s' % emsg
+            d['ERROR'].append( _('System error: %s') % emsg )
             self.render('account/register.html', **d)
+
+
 
 
 class Profile(LyRequestHandler):
@@ -142,6 +149,8 @@ class Profile(LyRequestHandler):
     @authenticated
     def get(self):
         self.render('account/profile.html')
+
+
 
 class User(LyRequestHandler):
 
@@ -230,11 +239,11 @@ class ResetPassword(LyRequestHandler):
         if emsg:
             return self.write(emsg)
 
-        d = { 'title': 'Reset Password' }
+        d = { 'title': 'Reset Password', 'ERROR': [] }
 
         password = self.get_argument('password', '')
         if len(password) < 6:
-            d['password_error'] = 'password must have more than 6 characters !'
+            d['ERROR'].append( _('password must have more than 6 characters !') )
             return self.render('account/reset_password.html', **d)
 
         salt = md5(str(random.random())).hexdigest()[:12]
@@ -246,7 +255,7 @@ class ResetPassword(LyRequestHandler):
                 'UPDATE auth_user SET password=%s;',
                 enc_password )
         except Exception, emsg:
-            d['submit_error'] = 'UPDATE failed: %s' % emsg
+            d['ERROR'].append( _('UPDATE failed: %s') % emsg )
             return self.render('account/reset_password.html', **d)
         self.redirect('/account/profile')
 
@@ -260,6 +269,7 @@ class ResetPassword(LyRequestHandler):
             'SELECT * from auth_user WHERE id=%s;', id)
 
         if not self.user:
-            return 'Have not found user %s' % id
+            return _('Have not found user %s') % id
         
         return None
+

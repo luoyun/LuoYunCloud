@@ -2,6 +2,14 @@
 
 <%block name="lymain">
 
+<div class="inner-navigator">
+  <span><a href="/">${ _("Home") }</a></span>&gt;
+  <span><a href="/wiki">${ _("Wiki") }</a></span>&gt;
+  <span><a href="/wiki/catalog/${ topic.catalog_id }">
+      ${ topic.catalog.name }</a></span>&gt;
+  <span>${ _("View") } ${ topic.name }</span>
+</div>
+
 <div class="topic">
   <div class="topic-name">
     <h2>${ topic.name }</h2>
@@ -9,13 +17,14 @@
   <div class="topic-info">
     <span>${ fulltime(topic.updated) } updated by ${ topic.user.username }</span>
 % if current_user:
-% if current_user.id == 1 or current_user.id == topic.user_id:
+% if current_user.id in [1, topic.user_id]:
     <span><a href="/wiki/topic/${ topic.id }/edit">${ _("Edit") }</a></span>
+    <span><a href="/wiki/topic/${ topic.id }/delete">${ _("Delete") }</a></span>
 % endif
 % endif
     <span><a href="/wiki/topic/${ topic.id }/source">${ _("Source") }</a></span>
   </div>
-  <div class="topic-body">
+  <div class="topic-body markup1">
     ${ topic.body_html }
   </div>
 </div>

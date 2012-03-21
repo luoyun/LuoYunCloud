@@ -1,0 +1,14 @@
+.user-profile {
+    padding: 30px 5px;
+}
+
+.user-register, .login-form, .reset-password-form {
+    margin: 100px auto;
+    width: 380px;
+}
+.user-register .c1, .login-form .c1, .reset-password-form .c1 {
+    width: 120px;
+}
+.user-register .c2, .login-form .c2, .reset-password-form .c2 {
+    width: 220px;
+}

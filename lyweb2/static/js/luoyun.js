@@ -17,6 +17,10 @@ function lySetCurrentNavigator () {
         current = matchs[1];
     }
 
+    if (current == '/instance')
+        $("#navigator li:first").addClass("current");
+
+
     if (current != '/') {
         var link = "#navigator a[href^='{0}']".format(current);
         $(link).parent().addClass("current");
@@ -50,3 +54,5 @@ function lyHover(id) {
         }
     );
 }
+
+

@@ -1,47 +1,28 @@
 <%inherit file="appliance_base.html" />
 
-<%block name="lymain">
+<%block name="main">
 
 <script type="text/javascript" src="${STATIC_URL}js/jquery.uploadProgress.js"></script>
 
-<div class="lyform">
+<div class="upload-appliance">
+
   <form id="upload" enctype="multipart/form-data" action="/upload" method="post">
     <input name="upfile" type="file"/>
-    <input type="submit" value="Upload"/>
+    <input type="submit" value="${ _('Upload') }"/>
   </form>
 
   <div id="uploading" style="display: none;">
     <div id="progress" class="bar">
       <div id="progressbar"> </div>
-      <div id="percents"></div>
     </div>
+    <div id="percents"></div>
   </div>
+
 </div>
 
+
 <script type="text/javascript">
-$(function() {
-  $("form").uploadProgress({
-    /* scripts locations for safari */
-    jqueryPath: "${STATIC_URL}js/jquery-1.7.min.js",
-    uploadProgressPath: "${STATIC_URL}js/jquery.uploadProgress.js",
-
-    start: function() { $("#uploading").show(); },
-
-    /* function called each time bar is updated */
-    uploading: function(upload) {$('#percents').html(upload.percents+'%');},
-
-    success: function(upload) { $("#uploading").hide(); },
-
-    /* selector or element that will be updated */
-    progressBar: "#progressbar",
-
-    /* progress reports url */
-    progressUrl: "/progress",
-
-    /* how often will bar be updated */
-    interval: 1000,
-  });
-});
+  Uploading();
 </script>
 
 </%block>
