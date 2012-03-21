@@ -232,18 +232,19 @@ self.current_user.id, settings.JOB_S_INITIATED, target_type, target_id, action)
 
             # mid-state of LY_A_NODE_RUN_INSTANCE
 
-            200: _('RUNNING'),
-            201: _('RUNNING_SEARCHING_NODE'),
-            202: _('RUNNING_SENT_TO_NODE'),
-            210: _('RUNNING_WAITING'),
-            211: _('RUNNING_DOWNLOADING_APP'),
-            212: _('RUNNING_CHECKING_APP'),
-            213: _('RUNNING_EXTRACTING_APP'),
-            214: _('RUNNING_MOUNTING_IMAGE'),
-            215: _('RUNNING_PREPARING_IMAGE'),
-            216: _('RUNNING_UNMOUNTING_IMAGE'),
-            221: _('RUNNING_STARTING_INSTANCE'),
-            299: _('RUNNING_LAST_STATUS = 299'),
+            200: _('Running'),
+            201: _('Searching for Node Server'),
+            202: _('Sending job to Node Server'),
+            210: _('Waiting for resource available on Node Server'),
+            211: _('Downloading Appliance image'),
+            212: _('Checking Appliance image'),
+            213: _('Creating Instance Disk File'),
+            214: _('Mounting Instance Disk File'),
+            215: _('Configuring Instance'),
+            216: _('Un-Mounting Instance Disk File'),
+            221: _('Starting Instance Virtual Machine'),
+            250: _('Stopping Instance Virtual Machine'),
+            299: _('Last Running Status'),
 
             # end of mid-state of LY_A_NODE_RUN_INSTANCE
 
