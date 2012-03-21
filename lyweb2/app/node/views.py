@@ -1,9 +1,12 @@
 # coding: utf-8
 
+import struct, socket
 import logging, datetime, time
 import tornado
 from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
+
+from settings import JOB_ACTION, JOB_TARGET
 
 
 class Index(LyRequestHandler):
@@ -45,3 +48,36 @@ class DynamicList(LyRequestHandler):
             #print 'go finish, now = %s' % now
             self.render( 'node/dynamic_node_list.html',
                          nodes = nodes )
+
+
+
+class Action(LyRequestHandler):
+
+    @authenticated
+    def get(self, id):
+
+        action = int(self.get_argument("action", 0))
+
+        node = self.db.get('SELECT * FROM node WHERE id=%s;', id)
+
+        if not node:
+            return self.write('No such node!')
+
+        if not action:
+            return self.render('node/view.html', node=node)
+
+        elif action == 1:
+            if node.isenable:
+                return self.write('Already enable !')
+            else:
+                self.new_job(JOB_TARGET['NODE'], id, JOB_ACTION['ENABLE_NODE'])
+
+        elif action == 2:
+            if not node.isenable:
+                return self.write('Already disable !')
+            else:
+                self.new_job(JOB_TARGET['NODE'], id, JOB_ACTION['DISABLE_NODE'])
+        else:
+            return self.write('Unknow action!')
+
+        return self.write('Action success !')

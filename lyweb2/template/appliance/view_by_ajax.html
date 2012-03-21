@@ -1,0 +1,26 @@
+<div class="appliance-base-info">
+
+  <h2 class="name"><a href="/appliance/${ appliance.id }">${ appliance.name }</a></h2>
+  
+  % if appliance.summary:
+  <p class="summary">${ appliance.summary }</p>
+  % endif
+
+  <table>
+    <tbody>
+      <tr><td>${ _("ID") }</td><td>${ appliance.id }</td></tr>
+      <tr><td>${ _("Size") }</td><td>${ appliance.filesize }</td></tr>
+      <tr><td>${ _("Create Time") }</td><td>${ fulltime(appliance.created) }</td></tr>
+      <tr><td>${ _("Update Time") }</td><td>${ fulltime(appliance.updated) }</td></tr>
+    </tbody>
+  </table>
+
+  <div class="action">
+    % if current_user and current_user.id == appliance.user_id:
+    <span class="edit"><a class="small-button" href="/appliance/${ appliance.id }/edit">${ _("Edit") }</a></span>
+    <span class="delete"><a class="small-button" href="/appliance/${ appliance.id }/delete">${ _("Delete") }</a></span>
+    % endif
+    <span class="create"><a class="small-button" href="/appliance/${ appliance.id }/create_instance">${ _("Create Instance") }</a></span>
+  </div>
+
+</div>

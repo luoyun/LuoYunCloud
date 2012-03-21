@@ -60,3 +60,53 @@ class DynamicList(LyRequestHandler):
                          nodes = nodes )
 
 
+class JobStatus(LyRequestHandler):
+
+    ''' A running job status '''
+
+    @asynchronous
+    def get(self, id):
+
+        job = self.db.get(
+            'SELECT * FROM job WHERE id=%s;', id )
+
+        if not job:
+            self.write(u'No job %s !' % id)
+            self.finish()
+
+        previous = int( self.get_argument('previous', 0) )
+
+        self.check_job_status(id, previous)
+
+
+    def check_job_status(self, id, previous):
+
+        if self.request.connection.stream.closed():
+            return
+
+        job = self.db.get(
+            'SELECT * FROM job WHERE id=%s;', id )
+
+        #print 'id = %s, previous = %s, now = %s' % (
+        #    id, previous, job.status )
+
+        if job.status >= 300 and job.status <= 399:
+            json = { 'jid': id, 'job_status': job.status,
+                     'desc': self.job_status(job.status),
+                     'status': 0 }
+            self.write(json)
+            return self.finish()
+
+        if job.status == previous:
+
+            tornado.ioloop.IOLoop.instance().add_timeout(
+                time.time() + 3,
+                lambda: self.check_job_status(id, job.status) )
+
+        else:
+
+            json = { 'jid': id, 'job_status': job.status,
+                     'desc': self.job_status(job.status),
+                     'status': 1 }
+            self.write(json)
+            self.finish()

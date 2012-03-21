@@ -2,41 +2,47 @@
 
 <%block name="lyentry">
 
-<div class="lyform">
+<div class="lrform user-register">
+  <h2>${_("LuoYun User Register")}</h2>
   <form method="POST" action="/account/register">
 
-    <div class="form-header">
-      <h1>${_("LuoYun User Register")}</h1>
-    </div>
-
-    <div class="form-element">
-      <label for="username">${_("Username")}</label>
-      <input id="username" type="text" name="username" maxlength="30" value="${username}"/>
-    </div>
-    % if username_error:
-    <div class="submit-error">${ username_error }</div>
+    % if ERROR:
+    <ol>
+      % for e in ERROR:
+      <li>${ e }</li>
+      % endfor
+    </ol>
     % endif
 
-    <div class="form-element">
-      <label for="password">${_("Password")}</label>
-      <input id="password" type="password" name="password" value="${password}"/>
+    <div class="item">
+      <div class="c1">
+        <label for="username">${_("Username")}</label>
+      </div>
+      <div class="c2">
+        <input id="username" type="text" name="username" maxlength="30" value="${username}"/>
+      </div>
     </div>
 
-    % if password_error:
-    <div class="submit-error">${ password_error }</div>
-    % endif
-
-    <div class="form-element">
-      <label for="password2">${_("Password Confirm")}</label>
-      <input id="password2" type="password" name="password2"/>
+    <div class="item">
+      <div class="c1">
+        <label for="password">${_("Password")}</label>
+      </div>
+      <div class="c2">
+        <input id="password" type="password" name="password" value="${password}"/>
+      </div>
     </div>
 
-    %if submit_error:
-    <div class="submit-error">${ submit_error }</div>
-    %endif
+    <div class="item">
+      <div class="c1">
+        <label for="password2">${_("Password Confirm")}</label>
+      </div>
+      <div class="c2">
+        <input id="password2" type="password" name="password2"/>
+      </div>
+    </div>
 
-    <div class="form-footer">
-      <input id="register_submit" type="submit" value="${_("Register")}"/>
+    <div class="submit">
+      <input type="submit" value="${ _("Register") }"/>
     </div>
 
   </form>

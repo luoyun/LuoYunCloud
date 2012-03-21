@@ -1,45 +1,48 @@
 <%inherit file="instance_base.html"/>
 
-<%block name="lymain">
+<%block name="main">
 
-<div class="lyform">
+<div class="lrform create-instance">
+  <h2>${_("Create a new instance")}</h2>
+
   <form action="/instance/add" method="POST">
 
-    <div class="form-header">
-      <h1>${_("Create a new instance")}</h1>
-      <p>${_("This the common func")}</p>
+    % if ERROR:
+    <ol>
+      % for e in ERROR:
+      <li>${ e }</li>
+      % endfor
+    </ol>
+    % endif
+
+    <div class="item">
+      <div class="c1">
+        <label for="id_appliance">${ _("Appliance catalog:") }</label>
+      </div>
+      <div class="c2">
+        <select name="appliance" id="id_appliance">
+          %for a in appliances:
+          <option value="${ a.id }" 
+                  %if a.id == appliance:
+                  selected="selected"
+                  %endif
+                  >${ a.name }</option>
+          %endfor
+        </select>
+      </div>
     </div>
 
-    <div class="form-element">
-      <label for="id_appliance">${_("Appliance catalog:")}</label>
-      <select name="appliance" id="id_appliance">
-        %for a in appliances:
-        <option value="${ a.id }" 
-%if a.id == appliance:
-selected="selected"
-%endif
->${ a.name }</option>
-        %endfor
-      </select>
-      %if appliance_error:
-      <div class="field-error">${ appliance_error }</div>
-      %endif
+    <div class="item">
+      <div class="c1">
+        <label for="id_name">${_("Instance Name:")}</label>
+      </div>
+      <div class="c2">
+        <input id="id_name" type="text" name="name" maxlength="30" value="${ name }"/>
+      </div>
     </div>
 
-    <div class="form-element">
-      <label for="id_name">${_("Instance Name:")}</label>
-      <input id="id_name" type="text" name="name" maxlength="30" value="${ name }"/>
-      %if name_error:
-      <div class="field-error">${ name_error }</div>
-      %endif
-    </div>
-
-    %if submit_error:
-    <div class="submit-error">{{ submit_error }}</div>
-    %endif
-
-    <div class="form-footer">
-      <button type="submit">${_("Submit")}</button>
+    <div class="submit">
+      <input type="submit" value="${ _('Submit') }" />
     </div>
   </form>
 </div>

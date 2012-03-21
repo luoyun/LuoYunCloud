@@ -3,8 +3,7 @@
 *~
 *#
 *.bak
-*.db
-cscope.out
 *.log
 mako
 tornado
+markdown

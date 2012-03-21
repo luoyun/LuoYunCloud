@@ -187,10 +187,12 @@ CREATE TABLE application_catalog (
 CREATE TABLE node (
     id serial PRIMARY KEY,
     hostname character varying(64),
+    key character varying(128),
     ip inet NOT NULL,
 -- should bind with some authenticate method
     arch integer NOT NULL,
     status integer NOT NULL,
+    isenable boolean DEFAULT False, /* TODO */
     memory integer NOT NULL,
     cpus integer NOT NULL,
     cpu_model character varying(64) NOT NULL,
@@ -206,6 +208,7 @@ CREATE TABLE node (
 CREATE TABLE instance (
     id serial PRIMARY KEY,
     name character varying(64) NOT NULL,
+    key character varying(128),
     summary character varying(256),
     description text,
     logo character varying(64), -- 'instance_logo_' + md5 + 'suffix'
@@ -219,7 +222,7 @@ CREATE TABLE instance (
 -- should bind with node !
 
     ip inet,                -- unique ?
-    mac macaddr UNIQUE NOT NULL,
+    mac macaddr UNIQUE,
 
     status integer NOT NULL, -- default is stop ?
 
@@ -308,7 +311,7 @@ INSERT INTO user_permissions (user_id, permission_id) VALUES (1, 1);
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
 
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
+--REVOKE ALL ON SCHEMA public FROM PUBLIC;
+--REVOKE ALL ON SCHEMA public FROM postgres;
+--GRANT ALL ON SCHEMA public TO postgres;
+--GRANT ALL ON SCHEMA public TO PUBLIC;

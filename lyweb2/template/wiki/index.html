@@ -1,24 +1,24 @@
 <%inherit file="wiki_base.html"/>
 
-<%block name="lymain">
+<%block name="main">
 
 <div id="wiki-main">
-  % if current_user:
-  <div class="action">
-    <a href="/wiki/catalog/add">${ _("Add Catalog") }</a>
-    <a href="/wiki/topic/add">${ _("New Topic") }</a>
+  <div class="action clearfix">
+    <a id="add-topic" class="button"
+       href="/wiki/topic/add"
+       title="${ _('Post a new topic') }"
+       >${ _("New Topic") }</a>
   </div>
-  % endif
 
   % if catalogs:
 
   % for c in catalogs:
-  <div class="catalog-list">
-    <div class="catalog-name">
-      <h2>${ c.name }</h2>
-    </div>
+  <div class="catalog">
+
+    <h2><a href="/wiki/catalog/${ c.id }">${ c.name }</a></h2>
+
     % for t in c.topics:
-    <div class="topic-list clearfix">
+    <div class="topic clearfix">
       <div class="name">
         <a href="/wiki/topic/${ t.id }">${ t.name }</a>
       </div>
@@ -30,6 +30,7 @@
       </div>
     </div>
     % endfor
+
   </div>
   % endfor
 

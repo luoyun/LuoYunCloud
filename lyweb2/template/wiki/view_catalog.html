@@ -1,0 +1,42 @@
+<%inherit file="wiki_base.html"/>
+
+<%block name="main">
+
+<div class="inner-navigator">
+  <span><a href="/">${ _("Home") }</a></span>&gt;
+  <span><a href="/wiki">${ _("Wiki") }</a></span>&gt;
+  <span>${ _("View") } ${ catalog.name }</span>
+</div>
+
+<div id="wiki-main">
+
+  <div class="action clearfix">
+    <a id="add-topic" class="button"
+       href="/wiki/topic/add"
+       title="${ _('Post a new topic') }"
+       >${ _("New Topic") }</a>
+  </div>
+
+  <div class="catalog">
+
+    <h2>${ catalog.name }</h2>
+
+    % for t in topics:
+    <div class="topic clearfix">
+      <div class="name">
+        <a href="/wiki/topic/${ t.id }">${ t.name }</a>
+      </div>
+      <div class="description">
+        <span class="updated">${ fulltime(t.updated) }</span>
+        ${ _("by") }
+        <span class="user"><a href="/account/${ t.user_id }">${ t.user.username }</a></span>
+        ${ _("update") }
+      </div>
+    </div>
+    % endfor
+
+  </div>
+
+</div>
+
+</%block>

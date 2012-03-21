@@ -1,47 +1,62 @@
 <%inherit file="appliance_base.html"/>
 
-<%block name="lymain">
+<%block name="main">
 
-<%
-   for a in appliances:
-       if a.logoname:
-           a.logourl = '%s%s/%s' % (APPLIANCE_TOP_URL, a.id, a.logoname)
-       else:
-           a.logourl = '%simg/appliance.png' % THEME_URL
+<div class="appliance-home clearfix">
 
-   app_total = len(appliances)
-%>
-
-<div id="image-main" class="clearfix">
-
-  <div class="sidebar float-left">
-    <div class="add-button"><a href="/appliance/upload">${_("Upload")}</a></div>
+  <div class="sidebar">
 
     <div class="menu">
-      <span class="normal current" id="c0">${ _("All") } (${ app_total })</span>
-      % for c in catalogs:
-      <span class="normal" id="c0">${ c.name } (${ len(c.apps) })</span>
-      % endfor
+      <ul>
+        % for c in catalogs:
+        <li id="catalog${ c.id }"
+            % if c.id == cur_catalog:
+            class="current"
+            % endif
+            ><a href="/appliance?c=${ c.id }">${ c.name }</a>
+        </li>
+        % endfor
+      </ul>
     </div>
 
     <div class="addon">
-      <a href="/appliance/add_catalog">${_("Add Catalog")}</a>
+      <a class="button" href="/appliance/upload">${_("Upload")}</a>
     </div>
+
   </div>
 
-  <div class="close-main float-right">
+  <div class="sidemain clearfix">
+
+<%doc>
+    <div class="sort-method">
+      <span>${ _("Sorted by") }</span>
+      <span><a href="/appliance?c=${ cur_catalog }">${ _("Default") }</a></span>
+      <span><a href="/appliance?c=${ cur_catalog }&by=updated">${ _("Updated") }</a></span>
+    </div>
+</%doc>
+
+<div class="appliance-list">
     % for app in appliances:
     <div class="appliance">
       <div class="logo">
-        <a href="/appliance/${app.id}"><img src="${app.logourl}"  alt="Image Picture" /></a>
+        <a href="/appliance/${ app.id }"><img src="${ app_logo_url(app) }" alt="Appliance Picture" /></a>
       </div>
       <div class="desc">
-        <span class="appid">${ app.id }</span>
         <span class="name">${ app.name }</span>
       </div>
+
     </div>
     % endfor
-  </div>
 </div>
+
+    <div class="clearfix"></div>
+    ${ page_html }
+
+  </div>
+
+<script type="text/javascript">
+  ApplianceHover();
+</script>
+
 
 </%block>
