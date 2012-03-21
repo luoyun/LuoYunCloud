@@ -227,58 +227,59 @@ self.current_user.id, settings.JOB_S_INITIATED, target_type, target_id, action)
         # TODO: have a lazy translation
 
         JOB_STATUS_STR = {
-            0: _('UNKNOWN'),
-            100: _('INITIATED'),
+            0: _('unknown'),
+            100: _('action initialized'),
 
             # mid-state of LY_A_NODE_RUN_INSTANCE
 
-            200: _('RUNNING'),
-            201: _('RUNNING_SEARCHING_NODE'),
-            202: _('RUNNING_SENT_TO_NODE'),
-            210: _('RUNNING_WAITING'),
-            211: _('RUNNING_DOWNLOADING_APP'),
-            212: _('RUNNING_CHECKING_APP'),
-            213: _('RUNNING_EXTRACTING_APP'),
-            214: _('RUNNING_MOUNTING_IMAGE'),
-            215: _('RUNNING_PREPARING_IMAGE'),
-            216: _('RUNNING_UNMOUNTING_IMAGE'),
-            221: _('RUNNING_STARTING_INSTANCE'),
-            299: _('RUNNING_LAST_STATUS = 299'),
+            200: _('running'),
+            201: _('searching for node server'),
+            202: _('sending request to sode server'),
+            210: _('waiting for resource available on node server'),
+            211: _('downloading appliance image'),
+            212: _('checking appliance image'),
+            213: _('creating instance disk file'),
+            214: _('mounting instance disk file'),
+            215: _('configuring instance'),
+            216: _('unmounting instance disk file'),
+            221: _('starting instance virtual machine'),
+            250: _('stopping instance virtual machine'),
+            299: _('Last Running Status'),
 
             # end of mid-state of LY_A_NODE_RUN_INSTANCE
 
-            300: _('FINISHED'),
-            301: _('FINISHED_SUCCESS'),
-            302: _('FINISHED_INSTANCE_RUNNING'),
-            303: _('FINISHED_INSTANCE_NOT_RUNNING'),
-            304: _('FINISHED_INSTANCE_NOT_EXIST'),
-            311: _('FINISHED_FAILURE'),
-            321: _('FINISHED_FAILURE_NODE_NOT_AVAIL'),
-            322: _('FINISHED_FAILURE_NODE_BUSY'),
-            331: _('FINISHED_FAILURE_APP_NOT_AVAIL'),
-            332: _('FINISHED_FAILURE_APP_ERROR'),
-            399: _('FINISHED_LAST_STATUS'),
+            300: _('finished'),
+            301: _('finished successfully'),
+            302: _('instance running already'),
+            303: _('instance not running'),
+            304: _('instance not exist'),
+            311: _('failed'),
+            321: _('node server not available'),
+            322: _('node server busy'),
+            331: _('appliance not available'),
+            332: _('appliance error'),
+            399: _('Last Finish Status'),
 
             # waiting for osmanager/application to start
 
-            400: _('WAITING'),
-            411: _('WAITING_STARTING_OSM'),
-            412: _('WAITING_SYCING_OSM'),
-            421: _('WAITING_STARTING_SERVICE'),
-            499: _('WAITING_LAST_STATUS'),
+            400: _('waiting'),
+            411: _('starting OS manager'),
+            412: _('syncing with OS manager'),
+            421: _('checking instance status'),
+            499: _('Last Waiting Status'),
 
             # job is pending
-            500: _('PENDING'),
+            500: _('pending'),
 
             # job is timed out
-            600: _('TIMEOUT'),
+            600: _('timeout'),
 
-            700: _('CANCEL'),
-            701: _('CANCEL_INTERNAL_ERROR'),
-            702: _('CANCEL_ALREADY_EXIST'),
-            703: _('CANCEL_TARGET_BUSY'),
-            711: _('CANCEL_ACTION_REPLACED'),
-            799: _('CANCEL_LAST_STATUS'),
+            700: _('cancel'),
+            701: _('Internal Error'),
+            702: _('work started already'),
+            703: _('node/instance busy'),
+            711: _('request cancelled'),
+            799: _('Last Cancel Status'),
             }
 
         return JOB_STATUS_STR.get( code, _('Unknown') )
