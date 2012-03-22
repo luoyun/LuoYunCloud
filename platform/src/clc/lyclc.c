@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <time.h>
 #include <sys/epoll.h>
 /* in RHEL5, EPOLLRDHUP is not defined */
 #ifndef EPOLLRDHUP
@@ -237,7 +238,7 @@ int main(int argc, char *argv[])
     }
 
     /* init job queue */
-    if (job_init() < 0) {
+    if (job_init() < 0 || job_internal_init() < 0) {
         logsimple(_("job_init failed.\n"));
         ret = -255;
         goto out;
@@ -258,29 +259,46 @@ int main(int argc, char *argv[])
         goto out;
     }
 
+    /* init timeout values */
+    time_t mcast_join_time, job_dispatch_time, job_internal_time;
+    mcast_join_time = 0;
+    time(&job_dispatch_time);
+    job_internal_time = job_dispatch_time + (CLC_MCAST_JOIN_INTERVAL<<1);
+    job_dispatch_time = job_dispatch_time + (CLC_MCAST_JOIN_INTERVAL<<2);
+
     /* start main event driven loop */
     int i, n = 0;
     struct epoll_event events[EPOLL_EVENTS_MAX];
     while (1) {
+        time_t time_now;
+        time(&time_now);
+
         /* send mcast request */
-        static int mcast_join_timeout = 0;
-        if (mcast_join_timeout == 0) {
+        if (time_now - mcast_join_time > CLC_MCAST_JOIN_INTERVAL) {
             if (ly_mcast_send_join() < 0)
                 logerror(_("failed sending mcast request.\n"));
-            mcast_join_timeout = CLC_MCAST_JOIN_INTERVAL;
+            mcast_join_time = time_now;
         }
-        else if (n == 0)
-            mcast_join_timeout--;
+        else if (time_now < mcast_join_time)
+            mcast_join_time = time_now;
 
         /* job dispatch */
-        static int job_dispatch_timeout = 2*CLC_MCAST_JOIN_INTERVAL;
-        if (job_dispatch_timeout == 0) {
+        if (time_now - job_dispatch_time > CLC_JOB_DISPATCH_INTERVAL) {
             if (job_dispatch() < 0)
                 logerror(_("job_dispatch failed.\n"));
-            job_dispatch_timeout = CLC_JOB_DISPATCH_INTERVAL;
+            job_dispatch_time = time_now;
         }
-        else if (n == 0)
-            job_dispatch_timeout--;
+        else if (time_now < job_dispatch_time)
+            job_dispatch_time = time_now;
+
+        /* internal job dispatch */
+        if (time_now - job_internal_time > CLC_JOB_INTERNAL_INTERVAL) {
+            if (job_internal_dispatch() < 0)
+                logerror(_("job_internal failed.\n"));
+            job_internal_time = time_now;
+        }
+        else if (time_now < job_internal_time)
+            job_internal_time = time_now;
 
         n = epoll_wait(g_efd, events, EPOLL_EVENTS_MAX,
                        CLC_EPOLL_TIMEOUT);

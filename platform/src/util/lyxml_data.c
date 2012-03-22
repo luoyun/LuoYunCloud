@@ -268,7 +268,7 @@ char * lyxml_data_node_info(int req_id, char * buf, unsigned int size)
   "<from entity=\"%d\"/>"\
   "<to entity=\"%d\"/>"\
   "<response id=\"%d\" status=\"%d\">"\
-    "<data>"\
+    "<data type=\"%d\">"\
       "<status>%d</status>"\
       "<cpu>"\
         "<commit>%d</commit>"\
@@ -296,6 +296,7 @@ char * lyxml_data_reply_node_info(LYReply * reply, char * buf, unsigned int size
     int len = snprintf(buf, size, LUOYUN_XML_DATA_REPLY_NODE_INFO, 
                        reply->from, reply->to,
                        reply->req_id, reply->status,
+                       DATA_NODE_INFO,
                        ni->status,
                        ni->cpu_commit,
                        ni->mem_free,
@@ -539,7 +540,8 @@ char * lyxml_data_reply(LYReply * reply, char * buf, unsigned int size)
   "<from entity=\"%d\"/>"\
   "<to entity=\"%d\"/>"\
   "<response id=\"%d\" status=\"%d\">"\
-    "<data>"\
+    "<data type=\"%d\">"\
+      "<id>%d</id>"\
       "<status>%d</status>"\
       "<ip>%s</ip>"\
     "</data>"\
@@ -559,7 +561,10 @@ char * lyxml_data_reply_instance_info(LYReply * reply, char * buf,
 
     int len = snprintf(buf, size, LUOYUN_XML_DATA_INSTANCE_INFO,
                        reply->from, reply->to, reply->req_id,
-                       reply->status, ii->status,
+                       reply->status,
+                       DATA_INSTANCE_INFO,
+                       ii->id,
+                       ii->status,
                        ii->ip ? (char *)(BAD_CAST ii->ip) : "");
     if (len < 0 || len >= size)
         return NULL;

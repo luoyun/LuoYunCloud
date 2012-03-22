@@ -308,6 +308,11 @@ typedef enum StorageMethod_t {
     STORAGE_ISCSI,
 } StorageMethod;
 
+typedef enum XMLResponseDataType_t {
+    DATA_INSTANCE_INFO = 1,
+    DATA_NODE_INFO = 2,
+} XMLResponseDataType;
+
 /*
 ** common data structure for instance control to node 
 */
@@ -375,6 +380,7 @@ typedef struct AuthInfo_t {
 ** common data structure for instance info
 */
 typedef struct InstanceInfo_t {
+    int id;
     int status;
     char *ip;
 } InstanceInfo;

@@ -371,7 +371,7 @@ static int __process_node_xml_request(xmlDoc * doc, xmlNode * node, int ent_id)
 ** the is the reply of instance info query through node request
 */
 static int __instance_info_update(xmlDoc * doc, xmlNode * node,
-                                  int ins_id, int * j_status)
+                                  int ent_id, int * j_status)
 {
     logdebug(_("%s called\n"), __func__);
 
@@ -386,6 +386,12 @@ static int __instance_info_update(xmlDoc * doc, xmlNode * node,
     InstanceInfo ii;
     char *str;
     str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/response/data/id");
+    if (str == NULL)
+        goto failed;
+    ii.id = atoi(str);
+    free(str);
+    str = xml_xpath_text_from_ctx(xpathCtx,
                          "/" LYXML_ROOT "/response/data/status");
     if (str == NULL)
         goto failed;
@@ -395,11 +401,12 @@ static int __instance_info_update(xmlDoc * doc, xmlNode * node,
                          "/" LYXML_ROOT "/response/data/ip");
 
     logdebug(_("update info for instance %d: status %d, ip %s\n"),
-                ins_id, ii.status, ii.ip);
+                ii.id, ii.status, ii.ip);
 
-    int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, ins_id);
+    /* the ent_id passed to the routine is for node, not usefult */
+    ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, ii.id);
     if (!ly_entity_is_registered(ent_id) &&
-        db_instance_update_status(ins_id, &ii, -1) < 0) {
+        db_instance_update_status(ii.id, &ii, -1) < 0) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         if (ii.ip)
             free(ii.ip);
@@ -521,50 +528,59 @@ static int __process_node_xml_response(xmlDoc * doc, xmlNode * node,
     int status = atoi(str);
     free(str);
 
+    int data_type = -1;
     node = node->children;
     for (; node; node = node->next) {
         if (node->type == XML_ELEMENT_NODE) {
-            if (strcmp((char *)node->name, "result") == 0)
-                break;
+            if (strcmp((char *)node->name, "result") == 0) {
+                xmlNode * n = node->children;
+                if (n && n->type == XML_TEXT_NODE && n->content)
+                    loginfo(_("response result: %s\n"), n->content);
+                else
+                    loginfo(_("response no result message\n"));
+            }
+            else if (strcmp((char *)node->name, "data") == 0) {
+                str = (char *) xmlGetProp(node, (const xmlChar *) "type");
+                if (str) {
+                    logdebug("node response data type = %s\n", str);
+                    data_type = atoi(str);
+                    free(str);
+                }
+                else
+                    logwarn(_("response data no type\n"));
+            }
         }
     }
-    if (node == NULL || node->children == NULL ||
-        node->children->type != XML_TEXT_NODE) {
-        logdebug(_("response no result message\n"));
-    }
-    else {
-        node = node->children;
-        char * result = strdup((char *)node->content);
-        logdebug(_("response result: %s\n"), result);
+
+    if (id != 0) {
+        LYJobInfo * job = job_find(id);
+        if (job == NULL) {
+            logwarn(_("job(%d) not found waiting for node reply\n"), id);
+            return 0;
+        }
+        if (job_update_status(job, status)) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            return -1;
+        }
+        if (status != LY_S_FINISHED_SUCCESS || data_type < 0)
+            return 0;
     }
 
-    LYJobInfo * job = job_find(id);
-    if (job == NULL) {
-        logwarn(_("job(%d) not found waiting for node reply\n"), id);
-        return 0;
-    }
-
-    if (status == LY_S_FINISHED_SUCCESS &&
-        job->j_action == LY_A_NODE_QUERY_INSTANCE) {
-        if ( __instance_info_update(doc, node, job->j_target_id, &status)) {
+    int ent_type = ly_entity_type(ent_id);
+    if (ent_type == LY_ENTITY_NODE && data_type == DATA_INSTANCE_INFO) { 
+        if ( __instance_info_update(doc, node, ent_id, &status)) {
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
             return -1;
         }
     }
    
-    if (status == LY_S_FINISHED_SUCCESS &&
-        job->j_action == LY_A_NODE_QUERY) {
+    if (ent_type == LY_ENTITY_NODE && data_type == DATA_NODE_INFO) { 
         if ( __node_info_update(doc, node, ent_id, &status)) {
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
             return -1;
         }
     }
  
-    if (job_update_status(job, status)) {
-        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-        return -1;
-    }
-
     return 0;
 }
 

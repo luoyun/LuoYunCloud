@@ -667,6 +667,58 @@ int db_instance_find_ip_by_status(int status, char * ins_ip[], int size)
     return j;
 }
 
+int db_instance_get_node(int id)
+{
+    char sql[LINE_MAX];
+    int ret = snprintf(sql, LINE_MAX,
+                       "SELECT node_id from instance where id = %d;",
+                       id);
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    PGresult *res = __db_select(sql);
+    if (res == NULL)
+        return -1;
+
+    ret = PQntuples(res);
+    if (ret <= 0)
+        return ret;
+
+    return atoi(PQgetvalue(res, 0, 0));
+}
+
+int db_instance_get_all(int **ids)
+{
+    char sql[LINE_MAX];
+    int ret = snprintf(sql, LINE_MAX, "SELECT id from instance;");
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    PGresult *res = __db_select(sql);
+    if (res == NULL)
+        return -1;
+
+    ret = PQntuples(res);
+    if (ret <= 0)
+        return ret;
+
+    int * id = malloc(ret * sizeof(int));
+    if (id == NULL)
+        return -1;
+
+    int i;
+    for (i = 0; i < ret; i++) {
+        id[i] = atoi(PQgetvalue(res, i, 0));
+    }
+    *ids = id;
+
+    return ret;
+}
+
 int db_instance_init_status()
 {
     char sql[LINE_MAX];

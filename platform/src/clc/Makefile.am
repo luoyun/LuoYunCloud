@@ -13,7 +13,7 @@ bin_PROGRAMS = lyclc
 lyclc_SOURCES = $(top_srcdir)/config.h \
                 lyclc.c  lyclc.h  options.c  options.h entity.c entity.h \
                 events.c  events.h ev_node.c ev_osm.c \
-                lyjob.c lyjob.h \
+                lyjob.c lyjob.h lyjob2.c \
                 postgres.c postgres.h \
                 node.c node.h mcast.c
 lyclc_LDADD = ../luoyun/libluoyun.a ../util/libutil.a ../../lib/libding.a

@@ -843,6 +843,7 @@ static int __domain_query(NodeCtrlInstance * ci)
         ii.status = DOMAIN_S_STOP;
     else
         ii.status = DOMAIN_S_NOT_EXIST;
+    ii.id = ci->ins_id;
 
     LYReply r;
     r.req_id = ci->req_id;
