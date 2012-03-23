@@ -412,7 +412,7 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
     }
     
     /* parse config file */
-    if (access(c->conf_path, R_OK)) {
+    if (access(c->conf_path, R_OK) == 0) {
         ret = __parse_config(c);
         if (ret && ret != NODE_CONFIG_RET_ERR_NOCONF)
             return ret; /* to exit programe */

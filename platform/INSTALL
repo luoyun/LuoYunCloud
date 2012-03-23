@@ -76,8 +76,6 @@ source code, assuming the source files are ready in the current directory.
      files are
      [dongwu@localhost luoyun-cloud-0.2]$ find /opt/LuoYun/platform
      /opt/LuoYun/platform
-     /opt/LuoYun/platform/share
-     /opt/LuoYun/platform/share/aclocal
      /opt/LuoYun/platform/bin
      /opt/LuoYun/platform/bin/lyclc
      /opt/LuoYun/platform/bin/lynode
