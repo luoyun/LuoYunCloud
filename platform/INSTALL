@@ -1,52 +1,175 @@
-To build the LuoYun cloud applications from the source files,
 
-#######################################################################
-Example step by step setup commands,
+This file contains information about how to build LuoYun Cloud platform
+applications from source code, and how to deploy platform applications
+on target systems.
 
-sh-4.1# mkdir /opt/LuoYun2_Src
-sh-4.1# cd /opt/LuoYun2_Src/
-sh-4.1# cp /home/dongwu/luoyun-cloud/luoyun-cloud-0.1.tar.gz .
-sh-4.1# tar xzf luoyun-cloud-0.1.tar.gz 
-sh-4.1# cd luoyun-cloud-0.1
-sh-4.1# ./configure --prefix=/opt/LuoYun2_Src/Install 
-...
-sh-4.1# make
-...
-sh-4.1# make install
-sh-4.1# cd /opt/LuoYun2_Src/Install/
-sh-4.1# bin/lyclc -d
-...
-sh-4.1# bin/lynode -d
-...
 
-#######################################################################
+The file contains following sections.
+1. Overview by exmaple
+2. Install details
+3. Deployment
+3.1 Deployment on single machine
+3.2 Deployment on multi machines
+3.3 Deployment on instances(virtual machine)
 
-Here's the standard description,
 
-1. The first step is to run the configure script, which can be as
-   simple as
+##########################################################################
+1. Overview by exmaple
+##########################################################################
+The LuoYun Cloud platform applications are developed with GNU Auto tools.
+So it follows standard source code building procedures.
 
-    ./configure
+Assuming the tar ball of source files is copied into the current directory,
+and all the applications and supporting files are to be installed
+under /opt/LuoYun/platform, the build commands are,
+[dongwu@localhost tmp]$ tar xzf luoyun-cloud-0.2.tar.gz
+[dongwu@localhost tmp]$ cd luoyun-cloud-0.2/
+[dongwu@localhost luoyun-cloud-0.2]$ ./configure --prefix=/opt/LuoYun/platform
+[dongwu@localhost luoyun-cloud-0.2]$ make
+[dongwu@localhost luoyun-cloud-0.2]$ sudo make install
+Password: 
+[dongwu@localhost luoyun-cloud-0.2]$
 
-   However, it's recommeneded to specify a prefix so that when doing
-   "make install", all the files are installed into the specified 
-   directory. Developers in LuoYun Corp. use the following command as
-   root,
+Assuming the machine is used as the cloud controller, 
+[dongwu@localhost luoyun-cloud-0.2]$ sudo /opt/LuoYun/platform/bin/lyclc
 
-    ./configure --prefix=/opt/luoyun
+Assuming the same machine is used as the node server as well,
+[dongwu@localhost luoyun-cloud-0.2]$ sudo /opt/LuoYun/platform/bin/lynode
 
-2. The second step is very simple, just run "make"
+Now a LuoYun Cloud platform that comprises one machine is up and ready to 
+serve the request from LuoYun Cloud web server.
 
-    make
 
-3. The third step is to install the applications ans supporting files,
 
-    make install
+##########################################################################
+2. Install details
+##########################################################################
 
-   If you have specified "prefix" in the first step, all the files will
-   be installed to the specified directory. Otherwise, the files will be
-   installed to directories per Linux standard. For example, executables
-   will be installed into /usr/local/bin, config files go to /etc, etc.
+Here are the defails of building LuoYun Cloud platform applications from
+source code, assuming the source files are ready in the current directory.
+
+2.1  The first step is to run the configure script, which can be as
+     simple as
+
+     ./configure
+
+     However, it's recommeneded to specify a prefix so that when doing
+     "make install", all the files are installed into the specified 
+     directory. Developers in LuoYun Co. use the following command
+
+     ./configure --prefix=/opt/LuoYun/platform
+
+2.2  The second step is quite straightforward, just run "make"
+
+     make
+
+2.3  The third step is to install the applications and supporting files,
+
+     make install
+
+     If you have specified "prefix" in the first step, all the files will
+     be installed to the specified directory. Otherwise, the files will be
+     installed to directories per Linux standard. For example, executables
+     will be installed into /usr/local/bin, config files go to /etc, etc.
+
+     When /opt/LuoYun/platform is used as install prefix, all the resulting
+     files are
+     [dongwu@localhost luoyun-cloud-0.2]$ find /opt/LuoYun/platform
+     /opt/LuoYun/platform
+     /opt/LuoYun/platform/share
+     /opt/LuoYun/platform/share/aclocal
+     /opt/LuoYun/platform/bin
+     /opt/LuoYun/platform/bin/lyclc
+     /opt/LuoYun/platform/bin/lynode
+     /opt/LuoYun/platform/bin/lyosm
+     /opt/LuoYun/platform/etc
+     /opt/LuoYun/platform/etc/luoyun-cloud
+     /opt/LuoYun/platform/etc/luoyun-cloud/lyclc.conf
+     /opt/LuoYun/platform/etc/luoyun-cloud/lynode.conf
+     [dongwu@localhost luoyun-cloud-0.2]$ 
+
+     Among all the files installed, only the three binary excutables are
+     needed. Other files, including configuration files can be omitted if
+     all the default settings are to be used. The default settings should
+     work in most cases.
+
+     lyclc  - this is the cloud controller application. Along with the
+              LuoYun Cloud web application, it needs to be installed on
+              a machine which is designated to control LuoYun Cloud system.
+
+     lynode - this is the node server application. It needs to be installed
+              on a physical machine that supports virtualization. Currently
+              only KVM is supported.
+
+     lyosm  - this is the OS manager application. It needs to be installed
+              on each instance or virtual machine that's created and managed
+              through LuoYun Cloud platform.
+
+
+##########################################################################
+3. Deployment
+##########################################################################
+
+3.1 Deployment on single machine
+
+LuoYun Cloud platform applications work well on a single machine. The
+commands listed in Overview section are the example of setting up LuoYun
+Cloud platform on a single machine.
+
+The machine needs to have KVM properly configured. And it's suggested to
+use RHEL6/CentOS6, or the compliant Linux distribution, as the OS running
+on the machine.
+
+To deploy LuoYun Cloud platform on another machine, simply copy the
+lyclc and lynode binary executables onto the other machine and start
+them with root privilege.
+
+3.2 Deployment on multiple machines
+
+While deploying LuoYun Cloud platform onto multiple machines, one and only
+one machine needs to be designated as Cloud Controller. Although a virtual
+machine can be used as Cloud Controller, for the purpose of performance,
+it's recommended to use a physical machine.
+
+To set up the Cloud Controller machine,
+  1) Start and configure postgresql DB per requirement from LuoYun Cloud
+     Web server.
+  2) In default configuration, lyclc registers each node server
+     automatically by multicasting register request through multicast
+     IP adddress 228.0.0.1. If defautl settings are used, make sure
+     iptables is disabled or network traffic destined to 228.0.0.1
+     is allowed.
+  3) Copy the lyclc binary executable onto the machine and start it with
+     root privilege. RHEL5/6 and their compliant Linux diestributions are
+     well tested. If non-default settings are used, copy the configuration
+     file as well. It's recommended to copy both the binary executable
+     and configuration file to default location(specified by --prefix
+     option in configure).
+
+LuoYun Cloud platform can be easily expanded to include more physical
+machines as node server. To set up a node server,
+  1) Configure KVM and enable bridging mode. Make sure full-virtualization
+     virtual machine can be created with KVM.
+  2) In default configuration, lynode registers to cloud controller
+     automatically by listening on multicast IP adddress 228.0.0.1 for
+     register request. If defautl settings are used, make sure
+     iptables is disabled or network traffic destined to 228.0.0.1
+     is allowed.
+  3) Copy the lynode binary executable onto the machine and start it with 
+     root privilege. RHEL6/CentOS6 and its compliant Linux diestributions
+     have good support for KVM and are well tested. If non-default
+     settings are used, copy the configuration file as well. It's
+     recommended to copy both the binary executable and configuration file
+     to default location(specified by --prefix option in configure).
+
+3.3 Deployment on instances(virtual machine)
+
+In other to manage instances effectively in LuoYun Cloud platform, it's 
+desired to have each instances installed with OS manager(lyosm) and started
+automatically when instances get started. All instances developed by
+LuoYun Co have OS manager pre-installed and configured. See LuoYun Cloud
+Instance Devleopment Guide for more details.
+
 
 
 Enjoy!

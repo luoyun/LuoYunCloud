@@ -489,7 +489,8 @@ int ly_epoll_work_recv(void)
         return 1;
     }
     logdebug(_("recv %d bytes received\n"), ret);
-    __print_recv_buf(buf);
+    if (g_c->config.debug)
+        __print_recv_buf(buf);
 
     while(1) {
         ret = ly_packet_recv(pkt, ret);

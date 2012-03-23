@@ -1,6 +1,6 @@
 TRACE_LEVEL=@TRACE_VAR@
 
-EXTRA_DIST = ding-libs-0.1.3.tar.gz
+#EXTRA_DIST = ding-libs-0.1.3.tar.gz
 
 dingsrcdir = ./ding-libs
 noinst_LIBRARIES = libding.a

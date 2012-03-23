@@ -410,13 +410,13 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
         if (c->conf_path == NULL)
             return NODE_CONFIG_RET_ERR_NOMEM;
     }
-    else if (file_not_exist(c->conf_path))
-        return NODE_CONFIG_RET_ERR_ERRCONF;
     
     /* parse config file */
-    ret = __parse_config(c);
-    if (ret && ret != NODE_CONFIG_RET_ERR_NOCONF)
-        return ret; /* to exit programe */
+    if (access(c->conf_path, R_OK)) {
+        ret = __parse_config(c);
+        if (ret && ret != NODE_CONFIG_RET_ERR_NOCONF)
+            return ret; /* to exit programe */
+    }
 
     /* set default values for auto_connect */
     if (c->auto_connect == UNKNOWN)
@@ -451,7 +451,7 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
         c->debug = 0;
     if (c->clc_port == 0)
         c->clc_port = DEFAULT_LYCLC_PORT;
-    if (c->clc_mcast_ip)
+    if (c->clc_mcast_ip == NULL)
         c->clc_mcast_ip = strdup(DEFAULT_LYCLC_MCAST_IP);
     if (c->clc_mcast_port == 0)
         c->clc_mcast_port = DEFAULT_LYCLC_MCAST_PORT;
