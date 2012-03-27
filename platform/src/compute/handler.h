@@ -59,7 +59,7 @@ int ly_handler_busy(void);
 "<domain type='kvm' id=\'%d\'>"\
   "<name>%s</name>"\
   "<os>"\
-    "<type arch='x86_64' machine='rhel6.1.0'>hvm</type>"\
+    "<type arch='x86_64' machine='pc'>hvm</type>"\
     "<boot dev='hd'/>"\
   "</os>"\
   "<memory>%d</memory>"\
@@ -97,9 +97,6 @@ int ly_handler_busy(void);
     "</console>"\
     "<input type='mouse' bus='ps2'/>"\
     "<graphics type='vnc' port='-1' autoport='yes'/>"\
-    "<sound model='ich6'>"\
-      "<address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>"\
-    "</sound>"\
     "<video>"\
       "<model type='cirrus' vram='9216' heads='1'/>"\
       "<address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>"\
