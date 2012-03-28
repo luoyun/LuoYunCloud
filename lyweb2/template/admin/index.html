@@ -2,13 +2,15 @@
 
 <%block name="main">
 
-<div class="inner-navigator">
-  <span><a href="/">${ _("Home") }</a></span>&gt;
-  <span><a href="/admin">${ _("Admin") }</a></span>
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="/">${ _("Home") }</a></span>&gt;
+    <span><a href="/admin">${ _("Admin") }</a></span>
+  </div>
 </div>
 
 
-<div class="admin">
+<div class="main-wrap">
 
   <div class="sidebar">
 
@@ -25,6 +27,9 @@
         </li>
         <li id="wiki-manager">
           <a href="/admin/wiki">${ _("Wiki") }</a>
+        </li>
+        <li id="node-manager">
+          <a href="/node">${ _("Node") }</a>
         </li>
       </ul>
     </div>

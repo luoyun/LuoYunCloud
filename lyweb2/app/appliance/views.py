@@ -126,6 +126,7 @@ class Upload(AppRequestHandler):
             return self.done(
                 _('Save %s failed: %s') % (fname, msg) )
 
+
         # add appliance to DB
         try:
             self.db.execute(
@@ -193,6 +194,7 @@ class Edit(LyRequestHandler):
 
         self.t = 'appliance/edit.html'
 
+
     @authenticated
     def prepare(self):
 
@@ -213,6 +215,8 @@ FROM appliance_catalog WHERE id=%s;', app.catalog_id )
 
         self.d['appliance'] = app
         self.d['name'] = self.get_argument('name', app.name)
+        self.d['summary'] = self.get_argument('summary', app.summary)
+        self.d['description'] = self.get_argument('description', app.description)
 
         self.d['catalog_id'] = int( self.get_argument(
                 'catalog',
@@ -232,24 +236,26 @@ FROM appliance_catalog WHERE id=%s;', app.catalog_id )
             return self.render(self.t, **d)
 
         # Save logo file
+        logoname = d['appliance'].logoname
         if self.request.files:
             logoname = self.save_logo()
             if d['ERROR']:
                 return self.render(self.t, **d)
 
-        # Updated DB
+        print 'logoname = %s' % logoname
         try:
             self.db.execute(
-                'UPDATE appliance SET name=%s, \
-catalog_id=%s, updated=%s, logoname=%s WHERE id=%s;',
-                d['name'], d['catalog_id'], 'now',
-                logoname, id )
+                "UPDATE appliance SET name=%s, summary=%s, \
+catalog_id=%s, logoname=%s, description=%s, updated='now' \
+WHERE id=%s;",
+                d['name'], d['summary'], d['catalog_id'],
+                logoname, d['description'], id )
 
-            self.redirect('/appliance/%s' % id)
+            self.redirect( '/appliance/%s' % id )
 
         except Exception, emsg:
-            d['ERROR'].append(emsg)
-            self.render(self.t, **d)
+            d['ERROR'].append( 'DB error: %s' % emsg )
+            self.render( self.t, **d )
 
 
     def save_logo(self):
@@ -335,6 +341,16 @@ class Delete(AppRequestHandler):
         if self.current_user.id not in [app.user_id, 1] :
             msg = _('No permissions to delete appliance !')
             return self.done(msg)
+
+        # TODO: have any instances exist ?
+        inst_list = self.db.query(
+            'SELECT id, name FROM instance \
+WHERE appliance_id=%s;', id )
+        if inst_list:
+            return self.render(
+                'appliance/delete_failed.html',
+                ERROR= _('Have instances exist'),
+                INSTANCE_LIST=inst_list )
 
 
         # Delete appliance file

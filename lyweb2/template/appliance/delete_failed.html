@@ -1,0 +1,23 @@
+<%inherit file="appliance_base.html" />
+
+<%block name="main">
+
+<div class="main-wrap">
+
+  % if ERROR:
+  <p class="error">${ ERROR }</p>
+  % endif
+
+  % if INSTANCE_LIST:
+  <h2>${ _("Instance List") }</h2>
+  <ul>
+    % for I in INSTANCE_LIST:
+    <li><a href="/instance/${ I.id }">${ I.name }</a></li>
+    % endfor
+  </ul>
+  % endif
+
+</div>
+
+
+</%block>

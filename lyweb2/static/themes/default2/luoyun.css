@@ -56,36 +56,24 @@ body, #pager {
 /* Begin Header */
 
 #header {
-    /*background-color: #2FB8CB;*/
-    /*background-color: #007FFF;*/
-    margin-bottom: 10px; /* Fix float */
-    border-bottom: 1px dotted #DADADA;
+    background-color: #3C9EDF;
 }
 
 #header-wrapper {
-    height: 56px;
+    height: 42px;
 }
 #logo {
     float: left;
 }
-#welcome-info {
-    float: left;
-    padding: 8px 10px;
-/*    color: #FFF; */
-    font-family: "DejaVu Sans", "Microsoft YaHei", 宋体, "Hiragino Sans GB",STHeiti,Tahoma,SimHei,sans-serif;
-    font-style: italic;
-    font-size: 1.8em;
-    text-shadow: 5px 5px 10px white;
-    text-decoration: none;
+#logo img {
+    height: 42px;
 }
-
 #navigator a, #login a {
-/*    color: #FFF;*/
+    color: #FFF;
 }
 
 #navigator {
     float: left;
-    padding: 0 20px 0 20px;
 }
 
 #navigator ul {
@@ -94,7 +82,7 @@ body, #pager {
 
 #navigator li {
     float: left;
-    margin: 8px 2px 0px;
+    margin-left: 8px;
     border-radius: 5px 5px 0 0;
 }
 
@@ -107,13 +95,14 @@ body, #pager {
 
 #navigator a {
     display:inline-block;
-    padding: 10px 10px;
+    padding: 5px 10px;
     text-decoration: none;
     float:left;
-/*    color: #FFF;*/
+    color: #FFF;
+    width: 100px;
+    text-align: center;
 }
 
-/*#navigator a:visited, #navigator a:link { color: #FFF; }*/
 #navigator a:hover, #navigator a:active { color: #59218D; }
 
 #navigator li:hover {
@@ -121,16 +110,9 @@ body, #pager {
     background-color: snow;
 }
 
-#select-language {
-    float: right;
-    margin-right: 30px;
-    padding-top: 30px;
-}
-
 #login {
     text-align: right;
     float: right;
-    padding-top: 30px;
 }
 
 /* End Header */
@@ -143,8 +125,21 @@ body, #pager {
     text-align: center;
 }
 
+#select-language {
+    float: right;
+}
 
 
+
+.main-wrap {
+    clear: both;
+    margin: 0 auto;
+    text-align: left;
+    width: 980px;
+}
+.main-wrap ul {
+    list-style-image: url('img/li.jpeg');
+}
 
 
 /* Start sidebar, sidemain */
@@ -503,4 +498,8 @@ table.list {
 .action-result {
     margin: 220px auto 250px;
     text-align: center;
+}
+
+.count {
+    font: italic bold 18px/12px Georgia,Serif;
 }

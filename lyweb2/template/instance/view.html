@@ -7,7 +7,7 @@
   <span>${ _("View") } ${ instance.name }</span>
 </div>
 
-<div id="view-instance" class="clearfix">
+<div id="view-instance" class="main-wrap clearfix">
 
   <div class="logo">
 
@@ -22,8 +22,8 @@
     % endif
 
     <div id="job-status">
-      <span id="job-id"></span>
-      <span id="job-status-value"></span>
+      <span id="job-id" style="display:none;"></span>
+##      <span id="job-status-value"></span>
       <span id="job-status-desc"></span>
     </div>
 
@@ -74,13 +74,43 @@
 
   </div>
 
+</div>
 
-  <div class="description">
-    % if instance.description:
+% if instance.description:
+<div class="main-wrap">
+  <div class="ly-instance-description">
     ${ instance.description }
-    % endif
   </div>
+</div>
+% endif
 
+<div class="main-wrap">
+  % if JOB_LIST:
+  <div class="ly-instance-job-list">
+    <h2>${ _("Recently Job List") }</h2>
+    <table class="list">
+      <tbody>
+        <tr>
+          <th>${ _("Job ID") }</th>
+          <th>${ _("Action") }</th>
+          <th>${ _("Creat Time") }</th>
+          <th>${ _("Start Time") }</th>
+          <th>${ _("End Time") }</th>
+        </tr>
+        % for J in JOB_LIST:
+        <tr>
+          <td><span class="count">${ J.id }</span></td>
+          <td>${ job_action(J.action) }</td>
+          <td>${ fulltime(J.created) }</td>
+          <td>${ fulltime(J.started) }</td>
+          <td>${ fulltime(J.ended) }</td>
+        </tr>
+        % endfor
+      </tbody>
+    </table>
+
+  </div>
+  % endif
 </div>
 
 <script type="text/javascript">

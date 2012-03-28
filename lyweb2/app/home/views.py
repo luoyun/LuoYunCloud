@@ -10,12 +10,6 @@ from tornado.web import authenticated
 
 class Index(LyRequestHandler):
 
-    def initialize(self):
-        
-        self.view_kwargs = {
-            'instance_logo_url': self.instance_logo_url }
-
-
     def get(self):
 
         by = self.get_argument('by', 'created')
@@ -44,8 +38,9 @@ LIMIT %s OFFSET %s;" % (by, sort, page_size, offset)
 FROM auth_user WHERE id=%s;', I.user_id )
 
 
-        TOTAL_INSTANCE = len( self.db.query(
-                'SELECT id FROM instance;') )
+        inst_total = self.db.query(
+            'SELECT id, cpus, memory, status FROM instance;' )
+        TOTAL_INSTANCE = len( inst_total )
         TOTAL_APPLIANCE = len( self.db.query(
                 'SELECT id FROM appliance;') )
 
@@ -55,32 +50,50 @@ FROM auth_user WHERE id=%s;', I.user_id )
             cur_page = cur_page ).html(self.get_page_url)
 
 
+        # CPUS and Memory
+        nodes = self.db.query( 'SELECT cpus, memory \
+FROM node WHERE isenable=true' )
+        TOTAL_CPU = 0
+        TOTAL_MEMORY = 0
+        for n in nodes:
+            TOTAL_CPU += n.cpus
+            TOTAL_MEMORY += n.memory
+
+
+        USED_CPU = 0
+        USED_MEMORY = 0
+        RUNNING_INSTANCE = 0
+        for i in inst_total:
+            if i.status in [4, 5]:
+                USED_CPU += i.cpus
+                RUNNING_INSTANCE += 1
+                USED_MEMORY += i.memory * 1024
+
         d = { 'title': _('LuoYun Home'),
+              'TOTAL_CPU': TOTAL_CPU,
+              'TOTAL_MEMORY': TOTAL_MEMORY,
+              'USED_CPU': USED_CPU,
+              'USED_MEMORY': USED_MEMORY,
               'TOTAL_APPLIANCE': TOTAL_APPLIANCE,
               'TOTAL_INSTANCE': TOTAL_INSTANCE,
+              'RUNNING_INSTANCE': RUNNING_INSTANCE,
               'INSTANCE_LIST': instances,
               'cur_page': cur_page,
               'page_html': page_html,
-              'instance_status': self.instance_status }
+              'instance_status': self.instance_status,
+              'instance_logo_url': self.instance_logo_url }
 
         self.render("home/index.html", **d)
+
+
 
 
 class SetLocale(LyRequestHandler):
-    def get(self):
-        self.write('Just for POST !')
 
-    def post(self):
+    def get(self):
+
         user_locale = self.get_argument("language")
+        next_url = self.get_argument("next", '/')
         self.set_cookie("user_locale", user_locale)
-        self.redirect('/')
 
-
-
-
-class Test(LyRequestHandler):
-
-    def get(self):
-        d = { 'title': 'TEST Title From LuoYun'}
-        self.render("home/index.html", **d)
-
+        self.redirect(next_url)

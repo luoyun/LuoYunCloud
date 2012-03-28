@@ -67,10 +67,10 @@
 
 
 .inner-navigator {
-    margin: 50px;
+    margin: 50px 0;
 }
 #view-appliance {
-    margin: 20px 50px 80px;
+    margin: 20px 0 80px;
 }
 
 #view-appliance .side,
@@ -94,7 +94,7 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 
     padding: 10px 15px;
-    width: 560px;
+    width: 660px;
 }
 
 #view-appliance .status {
@@ -125,8 +125,11 @@
     padding: 3px 0;
 }
 
-#view-appliance .description {
+.ly-appliance-description, .ly-appliance-instance-list {
     clear: both;
+    border-top: 1px solid #D9D9D9;
+    margin-top: 30px;
+    padding: 30px;
 }
 
 

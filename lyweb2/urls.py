@@ -60,7 +60,6 @@ handlers = [
     # Home
     (r'/', home.Index),
     (r'/i18n/setlang', home.SetLocale),
-    (r'/test', home.Test),
 
     # Account
     (r'/account/login', account.Login),
@@ -120,6 +119,7 @@ handlers = [
     (r'/admin', admin.Index),
     (r'/admin/appliance', admin.Appliance),
     (r'/admin/appliance/add_catalog', admin.ApplianceAddCatalog),
+    (r'/admin/appliance/catalog/([0-9]+)/edit', admin.ApplianceEditCatalog),
     (r'/admin/wiki', admin.Wiki),
     (r'/admin/wiki/add_catalog', admin.WikiAddCatalog),
     (r'/admin/wiki/catalog/([0-9]+)/edit', admin.WikiEditCatalog),

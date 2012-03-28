@@ -297,9 +297,9 @@ CREATE TABLE topic (
 --
 
 -- username: admin, password: admin
-INSERT INTO auth_user (id, username, date_joined, last_login, password) VALUES (1, 'admin', 'now', 'now', 'ecc1234328f6$9537a8be9eb122ab7fb7d215838e159df9186744a6ae40935572be00f02f10bf0c0cf52deb45721e42563db53df0efa78b405ffdecd6583df281479400aea3cd');
+INSERT INTO auth_user (username, date_joined, last_login, password) VALUES ('admin', 'now', 'now', 'ecc1234328f6$9537a8be9eb122ab7fb7d215838e159df9186744a6ae40935572be00f02f10bf0c0cf52deb45721e42563db53df0efa78b405ffdecd6583df281479400aea3cd');
 
-INSERT INTO user_profile (id, user_id, first_name, last_name, locale, email) VALUES (1, 1, 'Admin', 'System Manager', 'zh_CN', 'admin@luoyun.co');
+INSERT INTO user_profile (user_id, first_name, last_name, locale, email) VALUES (1, 'Admin', 'System Manager', 'zh_CN', 'admin@luoyun.co');
 
 -- admin role
 INSERT INTO auth_permission (name, codename) VALUES ('Administrator', 'admin');

@@ -234,7 +234,7 @@ self.current_user.id, settings.JOB_S_INITIATED, target_type, target_id, action)
 
             200: _('running'),
             201: _('searching for node server'),
-            202: _('sending request to sode server'),
+            202: _('sending request to node server'),
             210: _('waiting for resource available on node server'),
             211: _('downloading appliance image'),
             212: _('checking appliance image'),
@@ -283,6 +283,22 @@ self.current_user.id, settings.JOB_S_INITIATED, target_type, target_id, action)
             }
 
         return JOB_STATUS_STR.get( code, _('Unknown') )
+
+
+    # TODO: have a lazy translation
+    def job_action(self, code):
+
+        JOB_ACTION_STR = {
+            102: _('enable node'),
+            103: _('disable node'),
+
+            201: _('run'),
+            202: _('stop'),
+            206: _('destroy'),
+            207: _('query'),
+        }
+
+        return JOB_ACTION_STR.get( code, _('Unknown') )
         
 
     # TODO: have a lazy translation

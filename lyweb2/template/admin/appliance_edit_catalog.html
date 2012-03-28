@@ -1,11 +1,19 @@
-<%inherit file="admin_base.html"/>
+<%inherit file="admin_base.html" />
 
 <%block name="main">
 
 <div class="main-wrap">
-  <div class="lrform">
-    <h2>${ _("Create a new catalog") }</h2>
+  <div class="inner-navigator">
+    <span><a href="/">${ _("Home") }</a></span>&gt;
+    <span><a href="/admin">${ _("Admin") }</a></span>&gt;
+    <span><a href="/admin/appliance">${ _("Appliances") }</a></span>&gt;
+    <span>${ _("Edit catalog") }</span>
+  </div>
+</div>
 
+
+<div class="main-wrap">
+  <div class="lrform">
     <form method="post">
 
       % if ERROR:
@@ -15,7 +23,6 @@
         % endfor
       </ol>
       % endif
-
 
       <div class="item">
         <div class="c1">
@@ -45,7 +52,7 @@
       </div>
 
       <div class="submit">
-        <input type="submit" value="${ _('Add Catalog') }"/>
+        <input type="submit" value="${ _('Save') }"/>
       </div>
     </form>
   </div>

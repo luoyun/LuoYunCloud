@@ -2,15 +2,17 @@
 
 <%block name="main">
 
-<div class="inner-navigator">
-  <span><a href="/">${ _("Home") }</a></span>&gt;
-  <span><a href="/admin">${ _("Admin") }</a></span>&gt;
-  <span><a href="/admin/appliance">${ _("Appliances") }</a></span>
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="/">${ _("Home") }</a></span>&gt;
+    <span><a href="/admin">${ _("Admin") }</a></span>&gt;
+    <span><a href="/admin/appliance">${ _("Appliances") }</a></span>
+  </div>
 </div>
 
 
 
-<div class="admin-appliance">
+<div class="main-wrap admin-appliance">
 
   <div class="sidebar">
 
@@ -35,6 +37,9 @@
   </div>
 
   <div class="sidemain">
+    <div>
+      <a class="button" href="/admin/appliance/catalog/${ CATALOG.id }/edit">${ _("Edit") }</a>
+    </div>
     <table class="list">
       <tbody>
         <tr>

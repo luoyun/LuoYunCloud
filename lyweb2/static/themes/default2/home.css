@@ -1,9 +1,9 @@
 #banner {
-    margin: 30px auto 50px;
-    padding: 20px;
+    margin: 30px auto;
+    padding: 20px 0;
     color: #333;
 }
-#banner .info {
+#banner .info-list {
     background-color: #F4F8FC;
     background: -webkit-gradient(linear, left top, left bottom, from(#FCFDFE), to(#F4F8FC));
     background: -moz-linear-gradient(#FCFDFE, #F4F8FC) repeat scroll 0 0 #FCFDFE;
@@ -13,13 +13,39 @@
     border-radius: 5px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 
-    width: 300px;
+    width: 360px;
+    padding: 10px;
 }
+#banner .info {
+    height: 28px;
+    padding: 2px;
+}
+#banner .info .total {
+    border: 1px solid #D9D9D9;
+    background-color: #A0E575;
+    width: 200px;
+    height: 6px;
+}
+#banner .info .used {
+    height: 6px;
+    background-color: red;
+}
+
+#banner .info .c1, #banner .info .c2 {
+    float: left;
+    margin: 5px;
+}
+#banner .info .c1 {
+    width: 100px;
+    text-align: right;
+    margin-right: 10px;
+}
+
 #banner a {
     text-decoration: none;
 }
 #banner .count {
-    font: italic bold 20px/16px Georgia,Serif;
+    font: italic bold 18px/12px Georgia,Serif;
 }
 #banner .info>span {
     display: block;
@@ -41,17 +67,25 @@
 #instance-list {
     margin: 10px 0 60px;
     color: #666666;
+    border: 1px solid #C9E0EF;
+    border-radius: 5px;
 }
 #instance-list h2 {
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: 900;
+    background-color: #C9E0EF;
+    margin: -1px;
+    border-radius: 5px 5px 0 0;
+    padding: 6px 12px;
+    color: #126EA8;
 }
 
 .instance {
 
     padding: 5px 2px;
-    margin: 18px 12px;
+    margin: 48px 12px;
 
-    height: 165px;
+    height: 150px;
     width: 165px;
     position: relative;
 

@@ -6,32 +6,6 @@ from tornado.web import authenticated, asynchronous
 
 from settings import JOB_ACTION, JOB_TARGET
 
-LST_WEB_S = 1
-LST_CONTROL_S = 2
-LST_COMPUTE_S = 3
-
-RQTYPE_NEW_JOB = 10
-
-LYJOB_STATUS = {
-    'unknown': 0,
-    'prepare': 1,
-    'running': 2,
-    'finished': 3,
-    'failed': 4,
-    'stoped': 5,
-    'pending': 10,
-}
-
-
-
-LYJOB_TARGET_TYPE = {
-    'unknown': 0,
-    'node': 1,
-    'instance': 2,
-}
-
-
-
 
 class InstRequestHandler(LyRequestHandler):
 
@@ -119,14 +93,24 @@ class View(InstRequestHandler):
             'SELECT * from appliance WHERE id=%s;',
             inst.appliance_id )
 
+        # TODO: recently job list
+        JOB_LIST = self.db.query(
+            'SELECT * FROM job \
+WHERE target_id=%s and target_type=%s \
+ORDER BY created DESC LIMIT 10;',
+            id, JOB_TARGET['INSTANCE'] )
+
         d = { 'title': 'View Instance %s' % id,
               'instance': inst,
-              'instance_logo_url': self.instance_logo_url }
+              'instance_logo_url': self.instance_logo_url,
+              'JOB_LIST': JOB_LIST,
+              'job_action': self.job_action }
 
         if self.get_argument('ajax', 0):
             self.render('instance/view_by_ajax.html', **d)
         else:
             self.render('instance/view.html', **d)
+
 
 
 

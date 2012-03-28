@@ -64,7 +64,11 @@ class Action(LyRequestHandler):
             return self.write('No such node!')
 
         if not action:
-            return self.render('node/view.html', node=node)
+            instances = self.db.query(
+                'SELECT * FROM instance WHERE node_id=%s;',
+                id )
+            return self.render( 'node/view.html', node=node,
+                                INSTANCE_LIST=instances )
 
         elif action == 1:
             if node.isenable:

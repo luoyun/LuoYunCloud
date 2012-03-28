@@ -2,13 +2,15 @@
 
 <%block name="main">
 
-<div class="inner-navigator">
-  <span><a href="/">${ _("Home") }</a></span>&gt;
-  <span><a href="/appliance">${ _("Appliances") }</a></span>&gt;
-  <span>${ _("View") } ${ appliance.name }</span>
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="/">${ _("Home") }</a></span>&gt;
+    <span><a href="/appliance">${ _("Appliances") }</a></span>&gt;
+    <span>${ _("View") } ${ appliance.name }</span>
+  </div>
 </div>
 
-<div id="view-appliance" class="clearfix">
+<div id="view-appliance" class="main-wrap clearfix">
 
   <div class="side">
 
@@ -56,22 +58,33 @@
 
   </div>
 
-  % if instances:
-  <div class="instance-list">
-    <h2>${ _("Instance-List") }</h2>
-    <ul>
-      % for I in instances:
-      <li>
-        <a href="/instance/${ I.id }" title="${ _('View Instance ') }${ I.name }">${ I.name }</a>
-        <a class="delete" href="/instance/${ I.id }/delete" title="${ _('Delete Instance ') }">${ _("Delete") }</a>
-      </li>
-      % endfor
-    </ul>
-  </div>
-  % endif
-
-
 </div>
+
+<div class="main-wrap">
+  <div class="ly-appliance-description">
+    ${ appliance.description }
+  </div>
+</div>
+
+% if instances:
+<div class="main-wrap ly-appliance-instance-list">
+  <h2>${ _("Instance List") }</h2>
+  <table>
+    <tbody>
+      % for I in instances:
+      <tr>
+        <td><span class="count">${ I.id }</span></td>
+        <td><a href="/instance/${ I.id }"
+               title="${ _('View Instance ') }${ I.name }"
+               >${ I.name }</a></td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+</div>
+% endif
+
+
 
 ## Some hide information
 <div id="delete-confirm" style="display:none" >

@@ -1,4 +1,3 @@
-## coding: utf-8
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
@@ -21,67 +20,34 @@ LuoYun
   </head>
 
   <body>
-<%doc>
-    <noscript><p class="nojs">${ _("Sorry, your browser does not support JavaScript!") }</p></noscript>
-</%doc>
 
     <div id="pager">
 
       <div id="header">
         <div id="header-wrapper">
           <div id="logo">
-            <a href="/"><img src="${ STATIC_URL }image/logo.png" /></a>
-          </div>
-          <div id="welcome-info">
-            ${ _("LuoYun") }
+            <a href="/"><img src="${ STATIC_URL }image/logo_white_42.png" /></a>
           </div>
           <div id="navigator">
             <ul>
               <li><a href="/">${ _("Home") }</a></li>
               <li><a href="/appliance">${ _("Appliances") }</a></li>
-##              <li><a href="/instance">${ _("Instances") }</a></li>
               <li><a href="/wiki">${ _("Wiki") }</a></li>
-##              <li><a href="/system">${ _("System Status") }</a></li>
               % if current_user and current_user.id == 1:
-##              <li><a href="/admin">${ _("Administration") }</a></li>
+              <li><a href="/admin">${ _("Management") }</a></li>
               % endif
             </ul>
           </div>
 
           <div id="login">
             %if current_user:
-            %if current_user.id == 1:
-            <span><a href="/admin">${ _("Management") }</a></span>
-            %endif
             <span class="user"><a href="/account/profile">${ current_user.username }</a></span>
             <span class="logout"><a href="/account/logout">${ _("Sign Out") }</a></span>
             %else:
             <span class="login"><a href="/account/login">${ _("Sign In") }</a></span>
-            <span class="register"><a href="/account/register">${ _("Register") }</a></span>
             %endif
           </div>
 
-
-          <div id="select-language">
-            <form action="/i18n/setlang" method="post">
-              <select name="language" style="display: none;">
-                % for lang in LANGUAGES:
-                <option value="${ lang[0] }"
-                        % if lang[0] != locale.code:
-                        selected="selected"
-                        % endif
-                        >${ lang[1] }</option>
-                % endfor
-              </select>
-              <input type="submit" value=
-                     % if locale.code == 'zh_CN':
-                     "English"
-                     % else:
-                     "简体中文"
-                     % endif
-                     />
-            </form>
-          </div>
         </div>
       </div>
 
@@ -96,7 +62,17 @@ LuoYun
         <span class="copyright">${ _("Copyright") } &copy <a href="http://www.luoyun.co">${ _("LuoYun Inc.") }</a></span>
         <span class="about"><a href="/about">${ _("About") }</a></span>
         <span class="contact"><a href="/contact">${ _("Contact") }</a></span>
-        <span class="request_time">${ request.request_time() }</span>
+
+        <span id="select-language">
+          % if locale.code == 'en_US':
+          <img src="${ THEME_URL }img/zh_CN.png" />
+          <a href="/i18n/setlang?language=zh_CN&next=${ request.uri }">${ u"\u4e2d\u6587(\u7b80\u4f53)" }</a>
+          % else:
+          <img src="${ THEME_URL }img/en_US.png" />
+          <a href="/i18n/setlang?language=en_US&next=${ request.uri }">English</a>
+          % endif
+        </span>
+
       </div>
 
   </div>

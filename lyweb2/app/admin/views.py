@@ -98,6 +98,68 @@ VALUES (%s, %s, %s, 'now', 'now');",
                 _('Add catalog to DB failed: %s') % emsg )
 
         self.redirect('/admin')
+
+
+
+class ApplianceEditCatalog(LyRequestHandler):
+
+
+    def initialize(self):
+        self.t = 'admin/appliance_edit_catalog.html'
+        self.d = { 'title': _('Edit Appliance Catalog') }
+
+
+    @authenticated
+    def prepare(self):
+
+        id = re.match('.*/([0-9]+)/.*',
+                      self.request.path).groups()[0]
+        c = self.db.get(
+            'SELECT * FROM appliance_catalog WHERE id=%s;',
+            id )
+
+        if not c:
+            self.write(u'No catalog %s !' % id)
+            return self.finish()
+
+        if self.current_user.id not in [ 1 ]:
+            self.write( _('No permissions !') )
+            return self.finished()
+
+        self.d['name'] = c.name
+        self.d['summary'] = c.summary
+        self.d['description'] = c.description
+
+
+    def get(self, id):
+
+        self.render( self.t, **self.d )
+
+
+    def post(self, id):
+
+        d = self.d
+
+        d['name'] = self.get_argument('name', '')
+        d['summary'] = self.get_argument('summary', '')
+        d['description'] = self.get_argument('description', '')
+
+        if not d['name']:
+            d['name_error'] = _('Name is required !')
+            return self.render( self.t, **d )
+
+        try:
+            self.db.execute(
+                "UPDATE appliance_catalog SET \
+name=%s, summary=%s, description=%s, updated='now' \
+WHERE id=%s;",
+                d['name'], d['summary'], d['description'],
+                id )
+
+        except Exception, emsg:
+            return self.write( 'DB error: %s' % emsg )
+
+        self.redirect('/admin/appliance?c=%s' % id)
         
 
 
