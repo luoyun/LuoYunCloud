@@ -1,0 +1,111 @@
+#!/bin/bash
+#
+# Init file for LuoYun node server daemon
+#
+# chkconfig: 2345 55 25
+# description: LuoYun node server daemon
+#
+# processname: lynode
+# TOPDIR: /opt/LuoYun/platform/
+# config: ${TOPDIR}/etc/luoyun-cloud/lynode.conf
+# pidfile: ${TOPDIR}/node_data/.lynode.pid
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+LUOYUN_TOP_DIR=/opt/LuoYun/platform/
+prog="lynode"
+LYNODED="${LUOYUN_TOP_DIR}bin/lynode"
+OPTIONS="-d"
+PID_FILE="${LUOYUN_TOP_DIR}/node_data/.lynode.pid"
+
+runlevel=$(set -- $(runlevel); eval "echo \$$#" )
+
+
+check_kvm_module()
+{
+    RET=-1
+    if [ $(lsmod | grep kvm | wc -l) -ne 2 ]; then
+        modprobe kvm kvm_amd kvm_intel
+        RET=$?
+    fi
+
+    if [ $? -ne 0 ]; then
+        echo "kvm module not found."
+        exit 1
+    fi
+}
+
+KVM_BIN=/usr/libexec/qemu-kvm
+check_kvm_bin()
+{
+    if [ ! -f $KVM_BIN ]; then
+        echo "$KVM_BIN not found"
+        exit 2
+    fi
+}
+
+check_libvirtd()
+{
+    if [ ! -f /var/run/libvirtd.pid ]; then
+        service libvirtd start
+        if [ $? -ne 0 ]; then
+            echo "Start libvirtd error"
+            exit 3
+        fi
+    fi
+}
+
+start()
+{
+    check_kvm_module
+    check_kvm_bin
+    check_libvirtd
+
+    echo -n $"Starting $prog: "
+    $LYNODED $OPTIONS && success || failure
+    RETVAL=$?
+    [ "$RETVAL" = 0 ] && touch /var/lock/subsys/lynode
+    echo
+
+    # TODO: a hack for compatible
+    cp -af $PID_FILE /var/run/lynode.pid
+}
+
+stop()
+{
+    # TODO: a hack for compatible
+    cp -af $PID_FILE /var/run/lynode.pid
+
+    echo -n $"Stopping $prog: "
+    if [ -n "`pidfileofproc $LYNODED`" ] ; then
+	killproc $LYNODED
+    else
+	failure $"Stopping $prog"
+    fi
+    RETVAL=$?
+
+    [ "$RETVAL" = 0 ] && rm -f /var/lock/subsys/lynode
+    echo
+}
+
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    restart)
+	stop
+	start
+	;;
+    status)
+	status -p $PID_FILE lynode
+	RETVAL=$?
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|restart|status}"
+	RETVAL=1
+esac
+exit $RETVAL
