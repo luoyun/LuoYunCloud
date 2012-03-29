@@ -1,9 +1,0 @@
-*.pyc
-*.o
-*.mo
-*~
-*#
-*.bak
-*.db
-cscope.out
-*.log

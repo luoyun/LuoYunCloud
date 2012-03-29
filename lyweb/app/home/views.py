@@ -1,83 +1,99 @@
-from django.utils.translation import ugettext as _
+# coding: utf-8
 
-from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
-from django.shortcuts import get_object_or_404
-from django.core.urlresolvers import reverse
+import os
 
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.decorators import login_required, permission_required
-
-from lyweb.util import render_to, build_form
-
-from lyweb.app.image.models import Image
-from lyweb.app.node.models import Node
-from lyweb.app.domain.models import Domain
-from lyweb.app.job.models import Job
-
-
-@render_to("home/index.html")
-def index(request):
-
-    YD = {'title': _('Welcome To LuoYun')}
-
-    # For IE6
-    if request.META.get('HTTP_USER_AGENT', '').find('MSIE 6.0') != -1:
-        YD['IE6'] = True
-
-    YD['images'] = Image.objects.all()
-    YD['nodes'] = Node.objects.all()
-    YD['domains'] = Domain.objects.all()
-    YD['jobs'] = Job.objects.all()[:3]
-
-    YD['images_total'] = len(YD['images'])
-    YD['nodes_total'] = len(YD['nodes'])
-    YD['domains_total'] = len(YD['domains'])
-
-    YD['nodes_running'] = len(Node.objects.filter(status = 2))
-    YD['domains_running'] = len(Domain.objects.filter(status = 2))
-
-    return YD
-
-
-@render_to('home/login.html')
-def login (request):
-
-    if request.method == "POST":
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data["username"]
-            password = form.cleaned_data["password"]
-            from django.contrib.auth import authenticate, login
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    if request.session.test_cookie_worked():
-                        request.session.delete_test_cookie()
-                        return HttpResponseRedirect(request.session.get('login_redirect_url','/') or '/')
-                else:
-                    return HttpResponseForbidden(u'inactive account!')
-
-    else:
-        request.session['login_redirect_url'] = request.GET.get('next')
-        form = AuthenticationForm(request)
-
-    request.session.set_test_cookie()
-    return { 'title':_('Login'), 'form':form }
+from lycustom import LyRequestHandler, Pagination
+from tornado.web import authenticated
 
 
 
-@login_required
-def logout(request):
-    from django.contrib.auth import logout
-    previous_url = request.GET.get('next')
-    logout(request)
-    return HttpResponseRedirect(previous_url or '/')
+
+class Index(LyRequestHandler):
+
+    def get(self):
+
+        by = self.get_argument('by', 'created')
+        sort = self.get_argument('sort', 'DESC')
+        page_size = int(self.get_argument('sepa', 10))
+        cur_page = int(self.get_argument('p', 1))
+
+        # TODO: no SQL-injection
+        if not ( sort in ['DESC', 'ASC'] and
+                 by  in ['updated', 'created'] ):
+            return self.write(u'wrong URL !')
+
+        offset = (cur_page - 1) * page_size
+
+        SQL = "\
+SELECT id, name, summary, logo, cpus, memory, user_id, \
+       appliance_id, node_id, ip, status, created, updated \
+FROM instance \
+ORDER BY %s %s \
+LIMIT %s OFFSET %s;" % (by, sort, page_size, offset)
+
+        instances = self.db.query(SQL)
+
+        for I in instances:
+            I.user = self.db.get('SELECT id, username \
+FROM auth_user WHERE id=%s;', I.user_id )
 
 
-@render_to('home/ajax_new_jobs.html')
-def ajax_new_jobs(request):
+        inst_total = self.db.query(
+            'SELECT id, cpus, memory, status FROM instance;' )
+        TOTAL_INSTANCE = len( inst_total )
+        TOTAL_APPLIANCE = len( self.db.query(
+                'SELECT id FROM appliance;') )
 
-    jobs = Job.objects.all()[:3]
+        page_html = Pagination(
+            total = TOTAL_INSTANCE,
+            page_size = page_size,
+            cur_page = cur_page ).html(self.get_page_url)
 
-    return { 'jobs': jobs }
+
+        # CPUS and Memory
+        nodes = self.db.query( 'SELECT cpus, memory \
+FROM node WHERE isenable=true' )
+        TOTAL_CPU = 0
+        TOTAL_MEMORY = 0
+        for n in nodes:
+            TOTAL_CPU += n.cpus
+            TOTAL_MEMORY += n.memory
+
+
+        USED_CPU = 0
+        USED_MEMORY = 0
+        RUNNING_INSTANCE = 0
+        for i in inst_total:
+            if i.status in [4, 5]:
+                USED_CPU += i.cpus
+                RUNNING_INSTANCE += 1
+                USED_MEMORY += i.memory * 1024
+
+        d = { 'title': _('LuoYun Home'),
+              'TOTAL_CPU': TOTAL_CPU,
+              'TOTAL_MEMORY': TOTAL_MEMORY,
+              'USED_CPU': USED_CPU,
+              'USED_MEMORY': USED_MEMORY,
+              'TOTAL_APPLIANCE': TOTAL_APPLIANCE,
+              'TOTAL_INSTANCE': TOTAL_INSTANCE,
+              'RUNNING_INSTANCE': RUNNING_INSTANCE,
+              'INSTANCE_LIST': instances,
+              'cur_page': cur_page,
+              'page_html': page_html,
+              'instance_status': self.instance_status,
+              'instance_logo_url': self.instance_logo_url }
+
+        self.render("home/index.html", **d)
+
+
+
+
+class SetLocale(LyRequestHandler):
+
+    def get(self):
+
+        user_locale = self.get_argument("language")
+        next_url = self.get_argument("next", '/')
+        self.set_cookie("user_locale", user_locale)
+
+        self.redirect(next_url)

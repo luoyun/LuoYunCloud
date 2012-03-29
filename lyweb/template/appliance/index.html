@@ -1,0 +1,62 @@
+<%inherit file="appliance_base.html"/>
+
+<%block name="main">
+
+<div class="appliance-home clearfix">
+
+  <div class="sidebar">
+
+    <div class="menu">
+      <ul>
+        % for c in catalogs:
+        <li id="catalog${ c.id }"
+            % if c.id == cur_catalog:
+            class="current"
+            % endif
+            ><a href="/appliance?c=${ c.id }">${ c.name }</a>
+        </li>
+        % endfor
+      </ul>
+    </div>
+
+    <div class="addon">
+      <a class="button" href="/appliance/upload">${_("Upload Appliance")}</a>
+    </div>
+
+  </div>
+
+  <div class="sidemain clearfix">
+
+<%doc>
+    <div class="sort-method">
+      <span>${ _("Sorted by") }</span>
+      <span><a href="/appliance?c=${ cur_catalog }">${ _("Default") }</a></span>
+      <span><a href="/appliance?c=${ cur_catalog }&by=updated">${ _("Updated") }</a></span>
+    </div>
+</%doc>
+
+<div class="appliance-list">
+    % for app in appliances:
+    <div class="appliance">
+      <div class="logo">
+        <a href="/appliance/${ app.id }"><img src="${ app_logo_url(app) }" alt="Appliance Picture" /></a>
+      </div>
+      <div class="desc">
+        <span class="name">${ app.name }</span>
+      </div>
+
+    </div>
+    % endfor
+</div>
+
+    <div class="clearfix"></div>
+    ${ page_html }
+
+  </div>
+
+<script type="text/javascript">
+  ApplianceHover();
+</script>
+
+
+</%block>

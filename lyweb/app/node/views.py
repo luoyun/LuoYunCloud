@@ -1,79 +1,87 @@
-from django.utils.translation import ugettext as _
+# coding: utf-8
 
-from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
-from django.shortcuts import get_object_or_404
-from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required, permission_required
+import struct, socket
+import logging, datetime, time
+import tornado
+from lycustom import LyRequestHandler
+from tornado.web import authenticated, asynchronous
 
-from lyweb.util import render_to, build_form, lyw_struct_pack
-
-from lyweb.app.node.models import Node
-from lyweb.app.node.forms import NodeRegisterForm
-
-from lyweb.LuoYunConf import LY_CLC_DAEMON as DS # Daemon Server
-from lyweb.LuoYunConf import LYCMD_TYPE, LYWEB_NODE_CONTROL_FLAG
-
-import struct
+from settings import JOB_ACTION, JOB_TARGET
 
 
+class Index(LyRequestHandler):
 
-@render_to('node/index.html')
-def index(request):
+    def get(self):
 
-    nodes = Node.objects.all()
+        nodes = self.db.query('SELECT * from node;')
 
-    return { 'nodes': nodes }
+        d = { 'title': 'Servers Home', 'nodes': nodes }
 
-
-@render_to('node/node_list.html')
-def node_list(request):
-
-    nodes = Node.objects.all().order_by('-ip')
-
-    return { 'nodes': nodes }
+        self.render('node/index.html', **d)
 
 
-@login_required
-@render_to('node/register.html')
-def register(request):
+class DynamicList(LyRequestHandler):
 
-    form = build_form(NodeRegisterForm, request)
+    @asynchronous
+    def get(self):
 
-    if form.is_valid():
-        node = form.save()
-        url = reverse('node:index')
-        return HttpResponseRedirect(url)
-
-    return { 'form': form }
+        now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.have_new_node(now)
 
 
-@render_to('node/node_view.html')
-def view_node(request, id):
+    def have_new_node(self, now):
 
-    node = Node.objects.get(pk = id)
+        if self.request.connection.stream.closed():
+            return
 
-    return { 'node': node }
+        nodes = self.db.query(
+            'SELECT * from node WHERE updated > %s;',
+            now )
+
+        if not nodes:
+            #print 'add_timeout, now = %s' % now
+            tornado.ioloop.IOLoop.instance().add_timeout(
+                time.time() + 3,
+                lambda: self.have_new_node(now) )
+        else:
+            nodes = self.db.query('SELECT * from node;')
+            #print 'go finish, now = %s' % now
+            self.render( 'node/dynamic_node_list.html',
+                         nodes = nodes )
 
 
-@login_required
-def node_control(request, id, control):
 
-    '''
-    Control action of the node.
-    '''
+class Action(LyRequestHandler):
 
-    try:
-        node = Node.objects.get(pk=id)
-    except:
-        return HttpResponse(u'ERROR: node not found.')
+    @authenticated
+    def get(self, id):
 
-    flag = LYWEB_NODE_CONTROL_FLAG.get(control, 0)
-    content = struct.pack('ii32s', flag, node.port, str(node.ip))
+        action = int(self.get_argument("action", 0))
 
-    length = 40
-    cmdtype = LYCMD_TYPE.get('LYCMD_NODE_CONTROL', 0)
-    cmd = lyw_struct_pack(cmdtype, length)
+        node = self.db.get('SELECT * FROM node WHERE id=%s;', id)
 
-    DS.sendall(cmd + content)
+        if not node:
+            return self.write('No such node!')
 
-    return HttpResponseRedirect( reverse('node:index') )
+        if not action:
+            instances = self.db.query(
+                'SELECT * FROM instance WHERE node_id=%s;',
+                id )
+            return self.render( 'node/view.html', node=node,
+                                INSTANCE_LIST=instances )
+
+        elif action == 1:
+            if node.isenable:
+                return self.write('Already enable !')
+            else:
+                self.new_job(JOB_TARGET['NODE'], id, JOB_ACTION['ENABLE_NODE'])
+
+        elif action == 2:
+            if not node.isenable:
+                return self.write('Already disable !')
+            else:
+                self.new_job(JOB_TARGET['NODE'], id, JOB_ACTION['DISABLE_NODE'])
+        else:
+            return self.write('Unknow action!')
+
+        return self.write('Action success !')

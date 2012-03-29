@@ -1,0 +1,98 @@
+<%inherit file="appliance_base.html" />
+
+<%block name="main">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="/">${ _("Home") }</a></span>&gt;
+    <span><a href="/appliance">${ _("Appliances") }</a></span>&gt;
+    <span>${ _("View") } ${ appliance.name }</span>
+  </div>
+</div>
+
+<div id="view-appliance" class="main-wrap clearfix">
+
+  <div class="side">
+
+    <div class="logo">
+      <a href="/appliance/${appliance.id}">
+        <img class="appliance-logo"
+             src="${ app_logo_url(appliance) }"
+             alt="Image Picture" /></a>
+    </div>
+
+  </div>
+
+
+  <div class="base">
+
+    <h2 class="name">${ appliance.name }</h2>
+    
+    % if appliance.summary:
+    <p class="summary">${ appliance.summary }</p>
+    % endif
+
+    <table>
+      <tbody>
+        <tr><td>${ _("ID") }</td>
+          <td>${ appliance.id }</td></tr>
+        <tr><td>${ _("Checksum") }</td>
+          <td>${ appliance.checksum }</td></tr>
+        <tr><td>${ _("Size") }</td>
+          <td>${ appliance.filesize }</td></tr>
+        <tr><td>${ _("Create Time") }</td>
+          <td>${ fulltime(appliance.created) }</td></tr>
+        <tr><td>${ _("Update Time") }</td>
+          <td>${ fulltime(appliance.updated) }</td></tr>
+      </tbody>
+    </table>
+
+    <div class="action">
+      % if current_user and current_user.id == appliance.user_id:
+      <span class="edit"><a class="button" href="/appliance/${ appliance.id }/edit">${ _("Edit") }</a></span>
+      <span class="delete"><a class="button" href="/appliance/${ appliance.id }/delete">${ _("Delete") }</a></span>
+      % endif
+      <span class="create"><a class="button" href="/appliance/${ appliance.id }/create_instance">${ _("Create Instance") }</a></span>
+    </div>
+
+
+  </div>
+
+</div>
+
+<div class="main-wrap">
+  <div class="ly-appliance-description">
+    ${ appliance.description }
+  </div>
+</div>
+
+% if instances:
+<div class="main-wrap ly-appliance-instance-list">
+  <h2>${ _("Instance List") }</h2>
+  <table>
+    <tbody>
+      % for I in instances:
+      <tr>
+        <td><span class="count">${ I.id }</span></td>
+        <td><a href="/instance/${ I.id }"
+               title="${ _('View Instance ') }${ I.name }"
+               >${ I.name }</a></td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+</div>
+% endif
+
+
+
+## Some hide information
+<div id="delete-confirm" style="display:none" >
+  ${ _("Are you sure ?") }
+</div>
+
+<script type="text/javascript">
+  DeleteInstance();
+</script>
+
+</%block>

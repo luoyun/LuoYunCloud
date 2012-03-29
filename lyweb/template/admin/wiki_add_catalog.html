@@ -1,0 +1,54 @@
+<%inherit file="admin_base.html"/>
+
+<%block name="main">
+
+<div class="main-wrap">
+  <div class="lrform">
+    <h2>${ _("Create a new catalog") }</h2>
+
+    <form method="post">
+
+      % if ERROR:
+      <ol>
+        % for e in ERROR:
+        <li>${ e }</li>
+        % endfor
+      </ol>
+      % endif
+
+
+      <div class="item">
+        <div class="c1">
+          <label for="id_name">${_("* Name:")}</label>
+        </div>
+        <div class="c2">
+          <input id="id_name" type="text" name="name" maxlength="30" value="${ name }"/>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="c1">
+          <label for="id_summary">${_("Summary:")}</label>
+        </div>
+        <div class="c2">
+          <input id="id_summary" type="text" name="summary" maxlength="128" value="${ summary }"/>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="c1">
+          <label for="id_description">${_("Description:")}</label>
+        </div>
+        <div class="c2">
+          <textarea id="id_description" name="description">${ description }</textarea>
+        </div>
+      </div>
+
+      <div class="submit">
+        <input type="submit" value="${ _('Add Catalog') }"/>
+      </div>
+    </form>
+  </div>
+</div>
+
+</%block>

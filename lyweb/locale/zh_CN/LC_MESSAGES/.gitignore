@@ -1,6 +1,6 @@
-*.mo
 *.pyc
 *.o
+*.mo
 *~
-*#
-*.bak
+cscope.out
+*.log
