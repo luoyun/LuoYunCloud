@@ -109,6 +109,37 @@ void libvirt_close(void)
     return;
 }
 
+int libvirt_check(int driver)
+{
+    virSetErrorFunc(NULL, __customErrorFunc);
+
+    const char * URI;
+    if (driver == HYPERVISOR_IS_KVM)
+        URI = HYPERVISOR_URI_KVM;
+    else if (driver == HYPERVISOR_IS_XEN)
+        URI = HYPERVISOR_URI_XEN;
+    else {
+        logerror(_("unrecognized hypervisor driver(%d).\n"), driver);
+        return -1;
+    }
+
+    virConnectPtr conn = virConnectOpen(URI);
+    if (conn == NULL) {
+        logerror(_("Connect to %s error.\n"), URI);
+        return -1;
+    }
+
+    int numDomains = virConnectNumOfDomains(conn);
+    if (numDomains < 0) {
+        logerror(_("Connect to %s error.\n"), URI);
+        return -1;
+    }
+
+    virConnectClose(conn);
+
+    return 0;
+}
+
 int libvirt_hypervisor(void)
 {
     if (g_conn == NULL)

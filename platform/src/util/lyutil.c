@@ -294,15 +294,11 @@ int lyutil_set_keepalive(int sd, int time, int intvl, int probes)
     return 0;
 }
 
-/* ref APUE2 */
 /*
 ** daemonize the process with tty detached, files closed, pwd changed to root
 */
-void lyutil_daemonize(const char *log, int loglevel)
+void lyutil_daemonize(void (* exit_func)(), int exit_data)
 {
-    if (loglevel == LYDEBUG)
-        printf(_("Run as daemon, log to %s.\n"), log);
-
     pid_t pid;
     struct rlimit rl;
     struct sigaction sa;
@@ -321,8 +317,11 @@ void lyutil_daemonize(const char *log, int loglevel)
         perror("can not fork");
         exit(2);
     }
-    else if (pid != 0)
+    else if (pid != 0) {
+        if (exit_func)
+            exit_func(exit_data);
         exit(0);
+    }
     setsid();
 
     /* ensure future opens won't allocate controlling TTYs. */
@@ -337,8 +336,11 @@ void lyutil_daemonize(const char *log, int loglevel)
         perror("can not fork");
         exit(4);
     }
-    else if (pid != 0)
+    else if (pid != 0) {
+        if (exit_func)
+            exit_func(exit_data);
         exit(0);
+    }
 
     /* Change the current working directory to the root
        so we won't prevent file systems from being unmounted. */
@@ -361,8 +363,6 @@ void lyutil_daemonize(const char *log, int loglevel)
     fd1 = dup(0);
     fd2 = dup(0);
 #endif
-    /* Initialize the log file */
-    logfile(log, loglevel);
 }
 
 /* 
@@ -770,3 +770,21 @@ unsigned long long lyutil_free_memory(void)
     return (free + buffers + cached);
 }
 
+/* logging signal before calling default/old handler */
+static void __signal_handler_default(int signo)
+{
+    logwarn(_("received signal: %d, %s\n"), signo, strsignal(signo));
+    signal(signo, SIG_DFL);
+    raise(signo);
+    return;
+}
+
+/* init default behavior of handling signals */
+int lyutil_signal_init()
+{
+    int signo;
+    for (signo = 1; signo < NSIG; signo++)
+        signal(signo, __signal_handler_default);
+
+    return 0;
+}

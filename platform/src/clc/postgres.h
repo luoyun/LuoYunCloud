@@ -41,5 +41,6 @@ int db_instance_init_status();
 
 int ly_db_init();
 void ly_db_close();
+int ly_db_check(void);
 
 #endif

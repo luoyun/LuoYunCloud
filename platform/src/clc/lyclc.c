@@ -76,8 +76,6 @@ static void __main_clean(int keeppid)
     if (g_c == NULL)
         return;
 
-    loginfo(_("%s exit normally\n"), PROGRAM_NAME);
-
     job_cleanup();
     ly_db_close();
     ly_clc_ip_clean();
@@ -169,17 +167,10 @@ int main(int argc, char *argv[])
         goto out;
     }
 
-    /* get clc ip */
-    if (c->clc_ip == NULL && ly_clc_ip_get() < 0) {
-        logerror(_("CLC no proper network interface to use.\n"));
-        goto out;
-    }
-
     /* check whether program is started already */
     ret = lyutil_check_pid_file(LYCLC_PID_DIR, PROGRAM_NAME);
     if (ret == 1) {
         printf(_("%s is running already.\n"), PROGRAM_NAME);
-        ret = 0;
         goto out;
     }
     else if (ret != 0) {
@@ -187,14 +178,25 @@ int main(int argc, char *argv[])
         goto out;
     }
 
+    /* check DB */
+    if (ly_db_check() < 0) {
+        printf(_("failed connecting DB\n"));
+        ret = -255;
+        goto out;
+    }
+
+    /* get clc ip */
+    if (c->clc_ip == NULL && ly_clc_ip_get() < 0) {
+        logerror(_("CLC no proper network interface to use.\n"));
+        goto out;
+    }
+
     /* Daemonize the progress */
     if (c->daemon) {
-        if (c->debug)
-            lyutil_daemonize(c->log_path, LYDEBUG);
-        else if (c->verbose)
-            lyutil_daemonize(c->log_path, LYINFO);
-        else
-            lyutil_daemonize(c->log_path, LYWARN);
+        if (c->debug == LYDEBUG)
+            printf(_("Run as daemon, log to %s.\n"), c->log_path);
+        lyutil_daemonize(__main_clean, keeppidfile);
+        logfile(c->log_path, c->debug ? LYDEBUG : c->verbose ? LYINFO : LYWARN);
     }
     else
         logfile(NULL, c->debug ? LYDEBUG : c->verbose ? LYINFO : LYWARN);
@@ -212,20 +214,9 @@ int main(int argc, char *argv[])
     }
     keeppidfile = 0;
 
-    /* set up signal handler */
-    struct sigaction sa;
-    sa.sa_flags = 0;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_sigaction = __sig_handler;
-    if (sigaction(SIGTERM, &sa, NULL)) {
-        logsimple(_("Setting signal handler error.\n"));
-        ret = -255;
-        goto out;
-    }
-
     /* init db connection */
     if (ly_db_init() < 0) {
-        logsimple(_("ly_entity_init failed.\n"));
+        logsimple(_("ly_db_init failed.\n"));
         ret = -255;
         goto out;
     }
@@ -245,6 +236,20 @@ int main(int argc, char *argv[])
     }
     if (c->debug)
         job_print_queue();
+
+    /* set up signal handler */
+    lyutil_signal_init();
+
+    /* handle specific signal */
+    struct sigaction sa;
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_sigaction = __sig_handler;
+    if (sigaction(SIGTERM, &sa, NULL)) {
+        logsimple(_("Setting signal handler error.\n"));
+        ret = -255;
+        goto out;
+    }
 
     /* initialize g_c->efd */
     if (ly_epoll_init(EPOLL_EVENTS_MAX) != 0) {
@@ -267,6 +272,11 @@ int main(int argc, char *argv[])
     job_dispatch_time = job_dispatch_time + (CLC_MCAST_JOIN_INTERVAL<<2);
 
     /* start main event driven loop */
+    if (c->clc_ip)
+        loginfo(_("clc uses IP %s\n"), c->clc_ip);
+    else
+        loginfo(_("clc uses IP automatically detected\n"));
+    loginfo(_("start event loop, waiting for events ...\n"));
     int i, n = 0;
     struct epoll_event events[EPOLL_EVENTS_MAX];
     while (1) {
@@ -333,5 +343,7 @@ int main(int argc, char *argv[])
 
 out:
     __main_clean(keeppidfile);
+    if (ret <= 0)
+       loginfo(_("%s exits\n"), PROGRAM_NAME);
     return ret;
 }

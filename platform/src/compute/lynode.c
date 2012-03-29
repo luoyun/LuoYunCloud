@@ -67,7 +67,6 @@ static void __main_clean(int keeppid)
     if (g_c == NULL)
         return;
 
-    loginfo(_("%s exit normally\n"), PROGRAM_NAME);
 
     NodeConfig *c = &g_c->config;
     NodeSysConfig *s = &g_c->config_sys;
@@ -260,14 +259,19 @@ int main(int argc, char *argv[])
         goto out;
     }
 
+    /* Connect to libvirt daemon */
+    if (libvirt_check(c->driver) < 0) {
+        logsimple(_("error connecting hypervisor.\n"));
+        ret = -255;
+        goto out;
+    }
+
     /* Daemonize the progress */
     if (c->daemon) {
-        if (c->debug)
-            lyutil_daemonize(c->log_path, LYDEBUG);
-        else if (c->verbose)
-            lyutil_daemonize(c->log_path, LYINFO);
-        else
-            lyutil_daemonize(c->log_path, LYWARN);
+        if (c->debug == LYDEBUG)
+            printf(_("Run as daemon, log to %s.\n"), c->log_path);
+        lyutil_daemonize(__main_clean, keeppidfile);
+        logfile(c->log_path, c->debug ? LYDEBUG : c->verbose ? LYINFO : LYWARN);
     }
     else
         logfile(NULL, c->debug ? LYDEBUG : c->verbose ? LYINFO : LYWARN);
@@ -277,7 +281,6 @@ int main(int argc, char *argv[])
     ret = lyutil_create_pid_file(c->node_data_dir, PROGRAM_NAME);
     if (ret == 1) {
         logsimple(_("%s is running already.\n"), PROGRAM_NAME);
-        ret = 0;
         goto out;
     }
     else if (ret != 0) {
@@ -285,17 +288,6 @@ int main(int argc, char *argv[])
         goto out;
     }
     keeppidfile = 0;
-
-    /* set up signal handler */
-    struct sigaction sa;
-    sa.sa_flags = 0;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_sigaction = __sig_handler;
-    if (sigaction(SIGTERM, &sa, NULL)) {
-        logsimple(_("Setting signal handler error.\n"));
-        ret = -255;
-        goto out;
-    }
 
     /* Connect to libvirt daemon */
     if (libvirt_connect(c->driver) < 0) {
@@ -316,6 +308,26 @@ int main(int argc, char *argv[])
     if (c->debug)
         luoyun_node_info_print(nf);
 
+    /* set up signal handler */
+    lyutil_signal_init();
+
+    /* handle specific signal */
+    struct sigaction sa;
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_sigaction = __sig_handler;
+    if (sigaction(SIGTERM, &sa, NULL)) {
+        logsimple(_("Setting signal handler error.\n"));
+        ret = -255;
+        goto out;
+    }
+
+    /* block SIGCHLD */
+    sigset_t sig;
+    sigemptyset(&sig);
+    sigaddset(&sig, SIGCHLD);
+    pthread_sigmask(SIG_BLOCK, &sig, NULL);
+
     /* initialize g_c->efd */
     if (ly_epoll_init(MAX_EVENTS) != 0) {
         logsimple(_("ly_epoll_init failed.\n"));
@@ -323,43 +335,36 @@ int main(int argc, char *argv[])
         goto out;
     }
 
-    /* start listening on clc mcast */
-    if (g_c->clc_ip == NULL && ly_epoll_mcast_register() != 0) {
-        logsimple(_("listening on clc mcast error.\n"));
-        ret = -255;
-        goto out;
-    }
-
     /* start main event driven loop */
     int i, n;
-    int reinit = 0, wait = -1;
+    int wait = -1;
     struct epoll_event events[MAX_EVENTS];
     while (1) {
-        if (g_c->clc_ip && g_c->wfd < 0 && wait < 0) {
+        if (g_c->clc_ip == NULL) {
+            /* start listening on clc mcast */
+            if (g_c->mfd < 0 && ly_epoll_mcast_register() != 0) {
+                logerror(_("listening on clc mcast error.\n"));
+                ret = -1;
+                break;
+            }
+            loginfo(_("wait for clc mcast join request...\n"));
+        }
+        else if (g_c->wfd < 0 && wait < 0) {
             /* init node state */
             if (nf->host_tag > 0)
                 g_c->state = NODE_STATUS_INITIALIZED;
             else
                 g_c->state = NODE_STATUS_UNINITIALIZED;
             /* start node registration */
-            if (reinit == 0 && 
-                (ly_epoll_work_register() != 0 || ly_register_node() != 0)) {
+            if ((ly_epoll_work_register() != 0 || ly_register_node() != 0)) {
                 /* close work socket */
                 ly_epoll_work_close();
                 logerror(_("failed registering node. will try again\n"));
-                reinit = 1;
-            }
-            if (reinit) {
-                reinit = 0;
+
                 if (c->auto_connect == ALWAYS) {
                     free(g_c->clc_ip);
                     g_c->clc_ip = NULL;
-                    loginfo(_("wait for mcast join...\n"));
-                    if (g_c->mfd < 0 && ly_epoll_mcast_register() != 0) {
-                        logerror(_("listening on clc mcast error.\n"));
-                        ret = -1;
-                        break;
-                    }
+                    continue;
                 }
                 else {
                     wait = LY_NODE_EPOLL_WAIT;
@@ -368,7 +373,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        logdebug(_("waiting ...\n"));
+        logdebug(_("waiting for events ...\n"));
         n = epoll_wait(g_c->efd, events, MAX_EVENTS, wait);
         if (wait > 0)
             wait = -1;
@@ -401,10 +406,14 @@ int main(int argc, char *argv[])
                 /* in all other cases, close work socket */
                 ly_epoll_work_close();
                 if (ret < 0)
-                    logwarn(_("unexpected work process error\n"));
-                else {
-                    reinit = 1;
-                    logwarn(_("node socket closed. will try again... \n"));
+                    logwarn(_("unexpected work process error. "
+                              "will reopen work socket ...\n"));
+                else
+                    logwarn(_("node work socket closed. "
+                              "will reopen ...\n"));
+                if (c->auto_connect == ALWAYS) {
+                    free(g_c->clc_ip);
+                    g_c->clc_ip = NULL;
                  }
             }
             else if (events[i].events & EPOLLRDHUP) {
@@ -421,5 +430,7 @@ int main(int argc, char *argv[])
 
 out:
     __main_clean(keeppidfile);
+    if (ret <= 0)
+        loginfo(_("%s exits\n"), PROGRAM_NAME);
     return ret;
 }

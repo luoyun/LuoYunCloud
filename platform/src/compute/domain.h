@@ -8,6 +8,7 @@
 #define HYPERVISOR_URI_KVM "qemu:///system"
 #define HYPERVISOR_URI_XEN "xen:///"
 
+int libvirt_check(int driver);
 int libvirt_connect(int driver);
 void libvirt_close(void);
 int libvirt_hypervisor(void);

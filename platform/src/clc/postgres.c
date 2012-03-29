@@ -745,7 +745,7 @@ int ly_db_init(void)
 
     if (PQstatus(_db_conn) == CONNECTION_BAD) {
         logerror(_("unable to connect to the database: %s\n"),
-                 PQerrorMessage(_db_conn));
+                    PQerrorMessage(_db_conn));
         return -1;
     }
 
@@ -755,5 +755,26 @@ int ly_db_init(void)
 
 void ly_db_close(void)
 {
-    PQfinish(_db_conn);
+    if (_db_conn)
+        PQfinish(_db_conn);
 }
+
+int ly_db_check(void)
+{
+    char conninfo[LINE_MAX];
+
+    sprintf(conninfo, "dbname=%s user=%s password=%s",
+            g_c->db_name, g_c->db_user, g_c->db_pass);
+
+    PGconn * conn = PQconnectdb(conninfo);
+
+    if (PQstatus(conn) == CONNECTION_BAD) {
+        logerror(_("unable to connect to the database: %s\n"),
+                    PQerrorMessage(conn));
+        return -1;
+    }
+
+    PQfinish(conn);
+    return 0;
+}
+

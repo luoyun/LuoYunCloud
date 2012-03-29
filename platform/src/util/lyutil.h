@@ -32,7 +32,7 @@ char * lyutil_get_local_ip(int sd);
 int lyutil_set_keepalive(int sd, int time, int intvl, int probes);
 
 /* daemonize the program */
-void lyutil_daemonize(const char *log, int loglevel);
+void lyutil_daemonize(void (* exit_func)(), int exit_data);
 
 /* directory manipulation */
 int lyutil_create_dir(const char *dir);
@@ -60,5 +60,7 @@ char *lyutil_uuid(char * in, int in_len);
 #define LOAD_AVERAGE_LAST_15M 3
 int lyutil_load_average(int type);
 unsigned long long lyutil_free_memory(void);
+
+int lyutil_signal_init();
 
 #endif
