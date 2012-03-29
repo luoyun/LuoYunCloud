@@ -465,7 +465,7 @@ int lyutil_check_pid_file(const char *dir, const char *name)
     }
 
     char path[MAX_PATH];
-    if (snprintf(path, MAX_PATH, "%s/.%s.pid", dir, name) >= MAX_PATH) {
+    if (snprintf(path, MAX_PATH, "%s/%s.pid", dir, name) >= MAX_PATH) {
         logerror(_("path max exceeded %s\n"), __func__);
         return -1;
     }
@@ -531,7 +531,7 @@ int lyutil_create_pid_file(const char *dir, const char *name)
         return ret;
 
     char path[MAX_PATH];
-    if (snprintf(path, MAX_PATH, "%s/.%s.pid", dir, name) >= MAX_PATH) {
+    if (snprintf(path, MAX_PATH, "%s/%s.pid", dir, name) >= MAX_PATH) {
         logerror(_("path max exceeded %s\n"), __func__);
         return -1;
     }
@@ -566,7 +566,7 @@ int lyutil_remove_pid_file(const char *dir, const char *name)
         return -1;
 
     char path[MAX_PATH];
-    if (snprintf(path, MAX_PATH, "%s/.%s.pid", dir, name) >= MAX_PATH) {
+    if (snprintf(path, MAX_PATH, "%s/%s.pid", dir, name) >= MAX_PATH) {
         logerror(_("path max exceeded %s\n"), __func__);
         return -1;
     }

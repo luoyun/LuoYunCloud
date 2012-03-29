@@ -17,7 +17,7 @@ LUOYUN_TOP_DIR=/opt/LuoYun/platform/
 prog="lynode"
 LYNODED="${LUOYUN_TOP_DIR}bin/lynode"
 OPTIONS="-d"
-PID_FILE="${LUOYUN_TOP_DIR}/node_data/.lynode.pid"
+PID_FILE="/var/run/lynode.pid"
 
 runlevel=$(set -- $(runlevel); eval "echo \$$#" )
 
@@ -67,16 +67,10 @@ start()
     RETVAL=$?
     [ "$RETVAL" = 0 ] && touch /var/lock/subsys/lynode
     echo
-
-    # TODO: a hack for compatible
-    cp -af $PID_FILE /var/run/lynode.pid
 }
 
 stop()
 {
-    # TODO: a hack for compatible
-    cp -af $PID_FILE /var/run/lynode.pid
-
     echo -n $"Stopping $prog: "
     if [ -n "`pidfileofproc $LYNODED`" ] ; then
 	killproc $LYNODED

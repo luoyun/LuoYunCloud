@@ -17,16 +17,13 @@ LUOYUN_TOP_DIR=/opt/LuoYun/platform/
 prog="lyclc"
 LYCLCD="${LUOYUN_TOP_DIR}bin/lyclc"
 OPTIONS="-d"
-PID_FILE="${LUOYUN_TOP_DIR}/node_data/.lyclc.pid"
+PID_FILE="/var/run/lyclc.pid"
 
 runlevel=$(set -- $(runlevel); eval "echo \$$#" )
 
 
 start()
 {
-    # TODO: a hack for compatible
-    cp -af $PID_FILE /var/run/lyclc.pid
-
     echo -n $"Starting $prog: "
     $LYCLCD $OPTIONS && success || failure
     RETVAL=$?
@@ -36,9 +33,6 @@ start()
 
 stop()
 {
-    # TODO: a hack for compatible
-    cp -af $PID_FILE /var/run/lyclc.pid
-
     echo -n $"Stopping $prog: "
     if [ -n "`pidfileofproc $LYCLCD`" ] ; then
 	killproc $LYCLCD

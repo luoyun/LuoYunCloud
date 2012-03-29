@@ -1,5 +1,4 @@
-node_dir=@DEFAULT_LYNODE_DATA_DIR@
-for f in $(<${node_dir}/.lynode.pid) $(</var/run/.lyclc.pid)
+for f in $(</var/run/.lynode.pid) $(</var/run/.lyclc.pid)
 do
   kill $f
 done

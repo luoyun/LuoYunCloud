@@ -9,12 +9,24 @@ myexit()
 id=$(id -u)
 [ "$id" -ne 0 ] && myexit "please log in as root to build"
 
+LYCLCINIT=../../tools/lyclcd.initscript
+LYNODEINIT=../../tools/lynoded.initscript
+
+[ -e "$LYCLCINIT" ] || myexit "missing $LYCLCINIT"
+[ -e "$LYNODEINIT" ] || myexit "missing $LYNODEINIT"
+
 version=0.2
 
 tmpdir=$(mktemp -d tmp.XXXXXX) || myexit "mktemp failed"
+mkdir -p $tmpdir/etc/init.d && \
+    cp $LYNODEINIT $tmpdir/etc/init.d/lynoded && \
+    cp $LYCLCINIT $tmpdir/etc/init.d/lyclcd || myexit "copy init.d script failed"
 cp -r centos5/* $tmpdir || myexit "cp centos5 failed"
 cd $tmpdir; tar czf ../luoyun-cloud-${version}-bin-5.tgz *; cd ..
 rm -rf $tmpdir/* || myexit "rm failed"
+mkdir -p $tmpdir/etc/init.d && \
+    cp $LYNODEINIT $tmpdir/etc/init.d/lynoded && \
+    cp $LYCLCINIT $tmpdir/etc/init.d/lyclcd || myexit "copy init.d script failed"
 cp -r centos6/* $tmpdir || myexit "cp centos6 failed"
 cd $tmpdir; tar czf ../luoyun-cloud-${version}-bin-6.tgz *; cd ..
 rm -rf $tmpdir/* || myexit "rm failed"
@@ -25,6 +37,10 @@ mkdir $installdir || myexit "mkdir failed"
 mv luoyun-cloud-${version}-bin-5.tgz luoyun-cloud-${version}-bin-6.tgz \
    $installdir/ || myexit "mv failed"
 cp README install.sh $installdir/ || myexit "cp failed"
+
+mkdir -p $installdir/etc/init.d
+cp $LYNODEINIT $installdir/etc/init.d/lynoded
+cp $LYCLCINIT $installdir/etc/init.d/lyclcd
 
 cd $tmpdir/
 tar czf ../luoyun-cloud-${version}-bin.tgz luoyun-cloud-${version}|| \

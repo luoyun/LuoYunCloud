@@ -37,6 +37,7 @@ int node_schedule()
 {
     int ent_curr = -1;
     int ent_id = -1;
+    int cpu_avail_max = 0;
     while(1) {
         NodeInfo * ni = ly_entity_data_next(LY_ENTITY_NODE, &ent_curr);
         if (ni == NULL)
@@ -49,10 +50,14 @@ int node_schedule()
                   NODE_SCHEDULE_CPU_LIMIT(ni->cpu_max),
                   ni->mem_commit,
                   NODE_SCHEDULE_MEM_LIMIT(ni->mem_max));
-        if (ni->cpu_commit < NODE_SCHEDULE_CPU_LIMIT(ni->cpu_max) &&
-            ni->mem_commit < NODE_SCHEDULE_MEM_LIMIT(ni->mem_max)) {
+        if (ni->cpu_commit >= NODE_SCHEDULE_CPU_LIMIT(ni->cpu_max) ||
+            ni->mem_commit >= NODE_SCHEDULE_MEM_LIMIT(ni->mem_max)) {
+            continue;
+        }
+        int cpu_avail = NODE_SCHEDULE_CPU_LIMIT(ni->cpu_max) - ni->cpu_commit;
+        if (cpu_avail > cpu_avail_max) {
+            cpu_avail_max = cpu_avail;
             ent_id = ent_curr;
-            break;
         }
     }
     return ent_id;
