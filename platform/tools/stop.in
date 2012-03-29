@@ -1,4 +1,4 @@
-for f in $(</var/run/.lynode.pid) $(</var/run/.lyclc.pid)
+for f in $(</var/run/lynode.pid) $(</var/run/lyclc.pid)
 do
   kill $f
 done
