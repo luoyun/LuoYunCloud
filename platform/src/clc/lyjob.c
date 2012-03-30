@@ -450,7 +450,8 @@ static int __job_control_instance_simple(LYJobInfo * job)
 
     if (node_id <= 0) {
         logerror(_("no node found for job %d\n"), job->j_id);
-        goto failed;
+        job_update_status(job, JOB_S_FINISHED);
+        //goto failed;
     }
     logdebug(_("send job to node %d\n"), node_id);
 

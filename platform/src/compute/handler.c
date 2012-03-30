@@ -174,11 +174,27 @@ static int __file_lock_put(char * lock_dir, char * lock_ext)
     if (snprintf(link_path, PATH_MAX, "%s/.forlock.%s",
                  lock_dir, lock_ext) >= PATH_MAX)
         return -1;
+#if 0
     if (unlink(link_path) < 0) {
-        logerror(_("error in %s(%d). errno:%d\n"),
-                    __func__, __LINE__, errno);
+        logerror(_("error in %s(%d). unlink %s errno:%d\n"),
+                    __func__, __LINE__, link_path, errno);
         return -1;
     }
+#else
+    int cnt = 20;
+    while (unlink(link_path) < 0) {
+        logwarn(_("in %s(%d). unlink %s errno:%d\n"),
+                   __func__, __LINE__, link_path, errno);
+
+        /* hack: keep trying */
+        sleep(1);
+        cnt--;
+        if (cnt <= 0) {
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+            return -1;
+        }
+    }
+#endif
     return 0; /* lock released */
 }
 
@@ -388,20 +404,25 @@ static int __domain_run(NodeCtrlInstance * ci)
         }
         logdebug(_("tring to gain access to appliance file...\n"));
         __send_response(g_c->wfd, ci, LY_S_RUNNING_WAITING);
-        if (__file_lock_get(".", app_idstr) < 0) {
+        if (snprintf(path, PATH_MAX, "%s/%s",
+                     g_c->config.node_data_dir, appdir) >= PATH_MAX) {
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+            goto out_chdir;
+        }
+        if (__file_lock_get(path, app_idstr) < 0) {
             logerror(_("error in %s(%d).\n"), __func__, __LINE__);
             goto out_chdir;
         }
         if (access(app_idstr, F_OK)) {
             if (mkdir(app_idstr, 0755) == -1) {
                 logerror(_("can not create directory: %s\n"), app_idstr);
-                __file_lock_put(".", app_idstr);
+                __file_lock_put(path, app_idstr);
                 goto out_chdir;
             }
         }
         if (chdir(app_idstr) < 0) {
             logerror(_("change working directory to %s failed.\n"), app_idstr);
-            __file_lock_put("..", app_idstr);
+            __file_lock_put(path, app_idstr);
             goto out_chdir;
         }
         int new_app = 1;
@@ -424,7 +445,7 @@ static int __domain_run(NodeCtrlInstance * ci)
                 logwarn(_("downloading %s from %s failed.\n"), 
                            ci->app_name, ci->app_uri);
                 unlink(ci->app_name);
-                __file_lock_put("..", app_idstr);
+                __file_lock_put(path, app_idstr);
                 goto out_chdir;
             }
             loginfo(_("checking checksum ...\n"));
@@ -432,12 +453,13 @@ static int __domain_run(NodeCtrlInstance * ci)
             if (lyutil_checksum(ci->app_name, ci->app_checksum)) {
                 logwarn(_("%s checksum(%s) failed.\n"), ci->app_name, ci->app_checksum);
                 unlink(ci->app_name);
-                __file_lock_put("..", app_idstr);
+                __file_lock_put(path, app_idstr);
                 goto out_chdir;
             }
         }
-        if (__file_lock_put("..", app_idstr) < 0) {
-            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        if (__file_lock_put(path, app_idstr) < 0) {
+            logerror(_("error in %s(%d). ins id:%d, app_idstr %s\n"),
+                        __func__, __LINE__, ci->ins_id, app_idstr);
             goto out_chdir;
         }
         if (chdir("../..") < 0) {

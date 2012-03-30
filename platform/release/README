@@ -8,7 +8,7 @@
    Make sure postgresql DB is properly started
    Make sure network traffic to multicast IP 228.0.0.1 is open in iptables
    Then run the following command,
-        sudo /opt/LuoYun/platform/bin/lyclc
+        sudo /etc/init.d/lyclcd start
 
 3. To start Node Server daemon
 
@@ -16,5 +16,5 @@
    Make sure KVM bridge mode is properly set up
    Make sure network traffic to multicast IP 228.0.0.1 is open iptables
    Then run the following command,
-        sudo /opt/LuoYun/platform/bin/lynode
+        sudo /etc/init.d/lynoded start
 

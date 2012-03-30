@@ -38,10 +38,6 @@ mv luoyun-cloud-${version}-bin-5.tgz luoyun-cloud-${version}-bin-6.tgz \
    $installdir/ || myexit "mv failed"
 cp README install.sh $installdir/ || myexit "cp failed"
 
-mkdir -p $installdir/etc/init.d
-cp $LYNODEINIT $installdir/etc/init.d/lynoded
-cp $LYCLCINIT $installdir/etc/init.d/lyclcd
-
 cd $tmpdir/
 tar czf ../luoyun-cloud-${version}-bin.tgz luoyun-cloud-${version}|| \
     myexit "failed creating luoyun-cloud-${version}-bin.tgz"
