@@ -174,27 +174,11 @@ static int __file_lock_put(char * lock_dir, char * lock_ext)
     if (snprintf(link_path, PATH_MAX, "%s/.forlock.%s",
                  lock_dir, lock_ext) >= PATH_MAX)
         return -1;
-#if 0
     if (unlink(link_path) < 0) {
         logerror(_("error in %s(%d). unlink %s errno:%d\n"),
                     __func__, __LINE__, link_path, errno);
         return -1;
     }
-#else
-    int cnt = 20;
-    while (unlink(link_path) < 0) {
-        logwarn(_("in %s(%d). unlink %s errno:%d\n"),
-                   __func__, __LINE__, link_path, errno);
-
-        /* hack: keep trying */
-        sleep(1);
-        cnt--;
-        if (cnt <= 0) {
-            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-            return -1;
-        }
-    }
-#endif
     return 0; /* lock released */
 }
 
@@ -344,29 +328,15 @@ static int __domain_run(NodeCtrlInstance * ci)
         luoyun_node_ctrl_instance_print(ci);
 
     int ret = -1;
-    char * path_lock = malloc(PATH_MAX);
-    char * path = malloc(PATH_MAX);
-    char * tmpstr1024 = malloc(1024);
-    if (path_lock == NULL || path == NULL || tmpstr1024 == NULL) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-        goto out;
-    }
+    char path[PATH_MAX];
+    char tmpstr1024[1024];
 
-    /* appliances and instances are expected sub-dir */
-    char * appdir = "appliances";
-    char * insdir = "instances";
-
-    if (snprintf(path_lock, PATH_MAX, "%s/%s",
-                 g_c->config.node_data_dir, insdir) >= PATH_MAX) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-        goto out;
-    }
     char ins_idstr[10];
     snprintf(ins_idstr, 10, "%d", ci->ins_id);
 
     logdebug(_("tring to gain access to instance files...\n"));
     __send_response(g_c->wfd, ci, LY_S_RUNNING_WAITING);
-    if (__file_lock_get(path_lock, ins_idstr) < 0) {
+    if (__file_lock_get(g_c->config.ins_data_dir, ins_idstr) < 0) {
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         goto out;
     }
@@ -384,8 +354,8 @@ static int __domain_run(NodeCtrlInstance * ci)
         goto out_unlock;
     }
 
-    /* change to data root dir */
-    char * curdir = g_c->config.node_data_dir;
+    /* change to instances data dir */
+    char * curdir = g_c->config.ins_data_dir;
     if (chdir(curdir) < 0) {
         logerror(_("change working directory to %s failed.\n"), curdir);
         goto out_unlock;
@@ -393,38 +363,35 @@ static int __domain_run(NodeCtrlInstance * ci)
 
     if (ci->ins_status == DOMAIN_S_NEW || access(ins_idstr, F_OK)) {
         /* work in appliances dir */
-        char app_idstr[10];
-        if (snprintf(app_idstr, 10, "%d", ci->app_id) >= 10 ) {
-            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        curdir = g_c->config.app_data_dir;
+        if (chdir(curdir) < 0) {
+            logerror(_("change working directory to %s failed.\n"), curdir);
             goto out_chdir;
         }
-        if (chdir(appdir) < 0) {
-            logerror(_("change working directory to %s failed.\n"), appdir);
-            goto out_chdir;
-        }
-        logdebug(_("tring to gain access to appliance file...\n"));
+        /* get lockfile for appliance */
+        logdebug(_("tring to gain access to appliance %d ...\n"), ci->app_id);
         __send_response(g_c->wfd, ci, LY_S_RUNNING_WAITING);
-        if (snprintf(path, PATH_MAX, "%s/%s",
-                     g_c->config.node_data_dir, appdir) >= PATH_MAX) {
+        char app_idstr[10];
+        snprintf(app_idstr, 10, "%d", ci->app_id);
+        if (__file_lock_get(curdir, app_idstr) < 0) {
             logerror(_("error in %s(%d).\n"), __func__, __LINE__);
             goto out_chdir;
         }
-        if (__file_lock_get(path, app_idstr) < 0) {
-            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-            goto out_chdir;
-        }
+        /* prepare appliance dir */
         if (access(app_idstr, F_OK)) {
             if (mkdir(app_idstr, 0755) == -1) {
-                logerror(_("can not create directory: %s\n"), app_idstr);
-                __file_lock_put(path, app_idstr);
+                logerror(_("can not create directory: %s, err: %d\n"),
+                           app_idstr, errno);
+                __file_lock_put(curdir, app_idstr);
                 goto out_chdir;
             }
         }
         if (chdir(app_idstr) < 0) {
             logerror(_("change working directory to %s failed.\n"), app_idstr);
-            __file_lock_put(path, app_idstr);
+            __file_lock_put(curdir, app_idstr);
             goto out_chdir;
         }
+        /* check whether to download appliance */
         int new_app = 1;
         if (access(ci->app_name, F_OK) == 0) {
             loginfo(_("appliance %s found locally\n"), ci->app_name);
@@ -438,6 +405,7 @@ static int __domain_run(NodeCtrlInstance * ci)
             else
                 new_app = 0;
         }
+        /* download appliance */
         if (new_app) {
             loginfo(_("downloading %s from %s ...\n"), ci->app_name, ci->app_uri);
             __send_response(g_c->wfd, ci, LY_S_RUNNING_DOWNLOADING_APP);
@@ -445,7 +413,7 @@ static int __domain_run(NodeCtrlInstance * ci)
                 logwarn(_("downloading %s from %s failed.\n"), 
                            ci->app_name, ci->app_uri);
                 unlink(ci->app_name);
-                __file_lock_put(path, app_idstr);
+                __file_lock_put(curdir, app_idstr);
                 goto out_chdir;
             }
             loginfo(_("checking checksum ...\n"));
@@ -453,24 +421,22 @@ static int __domain_run(NodeCtrlInstance * ci)
             if (lyutil_checksum(ci->app_name, ci->app_checksum)) {
                 logwarn(_("%s checksum(%s) failed.\n"), ci->app_name, ci->app_checksum);
                 unlink(ci->app_name);
-                __file_lock_put(path, app_idstr);
+                __file_lock_put(curdir, app_idstr);
                 goto out_chdir;
             }
         }
-        if (__file_lock_put(path, app_idstr) < 0) {
+        /* done with appliance, release lock */
+        if (__file_lock_put(curdir, app_idstr) < 0) {
             logerror(_("error in %s(%d). ins id:%d, app_idstr %s\n"),
                         __func__, __LINE__, ci->ins_id, app_idstr);
             goto out_chdir;
         }
-        if (chdir("../..") < 0) {
-            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        /* go back to instances dir */
+        curdir = g_c->config.ins_data_dir;
+        if (chdir(curdir) < 0) {
+            logerror(_("change working directory to %s failed.\n"), curdir);
             goto out_chdir;
         }
-    }
-
-    if (chdir(insdir) < 0) {
-        logerror(_("change working directory to %s failed.\n"), insdir);
-        goto out_chdir;
     }
 
     /* prepare instance dir */
@@ -499,11 +465,11 @@ static int __domain_run(NodeCtrlInstance * ci)
     int ins_create_new = 0;
     if (access(LUOYUN_INSTANCE_DISK_FILE, F_OK)) {
         ins_create_new = 1;
-        if (snprintf(path, PATH_MAX, 
-                    "../../appliances/%d/%s", ci->app_id, ci->app_name) >=
-                    PATH_MAX) {
-            logerror(_("path error in %s(%d)\n"), __func__, __LINE__);
-            goto out_chdir;
+        if (snprintf(path, PATH_MAX, "%s/%d/%s", 
+                     g_c->config.app_data_dir, ci->app_id, ci->app_name) >=
+                     PATH_MAX) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            goto out_insclean;
         }
         loginfo(_("Extracting disk file\n"));
         __send_response(g_c->wfd, ci, LY_S_RUNNING_EXTRACTING_APP);
@@ -674,16 +640,10 @@ out_chdir:
     }   
     close(olddir);
 out_unlock:
-    if (__file_lock_put(path_lock, ins_idstr) < 0) {
+    if (__file_lock_put(g_c->config.ins_data_dir, ins_idstr) < 0) {
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
     }
 out:
-    if (path_lock)
-        free(path_lock);
-    if (path)
-        free(path);
-    if (tmpstr1024)
-        free(tmpstr1024);
     return ret;
 }
 

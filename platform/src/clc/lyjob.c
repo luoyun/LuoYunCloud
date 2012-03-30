@@ -320,33 +320,24 @@ static int __job_start_instance(LYJobInfo * job)
 
     int ent_id;
     if (node_id > 0) {
-        logdebug(_("run on node %d\n"), node_id);
+        logdebug(_("check origianl node %d for instance %d\n"),
+                    node_id, ci.ins_id);
         ent_id = ly_entity_find_by_db(LY_ENTITY_NODE, node_id);
-        logdebug(_("run on entity %d\n"), ent_id);
-        if (ent_id < 0 || ly_entity_is_online(ent_id) == 0) {
-            logerror(_("try to start existing instance(%d), "
-                       "but the node(%d) is not online.\n"),
-                       ci.ins_id, node_id);
-            goto failed;
-        }
-        if (ly_entity_is_registered(ent_id) == 0) {
-            logerror(_("try to start existing instance(%d), "
-                       "but the node(%d) is not registered\n"),
-                        ci.ins_id, node_id);
-            goto failed;
-        }
-        NodeInfo *ni = ly_entity_data(ent_id);
-        if (ni->status == NODE_STATUS_BUSY ||
-            ni->status == NODE_STATUS_ERROR) {
-            logerror(_("try to start existing instance(%d), "
-                       "but the node(%d) is %s\n"),
-                       ci.ins_id, node_id,
-                       ni->status == NODE_STATUS_BUSY ?
-                       "busy" : "in error state");
-            goto failed;
+        if (ly_entity_is_registered(ent_id) && ly_entity_is_enabled(ent_id))
+            logdebug(_("node %d is ready on entity %d\n"), node_id, ent_id);
+        else {
+            node_id = 0;
+            if (!ly_entity_is_enabled(ent_id))
+                loginfo(_("node %d is not enabled\n"), node_id);
+            else if (!ly_entity_is_online(ent_id) == 0)
+                loginfo(_("node %d is not online\n"), node_id);
+            else
+                loginfo(_("node %d is not regisered\n"), node_id);
         }
     }
-    else {
+
+    if (node_id <= 0) {
+        logdebug(_("search node for instance %d\n"), ci.ins_id);
         ent_id = node_schedule();
         if (ent_id < 0) {
             logwarn(_("no node available to run instance(%d). "
@@ -355,8 +346,16 @@ static int __job_start_instance(LYJobInfo * job)
             job_update_status(job, JOB_S_PENDING);
             return 0;
         }
-        logdebug(_("run on entity %d\n"), ent_id);
     }
+
+    NodeInfo *ni = ly_entity_data(ent_id);
+    if (ni->status == NODE_STATUS_BUSY || ni->status == NODE_STATUS_ERROR) {
+        logwarn(_("node %d is %s\n"), node_id,
+                   ni->status == NODE_STATUS_BUSY ?  "busy" : "in error state");
+    }
+
+    loginfo(_("run instance %d on node %d entity %d\n"),
+               ci.ins_id, node_id, ent_id);
     job->j_ent_id = ent_id;
 
     if (ci.ins_status == DOMAIN_S_NEW || ci.osm_secret == NULL) {

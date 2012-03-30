@@ -88,6 +88,10 @@ static void __main_clean(int keeppid)
         free(c->sysconf_path);
     if (c->node_data_dir)
         free(c->node_data_dir);
+    if (c->ins_data_dir)
+        free(c->ins_data_dir);
+    if (c->app_data_dir)
+        free(c->app_data_dir);
     if (c->log_path)
         free(c->log_path);
     if (s->clc_ip)
@@ -213,6 +217,8 @@ int main(int argc, char *argv[])
         printf(_("reading config file %s returned error\n"), c->conf_path);
     else if (ret == NODE_CONFIG_RET_ERR_UNKNOWN)
         printf(_("internal error\n"));
+    else if (ret != 0)
+        printf(_("undefined error\n"));
 
     /* exit if ret is not zero */
     if (ret != 0)

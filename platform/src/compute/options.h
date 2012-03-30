@@ -24,6 +24,8 @@ typedef struct NodeConfig_t {
     char *clc_mcast_ip;    /* cloud controller mcast ip */
     int  clc_mcast_port;   /* cloud controller mcast port */
     char *node_data_dir;   /* compute node data directory */
+    char *app_data_dir;    /* appliances sub-directory */
+    char *ins_data_dir;    /* instances sub-directory */
     char *conf_path;       /* config file path */
     char *sysconf_path;    /* sysconf file path */
     char *log_path;        /* log file path */

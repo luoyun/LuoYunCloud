@@ -477,25 +477,27 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
     }
 
     /* create necessary sub-directories for normal operation */
-    char path[PATH_MAX];
-    if (snprintf(path, PATH_MAX, "%s/appliances", c->node_data_dir) >= PATH_MAX)
-        return NODE_CONFIG_RET_ERR_CONF;
-    if (lyutil_create_dir(path) != 0) {
-        logsimple(_("failed creating directory of %s\n"), path);
+    int len = strlen(c->node_data_dir); 
+    c->app_data_dir = malloc(len + 15);
+    c->ins_data_dir = malloc(len + 15);
+    if (c->app_data_dir == NULL || c->ins_data_dir == NULL)
+        return NODE_CONFIG_RET_ERR_NOMEM;
+    sprintf(c->app_data_dir, "%s/appliances", c->node_data_dir);
+    if (lyutil_create_dir(c->app_data_dir) != 0) {
+        logsimple(_("failed creating directory of %s\n"), c->app_data_dir);
         return NODE_CONFIG_RET_ERR_CMD;
     }
-    if (__clean_lockfile(path) != 0) {
-        logsimple(_("failed cleaning directory of %s\n"), path);
+    if (__clean_lockfile(c->app_data_dir) != 0) {
+        logsimple(_("failed cleaning directory of %s\n"), c->app_data_dir);
         return NODE_CONFIG_RET_ERR_CMD;
     }
-    if (snprintf(path, PATH_MAX, "%s/instances", c->node_data_dir) >= PATH_MAX)
-        return NODE_CONFIG_RET_ERR_CONF;
-    if (lyutil_create_dir(path) != 0) {
-        logsimple(_("failed creating directory of %s\n"), path);
+    sprintf(c->ins_data_dir, "%s/instances", c->node_data_dir);
+    if (lyutil_create_dir(c->ins_data_dir) != 0) {
+        logsimple(_("failed creating directory of %s\n"), c->ins_data_dir);
         return NODE_CONFIG_RET_ERR_CMD;
     }
-    if (__clean_lockfile(path) != 0) {
-        logsimple(_("failed cleaning directory of %s\n"), path);
+    if (__clean_lockfile(c->ins_data_dir) != 0) {
+        logsimple(_("failed cleaning directory of %s\n"), c->ins_data_dir);
         return NODE_CONFIG_RET_ERR_CMD;
     }
 
