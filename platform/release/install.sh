@@ -42,8 +42,8 @@ tar -xzf luoyun-cloud-0.2-bin-${release}.tgz -C /
 if [ $? -eq 0 ]
 then
   echo "Installation succeeds!"
-  echo "Please run 'sudo /"$clc"' to start Cloud Controller daemon"
-  echo "Please run 'sudo /"$node"' to start Node Server daemon"
+  echo "Please run 'sudo /etc/init.d/lyclcd start' to start Cloud Controller daemon"
+  echo "Please run 'sudo /etc/init.d/lynoded start' to start Node Server daemon"
   exit 0
 else
   echo "Installation failed!"
