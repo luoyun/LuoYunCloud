@@ -326,13 +326,13 @@ static int __job_start_instance(LYJobInfo * job)
         if (ly_entity_is_registered(ent_id) && ly_entity_is_enabled(ent_id))
             logdebug(_("node %d is ready on entity %d\n"), node_id, ent_id);
         else {
-            node_id = 0;
             if (!ly_entity_is_enabled(ent_id))
                 loginfo(_("node %d is not enabled\n"), node_id);
             else if (!ly_entity_is_online(ent_id) == 0)
                 loginfo(_("node %d is not online\n"), node_id);
             else
                 loginfo(_("node %d is not regisered\n"), node_id);
+            node_id = 0;
         }
     }
 
@@ -346,6 +346,7 @@ static int __job_start_instance(LYJobInfo * job)
             job_update_status(job, JOB_S_PENDING);
             return 0;
         }
+        node_id = ly_entity_db_id(ent_id);
     }
 
     NodeInfo *ni = ly_entity_data(ent_id);
