@@ -1,0 +1,7 @@
+Files in top directory:
+
+README     - this file
+lyweb      - web server of LuoYun Cloud Computing Software
+platform   - Cloud Controller, Node Server and OS Manager of
+             LuoYun Cloud Computing Software
+tools      - some helper scripts
