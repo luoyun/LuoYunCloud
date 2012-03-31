@@ -2,13 +2,15 @@
 
 <%block name="main">
 
-<div class="inner-navigator">
-  <span><a href="/">${ _("Home") }</a></span>&gt;
-  <span><a href="/wiki">${ _("Wiki") }</a></span>&gt;
-  <span>${ _("View") } ${ catalog.name }</span>
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="/">${ _("Home") }</a></span>&gt;
+    <span><a href="/wiki">${ _("Wiki") }</a></span>&gt;
+    <span>${ _("View") } ${ catalog.name }</span>
+  </div>
 </div>
 
-<div id="wiki-main">
+<div class="main-wrap">
 
   <div class="action clearfix">
     <a id="add-topic" class="button"
