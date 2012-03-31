@@ -145,7 +145,7 @@ CREATE TABLE appliance_catalog (
 
 CREATE TABLE appliance (
     id serial PRIMARY KEY,
-    name character varying(64) NOT NULL,
+    name character varying(128) NOT NULL,
     summary character varying(256),
     description text,
 
