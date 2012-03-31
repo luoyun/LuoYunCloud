@@ -4,6 +4,12 @@
 The 404 error !
 </%block>
 
-<%block name="lyentry">
-The <span class="request_uri">${ request.full_url() }</span> have not found on the server !
+<%block name="main">
+
+<div class="main-wrap" id="http404">
+  <h2>${ _("404 Error") }</h2>
+  <p>${ _("No such page: ") }<span class="request_uri">${ request.uri }</span></p>
+</div>
+
+
 </%block>

@@ -503,3 +503,20 @@ table.list {
 .count {
     font: italic bold 18px/12px Georgia,Serif;
 }
+
+
+/* Start http404 error */
+#http404 {
+    margin: 220px auto;
+    width: 360px;
+}
+#http404 h2 {
+    color: blue;
+}
+#http404 p {
+    margin: 10px 0;
+}
+#http404 .request_uri {
+    color: red;
+}
+/* End http404 error */
