@@ -36,6 +36,11 @@
 </%doc>
 
 <div class="appliance-list">
+
+   % if not appliances:
+   <p>${ _("Have not any appliances yet !") }</p>
+   % endif
+
     % for app in appliances:
     <div class="appliance">
       <div class="logo">

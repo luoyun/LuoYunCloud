@@ -2,7 +2,7 @@
 
 import logging, datetime, time
 import tornado
-from lycustom import LyRequestHandler
+from lycustom import LyRequestHandler, Pagination
 from tornado.web import authenticated, asynchronous
 
 
@@ -10,10 +10,31 @@ class Index(LyRequestHandler):
 
     def get(self):
 
+        by = self.get_argument('by', 'created')
+        sort = self.get_argument('sort', 'DESC')
+        page_size = int(self.get_argument('sepa', 10))
+        cur_page = int(self.get_argument('p', 1))
+
+        # TODO: no SQL-injection
+        if not ( sort in ['DESC', 'ASC'] and
+                 by  in ['created', 'started', 'ended'] ):
+            return self.write(u'wrong URL !')
+
+        offset = (cur_page - 1) * page_size
+
+        SQL = "\
+SELECT * FROM job \
+ORDER BY %s %s \
+LIMIT %s OFFSET %s;" % (by, sort, page_size, offset)
+
+        JOB_LIST = self.db.query(SQL)
+
+        JOB_TOTAL = len(self.db.query('SELECT id FROM job;'))
+
+
         LYJOB_ACTION = self.application.settings['LYJOB_ACTION']
 
-        jobs = self.db.query('SELECT * from job;')
-        for j in jobs:
+        for j in JOB_LIST:
             j.user = self.db.get(
                 'SELECT * from auth_user WHERE id=%s;',
                 j.user_id )
@@ -25,7 +46,16 @@ class Index(LyRequestHandler):
                     j.action_str = k
                     break;
 
-        d = { 'title': 'Servers Home', 'jobs': jobs }
+        page_html = Pagination(
+            total = JOB_TOTAL, page_size = page_size,
+            cur_page = cur_page ).html(self.get_page_url)
+
+        d = { 'title': 'Jobs',
+              'JOB_TOTAL': JOB_TOTAL,
+              'JOB_LIST': JOB_LIST,
+              'cur_page': cur_page,
+              'page_html': page_html,
+              'job_status': self.job_status }
 
         self.render('job/index.html', **d)
 
@@ -74,7 +104,10 @@ class JobStatus(LyRequestHandler):
             self.write(u'No job %s !' % id)
             self.finish()
 
-        previous = int( self.get_argument('previous', 0) )
+        try:
+            previous = int( self.get_argument('previous', 0) )
+        except:
+            previous = 0
 
         self.check_job_status(id, previous)
 

@@ -88,9 +88,9 @@ class NewTopic(LyRequestHandler):
         
         d = self.d
 
-        d['name'] = self.get_argument('name', '')
+        d['name'] = self.get_argument('name', '').encode('utf-8')
         d['catalog'] = int(self.get_argument('catalog', 0))
-        d['body'] = self.get_argument('body', '')
+        d['body'] = self.get_argument('body', '').encode('utf-8')
 
         if not d['name']:
             d['ERROR'].append('name can not be empty !')
@@ -102,7 +102,7 @@ class NewTopic(LyRequestHandler):
         if d['ERROR']:
             return self.render('wiki/new_topic.html', **d)
 
-        html = YMK.convert(d['body'])
+        html = YMK.convert(d['body']).encode('utf-8')
 
         try:
             r = self.db.query(
@@ -112,14 +112,14 @@ catalog_id, user_id, user_ip, created, updated) VALUES \
                 d['name'], d['body'], html, d['catalog'],
                 self.current_user.id, self.request.remote_ip )
 
-            #print 'r = ', r
             return self.redirect('/wiki/topic/%s' % r[0].id)
 
         except Exception, emsg:
-            return self.write('Create new topic to DB failed: %s' % emsg)
+            return self.write('DB failed: %s' % emsg)
 
 
 class EditTopic(LyRequestHandler):
+
 
     @authenticated
     def prepare(self):
@@ -147,9 +147,9 @@ class EditTopic(LyRequestHandler):
 
         d = self.d
 
-        d['name'] = self.get_argument('name', '')
+        d['name'] = self.get_argument('name', '').encode('utf-8')
         d['catalog'] = int(self.get_argument('catalog', 0))
-        d['body'] = self.get_argument('body', '')
+        d['body'] = self.get_argument('body', '').encode('utf-8')
 
         if not d['name']:
             d['ERROR'].append('name can not be empty !')
@@ -161,7 +161,7 @@ class EditTopic(LyRequestHandler):
         if d['ERROR']:
             return self.render('wiki/new_topic.html', **d)
 
-        html = YMK.convert(d['body'])
+        html = YMK.convert(d['body']).encode('utf-8')
 
         try:
             self.db.execute(
@@ -174,7 +174,7 @@ WHERE id=%s;",
             return self.redirect('/wiki/topic/%s' % id)
 
         except Exception, emsg:
-            return self.write('Update topic failed: %s' % emsg)
+            return self.write('DB error: %s' % emsg)
 
 
 class DeleteTopic(LyRequestHandler):

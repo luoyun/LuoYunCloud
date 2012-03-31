@@ -9,7 +9,9 @@ from tornado.web import authenticated, asynchronous
 from settings import JOB_ACTION, JOB_TARGET
 
 
+
 class Index(LyRequestHandler):
+
 
     def get(self):
 
@@ -18,6 +20,7 @@ class Index(LyRequestHandler):
         d = { 'title': 'Servers Home', 'nodes': nodes }
 
         self.render('node/index.html', **d)
+
 
 
 class DynamicList(LyRequestHandler):
@@ -65,10 +68,13 @@ class Action(LyRequestHandler):
 
         if not action:
             instances = self.db.query(
-                'SELECT * FROM instance WHERE node_id=%s;',
+                'SELECT * FROM instance \
+WHERE node_id=%s and status!=2 \
+ORDER BY id;',
                 id )
             return self.render( 'node/view.html', node=node,
-                                INSTANCE_LIST=instances )
+                                INSTANCE_LIST=instances,
+                                instance_status=self.instance_status)
 
         elif action == 1:
             if node.isenable:

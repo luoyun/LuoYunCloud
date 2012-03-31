@@ -89,6 +89,9 @@ class View(InstRequestHandler):
         if not inst:
             return self.done( _('No instance %s !') % id )
 
+        inst.user = self.db.get(
+            'SELECT * FROM auth_user WHERE id=%s;',
+            inst.user_id )
         inst.appliance = self.db.get(
             'SELECT * from appliance WHERE id=%s;',
             inst.appliance_id )
@@ -97,8 +100,14 @@ class View(InstRequestHandler):
         JOB_LIST = self.db.query(
             'SELECT * FROM job \
 WHERE target_id=%s and target_type=%s \
-ORDER BY created DESC LIMIT 10;',
+ORDER BY created DESC LIMIT 5;',
             id, JOB_TARGET['INSTANCE'] )
+
+        for J in JOB_LIST:
+            J.user = self.db.get(
+                'SELECT id, username FROM auth_user \
+WHERE id=%s;', J.user_id )
+            J.result = self.job_status(J.status)
 
         d = { 'title': 'View Instance %s' % id,
               'instance': inst,
@@ -284,16 +293,25 @@ class Control(InstRequestHandler):
             'SELECT * from instance WHERE id=%s;', id)
 
         if not inst:
-            return self.write('No instance %s !' % id)
+            return self.write( _('No instance %s !') % id )
 
         if self.current_user.id not in [inst.user_id, 1]:
-            return self.write('No permissions to delete !')
+            return self.write( _('No permissions !') )
 
         LYJOB_ACTION = self.settings['LYJOB_ACTION']
         action_id = LYJOB_ACTION.get(action, 0)
         if not action_id:
-            return self.write('Unknown action "%s" !' % action)
+            return self.write( _('Unknown action "%s" !') % action )
 
+        # TODO: not run instance that it's running, and stop
+        if ( ( action_id == 201 and 
+               inst.status not in [0, 1, 2, 9] ) or (
+                action_id == 202 and 
+                inst.status in [0, 1, 2, 9] ) ):
+            return self.write(
+                _('the status of instance %s is: "%s", can not %s') % (
+                    id, self.instance_status(inst.status), 
+                    self.job_action(action_id) ) )
 
         jid = self.new_job(JOB_TARGET['INSTANCE'], id, action_id)
 

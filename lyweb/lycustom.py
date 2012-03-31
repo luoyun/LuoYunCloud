@@ -356,11 +356,11 @@ class Pagination:
 
   % for p in plist:
   % if p == cur_page:
-  <span class="count current">${ p }</span>
+  <span class="page current">${ p }</span>
   % elif p == notexist_page:
   <span>...</span>
   % else:
-  <a href="${ page_url(p) }"><span class="count">${ p }</span></a>
+  <a href="${ page_url(p) }"><span class="page">${ p }</span></a>
   % endif
   % endfor
 

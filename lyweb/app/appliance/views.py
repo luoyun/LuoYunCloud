@@ -133,7 +133,7 @@ class Upload(AppRequestHandler):
                 "INSERT INTO appliance (name, user_id, \
 filesize, checksum, created, updated) VALUES \
 (%s, %s, %s, %s, 'now', 'now');",
-                fname.replace('.', '_').upper(),
+                fname.replace('.', ' ').upper(),
                 self.current_user.id, fsize, fhash )
 
             appliance = self.db.get(
@@ -421,7 +421,7 @@ class CreateInstance(LyRequestHandler):
                 msg = 'Have not found appliance %s !' % id)
 
         d = { 'title': 'Create Instance', 'appliance': app,
-              'name': '%s_%s' % (
+              'name': "%s's %s" % (
                 self.current_user.username, app.name) }
 
         self.render('appliance/create_instance.html', **d)

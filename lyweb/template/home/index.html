@@ -28,7 +28,7 @@
     <div class="info">
       <div class="c1">${ _("Instance") }</div>
       <div class="c2">
-        <span class="count">${ TOTAL_INSTANCE }/${ RUNNING_INSTANCE }</span>
+        <span class="count">${ RUNNING_INSTANCE }/${ TOTAL_INSTANCE }</span>
       </div>
     </div>
 
@@ -40,10 +40,16 @@
     </div>
 
     <div class="info">
-      <div class="c1">${ _("Memory(KB)") }</div>
+      <div class="c1">${ _("Memory(MB)") }</div>
       <div class="c2">
-        <div class="count">${ TOTAL_MEMORY }/${ USED_MEMORY }</div>
-<div class="total"><div class="used" style="width: ${ (100 * USED_MEMORY)/TOTAL_MEMORY }%"></div></div>
+        <div class="count">${ USED_MEMORY }/${ TOTAL_MEMORY }</div>
+<div class="total"><div class="used" 
+% if TOTAL_MEMORY:
+style="width: ${ (100 * USED_MEMORY)/TOTAL_MEMORY }%"
+% else:
+style="width: 0%"
+% endif
+></div></div>
       </div>
     </div>
 
@@ -64,18 +70,18 @@
   </div>
 </%doc>
 
+  % if not INSTANCE_LIST:
+  <p>${ _("Have not any instance yet !") }</p>
+  % endif
+
   % for I in INSTANCE_LIST:
   <div class="instance">
 
     <div class="logo">
       <a href="/instance/${I.id}">
         <img src="${ instance_logo_url(I.logo) }" /></a>
-    </div>
-
-    <div class="info">
-
-      <span class="id">${ I.id }</span>
-      <span class="status">
+      <span class="count instance-id">${ I.id }</span>
+      <span class="instance-status">
         % if I.status not in [0, 1, 2, 4, 5, 9, 245, 255]:
         <img src="${ THEME_URL }icons/InstanceStatus/running.gif"/>
         % else:
@@ -83,14 +89,16 @@
         % endif
         <span class="status-string" style="display: none;">${ instance_status(I.status) }</span>
       </span>
+    </div>
 
+    <div class="title">
+      <span class="name">${ I.name }</span>
       % if I.status in [4, 5]:
       <span class="ip">
         <a href="/proxy?host=${ I.ip }&port=8080" title="${ _('Service is running') }">${ I.ip }</a>
 ##        <a href="http://${ I.ip }:8080" title="${ _('Service is running') }">${ I.ip }</a>
       </span>
       % endif
-
     </div>
 
     <div class="hide" style="display: none;">

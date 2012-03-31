@@ -35,7 +35,7 @@ body, #pager {
     margin: 0;
 }
 
-#header-wrapper, #main, #footer {
+#header-wrap, #main, #footer-wrap {
     margin: 0 auto;
     width: 980px;
 }
@@ -59,7 +59,7 @@ body, #pager {
     background-color: #3C9EDF;
 }
 
-#header-wrapper {
+#header-wrap {
     height: 42px;
 }
 #logo {
@@ -118,7 +118,7 @@ body, #pager {
 /* End Header */
 
 
-#footer {
+#footer-wrap {
     border-top: 1px solid #DFE6ED;
     padding-top: 15px;
     margin: 30px auto;

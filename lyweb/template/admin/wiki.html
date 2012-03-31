@@ -31,13 +31,15 @@
 
     <div class="addon">
       <a class="button" href="/admin/wiki/add_catalog">${_("Add Catalog")}</a>
+      % if CATALOG:
       <a class="button" href="/admin/wiki/catalog/${ CATALOG.id }/edit">${_("Edit Catalog")}</a>
+      % endif
     </div>
 
   </div>
 
   <div class="sidemain">
-
+    % if CATALOG:
     <table class="list">
       <tbody>
         <tr>
@@ -66,6 +68,8 @@
     <div class="description">
       ${ CATALOG.description }
     </div>
+    % endif
+
   </div>
 
 </div>

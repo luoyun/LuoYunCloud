@@ -2,8 +2,10 @@
 
 import logging, datetime, time, re
 import tornado
-from lycustom import LyRequestHandler
+from lycustom import LyRequestHandler,  Pagination
 from tornado.web import authenticated, asynchronous
+
+from settings import JOB_ACTION, JOB_TARGET
 
 
 
@@ -21,17 +23,33 @@ class Index(LyRequestHandler):
 
 
 
-class Appliance(LyRequestHandler):
+class User(LyRequestHandler):
+
 
     @authenticated
-    def prepare(self):
+    def get(self):
+
+        if self.current_user.id not in [ 1 ]:
+            return self.write( _('No permissions !') )
+
+        USER_LIST = self.db.query("SELECT * FROM auth_user;")
+
+        d = { 'title': _('User Management'),
+              'USER_LIST': USER_LIST }
+
+        self.render('admin/user.html', **d)
+
+
+
+class Appliance(LyRequestHandler):
+
+
+    @authenticated
+    def get(self):
 
         if self.current_user.id not in [ 1 ]:
             self.write( _('No permissions !') )
             return self.finished()
-
-
-    def get(self):
 
         c = int( self.get_argument('c', 1) )
 
@@ -297,3 +315,94 @@ WHERE id=%s;",
             return self.write('DB error: %s' % emsg)
 
         self.redirect('/admin/wiki?c=%s' % id)
+
+
+
+
+class Instance(LyRequestHandler):
+
+
+    @authenticated
+    def get(self):
+
+        if self.current_user.id not in [ 1 ]:
+            return self.write( _('No permissions !') )
+
+        by = self.get_argument('by', 'created')
+        sort = self.get_argument('sort', 'DESC')
+        page_size = int(self.get_argument('sepa', 10))
+        cur_page = int(self.get_argument('p', 1))
+
+        # TODO: no SQL-injection
+        if not ( sort in ['DESC', 'ASC'] and
+                 by  in ['updated', 'created'] ):
+            return self.write(u'wrong URL !')
+
+        offset = (cur_page - 1) * page_size
+
+        SQL = "\
+SELECT id, name, summary, logo, cpus, memory, user_id, \
+       appliance_id, node_id, ip, status, created, updated \
+FROM instance \
+ORDER BY %s %s \
+LIMIT %s OFFSET %s;" % (by, sort, page_size, offset)
+
+        INSTANCE_LIST = self.db.query(SQL)
+
+        TOTAL_INSTANCE = len( self.db.query(
+                'SELECT id FROM instance;') )
+
+        for I in INSTANCE_LIST:
+            I.user = self.db.get('SELECT id, username \
+FROM auth_user WHERE id=%s;', I.user_id )
+
+        page_html = Pagination(
+            total = TOTAL_INSTANCE,
+            page_size = page_size,
+            cur_page = cur_page ).html(self.get_page_url)
+
+
+        d = { 'title': _('Instance'),
+              'TOTAL_INSTANCE': TOTAL_INSTANCE,
+              'INSTANCE_LIST': INSTANCE_LIST,
+              'page_html': page_html,
+              'cur_page': cur_page,
+              'instance_status': self.instance_status,
+              'instance_logo_url': self.instance_logo_url }
+                              
+        self.render('admin/instance.html', **d)
+
+
+
+class ControlAllInstance(LyRequestHandler):
+    ''' stop/start all instance '''
+
+    @authenticated
+    def get(self, action):
+
+        if self.current_user.id not in [ 1 ]:
+            return self.write( _('No permissions !') )
+
+        if action == 'stop_all':
+            action = 'stop'
+            INSTANCE_LIST = self.db.query( 'SELECT id,status \
+FROM instance WHERE status != 2;' )
+
+        elif action == 'start_all':
+            action = 'run'
+            INSTANCE_LIST = self.db.query( 'SELECT id,status \
+FROM instance WHERE status=2;' )
+
+        else:
+            return self.write( _('Unknown action "%s" !') % action )
+
+        LYJOB_ACTION = self.settings['LYJOB_ACTION']
+        action_id = LYJOB_ACTION.get(action, 0)
+
+        JID_LIST = []
+
+        for I in INSTANCE_LIST:
+            jid = self.new_job(JOB_TARGET['INSTANCE'], I.id, action_id)
+            JID_LIST.append(jid)
+
+        self.write( _('%s all instance success: %s') % ( action, JID_LIST ) )

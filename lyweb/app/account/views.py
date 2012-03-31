@@ -26,7 +26,9 @@ def check_password(raw_password, enc_password):
 class Login(LyRequestHandler):
 
     def get(self):
-        self.render("account/login.html")
+
+        self.render("account/login.html",
+                    next_url = self.get_argument('next', '/'))
 
     def post(self):
 
@@ -38,14 +40,16 @@ class Login(LyRequestHandler):
             username )
 
         d = { 'username': username, 'password': password,
-              'user': user, 'ERROR': [] }
+              'user': user, 'ERROR': [],
+              'next_url': self.get_argument('next', '/') }
 
         if user:
             if check_password(password, user.password):
                 # login success, save a session
                 self.save_session(user.id)
                 #self.write("Have not completed ! d = %s" % d)
-                self.redirect('/')
+                print 'next_url = ', d['next_url']
+                self.redirect( d['next_url'] )
             else:
                 d['ERROR'].append( _('Password is wrong.') )
                 self.render('account/login.html', **d)
@@ -93,6 +97,7 @@ class Logout(LyRequestHandler):
         self.clear_all_cookies()
 
 
+# TODO: No used now
 class Register(LyRequestHandler):
 
     def get(self):
@@ -143,12 +148,65 @@ class Register(LyRequestHandler):
 
 
 
+class Create(LyRequestHandler):
+    ''' Create a new account, by admin '''
 
-class Profile(LyRequestHandler):
+    def initialize(self):
+
+        self.t = 'account/create.html'
 
     @authenticated
+    def prepare(self):
+        if self.current_user.id not in [ 1 ]:
+            self.write('No permissions !')
+            return self.finish()
+
+
     def get(self):
-        self.render('account/profile.html')
+        self.render(self.t)
+
+
+    def post(self):
+
+        username = self.get_argument('username', '')
+        password = self.get_argument('password', '')
+
+        d = { 'username': username, 'ERROR': [] }
+
+        user = self.db.get(
+            'SELECT * from auth_user WHERE username=%s;',
+            username )
+
+        if user:
+            d['ERROR'].append( _('This username is taked.') )
+            return self.render(self.t, **d)
+
+        if len(password) < 6:
+            d['ERROR'].append( _('password must have more than 6 characters !') )
+            return self.render(self.t, **d)
+
+        salt = md5(str(random.random())).hexdigest()[:12]
+        hsh = encrypt_password(salt, password)
+        enc_password = "%s$%s" % (salt, hsh)
+        try:
+            # create user
+            r = self.db.query(
+                "INSERT INTO auth_user (username, \
+password, last_login, date_joined) VALUES (%s, %s, \
+'epoch', 'now') RETURNING id;",
+                username, enc_password )
+
+            uid = r[0].id
+
+            # create user profile
+            self.db.execute( "INSERT INTO user_profile \
+(user_id) VALUES (%s);", uid )
+
+            return self.redirect( '/account/%s' % uid )
+
+        except Exception, emsg:
+            d['ERROR'].append( _('System error: %s') % emsg )
+            self.render( self.t, **d )
 
 
 
@@ -156,6 +214,7 @@ class User(LyRequestHandler):
 
     @authenticated
     def get(self, id):
+
         user = self.db.get(
             'SELECT * from auth_user WHERE id=%s;', id )
 
@@ -166,8 +225,14 @@ class User(LyRequestHandler):
             'SELECT * from user_profile WHERE user_id = %s;',
             user.id )
 
+        INSTANCE_LIST = self.db.query(
+            'SELECT id, name FROM instance WHERE user_id=%s',
+            user.id )
+
         self.render( 'account/view_user.html',
-                     title = 'View User', user = user )
+                     title = 'View User', user = user,
+                     INSTANCE_LIST = INSTANCE_LIST )
+
 
 
 class Chat(LyRequestHandler):
@@ -221,6 +286,9 @@ class UserList(LyRequestHandler):
 
 class ResetPassword(LyRequestHandler):
 
+    def initialize(self):
+        self.t = 'account/reset_password.html'
+
     @authenticated
     def get(self, id):
 
@@ -242,27 +310,32 @@ class ResetPassword(LyRequestHandler):
         d = { 'title': 'Reset Password', 'ERROR': [] }
 
         password = self.get_argument('password', '')
+        password2 = self.get_argument('password2', '')
+
         if len(password) < 6:
             d['ERROR'].append( _('password must have more than 6 characters !') )
-            return self.render('account/reset_password.html', **d)
+            return self.render(self.t, **d)
+
+        if password != password2:
+            d['ERROR'].append( _('password now match') )
+            return self.render(self.t, **d)
 
         salt = md5(str(random.random())).hexdigest()[:12]
         hsh = encrypt_password(salt, password)
         enc_password = "%s$%s" % (salt, hsh)
 
         try:
-            self.db.execute(
-                'UPDATE auth_user SET password=%s;',
-                enc_password )
+            self.db.execute( 'UPDATE auth_user \
+SET password=%s WHERE id=%s;', enc_password, id )
         except Exception, emsg:
             d['ERROR'].append( _('UPDATE failed: %s') % emsg )
             return self.render('account/reset_password.html', **d)
-        self.redirect('/account/profile')
+        self.redirect('/account/%s' % id)
 
 
     def check_permission(self, id):
         
-        if self.current_user.id != int(id):
+        if self.current_user.id not in [1, int(id)]:
             return 'Don not do this !'
 
         self.user = self.db.get(

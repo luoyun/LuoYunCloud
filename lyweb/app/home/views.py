@@ -71,9 +71,9 @@ FROM node WHERE isenable=true' )
 
         d = { 'title': _('LuoYun Home'),
               'TOTAL_CPU': TOTAL_CPU,
-              'TOTAL_MEMORY': TOTAL_MEMORY,
+              'TOTAL_MEMORY': TOTAL_MEMORY / 1024,
               'USED_CPU': USED_CPU,
-              'USED_MEMORY': USED_MEMORY,
+              'USED_MEMORY': USED_MEMORY / 1024,
               'TOTAL_APPLIANCE': TOTAL_APPLIANCE,
               'TOTAL_INSTANCE': TOTAL_INSTANCE,
               'RUNNING_INSTANCE': RUNNING_INSTANCE,
@@ -84,7 +84,6 @@ FROM node WHERE isenable=true' )
               'instance_logo_url': self.instance_logo_url }
 
         self.render("home/index.html", **d)
-
 
 
 

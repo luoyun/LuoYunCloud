@@ -1,12 +1,10 @@
 <%inherit file="account_base.html" />
 
-<%block name="main">
+<%block name="lyentry">
 
-
-<div class="lrform login-form">
-  <h2>${_("Sign in LuoYun System")}</h2>
-
-  <form method="POST" action="/account/login">
+<div class="lrform user-register">
+  <h2>${_("LuoYun User Register")}</h2>
+  <form method="POST">
 
     % if ERROR:
     <ol>
@@ -16,11 +14,9 @@
     </ol>
     % endif
 
-    <input type="hidden" name="next" value="${ next_url }"/>
-
     <div class="item">
       <div class="c1">
-        <label for="username">${ _("Username") }</label>
+        <label for="username">${_("Username")}</label>
       </div>
       <div class="c2">
         <input id="username" type="text" name="username" maxlength="30" value="${username}"/>
@@ -36,8 +32,17 @@
       </div>
     </div>
 
+    <div class="item">
+      <div class="c1">
+        <label for="password2">${_("Password Confirm")}</label>
+      </div>
+      <div class="c2">
+        <input id="password2" type="password" name="password2"/>
+      </div>
+    </div>
+
     <div class="submit">
-      <input type="submit" value="${ _('Sign In') }"/>
+      <input type="submit" value="${ _("Register") }"/>
     </div>
 
   </form>

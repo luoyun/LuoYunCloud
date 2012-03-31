@@ -23,7 +23,7 @@
 
     <div id="job-status">
       <span id="job-id" style="display:none;"></span>
-##      <span id="job-status-value"></span>
+      <span id="job-status-value"></span>
       <span id="job-status-desc"></span>
     </div>
 
@@ -37,6 +37,7 @@
 
     <table>
       <tbody>
+        <tr><td>${ _("Owner") }</td><td><a href="/account/${ instance.user_id }">${ instance.user.username }</a></td></tr>
         <tr><td>${ _("ID") }</td><td>${ instance.id }</td></tr>
         <tr><td>${ _("Appliance") }</td><td><a href="/appliance/${ instance.appliance.id }">${ instance.appliance.name }</a></td></tr>
         <tr><td>${ _("CPU numbers") }</td><td>${ instance.cpus }</td></tr>
@@ -92,16 +93,20 @@
       <tbody>
         <tr>
           <th>${ _("Job ID") }</th>
+          <th>${ _("User") }</th>
           <th>${ _("Action") }</th>
-          <th>${ _("Creat Time") }</th>
+          <th>${ _("Result") }</th>
+##          <th>${ _("Creat Time") }</th>
           <th>${ _("Start Time") }</th>
           <th>${ _("End Time") }</th>
         </tr>
         % for J in JOB_LIST:
         <tr>
           <td><span class="count">${ J.id }</span></td>
+          <td><a href="/account/${ J.user.id }">${ J.user.username }</a></td>
           <td>${ job_action(J.action) }</td>
-          <td>${ fulltime(J.created) }</td>
+          <td>${ J.result }</td>
+##          <td>${ fulltime(J.created) }</td>
           <td>${ fulltime(J.started) }</td>
           <td>${ fulltime(J.ended) }</td>
         </tr>

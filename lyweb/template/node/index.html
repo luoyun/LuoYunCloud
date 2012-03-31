@@ -3,8 +3,17 @@
 <%block name="main">
 
 <div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="/">${ _("Home") }</a></span>&gt;
+    <span><a href="/admin">${ _("Admin") }</a></span>&gt;
+    <span><a href="/node">${ _("Nodes") }</a></span>
+  </div>
+</div>
+
+
+<div class="main-wrap node-list">
   % if nodes:
-  <table>
+  <table class="list">
     <thead>
       <tr>
         <td>ID</td>

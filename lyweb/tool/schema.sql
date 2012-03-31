@@ -306,6 +306,11 @@ INSERT INTO auth_permission (name, codename) VALUES ('Administrator', 'admin');
 
 INSERT INTO user_permissions (user_id, permission_id) VALUES (1, 1);
 
+-- default appliance catalog
+INSERT INTO appliance_catalog (name, created, updated) VALUES ('LuoYun', 'now', 'now');
+
+-- default wiki catalog
+INSERT INTO wiki_catalog (name, created, updated) VALUES ('Defalut', 'now', 'now');
 
 --
 -- Name: public; Type: ACL; Schema: -; Owner: postgres

@@ -9,3 +9,11 @@
 .sidemain {
     padding: 50px 10px;
 }
+
+.admin-user-list {
+    margin: 50px;
+}
+.admin-user-list td {
+    padding: 5px 10px;
+}
+

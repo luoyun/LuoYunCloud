@@ -44,7 +44,7 @@ settings = {
     # Global settings about LuoYun System
     'appliance_top_dir': '/opt/LuoYun/data/appliance/',
     'appliance_top_url': '/dl/appliance/',
-    'control_server_ip': '192.168.1.11',
+    'control_server_ip': '127.0.0.1',
     'control_server_port': 1369,
 
     'THEME_URL': settings.THEME_URL,
@@ -64,8 +64,8 @@ handlers = [
     # Account
     (r'/account/login', account.Login),
     (r'/account/logout', account.Logout),
-    (r'/account/register', account.Register),
-    (r'/account/profile', account.Profile),
+    #(r'/account/register', account.Register),
+    (r'/account/create', account.Create),
     (r'/account/chat', account.Chat),
     (r'/account/online_total', account.Online),
     (r'/account/user_list', account.UserList),
@@ -117,12 +117,15 @@ handlers = [
 
     # Admin
     (r'/admin', admin.Index),
+    (r'/admin/user', admin.User),
     (r'/admin/appliance', admin.Appliance),
     (r'/admin/appliance/add_catalog', admin.ApplianceAddCatalog),
     (r'/admin/appliance/catalog/([0-9]+)/edit', admin.ApplianceEditCatalog),
     (r'/admin/wiki', admin.Wiki),
     (r'/admin/wiki/add_catalog', admin.WikiAddCatalog),
     (r'/admin/wiki/catalog/([0-9]+)/edit', admin.WikiEditCatalog),
+    (r'/admin/instance', admin.Instance),
+    (r'/admin/instance/([_a-z]+)', admin.ControlAllInstance),
 
     # Utils
     (r'/proxy', LyProxyHandler),
