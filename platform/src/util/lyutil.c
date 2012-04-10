@@ -607,7 +607,9 @@ int lyutil_decompress_bzip2(const char *srcfile, const char *dstfile)
     while (bzerror == BZ_OK) {
         nBuf = BZ2_bzRead(&bzerror, b, buf, BZ_BUF_SIZE);
         if (fwrite(buf, nBuf, 1, t) != nBuf) {
-            logerror(_("writing %s failed.\n"), dstfile);
+            char err[100];
+            logerror(_("writing %s failed. error: %d, %s\n"),
+                        dstfile, errno, strerror_r(errno, err, 100));
             goto out;
         }
     }
@@ -648,7 +650,9 @@ int lyutil_decompress_gz(const char *srcfile, const char *dstfile)
     int num_read = 0;
     while ((num_read = gzread(in, buffer, sizeof(buffer))) > 0) {
         if (fwrite(buffer, 1, num_read, out) != num_read) {
-            logerror(_("writing %s failed.\n"), dstfile);
+            char err[100];
+            logerror(_("writing %s failed. error: %d, %s\n"),
+                        dstfile, errno, strerror_r(errno, err, 100));
             goto out;
         }
     }

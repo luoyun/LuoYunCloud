@@ -276,9 +276,16 @@ int ly_entity_update(int id, int db_id, int status)
         (g_entity_store + id)->flag &= ~LY_ENTITY_FLAG_STATUS_MASK;
         (g_entity_store + id)->flag |= status & LY_ENTITY_FLAG_STATUS_MASK;
     }
-    if (db_id >= 0)
+    if (db_id >= 0) {
+        /* make sure each entity maps to a unique db_id */
+        int old_id = ly_entity_find_by_db(ly_entity_type(id), db_id);
+        if (old_id >= 0 && old_id != id) {
+            loginfo(_("Entity(%d) with same db_id(%d) found, release it\n"),
+                      old_id, db_id);
+            ly_entity_release(old_id);
+        }
         (g_entity_store + id)->db_id = db_id;
-
+    }
     return 0;
 }
 
@@ -292,9 +299,16 @@ int ly_entity_enable(int id, int db_id, int enble)
     else 
         (g_entity_store + id)->flag &= ~LY_ENTITY_FLAG_NODE_ENABLED;
 
-    if (db_id >= 0)
+    if (db_id >= 0) {
+        /* make sure each entity maps to a unique db_id */
+        int old_id = ly_entity_find_by_db(ly_entity_type(id), db_id);
+        if (old_id >= 0 && old_id != id) {
+            loginfo(_("Entity(%d) with same db_id(%d) found, release it\n"),
+                      old_id, db_id);
+            ly_entity_release(old_id);
+        }
         (g_entity_store + id)->db_id = db_id;
-
+    }
     return 0;
 }
 

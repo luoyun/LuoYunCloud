@@ -450,8 +450,10 @@ static int __job_control_instance_simple(LYJobInfo * job)
 
     if (node_id <= 0) {
         logerror(_("no node found for job %d\n"), job->j_id);
-        job_update_status(job, JOB_S_FINISHED);
         //goto failed;
+        luoyun_node_ctrl_instance_cleanup(&ci);
+        job_update_status(job, JOB_S_FINISHED);
+        return 0;
     }
     logdebug(_("send job to node %d\n"), node_id);
 
