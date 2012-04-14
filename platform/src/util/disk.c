@@ -188,6 +188,9 @@ long long lyutil_get_disk_offset(const char *disk)
 
     }
 
+    /* No patition have boot flag found ! */
+    logerror("%s, no boot patition have found !", __func__ );
+
     return -1;
 }
 
