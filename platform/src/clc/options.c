@@ -351,7 +351,7 @@ int clc_config(int argc, char *argv[], CLCConfig * c)
     //    return CLC_CONFIG_RET_ERR_ERRCONF;
 
     /* parse config file */
-    if (access(c->conf_path, R_OK)) {
+    if (access(c->conf_path, R_OK) == 0) {
         ret = __parse_config(c);
         if (ret && ret != CLC_CONFIG_RET_ERR_NOCONF)
             return ret; /* to exit programe */
