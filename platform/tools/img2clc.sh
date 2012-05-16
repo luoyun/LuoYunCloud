@@ -26,7 +26,7 @@ psql -c \
 EOL
 )
   su postgres -c "$sql" || myexit "ERR:$sql"
-  #cp $file /opt/LuoYun/data/appliance/appliance_$m || myexit "cp $1 ..."
+  cp $file /opt/LuoYun/data/appliance/appliance_$m || myexit "cp $1 ..."
 }
 
 update_old()
