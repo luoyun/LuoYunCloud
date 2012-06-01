@@ -11,13 +11,13 @@
 
   <div class="logo">
 
-    <a href="/instance/${instance.id}"><img class="instance-logo" src="${ instance_logo_url(instance.logo) }" alt="Instance Picture" /></a>
+    <a href="${ reverse_url('instance:view', instance.id) }"><img class="instance-logo" src="${ instance.logo_url }" alt="Instance Logo" /></a>
 
     <span class="status"><img src="${ THEME_URL }icons/InstanceStatus/${ instance.status }.png"  alt="Stauts Image"/></span>
 
     % if instance.status in [4, 5]:
     <span class="ip">
-      <a href="/proxy?host=${ instance.ip }&port=8080">${ instance.ip }</a>
+      <a href="${ instance.home_url }" target="_blank">${ instance.ip }</a>
     </span>
     % endif
 
@@ -30,16 +30,16 @@
   </div>
 
   <div class="base">
-    <h2>${instance.name}</h2>
+    <h2>${ instance.name }</h2>
     % if instance.summary:
-    <p>${instance.summary}</p>
+    <p>${ instance.summary }</p>
     % endif
 
     <table>
       <tbody>
-        <tr><td>${ _("Owner") }</td><td><a href="/account/${ instance.user_id }">${ instance.user.username }</a></td></tr>
+        <tr><td>${ _("Owner") }</td><td><a href="${ reverse_url('account:view', instance.user_id) }">${ instance.user.username }</a></td></tr>
         <tr><td>${ _("ID") }</td><td>${ instance.id }</td></tr>
-        <tr><td>${ _("Appliance") }</td><td><a href="/appliance/${ instance.appliance.id }">${ instance.appliance.name }</a></td></tr>
+        <tr><td>${ _("Appliance") }</td><td><a href="${ reverse_url('appliance:view', instance.appliance.id) }">${ instance.appliance.name }</a></td></tr>
         <tr><td>${ _("CPU numbers") }</td><td>${ instance.cpus }</td></tr>
         <tr><td>${ _("Memory") }</td><td>${ instance.memory }</td></tr>
         <tr><td>${ _("Create Time") }</td><td>${ fulltime(instance.created) }</tr>
@@ -47,18 +47,10 @@
       </tbody>
     </table>
 
-<%doc>
-    <ul>
-      <li><a href="/instance/${ instance.id }/config">${ _("Virtual Machine Configure") }</a></li>
-      <li><a href="/instance/${ instance.id }/libvirtd_conf">${ _("Libvirtd Configure") }</a></li>
-      <li><a href="/instance/${ instance.id }/osmanager_conf">${ _("Osmanager Configure") }</a></li>
-    </ul>
-</%doc>
-
     <div class="action">
-      % if current_user and current_user.id in [instance .user_id, 1]:
+      % if current_user and current_user.id in [instance.user_id, 1]:
 
-      % if instance.status in [0, 1, 2, 9, 245, 255]:
+      % if instance.can_run:
       <span class="run"><a class="button" href="/instance/${ instance.id }/run">${ _("Run") }</a></span>
       % else:
       <span class="stop"><a class="button" href="/instance/${ instance.id }/stop">${ _("Stop") }</a></span>
@@ -86,7 +78,7 @@
 % endif
 
 <div class="main-wrap">
-  % if JOB_LIST:
+  % if JOB_LIST.count():
   <div class="ly-instance-job-list">
     <h2>${ _("Recently Job List") }</h2>
     <table class="list">
@@ -96,17 +88,15 @@
           <th>${ _("User") }</th>
           <th>${ _("Action") }</th>
           <th>${ _("Result") }</th>
-##          <th>${ _("Creat Time") }</th>
           <th>${ _("Start Time") }</th>
           <th>${ _("End Time") }</th>
         </tr>
         % for J in JOB_LIST:
         <tr>
           <td><span class="count">${ J.id }</span></td>
-          <td><a href="/account/${ J.user.id }">${ J.user.username }</a></td>
-          <td>${ job_action(J.action) }</td>
-          <td>${ J.result }</td>
-##          <td>${ fulltime(J.created) }</td>
+          <td><a href="${ reverse_url('account:view', J.user.id) }">${ J.user.username }</a></td>
+          <td>${ J.action_string }</td>
+          <td>${ J.status_string }</td>
           <td>${ fulltime(J.started) }</td>
           <td>${ fulltime(J.ended) }</td>
         </tr>

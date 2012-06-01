@@ -1,6 +1,14 @@
 # coding: utf-8
 
+from datetime import datetime
 from lycustom import LyRequestHandler
+
+from app.account.models import User, ApplyUser, UserProfile
+from app.instance.models import Instance
+from app.session.models import Session
+
+from app.account.forms import LoginForm, ResetPasswordForm, \
+    RegistrationForm
 
 import random, time, pickle, base64
 from hashlib import md5, sha512, sha1
@@ -8,54 +16,15 @@ from hashlib import md5, sha512, sha1
 import tornado
 from tornado.web import authenticated, asynchronous
 
+from app.account.utils import encrypt_password, check_password
 
 
-def encrypt_password(salt, raw_password):
-    hsh = sha512(salt + raw_password).hexdigest()
-    return hsh
-
-def check_password(raw_password, enc_password):
-    try:
-        salt, hsh = enc_password.split('$')
-    except:
-        return False
-    return hsh == encrypt_password(salt, raw_password)
-    
+import settings
 
 
-class Login(LyRequestHandler):
 
-    def get(self):
+class AccountRequestHandler(LyRequestHandler):
 
-        self.render("account/login.html",
-                    next_url = self.get_argument('next', '/'))
-
-    def post(self):
-
-        username = self.get_argument('username', '')
-        password = self.get_argument('password', '')
-
-        user = self.db.get(
-            "SELECT * FROM auth_user WHERE username=%s;",
-            username )
-
-        d = { 'username': username, 'password': password,
-              'user': user, 'ERROR': [],
-              'next_url': self.get_argument('next', '/') }
-
-        if user:
-            if check_password(password, user.password):
-                # login success, save a session
-                self.save_session(user.id)
-                #self.write("Have not completed ! d = %s" % d)
-                print 'next_url = ', d['next_url']
-                self.redirect( d['next_url'] )
-            else:
-                d['ERROR'].append( _('Password is wrong.') )
-                self.render('account/login.html', **d)
-        else:
-            d['ERROR'].append( _('Have not found user.') )
-            self.render('account/login.html', **d)
 
     def save_session(self, user_id):
         self.require_setting("cookie_secret", "secure cookies")
@@ -69,17 +38,52 @@ class Login(LyRequestHandler):
         pickled_md5 = md5(pickled + sk).hexdigest()
         session_data = base64.encodestring(pickled + pickled_md5)
 
-        self.db.execute(
-            "INSERT INTO auth_session \
-(session_key, session_data, expire_date) \
-VALUES (%s, %s, now()::timestamp + '14 day');",
-            session_key, session_data )
+        session = Session(session_key, session_data)
+        self.db2.add(session)
+        self.db2.commit()
+
+
+    def delete_session(self, user_id):
+        session_key = self.get_secure_cookie('session_key')
+
+        session = self.db2.query(Session).filter_by(
+            session_key = session_key).first()
+        self.db2.delete(session)
+        self.db2.commit()
+
+        self.clear_all_cookies()
 
 
 
+class Login(AccountRequestHandler):
 
 
-class Logout(LyRequestHandler):
+    def get(self):
+        form = LoginForm()
+        self.render("account/login.html", form=form,
+                    next_url = self.get_argument('next', '/'))
+
+    def post(self):
+
+        form = LoginForm(self.request.arguments)
+        if form.validate():
+            user = self.db2.query(User).filter_by(username=form.username.data).first()
+            if user:
+                if check_password(form.password.data, user.password):
+                    self.save_session(user.id)
+                    user.last_login = datetime.utcnow()
+                    self.db2.commit()
+                    return self.redirect( self.get_argument('next', '/') )
+                else:
+                    form.password.errors.append( _('password is wrong !') )
+            else:
+                form.username.errors.append( _('No such user !') )
+
+        self.render('account/login.html', form=form)
+
+
+
+class Logout(AccountRequestHandler):
     @authenticated
     def get(self):
         if self.current_user:
@@ -89,260 +93,232 @@ class Logout(LyRequestHandler):
             d['username_error'] = 'Have not found user.'
             self.render('account/login.html', **d)
 
-    def delete_session(self, user_id):
-        session_key = self.get_secure_cookie('session_key')
-        self.db.execute(
-            'DELETE FROM auth_session WHERE session_key = %s;',
-            session_key )
-        self.clear_all_cookies()
 
 
 # TODO: No used now
-class Register(LyRequestHandler):
+class Register(AccountRequestHandler):
 
-    def get(self):
-        self.render('account/register.html')
+    ''' Complete a Registration '''
 
-    def post(self):
-
-        username = self.get_argument('username', '')
-        password = self.get_argument('password', '')
-
-        d = { 'username': username, 'ERROR': [] }
-
-        user = self.db.get(
-            'SELECT * from auth_user WHERE username=%s;',
-            username )
-
-        if user:
-            d['ERROR'].append( _('This username is taked.') )
-            return self.render('account/register.html', **d)
-
-        if len(password) < 6:
-            d['ERROR'].append( _('password must have more than 6 characters !') )
-            return self.render('account/register.html', **d)
-
-        salt = md5(str(random.random())).hexdigest()[:12]
-        hsh = encrypt_password(salt, password)
-        enc_password = "%s$%s" % (salt, hsh)
-        try:
-            # create user
-            self.db.execute(
-                "INSERT INTO auth_user (username, password, last_login, date_joined) VALUES (%s, %s, 'epoch', 'now');",
-                username, enc_password )
-
-            # query user
-            user = self.db.get(
-                'SELECT * from auth_user WHERE username=%s;',
-                username )
-
-            # create user profile
-            self.db.execute(
-                "INSERT INTO user_profile (user_id) VALUES (%s);",
-                user.id )
-            return self.redirect('/')
-
-        except Exception, emsg:
-            d['ERROR'].append( _('System error: %s') % emsg )
-            self.render('account/register.html', **d)
-
-
-
-class Create(LyRequestHandler):
-    ''' Create a new account, by admin '''
 
     def initialize(self):
 
-        self.t = 'account/create.html'
+        self.enable_apply = False
+        self.key = self.get_argument('key', None)
+        self.applyuser = None
 
-    @authenticated
-    def prepare(self):
-        if self.current_user.id not in [ 1 ]:
-            self.write('No permissions !')
-            return self.finish()
+        if hasattr(settings, 'REGISTRATION_APPLY'):
+            self.enable_apply = settings.REGISTRATION_APPLY
+
+        if self.key:
+            self.applyuser = self.db2.query(Applyuser).filter_by(
+                key = self.key).one()
 
 
     def get(self):
-        self.render(self.t)
+
+        if self.enable_apply:
+            if not self.key:
+                return self.write( _('No key found !') )
+            if not self.applyuser:
+                return self.write( _('No apply record found !') )
+
+        form = RegistrationForm()
+        if self.applyuser:
+            form.email.data = self.applyuser.email
+
+        self.render( 'account/register.html', form = form )
 
 
     def post(self):
 
-        username = self.get_argument('username', '')
-        password = self.get_argument('password', '')
+        form = RegistrationForm(self.request.arguments)
 
-        d = { 'username': username, 'ERROR': [] }
+        if form.validate():
 
-        user = self.db.get(
-            'SELECT * from auth_user WHERE username=%s;',
-            username )
+            user = self.db2.query(User).filter_by( username=form.username.data ).all()
 
-        if user:
-            d['ERROR'].append( _('This username is taked.') )
-            return self.render(self.t, **d)
+            if user:
+                form.username.errors.append( _('This username is occupied') )
+            else:
+                salt = md5(str(random.random())).hexdigest()[:12]
+                hsh = encrypt_password(salt, form.password.data)
+                enc_password = "%s$%s" % (salt, hsh)
 
-        if len(password) < 6:
-            d['ERROR'].append( _('password must have more than 6 characters !') )
-            return self.render(self.t, **d)
+                newuser = User( username = form.username.data,
+                                password = enc_password )
+                self.db2.add(newuser)
+                self.db2.commit()
+                # Create profile
+                profile = UserProfile(newuser, email = form.email.data)
+                self.db2.add(profile)
+                self.db2.commit()
 
-        salt = md5(str(random.random())).hexdigest()[:12]
-        hsh = encrypt_password(salt, password)
-        enc_password = "%s$%s" % (salt, hsh)
-        try:
-            # create user
-            r = self.db.query(
-                "INSERT INTO auth_user (username, \
-password, last_login, date_joined) VALUES (%s, %s, \
-'epoch', 'now') RETURNING id;",
-                username, enc_password )
+                # send_mail()
+                self.save_session(newuser.id)
 
-            uid = r[0].id
+                url = self.application.reverse_url('account:index')
+                return self.redirect( url )
 
-            # create user profile
-            self.db.execute( "INSERT INTO user_profile \
-(user_id) VALUES (%s);", uid )
-
-            return self.redirect( '/account/%s' % uid )
-
-        except Exception, emsg:
-            d['ERROR'].append( _('System error: %s') % emsg )
-            self.render( self.t, **d )
+        # Have a error
+        self.render( 'account/register.html', form = form )
 
 
 
-class User(LyRequestHandler):
+# TODO:
+class RegisterApply(AccountRequestHandler):
+
+
+    def get(self):
+
+        applyer = self.db2.query(Applyer).filter_by(key=key).one()
+
+        if applyer:
+
+            salt = md5(str(random.random())).hexdigest()[:12]
+            hsh = encrypt_password(salt, password)
+            enc_password = "%s$%s" % (salt, hsh)
+
+            user = User( username = applyer.username,
+                         password = enc_password )
+
+
+    def post(self):
+
+        applyer = ApplyUser( email = form.email.data,
+                             ip = self.request.remote_ip )
+        self.db2.add(applyuser)
+        self.db2.commit()
+
+
+
+class Index(LyRequestHandler):
+
+    ''' Show home of my '''
 
     @authenticated
+    def get(self):
+
+        my = self.db2.query(User).get(self.current_user.id)
+        d = { 'my': my }
+
+        show = self.get_argument('show', None)
+
+        if not show: 
+            d['title'] = _('My Account Center')
+            self.render( 'account/index.html', **d)
+
+        elif show == 'instances':
+            d['title'] = _('My Instances')
+            self.render( 'account/instances.html', **d)
+
+        elif show == 'appliances':
+            d['title'] = _('My Appliances')
+            self.render( 'account/appliances.html', **d)
+
+        elif show == 'groups':
+            d['title'] = _('My Groups')
+            self.render( 'account/groups.html', **d)
+
+        elif show == 'permissions':
+            d['title'] = _('My Permissions')
+            self.render( 'account/permissions.html', **d)
+
+        elif show == 'resources':
+            self.get_resources(d)
+
+
+    def get_resources(self, d):
+        d['title'] = _('My Resources')
+        insts = self.db2.query(Instance).filter(
+            Instance.user_id == self.current_user.id )
+        d['USED_INSTANCES'] = insts.count()
+        d['USED_CPUS'] = 0
+        d['USED_MEMORY'] = 0
+        for i in insts:
+            if i.status in [4, 5]:
+                d['USED_CPUS'] += i.cpus
+                d['USED_MEMORY'] += i.memory
+
+        #print "d = ", d
+        self.render( 'account/resources.html', **d)
+            
+
+
+
+class MyInstances(LyRequestHandler):
+
+    @authenticated
+    def get(self):
+
+        user = self.db2.query(User).get(self.current_user.id)
+
+        self.render( 'account/instances.html',
+                     title = _('My Instances'),
+                     INSTANCE_LIST = user.instances )
+
+
+class MyGroups(LyRequestHandler):
+
+    @authenticated
+    def get(self):
+
+        user = self.db2.query(User).get(self.current_user.id)
+
+        self.render( 'account/instances.html',
+                     title = _('My Instances') )
+
+
+
+class ViewUser(LyRequestHandler):
+
+    ''' Show home of specified user '''
+
     def get(self, id):
 
-        user = self.db.get(
-            'SELECT * from auth_user WHERE id=%s;', id )
+        user = self.db2.query(User).get(id)
 
         if not user:
             return self.write('Have not found user by id %s' % id)
 
-        user.prefs = self.db.get(
-            'SELECT * from user_profile WHERE user_id = %s;',
-            user.id )
-
-        INSTANCE_LIST = self.db.query(
-            'SELECT id, name FROM instance WHERE user_id=%s',
-            user.id )
+        instances = self.db2.query(Instance).filter_by(user_id=id)
 
         self.render( 'account/view_user.html',
                      title = 'View User', user = user,
-                     INSTANCE_LIST = INSTANCE_LIST )
+                     INSTANCE_LIST = instances )
 
-
-
-class Chat(LyRequestHandler):
-
-    def get(self):
-        d = { 'messages': [] }
-        self.render('account/chat.html', **d)
-
-
-class Online(LyRequestHandler):
-
-    @asynchronous
-    def post(self):
-
-        total = int(self.get_argument("total", 0))
-
-
-        self.is_total_changed(total, 0)
-
-    def is_total_changed(self, total, num):
-
-        num += 1;
-
-        if self.request.connection.stream.closed():
-            return
-
-        users = self.db.query("SELECT * from auth_user;")
-
-        print "[%s], total = %s, len(users) = %s" % (num, total, len(users))
-
-        if len(users) == total:
-            print "add_timeout"
-            tornado.ioloop.IOLoop.instance().add_timeout(
-                time.time() + 10, lambda: self.is_total_changed(total, num) )
-        else:
-            print "go finish"
-            self.write(str(len(users)))
-            self.finish()
-
-
-class UserList(LyRequestHandler):
-
-    def get(self):
-
-        users = self.db.query('SELECT * from auth_user;')
-
-        self.render( 'account/user_list.html',
-                     title = 'User List',
-                     users = users )
 
 
 class ResetPassword(LyRequestHandler):
 
-    def initialize(self):
-        self.t = 'account/reset_password.html'
 
     @authenticated
-    def get(self, id):
+    def get(self):
 
-        emsg = self.check_permission(id)
-        if emsg:
-            return self.write(emsg)
+        form = ResetPasswordForm()
 
-        self.render( 'account/reset_password.html',
-                     title = 'Reset Password',
-                     user = self.user )
+        self.render( 'account/reset_password.html', title = _('Reset Password'),
+                     form = form )
+
 
     @authenticated
-    def post(self, id):
+    def post(self):
 
-        emsg = self.check_permission(id)
-        if emsg:
-            return self.write(emsg)
+        form = ResetPasswordForm(self.request.arguments)
 
-        d = { 'title': 'Reset Password', 'ERROR': [] }
+        if form.validate():
 
-        password = self.get_argument('password', '')
-        password2 = self.get_argument('password2', '')
+            salt = md5(str(random.random())).hexdigest()[:12]
+            hsh = encrypt_password(salt, form.password.data)
+            enc_password = "%s$%s" % (salt, hsh)
 
-        if len(password) < 6:
-            d['ERROR'].append( _('password must have more than 6 characters !') )
-            return self.render(self.t, **d)
+            user = self.db2.query(User).get( self.current_user.id )
+            user.password = enc_password
+            self.db2.commit()
 
-        if password != password2:
-            d['ERROR'].append( _('password now match') )
-            return self.render(self.t, **d)
+            url = self.application.reverse_url('account:index')
+            return self.redirect( url )
 
-        salt = md5(str(random.random())).hexdigest()[:12]
-        hsh = encrypt_password(salt, password)
-        enc_password = "%s$%s" % (salt, hsh)
-
-        try:
-            self.db.execute( 'UPDATE auth_user \
-SET password=%s WHERE id=%s;', enc_password, id )
-        except Exception, emsg:
-            d['ERROR'].append( _('UPDATE failed: %s') % emsg )
-            return self.render('account/reset_password.html', **d)
-        self.redirect('/account/%s' % id)
-
-
-    def check_permission(self, id):
-        
-        if self.current_user.id not in [1, int(id)]:
-            return 'Don not do this !'
-
-        self.user = self.db.get(
-            'SELECT * from auth_user WHERE id=%s;', id)
-
-        if not self.user:
-            return _('Have not found user %s') % id
-        
-        return None
+        self.render( 'account/reset_password.html', title = _('Reset Password'),
+                     form = form )
 

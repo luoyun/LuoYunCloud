@@ -7,3 +7,13 @@
 mako
 tornado
 markdown
+wtforms
+Mako-0.5.0
+Markdown-2.0
+tornado-2.2
+WTForms-1.0.1
+sqlalchemy
+SQLAlchemy*
+Mako*
+tornadotools
+truemped-tornadotools-bd47622/

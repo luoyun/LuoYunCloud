@@ -1,0 +1,29 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="/">${ _("Home") }</a></span>&gt;
+    <span><a href="/admin">${ _("Admin") }</a></span>&gt;
+    <span><a href="/admin/appliance">${ _("Appliances") }</a></span>&gt;
+    <span>${ _("Add Catalog") }</span>
+  </div>
+</div>
+
+<div class="main-wrap small-left-right-form">
+  <form method="POST">
+    ${ form.name.label } ${ form.name() }<br/>
+    ${ form.html_errors( form.name.errors ) }
+
+    ${ form.summary.label } ${ form.summary() }<br/>
+    ${ form.html_errors( form.summary.errors ) }
+
+    ${ form.description.label } ${ form.description() }<br/>
+    ${ form.html_errors( form.description.errors ) }
+
+    <label>&nbsp;</label><input type="submit" value="${ _('Create') }"/>
+  </form>
+</div>
+
+</%block>

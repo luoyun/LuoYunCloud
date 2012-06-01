@@ -1,0 +1,30 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
+    <span><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></span>
+  </div>
+</div>
+
+<div class="main-wrap">
+  <span><a href="${ reverse_url('admin:appliance') }?action=add_catalog">${ _("Create New Catalog") }</a></span>
+  <span><a href="${ reverse_url('admin:appliance') }?action=appliances">${ _("All appliances") }</a></span>
+</div>
+
+<div class="main-wrap">
+  <table class="checklist">
+    <tbody>
+      % for C in catalogs:
+      <tr>
+        <td>${ C.id }</td>
+        <td><a href="${ reverse_url('admin:appliance') }?action=appliances&catalog=${ C.id }">${ C.name }</a></td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+</div>
+
+</%block>

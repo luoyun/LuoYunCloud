@@ -1,15 +1,12 @@
 # coding: utf-8
 
+import logging
+
 import settings
 
 # TODO: i18n is too ugly yet
 import gettext
 gettext.install( 'app', settings.I18N_PATH, unicode=False )
-
-
-import logging
-import psycopg2
-
 
 import tornado.ioloop
 import tornado.web
@@ -17,28 +14,20 @@ import tornado.web
 from urls import settings as app_settings
 from urls import handlers as app_handlers
 
-import lydb
+import lyorm
 
 
 from tornado.options import define, options
-define("port", default=8888, help="run on the given port", type=int)
-define("dbhost", default="localhost", help="database host")
-define("dbname", default="luoyun", help="database name")
-define("dbuser", default="luoyun", help="database user")
-define("dbpassword", default="luoyun", help="database password")
+define("port", default=8888, help="given port", type=int)
 
 
 class Application(tornado.web.Application):
     def __init__(self):
         tornado.web.Application.__init__(self, app_handlers, **app_settings)
 
-        # Have one global connection to the DB across all handlers
-        self.db = lydb.Connection(
-            host=options.dbhost, database=options.dbname,
-            user=options.dbuser, password=options.dbpassword)
+        # SQLAlchemy connect
+        self.db2 = lyorm.dbsession
 
-
-application = Application()
 
 
 def main():
@@ -57,10 +46,16 @@ def main():
     logging.info("starting torando web server")
 
     # Start listen
+    application = Application()
     application.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
 
 
 if __name__ == "__main__":
 
-    main()
+    try:
+        main()
+    finally:
+        # TODO: dispose from db
+        import lyorm
+        lyorm.dbengine.dispose()

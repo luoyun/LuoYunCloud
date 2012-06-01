@@ -1,0 +1,26 @@
+<%inherit file="instance_base.html"/>
+
+<%block name="main">
+
+<div class="main-wrap small-left-right-form">
+  <form method="POST" enctype="multipart/form-data">
+    % if not appliance:
+    ${ form.appliance.label } ${ form.appliance() }<br/>
+    ${ form.html_errors( form.appliance.errors ) }
+    % endif
+
+    ${ form.name.label } ${ form.name() }<br/>
+    ${ form.html_errors( form.name.errors ) }
+
+    ${ form.cpus.label } ${ form.cpus() }<br/>
+    ${ form.html_errors( form.cpus.errors ) }
+
+    ${ form.memory.label } ${ form.memory() }<br/>
+    ${ form.html_errors( form.memory.errors ) }
+
+    <label>&nbsp;</label><input type="submit" value="${ _('Create') }" class="button" />
+  </form>
+</div>
+
+
+</%block>

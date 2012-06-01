@@ -2,7 +2,6 @@
 
 import os, sys
 
-
 ## Global PATH
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, 'lib'))
@@ -14,6 +13,15 @@ STATIC_URL = "/static/"
 #THEME = "default"
 THEME = "default2"
 THEME_URL = "/static/themes/%s/" % THEME
+
+appliance_top_dir = '/opt/LuoYun/data/appliance/'
+appliance_top_url = '/dl/appliance/'
+
+#control_server_ip = '127.0.0.1'
+control_server_ip = '192.168.1.11'
+control_server_port = 1369
+
+ADMIN_EMAIL = 'contact@luoyun.co'
 
 
 
@@ -27,6 +35,9 @@ LANGUAGES = (
     ('en_US', 'English'),
 )
 
+
+# DB Connect format: "postgresql+psycopg2://username:password@HOST_ADDRESS/DB_NAME"
+SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://luoyun:luoyun@127.0.0.1/luoyun"
 
 
 # Socket Request
@@ -53,3 +64,93 @@ JOB_ACTION = {
 }
 
 
+LYJOB_ACTION = {
+    'unknown': 0,
+    'run': JOB_ACTION['RUN_INSTANCE'],
+    'stop': JOB_ACTION['STOP_INSTANCE'],
+    'suspend': 3,
+    'save': 4,
+    'reboot': 5,
+    'query': JOB_ACTION['QUERY_INSTANCE'],
+}
+
+
+
+# TODO
+app = [
+    'app.home',
+    'app.account',
+    'app.admin',
+    'app.instance',
+    'app.node',
+    'app.appliance',
+    'app.job',
+    'app.wiki',
+    'app.session',
+    'app.system',
+    ]
+
+
+luoyun_system_config = [
+    # ( 'key', 'value' )
+    ('network.pool.start', '192.168.1.100'),
+    ('network.pool.end', '192.168.1.254'),
+    ('network.netmask', '255.255.255.0'),
+    ('network.gateway', '192.168.1.1'),
+    ('network.nameserver', '8.8.8.8'),
+]
+
+default_permission = [
+    # ( 'codename', 'name' )
+    ('admin', 'Administrator'),
+    ('user', 'User'),  # default permission for all user
+    ('appliance.upload', 'Can upload appliance'),
+    ('instance.create', 'Can create instance'),
+]
+
+default_group = [
+    # ( 'group name' )
+    ('admin'),
+    ('user'),
+]
+
+default_user = [
+    # ( 'username', 'password' )
+    ('admin', 'admin'),
+    ('luoyun', 'luoyun'),  # For test
+]
+
+default_admin_user = 'admin'
+
+default_user_group = [
+    # ( 'group name', 'username' )
+    ('admin', 'admin'),
+]
+
+default_user_permission = [
+    # ( 'username', 'permission codename' )
+    ('admin', 'admin'),
+    ('luoyun', 'user'),
+]
+
+default_group_permission = [
+    # ( 'group name', 'permission codename' )
+    ('admin', 'admin'),
+    ('user', 'user'),
+    ('user', 'appliance.upload'),
+    ('user', 'instance.create'),
+]
+
+
+default_appliance_catalog = [
+    # ( 'name', 'summary' )
+    ('Default', 'Default Catalog'),
+    ('Office', 'Office support'),
+    ('OS Platform', 'Base os platform'),
+]
+
+
+default_wiki_catalog = [
+    # ( 'name', 'summary' )
+    ('Default', 'Default Catalog'),
+]

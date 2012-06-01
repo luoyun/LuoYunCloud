@@ -2,11 +2,38 @@
 
 <%block name="head">
 <link rel="stylesheet" href="${THEME_URL}account.css" />
+<link rel="stylesheet" href="${ THEME_URL }table.css" />
 </%block>
 
+<%block name="main">
+<div class="main-wrap account luoyun-min-height">
 
-<%block name="lyentry">
-<div id="lyaccount">
-  <%block name="lymain"/>
+  <div class="sidebar min-height-600">
+
+    <div class="account-info">
+      <div>${ _("Welcome to back, ") }
+        <span class="username"><a href="${ reverse_url('account:index') }">${ current_user.username }</a></span>
+      </div>
+      <div class="last-login">${ _("Last login: ")}<span>${ fulltime(current_user.last_login) }</span></div>
+    </div>
+
+    <div class="action">
+      <ul>
+        <li><a href="${ reverse_url('account:reset_password') }">${ _("Reset Password") }</a></li>
+##        <li><a href="">${ _("Configures") }</a></li>
+        <li><a href="${ reverse_url('account:index') }?show=groups">${ _("Groups") }</a></li>
+        <li><a href="${ reverse_url('account:index') }?show=permissions">${ _("Permissions") }</a></li>
+        <li><a href="${ reverse_url('account:index') }?show=resources">${ _("Resources") }</a></li>
+        <li><a href="${ reverse_url('account:index') }?show=appliances">${ _("Appliances") }</a></li>
+        <li><a href="${ reverse_url('account:index') }?show=instances">${ _("Instances") }</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="sidemain">
+    <%block name="sidemain"/>
+  </div>
+
 </div>
 </%block>

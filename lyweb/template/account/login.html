@@ -3,44 +3,34 @@
 <%block name="main">
 
 
-<div class="lrform login-form">
+<div class="main-wrap">
+
   <h2>${_("Sign in LuoYun System")}</h2>
 
-  <form method="POST" action="/account/login">
+  <div class="small-left-right-form">
+    <form method="POST">
+      ${ form.username.label } ${ form.username() }<br/>
+      % if form.username.errors:
+      <ul class="errors">
+        % for error in form.username.errors:
+        <li>${ error }</li>
+        % endfor
+      </ul>
+      % endif:
 
-    % if ERROR:
-    <ol>
-      % for e in ERROR:
-      <li>${ e }</li>
-      % endfor
-    </ol>
-    % endif
+      ${ form.password.label } ${ form.password() }<br/>
+      % if form.password.errors:
+      <ul class="errors">
+        % for error in form.password.errors:
+        <li>${ error }</li>
+        % endfor
+      </ul>
+      % endif
 
-    <input type="hidden" name="next" value="${ next_url }"/>
+      <label>&nbsp;</label><input type="submit" value="${ _('Sign In') }"/>
+    </form>
+  </div>
 
-    <div class="item">
-      <div class="c1">
-        <label for="username">${ _("Username") }</label>
-      </div>
-      <div class="c2">
-        <input id="username" type="text" name="username" maxlength="30" value="${username}"/>
-      </div>
-    </div>
-
-    <div class="item">
-      <div class="c1">
-        <label for="password">${_("Password")}</label>
-      </div>
-      <div class="c2">
-        <input id="password" type="password" name="password" value="${password}"/>
-      </div>
-    </div>
-
-    <div class="submit">
-      <input type="submit" value="${ _('Sign In') }"/>
-    </div>
-
-  </form>
 </div>
 
 </%block>

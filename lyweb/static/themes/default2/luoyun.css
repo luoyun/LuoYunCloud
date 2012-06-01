@@ -137,9 +137,11 @@ body, #pager {
     text-align: left;
     width: 980px;
 }
+/*
 .main-wrap ul {
     list-style-image: url('img/li.jpeg');
 }
+*/
 
 
 /* Start sidebar, sidemain */
@@ -482,11 +484,12 @@ table.list {
 }
 
 .list tr:hover {
-    background-color: #65A4CE!important;
+    /*background-color: #65A4CE!important;*/
+    background-color: #EDF5FF;
 }
 
 .list tr:hover, .list tr:hover a {
-    color: #FFF;
+    /*color: #FFF;*/
 }
 
 .list tr.odd {
@@ -520,3 +523,133 @@ table.list {
     color: red;
 }
 /* End http404 error */
+
+
+/* Start small-left-right-form */
+.small-left-right-form {
+    margin: 10px;
+    padding: 10px;
+}
+.small-left-right-form input[type="text"],
+.small-left-right-form input[type="password"] {
+    height: 2em;
+}
+.small-left-right-form label {
+    display: block;
+    width: 150px;
+    float: left;
+    /*margin: 2px 4px 6px 4px;*/
+    text-align: right;
+    color: #777777;
+    margin: 10px 5px;
+    line-height: 2em;
+}
+.small-left-right-form input,
+.small-left-right-form select {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #DCDCDC;
+    box-shadow: 0 1px 1px #DEDEDE inset;
+    font-size: 14px;
+    padding: 4px 5px;
+    margin: 10px 5px;
+}
+.small-left-right-form textarea {
+    width: 360px;
+    height: 150px;
+}
+.small-left-right-form input:hover {
+    background: #F0F7FE;
+}
+.small-left-right-form input.button {
+    margin-top: 15px;
+    border: none;
+    box-shadow: 0 1px 1px #FFF inset;
+    background: url('img/button-up.png') no-repeat top left;
+    padding: 2px 8px;
+}
+.small-left-right-form input.button:hover {
+    border: none;
+    background: url('img/button-pressed.png') no-repeat top left;
+    padding: 2px 8px;
+}
+.small-left-right-form br { clear: left; }
+.small-left-right-form ul.errors {
+    color: red;
+}
+/* End small-left-right-form */
+
+
+/* Start large-left-right-form */
+.large-left-right-form {
+    margin: 10px;
+    padding: 10px;
+}
+.large-left-right-form input[type="text"],
+.large-left-right-form input[type="password"] {
+    height: 2em;
+    width: 560px;
+}
+.large-left-right-form label {
+    display: block;
+    width: 150px;
+    float: left;
+    /*margin: 2px 4px 6px 4px;*/
+    text-align: right;
+    color: #777777;
+    margin: 10px 5px;
+    line-height: 2em;
+}
+.large-left-right-form input,
+.large-left-right-form select {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #DCDCDC;
+    box-shadow: 0 1px 1px #DEDEDE inset;
+    font-size: 14px;
+    padding: 4px 5px;
+    margin: 10px 5px;
+}
+.large-left-right-form textarea {
+    width: 560px;
+    height: 450px;
+}
+.large-left-right-form input:hover {
+    background: #F0F7FE;
+}
+.large-left-right-form input.button {
+    margin-top: 15px;
+    border: none;
+    box-shadow: 0 1px 1px #FFF inset;
+    background: url('img/button-up.png') no-repeat top left;
+    padding: 2px 8px;
+}
+.large-left-right-form input.button:hover {
+    border: none;
+    background: url('img/button-pressed.png') no-repeat top left;
+    padding: 2px 8px;
+}
+.large-left-right-form br { clear: left; }
+.large-left-right-form ul.errors {
+    color: red;
+}
+/* End large-left-right-form */
+
+
+
+/* Start min height */
+.luoyun-min-height {
+    height:auto !important;
+    height:600px;
+    min-height:600px;
+}
+.min-height-600 {
+    height:auto !important;
+    height:600px;
+    min-height:600px;
+}
+/* End min height */
+
+
+a.action img {
+    height: 26px;
+    width: 26px;
+}

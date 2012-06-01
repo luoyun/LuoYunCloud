@@ -54,18 +54,23 @@ function InstanceControl() {
 
         URL = $obj.attr('href');
 
-        var imgp = $('.status img').attr('src');
-        imgp = imgp.replace(/\d+\.png/, 'running.gif');
-
-        // set status img of instance
-        $('.status img').attr('src', imgp);
-        $obj.attr('href', "javascript:void(0);");
-        $obj.addClass('clicked');
-
         $.ajax({
             url: URL + '?ajax=1',
             type: 'GET',
             success: function (data) {
+                if (! data.jid) {
+                    $('#job-status-desc').html( data.desc );
+                    return
+                }
+
+                var imgp = $('.status img').attr('src');
+                imgp = imgp.replace(/\d+\.png/, 'running.gif');
+
+                // set status img of instance
+                $('.status img').attr('src', imgp);
+                $obj.attr('href', "javascript:void(0);");
+                $obj.addClass('clicked');
+
                 $('#job-id').html(data.jid);
                 //alert(data.desc + data.jid);
                 // TODO: change action between run and stop

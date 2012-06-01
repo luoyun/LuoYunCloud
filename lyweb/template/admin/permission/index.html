@@ -1,0 +1,33 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap inner-navigator">
+  <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
+  <span><a href="${ reverse_url('admin:permission') }">${ _("Permission") }</a></span>
+</div>
+
+<div class="main-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>${ _("ID") }</th>
+        <th>${ _("Codename") }</th>
+        <th>${ _("Name") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for P in PERMISSION_LIST:
+      <tr>
+        <td>${ P.id }</td>
+        <td>${ P.codename }</td>
+        <td>${ P.name }</td>
+        <td><a href="${ reverse_url('admin:permission') }?id=${ P.id }&action=users"><img src="${ THEME_URL }img/users.gif" title="${ _('Users') }"/></a></td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+</div>
+
+
+</%block>

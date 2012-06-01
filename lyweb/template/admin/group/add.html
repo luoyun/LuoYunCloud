@@ -1,0 +1,21 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
+    <span><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></span>&gt;
+    <span>${ _("Create a new group") }</span>
+  </div>
+</div>
+
+<div class="main-wrap small-left-right-form">
+  <form method="POST">
+    ${ form.name.label } ${ form.name() }<br/>
+    ${ form.html_errors(form.name.errors) }
+    <label>&nbsp;</label><input type="submit" value="${ _('Create') }"/>
+  </form>
+</div>
+
+</%block>

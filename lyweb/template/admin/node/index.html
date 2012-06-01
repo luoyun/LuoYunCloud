@@ -1,0 +1,52 @@
+<%inherit file="/admin/admin_base.html"/>
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
+    <span><a href="${ reverse_url('admin:node') }">${ _("Nodes") }</a></span>
+  </div>
+</div>
+
+
+<div class="main-wrap node-list">
+  % if nodes:
+  <table class="list">
+    <thead>
+      <tr>
+        <td>ID</td>
+        <td>Hostname</td>
+        <td>IP</td>
+        <td>Status</td>
+        <td>Max Memory (KB)</td>
+        <td>Action</td>
+      </tr>
+    </thead>
+    <tbody>
+      % for n in nodes:
+      <tr>
+        <td>${ n.id }</td>
+        <td>${ n.hostname }</td>
+        <td><a href="/node/${ n.id }">${ n.ip }</a></td>
+        <td><img src="${ THEME_URL }icons/NodeStatus/${ n.status }.png"  alt="${ n.status }"/></td>
+        <td>${ n.memory }</td>
+        <td>
+          % if not n.isenable:
+          <a href="/node/${ n.id }?action=1">${ _("Enable") }</a>
+          % else:
+          <a href="/node/${ n.id }?action=2">${ _("Disable") }</a>
+          % endif
+        </td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  % else:
+  <div class="first-warning">
+    <p>Have not found any nodes. Please register first!</p>
+  </div>
+  % endif
+</div>
+
+</%block>

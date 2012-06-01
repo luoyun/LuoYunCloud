@@ -1,0 +1,48 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+<script type="text/javascript" src="${ STATIC_URL }js/checkbox.js"></script>
+<script type="text/javascript" src="${ STATIC_URL }js/url.js"></script>
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
+    <span><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></span>
+    % if catalog:
+    &gt;
+    <span><a href="${ reverse_url('admin:appliance') }?action=appliances&catalog=${ catalog.id }">${ catalog.name }</a></span>
+    % endif
+  </div>
+</div>
+
+<div class="main-wrap">
+  <table class="checklist">
+    <caption>${ _("Appliance List") }</caption>
+    <thead>
+      <tr>
+        <th><input onclick="if(this.checked==true) { ly_checkbox_checkall('test'); } else { ly_checkbox_clearall('test'); }" type="checkbox" value="" name="test" title="${ _('Check All/Cleare All') }"/></th>
+        <th>ID</th>
+        <th>${ _("Name") }</th>
+        <th>${ _("Owner") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for A in APPLIANCE_LIST:
+      <tr>
+        <td><input type="checkbox" value="a" name="test"/></td>
+        <td>${ A.id }</td>
+        <td><a href="${ reverse_url('appliance:view', A.id) }">${ A.name }</a></td>
+        <td><a href="${ reverse_url('admin:user') }?id=${ A.user.id }&action=view">${ A.user.username }</a></td>
+      </tr>
+      % endfor
+    </tbody>
+    <tfoot>
+      <tr>
+        <td><input onclick="if(this.checked==true) { ly_checkbox_checkall('test'); } else { ly_checkbox_clearall('test'); }" type="checkbox" value="" name="test" title="${ _('Check All/Cleare All') }"/></td>
+        <td colspan="8"><a href="${ reverse_url('admin:appliance') }?action=delete">${ _("Delete") }</a></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+</%block>

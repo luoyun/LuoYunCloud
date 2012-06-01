@@ -1,50 +1,33 @@
 <%inherit file="admin_base.html"/>
 
-<%block name="main">
+<%block name="sidemain">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="/">${ _("Home") }</a></span>&gt;
-    <span><a href="/admin">${ _("Admin") }</a></span>
-  </div>
-</div>
+<p>LuoYun Admin Management Console</p>
 
+<div class="info-list">
 
-<div class="main-wrap">
-
-  <div class="sidebar">
-
-    <div class="menu">
-      <ul>
-        <li id="user-manager">
-          <a href="/admin/user">${ _("User") }</a>
-        </li>
-        <li id="appliance-manager">
-          <a href="/admin/appliance">${ _("Appliances") }</a>
-        </li>
-        <li id="instance-manager">
-          <a href="/admin/instance">${ _("Instances") }</a>
-        </li>
-        <li id="wiki-manager">
-          <a href="/admin/wiki">${ _("Wiki") }</a>
-        </li>
-        <li id="node-manager">
-          <a href="/node">${ _("Node") }</a>
-        </li>
-        <li id="job-manager">
-          <a href="/job">${ _("Job") }</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="sidemain">
-    <p>LuoYun Admin Management Console</p>
-  </div>
+  <table class="kvlist">
+    <tbody>
+      <tr>
+        <td class="c1">${ _("Appliance") }</td>
+        <td class="c2">${ TOTAL_APPLIANCE }</td>
+      </tr>
+      <tr>
+        <td class="c1">${ _("Instance") }</td>
+        <td class="c2">${ RUNNING_INSTANCE }/${ TOTAL_INSTANCE }</td>
+      </tr>
+      <tr>
+        <td class="c1">${ _("CPUs") }</td>
+        <td class="c2">${ TOTAL_CPU }</td>
+      </tr>
+      <tr>
+        <td class="c1">${ _("Memory(MB)") }</td>
+        <td class="c2">${ USED_MEMORY }/${ TOTAL_MEMORY }</td>
+      </tr>
+    </tbody>
+  </table>
 
 </div>
 
-<script type="text/javascript">
-</script>
 
 </%block>

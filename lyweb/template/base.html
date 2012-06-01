@@ -33,7 +33,8 @@ LuoYun
               <li><a href="/">${ _("Home") }</a></li>
               <li><a href="/appliance">${ _("Appliances") }</a></li>
               <li><a href="/wiki">${ _("Wiki") }</a></li>
-              % if current_user and current_user.id == 1:
+##              % if current_user and current_user.id == 1:
+              % if has_permission('admin'):
               <li><a href="/admin">${ _("Management") }</a></li>
               % endif
             </ul>
@@ -41,17 +42,18 @@ LuoYun
 
           <div id="login">
             %if current_user:
-            <span class="user"><a href="/account/${ current_user.id }">${ current_user.username }</a></span>
-            <span class="logout"><a href="/account/logout">${ _("Sign Out") }</a></span>
+            <span class="user">${ current_user.username }, <a href="${ reverse_url('account:index') }">${ _("My Account") }</a></span>
+            <span class="logout"><a href="${ reverse_url('logout') }">${ _("Sign Out") }</a></span>
             %else:
-            <span class="login"><a href="/account/login">${ _("Sign In") }</a></span>
+            <span class="login"><a href="${ reverse_url('login') }">${ _("Sign In") }</a></span>
+            <span class="register"><a href="${ reverse_url('register') }">${ _("Register") }</a></span>
             %endif
           </div>
 
         </div>
       </div>
 
-      <div id="main">
+      <div id="main" class="luoyun-min-height">
         <%block name="main"/>
         <div id="lyentry">
           <%block name="lyentry"/>

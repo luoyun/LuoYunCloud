@@ -1,0 +1,34 @@
+<%inherit file="account_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  % if my.groups:
+  <h2>${ _("Group List") }</h2>
+  <table class="list">
+    <thead>
+      <th>${ _("Group") }</th>
+      <th>${ _("Permissions") }</th>
+    </thead>
+    <tbody>
+      % for G in my.groups:
+      <tr>
+        <td>${ G.name }</td>
+        <td>
+          <ul>
+            % for P in G.permissions:
+            <li>${ P.codename }</li>
+            % endfor
+          </ul>
+        </td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  % endif
+
+</div>
+
+
+
+</%block>

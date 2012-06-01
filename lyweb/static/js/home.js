@@ -15,46 +15,6 @@ function InstanceLogoHover() {
     });
 }
 
-function InstanceLogoHover2() {
-    $(".instance .logo").each( function (index) {
-
-        $obj = $(this);
-
-        //var c = $obj.parent().find('.ip').html();
-        var c = $obj.parent().find('.hide').html();
-
-        var qtip_my = 'bottom left';
-        var qtip_at = 'top right';
-
-        var r = index % 5;
-
-        if ( r == 4 || r == 3 ) {
-            qtip_my = 'bottom right';
-            qtip_at = 'top left';
-        } else if ( r == 2 ) {
-            qtip_my = 'bottom center';
-            qtip_at = 'top center';
-        }
-
-        $obj.qtip({
-            content: c,
-            show: 'mouseover',
-            hide: 'mouseout',
-            style: {
-            },
-            position: {
-                 my: qtip_my, at: qtip_at
-            },
-            show: {
-                //effect: true,
-                //delay: 200,
-            },
-            suppress: true, // hide default title
-        });
-        
-    });
-}
-
 
 function InstanceStatusHover() {
 
@@ -84,6 +44,41 @@ function InstanceStatusHover() {
             },
         });
 
+    });
+}
+
+
+function instance_view_method() {
+
+    var curview = ly_url_get_parameter("view");
+    var found = 0;
+    if ( curview == "" ) {
+        $(".single-choice input:checkbox").each(function(){
+            if ( this.value == "self" ) {
+                this.checked = true;
+            } else {
+                this.checked = false;
+            }
+        });
+    } else {
+        $(".single-choice input:checkbox").each(function(){
+            if ( this.value == curview ) {
+                this.checked = true;
+                found = 1;
+            } else {
+                this.checked = false;
+            }
+        });
+    }
+
+    $(".single-choice input:checkbox").click(function(){
+        var curval = this.value;
+        $(".single-choice input:checkbox").each(function(){
+            if ( this.value != curval ) {
+                this.checked = false;
+            }
+        });
+        ly_url_set_parameter('view', curval);
     });
 }
 

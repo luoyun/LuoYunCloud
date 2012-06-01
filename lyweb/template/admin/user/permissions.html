@@ -1,0 +1,61 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="/admin">${ _("Admin") }</a></span>&gt;
+    <span><a href="/admin/user">${ _("User") }</a></span>&gt;
+    <span><a href="${ reverse_url('admin:user') }?id=${ user.id }&action=view">${ user.username }</a></span>&gt;
+    <span>${ _("Permissions") }</span>
+  </div>
+</div>
+
+<div class="main-wrap instance-list">
+  % if user.permissions:
+  <h2>${ _("Single Permission List") }</h2>
+  <table class="list">
+    <thead>
+      <th>${ _("Name") }</th>
+      <th>${ _("Codename") }</th>
+    </thead>
+    <tbody>
+      % for P in user.permissions:
+      <tr>
+        <td>${ P.codename }</td>
+        <td>${ P.name }</a></td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  % endif
+
+  % if user.groups:
+  <h2>${ _("Group Permission List") }</h2>
+  <table class="list">
+    <thead>
+      <th>${ _("Group") }</th>
+      <th>${ _("Permissions") }</th>
+    </thead>
+    <tbody>
+      % for G in user.groups:
+      <tr>
+        <td>${ G.name }</td>
+        <td>
+          <ul>
+            % for P in G.permissions:
+            <li>${ P.codename }</li>
+            % endfor
+          </ul>
+        </td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  % endif
+
+</div>
+
+
+
+</%block>

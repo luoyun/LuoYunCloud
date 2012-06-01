@@ -8,6 +8,34 @@
   <span>${ _("Edit") } ${ appliance.name }</span>
 </div>
 
+<div class="main-wrap small-left-right-form">
+  <div><a href="${ reverse_url('appliance:view', appliance.id) } ">
+    <img class="appliance-logo"
+         src="${ appliance.logo_url() }"
+         alt="Image Picture" /></a></div>
+
+  <form method="POST" enctype="multipart/form-data">
+    ${ form.name.label } ${ form.name() }<br />
+    ${ form.html_errors( form.name.errors ) }
+
+    ${ form.summary.label } ${ form.summary() }<br />
+    ${ form.html_errors( form.summary.errors ) }
+
+    ${ form.catalog.label } ${ form.catalog() }<br />
+    ${ form.html_errors( form.catalog.errors ) }
+
+    ${ form.logo.label } ${ form.logo() }<br />
+    ${ form.html_errors( form.logo.errors ) }
+
+    ${ form.description.label } ${ form.description() }<br />
+    ${ form.html_errors( form.description.errors ) }
+
+    <label>&nbsp;</label><input type="submit" value="${ _('Save') }" class="button" />
+  </form>
+</div>
+
+
+<%doc>
 <div class="lrform edit-appliance">
   <h2>${_("Edit appliance")}</h2>
   <form method="POST" enctype="multipart/form-data">
@@ -79,5 +107,7 @@
 
   </form>
 </div>
+</%doc>
+
 
 </%block>

@@ -1,0 +1,32 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
+    <span><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></span>
+  </div>
+</div>
+
+<div class="main-wrap">
+  <span><a class="button" href="${ reverse_url('admin:group') }?action=add">${ _("Create New Group") }</a></span>
+</div>
+
+<div class="main-wrap admin-user-list">
+  <table>
+    <tbody>
+      % for G in GROUP_LIST:
+      <tr>
+        <td>${ G.id }</td>
+        <td><a href="${ reverse_url('admin:group') }?id=${ G.id }&action=view">${ G.name }</a></td>
+        <td><a href="${ reverse_url('admin:group') }?id=${ G.id }&action=users"><img src="${ THEME_URL }img/users.gif" title="${ _('Users') }"/></a></td>
+        <td><a href="${ reverse_url('admin:group') }?id=${ G.id }&action=permissions"><img src="${ THEME_URL }img/permission.png" title="${ _('Permissions') }"/></a></td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+</div>
+
+
+</%block>

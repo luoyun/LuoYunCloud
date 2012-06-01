@@ -2,5 +2,51 @@
 
 <%block name="head">
 <link rel="stylesheet" href="${ THEME_URL }admin.css" />
+<link rel="stylesheet" href="${ THEME_URL }table.css" />
 <script type="text/javascript" src="${STATIC_URL}js/admin.js"></script>
+</%block>
+
+<%block name="main">
+<div class="main-wrap">
+
+  <div class="sidebar">
+
+    <div class="menu">
+      <ul>
+        <li>
+          <a href="${ reverse_url('admin:user') }">${ _("User") }</a>
+        </li>
+        <li>
+          <a href="${ reverse_url('admin:group') }">${ _("Group") }</a>
+        </li>
+        <li>
+          <a href="${ reverse_url('admin:permission') }">${ _("Permission") }</a>
+        </li>
+        <li>
+          <a href="${ reverse_url('admin:appliance') }">${ _("Appliances") }</a>
+        </li>
+        <li>
+          <a href="${ reverse_url('admin:instance') }">${ _("Instances") }</a>
+        </li>
+        <li>
+          <a href="${ reverse_url('admin:wiki') }">${ _("Wiki") }</a>
+        </li>
+        <li>
+          <a href="${ reverse_url('admin:node') }">${ _("Node") }</a>
+        </li>
+        <li>
+          <a href="${ reverse_url('admin:job') }">${ _("Job") }</a>
+        </li>
+        <li>
+          <a href="${ reverse_url('admin:system') }">${ _("System") }</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sidemain">
+    <%block name="sidemain"/>
+  </div>
+
+</div>
 </%block>
