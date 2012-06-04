@@ -1,0 +1,45 @@
+<%inherit file="home_base.html"/>
+
+<%block name="main">
+
+% if REASON:
+<h1>${ REASON }</h1>
+% endif
+
+<%
+   USER = current_user
+%>
+
+% if USER.profile:
+<table class="kvlist">
+  <thead>
+    <tr>
+      <th>${ _("Resource Name") }</th>
+      <th>${ _("Total") }</th>
+      <th>${ _("Used") }</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>${ _("Memory") }</td>
+      <td>${ USER.profile.memory }</td>
+      <td>${ USED_MEMORY }</td>
+    </tr>
+    <tr>
+      <td>${ _("CPUs") }</td>
+      <td>${ USER.profile.cpus }</td>
+      <td>${ USED_CPUS }</td>
+    </tr>
+    <tr>
+      <td>${ _("Instances") }</td>
+      <td>${ USER.profile.instances }</td>
+      <td>${ USED_INSTANCES }</td>
+    </tr>
+  </tbody>
+</table>
+% endif
+
+
+<p>${ _("If you have any questions, please contact ") }<a href="mailto:${ ADMIN_EMAIL }">${ _("Admin") }</a></p>
+
+</%block>

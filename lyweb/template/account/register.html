@@ -1,51 +1,30 @@
 <%inherit file="account_base.html" />
 
-<%block name="lyentry">
+<%block name="main">
 
-<div class="lrform user-register">
-  <h2>${_("LuoYun User Register")}</h2>
-  <form method="POST" action="/account/register">
+<div class="main-wrap">
 
-    % if ERROR:
-    <ol>
-      % for e in ERROR:
-      <li>${ e }</li>
-      % endfor
-    </ol>
-    % endif
+  <h2>${_("Create a account on LuoYun")}</h2>
 
-    <div class="item">
-      <div class="c1">
-        <label for="username">${_("Username")}</label>
-      </div>
-      <div class="c2">
-        <input id="username" type="text" name="username" maxlength="30" value="${username}"/>
-      </div>
-    </div>
+  <div class="small-left-right-form">
+    <form method="POST">
+      ${ form.username.label } ${ form.username() }<br/>
+      ${ form.html_errors(form.username.errors) }
 
-    <div class="item">
-      <div class="c1">
-        <label for="password">${_("Password")}</label>
-      </div>
-      <div class="c2">
-        <input id="password" type="password" name="password" value="${password}"/>
-      </div>
-    </div>
+      ${ form.email.label } ${ form.email() }<br/>
+      ${ form.html_errors(form.email.errors) }
 
-    <div class="item">
-      <div class="c1">
-        <label for="password2">${_("Password Confirm")}</label>
-      </div>
-      <div class="c2">
-        <input id="password2" type="password" name="password2"/>
-      </div>
-    </div>
+      ${ form.password.label } ${ form.password() }<br/>
+      ${ form.password_confirm.label } ${ form.password_confirm() }<br/>
+      ${ form.html_errors(form.password.errors) }
 
-    <div class="submit">
-      <input type="submit" value="${ _("Register") }"/>
-    </div>
+      ${ form.accept_rules.label } ${ form.accept_rules() }<br/>
+      ${ form.html_errors(form.accept_rules.errors) }
 
-  </form>
+      <label>&nbsp;</label><input type="submit" value="${ _('Registration') }"/>
+    </form>
+  </div>
+
 </div>
 
 </%block>

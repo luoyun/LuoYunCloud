@@ -1,0 +1,45 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
+    <span><a href="${ reverse_url('admin:instance') }">${ _("Instances") }</a></span>
+  </div>
+</div>
+
+<div class="main-wrap admin-instance">
+
+  % if INSTANCE_LIST:
+  <table class="list">
+    <thead>
+      <tr>
+        <th>${ _("ID") }</th>
+        <th>${ _("Owner") }</th>
+        <th>${ _("Name") }</th>
+        <th>${ _("Status") }</th>
+        <th>${ _("Status Updated") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for I in INSTANCE_LIST:
+      <tr>
+        <td>${ I.id }</td>
+        <td>${ I.user.username }</td>
+        <td>${ I.name }</td>
+        <td><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" title="${ I.status_string }"/></td>
+        <td>${ fulltime(I.updated) }</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  ${ page_html }
+
+  % else:
+  <p>${ _("No instances yet !") }</p>
+  % endif
+
+</div>
+
+</%block>

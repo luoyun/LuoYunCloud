@@ -65,10 +65,12 @@
 }
 
 #instance-list {
+/*
     margin: 10px 0 60px;
     color: #666666;
     border: 1px solid #C9E0EF;
     border-radius: 5px;
+*/
 }
 #instance-list h2 {
     font-size: 18px;

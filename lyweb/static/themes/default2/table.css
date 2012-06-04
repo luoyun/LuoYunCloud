@@ -1,0 +1,56 @@
+table.checklist{
+    margin:10px;
+    color:#333333;
+    border-collapse:collapse;
+}
+table.checklist td{
+    border:1px solid #CEDBE1;
+    height:22px;
+    padding: 8px 16px;
+}
+.checklist caption{
+    text-align:center;
+    font-size:12px;
+    font-weight:bold;
+    margin:0 auto;
+}
+.checklist tr td:odd {background-color:#fff;}
+.checklist tr td:even {background-color:#eee;}
+.checklist th, .checklist tfoot tr td{
+    font-weight:bold;
+    text-align:center;
+    background: #BADEF4;
+}
+.checklist th{
+    line-height:30px;
+    height:30px;
+}
+.checklist tfoot tr td{
+    background:#fff;
+    line-height:26px;
+    height:26px;
+}
+.checklist thead{
+    border:1px solid #CEDBE1;
+}
+.checklist thead th{
+    text-align:center;
+}
+
+
+
+
+table.kvlist {
+    margin: 10px;
+    color: #333333;
+    /*border-collapse:collapse;*/
+}
+table.kvlist td {
+    border: 1px solid #CEDBE1;
+    border-radius: 3px;
+    height: 22px;
+    padding: 8px 16px;
+}
+table.kvlist td.c1 {
+    background: #F4F8FC;
+}

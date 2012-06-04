@@ -1,0 +1,16 @@
+<%inherit file="home_base.html"/>
+
+<%block name="main">
+
+% if PERMS:
+<h1>${ _("This action need permissions:") }</h1>
+<ul>
+  % for p in PERMS:
+  <li>${ p.codename } ( ${ p.name } )</li>
+  % endfor
+</ul>
+% endif
+
+<p>${ _("If you have any questions, please contact ") }<a href="mailto:${ ADMIN_EMAIL }">${ _("Admin") }</a></p>
+
+</%block>

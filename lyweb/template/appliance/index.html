@@ -13,55 +13,50 @@
             % if c.id == cur_catalog:
             class="current"
             % endif
-            ><a href="/appliance?c=${ c.id }">${ c.name }</a>
+            ><a href="${ reverse_url('appliance:index') }?c=${ c.id }">${ c.name }
+            <span> ( ${ c.total } )</span>
+          </a>
         </li>
         % endfor
       </ul>
     </div>
 
     <div class="addon">
-      <a class="button" href="/appliance/upload">${_("Upload Appliance")}</a>
+      <a class="button" href="${ reverse_url('appliance:upload') }">${_("Upload Appliance")}</a>
     </div>
 
   </div>
 
+
   <div class="sidemain clearfix">
 
-<%doc>
-    <div class="sort-method">
-      <span>${ _("Sorted by") }</span>
-      <span><a href="/appliance?c=${ cur_catalog }">${ _("Default") }</a></span>
-      <span><a href="/appliance?c=${ cur_catalog }&by=updated">${ _("Updated") }</a></span>
-    </div>
-</%doc>
+    <div class="appliance-list">
 
-<div class="appliance-list">
+      % if not appliances:
+      <p>${ _("Have not any appliances yet !") }</p>
+      % endif
 
-   % if not appliances:
-   <p>${ _("Have not any appliances yet !") }</p>
-   % endif
+      % for app in appliances:
+      <div class="appliance">
+        <div class="logo">
+          <a href="${ reverse_url('appliance:view', app.id) }"><img src="${ app.logo_url() }" alt="Appliance Picture" /></a>
+        </div>
+        <div class="desc">
+          <span class="name">${ app.name }</span>
+        </div>
 
-    % for app in appliances:
-    <div class="appliance">
-      <div class="logo">
-        <a href="/appliance/${ app.id }"><img src="${ app_logo_url(app) }" alt="Appliance Picture" /></a>
       </div>
-      <div class="desc">
-        <span class="name">${ app.name }</span>
-      </div>
-
+      % endfor
     </div>
-    % endfor
-</div>
 
     <div class="clearfix"></div>
     ${ page_html }
 
   </div>
 
-<script type="text/javascript">
-  ApplianceHover();
-</script>
+  <script type="text/javascript">
+    ApplianceHover();
+  </script>
 
 
 </%block>

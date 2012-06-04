@@ -2,58 +2,18 @@
 
 <%block name="main">
 
-<div class="lrform edit-topic">
-  <h2>${ _("Edit") } ${ topic.name }</h2>
-  <form action="" method="post">
+<div class="main-wrap large-left-right-form">
+  <form method="POST">
+    ${ form.name.label } ${ form.name() }<br/>
+    ${ form.html_errors( form.name.errors ) }
 
-    % if ERROR:
-    <ol>
-      % for e in ERROR:
-      <li>${ e }</li>
-      % endfor
-    </ol>
-    % endif
+    ${ form.catalog.label } ${ form.catalog() }<br/>
+    ${ form.html_errors( form.catalog.errors ) }
 
-    <div class="item">
-      <div class="c1">
-        <label for="id_name">${_("* Name:")}</label>
-      </div>
-      <div class="c2">
-        <input id="id_name" type="text" name="name" maxlength="60" value="${ topic.name }"/>
-      </div>
-    </div>
-    
-    <div class="item">
-      <div class="c1">
-        <label for="id_catalog">${_("Catalog:")}</label>
-      </div>
-      <div class="c2">
-        <select name="catalog" id="id_catalog">
-          % for c in catalogs:
-          <option value="${ c.id }" 
-                  % if c.id == topic.catalog_id:
-                  selected="selected"
-                  % endif
-                  >${ c.name }</option>
+    ${ form.body.label } ${ form.body() }<br/>
+    ${ form.html_errors( form.body.errors ) }
 
-          % endfor
-        </select>
-      </div>
-    </div>
-
-    <div class="item">
-      <div class="c1">
-        <label for="id_body">${_("Description:")}</label>
-      </div>
-      <div class="c2">
-        <textarea id="id_body" name="body">${ topic.body }</textarea>
-      </div>
-    </div>
-
-    <div class="submit">
-      <input type="submit" value="${ _('Update Topic') }"/>
-    </div>
-
+    <label>&nbsp;</label><input type="submit" value="${ _('Publish') }" class="button" />
   </form>
 </div>
 

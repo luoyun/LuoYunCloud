@@ -1,0 +1,30 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="/admin">${ _("Admin") }</a></span>&gt;
+    <span><a href="/admin/user">${ _("User") }</a></span>&gt;
+    <span>${ _("Edit user: ") }${ USER.username }</span>
+  </div>
+</div>
+
+
+<div class="main-wrap small-left-right-form">
+  <form method="POST">
+    ${ form.memory.label } ${ form.memory() }<br/>
+    ${ form.html_errors(form.memory.errors) }
+
+    ${ form.cpus.label } ${ form.cpus() }<br/>
+    ${ form.html_errors(form.cpus.errors) }
+
+    ${ form.instances.label } ${ form.instances() }<br/>
+    ${ form.html_errors(form.instances.errors) }
+
+    <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
+  </form>
+</div>
+
+
+</%block>

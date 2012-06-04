@@ -6,6 +6,7 @@
   <div class="inner-navigator">
     <span><a href="/">${ _("Home") }</a></span>&gt;
     <span><a href="/appliance">${ _("Appliances") }</a></span>&gt;
+    <span><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog.name }</a></span>&gt;
     <span>${ _("View") } ${ appliance.name }</span>
   </div>
 </div>
@@ -15,9 +16,9 @@
   <div class="side">
 
     <div class="logo">
-      <a href="/appliance/${appliance.id}">
+      <a href="${ reverse_url('appliance:view', appliance.id) }">
         <img class="appliance-logo"
-             src="${ app_logo_url(appliance) }"
+             src="${ appliance.logo_url() }"
              alt="Image Picture" /></a>
     </div>
 
@@ -52,7 +53,7 @@
       <span class="edit"><a class="button" href="/appliance/${ appliance.id }/edit">${ _("Edit") }</a></span>
       <span class="delete"><a class="button" href="/appliance/${ appliance.id }/delete">${ _("Delete") }</a></span>
       % endif
-      <span class="create"><a class="button" href="/appliance/${ appliance.id }/create_instance">${ _("Create Instance") }</a></span>
+      <span class="create"><a class="button" href="${ reverse_url('instance:create') }?appliance_id=${ appliance.id }">${ _("Create Instance") }</a></span>
     </div>
 
 
@@ -60,11 +61,13 @@
 
 </div>
 
+% if appliance.description:
 <div class="main-wrap">
   <div class="ly-appliance-description">
     ${ appliance.description }
   </div>
 </div>
+% endif
 
 % if instances:
 <div class="main-wrap ly-appliance-instance-list">

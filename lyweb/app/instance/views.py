@@ -1,10 +1,24 @@
 # coding: utf-8
 
-import logging, struct, socket, re, Image, os
+import logging, struct, socket, re, os
 from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
+from sqlalchemy.sql.expression import asc, desc
+
+from app.appliance.models import Appliance
+from app.instance.models import Instance
+from app.job.models import Job
+from app.instance.forms import CreateInstanceBaseForm, CreateInstanceForm
+
+
 from settings import JOB_ACTION, JOB_TARGET
+
+IMAGE_SUPPORT=True
+try:
+    import Image
+except ImportError:
+    IMAGE_SUPPORT=False
 
 
 class InstRequestHandler(LyRequestHandler):
@@ -22,7 +36,7 @@ class InstRequestHandler(LyRequestHandler):
     def create_logo(self, app, inst_id):
         ''' Create logo '''
 
-        if not app.logoname:
+        if not hasattr(app, 'logoname'):
             return False
 
         applogo = os.path.join(
@@ -32,6 +46,9 @@ class InstRequestHandler(LyRequestHandler):
         if not os.path.exists(applogo):
             logging.error('%s not exist' % applogo)
             return False
+
+        if not IMAGE_SUPPORT:
+            return applogo
 
         wm = os.path.join(
             self.settings['static_path'],
@@ -61,7 +78,6 @@ class InstRequestHandler(LyRequestHandler):
                      I.size[1] - M.size[1] )
         img = watermark(I, M, position, 0.3)
         img.save( fullpath )
-        print 'HERE7'
 
         return sname
 
@@ -83,37 +99,19 @@ class View(InstRequestHandler):
 
     def get(self, id):
 
-        inst = self.db.get(
-            'SELECT * from instance WHERE id=%s;', id )
-
+        inst = self.db2.query(Instance).get(id)
         if not inst:
-            return self.done( _('No instance %s !') % id )
+            return self.done( _('No such instance: %s !') % id )
 
-        inst.user = self.db.get(
-            'SELECT * FROM auth_user WHERE id=%s;',
-            inst.user_id )
-        inst.appliance = self.db.get(
-            'SELECT * from appliance WHERE id=%s;',
-            inst.appliance_id )
-
-        # TODO: recently job list
-        JOB_LIST = self.db.query(
-            'SELECT * FROM job \
-WHERE target_id=%s and target_type=%s \
-ORDER BY created DESC LIMIT 5;',
-            id, JOB_TARGET['INSTANCE'] )
-
-        for J in JOB_LIST:
-            J.user = self.db.get(
-                'SELECT id, username FROM auth_user \
-WHERE id=%s;', J.user_id )
-            J.result = self.job_status(J.status)
+        JOB_LIST = self.db2.query(Job).filter(
+            Job.target_id == id,
+            Job.target_type == JOB_TARGET['INSTANCE'] )
+        JOB_LIST.order_by( desc('created') )
+        JOB_LIST = JOB_LIST.limit(5)
 
         d = { 'title': 'View Instance %s' % id,
               'instance': inst,
-              'instance_logo_url': self.instance_logo_url,
-              'JOB_LIST': JOB_LIST,
-              'job_action': self.job_action }
+              'JOB_LIST': JOB_LIST }
 
         if self.get_argument('ajax', 0):
             self.render('instance/view_by_ajax.html', **d)
@@ -123,83 +121,12 @@ WHERE id=%s;', J.user_id )
 
 
 
-class Add(InstRequestHandler):
-
-
-    @authenticated
-    def get(self):
-
-        apps = self.db.query('SELECT * from appliance;')
-
-        d = { 'title': 'Create new instance',
-              'appliances': apps }
-
-        self.render('instance/add.html', **d)
-
-
-    @authenticated
-    def post(self):
-
-        app_id = int(self.get_argument('appliance', 0))
-        name = self.get_argument('name', '')
-
-        d = { 'title': 'Create new instance', 'ERROR': [],
-              'name': name, 'app_id': app_id }
-
-        if not app_id:
-            d['ERROR'].append(u'appliance needed')
-        if not name:
-            d['ERROR'].append(u'name needed')
-
-        if d['ERROR']:
-            return self.render('instance/add.html', **d)
-
-        app = self.db.get(
-            'SELECT * from appliance WHERE id=%s;', app_id )
-
-        if not app:
-            return self.write('No appliance %s!' % app_id)
-
-        try:
-            r = self.db.query(
-            "INSERT INTO instance (name, user_id, \
-appliance_id, status, created, updated) \
-VALUES (%s, %s, %s, 1, 'now', 'now') RETURNING id;",
-            name, self.current_user.id, app_id )
-
-            inst_id = r[0].id
-
-            mac = '92:1B:40:26:%02x:%02x' % (
-                inst_id / 256, inst_id % 256 )
-
-            self.db.execute(
-                'UPDATE instance SET mac=%s WHERE id=%s;',
-                mac, inst_id )
-
-            sname = self.create_logo(app, inst_id)
-            if sname:
-                self.db.execute(
-                    'UPDATE instance SET logo=%s \
-WHERE id=%s;',
-                    sname, inst_id )
-
-            self.redirect('/instance/%s' % inst_id)
-
-
-        except Exception, emsg:
-            return self.write(u'System error: %s' % emsg)
-
-
-
-
-
 class Edit(InstRequestHandler):
 
 
     def initialize(self):
 
-        self.d = { 'title': 'Edit Instance', 'ERROR': [],
-                   'instance_logo_url': self.instance_logo_url }
+        self.d = { 'title': 'Edit Instance', 'ERROR': [], }
         self.t = 'instance/edit.html'
 
 
@@ -208,11 +135,10 @@ class Edit(InstRequestHandler):
 
         id = re.match('.*/([0-9]+)/.*', self.request.path).groups()[0]
 
-        inst = self.db.get(
-            'SELECT * from instance WHERE id=%s;', id)
+        inst = self.db2.query(Instance).get(id)
 
         if not inst:
-            self.write('Have not found instance %d !' % id )
+            self.write('Have not found instance %s !' % id )
             return self.finish()
 
         if self.current_user.id not in [inst.user_id, 1]:
@@ -252,11 +178,11 @@ class Edit(InstRequestHandler):
         if self.d['ERROR']:
             return self.render(self.t, **self.d)
 
-        self.db.execute(
-            "UPDATE instance SET \
-name=%s, cpus=%s, memory=%s, updated='now' WHERE id = %s",
-            name, cpus, memory, id )
-
+        inst = self.db2.query(Instance).get(id)
+        inst.name = name,
+        inst.cpus = cpus,
+        inst.memory = memory,
+        self.db2.commit()
         self.redirect('/instance/%s' % id)
 
 
@@ -266,20 +192,17 @@ class Delete(InstRequestHandler):
     @authenticated
     def get(self, id):
 
-        inst = self.db.get(
-            'SELECT * from instance WHERE id=%s;', id)
-
+        inst = self.db2.query(Instance).get(id)
         if not inst:
             return self.done( _('No instance %s !') % id )
 
         if self.current_user.id not in [inst.user_id, 1]:
             return self.done( _('No permissions !') )
 
-        self.db.execute(
-            'DELETE FROM instance WHERE id=%s;', id )
+        self.db2.delete(inst)
+        self.db2.commit()
 
         return self.done( _('Delete instance %s success !' % id) )
-
 
 
 
@@ -289,14 +212,16 @@ class Control(InstRequestHandler):
     @authenticated
     def get(self, id, action):
 
-        inst = self.db.get(
-            'SELECT * from instance WHERE id=%s;', id)
-
+        inst = self.db2.query(Instance).get(id)
         if not inst:
             return self.write( _('No instance %s !') % id )
 
-        if self.current_user.id not in [inst.user_id, 1]:
+        if not ( self.current_user.id == inst.user_id or
+                 self.has_permission('admin') ):
             return self.write( _('No permissions !') )
+
+        if action == 'run' and not self.have_resource(inst):
+            return self.finish()
 
         LYJOB_ACTION = self.settings['LYJOB_ACTION']
         action_id = LYJOB_ACTION.get(action, 0)
@@ -304,66 +229,135 @@ class Control(InstRequestHandler):
             return self.write( _('Unknown action "%s" !') % action )
 
         # TODO: not run instance that it's running, and stop
-        if ( ( action_id == 201 and 
-               inst.status not in [0, 1, 2, 9] ) or (
-                action_id == 202 and 
-                inst.status in [0, 1, 2, 9] ) ):
+        if ( ( action=='stop' and not inst.can_stop ) or (
+                action=='run' and not inst.can_run ) ):
             return self.write(
-                _('the status of instance %s is: "%s", can not %s') % (
-                    id, self.instance_status(inst.status), 
-                    self.job_action(action_id) ) )
+                _('status of instance %s is "%s", can not %s') % (
+                    id, inst.status_string(), action ) )
 
-        jid = self.new_job(JOB_TARGET['INSTANCE'], id, action_id)
+        job = Job( user = self.current_user,
+                   target_type = JOB_TARGET['INSTANCE'],
+                   target_id = id,
+                   action = action_id )
+
+        self.db2.add(job)
+        self.db2.commit()
+        self._job_notify( job.id )
 
         ajax = self.get_argument('ajax', 0)
         desc = u'%s instance %s success !' % (action, id)
 
         if ajax:
-            json = { 'jid': jid, 'desc': desc }
+            json = { 'jid': job.id, 'desc': desc }
             self.write(json)
         else:
             self.write(desc)
 
 
+    def have_resource(self, inst):
+        # Have resources ?
+        USED_INSTANCES = self.db2.query(Instance).filter(
+            Instance.user_id == self.current_user.id).all()
+        USED_CPUS = inst.cpus
+        USED_MEMORY = inst.memory
+        for I in USED_INSTANCES:
+            if I.is_running:
+                USED_CPUS += I.cpus
+                USED_MEMORY += I.memory
 
-class InstanceConfig(InstRequestHandler):
+        if ( USED_CPUS > self.current_user.profile.cpus or
+             USED_MEMORY > self.current_user.profile.memory ):
 
-    def get(self, id):
+            desc = _('No resources to run instance:')
 
-        inst = self.db.get('SELECT * from instance WHERE id = %s;', id)
+            if USED_CPUS > self.current_user.profile.cpus:
+                desc += _('the total cpus you owned is %s, but now were used %s.') % (self.current_user.profile.cpus, USED_CPUS - inst.cpus)
+            if USED_MEMORY > self.current_user.profile.memory:
+                desc += _('the total memory you owned is %s MB, but now were used %s MB.') % (self.current_user.profile.memory, USED_MEMORY - inst.memory)
 
-        inst.appliance = self.db.get(
-            'SELECT * from appliance WHERE id = %s;',
-            inst.appliance_id )
+            ajax = self.get_argument('ajax', 0)
 
-        self.render('instance/config.txt', instance = inst)
+            if ajax:
+                json = { 'jid': 0, 'desc': desc }
+                self.write(json)
+            else:
+                url = self.get_no_resource_url()
+                url += "?reason=Resource Limit"
+                self.redirect( url )
 
+            return False
 
-
-class LibvirtdConf(InstRequestHandler):
-
-    def get(self, id):
-
-        inst = self.db.get('SELECT * from instance WHERE id = %s;', id)
-
-        inst.appliance = self.db.get(
-            'SELECT * from appliance WHERE id = %s;',
-            inst.appliance_id )
-
-        self.set_header("Content-Type", "text/xml")
-        self.render('instance/libvirtd_conf.xml', instance = inst)
+        return True
 
 
 
-class OsmanagerConf(InstRequestHandler):
+from lycustom import has_permission
+class CreateInstance(InstRequestHandler):
 
-    def get(self, id):
+    @has_permission('instance.create')
+    def prepare(self):
 
-        inst = self.db.get('SELECT * from instance WHERE id = %s;', id)
+        _id = self.get_argument('appliance_id', 0)
+        self.appliance = self.db2.query(Appliance).get(_id)
 
-        #self.set_header("Content-Type", "text")
-        self.render( 'instance/osmanager.conf',
-                     instance = inst,
-                     control_server_ip = self.application.settings['control_server_ip'],
-                     control_server_port = self.application.settings['control_server_port']
-                     )
+        # Have resources ?
+        USED_INSTANCES = self.db2.query(Instance.id).filter(
+            Instance.user_id == self.current_user.id ).count()
+
+        if USED_INSTANCES + 1 > self.current_user.profile.instances:
+            url = self.get_no_resource_url()
+            url += "?reason=Resource Limit"
+            self.redirect( url )
+            return self.finish()
+
+
+    def get(self):
+ 
+        if not self.appliance:
+            form = CreateInstanceForm()
+            apps = self.db2.query(Appliance)
+            if not apps.count():
+                return self.write( _("No appliances found, please upload a appliance first !") )
+            form.appliance.query = apps.all()
+        else:
+            form = CreateInstanceBaseForm()
+            form.name.data = self.appliance.name
+
+        self.render( 'instance/create.html', title = _('Create Instance'),
+                     form = form, appliance = self.appliance )
+
+
+    def post(self):
+
+        if not self.appliance:
+            form = CreateInstanceForm( self.request.arguments )
+            form.appliance.query = self.db2.query(Appliance).all()
+            #app = self.db2.query(Appliance).get( form.appliance.data )e
+            app = form.appliance.data
+        else:
+            form = CreateInstanceBaseForm( self.request.arguments )
+            app = self.appliance 
+
+        if form.validate():
+            instance = Instance(
+                name=form.name.data, user=self.current_user,
+                appliance=app )
+
+            self.db2.add(instance)
+            self.db2.commit()
+            instance.logo = self.create_logo(app, instance.id)
+            self.db2.commit()
+
+            instance.mac = '92:1B:40:26:%02x:%02x' % (
+                instance.id / 256, instance.id % 256 )
+            self.db2.commit()
+
+            url = self.reverse_url('instance:view', instance.id)
+            return self.redirect(url)
+
+        self.render( 'instance/create.html', title = _('Create Instance'),
+                     form = form, appliance = app )
+
+        
+            
+

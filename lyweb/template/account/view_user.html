@@ -4,46 +4,24 @@
 
 
 <div class="main-wrap view-user">
-  % if current_user and current_user.id in [1, user.id]:
-  <p><a class="button" href="/account/${ user.id }/reset_password">${ _("Reset Password") }</a></p>
-  % endif
-
-  <table class="list">
+  <table class="kvlist">
     <tbody>
       <tr>
         <td>${ _("Username") }</td>
-        <td>${user.username}</td>
+        <td>${ user.username }</td>
       </tr>
       <tr>
         <td>${ _("ID") }</td>
-        <td>${user.id}</td>
+        <td>${ user.id }</td>
       </tr>
       <tr>
         <td>${ _("Date Joined") }</td>
-        <td>${user.date_joined}</td>
+        <td>${ fulltime(user.date_joined) }</td>
       </tr>
       <tr>
         <td>${ _("Last Login") }</td>
-        <td>${user.last_login}</td>
+        <td>${ fulltime(user.last_login) }</td>
       </tr>
-<%doc>
-      <tr>
-        <td>${ _("Email") }</td>
-        <td>${user.prefs.email}</td>
-      </tr>
-      <tr>
-        <td>${ _("Locale") }</td>
-        <td>${user.prefs.locale}</td>
-      </tr>
-      <tr>
-        <td>${ _("First Name") }</td>
-        <td>${user.prefs.first_name}</td>
-      </tr>
-      <tr>
-        <td>${ _("Last Name") }</td>
-        <td>${user.prefs.last_name}</td>
-      </tr>
-</%doc>
     </tbody>
   </table>
 </div>
@@ -52,12 +30,20 @@
 % if INSTANCE_LIST:
 <div class="main-wrap instance-list">
   <h2>${ _("Instance List") }</h2>
-  <table>
+  <table class="list">
+    <thead>
+      <th>${ _("ID") }</th>
+      <th>${ _("Name") }</th>
+      <th>${ _("Status") }</th>
+      <th>${ _("IP") }</th>
+    </thead>
     <tbody>
       % for I in INSTANCE_LIST:
       <tr>
-        <td><span class="count">${ I.id }</span></td>
+        <td>${ I.id }</td>
         <td><a href="/instance/${ I.id }">${ I.name }</a></td>
+        <td>${ I.status_string }</td>
+        <td><a href="${ I.home_url }">${ I.ip }</a></td>
       </tr>
       % endfor
     </tbody>
