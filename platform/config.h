@@ -131,13 +131,13 @@
 #define PACKAGE_NAME "luoyun-cloud"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "luoyun-cloud 0.2"
+#define PACKAGE_STRING "luoyun-cloud 0.4"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "luoyun-cloud"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.2"
+#define PACKAGE_VERSION "0.4"
 
 /* The size of `long', as computed by sizeof. */
 #define SIZEOF_LONG 8
@@ -149,4 +149,4 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.2"
+#define VERSION "0.4"
