@@ -92,6 +92,7 @@ class NewTopic(LyRequestHandler):
 class EditTopic(LyRequestHandler):
 
 
+
     @authenticated
     def prepare(self):
 
@@ -100,11 +101,12 @@ class EditTopic(LyRequestHandler):
         self.topic = self.db2.query(Topic).get(_id)
         if not self.topic:
             self.write('Have not found topic %s' % _id)
-            return self.finished()
+            return self.finish()
 
-        if self.topic.user_id != self.current_user.id:
+        if not ( self.topic.user_id == self.current_user.id or
+                 self.has_permission('admin') ):
             self.write('You have not permission !')
-            return self.finished()
+            return self.finish()
 
 
     def get(self, id):

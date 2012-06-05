@@ -13,6 +13,7 @@ from app.appliance.urls import handlers as appliance_urls
 from app.instance.urls import handlers as instance_urls
 from app.wiki.urls import handlers as wiki_urls
 from app.job.urls import handlers as job_urls
+from app.node.urls import handlers as node_urls
 
 
 curdir = os.path.dirname(__file__)
@@ -46,7 +47,7 @@ settings = {
 }
 
 
-handlers =  account_urls + admin_urls + appliance_urls + wiki_urls + instance_urls + job_urls + [
+handlers =  account_urls + admin_urls + appliance_urls + wiki_urls + instance_urls + job_urls + node_urls + [
 
     # Home
     (r'/', home.Index),

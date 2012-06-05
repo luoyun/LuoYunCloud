@@ -26,7 +26,7 @@ class WikiManagement(LyRequestHandler):
             self.topic = self.db2.query(Topic).get( topic_id )
             if not self.topic:
                 self.write( _('No such topic : %s') % topic_id )
-                return self.finished()
+                return self.finish()
 
         c_id = self.get_argument('catalog', 0)
         self.catalog = self.db2.query(WikiCatalog).get(c_id)

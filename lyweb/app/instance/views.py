@@ -39,6 +39,9 @@ class InstRequestHandler(LyRequestHandler):
         if not hasattr(app, 'logoname'):
             return False
 
+        if not app.logoname:
+            return False
+
         applogo = os.path.join(
             self.settings['appliance_top_dir'],
             app.logoname )
@@ -199,6 +202,7 @@ class Delete(InstRequestHandler):
         if self.current_user.id not in [inst.user_id, 1]:
             return self.done( _('No permissions !') )
 
+        # TODO: no running delete !
         self.db2.delete(inst)
         self.db2.commit()
 

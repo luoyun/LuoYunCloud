@@ -24,7 +24,7 @@ class InstanceManagement(LyRequestHandler):
             self.instance = self.db2.query(Instance).get( instance_id )
             if not self.instance:
                 self.write( _('No such instance : %s') % instance_id )
-                return self.finished()
+                return self.finish()
 
 
     def get(self):
@@ -49,7 +49,7 @@ class InstanceManagement(LyRequestHandler):
 
 
     def get_index(self):
-        instances = self.db2.query(Instance).all()
+        instances = self.db2.query(Instance).order_by('id').all()
         self.render( 'admin/instance/index.html',
                      title = _('Instance Management'),
                      INSTANCE_LIST = instances )

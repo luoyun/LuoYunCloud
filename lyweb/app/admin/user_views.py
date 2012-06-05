@@ -33,7 +33,7 @@ class UserManagement(LyRequestHandler):
             self.user = self.db2.query(User).get( user_id  )
             if not self.user:
                 self.write( _('No such user : %s') % user_id )
-                return self.finished()
+                return self.finish()
 
 
     def get(self):

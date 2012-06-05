@@ -48,7 +48,7 @@ class SystemManagement(LyRequestHandler):
 
         from lyorm import ORMBase, dbengine
         ORMBase.metadata.create_all(dbengine)
-
+        self.db2.commit()
         url = self.application.reverse_url('admin:system')
         return self.redirect( url )
 

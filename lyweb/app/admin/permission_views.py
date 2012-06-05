@@ -23,7 +23,7 @@ class PermissionManagement(LyRequestHandler):
             self.permission = self.db2.query(Permission).get( permission_id  )
             if not self.permission:
                 self.write( _('No such permission : %s') % permission_id )
-                return self.finished()
+                return self.finish()
 
 
     def get(self):

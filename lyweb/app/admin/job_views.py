@@ -25,7 +25,7 @@ class JobManagement(LyRequestHandler):
             self.job = self.db2.query(Job).get( job_id )
             if not self.job:
                 self.write( _('No such node') % job_id )
-                return self.finished()
+                return self.finish()
 
 
     def get(self):

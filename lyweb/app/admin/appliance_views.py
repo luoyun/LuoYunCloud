@@ -27,7 +27,7 @@ class ApplianceManagement(LyRequestHandler):
             self.appliance = self.db2.query(Appliance).get( appliance_id )
             if not self.appliance:
                 self.write( _('No such appliance : %s') % appliance_id )
-                return self.finished()
+                return self.finish()
 
         c_id = self.get_argument('catalog', 0)
         self.catalog = self.db2.query(ApplianceCatalog).get(c_id)

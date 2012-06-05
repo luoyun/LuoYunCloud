@@ -20,7 +20,7 @@
     <div class="topic-info">
       <span>${ fulltime(topic.updated) } updated by ${ topic.user.username }</span>
       % if current_user:
-      % if current_user.id in [1, topic.user_id]:
+      % if current_user.id == topic.user_id or has_permission('admin'):
       <span><a href="/wiki/topic/${ topic.id }/edit">${ _("Edit") }</a></span>
       <span><a href="/wiki/topic/${ topic.id }/delete">${ _("Delete") }</a></span>
       % endif

@@ -37,7 +37,8 @@ LANGUAGES = (
 
 
 # DB Connect format: "postgresql+psycopg2://username:password@HOST_ADDRESS/DB_NAME"
-SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://luoyun:luoyun@127.0.0.1/luoyun"
+#SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://luoyun:luoyun@127.0.0.1/luoyun"
+SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://luoyun:luoyun@192.168.1.11/luoyun"
 
 
 # Socket Request
