@@ -25,6 +25,7 @@ typedef struct CLCConfig_t {
     int   verbose;
     int   debug;
     int   daemon;
+    int   node_cpu_factor, node_mem_factor;
 } CLCConfig;
 
 

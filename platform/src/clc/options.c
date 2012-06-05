@@ -244,6 +244,10 @@ static int __parse_config(CLCConfig * c)
                             0, ini_config) ||
         __parse_oneitem_str("LYCLC_PID_PATH", &c->pid_path,
                             0, ini_config) ||
+        __parse_oneitem_int("LYCLC_NODE_CPU_FACTOR", &c->node_cpu_factor,
+                            ini_config) ||
+        __parse_oneitem_int("LYCLC_NODE_MEM_FACTOR", &c->node_mem_factor,
+                            ini_config) ||
         __parse_oneitem_str("LYCLC_DB_NAME", &c->db_name,
                             0, ini_config) ||
         __parse_oneitem_str("LYCLC_DB_USERNAME", &c->db_user,

@@ -59,11 +59,13 @@ static int __print_config(CLCConfig * c)
              "  conf_path = %s\n"
              "  log_path = %s\n"
              "  DB info = %s,%s,%s\n"
+             "  factor = %d,%d\n"
              "  verbose = %d\n" "  debug = %d\n" "  daemon = %d\n",
              c->clc_ip, c->clc_port,
              c->clc_mcast_ip, c->clc_mcast_port,
              c->conf_path, c->log_path,
              c->db_name, c->db_user, c->db_pass,
+             c->node_cpu_factor, c->node_mem_factor,
              c->verbose, c->debug, c->daemon);
 
     return 0;
@@ -153,6 +155,12 @@ int main(int argc, char *argv[])
     /* exit if ret is not zero */
     if (ret != 0)
         goto out;
+
+    /* node cpu/mem factors */
+    if (c->node_cpu_factor == 0)
+        c->node_cpu_factor = DEFAULT_NODE_CPU_FACTOR;
+    if (c->node_mem_factor == 0)
+        c->node_mem_factor = DEFAULT_NODE_MEM_FACTOR;
 
     /* for debuuging */
     if (c->debug)

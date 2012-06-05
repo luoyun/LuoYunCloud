@@ -49,6 +49,12 @@ LYCLC_LOG_PATH = @DEFAULT_LYCLC_LOG_PATH@
 #
 LYCLC_PID_PATH = @DEFAULT_LYCLC_PID_PATH@
 
+# 
+# CPU/Memory factors for calculating node resource limit
+#
+LYCLC_NODE_CPU_FACTOR = 4
+LYCLC_NODE_MEM_FACTOR = 2
+
 #
 # daemon mode, 1: in daemon mode, 0: not in daemon mode, 
 #              any other values are not valid
