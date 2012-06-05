@@ -4,4 +4,5 @@ README     - this file
 lyweb      - web server of LuoYun Cloud Computing Software
 platform   - Cloud Controller, Node Server and OS Manager of
              LuoYun Cloud Computing Software
+lyosm      - separate OS manager implementation
 tools      - some helper scripts
