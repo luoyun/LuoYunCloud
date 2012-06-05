@@ -25,7 +25,7 @@ class GroupManagement(LyRequestHandler):
             self.group = self.db2.query(Group).get( group_id  )
             if not self.group:
                 self.write( _('No such group : %s') % group_id )
-                return self.finished()
+                return self.finish()
 
 
     def get(self):
