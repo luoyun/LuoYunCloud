@@ -29,6 +29,7 @@ typedef struct NodeConfig_t {
     char *conf_path;       /* config file path */
     char *sysconf_path;    /* sysconf file path */
     char *log_path;        /* log file path */
+    char *pid_path;        /* pid file path */
     char *osm_conf_path;   /* osmanage configuraton path inside instance */
     char *osm_key_path;    /* osmanage key file path inside instance */
     int  verbose;

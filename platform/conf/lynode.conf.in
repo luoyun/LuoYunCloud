@@ -71,6 +71,13 @@ LYNODE_UUID_PATH = @DEFAULT_LYNODE_UUID_PATH@
 LYNODE_LOG_PATH = @DEFAULT_LYNODE_LOG_PATH@
 
 #
+# pid file
+#
+# Default setting is /var/run/lynode.pid
+#
+LYNODE_PID_PATH = @DEFAULT_LYNODE_PID_PATH@
+
+#
 # OSM configuration file and secret key file
 #
 LYOSM_CONF_PATH = @DEFAULT_LYOSM_CONF_PATH@

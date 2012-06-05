@@ -39,9 +39,9 @@ int lyutil_create_dir(const char *dir);
 int lyutil_create_file(const char *path, int dir_only);
 
 /* process lock file */
-int lyutil_check_pid_file(const char *dir, const char *name);
-int lyutil_create_pid_file(const char *dir, const char *name);
-int lyutil_remove_pid_file(const char *dir, const char *name);
+int lyutil_check_pid_file(const char *path, const char *name);
+int lyutil_create_pid_file(const char *path, const char *name);
+int lyutil_remove_pid_file(const char *path, const char *name);
 
 /* file decompression */
 int lyutil_decompress_bzip2(const char *srcfile, const char *dstfile);

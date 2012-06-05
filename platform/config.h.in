@@ -27,6 +27,9 @@
 /* default cloud controller mcast port */
 #undef DEFAULT_LYCLC_MCAST_PORT
 
+/* default lyclc pid file */
+#undef DEFAULT_LYCLC_PID_PATH
+
 /* default cloud controller port */
 #undef DEFAULT_LYCLC_PORT
 
@@ -41,6 +44,9 @@
 
 /* default lynode log file */
 #undef DEFAULT_LYNODE_LOG_PATH
+
+/* default lynode pid file */
+#undef DEFAULT_LYNODE_PID_PATH
 
 /* default compute node port */
 #undef DEFAULT_LYNODE_PORT

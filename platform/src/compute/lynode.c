@@ -39,8 +39,6 @@
 #include "domain.h"
 #include "node.h"
 
-#define LYNODE_PID_DIR "/var/run"
-
 /* Global value */
 NodeControl *g_c = NULL;
 
@@ -76,7 +74,7 @@ static void __main_clean(int keeppid)
     ly_epoll_close();
     libvirt_close();
     if (keeppid == 0)
-        lyutil_remove_pid_file(LYNODE_PID_DIR, PROGRAM_NAME);
+        lyutil_remove_pid_file(c->pid_path, PROGRAM_NAME);
     lyauth_free(&g_c->auth);
     if (c->clc_ip)
         free(c->clc_ip);
@@ -256,7 +254,7 @@ int main(int argc, char *argv[])
     }
 
     /* check whether program is started already */
-    ret = lyutil_check_pid_file(LYNODE_PID_DIR, PROGRAM_NAME);
+    ret = lyutil_check_pid_file(c->pid_path, PROGRAM_NAME);
     if (ret == 1) {
         printf(_("%s is running already.\n"), PROGRAM_NAME);
         ret = 0;
@@ -286,7 +284,7 @@ int main(int argc, char *argv[])
     logcallback(ly_node_send_report, 0);
 
     /* create lock file */
-    ret = lyutil_create_pid_file(LYNODE_PID_DIR, PROGRAM_NAME);
+    ret = lyutil_create_pid_file(c->pid_path, PROGRAM_NAME);
     if (ret == 1) {
         logsimple(_("%s is running already.\n"), PROGRAM_NAME);
         goto out;

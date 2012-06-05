@@ -43,6 +43,13 @@ LYCLC_DATA_DIR = @DEFAULT_LYCLC_DATA_DIR@
 LYCLC_LOG_PATH = @DEFAULT_LYCLC_LOG_PATH@
 
 #
+# pid file
+#
+# Default setting is /var/run/lyclc.pid
+#
+LYCLC_PID_PATH = @DEFAULT_LYCLC_PID_PATH@
+
+#
 # daemon mode, 1: in daemon mode, 0: not in daemon mode, 
 #              any other values are not valid
 #

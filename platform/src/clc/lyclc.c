@@ -48,8 +48,6 @@
 #include "lyclc.h"
 
 
-#define LYCLC_PID_DIR "/var/run"
-
 /* Global value */
 CLCConfig *g_c = NULL;
 
@@ -82,7 +80,7 @@ static void __main_clean(int keeppid)
     ly_entity_store_destroy();
     ly_epoll_close();
     if (keeppid == 0)
-        lyutil_remove_pid_file(LYCLC_PID_DIR, PROGRAM_NAME);
+        lyutil_remove_pid_file(g_c->pid_path, PROGRAM_NAME);
     if (g_c->conf_path)
         free(g_c->conf_path);
     if (g_c->log_path)
@@ -168,7 +166,7 @@ int main(int argc, char *argv[])
     }
 
     /* check whether program is started already */
-    ret = lyutil_check_pid_file(LYCLC_PID_DIR, PROGRAM_NAME);
+    ret = lyutil_check_pid_file(c->pid_path, PROGRAM_NAME);
     if (ret == 1) {
         printf(_("%s is running already.\n"), PROGRAM_NAME);
         goto out;
@@ -202,7 +200,7 @@ int main(int argc, char *argv[])
         logfile(NULL, c->debug ? LYDEBUG : c->verbose ? LYINFO : LYWARN);
 
     /* create lock file */
-    ret = lyutil_create_pid_file(LYCLC_PID_DIR, PROGRAM_NAME);
+    ret = lyutil_create_pid_file(c->pid_path, PROGRAM_NAME);
     if (ret == 1) {
         logsimple(_("%s is running already.\n"), PROGRAM_NAME);
         ret = 0;

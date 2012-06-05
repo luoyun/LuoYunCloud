@@ -68,6 +68,16 @@ AS_IF([test ["$prefix" == "NONE"] ], [DEFAULT_LYCLC_LOG_PATH="/var/log/lyclc.log
 AC_SUBST(DEFAULT_LYCLC_LOG_PATH)
 AC_DEFINE_UNQUOTED([DEFAULT_LYCLC_LOG_PATH], ["${DEFAULT_LYCLC_LOG_PATH}"], [default clc log file])
 
+# lynode pid file
+DEFAULT_LYNODE_PID_PATH=/var/run/lynode.pid
+AC_SUBST(DEFAULT_LYNODE_PID_PATH)
+AC_DEFINE_UNQUOTED([DEFAULT_LYNODE_PID_PATH], ["${DEFAULT_LYNODE_PID_PATH}"], [default lynode pid file])
+
+# lyclc pid file
+DEFAULT_LYCLC_PID_PATH=/var/run/lyclc.pid
+AC_SUBST(DEFAULT_LYCLC_PID_PATH)
+AC_DEFINE_UNQUOTED([DEFAULT_LYCLC_PID_PATH], ["${DEFAULT_LYCLC_PID_PATH}"], [default lyclc pid file])
+
 # luoyun config dir
 AS_IF([test ["$prefix" == "NONE"] ], [LYSYSCONFDIR=/etc/${PACKAGE_NAME}], [LYSYSCONFDIR=${prefix%%/}/etc/${PACKAGE_NAME}])
 AC_SUBST(LYSYSCONFDIR)

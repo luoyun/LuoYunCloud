@@ -242,6 +242,8 @@ static int __parse_config(CLCConfig * c)
                             ini_config) ||
         __parse_oneitem_str("LYCLC_DATA_DIR", &c->clc_data_dir,
                             0, ini_config) ||
+        __parse_oneitem_str("LYCLC_PID_PATH", &c->pid_path,
+                            0, ini_config) ||
         __parse_oneitem_str("LYCLC_DB_NAME", &c->db_name,
                             0, ini_config) ||
         __parse_oneitem_str("LYCLC_DB_USERNAME", &c->db_user,
@@ -332,6 +334,7 @@ int clc_config(int argc, char *argv[], CLCConfig * c)
     c->debug = UNDEFINED_CFG_INT;
     c->conf_path = NULL;
     c->log_path = NULL;
+    c->pid_path = NULL;
     c->db_name = NULL;
     c->db_user = NULL;
     c->db_pass = NULL;
@@ -381,6 +384,11 @@ int clc_config(int argc, char *argv[], CLCConfig * c)
     if (c->log_path == NULL) {
         c->log_path = strdup(DEFAULT_LYCLC_LOG_PATH);
         if (c->log_path == NULL)
+            return CLC_CONFIG_RET_ERR_NOMEM;
+    }
+    if (c->pid_path == NULL) {
+        c->pid_path = strdup(DEFAULT_LYCLC_PID_PATH);
+        if (c->pid_path == NULL)
             return CLC_CONFIG_RET_ERR_NOMEM;
     }
     if (c->db_name == NULL) {

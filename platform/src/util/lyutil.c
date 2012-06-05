@@ -453,22 +453,10 @@ int lyutil_create_file(const char *path, int dir_only)
 ** check lock file with pid of running process 
 ** return 0: not exist, 1: exist already, -1: error
 */
-int lyutil_check_pid_file(const char *dir, const char *name)
+int lyutil_check_pid_file(const char *path, const char *name)
 {
-    if (dir == NULL || name == NULL)
+    if (path == NULL || name == NULL)
         return -1;
-
-    /* check whether it's writable */
-    if (access(dir, W_OK)) {
-        logerror(_("directory %s not writable\n"), dir);
-        return -1;
-    }
-
-    char path[MAX_PATH];
-    if (snprintf(path, MAX_PATH, "%s/%s.pid", dir, name) >= MAX_PATH) {
-        logerror(_("path max exceeded %s\n"), __func__);
-        return -1;
-    }
 
     /* check proc fs should be mounted */
     /* assume it's mounted on /proc, but it may not be true... */
@@ -517,6 +505,12 @@ int lyutil_check_pid_file(const char *dir, const char *name)
                  "old pid file ignored.\n"));
     }
 
+    /* make sure the file is wriable */
+    int fd = creat(path, S_IWUSR|S_IRUSR);
+    if (fd < 0) {
+        logerror(_("can not create file %s\n"), path);
+        return -1;
+    }
     return 0;
 }
 
@@ -524,17 +518,11 @@ int lyutil_check_pid_file(const char *dir, const char *name)
 ** create lock file with pid of running process 
 ** return 0: sucess, 1: exist already, -1: error
 */
-int lyutil_create_pid_file(const char *dir, const char *name)
+int lyutil_create_pid_file(const char *path, const char *name)
 {
-    int ret = lyutil_check_pid_file(dir, name);
+    int ret = lyutil_check_pid_file(path, name);
     if (ret != 0)
         return ret;
-
-    char path[MAX_PATH];
-    if (snprintf(path, MAX_PATH, "%s/%s.pid", dir, name) >= MAX_PATH) {
-        logerror(_("path max exceeded %s\n"), __func__);
-        return -1;
-    }
 
 #if 0
     FILE *fp = fopen(path, "w");
@@ -560,16 +548,11 @@ int lyutil_create_pid_file(const char *dir, const char *name)
 }
 
 /* remove pid file */
-int lyutil_remove_pid_file(const char *dir, const char *name)
+int lyutil_remove_pid_file(const char *path, const char *name)
 {
-    if (dir == NULL || name == NULL)
+    if (path == NULL || name == NULL)
         return -1;
 
-    char path[MAX_PATH];
-    if (snprintf(path, MAX_PATH, "%s/%s.pid", dir, name) >= MAX_PATH) {
-        logerror(_("path max exceeded %s\n"), __func__);
-        return -1;
-    }
     unlink(path);
 
     return 0;

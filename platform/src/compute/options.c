@@ -228,6 +228,8 @@ static int __parse_config(NodeConfig *c)
                              0, ini_config) || 
         __parse_oneitem_str("LYOSM_KEY_PATH", &c->osm_key_path,
                              0, ini_config) || 
+        __parse_oneitem_str("LYNODE_PID_PATH", &c->pid_path,
+                             0, ini_config) || 
         __parse_oneitem_str("LYNODE_DATA_DIR", &c->node_data_dir, 
                              0, ini_config))
         return NODE_CONFIG_RET_ERR_CONF;
@@ -457,7 +459,12 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
         c->clc_mcast_port = DEFAULT_LYCLC_MCAST_PORT;
     if (c->log_path == NULL) {
         c->log_path = strdup(DEFAULT_LYNODE_LOG_PATH);
-        if (c->conf_path == NULL)
+        if (c->log_path == NULL)
+            return NODE_CONFIG_RET_ERR_NOMEM;
+    }
+    if (c->pid_path == NULL) {
+        c->pid_path = strdup(DEFAULT_LYNODE_PID_PATH);
+        if (c->pid_path == NULL)
             return NODE_CONFIG_RET_ERR_NOMEM;
     }
     if (c->osm_conf_path == NULL) {

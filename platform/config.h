@@ -28,6 +28,9 @@
 /* default cloud controller mcast port */
 #define DEFAULT_LYCLC_MCAST_PORT 1369
 
+/* default lyclc pid file */
+#define DEFAULT_LYCLC_PID_PATH "/var/run/lyclc.pid"
+
 /* default cloud controller port */
 #define DEFAULT_LYCLC_PORT 1369
 
@@ -42,6 +45,9 @@
 
 /* default lynode log file */
 #define DEFAULT_LYNODE_LOG_PATH "/opt/LuoYun/platform/logs/lynode.log"
+
+/* default lynode pid file */
+#define DEFAULT_LYNODE_PID_PATH "/var/run/lynode.pid"
 
 /* default compute node port */
 #define DEFAULT_LYNODE_PORT 3260
