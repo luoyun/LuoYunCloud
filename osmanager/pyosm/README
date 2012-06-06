@@ -1,0 +1,38 @@
+Files in this directory are Python implementation of OS manager, which is
+used by some LuoYun Virtual Appliance. OS manager allows better control for
+the appliance through cloud.
+
+The typical use of OS manager is as follows,
+1. Inside appliance, make sure iptables is turned off. If iptables has to be
+   turned on, please make sure multicast packets to 228.0.0.1/1369 is allowed
+   to be received by the appliance.
+
+2. In the root file system of an appliance, create the following directories
+/LuoYun/bin
+/LuoYun/bin/pyosm
+/LuoYun/conf
+/LuoYun/log
+/LuoYun/scripts
+
+3. Copy all the Python files in this directory to /LuoYun/bin/pyosm
+
+4. Start OS manager with the following command, as root
+# python /LuoYun/bin/pyosm/lyosm.py &
+
+The above invocation of lyosm.py will use default configuration settings that
+built into the lyosm.py code. The default settings are,
+
+/LuoYun/conf/luoyun.conf - default cloud configuration file location, the file
+                           is provided by the cloud
+/LuoYun/log/luoyun.log   - default log file location, the file will created
+                           by lyosm.py
+/LuoYun/scripts          - default directory where appliance related scripts
+                           are stored. It's not neccessary to provide
+                           appliance scripts. However, if a script named
+                           "status" exists in the directory, lyosm.py will
+                           run the "status" script periodically to check
+                           status of the web application running in the
+                           appliance and report result to cloud controller.
+
+The above settings, along with other command options, can be changed on 
+commad line of lyosm.py.
