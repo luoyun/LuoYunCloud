@@ -60,12 +60,14 @@ static int __print_config(CLCConfig * c)
              "  log_path = %s\n"
              "  DB info = %s,%s,%s\n"
              "  factor = %d,%d\n"
+             "  vm_name_prefix = %s\n"
              "  verbose = %d\n" "  debug = %d\n" "  daemon = %d\n",
              c->clc_ip, c->clc_port,
              c->clc_mcast_ip, c->clc_mcast_port,
              c->conf_path, c->log_path,
              c->db_name, c->db_user, c->db_pass,
              c->node_cpu_factor, c->node_mem_factor,
+             c->vm_name_prefix,
              c->verbose, c->debug, c->daemon);
 
     return 0;

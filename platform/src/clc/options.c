@@ -248,6 +248,8 @@ static int __parse_config(CLCConfig * c)
                             ini_config) ||
         __parse_oneitem_int("LYCLC_NODE_MEM_FACTOR", &c->node_mem_factor,
                             ini_config) ||
+        __parse_oneitem_str("LYCLC_VM_NAME_PREFIX", &c->vm_name_prefix,
+                            0, ini_config) ||
         __parse_oneitem_str("LYCLC_DB_NAME", &c->db_name,
                             0, ini_config) ||
         __parse_oneitem_str("LYCLC_DB_USERNAME", &c->db_user,
@@ -412,6 +414,11 @@ int clc_config(int argc, char *argv[], CLCConfig * c)
     }
 
     /* simple configuration validity checking */
+    if (c->vm_name_prefix && strlen(c->vm_name_prefix) > 10) {
+        logsimple(_("VM name prefix is too long, must not be > 10\n"));
+        return CLC_CONFIG_RET_ERR_CONF;
+    }
+        
     if (__is_IP_valid(c->clc_mcast_ip, 1) == 0) {
         logsimple(_("cloud controller mcast ip is invalid\n"));
         return CLC_CONFIG_RET_ERR_CONF;

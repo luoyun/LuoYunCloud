@@ -56,6 +56,11 @@ LYCLC_NODE_CPU_FACTOR = 4
 LYCLC_NODE_MEM_FACTOR = 2
 
 #
+# Virtual Machine name prefix, must be less than 10 characters long
+#
+LYCLC_VM_NAME_PREFIX = i-
+
+#
 # daemon mode, 1: in daemon mode, 0: not in daemon mode, 
 #              any other values are not valid
 #

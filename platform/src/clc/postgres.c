@@ -619,8 +619,11 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
         if (s && strlen(s))
             ci->osm_secret = strdup(s);
         ci->osm_tag = ci->ins_id;
-        char ins_domain[20];
-        snprintf(ins_domain, 20, "i-%d", ci->ins_id);
+        char ins_domain[21];
+        if (g_c->vm_name_prefix == NULL)
+            snprintf(ins_domain, 20, "i-%d", ci->ins_id);
+        else
+            snprintf(ins_domain, 20, "%s%d", g_c->vm_name_prefix, ci->ins_id);
         ci->ins_domain = strdup(ins_domain);
         ret = 0;
     }

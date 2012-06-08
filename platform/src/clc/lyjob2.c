@@ -58,8 +58,11 @@ static int __query_instance(int id)
     if (fd < 0)
         return -1;
 
-    char ins_domain[20];
-    snprintf(ins_domain, 20, "i-%d", id);
+    char ins_domain[21];
+    if (g_c->vm_name_prefix == NULL)
+        snprintf(ins_domain, 20, "i-%d", id);
+    else
+        snprintf(ins_domain, 20, "%s%d", g_c->vm_name_prefix, id);
 
     NodeCtrlInstance ii;
     ii.req_id = 0;

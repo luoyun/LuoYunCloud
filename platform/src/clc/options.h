@@ -22,6 +22,7 @@ typedef struct CLCConfig_t {
     char *conf_path;         /* config file path */
     char *log_path;          /* log file path */
     char *pid_path;          /* pid file path */
+    char *vm_name_prefix;    /* VM name prefix */
     int   verbose;
     int   debug;
     int   daemon;
