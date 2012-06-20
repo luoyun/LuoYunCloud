@@ -67,6 +67,7 @@ class Instance(ORMBase):
             4: _('osm connected'),
             5: _('application is running'),
             9: _('suspend'),
+            settings.INSTANCE_DELETED_STATUS: _('deleted'),
             245: _('needs queryed'),
             255: _('not exist'),
         }

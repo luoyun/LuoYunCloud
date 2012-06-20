@@ -17,8 +17,7 @@ THEME_URL = "/static/themes/%s/" % THEME
 appliance_top_dir = '/opt/LuoYun/data/appliance/'
 appliance_top_url = '/dl/appliance/'
 
-#control_server_ip = '127.0.0.1'
-control_server_ip = '192.168.1.11'
+control_server_ip = '127.0.0.1'
 control_server_port = 1369
 
 ADMIN_EMAIL = 'contact@luoyun.co'
@@ -37,8 +36,8 @@ LANGUAGES = (
 
 
 # DB Connect format: "postgresql+psycopg2://username:password@HOST_ADDRESS/DB_NAME"
-#SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://luoyun:luoyun@127.0.0.1/luoyun"
-SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://luoyun:luoyun@192.168.1.11/luoyun"
+SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://luoyun:luoyun@127.0.0.1/luoyun"
+
 
 
 # Socket Request
@@ -74,6 +73,9 @@ LYJOB_ACTION = {
     'reboot': 5,
     'query': JOB_ACTION['QUERY_INSTANCE'],
 }
+
+# TODO
+INSTANCE_DELETED_STATUS = 100
 
 
 

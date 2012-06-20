@@ -29,7 +29,8 @@ class Index(LyRequestHandler):
         start = (cur_page - 1) * page_size
         stop = start + page_size
 
-        instances = self.db2.query(Instance)
+        instances = self.db2.query(Instance).filter(
+            Instance.status != settings.INSTANCE_DELETED_STATUS)
         if view == 'self' and self.current_user:
             instances = instances.filter_by(
                 user_id=self.current_user.id )
@@ -40,11 +41,13 @@ class Index(LyRequestHandler):
 
         if self.current_user and view == 'self':
             USED_INSTANCE = self.db2.query(Instance.id).filter(
-                Instance.user_id == self.current_user.id).count()
+                Instance.user_id == self.current_user.id).filter(
+                Instance.status != settings.INSTANCE_DELETED_STATUS).count()
             TOTAL_APPLIANCE = self.db2.query(Appliance.id).filter(
                 Appliance.user_id == self.current_user.id).count()
         else:
-            USED_INSTANCE = self.db2.query(Instance.id).count()
+            USED_INSTANCE = self.db2.query(Instance.id).filter(
+                Instance.status != settings.INSTANCE_DELETED_STATUS).count()
             TOTAL_APPLIANCE = 0
 
         page_html = Pagination(

@@ -205,7 +205,7 @@ class LyRequestHandler(RequestHandler):
 
 
 
-import functools
+import functools, urlparse, urllib
 def has_permission(codename):
     """ Needed permission 'codename'. """
     def foo(method):

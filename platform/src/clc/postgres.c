@@ -332,10 +332,10 @@ int db_node_insert(NodeInfo * nf)
 {
     char sql[LINE_MAX];
     if (snprintf(sql, LINE_MAX,
-                 "INSERT INTO node (hostname, ip, arch, memory, "
+                 "INSERT INTO node (id, hostname, ip, arch, memory, "
                  "status, cpus, cpu_model, "
                  "cpu_mhz, created, updated) "
-                 "VALUES ('%s', '%s', %d, %d, "
+                 "VALUES (nextval('node_id_seq'), '%s', '%s', %d, %d, "
                  "%d, %d, '%s', "
                  "%d, 'now', 'now');",
                  nf->host_name, nf->host_ip, nf->cpu_arch, nf->mem_max,

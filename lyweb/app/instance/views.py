@@ -12,6 +12,7 @@ from app.job.models import Job
 from app.instance.forms import CreateInstanceBaseForm, CreateInstanceForm
 
 
+import settings
 from settings import JOB_ACTION, JOB_TARGET
 
 IMAGE_SUPPORT=True
@@ -203,7 +204,21 @@ class Delete(InstRequestHandler):
             return self.done( _('No permissions !') )
 
         # TODO: no running delete !
-        self.db2.delete(inst)
+        if inst.is_running:
+            LYJOB_ACTION = self.settings['LYJOB_ACTION']
+            action_id = LYJOB_ACTION.get('stop', 0)
+
+            job = Job( user = self.current_user,
+                       target_type = JOB_TARGET['INSTANCE'],
+                       target_id = id,
+                       action = action_id )
+
+            self.db2.add(job)
+            self.db2.commit()
+            self._job_notify( job.id )
+
+
+        inst.status = settings.INSTANCE_DELETED_STATUS
         self.db2.commit()
 
         return self.done( _('Delete instance %s success !' % id) )

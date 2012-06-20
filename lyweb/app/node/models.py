@@ -19,7 +19,7 @@ class Node(ORMBase):
     ip = Column( String(32) )
 
     arch = Column( Integer ) # TODO: selected
-    cpu_model = Column( Integer ) # TODO: selected , needed ?
+    cpu_model = Column( String(64) )
     cpu_mhz = Column( Integer )
 
     status = Column( Integer ) # TODO: selected ?
