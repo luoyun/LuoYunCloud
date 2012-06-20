@@ -3,7 +3,7 @@ import struct
 import lydef, lylog, lyutil, lyconf
 
 LOG = lylog.logger()
-APP_Status = lydef.LY_S_APP_UNKNOWN
+APP_Status = -1
 APP_Pending = {}
 
 def run(sock):
@@ -14,6 +14,7 @@ def run(sock):
     if os.access(cmd, os.F_OK | os.X_OK):
        LOG.debug("exec: %s" % cmd)
        APP_Pending['status'] =  subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  s = lydef.LY_S_APP_UNKNOWN
   if APP_Pending.has_key('status'):
     p = APP_Pending['status']
     s = p.poll()
@@ -26,8 +27,9 @@ def run(sock):
     if s < 0:
       return
     s += lydef.LY_S_APP_RUNNING;
-    if s != APP_Status:
-      LOG.info("status return code: %d" % s)
-      d = struct.pack('i', s)
-      lyutil.socksend(sock, lydef.PKT_TYPE_OSM_REPORT, d)
-      APP_Status = s 
+
+  if s != APP_Status:
+    LOG.info("status return code: %d" % s)
+    d = struct.pack('i', s)
+    lyutil.socksend(sock, lydef.PKT_TYPE_OSM_REPORT, d)
+    APP_Status = s 

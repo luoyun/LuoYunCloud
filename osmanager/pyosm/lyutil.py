@@ -8,13 +8,13 @@ LOG = lylog.logger()
 
 def socksend(sock, type, data):
   l = len(data)
-  mreq = struct.pack("LL%ds" % l, type, l, data)
+  mreq = struct.pack("=LL%ds" % l, type, l, data)
   sock.send(mreq)
 
 def sockrecv(sock, length = 1024, timeout = 1):
   data = b''
   # first read header
-  headlen = struct.calcsize("LL")
+  headlen = struct.calcsize("=LL")
   while True:
     ready = select.select([sock], [], [], timeout)
     if ready[0]:
@@ -30,7 +30,7 @@ def sockrecv(sock, length = 1024, timeout = 1):
       LOG.debug("sockrecv timed out")
       return (-1, None)
   # calculate the size of data to read
-  type, datalen = struct.unpack("LL", data)
+  type, datalen = struct.unpack("=LL", data)
   LOG.debug("%d %d" % (type, datalen))
   if datalen == 0 or length <= headlen:
     return (0, data)

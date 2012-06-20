@@ -38,11 +38,11 @@ def getclcparm():
       return 1
 
     LOG.info("mcast packet: %s" % pkt)
-    l = struct.calcsize("LL")
+    l = struct.calcsize("=LL")
     if len(pkt) < l:
       LOG.error("unrecognized packet")
       return 1
-    pkt_type, pkt_len = struct.unpack('LL', pkt[:l])
+    pkt_type, pkt_len = struct.unpack('=LL', pkt[:l])
     LOG.info("mcast packet type:%d packet length:%d" % (pkt_type, pkt_len))
     if pkt_type != lydef.PKT_TYPE_JOIN_REQUEST:
       if time.time() - start_time > 60:
@@ -107,12 +107,12 @@ def regclc():
     lyconf.Config.local_ip = b'empty'
 
   try:
-    LOG.info("send auth request")
+    LOG.info("send auth request %d" % tag)
     data = struct.pack("i%ds" % lydef.LUOYUN_AUTH_DATA_LEN, tag, challengestr)
     lyutil.socksend(sock, lydef.PKT_TYPE_OSM_AUTH_REQUEST, data)
 
     LOG.info("recv auth reply")
-    recvsize = struct.calcsize("LLi%ds" % lydef.LUOYUN_AUTH_DATA_LEN);
+    recvsize = struct.calcsize("=LLi%ds" % lydef.LUOYUN_AUTH_DATA_LEN);
     result, response = lyutil.sockrecv(sock)
     if result == -1 or len(response) != recvsize:
       LOG.error("error in sockrecv")
@@ -120,7 +120,7 @@ def regclc():
     if result == 0:
       LOG.error("socket closed")
       return None
-    t, l, rettag, answer = struct.unpack("LLi%ds" % lydef.LUOYUN_AUTH_DATA_LEN, response)
+    t, l, rettag, answer = struct.unpack("=LLi%ds" % lydef.LUOYUN_AUTH_DATA_LEN, response)
     if t != lydef.PKT_TYPE_OSM_AUTH_REPLY:
       LOG.error("wrong auth reply %d" % t)
       return None
@@ -134,7 +134,7 @@ def regclc():
     LOG.info("CLC verified")
 
     LOG.info("process auth request")
-    recvsize = struct.calcsize("LLi%ds" % lydef.LUOYUN_AUTH_DATA_LEN);
+    recvsize = struct.calcsize("=LLi%ds" % lydef.LUOYUN_AUTH_DATA_LEN);
     result, response = lyutil.sockrecv(sock)
     if result == -1 or len(response) != recvsize:
       LOG.error("error in sockrecv")
@@ -142,7 +142,7 @@ def regclc():
     if result == 0:
       LOG.error("socket closed")
       return None
-    t, l, rettag, challenge = struct.unpack("LLi%ds" % lydef.LUOYUN_AUTH_DATA_LEN, response)
+    t, l, rettag, challenge = struct.unpack("=LLi%ds" % lydef.LUOYUN_AUTH_DATA_LEN, response)
     if t != lydef.PKT_TYPE_OSM_AUTH_REQUEST:
       LOG.error("wrong packet %d" % t)
       return None
@@ -169,7 +169,7 @@ def regclc():
       return None
     if result == 0:
       LOG.error("socket closed")
-    t, l, s = struct.unpack("LLi", response)
+    t, l, s = struct.unpack("=LLi", response)
     if t != lydef.PKT_TYPE_OSM_REGISTER_REPLY:
       LOG.error("wrong packet %d" % t)
       return None

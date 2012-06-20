@@ -13,8 +13,8 @@ def procOSMQuery(sock, datalen, data):
   return 0
 
 def process(sock, packet):
-  h = struct.calcsize("LL")
-  type, datalen = struct.unpack("LL", packet[:h])
+  h = struct.calcsize("=LL")
+  type, datalen = struct.unpack("=LL", packet[:h])
   if type == PKT_TYPE_TEST_ECHO_REQUEST:
     sock.socksend(sock, PKT_TYPE_TEST_ECHO_REPLY, packet[h:])
   elif type == PKT_TYPE_CLC_OSM_QUERY_REQUEST:
