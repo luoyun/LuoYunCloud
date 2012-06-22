@@ -92,6 +92,10 @@ static void __main_clean(int keeppid)
         free(c->app_data_dir);
     if (c->log_path)
         free(c->log_path);
+    if (c->vm_template_path)
+        free(c->vm_template_path);
+    if (c->vm_xml)
+        free(c->vm_xml);
     if (s->clc_ip)
         free(s->clc_ip);
     if (s->node_secret)

@@ -78,6 +78,13 @@ LYNODE_LOG_PATH = @DEFAULT_LYNODE_LOG_PATH@
 LYNODE_PID_PATH = @DEFAULT_LYNODE_PID_PATH@
 
 #
+# VM XML template file
+#
+# the setting is optional, no default setting
+#
+#LYNODE_VM_TEMPLATE = 
+
+#
 # OSM configuration file and secret key file
 #
 LYOSM_CONF_PATH = @DEFAULT_LYOSM_CONF_PATH@

@@ -242,9 +242,9 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
     char * path = malloc(PATH_MAX);
     if (path == NULL)
         return NULL;
-    if (snprintf(path, PATH_MAX, "%s/%s/%d",
+    if (snprintf(path, PATH_MAX, "%s/%s/%d/%s",
                  g_c->config.node_data_dir, "instances",
-                 ci->ins_id) >= PATH_MAX) {
+                 ci->ins_id, LUOYUN_INSTANCE_DISK_FILE) >= PATH_MAX) {
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         free(path);
         return NULL;
@@ -259,7 +259,16 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
     }
 
     int len = -1;
-    if (hypervisor == HYPERVISOR_IS_KVM) {
+    if (g_c->config.vm_xml) {
+        char strid[20], strmem[20], strcpu[10];
+        sprintf(strid, "%d", ci->ins_id);
+        sprintf(strmem, "%d", ci->ins_mem);
+        sprintf(strcpu, "%d", ci->ins_vcpu);
+        len =  snprintf(buf, size, g_c->config.vm_xml,
+                        strid, ci->ins_domain,
+                        strmem, strcpu, path, ci->ins_mac);
+    }
+    else if (hypervisor == HYPERVISOR_IS_KVM) {
         len = snprintf(buf, size, LIBVIRT_XML_TMPL_KVM, 
                        ci->ins_id, ci->ins_domain,
                        ci->ins_mem, ci->ins_vcpu, path, ci->ins_mac);

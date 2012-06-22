@@ -32,6 +32,8 @@ typedef struct NodeConfig_t {
     char *pid_path;        /* pid file path */
     char *osm_conf_path;   /* osmanage configuraton path inside instance */
     char *osm_key_path;    /* osmanage key file path inside instance */
+    char *vm_template_path; /* vm xml template file path */
+    char *vm_xml;          /* vm xml template */
     int  verbose;
     int  debug;
     int  daemon;

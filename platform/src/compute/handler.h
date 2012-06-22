@@ -35,7 +35,7 @@ int ly_handler_busy(void);
     "<vcpu>%d</vcpu>"\
     "<devices>"\
         "<disk type=\'file\'>"\
-            "<source file=\'%s/" LUOYUN_INSTANCE_DISK_FILE "\'/>"\
+            "<source file=\'%s\'/>"\
             "<target dev='sda1'/>"\
         "</disk>"\
         "<interface type='bridge'>"\
@@ -77,7 +77,7 @@ int ly_handler_busy(void);
     "<emulator>/usr/libexec/qemu-kvm</emulator>"\
     "<disk type='file' device='disk'>"\
       "<driver name='qemu' type='raw' cache='none' io='threads'/>"\
-      "<source file=\'%s/" LUOYUN_INSTANCE_DISK_FILE "\'/>"\
+      "<source file=\'%s\'/>"\
       "<target dev='hda' bus='ide'/>"\
       "<address type='drive' controller='0' bus='0' unit='0'/>"\
     "</disk>"\

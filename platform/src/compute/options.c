@@ -32,6 +32,7 @@
 #include "../util/logging.h"
 #include "../util/misc.h"
 #include "../util/lyutil.h"
+#include "handler.h"
 #include "options.h"
 
 #define UNDEFINED_CFG_INT (-1)
@@ -229,6 +230,8 @@ static int __parse_config(NodeConfig *c)
         __parse_oneitem_str("LYOSM_KEY_PATH", &c->osm_key_path,
                              0, ini_config) || 
         __parse_oneitem_str("LYNODE_PID_PATH", &c->pid_path,
+                             0, ini_config) || 
+        __parse_oneitem_str("LYNODE_VM_TEMPLATE", &c->vm_template_path,
                              0, ini_config) || 
         __parse_oneitem_str("LYNODE_DATA_DIR", &c->node_data_dir, 
                              0, ini_config))
@@ -442,6 +445,15 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
         ret = __parse_sysconf(c->sysconf_path, s);
         if (ret)
            return ret; /* to exit program */
+    }
+
+    /* read xml template */
+    if (c->vm_template_path) {
+        c->vm_xml = file2str(c->vm_template_path, LIBVIRT_XML_MAX);
+        if (c->vm_xml == NULL) {
+            logsimple(_("error while reading %s\n"), c->vm_template_path);
+            return NODE_CONFIG_RET_ERR_CMD;
+        }
     }
 
     /* set default values for unconfigured settings */
