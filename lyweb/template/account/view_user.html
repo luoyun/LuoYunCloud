@@ -10,9 +10,7 @@
         <td>${ _("Username") }</td>
         <td>${ user.username } 
         
-  <form action="/message/new?userid=${ user.id }" method="POST">
-    </label><input type="submit" value="${ _('Send Message') }" class="button" />
-  </form>
+   <a href=/message/new?userid=${ user.id} > Send Message</a>
         
         </td>
       </tr>

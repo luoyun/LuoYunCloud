@@ -12,7 +12,7 @@
 
     <div class="account-info">
       <div>${ _("Welcome, ") }
-        <span class="username"><a href="${ reverse_url('account:index') }">${ current_user.username }</a></span>
+        <span class="username"><a href="${ reverse_url('account:view', current_user.id ) }">${ current_user.username }</a></span>
       </div>
       <div class="last-login">${ _("Last login: ")}<span>${ fulltime(current_user.last_login) }</span></div>
     </div>

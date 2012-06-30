@@ -7,6 +7,9 @@ from sqlalchemy import Column, Integer, String, \
 
 from sqlalchemy.orm import backref,relationship
 
+from markdown import Markdown
+YMK = Markdown(extensions=['fenced_code', 'tables'])
+
 class Message(ORMBase):
 
     __tablename__ = 'message'
@@ -20,7 +23,9 @@ class Message(ORMBase):
 
     subject = Column( Text )
     content = Column ( Text )
+    content_html = Column ( Text )
 
+    read = Column( Boolean, default = False)
     created = Column(DateTime(), default=datetime.utcnow() )
 
     def __init__(self, sender, receiver, subject='', content=''):
@@ -28,6 +33,7 @@ class Message(ORMBase):
         self.receiver_id = receiver.id
         self.subject = subject
         self.content = content
+        self.content_html = YMK.convert( content )
 
     def __repr__(self):
         return _("[Message(%s:%s)]") % (self.id, self.subject)

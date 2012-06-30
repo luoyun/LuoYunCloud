@@ -22,8 +22,16 @@ class Inbox(LyRequestHandler):
     @authenticated
     def get(self):
         my = self.db2.query(User).get(self.current_user.id)
-        messages = self.db2.query(Message).filter_by( receiver_id=my.id ).all()
-        self.render( 'message/inbox.html', title = _('Message Inbox'), messages=messages, user = my )
+        messages = self.db2.query(Message).filter_by( receiver_id=my.id ).order_by(Message.created.desc()).all()
+        unread = self.db2.query(Message).filter_by( receiver_id=my.id, read=False ).all()
+
+        d = {
+            'title': _('Message Inbox'),
+            'messages': messages,
+            'user': my,
+            'unread': len(unread)
+        }
+        self.render( 'message/inbox.html', **d )
 
 
 class Outbox(LyRequestHandler):
@@ -31,7 +39,7 @@ class Outbox(LyRequestHandler):
     @authenticated
     def get(self):
         my = self.db2.query(User).get(self.current_user.id)
-        messages = self.db2.query(Message).filter_by(sender_id=my.id ).all()
+        messages = self.db2.query(Message).filter_by(sender_id=my.id ).order_by(Message.created.desc()).all()
         self.render( 'message/outbox.html', title = _('Message Outbox'), messages=messages, user = my )
 
 
@@ -48,6 +56,8 @@ class View(LyRequestHandler):
         d = { 'title': _('View Message: %s') % message.subject,
               'message': message, 'user': my}
 
+        # mark the message is read
+        message.read = True
         self.render('message/view_message.html', **d)
 
 
@@ -60,7 +70,7 @@ class NewMessage(LyRequestHandler):
         sendto = self.db2.query(User).get(id)
         form = NewMessageForm()
         if sendto:
-            form = NewMessageForm(sender = sendto.username)
+            form = NewMessageForm(sendto = sendto.username)
 
         self.render( 'message/new_message.html', title = _('New Message'), form = form )
 
@@ -79,7 +89,7 @@ class NewMessage(LyRequestHandler):
 
                 self.db2.add(m)
                 self.db2.commit()
-                url = self.reverse_url('message:view', m.id)
+                url = self.reverse_url('message:outbox')
                 return self.redirect(url)
             else:
                 form.sendto.errors.append( _('No such user !') ) 
