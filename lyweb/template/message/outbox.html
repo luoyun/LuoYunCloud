@@ -1,0 +1,37 @@
+<%inherit file="message_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap instance-list">
+  % if messages:
+  <h2>${ _("Outbox ") }</h2>
+  <table class="list">
+    <thead>
+      <tr>
+        <th>${ _("Send To") }</th>
+        <th>${ _("Title") }</th>
+        <th>${ _("Date") }</th>
+        <th>${ _("Deletion") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for M in messages:
+      <tr>
+        <td><a href="/user/${ M.receiver_id }">${ M.receiver.username }</a></td>
+        <td><a href="/message/${ M.id }">${ M.subject }</a></td>
+        <td>${ fulltime(M.created) }</td>
+        <td>
+  <form action="/message/${ M.id }/delete" method="GET">
+    <label>&nbsp;</label><input type="submit" value="${ _('Delete') }" class="button" />
+  </form>
+        </td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  % else:
+  <p>${ _("You have not sent any message before !") }</p>
+  % endif
+</div>
+
+</%block>

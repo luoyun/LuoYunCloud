@@ -1,0 +1,35 @@
+<%inherit file="/base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${THEME_URL}account.css" />
+<link rel="stylesheet" href="${ THEME_URL }table.css" />
+</%block>
+
+<%block name="main">
+<div class="main-wrap account luoyun-min-height">
+
+  <div class="sidebar min-height-600">
+
+    <div class="account-info">
+      <div>${ _("Welcome, ") }
+        <span class="username"><a href="${ reverse_url('account:index') }">${ current_user.username }</a></span>
+      </div>
+      <div class="last-login">${ _("Last login: ")}<span>${ fulltime(current_user.last_login) }</span></div>
+    </div>
+
+    <div class="action">
+      <ul>
+        <li><a href="${ reverse_url('message:new') }">${ _("Write Message") }</a></li>
+        <li><a href="${ reverse_url('message:inbox') }">${ _("Message Inbox") }</a></li>
+        <li><a href="${ reverse_url('message:outbox') }">${ _("Message Outbox") }</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="sidemain">
+    <%block name="sidemain"/>
+  </div>
+
+</div>
+</%block>

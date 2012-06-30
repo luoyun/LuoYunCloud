@@ -1,0 +1,21 @@
+<%inherit file="message_base.html" />
+
+<%block name="sidemain">
+
+<div>
+  <span>${ _("Reply Message") }</span>
+</div>
+
+<div class="small-left-right-form">
+
+  <form method="POST">
+    ${ _('Reply To:') }<a href="/user/${ message.sender_id }"> ${ message.sender.username } </a> <br/>
+    ${ form.subject.label } ${ form.subject() }<br/>
+    ${ form.content.label } ${ form.content() }<br/>
+    ${ form.html_errors( form.subject.errors ) }
+
+    <label>&nbsp;</label><input type="submit" value="${ _('Submit') }" class="button" />
+  </form>
+</div>
+
+</%block>

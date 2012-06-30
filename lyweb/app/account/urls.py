@@ -9,6 +9,7 @@ handlers = [
     url(r'/account', account.Index, name='account:index'),
 
     url(r'/user/([0-9]+)', account.ViewUser, name='account:view'),
+    #url(r'/user/([0-9]+)/send', account.SendMessage, name='account:send'),
     url(r'/reset_password', account.ResetPassword, name='account:reset_password'),
 
 ]
