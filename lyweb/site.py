@@ -31,10 +31,14 @@ class Application(tornado.web.Application):
 
 
 def main():
-
-    import sys
+    import sys,signal
     reload(sys)
     sys.setdefaultencoding('utf8') 
+
+    def signal_handler(signal, frame):
+        print "...You Pressed CTL+C ,exit..."
+        sys.exit(1)
+        # end def
 
     # Locale
     tornado.locale.load_gettext_translations(settings.I18N_PATH, "luoyun")
@@ -49,6 +53,10 @@ def main():
     application = Application()
     application.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
+
+    # wait for singal
+    signal.pause()
+
 
 
 if __name__ == "__main__":

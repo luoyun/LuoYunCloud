@@ -36,3 +36,6 @@ msgstr ""
 #: app/home/views.py:57
 msgid "LuoYun Home"
 msgstr ""
+
+msgid "unread"
+msgstr ""
