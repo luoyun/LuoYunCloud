@@ -5875,7 +5875,7 @@ _ACEOF
 
 # end from ding-libs
 
-ac_config_files="$ac_config_files Makefile README doc/Makefile m4/Makefile lib/Makefile conf/Makefile conf/lynode.conf conf/lyclc.conf src/Makefile src/util/Makefile src/compute/Makefile src/osmanager/Makefile src/clc/Makefile src/luoyun/Makefile tools/restart tools/stop tools/start"
+ac_config_files="$ac_config_files Makefile README doc/Makefile m4/Makefile lib/Makefile lib/json-parser/Makefile conf/Makefile conf/lynode.conf conf/lyclc.conf src/Makefile src/util/Makefile src/compute/Makefile src/osmanager/Makefile src/clc/Makefile src/luoyun/Makefile tools/restart tools/stop tools/start"
 
 
 cat >confcache <<\_ACEOF
@@ -6512,6 +6512,7 @@ do
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "m4/Makefile") CONFIG_FILES="$CONFIG_FILES m4/Makefile" ;;
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
+    "lib/json-parser/Makefile") CONFIG_FILES="$CONFIG_FILES lib/json-parser/Makefile" ;;
     "conf/Makefile") CONFIG_FILES="$CONFIG_FILES conf/Makefile" ;;
     "conf/lynode.conf") CONFIG_FILES="$CONFIG_FILES conf/lynode.conf" ;;
     "conf/lyclc.conf") CONFIG_FILES="$CONFIG_FILES conf/lyclc.conf" ;;

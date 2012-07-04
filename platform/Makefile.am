@@ -9,7 +9,7 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 EXTRA_DIST = configure
-SUBDIRS = m4 lib conf src doc
+SUBDIRS = m4 lib lib/json-parser conf src doc
 
 CLEANFILES = *~
 

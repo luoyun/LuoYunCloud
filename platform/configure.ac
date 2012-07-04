@@ -169,6 +169,7 @@ AC_CONFIG_FILES([
    doc/Makefile
    m4/Makefile
    lib/Makefile
+   lib/json-parser/Makefile
    conf/Makefile
    conf/lynode.conf
    conf/lyclc.conf
