@@ -36,3 +36,6 @@ msgstr "虚拟机器正在启动"
 #: app/home/views.py:57
 msgid "LuoYun Home"
 msgstr "落云首页"
+
+msgid "unread"
+msgstr "未读"

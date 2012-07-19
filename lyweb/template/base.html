@@ -43,6 +43,7 @@ LuoYun
           <div id="login">
             %if current_user:
             <span class="user">${ current_user.username }, <a href="${ reverse_url('account:index') }">${ _("My Account") }</a></span>
+            <span class="user"><a href="${ reverse_url('message:index') }">${ _("Message Box") }</a></span>
             <span class="logout"><a href="${ reverse_url('logout') }">${ _("Sign Out") }</a></span>
             %else:
             <span class="login"><a href="${ reverse_url('login') }">${ _("Sign In") }</a></span>

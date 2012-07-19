@@ -1,0 +1,43 @@
+<%inherit file="message_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap instance-list">
+  % if messages:
+  <h2>${ _("Inbox") }(<b>${ unread } ${ _("unread")} </b>)</h2>
+  <table class="list">
+    <thead>
+      <tr>
+        <th>${ _("From") }</th>
+        <th>${ _("Title") }</th>
+        <th>${ _("Date") }</th>
+        <th>${ _("Deletion") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for M in messages:
+      <tr>
+        <td><a href="/user/${ M.sender_id }">${ M.sender.username }</a></td>
+        % if M.read == False:
+            <td><b><i><a href="/message/${ M.id }">${ M.subject }</a></b></i></td>
+        % else:
+            <td><a href="/message/${ M.id }">${ M.subject }</a></td>
+        % endif
+        <td>${ fulltime(M.created) }</td>
+        <td>
+        
+  <form action="/message/${ M.id }/delete" method="GET">
+    <label>&nbsp;</label><input type="submit" value="${ _('Delete') }" class="button" />
+  </form>
+        
+        </td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  % else:
+  <p>${ _("You have not receiverd any message yet !") }</p>
+  % endif
+</div>
+
+</%block>

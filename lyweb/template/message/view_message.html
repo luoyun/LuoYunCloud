@@ -1,0 +1,54 @@
+<%inherit file="message_base.html" />
+
+<%block name="sidemain">
+
+<div>
+  <span>${ _("Message Details") }</span>
+</div>
+
+<div class="small-left-right-form">
+
+<table class=list>
+
+% if message.sender_id != user.id:
+<tr>
+    <td>From: </td>
+    <td><a href="/user/${ message.sender_id }">${ message.sender.username } </a></td>
+</tr>
+% endif 
+
+% if message.receiver_id != user.id:
+<tr>
+    <td>To: </td> 
+    <td><a href="/user/${ message.receiver_id }">${ message.receiver.username } </a></td>
+</tr>
+% endif
+
+<tr>
+    <td><b>Subject: </b></td>
+    <td><b>${ message.subject } </b></td>
+</tr>
+<tr>
+    <td>Message: </td>
+    <td>${ message.content_html } </td>
+</tr>
+</table>
+
+<table class='list'>
+<tr>
+% if message.receiver_id == user.id:
+  <form action="/message/${ message.id}/reply" method="GET">
+    <label>&nbsp;</label><input type="submit" value="${ _('Reply') }" class="button" />
+  </form>
+% endif 
+</tr>
+<tr>
+  <form action="/message/${ message.id}/delete" method="GET">
+    <label>&nbsp;</label><input type="submit" value="${ _('Delete') }" class="button" />
+  </form>
+  </tr>
+</table>
+
+</div>
+
+</%block>

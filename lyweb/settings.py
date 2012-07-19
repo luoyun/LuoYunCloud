@@ -91,6 +91,7 @@ app = [
     'app.wiki',
     'app.session',
     'app.system',
+    'app.message',
     ]
 
 
