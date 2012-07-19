@@ -233,6 +233,16 @@ static int __parse_config(NodeConfig *c)
                              0, ini_config) || 
         __parse_oneitem_str("LYNODE_VM_TEMPLATE", &c->vm_template_path,
                              0, ini_config) || 
+        __parse_oneitem_str("LYNODE_VM_NET_NAT_TEMPLATE", &c->vm_template_net_nat_path,
+                             0, ini_config) || 
+        __parse_oneitem_str("LYNODE_VM_NET_BRIDGE_TEMPLATE", &c->vm_template_net_br_path,
+                             0, ini_config) || 
+        __parse_oneitem_str("LYNODE_VM_DISK_TEMPLATE", &c->vm_template_disk_path,
+                             0, ini_config) || 
+        __parse_oneitem_str("LYNODE_NET_PRIMARY", &c->net_primary,
+                             0, ini_config) || 
+        __parse_oneitem_str("LYNODE_NET_SERCONDARY", &c->net_secondary,
+                             0, ini_config) || 
         __parse_oneitem_str("LYNODE_DATA_DIR", &c->node_data_dir, 
                              0, ini_config))
         return NODE_CONFIG_RET_ERR_CONF;
@@ -347,17 +357,16 @@ static int __is_port_valid(int port)
 #include <unistd.h>
 static int __clean_lockfile(char * path)
 {
-    if (chdir(path))
-        return -1;
-
-    DIR * d = opendir(".");
+    DIR * d = opendir(path);
     if (d == NULL)
         return -1;
 
     struct dirent * r = readdir(d);
     while (r) {
         if (strncmp(r->d_name, ".forlock", 8) == 0) {
-            if (unlink(r->d_name))
+            char tmp[PATH_MAX];
+            snprintf(tmp, PATH_MAX, "%s/%s", path, r->d_name);
+            if (unlink(tmp))
                 return -1;
         }
         r = readdir(d);
@@ -455,6 +464,28 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
             return NODE_CONFIG_RET_ERR_CMD;
         }
     }
+    if (c->vm_template_net_nat_path) {
+        c->vm_xml_net_nat = file2str(c->vm_template_net_nat_path, LIBVIRT_XML_MAX);
+        if (c->vm_xml_net_nat == NULL) {
+            logsimple(_("error while reading %s\n"), c->vm_template_net_nat_path);
+            return NODE_CONFIG_RET_ERR_CMD;
+        }
+    }
+    if (c->vm_template_net_br_path) {
+        c->vm_xml_net_br = file2str(c->vm_template_net_br_path, LIBVIRT_XML_MAX);
+        if (c->vm_xml_net_br == NULL) {
+            logsimple(_("error while reading %s\n"), c->vm_template_net_br_path);
+            return NODE_CONFIG_RET_ERR_CMD;
+        }
+    }
+    if (c->vm_template_disk_path) {
+        c->vm_xml_disk = file2str(c->vm_template_disk_path, LIBVIRT_XML_MAX);
+        if (c->vm_xml_disk == NULL) {
+            logsimple(_("error while reading %s\n"), c->vm_template_disk_path);
+            return NODE_CONFIG_RET_ERR_CMD;
+        }
+    }
+
 
     /* set default values for unconfigured settings */
     if (c->verbose == UNDEFINED_CFG_INT)
@@ -492,6 +523,11 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
     if (c->node_data_dir == NULL) {
         c->node_data_dir = strdup(DEFAULT_LYNODE_DATA_DIR);
         if (c->node_data_dir == NULL)
+            return NODE_CONFIG_RET_ERR_NOMEM;
+    }
+    if (c->net_primary == NULL) {
+        c->net_primary = strdup(LUOYUN_INSTANCE_NET_DEFAULT);
+        if (c->net_primary == NULL)
             return NODE_CONFIG_RET_ERR_NOMEM;
     }
 

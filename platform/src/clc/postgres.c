@@ -32,6 +32,7 @@
 #include <libpq-fe.h>
 
 #include "../util/logging.h"
+#include "../luoyun/luoyun.h"
 #include "lyclc.h"
 #include "lyjob.h"
 #include "postgres.h"
@@ -571,6 +572,19 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
     return __db_exec(sql);
 }
 
+int db_instance_delete(int instance_id)
+{
+    char sql[LINE_MAX];
+    if (snprintf(sql, LINE_MAX, "DELETE from instance WHERE id = %d "
+                                "and status = %d;", 
+                                instance_id, DOMAIN_S_DELETE) >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    return __db_exec(sql);
+}
+
 int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
 {
     char sql[LINE_MAX];
@@ -578,7 +592,8 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
                  "SELECT instance.name, instance.cpus, instance.memory, "
                  "instance.ip, instance.mac, instance.node_id, "
                  "instance.appliance_id, appliance.name, "
-                 "appliance.checksum, instance.status, instance.key "
+                 "appliance.checksum, instance.status, instance.key, "
+                 "instance.config "
                  "from instance, appliance "
                  "where instance.id = %d and "
                  "appliance.id = instance.appliance_id;",
@@ -619,6 +634,9 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
         if (s && strlen(s))
             ci->osm_secret = strdup(s);
         ci->osm_tag = ci->ins_id;
+        s = PQgetvalue(res, 0, 11);
+        if (s && strlen(s))
+            ci->osm_json = strdup(s);
         char ins_domain[21];
         if (g_c->vm_name_prefix == NULL)
             snprintf(ins_domain, 20, "i-%d", ci->ins_id);

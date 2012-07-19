@@ -99,7 +99,8 @@ source code, assuming the source files are ready in the current directory.
               on a physical machine that supports virtualization. Currently
               only KVM is supported.
 
-     lyosm  - this is the OS manager application. It needs to be installed
+     lyosm  - (this is obsoleted, only works for version 0.2/0.3 cloud)
+              this is the OS manager application. It needs to be installed
               on each instance or virtual machine that's created and managed
               through LuoYun Cloud platform.
 
@@ -161,6 +162,9 @@ machines as node server. To set up a node server,
      to default location(specified by --prefix option in configure).
 
 3.3 Deployment on instances(virtual machine)
+
+(lyosm is obsoleted, replaced by pyosm, see osmanager directory on the top
+ directory of LuoYunCloud project)
 
 In other to manage instances effectively in LuoYun Cloud platform, it's 
 desired to have each instances installed with OS manager(lyosm) and started

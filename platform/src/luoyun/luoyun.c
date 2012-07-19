@@ -54,14 +54,15 @@ void luoyun_node_ctrl_instance_print(NodeCtrlInstance * ci)
               "osm_clcip = %s\n"
               "osm_clcport = %d\n"
               "osm_tag = %d\n"
-              "osm_secret = %s\n",
+              "osm_secret = %s\n"
+              "osm_json = %s\n",
               ci->req_id, ci->req_action,
               ci->ins_id, ci->ins_status, ci->ins_name, ci->ins_vcpu,
               ci->ins_mem, ci->ins_mac, ci->ins_ip, ci->ins_domain,
               ci->app_id, ci->app_name, ci->app_uri, ci->app_checksum, 
               ci->storage_ip, ci->storage_method, ci->storage_parm,
               ci->osm_clcip, ci->osm_clcport, ci->osm_tag,
-              ci->osm_secret ? "Not Empty" : "Empty");
+              ci->osm_secret ? "Not Empty" : "Empty", ci->osm_json);
     if (ci->ins_ip == NULL)
         logsimple("instance ip is NULL\n");
 }
@@ -92,6 +93,8 @@ void luoyun_node_ctrl_instance_cleanup(NodeCtrlInstance * ci)
         free(ci->osm_clcip);
     if (ci->osm_secret)
         free(ci->osm_secret);
+    if (ci->osm_json)
+        free(ci->osm_json);
     bzero(ci, sizeof(NodeCtrlInstance));
     return;
 }
@@ -127,6 +130,8 @@ NodeCtrlInstance * luoyun_node_ctrl_instance_copy(NodeCtrlInstance * ci)
         ret->storage_parm = strdup(ci->storage_parm);
     if (ci->osm_secret)
         ret->osm_secret = strdup(ci->osm_secret);
+    if (ci->osm_json)
+        ret->osm_json = strdup(ci->osm_json);
     return ret;
 }
 
@@ -147,13 +152,15 @@ void luoyun_node_info_print(NodeInfo * nf)
               "\tcpu_mhz = %d\n"
               "\tcpu_commit = %d\n"
               "\tload_average = %d\n"
+              "\tstorage_total = %d\n"
+              "\tstorage_free = %d\n"
               "}\n",
               nf->status, nf->hypervisor, 
               nf->host_name, nf->host_ip, nf->host_tag,
               nf->mem_max, nf->mem_free, nf->mem_commit,
               nf->cpu_arch, nf->cpu_max, nf->cpu_model,
               nf->cpu_mhz, nf->cpu_commit,
-              nf->load_average);
+              nf->load_average, nf->storage_total, nf->storage_free);
 }
 
 void luoyun_node_info_cleanup(NodeInfo * nf)

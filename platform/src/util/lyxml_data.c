@@ -156,6 +156,10 @@ char * lyxml_data_join(int id, char * host, int port,
         "<max>%d</max>"\
         "<commit>%d</commit>"\
       "</cpu>"\
+      "<storage>"\
+        "<total>%u</total>"\
+        "<free>%u</free>"\
+      "</storage>"\
       "<load>"\
         "<average>%d</average>"\
       "</load>"\
@@ -185,6 +189,7 @@ char * lyxml_data_node_register(NodeInfo * ni, char * buf, unsigned int size)
                        ni->cpu_arch,
                        ni->cpu_model ? (char *)(BAD_CAST ni->cpu_model) : "",
                        ni->cpu_mhz, ni->cpu_max, ni->cpu_commit,
+                       ni->storage_total, ni->storage_free,
                        ni->load_average);
     if (len < 0 || len >= size)
         return NULL;
@@ -277,6 +282,9 @@ char * lyxml_data_node_info(int req_id, char * buf, unsigned int size)
         "<free>%u</free>"\
         "<commit>%u</commit>"\
       "</memory>"\
+      "<storage>"\
+        "<free>%u</free>"\
+      "</storage>"\
       "<load>"\
         "<average>%d</average>"\
       "</load>"\
@@ -301,6 +309,7 @@ char * lyxml_data_reply_node_info(LYReply * reply, char * buf, unsigned int size
                        ni->cpu_commit,
                        ni->mem_free,
                        ni->mem_commit,
+                       ni->storage_free,
                        ni->load_average);
     if (len < 0 || len >= size)
         return NULL;
@@ -342,6 +351,7 @@ char * lyxml_data_reply_node_info(LYReply * reply, char * buf, unsigned int size
         "</clc>"\
         "<tag>%d</tag>"\
         "<secret>%s</secret>"\
+        "<json>%s</json>"\
       "</osmanager>"\
       "<storage>"\
         "<ip>%s</ip>"\
@@ -376,6 +386,7 @@ char * lyxml_data_instance_run(NodeCtrlInstance * ii, char * buf, unsigned int s
                        ii->osm_clcip ? (char *)(BAD_CAST ii->osm_clcip) : "",
                        ii->osm_clcport, ii->osm_tag,
                        ii->osm_secret ? (char *)(BAD_CAST ii->osm_secret) : "",
+                       ii->osm_json ? (char *)(BAD_CAST ii->osm_json) : "",
                        ii->storage_ip ? (char *)(BAD_CAST ii->storage_ip) : "",
                        ii->storage_method,
                        ii->storage_parm ? (char *)(BAD_CAST ii->storage_parm) : "");
@@ -618,6 +629,9 @@ char * lyxml_data_report(LYReport * r, char * buf, unsigned int size)
         "<free>%u</free>"\
         "<commit>%u</commit>"\
       "</memory>"\
+      "<storage>"\
+        "<free>%u</free>"\
+      "</storage>"\
       "<load>"\
         "<average>%d</average>"\
       "</load>"\
@@ -639,6 +653,7 @@ char * lyxml_data_report_node_info(LYReport * r, char * buf, unsigned int size)
                        ni->cpu_commit,
                        ni->mem_free,
                        ni->mem_commit,
+                       ni->storage_free,
                        ni->load_average);
     if (len < 0 || len >= size)
         return NULL;

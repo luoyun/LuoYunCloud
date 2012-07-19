@@ -182,6 +182,18 @@ static int __node_xml_register(xmlDoc * doc, xmlNode * node, int ent_id)
     nf->mem_commit = atoi(str);
     free(str);
     str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/request/parameters/storage/total");
+    if (str == NULL)
+        goto xml_err;
+    nf->storage_total = atoi(str);
+    free(str);
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/request/parameters/storage/free");
+    if (str == NULL)
+        goto xml_err;
+    nf->storage_free = atoi(str);
+    free(str);
+    str = xml_xpath_text_from_ctx(xpathCtx,
                           "/" LYXML_ROOT "/request/parameters/load/average");
     if (str == NULL)
         goto xml_err;
@@ -472,6 +484,13 @@ static int __node_info_update(xmlDoc * doc, xmlNode * node,
     free(str);
 
     str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/response/data/storage/free");
+    if (str == NULL)
+        goto failed;
+    nf->storage_free = atoi(str);
+    free(str);
+
+    str = xml_xpath_text_from_ctx(xpathCtx,
                          "/" LYXML_ROOT "/response/data/memory/commit");
     if (str == NULL)
         goto failed;
@@ -623,6 +642,13 @@ static int __node_resource_update(xmlDoc * doc, xmlNode * node, int ent_id)
     if (str == NULL)
         goto failed;
     nf->mem_commit = atoi(str);
+    free(str);
+
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/report/resource/storage/free");
+    if (str == NULL)
+        goto failed;
+    nf->storage_free = atoi(str);
     free(str);
 
     str = xml_xpath_text_from_ctx(xpathCtx,

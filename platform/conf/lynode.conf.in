@@ -78,14 +78,33 @@ LYNODE_LOG_PATH = @DEFAULT_LYNODE_LOG_PATH@
 LYNODE_PID_PATH = @DEFAULT_LYNODE_PID_PATH@
 
 #
-# VM XML template file
+# VM XML template files
 #
-# the setting is optional, no default setting
+# the setting are optional, no default setting
+# LYNODE_VM_DISK_TEMPLATE has one input, the full path of disk image file
+# LYNODE_VM_NET_BRIDGE_TEMPLATE has two inputs, bridge name and mac address
+# LYNODE_VM_NET_NAT_TEMPLATE has one input, the mac address
 #
 #LYNODE_VM_TEMPLATE = 
+#LYNODE_VM_DISK_TEMPLATE = 
+#LYNODE_VM_NET_BRIDGE_TEMPLATE = 
+#LYNODE_VM_NET_NAT_TEMPLATE = 
 
 #
-# OSM configuration file and secret key file
+# Network connection
+#
+# the setting defines how the networks configured in Node Server affect 
+# network configuraion in instances. currently two types of network are 
+# supported, bridge and nat. all bridge networks start with "br" and the
+# nat network only supports the "default" network defined by libvirt
+#
+LYNODE_NET_PRIMARY = br0
+LYNODE_NET_SERCONDARY = 
+
+#
+# OSM configuration file and secret key file,
+#
+# these options are obsoleted
 #
 LYOSM_CONF_PATH = @DEFAULT_LYOSM_CONF_PATH@
 LYOSM_KEY_PATH = @DEFAULT_LYOSM_KEY_PATH@

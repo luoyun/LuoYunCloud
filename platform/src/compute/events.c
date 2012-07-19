@@ -224,6 +224,11 @@ static int __process_xml_request(xmlDocPtr doc, xmlNodePtr node)
         ci.osm_secret = str;
     }
     str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/request/parameters/osmanager/json");
+    if (str != NULL) {
+        ci.osm_json = str;
+    }
+    str = xml_xpath_text_from_ctx(xpathCtx,
                          "/" LYXML_ROOT "/request/parameters/storage/ip");
     if (str != NULL) {
         ci.storage_ip = str;

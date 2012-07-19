@@ -63,6 +63,9 @@
 /* default lyosm secret key file path */
 #undef DEFAULT_LYOSM_KEY_PATH
 
+/* default node server storage low mark */
+#undef DEFAULT_NODE_STORAGE_LOW
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 

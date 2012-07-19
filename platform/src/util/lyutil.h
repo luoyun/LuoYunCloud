@@ -60,6 +60,8 @@ char *lyutil_uuid(char * in, int in_len);
 #define LOAD_AVERAGE_LAST_15M 3
 int lyutil_load_average(int type);
 unsigned long long lyutil_free_memory(void);
+unsigned int lyutil_total_storage(char * path);
+unsigned int lyutil_free_storage(char * path);
 
 int lyutil_signal_init();
 

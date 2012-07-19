@@ -29,6 +29,7 @@
 #include <strings.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/statvfs.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -756,6 +757,34 @@ unsigned long long lyutil_free_memory(void)
 
     return (free + buffers + cached);
 }
+
+/* get storage info in giga-bytes */
+#define GET_STORAGE_TOTAL 0
+#define GET_STORAGE_AVAIL 1
+static unsigned int __lyutil_storage(char * path, int type)
+{
+    struct statvfs data;
+    if((statvfs(path, &data)) < 0 ) {
+        logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
+                                                  strerror(errno), errno);
+        return 0;
+    }
+    if (type == GET_STORAGE_TOTAL)
+        return data.f_blocks/((1<<30)/data.f_bsize);
+    else if (type == GET_STORAGE_AVAIL)
+        return data.f_bfree/((1<<30)/data.f_bsize);
+    else
+        return 0;
+}
+unsigned int lyutil_total_storage(char * path)
+{
+    return __lyutil_storage(path, GET_STORAGE_TOTAL);
+}
+unsigned int lyutil_free_storage(char * path)
+{
+    return __lyutil_storage(path, GET_STORAGE_AVAIL);
+}
+
 
 /* logging signal before calling default/old handler */
 static void __signal_handler_default(int signo)

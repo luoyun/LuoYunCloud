@@ -50,7 +50,7 @@ am_lynode_OBJECTS = domain.$(OBJEXT) handler.$(OBJEXT) \
 	events.$(OBJEXT)
 lynode_OBJECTS = $(am_lynode_OBJECTS)
 lynode_DEPENDENCIES = ../luoyun/libluoyun.a ../util/libutil.a \
-	../../lib/libding.a
+	../../lib/libding.a ../../lib/json-parser/libjson_parser.a
 lynode_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(lynode_LDFLAGS) \
 	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -96,6 +96,7 @@ DEFAULT_LYNODE_UUID_PATH = @DEFAULT_LYNODE_UUID_PATH@
 DEFAULT_LYOSM_CONF_PATH = @DEFAULT_LYOSM_CONF_PATH@
 DEFAULT_LYOSM_KEY_PATH = @DEFAULT_LYOSM_KEY_PATH@
 DEFAULT_NODE_PORT = @DEFAULT_NODE_PORT@
+DEFAULT_NODE_STORAGE_LOW = @DEFAULT_NODE_STORAGE_LOW@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 ECHO_C = @ECHO_C@
@@ -179,13 +180,16 @@ AM_CPPFLAGS = -I. \
                -I$(top_srcdir)/lib/ding-libs/refarray \
                -I$(top_srcdir)/lib/ding-libs/collection \
                -I$(top_srcdir)/lib/ding-libs/ini \
+               -I$(top_srcdir)/lib/json-parser \
                -I/usr/include/libxml2
 
 lynode_SOURCES = $(top_srcdir)/config.h \
                  domain.c  domain.h  handler.c  handler.h  lynode.c  lynode.h \
                  node.c  node.h  options.c  options.h events.c  events.h
 
-lynode_LDADD = ../luoyun/libluoyun.a ../util/libutil.a ../../lib/libding.a
+lynode_LDADD = ../luoyun/libluoyun.a ../util/libutil.a ../../lib/libding.a \
+               ../../lib/json-parser/libjson_parser.a
+
 lynode_LDFLAGS = -lm -pthread -lvirt -lcurl -lbz2 -lz -lxml2 -luuid -lgcrypt
 CLEANFILES = *~
 all: all-am

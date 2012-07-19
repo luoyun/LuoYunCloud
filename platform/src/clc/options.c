@@ -250,6 +250,10 @@ static int __parse_config(CLCConfig * c)
                             ini_config) ||
         __parse_oneitem_str("LYCLC_VM_NAME_PREFIX", &c->vm_name_prefix,
                             0, ini_config) ||
+        __parse_oneitem_int("LYCLC_NODE_STORAGE_LOW", &c->node_storage_low,
+                            ini_config) ||
+        __parse_oneitem_int("LYCLC_NODE_SELECT", &c->node_select,
+                            ini_config) ||
         __parse_oneitem_str("LYCLC_DB_NAME", &c->db_name,
                             0, ini_config) ||
         __parse_oneitem_str("LYCLC_DB_USERNAME", &c->db_user,
@@ -412,7 +416,12 @@ int clc_config(int argc, char *argv[], CLCConfig * c)
         if (c->db_pass == NULL)
             return CLC_CONFIG_RET_ERR_NOMEM;
     }
-
+    if (c->node_storage_low == 0)
+        c->node_storage_low = DEFAULT_NODE_STORAGE_LOW;
+    if (c->node_select < NODE_SELECT_ANY || 
+        c->node_select > NODE_SELECT_LAST_ONLY)
+        c->node_select = NODE_SELECT_LAST_ONLY;
+ 
     /* simple configuration validity checking */
     if (c->vm_name_prefix && strlen(c->vm_name_prefix) > 10) {
         logsimple(_("VM name prefix is too long, must not be > 10\n"));

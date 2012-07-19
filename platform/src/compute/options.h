@@ -34,6 +34,14 @@ typedef struct NodeConfig_t {
     char *osm_key_path;    /* osmanage key file path inside instance */
     char *vm_template_path; /* vm xml template file path */
     char *vm_xml;          /* vm xml template */
+    char *vm_template_net_nat_path;
+    char *vm_xml_net_nat;
+    char *vm_template_net_br_path;
+    char *vm_xml_net_br;
+    char *vm_template_disk_path;
+    char *vm_xml_disk;
+    char *net_primary;
+    char *net_secondary;
     int  verbose;
     int  debug;
     int  daemon;

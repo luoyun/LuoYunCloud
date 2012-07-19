@@ -5,10 +5,10 @@
 #define COL_MAX_DATA 65535
 
 /* default lyclc.conf location */
-#define DEFAULT_LYCLC_CONF_PATH "/opt/LuoYun/platform/etc/luoyun-cloud/lyclc.conf"
+#define DEFAULT_LYCLC_CONF_PATH "/test/0.4/platform/etc/luoyun-cloud/lyclc.conf"
 
 /* default lyclc data dir */
-#define DEFAULT_LYCLC_DATA_DIR "/opt/LuoYun/platform/clc_data"
+#define DEFAULT_LYCLC_DATA_DIR "/test/0.4/platform/clc_data"
 
 /* default db name */
 #define DEFAULT_LYCLC_DB_NAME "luoyun"
@@ -20,7 +20,7 @@
 #define DEFAULT_LYCLC_DB_USER "luoyun"
 
 /* default clc log file */
-#define DEFAULT_LYCLC_LOG_PATH "/opt/LuoYun/platform/logs/lyclc.log"
+#define DEFAULT_LYCLC_LOG_PATH "/test/0.4/platform/logs/lyclc.log"
 
 /* default cloud controller mcast ip */
 #define DEFAULT_LYCLC_MCAST_IP "228.0.0.1"
@@ -35,16 +35,16 @@
 #define DEFAULT_LYCLC_PORT 1369
 
 /* default lyclc.uuid location */
-#define DEFAULT_LYCLC_UUID_PATH "/opt/LuoYun/platform/etc/luoyun-cloud/lyclc.uuid"
+#define DEFAULT_LYCLC_UUID_PATH "/test/0.4/platform/etc/luoyun-cloud/lyclc.uuid"
 
 /* default lynode.conf location */
-#define DEFAULT_LYNODE_CONF_PATH "/opt/LuoYun/platform/etc/luoyun-cloud/lynode.conf"
+#define DEFAULT_LYNODE_CONF_PATH "/test/0.4/platform/etc/luoyun-cloud/lynode.conf"
 
 /* default lynode data dir */
-#define DEFAULT_LYNODE_DATA_DIR "/opt/LuoYun/platform/node_data"
+#define DEFAULT_LYNODE_DATA_DIR "/test/0.4/platform/node_data"
 
 /* default lynode log file */
-#define DEFAULT_LYNODE_LOG_PATH "/opt/LuoYun/platform/logs/lynode.log"
+#define DEFAULT_LYNODE_LOG_PATH "/test/0.4/platform/logs/lynode.log"
 
 /* default lynode pid file */
 #define DEFAULT_LYNODE_PID_PATH "/var/run/lynode.pid"
@@ -53,16 +53,19 @@
 #define DEFAULT_LYNODE_PORT 3260
 
 /* default lynode.sysconf location */
-#define DEFAULT_LYNODE_SYSCONF_PATH "/opt/LuoYun/platform/etc/luoyun-cloud/lynode.sysconf"
+#define DEFAULT_LYNODE_SYSCONF_PATH "/test/0.4/platform/etc/luoyun-cloud/lynode.sysconf"
 
 /* default lynode.uuid location */
-#define DEFAULT_LYNODE_UUID_PATH "/opt/LuoYun/platform/etc/luoyun-cloud/lynode.uuid"
+#define DEFAULT_LYNODE_UUID_PATH "/test/0.4/platform/etc/luoyun-cloud/lynode.uuid"
 
 /* default lyosm configration file path */
 #define DEFAULT_LYOSM_CONF_PATH "/LuoYun/conf/luoyun.conf"
 
 /* default lyosm secret key file path */
 #define DEFAULT_LYOSM_KEY_PATH "/LuoYun/conf/luoyun.key"
+
+/* default node server storage low mark */
+#define DEFAULT_NODE_STORAGE_LOW 50
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -122,7 +125,7 @@
 #define HAVE_UNISTD_H 1
 
 /* default config directory */
-#define LYSYSCONFDIR "/opt/LuoYun/platform/etc/luoyun-cloud"
+#define LYSYSCONFDIR "/test/0.4/platform/etc/luoyun-cloud"
 
 /* Max length of the key in the INI file. */
 #define MAX_KEY 1024

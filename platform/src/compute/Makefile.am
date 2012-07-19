@@ -7,13 +7,15 @@ AM_CPPFLAGS =  -I. \
                -I$(top_srcdir)/lib/ding-libs/refarray \
                -I$(top_srcdir)/lib/ding-libs/collection \
                -I$(top_srcdir)/lib/ding-libs/ini \
+               -I$(top_srcdir)/lib/json-parser \
                -I/usr/include/libxml2
 LIBS =
 bin_PROGRAMS = lynode
 lynode_SOURCES = $(top_srcdir)/config.h \
                  domain.c  domain.h  handler.c  handler.h  lynode.c  lynode.h \
                  node.c  node.h  options.c  options.h events.c  events.h
-lynode_LDADD = ../luoyun/libluoyun.a ../util/libutil.a ../../lib/libding.a
+lynode_LDADD = ../luoyun/libluoyun.a ../util/libutil.a ../../lib/libding.a \
+               ../../lib/json-parser/libjson_parser.a
 lynode_LDFLAGS = -lm -pthread -lvirt -lcurl -lbz2 -lz -lxml2 -luuid -lgcrypt
 
 CLEANFILES = *~

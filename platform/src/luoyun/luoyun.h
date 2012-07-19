@@ -106,6 +106,9 @@ typedef enum LYActionStatus_t {
      LY_S_FINISHED_FAILURE = 311,
      LY_S_FINISHED_FAILURE_NODE_NOT_AVAIL = 321,
      LY_S_FINISHED_FAILURE_NODE_BUSY = 322,
+     LY_S_FINISHED_FAILURE_NODE_NOT_ENABLED = 323,
+     LY_S_FINISHED_FAILURE_NODE_NOT_ONLINE = 324,
+     LY_S_FINISHED_FAILURE_NODE_NOT_REGISTERED = 325,
      LY_S_FINISHED_FAILURE_APP_NOT_AVAIL = 331,
      LY_S_FINISHED_FAILURE_APP_ERROR = 332,
      LY_S_FINISHED_LAST_STATUS = 399,
@@ -252,8 +255,9 @@ typedef enum DomainStatus_t {
     DOMAIN_S_STOP = 2,      /* domain has run at least once, but now stopped */
     DOMAIN_S_START = 3,     /* domain started by hypervisor */
     DOMAIN_S_RUNNING = 4,   /* domain osm has connected clc */
-    DOMAIN_S_SERVING = 5,   /* domain application is running */
+    DOMAIN_S_SERVING = 5,   /* domain osm web is running */
     DOMAIN_S_SUSPEND = 9,
+    DOMAIN_S_DELETE = 100,
     DOMAIN_S_NEED_QUERY = 245, /* domain status needs to be queryed */
     DOMAIN_S_NOT_EXIST = 255,
 } DomainStatus;
@@ -335,6 +339,7 @@ typedef struct NodeCtrlInstance_t {
     int   osm_clcport;
     int   osm_tag;
     char *osm_secret;
+    char *osm_json;
     char *storage_ip;
     int   storage_method;
     char *storage_parm;
@@ -351,6 +356,8 @@ typedef struct NodeCtrlInstance_t {
 typedef struct NodeInfo_t {
     unsigned int status;
     unsigned int hypervisor;
+    unsigned int storage_total;
+    unsigned int storage_free;
     unsigned int mem_max;
     unsigned int mem_free;
     unsigned int mem_commit;

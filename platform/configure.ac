@@ -141,6 +141,11 @@ DEFAULT_CLC_DB_PASS=luoyun
 AC_SUBST(DEFAULT_CLC_DB_PASS)
 AC_DEFINE_UNQUOTED([DEFAULT_LYCLC_DB_PASS], ["${DEFAULT_CLC_DB_PASS}"], [default db user password])
 
+# default limits
+DEFAULT_NODE_STORAGE_LOW=50
+AC_SUBST(DEFAULT_NODE_STORAGE_LOW)
+AC_DEFINE_UNQUOTED([DEFAULT_NODE_STORAGE_LOW], [${DEFAULT_NODE_STORAGE_LOW}], [default node server storage low mark])
+
 # from ding-libs
 # Enable trace build
 AC_ARG_ENABLE([trace],

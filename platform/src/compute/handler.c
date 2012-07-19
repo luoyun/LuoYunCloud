@@ -187,37 +187,40 @@ static int __domain_dir_clean(char * dir, int keepdir)
     if (dir == NULL)
         return -1;
 
-    int ret = -1;
-
     /* save the current dir */
     int olddir = -1;
     if ((olddir = open(".", O_RDONLY)) < 0) {
-        logerror(_("open current dir failed.\n"));
+        logerror(_("open current dir failed, %s.\n"), strerror(errno));
         return -1;
     }
 
     if (chdir(dir) < 0) {
-        logerror(_("change working directory to %s failed.\n"), dir);
-        goto out;
+        logerror(_("change working directory to %s failed, %s.\n"), dir, 
+                                                      strerror(errno));
+        close(olddir);
+        return -1;
     }
-    char * file = LUOYUN_INSTANCE_DISK_FILE;
-    if (access(file, R_OK) == 0 && unlink(file) != 0) {
-        logerror(_("removing %s failed.\n"), file);
-        goto out;
+
+    char * files[] = { LUOYUN_INSTANCE_DISK_FILE,
+                       LUOYUN_INSTANCE_CONF_FILE,
+                       LUOYUN_INSTANCE_STORAGE1_FILE,
+                       LUOYUN_INSTANCE_STORAGE2_FILE,
+                       "kernel",
+                       "initrd",
+                       NULL };
+    int i = 0;
+    while (files[i]) {
+        if (access(files[i], R_OK) == 0 && unlink(files[i]) != 0) {
+            logerror(_("removing %s failed, %s.\n"), files[i], strerror(errno));
+            goto out;
+        }
+        i++;
     }
-    file = "kernel";
-    if (access(file, R_OK) == 0 && unlink(file) != 0) {
-        logerror(_("removing %s failed.\n"), file);
-        goto out;
-    }
-    file = "initrd";
-    if (access(file, R_OK) == 0 && unlink(file) != 0) {
-        logerror(_("removing %s failed.\n"), file);
-        goto out;
-    }
+
     if (fchdir(olddir) < 0) {
-       logerror(_("restore working directory failed.\n"));
-       ret = -1;
+       logerror(_("restore working directory failed %s.\n"), strerror(errno));
+       close(olddir);
+       return -1;
     }
     close(olddir);
 
@@ -225,13 +228,240 @@ static int __domain_dir_clean(char * dir, int keepdir)
         return 0;
 
     if (rmdir(dir) != 0) {
-        logerror(_("error removing %s, err %d\n"), dir, errno);
-        goto out;
+        logerror(_("error removing %s, %s\n"), dir, strerror(errno));
+        /* return -1; don't treat this as fatal error */
     }
 
     return 0;
 out:
-    return ret;
+    if (fchdir(olddir) < 0) {
+       logerror(_("restore working directory failed %s.\n"), strerror(errno));
+    }
+    close(olddir);
+    return -1;
+}
+
+#include <json.h>
+static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor, 
+                             char * net, int net_size, 
+                             char * disk, int disk_size)
+{
+    if (ci == NULL || ci->osm_json == NULL || net == NULL || disk == NULL || g_c == NULL)
+        return -1;
+
+    char path[1024], tmp[1024];
+    json_settings settings;
+    memset((void *)&settings, 0, sizeof(json_settings));
+    char error[256];
+    json_value * value = json_parse_ex(&settings, ci->osm_json, error);
+    if (value == 0) {
+        logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, error);
+        return -1;
+    }
+
+    if (value->type != json_object) {
+        logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "object");
+        goto out;
+    }
+
+    for (int i = 0; i < value->u.object.length; i++) {
+        if (strcmp(value->u.object.values[i].name, "network") == 0) {
+            net[0] = '\0';
+            json_value * net_array = value->u.object.values[i].value;
+            if (net_array->type != json_array) {
+                logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "network");
+                goto out;
+            }
+            for (int j = 0; j < net_array->u.array.length; j++) {
+                json_value * net_value = net_array->u.array.values[j];
+                if (net_value->type != json_object) {
+                    logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "net object");
+                    goto out;
+                }
+                json_value * net_mac = NULL;
+                json_value * net_type = NULL;
+                for (int k = 0; k < net_value->u.object.length; k++) {
+                    if (strcmp(net_value->u.object.values[k].name, "mac") == 0) {
+                        net_mac = net_value->u.object.values[k].value;
+                    }
+                    else if (strcmp(net_value->u.object.values[k].name, "type") == 0) {
+                        net_type = net_value->u.object.values[k].value;
+                    }
+                    if (net_mac && net_type)
+                        break;
+                }
+                if (net_mac == NULL || net_mac->type != json_string) {
+                    logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "net mac");
+                    goto out;
+                }
+                char * mac = net_mac->u.string.ptr;
+                char * type = g_c->config.net_primary;
+                if (j > 0 && g_c->config.net_secondary)
+                    type = g_c->config.net_secondary;
+                if (net_type) {
+                    if (net_type->type != json_string) {
+                        logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "net type");
+                        goto out;
+                    }
+                    if (strcmp(net_type->u.string.ptr, "nat") == 0) 
+                        type = NULL;
+                    else if (strcmp(net_type->u.string.ptr, "bridge") && strcmp(net_type->u.string.ptr, "default")) {
+                        logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, error);
+                        goto out;
+                    }
+                }
+                if (type == NULL || strcmp(type, "default") == 0 || strncmp(type, "virbr", 5) == 0) {
+                    if (g_c->config.vm_xml_net_nat)
+                        snprintf(tmp, 1024, g_c->config.vm_xml_net_nat, mac);
+                    else if (hypervisor == HYPERVISOR_IS_XEN)
+                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_NET_NAT, mac);
+                    else if (hypervisor == HYPERVISOR_IS_KVM)
+                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_NET_NAT, mac);
+                    else {
+                        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                        goto out;
+                    }
+                }
+                else {
+                    if (g_c->config.vm_xml_net_br)
+                        snprintf(tmp, 1024, g_c->config.vm_xml_net_br, type, mac);
+                    else if (hypervisor == HYPERVISOR_IS_XEN)
+                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_NET_BRIDGE, type, mac);
+                    else if (hypervisor == HYPERVISOR_IS_KVM)
+                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_NET_BRIDGE, type, mac);
+                    else {
+                        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                        goto out;
+                    }
+                }
+                if (strlen(net) + strlen(tmp) >= net_size) {
+                    logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                    goto out;
+                }
+                strcat(net, tmp);
+            }
+        }
+        else if (strcmp(value->u.object.values[i].name, "storage") == 0) {
+            int storage_size = -1;
+            int disk_found = 0;
+            json_value * disk_array = value->u.object.values[i].value;
+            if (disk_array->type != json_array) {
+                logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "storage");
+                goto out;
+            }
+            for (int j = 0; j < disk_array->u.array.length; j++) {
+                json_value * disk_value = disk_array->u.array.values[j];
+                if (disk_value->type != json_object) {
+                    logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "disk");
+                    goto out;
+                }
+                for (int k = 0; k < disk_value->u.object.length; k++) {
+                    if (strcmp(disk_value->u.object.values[k].name, "type") == 0) {
+                        json_value * disk_type = disk_value->u.object.values[k].value;
+                        if (disk_type->type != json_string) {
+                            logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "disk type");
+                            goto out;
+                        }
+                        if (strcmp(disk_type->u.string.ptr, "disk") == 0) {
+                            if (disk_found) {
+                                logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "dup disk");
+                                goto out;
+                            }
+                            disk_found = 1;
+                        }
+                        else
+                            break;
+                    }
+                    else if (strcmp(disk_value->u.object.values[k].name, "size") == 0) {
+                        json_value * disk_size = disk_value->u.object.values[k].value;
+                        if (disk_size->type != json_integer || disk_size->u.integer <= 0) {
+                            logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "disk size");
+                            goto out;
+                        }
+                        storage_size = disk_size->u.integer;
+                    }
+                }
+                if (disk_found) {
+                    if (storage_size <= 0) {
+                        logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "no disk size");
+                        goto out;
+                    }
+                    if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
+                                 ci->ins_id, LUOYUN_INSTANCE_STORAGE1_FILE) >= 1024) {
+                        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                        goto out;
+                    }
+
+                    if (g_c->config.vm_xml_disk)
+                        snprintf(tmp, 1024, g_c->config.vm_xml_disk, path);
+                    else if (hypervisor == HYPERVISOR_IS_XEN)
+                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_DISK, path, LUOYUN_INSTANCE_XEN_DISK3_NAME);
+                    else if (hypervisor == HYPERVISOR_IS_KVM)
+                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_DISK, path, LUOYUN_INSTANCE_KVM_DISK3_NAME);
+                    else {
+                        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                        goto out;
+                    }
+                    if (strlen(disk) + strlen(tmp) > disk_size) {
+                        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                        goto out;
+                    }
+                    strcat(disk, tmp);
+
+                    int need_truncate = 1;
+                    if (access(path, F_OK) == 0) {
+                        struct stat statbuf;
+                        if (stat(path, &statbuf)) {
+                            logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
+                                                                      strerror(errno), errno);
+                            goto out;
+                        }
+                        int size_g = (int)(statbuf.st_size>>30);
+                        if (size_g == storage_size)
+                            need_truncate = 0;
+                    }
+                    else {
+                        int fh = creat(path, S_IRUSR|S_IWUSR);
+                        if (fh < 0) {
+                            logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
+                                                                     strerror(errno), errno);
+                            goto out;
+                        }
+                        close(fh);
+                    }
+                    if (need_truncate) {
+                        if (truncate(path, (off_t)storage_size<<30)) {
+                            logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
+                                                                      strerror(errno), errno);
+                            goto out;
+                        }
+                    }
+                }
+            }
+            if (disk_found == 0) {
+                /* delete disk */
+                if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
+                             ci->ins_id, LUOYUN_INSTANCE_STORAGE1_FILE) >= 1024) {
+                    logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                    goto out;
+                }
+                if (access(path, F_OK) == 0) {
+                    if (unlink(path)) {
+                        logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
+                                                                  strerror(errno), errno);
+                        goto out;
+                    }
+                }
+            }
+        }
+    }
+
+    json_value_free(value);
+    return 0;
+
+out:
+    json_value_free(value);
+    return -1;
 }
 
 static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
@@ -239,23 +469,92 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
     if (ci == NULL || g_c == NULL)
         return NULL;
 
-    char * path = malloc(PATH_MAX);
-    if (path == NULL)
-        return NULL;
-    if (snprintf(path, PATH_MAX, "%s/%s/%d/%s",
-                 g_c->config.node_data_dir, "instances",
-                 ci->ins_id, LUOYUN_INSTANCE_DISK_FILE) >= PATH_MAX) {
+    char net[1024], disk[1024];
+    char path[1024], tmp[1024];
+
+    /* os disk */
+    if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
+                 ci->ins_id, LUOYUN_INSTANCE_DISK_FILE) >= 1024) {
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-        free(path);
+        return NULL;
+    }
+    if (g_c->config.vm_xml_disk)
+        snprintf(disk, 1024, g_c->config.vm_xml_disk, path);
+    else if (hypervisor == HYPERVISOR_IS_XEN)
+        snprintf(disk, 1024, LIBVIRT_XML_TMPL_XEN_DISK, path, LUOYUN_INSTANCE_XEN_DISK1_NAME);
+    else if (hypervisor == HYPERVISOR_IS_KVM)
+        snprintf(disk, 1024, LIBVIRT_XML_TMPL_KVM_DISK, path, LUOYUN_INSTANCE_KVM_DISK1_NAME);
+    else {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         return NULL;
     }
 
+    /* config disk */
+    if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
+                 ci->ins_id, LUOYUN_INSTANCE_CONF_FILE) >= 1024) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return NULL;
+    }
+    if (g_c->config.vm_xml_disk)
+        snprintf(tmp, 1024, g_c->config.vm_xml_disk, path);
+    else if (hypervisor == HYPERVISOR_IS_XEN)
+        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_DISK, path, LUOYUN_INSTANCE_XEN_DISK2_NAME);
+    else if (hypervisor == HYPERVISOR_IS_KVM)
+        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_DISK, path, LUOYUN_INSTANCE_KVM_DISK2_NAME);
+    else {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return NULL;
+    }
+    if (strlen(disk) + strlen(tmp) >= 1024) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return NULL;
+    }
+    strcat(disk, tmp);
+
+
+    /* prepare space for the complete XML */
     int size = LIBVIRT_XML_DATA_MAX;
     char * buf = malloc(size);
     if (buf == NULL) {
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-        free(path);
         return NULL;
+    }
+
+    net[0] = '\0';
+    if (ci->osm_json) {
+        if (__domain_xml_json(ci, hypervisor, net, 1024, disk, 1024) != 0) {
+             logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+             goto out;
+        }
+    }
+
+    if (net[0] == '\0') {
+        char * type = g_c->config.net_primary;
+        if (type == NULL || strcmp(type, "default") == 0 || strncmp(type, "virbr", 5) == 0) {
+            if (g_c->config.vm_xml_net_nat)
+                snprintf(net, 1024, g_c->config.vm_xml_net_nat, ci->ins_mac);
+            else if (hypervisor == HYPERVISOR_IS_XEN)
+                snprintf(net, 1024, LIBVIRT_XML_TMPL_XEN_NET_NAT, ci->ins_mac);
+            else if (hypervisor == HYPERVISOR_IS_KVM)
+                snprintf(net, 1024, LIBVIRT_XML_TMPL_KVM_NET_NAT, ci->ins_mac);
+            else {
+                logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                goto out;
+            }
+        }
+        else {
+            if (g_c->config.vm_xml_net_br)
+                snprintf(net, 1024, g_c->config.vm_xml_net_br, type, ci->ins_mac);
+            else if (hypervisor == HYPERVISOR_IS_XEN)
+                snprintf(net, 1024, LIBVIRT_XML_TMPL_XEN_NET_BRIDGE, type, ci->ins_mac);
+            else if (hypervisor == HYPERVISOR_IS_KVM)
+                snprintf(net, 1024, LIBVIRT_XML_TMPL_KVM_NET_BRIDGE, type, ci->ins_mac);
+            else {
+                logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                goto out;
+            }
+        }
+
     }
 
     int len = -1;
@@ -266,31 +565,38 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         sprintf(strcpu, "%d", ci->ins_vcpu);
         len =  snprintf(buf, size, g_c->config.vm_xml,
                         strid, ci->ins_domain,
-                        strmem, strcpu, path, ci->ins_mac);
+                        strmem, strcpu, disk, net);
     }
     else if (hypervisor == HYPERVISOR_IS_KVM) {
-        len = snprintf(buf, size, LIBVIRT_XML_TMPL_KVM, 
+        len = snprintf(buf, size, LIBVIRT_XML_TMPL_KVM,
                        ci->ins_id, ci->ins_domain,
-                       ci->ins_mem, ci->ins_vcpu, path, ci->ins_mac);
+                       ci->ins_mem, ci->ins_vcpu, disk, net);
     }
     else if (hypervisor == HYPERVISOR_IS_XEN && fullvirt) {
         len = -2;
     }
     else if (hypervisor == HYPERVISOR_IS_XEN && fullvirt == 0) {
-        len = snprintf(buf, size, LIBVIRT_XML_TMPL_XEN_PARA, 
+        snprintf(path, 1024, "%s/%d", g_c->config.ins_data_dir, ci->ins_id);
+        len = snprintf(buf, size, LIBVIRT_XML_TMPL_XEN_PARA,
                        ci->ins_id, ci->ins_domain, path, path,
-                       ci->ins_mem, ci->ins_vcpu, path, ci->ins_mac);
+                       ci->ins_mem, ci->ins_vcpu, disk, net);
     }
     logsimple("%d\n", len);
-    if (len < 0 || len >= size) {
-        free(path);
-        free(buf);
-        return NULL;
+    if (len < 0) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        goto out;
+    }
+    else if (len >= size) {
+        logerror(_("xml string is too large\n"));
+        goto out;
     }
     logsimple("%s\n", buf);
 
-    free(path);
     return buf;
+
+out:
+    free(buf);
+    return NULL;
 }
 
 static int __domain_run_data_check(NodeCtrlInstance * ci)
@@ -302,7 +608,7 @@ static int __domain_run_data_check(NodeCtrlInstance * ci)
         ci->ins_vcpu = LUOYUN_INSTANCE_CPU_DEFAULT;
     if (ci->ins_mem == 0)
         ci->ins_mem = LUOYUN_INSTANCE_MEM_DEFAULT;
-    if (ci->ins_mac == NULL)
+    if (ci->ins_mac == NULL && ci->osm_json == NULL)
         return -1;
     if (ci->app_id == 0 ||
         ci->app_name == NULL ||
@@ -482,6 +788,12 @@ static int __domain_run(NodeCtrlInstance * ci)
         }
         loginfo(_("Extracting disk file\n"));
         __send_response(g_c->wfd, ci, LY_S_RUNNING_EXTRACTING_APP);
+        int fd = creat(LUOYUN_INSTANCE_DISK_FILE, S_IRUSR|S_IWUSR);
+        if (fd < 0) {
+            logerror(_("error creating file %s\n"), LUOYUN_INSTANCE_DISK_FILE);
+            goto out_insclean;
+        }
+        close(fd);
         if (lyutil_decompress_gz(path, LUOYUN_INSTANCE_DISK_FILE)) {
             logwarn(_("decompress %s failed.\n"), path);
             unlink(path);
@@ -493,34 +805,37 @@ static int __domain_run(NodeCtrlInstance * ci)
         }
     }
 
-    /* mount instance image */
-    __send_response(g_c->wfd, ci, LY_S_RUNNING_MOUNTING_IMAGE);
+    /* use disk offset to determine using xen or kvm */
     long long offset;
     offset = lyutil_get_disk_offset(LUOYUN_INSTANCE_DISK_FILE);
     if (offset < 0) {
         logwarn(_("instance %d, get disk offset error\n"), ci->ins_id);
         goto out_insclean;
     }
-    char nametemp[32] = "/tmp/LuoYun_XXXXXX";
-    char * mount_path = mkdtemp(nametemp);
-    if (mount_path == NULL) {
-        logerror(_("can not get a tmpdir for mount\n"));
-        goto out_insclean;
-    }
-    if (snprintf(tmpstr1024, 1024, "mount %s %s -o loop,offset=%lld",
-                 LUOYUN_INSTANCE_DISK_FILE, mount_path, offset) >= 1024) {
-        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-        goto out_insclean;
-    }
-    if (system_call(tmpstr1024)) {
-        logerror(_("failed executing %s\n"), tmpstr1024);
-        remove(mount_path);
-        goto out_insclean;
-    }
 
-    __send_response(g_c->wfd, ci, LY_S_RUNNING_PREPARING_IMAGE);
-    /* copy kernel/initrd, edit instance file, etc */
-    if ((access("kernel", F_OK) || access("initrd", F_OK)) && offset == 0) {
+    char * mount_path = NULL;
+    if (offset == 0 && (access("kernel", F_OK) || access("initrd", F_OK))) {
+        /* mount instance image */
+        __send_response(g_c->wfd, ci, LY_S_RUNNING_MOUNTING_IMAGE);
+        char nametemp[32] = "/tmp/LuoYun_XXXXXX";
+        mount_path = mkdtemp(nametemp);
+        if (mount_path == NULL) {
+            logerror(_("can not get a tmpdir for mount\n"));
+            goto out_insclean;
+        }
+        if (snprintf(tmpstr1024, 1024, "mount %s %s -o loop,offset=%lld",
+                     LUOYUN_INSTANCE_DISK_FILE, mount_path, offset) >= 1024) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            goto out_insclean;
+        }
+        if (system_call(tmpstr1024)) {
+            logerror(_("failed executing %s\n"), tmpstr1024);
+            remove(mount_path);
+            goto out_insclean;
+        }
+
+        /* copy kernel/initrd, edit instance file, etc */
+        __send_response(g_c->wfd, ci, LY_S_RUNNING_PREPARING_IMAGE);
         if (snprintf(tmpstr1024, 1024, "cp %s/$(readlink %s/kernel) kernel",
                      mount_path, mount_path) >= 1024) {
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
@@ -539,69 +854,57 @@ static int __domain_run(NodeCtrlInstance * ci)
             logerror(_("failed executing %s\n"), tmpstr1024);
             goto out_umount;
         }
-    }
-    if (snprintf(path, PATH_MAX, "%s/%s", mount_path,
-                 g_c->config.osm_conf_path) >= PATH_MAX) {
-        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-        goto out_umount;
-    }
-    if (lyutil_create_file(path, 1) < 0) {
-        logerror(_("failed creating file %s\n"), path);
-        goto out_umount;
-    }
-    if (snprintf(tmpstr1024, 1024,
-                 "CLC_IP=%s\nCLC_PORT=%d\n"
-                 "CLC_MCAST_IP=%s\nCLC_MCAST_PORT=%d\n"
-                 "STORAGE_IP=%s\nSTORAGE_METHOD=%d\nSTORAGE_PARM=%s\n"
-                 "TAG=%d\n",
-                 ci->osm_clcip, ci->osm_clcport,
-                 g_c->config.clc_mcast_ip, g_c->config.clc_mcast_port,
-                 ci->storage_ip ? ci->storage_ip : "",
-                 ci->storage_method,
-                 ci->storage_parm ? ci->storage_parm : "",
-                 ci->osm_tag) >= 1024) {
-        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-        goto out_umount;
-    }
-    int fh = creat(path, S_IRUSR);
-    if (fh < 0) {
-        logerror(_("error writing to %s\n"), path);
-        goto out_umount;
-    }
-    if (write(fh, tmpstr1024, strlen(tmpstr1024)) < 0) {
-        logerror(_("error in %s(%d)\n"), __func__, __LINE__, errno);
-        close(fh);
-        goto out_umount;
-    }
-    close(fh);
-    if (ci->osm_secret) {
-        if (snprintf(path, PATH_MAX, "%s/%s", mount_path,
-                     g_c->config.osm_key_path) >= PATH_MAX) {
-            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+
+        /* umount the instance image */
+        __send_response(g_c->wfd, ci, LY_S_RUNNING_UNMOUNTING_IMAGE);
+        snprintf(tmpstr1024, 1024, "umount %s", mount_path);
+        if (system_call(tmpstr1024)) {
+            logerror(_("can not umount %s\n"), mount_path);
             goto out_umount;
         }
-        fh = creat(path, S_IRUSR);
-        if (fh < 0) {
-            logerror(_("error writing to %s\n"), path);
-            goto out_umount;
-        }
-        if (write(fh, ci->osm_secret, strlen(ci->osm_secret)) < 0) {
-            logerror(_("error in %s(%d)\n"), __func__, __LINE__, errno);
-            close(fh);
-            goto out_umount;
-        }
-        close(fh);
+        remove(mount_path);
+        mount_path = NULL;
     }
 
-    /* umount the instance image */
-    __send_response(g_c->wfd, ci, LY_S_RUNNING_UNMOUNTING_IMAGE);
-    snprintf(tmpstr1024, 1024, "umount %s", mount_path);
-    if (system_call(tmpstr1024)) {
-        logerror(_("can not umount %s\n"), mount_path);
-        goto out_umount;
+    /* create instance config file */
+    int fd = creat(LUOYUN_INSTANCE_CONF_FILE, S_IRUSR|S_IWUSR);
+    if (fd < 0) {
+        logerror(_("error creating file %s, %s\n"), LUOYUN_INSTANCE_CONF_FILE,
+                                                    strerror(errno));
+        goto out_insclean;
     }
-    remove(mount_path);
-    mount_path = NULL;
+    FILE * fp = fdopen(fd, "w");
+    if (fp == NULL) {
+        logerror(_("error opening file %s, %s\n"), LUOYUN_INSTANCE_CONF_FILE,
+                                                   strerror(errno));
+        goto out_insclean;
+    }
+    int len = fprintf(fp,
+                    "CLC_IP=%s\n"
+                    "CLC_PORT=%d\n"
+                    "CLC_MCAST_IP=%s\n"
+                    "CLC_MCAST_PORT=%d\n"
+                    "TAG=%d\n"
+                    "KEY=%s\n"
+                    "JSON=%s\n",
+                    ci->osm_clcip,
+                    ci->osm_clcport,
+                    g_c->config.clc_mcast_ip,
+                    g_c->config.clc_mcast_port,
+                    ci->osm_tag,
+                    ci->osm_secret,
+                    ci->osm_json);
+    fclose(fp);
+    if (len < 0) {
+        logerror(_("error writing to %s, %s\n"), LUOYUN_INSTANCE_CONF_FILE,
+                                                 strerror(errno));
+        goto out_insclean;
+    }
+    if (truncate(LUOYUN_INSTANCE_CONF_FILE, ((len+1023)>>10)<<10)) {
+        logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
+                                                  strerror(errno), errno);
+        goto out_insclean;
+    }
 
     /* create xml */
     int fullvirt = 1;
@@ -802,11 +1105,13 @@ static int __domain_destroy(NodeCtrlInstance * ci)
     }
     if (access(path_clean, F_OK) != 0) {
         logwarn(_("instance %s not exist\n"), ci->ins_domain);
-        ret = LY_S_FINISHED_INSTANCE_NOT_EXIST;
+        /* ret = LY_S_FINISHED_INSTANCE_NOT_EXIST; */
+        ret = 0;
         goto out;
     }
     ret = __domain_dir_clean(path_clean, 0);
 
+    ly_node_send_report_resource();
 out:
     if (__file_lock_put(path_lock, idstr) < 0) {
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);

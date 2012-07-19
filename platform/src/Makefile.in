@@ -124,6 +124,7 @@ DEFAULT_LYNODE_UUID_PATH = @DEFAULT_LYNODE_UUID_PATH@
 DEFAULT_LYOSM_CONF_PATH = @DEFAULT_LYOSM_CONF_PATH@
 DEFAULT_LYOSM_KEY_PATH = @DEFAULT_LYOSM_KEY_PATH@
 DEFAULT_NODE_PORT = @DEFAULT_NODE_PORT@
+DEFAULT_NODE_STORAGE_LOW = @DEFAULT_NODE_STORAGE_LOW@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 ECHO_C = @ECHO_C@
@@ -206,7 +207,7 @@ AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/src/util \
               -I$(top_srcdir)/lib/ding-libs/path_utils \
               -I$(top_srcdir)/lib/ding-libs/refarray \
               -I$(top_srcdir)/lib/ding-libs/collection \
-              -I$(top_srcdir)/lib/ding-libs/ini 
+              -I$(top_srcdir)/lib/ding-libs/ini
 
 CLEANFILES = *~
 all: all-recursive

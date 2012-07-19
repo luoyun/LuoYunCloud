@@ -16,6 +16,6 @@ AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/src/util \
               -I$(top_srcdir)/lib/ding-libs/path_utils \
               -I$(top_srcdir)/lib/ding-libs/refarray \
               -I$(top_srcdir)/lib/ding-libs/collection \
-              -I$(top_srcdir)/lib/ding-libs/ini 
+              -I$(top_srcdir)/lib/ding-libs/ini
 CLEANFILES = *~
 
