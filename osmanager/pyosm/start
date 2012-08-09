@@ -1,0 +1,17 @@
+#!/bin/sh
+
+EXE=$(readlink $0)
+[ -z "$EXE" ] && EXE=$0
+DIR=$(dirname $EXE)
+EXE=lyosm.py
+
+[ -x "$DIR/../../scripts/start" ] && $DIR/../../scripts/start
+
+if [ -x "$DIR/$EXE" ]
+then
+    echo "Start $EXE ..."
+    $DIR/$EXE &
+else
+    echo "Error: no $EXE"
+    exit 1
+fi
