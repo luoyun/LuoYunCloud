@@ -226,9 +226,10 @@ int ly_epoll_entity_recv(int ent_id)
     }
 
     int len = recv(fd, buf, size, 0);
-    if (len < 0) {
-        loginfo(_("socket %d recv returns %d, errno %d. close socket\n"),
-                   fd, len, errno);
+    if (len <= 0) {
+        loginfo(_("socket %d recv returns %d. close socket\n"), fd, len);
+        if (len < 0)
+            loginfo(_("socket %d recv, errno %d\n"), fd, errno);
 
         if (ly_entity_type(ent_id) != LY_ENTITY_OSM)
             return 1;
@@ -239,11 +240,7 @@ int ly_epoll_entity_recv(int ent_id)
         ii.ip = NULL;
         ii.status = DOMAIN_S_NEED_QUERY;
         db_instance_update_status(db_id, &ii, -1);
-        return 1;
-    }
-    else if (len == 0) {
-        /* Maybe the client have closed */
-        loginfo(_("socket %d recv 0 byte. close socket\n"), fd);
+        job_internal_query_instance(db_id);
         return 1;
     }
     logdebug(_("socket %d recv %d bytes\n"), fd, len);

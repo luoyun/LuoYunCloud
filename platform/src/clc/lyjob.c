@@ -229,6 +229,7 @@ int job_update_status(LYJobInfo * job, int status)
             ii.ip = NULL;
             ii.status = DOMAIN_S_NEED_QUERY;
             ret = db_instance_update_status(job->j_target_id, &ii, -1);
+            job_internal_query_instance(job->j_target_id);
         }
         else if (job->j_action == LY_A_NODE_RUN_INSTANCE && 
             status == LY_S_FINISHED_SUCCESS) {

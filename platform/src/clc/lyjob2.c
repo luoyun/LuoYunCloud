@@ -41,7 +41,7 @@ static time_t g_job_time_query_node = 0;
 static time_t g_job_time_cleanup_node = 0;
 static time_t g_job_time_query_instance = 0;
 
-static int __query_instance(int id)
+int job_internal_query_instance(int id)
 {
     if (id <= 0)
         return -1;
@@ -91,12 +91,12 @@ static void  __query_instance_all(void)
 {
     /* logdebug(_("%s is called\n"), __func__); */
 
-    int * ins_id = NULL;
-    int ins_num = db_instance_get_all(&ins_id);
+    int ins_num = 0;
+    int * ins_id = db_instance_get_all(&ins_num);;
     if (ins_num <= 0 || ins_id == NULL)
         return;
     for (int i = 0; i < ins_num; i++) {
-        __query_instance(ins_id[i]);
+        job_internal_query_instance(ins_id[i]);
     }
     free(ins_id);
     return;

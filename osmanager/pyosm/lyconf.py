@@ -9,19 +9,19 @@ class Config:
   clc_port = 0
   clc_mcast_ip = b''
   clc_mcast_port = 0
-  storage_ip = b''
-  storage_method = 0
-  storage_parm = b''
   key = b''
+  json = b''
   local_ip = b''
   status = lydef.OSM_STATUS_INIT
 
-  def __init__(self, confpath, keypath):
+  def __init__(self, confpath):
     try:
       f = open(confpath)
       for l in f.readlines():
-        l = l.rstrip()
-        k,v = l.split('=')
+        l = l.strip()
+        if not l:
+          continue
+        k,v = l.split('=', 1)
         if k == 'CLC_IP':
           Config.clc_ip = v
         elif k == 'CLC_PORT':
@@ -30,26 +30,19 @@ class Config:
           Config.clc_mcast_ip = v
         elif k == 'CLC_MCAST_PORT':
           Config.clc_mcast_port = int(v)
-        elif k == 'STORAGE_IP':
-          Config.storage_ip = v
-        elif k == 'STORAGE_METHOD':
-          Config.storage_method = int(v)
-        elif k == 'STORAGE_PARM':
-          Config.storage_parm = v
         elif k == 'TAG':
           Config.tag = int(v)
+        elif k == 'KEY':
+          Config.key = v
+        elif k == 'JSON':
+          Config.json = v
     except IOError:
       LOG.error("Failed reading %s" % confpath)
-      sys.exit(1)
-    try:
-      f = open(keypath)
-      Config.key = f.readline()
-    except IOError:
-      LOG.error("Failed reading %s" % keypath)
       sys.exit(1)
 
 if __name__ == "__main__":
   lylog.setup()
-  Config('/LuoYun/conf/luoyun.conf', '/LuoYun/conf/luoyun.key')
+  Config('/LuoYun/conf/luoyun.conf')
   LOG.info(Config.clc_ip)
-  LOG.info(Config.key)
+  LOG.info(Config.json)
+

@@ -241,6 +241,109 @@ out:
     return -1;
 }
 
+/* create fat16 FS of size 1MB and luoyun.ini fle */
+static FILE * __create_luoyun_ini(char * ini_path)
+{
+    char sec_boot[] = {
+        0xeb, 0x3c, 0x90, 0x6d, 0x6b, 0x64, 0x6f, 0x73, 0x66, 0x73, 0x00, 0x00, 0x02, 0x01, 0x01, 0x00,
+        0x02, 0x00, 0x02, 0x00, 0x08, 0xf8, 0x08, 0x00, 0x20, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x29, 0xed, 0xee, 0x74, 0xf0, 0x20, 0x20, 0x20, 0x20, 0x20,
+        0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x46, 0x41, 0x54, 0x31, 0x36, 0x20, 0x20, 0x20, 0x0e, 0x1f,
+        0xbe, 0x5b, 0x7c, 0xac, 0x22, 0xc0, 0x74, 0x0b, 0x56, 0xb4, 0x0e, 0xbb, 0x07, 0x00, 0xcd, 0x10,
+        0x5e, 0xeb, 0xf0, 0x32, 0xe4, 0xcd, 0x16, 0xcd, 0x19, 0xeb, 0xfe, 0x54, 0x68, 0x69, 0x73, 0x20,
+        0x69, 0x73, 0x20, 0x6e, 0x6f, 0x74, 0x20, 0x61, 0x20, 0x62, 0x6f, 0x6f, 0x74, 0x61, 0x62, 0x6c,
+        0x65, 0x20, 0x64, 0x69, 0x73, 0x6b, 0x2e, 0x20, 0x20, 0x50, 0x6c, 0x65, 0x61, 0x73, 0x65, 0x20,
+        0x69, 0x6e, 0x73, 0x65, 0x72, 0x74, 0x20, 0x61, 0x20, 0x62, 0x6f, 0x6f, 0x74, 0x61, 0x62, 0x6c,
+        0x65, 0x20, 0x66, 0x6c, 0x6f, 0x70, 0x70, 0x79, 0x20, 0x61, 0x6e, 0x64, 0x0d, 0x0a, 0x70, 0x72,
+        0x65, 0x73, 0x73, 0x20, 0x61, 0x6e, 0x79, 0x20, 0x6b, 0x65, 0x79, 0x20, 0x74, 0x6f, 0x20, 0x74,
+        0x72, 0x79, 0x20, 0x61, 0x67, 0x61, 0x69, 0x6e, 0x20, 0x2e, 0x2e, 0x2e, 0x20, 0x0d, 0x0a, 0x00 };
+    int len_boot = sizeof(sec_boot);
+    int off_boot = 0;
+    char sec_boot_sign[] = { 0x55, 0xaa };
+    int len_boot_sign = 2;
+    int off_boot_sign = 510;
+    char sec_fat[] = {
+        0xf8, 0xff, 0xff, 0xff, 0x40, 0x00, 0x05, 0x60, 0x00, 0x07, 0x80, 0x00, 0x09, 0xf0, 0xff, 0x00 };
+    int len_fat = sizeof(sec_fat);
+    int off_fat1 = 0x200;
+    int off_fat2 = 0x1200;
+    char sec_root[] = {
+        0x41, 0x6c, 0x00, 0x75, 0x00, 0x6f, 0x00, 0x79, 0x00, 0x75, 0x00, 0x0f, 0x00, 0xca, 0x6e, 0x00,
+        0x2e, 0x00, 0x69, 0x00, 0x6e, 0x00, 0x69, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff,
+        0x4c, 0x55, 0x4f, 0x59, 0x55, 0x4e, 0x20, 0x20, 0x49, 0x4e, 0x49, 0x20, 0x00, 0x00, 0xd1, 0xa1,
+        0x02, 0x41, 0x02, 0x41, 0x00, 0x00, 0xd1, 0xa1, 0x02, 0x41, 0x03, 0x00 };
+    int len_root = sizeof(sec_root);
+    int off_root = 0x2200;
+    /* int off_data_len = off_root + len_root; */
+    int off_data = 0x6400;
+
+    int fd = creat(ini_path, S_IRUSR|S_IWUSR);
+    if (fd < 0) {
+        logerror(_("error creating file %s, %s\n"), ini_path, strerror(errno));
+        return NULL;
+    }
+
+    if (lseek(fd, off_boot, SEEK_SET) < 0 ||
+        write(fd, sec_boot, len_boot) < 0 ||
+        lseek(fd, off_boot_sign, SEEK_SET) < 0 ||
+        write(fd, sec_boot_sign, len_boot_sign) < 0 ||
+        lseek(fd, off_fat1, SEEK_SET) < 0 ||
+        write(fd, sec_fat, len_fat) < 0 ||
+        lseek(fd, off_fat2, SEEK_SET) < 0 ||
+        write(fd, sec_fat, len_fat) < 0 ||
+        lseek(fd, off_root, SEEK_SET) < 0 ||
+        write(fd, sec_root, len_root) < 0 ||
+        lseek(fd, off_data, SEEK_SET) < 0) {
+        logerror(_("error writing file %s, %s\n"), ini_path, strerror(errno));
+        goto out;
+    }
+
+    FILE * fp = fdopen(fd, "w");
+    if (fp == NULL) {
+        logerror(_("error opening file %s, %s\n"), LUOYUN_INSTANCE_CONF_FILE,
+                                                   strerror(errno));
+        goto out;
+    }
+
+    return fp;
+out:
+    close(fd);
+    unlink(ini_path);
+    return NULL;
+}
+
+/* close luoyun.ini fle */
+static int __close_luoyun_ini(FILE * fp)
+{
+    int fd = fileno(fp);
+    long off_data_len = 0x223c; /* off_root + len_root */
+    long off_data = 0x6400;
+    long len_data = ftell(fp);
+    if (len_data < 0) {
+        logerror(_("error getting file position, %s\n"), strerror(errno));
+        goto out;
+    }
+    if (len_data >= 1048576) {
+        logerror(_("error writing file, ini file is too big\n"));
+        goto out;
+    }
+    len_data -= off_data;
+    if (lseek(fd, off_data_len, SEEK_SET) < 0 ||
+        write(fd, (unsigned long *)&len_data, 4) < 0) {
+        logerror(_("error writing file, %s\n"), strerror(errno));
+        goto out;
+    }
+    if (ftruncate(fd, 1048576)) {
+        logerror(_("error truncate file, %s\n"), strerror(errno));
+        goto out;
+    }
+    fclose(fp);
+    return 0;
+out:
+    fclose(fp);
+    return -1;
+}
+
 #include <json.h>
 static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor, 
                              char * net, int net_size, 
@@ -470,7 +573,7 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         return NULL;
 
     char net[1024], disk[1024];
-    char path[1024], tmp[1024];
+    char path[1024], conf_path[1024];
 
     /* os disk */
     if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
@@ -490,17 +593,18 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
     }
 
     /* config disk */
-    if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
+    if (snprintf(conf_path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
                  ci->ins_id, LUOYUN_INSTANCE_CONF_FILE) >= 1024) {
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         return NULL;
     }
+#if 0 /* floppy disk */
     if (g_c->config.vm_xml_disk)
-        snprintf(tmp, 1024, g_c->config.vm_xml_disk, path);
+        snprintf(tmp, 1024, g_c->config.vm_xml_disk, conf_path);
     else if (hypervisor == HYPERVISOR_IS_XEN)
-        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_DISK, path, LUOYUN_INSTANCE_XEN_DISK2_NAME);
+        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_DISK, conf_path, LUOYUN_INSTANCE_XEN_DISK2_NAME);
     else if (hypervisor == HYPERVISOR_IS_KVM)
-        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_DISK, path, LUOYUN_INSTANCE_KVM_DISK2_NAME);
+        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_DISK, conf_path, LUOYUN_INSTANCE_KVM_DISK2_NAME);
     else {
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         return NULL;
@@ -510,7 +614,7 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         return NULL;
     }
     strcat(disk, tmp);
-
+#endif
 
     /* prepare space for the complete XML */
     int size = LIBVIRT_XML_DATA_MAX;
@@ -565,12 +669,12 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         sprintf(strcpu, "%d", ci->ins_vcpu);
         len =  snprintf(buf, size, g_c->config.vm_xml,
                         strid, ci->ins_domain,
-                        strmem, strcpu, disk, net);
+                        strmem, strcpu, conf_path, disk, net);
     }
     else if (hypervisor == HYPERVISOR_IS_KVM) {
         len = snprintf(buf, size, LIBVIRT_XML_TMPL_KVM,
                        ci->ins_id, ci->ins_domain,
-                       ci->ins_mem, ci->ins_vcpu, disk, net);
+                       ci->ins_mem, ci->ins_vcpu, conf_path, disk, net);
     }
     else if (hypervisor == HYPERVISOR_IS_XEN && fullvirt) {
         len = -2;
@@ -579,7 +683,7 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         snprintf(path, 1024, "%s/%d", g_c->config.ins_data_dir, ci->ins_id);
         len = snprintf(buf, size, LIBVIRT_XML_TMPL_XEN_PARA,
                        ci->ins_id, ci->ins_domain, path, path,
-                       ci->ins_mem, ci->ins_vcpu, disk, net);
+                       ci->ins_mem, ci->ins_vcpu, conf_path, disk, net);
     }
     logsimple("%d\n", len);
     if (len < 0) {
@@ -867,6 +971,7 @@ static int __domain_run(NodeCtrlInstance * ci)
     }
 
     /* create instance config file */
+#if 0
     int fd = creat(LUOYUN_INSTANCE_CONF_FILE, S_IRUSR|S_IWUSR);
     if (fd < 0) {
         logerror(_("error creating file %s, %s\n"), LUOYUN_INSTANCE_CONF_FILE,
@@ -879,6 +984,14 @@ static int __domain_run(NodeCtrlInstance * ci)
                                                    strerror(errno));
         goto out_insclean;
     }
+#else
+    FILE * fp = __create_luoyun_ini(LUOYUN_INSTANCE_CONF_FILE);
+    if (fp == NULL) {
+        logerror(_("error creating file %s, %s\n"), LUOYUN_INSTANCE_CONF_FILE,
+                                                   strerror(errno));
+        goto out_insclean;
+    }
+#endif
     int len = fprintf(fp,
                     "CLC_IP=%s\n"
                     "CLC_PORT=%d\n"
@@ -894,17 +1007,26 @@ static int __domain_run(NodeCtrlInstance * ci)
                     ci->osm_tag,
                     ci->osm_secret,
                     ci->osm_json);
-    fclose(fp);
     if (len < 0) {
         logerror(_("error writing to %s, %s\n"), LUOYUN_INSTANCE_CONF_FILE,
                                                  strerror(errno));
         goto out_insclean;
     }
+#if 0
+    fclose(fp);
     if (truncate(LUOYUN_INSTANCE_CONF_FILE, ((len+1023)>>10)<<10)) {
         logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
                                                   strerror(errno), errno);
         goto out_insclean;
     }
+#else
+    if (__close_luoyun_ini(fp)) {
+        logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
+                                                  strerror(errno), errno);
+        unlink(LUOYUN_INSTANCE_CONF_FILE);
+        goto out_insclean;
+    }
+#endif
 
     /* create xml */
     int fullvirt = 1;

@@ -30,6 +30,7 @@ def run(sock):
 
   if s != APP_Status:
     LOG.info("status return code: %d" % s)
-    d = struct.pack('i', s)
-    lyutil.socksend(sock, lydef.PKT_TYPE_OSM_REPORT, d)
+    if sock:
+      d = struct.pack('i', s)
+      lyutil.socksend(sock, lydef.PKT_TYPE_OSM_REPORT, d)
     APP_Status = s 

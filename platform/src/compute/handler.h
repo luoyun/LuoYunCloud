@@ -6,7 +6,7 @@
 #define LUOYUN_APPLIANCE_URI_MAX 256
 #define LUOYUN_APPLIANCE_URI_TEMPLATE "http://%s/dl/appliance/appliance_%s"
 #define LUOYUN_INSTANCE_DISK_FILE "os.img"
-#define LUOYUN_INSTANCE_CONF_FILE "luoyun.conf"
+#define LUOYUN_INSTANCE_CONF_FILE "floppy.img"
 #define LUOYUN_INSTANCE_STORAGE1_FILE "disk1.img"
 #define LUOYUN_INSTANCE_STORAGE2_FILE "disk2.img"
 #define LUOYUN_INSTANCE_KVM_DISK1_NAME "hda"
@@ -65,6 +65,12 @@ int ly_handler_busy(void);
     "<memory>%d</memory>"\
     "<vcpu>%d</vcpu>"\
     "<devices>"\
+    "<disk type='file' device='floppy'>"\
+      "<driver name='qemu' type='raw' cache='none'/>"\
+      "<source file=\'%s\'/>"\
+      "<target dev='fda' bus='fdc'/>"\
+      "<address type='drive' controller='0' bus='0' unit='0'/>"\
+    "</disk>"\
 "%s"\
 "%s"\
     "</devices>"\
@@ -118,6 +124,12 @@ int ly_handler_busy(void);
   "<on_crash>restart</on_crash>"\
   "<devices>"\
     "<emulator>/usr/libexec/qemu-kvm</emulator>"\
+    "<disk type='file' device='floppy'>"\
+      "<driver name='qemu' type='raw' cache='none'/>"\
+      "<source file=\'%s\'/>"\
+      "<target dev='fda' bus='fdc'/>"\
+      "<address type='drive' controller='0' bus='0' unit='0'/>"\
+    "</disk>"\
 "%s"\
     "<controller type='ide' index='0'>"\
       "<address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>"\
@@ -129,6 +141,12 @@ int ly_handler_busy(void);
     "<console type='pty'>"\
       "<target type='serial' port='0'/>"\
     "</console>"\
+    "<input type='mouse' bus='ps2'/>"\
+    "<graphics type='vnc' port='-1' autoport='yes'/>"\
+    "<video>"\
+      "<model type='cirrus' vram='9216' heads='1'/>"\
+      "<address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>"\
+    "</video>"\
     "<memballoon model='virtio'>"\
       "<address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>"\
     "</memballoon>"\
