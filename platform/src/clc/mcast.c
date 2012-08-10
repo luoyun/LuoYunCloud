@@ -247,6 +247,22 @@ out:
     return ret;
 }
 
+int ly_is_clc_ip(char * ip)
+{
+    if (ip == NULL)
+        return 0;
+
+    if (g_c->clc_ip && strcmp(g_c->clc_ip, ip) == 0)
+        return 1;
+
+    for (int i = 0; i < g_clc_ip_num; i++) {
+        if (strcmp(g_clc_ip[i], ip) == 0)
+            return 1;
+    }
+
+    return 0;
+}
+
 void ly_clc_ip_clean(void)
 {
     int i;

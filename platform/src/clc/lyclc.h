@@ -17,6 +17,7 @@
 /* functions defined in mcast.c */
 int ly_mcast_send_join(void);
 int ly_clc_ip_get(void);
+int ly_is_clc_ip(char * ip);
 void ly_clc_ip_clean(void);
 
 /* glocal var, defined in lyclc.c */
