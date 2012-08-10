@@ -57,18 +57,14 @@ if __name__ == '__main__':
         print "IOError: processing %s" % (confpath)
         sys.exit(1)
 
-    isenable = 0
     if jsonstr:
         j = json.loads(jsonstr)
         if j and j.get("webssh"):
-            if j["webssh"].get("status") and j["webssh"]["status"] == "enable":
-               isenable = 1
+            if j["webssh"].get("status") and j["webssh"]["status"] == "disable":
+                print "web ssh disabled"
+                sys.exit(0)
             if j["webssh"].get("port"):
                sshport = j["webssh"]["port"]
-
-    if isenable == 0:
-        print "web ssh disabled"
-        sys.exit(0)
 
     p = os.path.dirname(sys.argv[0])
     f = os.popen("%s/%s -t -b -p %d -s /:SSH" % (p, DEFAULT_WEB_SSH_EXE, sshport))

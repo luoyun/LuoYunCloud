@@ -169,6 +169,7 @@ def regclc():
       return None
     if result == 0:
       LOG.error("socket closed")
+      return None
     t, l, s = struct.unpack("=LLi", response)
     if t != lydef.PKT_TYPE_OSM_REGISTER_REPLY:
       LOG.error("wrong packet %d" % t)
@@ -178,11 +179,11 @@ def regclc():
       return None
     lyconf.Config.status = lydef.OSM_STATUS_REGISTERED
     LOG.info("register to clc successfully")
-
-    return sock
   finally:
     if lyconf.Config.status != lydef.OSM_STATUS_REGISTERED:
       sock.close()
+      return None
+    return sock
 
 def connclc():
   clc_ip = lyconf.Config.clc_ip

@@ -11,8 +11,11 @@ DEFAULT_OSM_LOG_PATH = b'/LuoYun/log/luoyun.log'
 DEFAULT_OSM_SCRIPT_DIR = b'/LuoYun/scripts'
 
 LOG = lylog.logger()
+progrun = 1
 
 def myexit(sig, func=None):
+  global progrun
+  progrun = 0
   if sig == signal.SIGTERM:
     LOG.info("TERM signal captured")
   elif sig == signal.SIGINT:
@@ -87,25 +90,31 @@ def main():
   signal.signal(signal.SIGINT, myexit)
 
   sock = None
+  notify = 0
+  timeout = 3600
   timenow = time.time()
-  timeout = 5
-  while True:
+  while progrun:
     if not sock:
       sock = lyconn.connclc()
       if not sock:
         LOG.error("failed connecting clc")
         time.sleep(1)
+      else:
+        notify = 1
     else:
       result, response = lyutil.sockrecv(sock)
       if result == 0:
         LOG.info("close socket")
         sock.close()
+        sock = None
       elif result > 0:
         lyproc.process(sock, response)
     t = time.time()
-    if t - timenow >= timeout:
+    if t - timenow >= timeout or notify:
       timenow = t
-      lyapp.run(sock)
+      ret = lyapp.run(sock, notify)
+      if ret == 1 and notify:
+        notify = 0
     
 
 if __name__ == "__main__":

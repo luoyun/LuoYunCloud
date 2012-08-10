@@ -17,10 +17,13 @@ except ImportError:
     import simplejson as json
 
 import luoyuninfo
+import lylog
 
 DEFAULT_OSM_CONF_PATH = b'/LuoYun/conf/luoyun.conf'
+DEFAULT_WEB_LOG_PATH = b'/LuoYun/log/lyweb.log'
 luoyun_cookie = b''
 luoyun_domain = None
+LOG = lylog.logger()
 
 class LuoYunHttpRequestHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -81,8 +84,9 @@ def usage():
 
 if __name__ == '__main__':
     confpath = DEFAULT_OSM_CONF_PATH
+    logpath = DEFAULT_WEB_LOG_PATH
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hc:", ["help", "config="])
+        opts, args = getopt.getopt(sys.argv[1:], "hc:l:", ["help", "config=", "log="])
     except getopt.GetoptError:
         print 'Wrong command options, use -h to list command options'
         sys.exit(1)
@@ -92,9 +96,13 @@ if __name__ == '__main__':
             sys.exit()
         if o in ("-c", "--config"):
             conf_path = a
+        elif o in ("-l", "--log"):
+            log_path = a
         else:
             print 'Wrong command options'
             sys.exit(1)
+
+    lylog.setup(logpath)
 
     jsonstr = ""
     try:

@@ -6,31 +6,43 @@ LOG = lylog.logger()
 APP_Status = -1
 APP_Pending = {}
 
-def run(sock):
-  global APP_Pending, APP_Status
-  # run application status, if it exists
-  if not APP_Pending:
-    cmd = lyconf.Config.script_dir + '/status'
+def runcmd(cmdname):
+  global APP_Pending
+  if not APP_Pending or not APP_Pending.has_key(cmdname):
+    cmd = lyconf.Config.script_dir + '/' + cmdname
     if os.access(cmd, os.F_OK | os.X_OK):
-       LOG.debug("exec: %s" % cmd)
-       APP_Pending['status'] =  subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-  s = lydef.LY_S_APP_UNKNOWN
-  if APP_Pending.has_key('status'):
-    p = APP_Pending['status']
+      LOG.debug("exec: %s" % cmd)
+      APP_Pending[cmdname] =  subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  if APP_Pending.has_key(cmdname):
+    p = APP_Pending[cmdname]
     s = p.poll()
-    if s == None:
-      return
-    del APP_Pending['status']
+    if s != None:
+      del APP_Pending['status']
+    return (s, p)
+  else:
+    return (-1, None)
+
+def run(sock = None, notify = 0):
+  global APP_Status
+  ret = 0
+  s, p = runcmd('status')
+  if s != None:
     LOG.debug("status output:")
     for o in p.stdout.readlines():
       LOG.debug(o)
     if s < 0:
-      return
-    s += lydef.LY_S_APP_RUNNING;
+      s = lydef.LY_S_APP_UNKNOWN
+    else:
+      s += lydef.LY_S_APP_RUNNING
+    if s != APP_Status or notify:
+      LOG.info("status return code: %d" % s)
+      if sock:
+        d = struct.pack('i', s)
+        if lyutil.socksend(sock, lydef.PKT_TYPE_OSM_REPORT, d) >= 0:
+          ret = 1
+      APP_Status = s
+  else:
+    ret = -1
+  return ret
+  
 
-  if s != APP_Status:
-    LOG.info("status return code: %d" % s)
-    if sock:
-      d = struct.pack('i', s)
-      lyutil.socksend(sock, lydef.PKT_TYPE_OSM_REPORT, d)
-    APP_Status = s 

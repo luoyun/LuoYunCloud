@@ -3,12 +3,12 @@
 EXE=$(readlink $0)
 [ -z "$EXE" ] && EXE=$0
 DIR=$(dirname $EXE)
-EXE=webssh.py
+EXE=shellinaboxd
 
 if [ -x "$DIR/$EXE" ]
 then
     echo "Start $EXE ..."
-    $DIR/$EXE
+    $DIR/$EXE -t -b -p 8001 -s /:SSH
 else
     echo "Error: no $EXE"
     exit 1
