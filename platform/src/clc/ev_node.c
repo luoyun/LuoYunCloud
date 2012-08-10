@@ -260,6 +260,7 @@ static int __node_xml_register(xmlDoc * doc, xmlNode * node, int ent_id)
         }
         if (db_nf.secret)
             logwarn(_("new node takes ip(%s) used by tagged node\n"), nf->host_ip);
+        nf->status = NODE_STATUS_ONLINE;
         ret = db_node_insert(nf);
         if (ret < 0) {
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
@@ -292,6 +293,7 @@ static int __node_xml_register(xmlDoc * doc, xmlNode * node, int ent_id)
             ret = LY_S_REGISTERING_INIT;
         }
         ly_entity_update(ent_id, db_nf.id, LY_ENTITY_FLAG_STATUS_ONLINE);
+        nf->status = NODE_STATUS_ONLINE;
         if (db_node_update(DB_NODE_FIND_BY_ID, &db_nf.id, nf) < 0) {
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
             ret = -1;

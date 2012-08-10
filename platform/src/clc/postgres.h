@@ -39,6 +39,7 @@ int db_instance_find_ip_by_status(int status, char * ins_ip[], int size);
 int db_instance_get_node(int id);
 int * db_instance_get_all(int * num);
 int db_instance_init_status();
+int db_node_init_status();
 
 int ly_db_init();
 void ly_db_close();

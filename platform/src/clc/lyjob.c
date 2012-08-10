@@ -767,6 +767,7 @@ int job_init(void)
 
     /* init instance status in db */
     db_instance_init_status();
+    db_node_init_status();
 
     return 0;
 }

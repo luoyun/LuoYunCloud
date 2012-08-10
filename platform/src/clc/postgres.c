@@ -764,6 +764,22 @@ int db_instance_init_status()
     return __db_exec(sql);
 }
 
+int db_node_init_status()
+{
+    char sql[LINE_MAX];
+    if (snprintf(sql, LINE_MAX, "UPDATE node SET status = %d "
+                                "where status >= %d and status <= %d;",
+                                NODE_STATUS_OFFLINE,
+                                NODE_STATUS_INITIALIZED,
+                                NODE_STATUS_REGISTERED) >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    return __db_exec(sql);
+}
+
+
 int ly_db_init(void)
 {
     char conninfo[LINE_MAX];

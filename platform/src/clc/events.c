@@ -231,10 +231,17 @@ int ly_epoll_entity_recv(int ent_id)
         if (len < 0)
             loginfo(_("socket %d recv, errno %d\n"), fd, errno);
 
+        int type = ly_entity_type(ent_id);
+        int db_id = ly_entity_db_id(ent_id);
+        if (type == LY_ENTITY_NODE) {
+            logdebug(_("update node %d status in db to offline\n"), db_id);
+            db_node_update_status(DB_NODE_FIND_BY_ID, &db_id, NODE_STATUS_OFFLINE);
+            return 1;
+        }
+
         if (ly_entity_type(ent_id) != LY_ENTITY_OSM)
             return 1;
 
-        int db_id = ly_entity_db_id(ent_id);
         logdebug(_("update instance %d status in db\n"), db_id);
         InstanceInfo ii;
         ii.ip = NULL;
