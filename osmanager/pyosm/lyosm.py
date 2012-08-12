@@ -91,9 +91,11 @@ def main():
 
   sock = None
   notify = 0
+  appstatus = -1
   timeout = 3600
   timenow = time.time()
   while progrun:
+    # connect and register osmanager with control server
     if not sock:
       sock = lyconn.connclc()
       if not sock:
@@ -109,12 +111,18 @@ def main():
         sock = None
       elif result > 0:
         lyproc.process(sock, response)
+    # run scripts provided by user in script_dir
+    # adjust the timeout value when neccessary
     t = time.time()
-    if t - timenow >= timeout or notify:
+    if t - timenow >= timeout or appstatus == 0 or notify:
       timenow = t
-      ret = lyapp.run(sock, notify)
-      if ret == 1 and notify:
+      # lyapp.run returns 0 if any of the scripts is still running
+      appstatus = lyapp.run(sock, notify)
+      if appstatus > 0 and notify:
         notify = 0
+
+  # main() function exits
+  LOG.info('%s exits' % PROGRAM_NAME)
     
 
 if __name__ == "__main__":

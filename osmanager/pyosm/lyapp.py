@@ -27,12 +27,13 @@ def run(sock = None, notify = 0):
   ret = 0
   s, p = runcmd('status')
   if s != None:
-    LOG.debug("status output:")
-    for o in p.stdout.readlines():
-      LOG.debug(o)
     if s < 0:
+      LOG.debug("status unknown")
       s = lydef.LY_S_APP_UNKNOWN
     else:
+      LOG.debug("status output:")
+      for o in p.stdout.readlines():
+        LOG.debug(o)
       s += lydef.LY_S_APP_RUNNING
     if s != APP_Status or notify:
       LOG.info("status return code: %d" % s)
@@ -40,9 +41,9 @@ def run(sock = None, notify = 0):
         d = struct.pack('i', s)
         if lyutil.socksend(sock, lydef.PKT_TYPE_OSM_REPORT, d) >= 0:
           ret = 1
+        else:
+          ret = -1
       APP_Status = s
-  else:
-    ret = -1
   return ret
   
 
