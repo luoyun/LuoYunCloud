@@ -1,0 +1,54 @@
+The purpose of os mananger is to allow better control of instance in the cloud.
+Also, since os manager runs in the instance, it's decided to use python to 
+implement os manager so that it can be easily modified to fit instance's need.
+
+Currently, there are four components in OS mamanger,
+
+pyosc	- pyosc runs as soon as instance root file system is mounted. 
+          It reads instance configuration info that's provided by the cloud,
+          and saves the info to a standard location for other cs manager
+          components to use. Currently, the standard instance configuration
+          file location is /LuoYun/conf/luoyun.conf.
+          pyosc also configures basic system info such as root password,
+          root ssh key and network interface address.
+
+pyosm	- pyosm runs after instance network interface is properly set up
+          and enabled. Based on information provided by instance
+          configuration file, it registers the instance in LuoYun cloud
+          and maintains the connection as long as the instance is in running
+          state. Currently, pyosm also periodically runs 'status' command
+          that's under scripts directory. From the 'status' command result,
+          it tells Cloud Controller whether lyweb is properly running.
+
+pyweb	- pyweb runs after instance network interface is properly set up
+          and enabled. Currently pyweb starts a simple HTTP server and serves
+          simple web pages for the instance.
+
+webssh	- webssh runs after instance network interface is properly set up
+          and enabled. Instance owner can also choose to not run the webssh
+          client when instance gets started. The control option is given in
+          instance configuration file.
+
+Here are the steps to install os manager in instance,
+1. Create /LuoYun/bin directory in instance, and copy pyosc, pyosm, pyweb, and
+   webssh directories into /LuoYun/bin/. Modify index.html files under
+   /LuoYun/bin/pyweb/data/ to provide instance specific information.
+2. Create /LuoYun/build directory in instance, and create following regular
+   text files under /LuoYun/build
+   BASE: info about instance base OS
+   BUILD: build info about instance
+   CHANGELOG: chnagelog of instance
+   PACKAGES: list of packages installed in instance
+   VERSION: the version of instance and the version of main application
+            installed in instance
+   Currently, file VERSION is used by pyweb to build the web pages served
+   by pyweb.
+3. Create empty directory of /LuoYun/conf and /LuoYun/log. Both directories
+   are used by os manager.
+4. Copy scripts directory under /LuoYun and modify the scripts/status file
+   when neccessary.
+
+OS manager is also typically installed in appliance so that the related
+instances can be automatically managed through LuoYun Cloud Web interface.
+
+

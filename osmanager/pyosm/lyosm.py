@@ -5,7 +5,7 @@ import lylog, lyconf
 import lyutil, lyconn, lyproc, lyapp
 
 PROGRAM_NAME = b'lyosm.py'
-PROGRAM_VERSION = b'1.0'
+PROGRAM_VERSION = b'0.4.0'
 DEFAULT_OSM_CONF_PATH = b'/LuoYun/conf/luoyun.conf'
 DEFAULT_OSM_LOG_PATH = b'/LuoYun/log/luoyun.log'
 DEFAULT_OSM_SCRIPT_DIR = b'/LuoYun/scripts'
