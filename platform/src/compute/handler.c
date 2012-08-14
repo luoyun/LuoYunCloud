@@ -498,9 +498,9 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
                     if (g_c->config.vm_xml_disk)
                         snprintf(tmp, 1024, g_c->config.vm_xml_disk, path);
                     else if (hypervisor == HYPERVISOR_IS_XEN)
-                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_DISK, path, LUOYUN_INSTANCE_XEN_DISK3_NAME);
+                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_DISK, path, LUOYUN_INSTANCE_XEN_DISK2_NAME);
                     else if (hypervisor == HYPERVISOR_IS_KVM)
-                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_DISK, path, LUOYUN_INSTANCE_KVM_DISK3_NAME);
+                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_DISK, path, LUOYUN_INSTANCE_KVM_DISK2_NAME);
                     else {
                         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
                         goto out;
