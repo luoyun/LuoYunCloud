@@ -47,8 +47,13 @@ Here are the steps to install os manager in instance,
    are used by os manager.
 4. Copy scripts directory under /LuoYun and modify the scripts/status file
    when neccessary.
+5. Create following links so that all the os manager components can be
+   started automatically.
+ln -sf /LuoYun/bin/pyosc/start /etc/rc3.d/S01luoyun-osconfig
+ln -sf /LuoYun/bin/pyosm/start /etc/rc3.d/S90luoyun-osmanager
+ln -sf /LuoYun/bin/webssh/start /etc/rc3.d/S99luoyun-webssh
+ln -sf /LuoYun/bin/pyweb/start /etc/rc3.d/S99luoyun-web
 
 OS manager is also typically installed in appliance so that the related
 instances can be automatically managed through LuoYun Cloud Web interface.
-
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ln -sf /LuoYun/bin/pyosc/start /etc/rc3.d/S01luoyun-osconfig
 ln -sf /LuoYun/bin/pyosm/start /etc/rc3.d/S90luoyun-osmanager

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 nc=`which nc`
 [ ! -x "$nc" ] && exit 1

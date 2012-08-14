@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 EXE=$(readlink $0)
 [ -z "$EXE" ] && EXE=$0
