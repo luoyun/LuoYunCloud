@@ -226,6 +226,12 @@ int job_update_status(LYJobInfo * job, int status)
 
         /* need to query status if timed out */
         if (JOB_IS_TIMEOUT(status)) {
+            loginfo(_("job %d is timed out\n"), job->j_id);
+            int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, job->j_target_id);
+            if (ent_id > 0) {
+                loginfo(_("release entity %d\n"), ent_id);
+                ly_entity_release(ent_id);
+            }
             ii.ip = NULL;
             ii.status = DOMAIN_S_NEED_QUERY;
             ret = db_instance_update_status(job->j_target_id, &ii, -1);
