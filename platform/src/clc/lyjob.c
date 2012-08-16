@@ -252,6 +252,12 @@ int job_update_status(LYJobInfo * job, int status)
         else if (job->j_action == LY_A_NODE_STOP_INSTANCE &&
                  (status == LY_S_FINISHED_SUCCESS ||
                   status == LY_S_FINISHED_INSTANCE_NOT_RUNNING)) {
+            logdebug(_("instance %d stopped\n"), job->j_target_id);
+            int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, job->j_target_id);
+            if (ent_id > 0) {
+                loginfo(_("release entity %d\n"), ent_id);
+                ly_entity_release(ent_id);
+            }
             ii.ip = "0.0.0.0";
             ii.status = DOMAIN_S_STOP;
             ret = db_instance_update_status(job->j_target_id, &ii, -1);
@@ -503,14 +509,6 @@ static int __job_control_instance_simple(LYJobInfo * job)
         goto failed;
     }
     free(xml);
-
-    /* release instance entity for certain action */
-    if (job->j_action == LY_A_NODE_REBOOT_INSTANCE || 
-        job->j_action == LY_A_NODE_STOP_INSTANCE) {
-        ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, ci.ins_id);
-        loginfo(_("release entity %d\n"), ent_id);
-        ly_entity_release(ent_id);
-    }
 
     luoyun_node_ctrl_instance_cleanup(&ci);
     return 0;

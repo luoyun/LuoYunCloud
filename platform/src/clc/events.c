@@ -210,6 +210,11 @@ int ly_epoll_entity_recv(int ent_id)
         return __epoll_work_recv(ent_id);
 
     int fd = ly_entity_fd(ent_id);
+    if (fd < 0) {
+        logerror(_("fd for entity %d was closed. ignore event.\n"), ent_id);
+        return 1;
+    }
+
     LYPacketRecv *pkt = ly_entity_pkt(ent_id);
     if (pkt == NULL)
         return -255;
@@ -393,7 +398,6 @@ int ly_epoll_work_start(int port)
         ly_entity_release(id);
         /* close(listener); closed in ly_entity_release */
         return -1;
-        goto out;
     }
     ly_entity_init(id, LY_ENTITY_CLC);
 

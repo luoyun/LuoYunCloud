@@ -351,16 +351,17 @@ int ly_entity_release(int id)
 {
     if (g_entity_store == NULL || id < 0 || id >= LY_ENTITY_MAX)
         return -1;
+
     LYEntity *ent = g_entity_store + id;
+    if (ent->id < 0)
+        /* deleted already */
+        return 0;
+
     list_del(&ent->list);
 
     if (ent->fd >= 0)
         close(ent->fd);
     ent->fd = -1;
-    ent->id = -1;
-    ent->db_id = -1;
-    ent->type = LY_ENTITY_UNKNOWN;
-    ent->flag = 0;
 
     /* don't free packet buffer
     if (ent->pkt) {
@@ -378,6 +379,10 @@ int ly_entity_release(int id)
         ent->entity = NULL;
     }
 
+    ent->id = -1;
+    ent->db_id = -1;
+    ent->type = LY_ENTITY_UNKNOWN;
+    ent->flag = 0;
     lyauth_free(&ent->auth);
 
     return 0;
