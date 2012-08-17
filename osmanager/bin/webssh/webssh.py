@@ -38,7 +38,7 @@ if __name__ == '__main__':
             sys.exit()
         if o in ("-c", "--config"):
             confpath = a
-        if o in ("-p", "--port"):
+        elif o in ("-p", "--port"):
             sshport = int(a)
         else:
             print 'Wrong command options'

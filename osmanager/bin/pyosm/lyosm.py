@@ -8,7 +8,7 @@ PROGRAM_NAME = b'lyosm.py'
 PROGRAM_VERSION = b'0.4.0'
 DEFAULT_OSM_CONF_PATH = b'/LuoYun/conf/luoyun.conf'
 DEFAULT_OSM_LOG_PATH = b'/LuoYun/log/luoyun.log'
-DEFAULT_OSM_SCRIPT_DIR = b'/LuoYun/scripts'
+DEFAULT_OSM_SCRIPT_DIR = b'/LuoYun/custom/scripts'
 
 LOG = lylog.logger()
 progrun = 1
@@ -30,7 +30,7 @@ def usage():
   print '  -c, --config    config file, must be full path'
   print '                  default is  %s' % DEFAULT_OSM_CONF_PATH
   print '  -l, --log       log file, must be full path'
-  print '                  default is %s' %DEFAULT_OSM_LOG_PATH
+  print '                  default is %s' % DEFAULT_OSM_LOG_PATH
   print '  -s, --script    script directory, must be full path'
   print '                  default is %s' % DEFAULT_OSM_SCRIPT_DIR
   print '  --debug         debug mode, log to strandard output'

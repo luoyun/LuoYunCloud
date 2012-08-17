@@ -21,6 +21,8 @@ import lylog
 
 DEFAULT_OSM_CONF_PATH = b'/LuoYun/conf/luoyun.conf'
 DEFAULT_WEB_LOG_PATH = b'/LuoYun/log/lyweb.log'
+DEFAULT_WEB_PAGE_DIR = b'/LuoYun/custom/www'
+DEFAULT_WEB_PORT = 8080
 luoyun_cookie = b''
 luoyun_domain = None
 LOG = lylog.logger()
@@ -72,21 +74,33 @@ class LuoYunHttpRequestHandler(SimpleHTTPRequestHandler):
 
 
 def main(HandlerClass = LuoYunHttpRequestHandler,
-         ServerClass = BaseHTTPServer.HTTPServer):
-    BaseHTTPServer.test(HandlerClass, ServerClass)
+         ServerClass = BaseHTTPServer.HTTPServer, port = 8080):
+    server_address = ('', port)
+    httpd = ServerClass(server_address, HandlerClass)
+    httpd.serve_forever()
+
 
 def usage():
-  print '%s OS manager of LuoYun Cloud Platform.' % PROGRAM_NAME
+  print '%s Start simple http server used by LuoYun Cloud Platform.' % PROGRAM_NAME
   print 'Usage : %s [OPTION] ' % PROGRAM_NAME
   print '  -c, --config    config file, must be full path'
   print '                  default is  %s' % DEFAULT_OSM_CONF_PATH
+  print '  -l, --log       log file, must be full path'
+  print '                  default is %s' % DEFAULT_WEB_LOG_PATH
+  print '  -w, --web       web file directory, must be full path'
+  print '                  default is %s' % DEFAULT_WEB_PAGE_DIR
+  print '  -p, --port      http server listening'
+  print '                  default is %s' % DEFAULT_WEB_PORT
   print '  -h, --help      '
 
 if __name__ == '__main__':
     confpath = DEFAULT_OSM_CONF_PATH
     logpath = DEFAULT_WEB_LOG_PATH
+    webdir = DEFAULT_WEB_PAGE_DIR
+    webport = DEFAULT_WEB_PORT
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hc:l:", ["help", "config=", "log="])
+        opts, args = getopt.getopt(sys.argv[1:], "hc:l:p:w:",
+                              ["help", "config=", "log=", "port=", "web="])
     except getopt.GetoptError:
         print 'Wrong command options, use -h to list command options'
         sys.exit(1)
@@ -95,9 +109,13 @@ if __name__ == '__main__':
             usage()
             sys.exit()
         if o in ("-c", "--config"):
-            conf_path = a
+            confpath = a
         elif o in ("-l", "--log"):
-            log_path = a
+            logpath = a
+        elif o in ("-p", "--port"):
+            webport = int(a)
+        elif o in ("-w", "--web"):
+            webdir = a
         else:
             print 'Wrong command options'
             sys.exit(1)
@@ -126,5 +144,6 @@ if __name__ == '__main__':
 
     p = os.path.dirname(sys.argv[0])
     sys.path.append(p)
-    os.chdir("%s/data" % p)
-    main()
+    os.chdir(webdir)
+    main(port=webport)
+

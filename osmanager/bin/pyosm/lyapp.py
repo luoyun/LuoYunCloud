@@ -30,11 +30,13 @@ def run(sock = None, notify = 0):
     if s < 0:
       LOG.debug("status unknown")
       s = lydef.LY_S_APP_UNKNOWN
-    else:
-      LOG.debug("status output:")
+    elif s > 0:
+      LOG.info("status output:")
       for o in p.stdout.readlines():
-        LOG.debug(o)
+        LOG.info(o)
       s += lydef.LY_S_APP_RUNNING
+    else:
+      s = lydef.LY_S_APP_RUNNING
     if s != APP_Status or notify:
       LOG.info("status return code: %d" % s)
       if sock:

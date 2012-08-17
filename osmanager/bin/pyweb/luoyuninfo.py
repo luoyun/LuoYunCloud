@@ -6,9 +6,7 @@ def get_sysinfo(hostname = None):
     """Get system info, including
        $hostname $application $version1 $version2 $curtime"""
     if hostname == None:
-        hostname = os.uname()[1]
-    if hostname == "localhost":
-        f = os.popen("ifconfig eth0")
+        f = os.popen("/sbin/ifconfig eth0")
         s = f.read()
         if f.close() == None: 
             for l in s.split('\n'):
