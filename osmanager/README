@@ -64,7 +64,8 @@ Here are the steps to install os manager in instance,
                         installed in instance.
    /LuoYun/custom/scrtips/config - is the file used to configure application.
                                    It's invoked by osmanager.sh.
-5) Run /LuoYun/install.sh to start OS Manager automatically when instance gets
+5) Review mand modify osmanager.sh when neceassry.
+6) Run /LuoYun/install.sh to start OS Manager automatically when instance gets
    started.
 
 While installing OS Manager in appliance, make sure stop 5 above is done in

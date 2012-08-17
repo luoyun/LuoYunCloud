@@ -23,6 +23,7 @@ exedir=${luoyundir}/bin
 customdir=${luoyundir}/custom
 confdir=${luoyundir}/conf
 confpath=$confdir/luoyun.conf
+logdir=${luoyundir}/log
 
 myexit()
 {
@@ -63,6 +64,9 @@ then
 fi
 [ $newconf -eq 0 ] || cp "$mntdir/luoyun.ini" "$confpath" || myexit "osmanger error: failed copy $confpath"
 umount /dev/fd0 && [ -n "$tmpmntdir" ] && rmdir $tmpmntdir 
+
+# create log directory
+[ -d "$logdir" ] ||  mkdir -p $logdir || myexit "osmanger error: failed mkdir $logdir"
 
 # start osconfig
 exepath=${exedir}/pyosc/osconfig.py
