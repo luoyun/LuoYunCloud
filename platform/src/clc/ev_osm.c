@@ -94,8 +94,8 @@ int eh_process_osm_report(char * buf, int size, int ent_id)
             loginfo(_("instance (tag:%d) is servicing\n"), db_id);
         }
     }
-    else if (status == LY_S_APP_UNKNOWN) {
-        loginfo(_("osm report: %d, %s\n"), status, "application no status");
+    else if (status > LY_S_APP_RUNNING && status <= LY_S_APP_FAILED) {
+        loginfo(_("osm report: %d, %s\n"), status, "application status unknown");
         if (!ly_entity_is_running(ent_id) || ly_entity_is_serving(ent_id)) {
             InstanceInfo ii;
             ii.status = DOMAIN_S_RUNNING;
@@ -110,19 +110,7 @@ int eh_process_osm_report(char * buf, int size, int ent_id)
         }
     }
     else {
-        loginfo(_("osm report: %d, %s\n"), status, "application state unknown");
-        if (ly_entity_is_serving(ent_id)) {
-            InstanceInfo ii;
-            ii.status = DOMAIN_S_RUNNING;
-            ii.ip = NULL;
-            if (db_instance_update_status(db_id, &ii, -1) < 0) {
-                logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-                return -1;
-            }
-
-            ly_entity_update(ent_id, -1, LY_ENTITY_FLAG_STATUS_REGISTERED);
-            loginfo(_("instance (tag:%d) is running without web serving\n"), db_id);
-        }
+        logwarn(_("osm report: %d, %s\n"), status, "undefined osm report, ignore");
     }
     return 0;
 }
