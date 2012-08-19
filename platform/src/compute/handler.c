@@ -204,7 +204,6 @@ static int __domain_dir_clean(char * dir, int keepdir)
     char * files[] = { LUOYUN_INSTANCE_DISK_FILE,
                        LUOYUN_INSTANCE_CONF_FILE,
                        LUOYUN_INSTANCE_STORAGE1_FILE,
-                       LUOYUN_INSTANCE_STORAGE2_FILE,
                        "kernel",
                        "initrd",
                        NULL };
@@ -467,12 +466,14 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
                         }
                         if (strcmp(disk_type->u.string.ptr, "disk") == 0) {
                             if (disk_found) {
+                                /* only support one disk for now */
                                 logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "dup disk");
                                 goto out;
                             }
                             disk_found = 1;
                         }
                         else
+                            /* ignore other disk types */
                             break;
                     }
                     else if (strcmp(disk_value->u.object.values[k].name, "size") == 0) {
@@ -574,6 +575,7 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
 
     char net[1024], disk[1024];
     char path[1024], conf_path[1024];
+    int disk_len;
 
     /* os disk */
     if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
@@ -591,6 +593,7 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         return NULL;
     }
+    disk_len = strlen(disk);
 
     /* config disk */
     if (snprintf(conf_path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
@@ -598,7 +601,7 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         return NULL;
     }
-#if 0 /* floppy disk */
+#if 0 /* use floppy disk instead */
     if (g_c->config.vm_xml_disk)
         snprintf(tmp, 1024, g_c->config.vm_xml_disk, conf_path);
     else if (hypervisor == HYPERVISOR_IS_XEN)
@@ -629,6 +632,22 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         if (__domain_xml_json(ci, hypervisor, net, 1024, disk, 1024) != 0) {
              logerror(_("error in %s(%d).\n"), __func__, __LINE__);
              goto out;
+        }
+    }
+
+    if (disk_len == strlen(disk)) {
+        /* delete disk */
+        if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
+                     ci->ins_id, LUOYUN_INSTANCE_STORAGE1_FILE) >= 1024) {
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+            goto out;
+        }
+        if (access(path, F_OK) == 0) {
+            if (unlink(path)) {
+                logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
+                           strerror(errno), errno);
+                goto out;
+            }
         }
     }
 
