@@ -31,6 +31,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <net/if.h>
+#include <ifaddrs.h>            /* getifaddrs */
 #include <unistd.h>             /* gethostname */
 #include <netdb.h>              /* struct hostent */
 #include <errno.h>
@@ -937,6 +938,7 @@ int ly_epoll_mcast_register()
     }
 
     /* Join the multicast group on INADDR_ANY interface */
+    /*
     struct ip_mreq group;
     group.imr_multiaddr.s_addr = inet_addr(c->clc_mcast_ip);
     group.imr_interface.s_addr = INADDR_ANY;
@@ -945,6 +947,38 @@ int ly_epoll_mcast_register()
         close(sd);
         return -1;
     }
+    */
+    /* go through all INET interface */
+    struct ifaddrs *ifaddr, *ifa;
+    if (getifaddrs(&ifaddr) == -1) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        close(sd);
+        return -1;
+    }
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+        char host[NI_MAXHOST];
+        if (ifa->ifa_addr == NULL || ifa->ifa_addr->sa_family != AF_INET)
+            continue;
+        /* get ip */
+        int s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+                            host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+        if (s != 0) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            close(sd);
+            return -1;
+        }
+        logdebug(_("mcast listen on %s\n"), host);
+        struct ip_mreq group;
+        group.imr_multiaddr.s_addr = inet_addr(c->clc_mcast_ip);
+        group.imr_interface.s_addr = inet_addr(host);
+        if (setsockopt (sd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *) &group, sizeof(group)) < 0) {
+            logerror(_("Adding multicast group error %s"), __func__);
+            close(sd);
+            return -1;
+        }
+        logdebug(_("mcast listen on %s registered\n"), host);
+    }
+
 
     /* enable receiving control message */
     int yes = 1;
