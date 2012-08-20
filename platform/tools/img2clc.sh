@@ -20,8 +20,8 @@ insert_new()
   m=$(echo $m | awk '{print $1}' )
   sql=$(cat <<EOL
 psql -c \
-'insert into appliance (name, summary, user_id, catalog_id, filesize, checksum, created, updated)'\
-'values ('\'$name\'', '\'$file\'', 1, 1, $size, '\'$m\'', '\'now\'', '\'now\'');' \
+'insert into appliance (id, name, summary, user_id, catalog_id, filesize, checksum, created, updated)'\
+'values (nextval('\'appliance_id_seq\''), '\'$name\'', '\'$file\'', 1, 1, $size, '\'$m\'', '\'now\'', '\'now\'');' \
 -d luoyun
 EOL
 )
