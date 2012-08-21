@@ -47,7 +47,8 @@ int node_schedule()
             !ly_entity_is_enabled(ent_curr))
             continue;
 
-        ent_id = NODE_SCHEDULE_NODE_BUSY;
+        if (ent_id < 0)
+            ent_id = NODE_SCHEDULE_NODE_BUSY;
         if (ni->storage_free <= g_c->node_storage_low)
             continue;
         logdebug("%s:%d %d %d %d\n", __func__,

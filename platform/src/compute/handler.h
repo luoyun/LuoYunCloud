@@ -5,6 +5,7 @@
 
 #define LUOYUN_APPLIANCE_URI_MAX 256
 #define LUOYUN_APPLIANCE_URI_TEMPLATE "http://%s/dl/appliance/appliance_%s"
+#define LUOYUN_APPLIANCE_FILE "app.img.gz"
 #define LUOYUN_INSTANCE_DISK_FILE "os.img"
 #define LUOYUN_INSTANCE_CONF_FILE "floppy.img"
 #define LUOYUN_INSTANCE_STORAGE1_FILE "disk1.img"
