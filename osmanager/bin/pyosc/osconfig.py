@@ -177,8 +177,8 @@ def main():
     passwdconfig(j["passwd_hash"])
   else:
     passwdconfig()
-  if j.get("nameserver"):
-    nameserverconfig(j["nameserver"])
+  if j.get("nameservers"):
+    nameserverconfig(j["nameservers"])
 
 def usage():
   print '%s Configure essential system settings' % PROGRAM_NAME
