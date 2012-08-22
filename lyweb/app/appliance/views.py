@@ -45,14 +45,19 @@ class Index(AppRequestHandler):
         stop = start + page_size
 
         apps = self.db2.query(Appliance).filter_by(
-            catalog_id=catalog_id).order_by(by_exp).slice(start, stop)
+            catalog_id=catalog_id).filter_by(
+            isuseable=True).filter_by(
+            isprivate=False).order_by(by_exp)
+
+        total = apps.count()
+        apps = apps.slice(start, stop)
             
         catalogs = self.db2.query(ApplianceCatalog).all()
         for c in catalogs:
             c.total = self.db2.query(Appliance.id).filter_by( catalog_id = c.id ).count()
 
         pagination = Pagination(
-            total = self.db2.query(Appliance.id).count(),
+            total = total,
             page_size = page_size, cur_page = cur_page )
 
         page_html = pagination.html( self.get_page_url )
@@ -257,7 +262,7 @@ class Delete(AppRequestHandler):
             return self.done( msg )
 
         # auth delete
-        if self.current_user.id != app.user_id:
+        if  not (self.current_user.id == app.user_id or self.has_permission('admin')):
             msg = _('No permissions to delete appliance !')
             return self.done( msg )
 
@@ -305,32 +310,116 @@ class View(AppRequestHandler):
                 'appliance/action_result.html',
                 msg = 'Have not found appliance %s !' % id )
 
-        instances = self.db2.query(Instance).filter_by( appliance_id=app.id ).all()
+        # TODO: page
+        instances, page_html = self.page_view_instances(app)
+        #instances = self.db2.query(Instance).filter_by( appliance_id=app.id ).all()
 
         d = { 'title': "View Appliance", 'appliance': app,
-              'instances': instances }
+              'instances': instances, 'page_html': page_html }
 
-        if ajax:
-            self.render('appliance/view_by_ajax.html', **d)
+        self.render('appliance/view.html', **d)
+
+
+    def page_view_instances(self, app):
+
+        view = self.get_argument('view', 'all')
+        by = self.get_argument('by', 'updated')
+        sort = self.get_argument('sort', 'desc')
+        status = self.get_argument('status', 'all')
+        page_size = int(self.get_argument(
+                'sepa', settings.APPLIANCE_INSTANCE_LIST_PAGE_SIZE))
+        cur_page = int(self.get_argument('p', 1))
+
+        start = (cur_page - 1) * page_size
+        stop = start + page_size
+
+        if status == 'running':
+            slist = settings.INSTANCE_SLIST_RUNING
+        elif status == 'stoped':
+            slist = settings.INSTANCE_SLIST_STOPED
         else:
-            self.render('appliance/view.html', **d)
+            slist = settings.INSTANCE_SLIST_ALL
+
+        instances = self.db2.query(Instance).filter(
+            Instance.isprivate != True ).filter(
+            Instance.status.in_( slist) ).filter(
+            Instance.appliance_id == app.id)
+            
+
+        if view == 'self' and self.current_user:
+            instances = instances.filter_by(
+                user_id = self.current_user.id )
+
+        if by == 'created':
+            by_obj = Instance.created
+        else:
+            by_obj = Instance.updated
+
+        sort_by_obj = desc(by_obj) if sort == 'desc' else asc(by_obj)
+
+        instances = instances.order_by( sort_by_obj )
+
+        total = instances.count()
+        instances = instances.slice(start, stop).all()
+
+        if total > page_size:
+            page_html = Pagination(
+                total = total,
+                page_size = page_size,
+                cur_page = cur_page ).html(self.get_page_url)
+        else:
+            page_html = ""
+
+        return instances, page_html
+        
 
 
-
-class CreateInstance(LyRequestHandler):
+class SetUseable(AppRequestHandler):
 
     @authenticated
     def get(self, id):
 
+        # TODO:
+        url = self.get_argument('next_url', None)
+        if not url:
+            url = self.reverse_url('appliance:view', id)
+
         app = self.db2.query(Appliance).get(id)
         if not app:
-            return self.render(
-                'appliance/action_result.html',
-                msg = 'Have not found appliance %s !' % id)
+            return self.write( _('No such appliance !') )
 
-        d = { 'title': 'Create Instance', 'appliance': app,
-              'name': "%s's %s" % (
-                self.current_user.username, app.name) }
+        if not ( app.user_id == self.current_user.id or
+                 self.has_permission('admin') ):
+            return self.write( _('No permissions !') )
 
-        self.render('appliance/create_instance.html', **d)
+        flag = self.get_argument('isuseable', None)
+        app.isuseable = True if flag == 'true' else False
+        self.db2.commit()
 
+        self.redirect( url )
+
+
+
+class SetPrivate(AppRequestHandler):
+
+    @authenticated
+    def get(self, id):
+
+        # TODO:
+        url = self.get_argument('next_url', None)
+        if not url:
+            url = self.reverse_url('appliance:view', id)
+
+        app = self.db2.query(Appliance).get(id)
+        if not app:
+            return self.write( _('No such appliance !') )
+
+        if not ( app.user_id == self.current_user.id or
+                 self.has_permission('admin') ):
+            return self.write( _('No permissions !') )
+
+        flag = self.get_argument('isprivate', None)
+        app.isprivate = True if flag == 'true' else False
+        self.db2.commit()
+
+        self.redirect( url )

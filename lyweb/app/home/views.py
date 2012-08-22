@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import os, logging
+import os, logging, json
 
 from lycustom import LyRequestHandler, Pagination
 from tornado.web import authenticated
@@ -11,6 +11,7 @@ from app.instance.models import Instance
 from app.appliance.models import Appliance
 from app.node.models import Node
 from app.account.models import Permission
+from app.system.models import LuoYunConfig
 
 import settings
 
@@ -29,25 +30,24 @@ class Index(LyRequestHandler):
         start = (cur_page - 1) * page_size
         stop = start + page_size
 
-        instances = self.db2.query(Instance).filter(
-            Instance.status != settings.INSTANCE_DELETED_STATUS)
+        instances = self.db2.query(Instance)
+
         if view == 'self' and self.current_user:
             instances = instances.filter_by(
-                user_id=self.current_user.id )
+                user_id = self.current_user.id )
+
         instances = instances.slice(start, stop)
 
         # TODO:
 
 
         if self.current_user and view == 'self':
-            USED_INSTANCE = self.db2.query(Instance.id).filter(
-                Instance.user_id == self.current_user.id).filter(
-                Instance.status != settings.INSTANCE_DELETED_STATUS).count()
-            TOTAL_APPLIANCE = self.db2.query(Appliance.id).filter(
-                Appliance.user_id == self.current_user.id).count()
+            USED_INSTANCE = self.db2.query(Instance.id).filter_by(
+                user_id = self.current_user.id).count()
+            TOTAL_APPLIANCE = self.db2.query(Appliance.id).filter_by(
+                user_id = self.current_user.id).count()
         else:
-            USED_INSTANCE = self.db2.query(Instance.id).filter(
-                Instance.status != settings.INSTANCE_DELETED_STATUS).count()
+            USED_INSTANCE = self.db2.query(Instance.id).count()
             TOTAL_APPLIANCE = 0
 
         page_html = Pagination(
@@ -129,6 +129,7 @@ class NoPermission(LyRequestHandler):
 
         d = { 'title': _("Permission Denied"),
               'ADMIN_EMAIL': ADMIN_EMAIL,
+              'ADMIN_ID': 1,
               'PERMS': PERMS }
 
         self.set_status(403)
@@ -142,7 +143,8 @@ class NoResource(LyRequestHandler):
         reason = self.get_argument('reason', '')
 
         d = { 'title': _("No Resource"),
-              'REASON': reason }
+              'REASON': reason,
+              'USED_STORAGE': self.get_argument('used', 0)}
 
         insts = self.db2.query(Instance).filter(
             Instance.user_id == self.current_user.id )
@@ -154,4 +156,26 @@ class NoResource(LyRequestHandler):
                 d['USED_CPUS'] += i.cpus
                 d['USED_MEMORY'] += i.memory
 
+        if hasattr(settings, 'ADMIN_EMAIL'):
+            d['ADMIN_EMAIL'] = settings.ADMIN_EMAIL
+        else:
+            d['ADMIN_EMAIL'] = 'contact@luoyun.co'
+
+        d['ADMIN_ID'] = 1
+
         self.render('home/no_resource.html', **d)
+
+
+
+class RegistrationProtocol(LyRequestHandler):
+
+    def get(self):
+
+        protocol = self.db2.query(LuoYunConfig).filter_by(key='protocol').first()
+        if protocol:
+            rp = json.loads(protocol.value).get('html')
+        else:
+            rp = None
+
+        self.render( 'home/registration_protocol.html',
+                     REGISTRATION_PROTOCOL = rp )

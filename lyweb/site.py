@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import logging
+import sys, logging, json
 
 import settings
 
@@ -11,8 +11,9 @@ gettext.install( 'app', settings.I18N_PATH, unicode=False )
 import tornado.ioloop
 import tornado.web
 
-from urls import settings as app_settings
+from urls import tornado_settings as app_settings
 from urls import handlers as app_handlers
+
 
 import lyorm
 
@@ -23,11 +24,38 @@ define("port", default=8888, help="given port", type=int)
 
 class Application(tornado.web.Application):
     def __init__(self):
-        tornado.web.Application.__init__(self, app_handlers, **app_settings)
 
         # SQLAlchemy connect
         self.db2 = lyorm.dbsession
 
+        # TEST db connect
+        try:
+            from sqlalchemy.exc import OperationalError, ProgrammingError
+            from tool.network import set_network_pool
+            set_network_pool(self.db2)
+
+            # Normal web server
+            return tornado.web.Application.__init__(self, app_handlers, **app_settings)
+
+        except OperationalError, msg:
+            # DB connect error, show the install step
+            logging.warning('OperationalError: %s' % msg)
+        except ProgrammingError, msg:
+            logging.warning('ProgrammingError: %s' % msg)
+            # TODO
+            import manage
+            manage.syncdb()
+            manage.i18n()
+
+        except Exception, msg:
+            print 'A error : %s !!!' % msg
+            pass
+
+        # This is error handlers
+        from app.install.urls import handlers as install_handlers
+        tornado.web.Application.__init__(self, install_handlers, **app_settings)
+
+                
 
 
 def main():
@@ -60,6 +88,10 @@ def main():
 
 
 if __name__ == "__main__":
+
+    # save the global argv of program
+    settings.CMD_ARGV = sys.argv
+    print 'settings.CMD_ARGV = ', settings.CMD_ARGV
 
     try:
         main()

@@ -8,13 +8,18 @@ from app.account.models import User, Group, UserProfile
 from app.instance.models import Instance
 
 from app.account.forms import ResetPasswordForm
-from app.admin.forms import CreateUserForm, UserResourceForm
+from app.admin.forms import CreateUserForm, UserResourceForm, \
+    UserGroupEditForm
 
 import random, time, pickle, base64
 from hashlib import md5, sha512, sha1
 from app.account.utils import encrypt_password, check_password
 
+from sqlalchemy.sql.expression import asc, desc
+
 from lycustom import has_permission
+
+from settings import ADMIN_USER_LIST_PAGE_SIZE as USER_PS
 
 
 class UserManagement(LyRequestHandler):
@@ -39,7 +44,10 @@ class UserManagement(LyRequestHandler):
     def get(self):
 
         if self.action == 'index':
-            self.get_index()
+            if self.user:
+                self.get_view()
+            else:
+                self.get_index()
 
         elif self.action == 'view':
             self.get_view()
@@ -50,17 +58,14 @@ class UserManagement(LyRequestHandler):
         elif self.action == 'add':
             self.get_add()
 
-        elif self.action == 'instances':
-            self.get_instances()
-
-        elif self.action == 'permissions':
-            self.get_permissions()
-
-        elif self.action == 'groups':
-            self.get_groups()
-
         elif self.action == 'edit_resources':
             self.get_edit_resources()
+
+        elif self.action == 'set_lock_flag':
+            self.get_set_lock_flag()
+
+        elif self.action == 'edit_groups':
+            self.get_edit_groups()
 
         else:
             self.write( _('Wrong action value!') )
@@ -80,32 +85,53 @@ class UserManagement(LyRequestHandler):
         elif self.action == 'edit_resources':
             self.post_edit_resources()
 
+        elif self.action == 'edit_groups':
+            self.post_edit_groups()
+
         else:
             self.write( _('Wrong action value!') )
 
 
     def get_index(self):
 
-        # Show admin user index
-        USER_LIST = self.db2.query(User).order_by('id')
-        self.render('admin/user/index.html', title=_('User Management'),
-                    USER_LIST = USER_LIST )
+        page_size = int( self.get_argument('sepa', USER_PS) )
+        cur_page = int( self.get_argument('p', 1) )
+        by = self.get_argument('by', 'id')
+        sort = self.get_argument('sort', 'ASC')
+
+        by_exp = desc(by) if sort == 'DESC' else asc(by)
+        start = (cur_page - 1) * page_size
+        stop = start + page_size
+
+        UL = self.db2.query(User).order_by( by_exp )
+        total = UL.count()
+        UL = UL.slice(start, stop)
+
+        pagination = Pagination(
+            total = total, page_size = page_size,
+            cur_page = cur_page )
+
+        page_html = pagination.html( self.get_page_url )
+            
+
+        d = { 'title': _('Admin User Management'),
+              'USER_LIST': UL, 'PAGE_HTML': page_html,
+              'TOTAL_USER': total }
+
+        self.render( 'admin/user/index.html', **d )
 
 
     def get_view(self):
 
-        instances = self.db2.query(Instance).filter_by(user_id=self.user.id)
-
         self.render( 'admin/user/view.html',
-                     title = 'View User', user = self.user,
-                     INSTANCE_LIST = instances )
+                     title = 'View User', user = self.user )
 
 
 
     def get_reset_password(self):
 
         self.render( 'admin/user/reset_password.html', title = _('Reset Password'),
-                     form = ResetPasswordForm(), user = self.user )
+                     form = ResetPasswordForm(), USER = self.user )
 
 
     def post_reset_password(self):
@@ -126,7 +152,7 @@ class UserManagement(LyRequestHandler):
             return self.redirect( url )
 
         self.render( 'admin/user/reset_password.html', title = _('Reset Password'),
-                     form = form, user = self.user )
+                     form = form, USER = self.user )
 
 
     # Add a new user manually
@@ -167,32 +193,6 @@ class UserManagement(LyRequestHandler):
         self.render( 'admin/user/add.html', form = form )
 
 
-    # Get instances list of user
-    def get_instances(self):
-
-        instances = self.db2.query(Instance).filter_by(user_id=self.user.id)
-
-        self.render( 'admin/user/instances.html',
-                     title = _("User's Instances"), user = self.user,
-                     INSTANCE_LIST = instances )
-
-
-    # Get permissions list of user
-    def get_permissions(self):
-
-        self.render( 'admin/user/permissions.html',
-                     title = _("User's Permissions"),
-                     user = self.user )
-
-
-    # Get group list of user
-    def get_groups(self):
-
-        self.render( 'admin/user/groups.html',
-                     title = _("User's groups"),
-                     user = self.user )
-
-
     def get_edit_resources(self):
 
         form = UserResourceForm()
@@ -206,11 +206,13 @@ class UserManagement(LyRequestHandler):
         form.memory.data = self.user.profile.memory
         form.cpus.data = self.user.profile.cpus
         form.instances.data = self.user.profile.instances
+        form.storage.data = self.user.profile.storage
 
         self.render( 'admin/user/edit_resources.html',
                      title = _('Edit User %s') % self.user.username,
                      form = form, USER = self.user )
     
+
 
     def post_edit_resources(self):
 
@@ -221,6 +223,7 @@ class UserManagement(LyRequestHandler):
             self.user.profile.memory = form.memory.data
             self.user.profile.cpus = form.cpus.data
             self.user.profile.instances = form.instances.data
+            self.user.profile.storage = form.storage.data
             self.db2.commit()
 
             url = self.application.reverse_url('admin:user')
@@ -229,3 +232,51 @@ class UserManagement(LyRequestHandler):
 
         # Have a error
         self.render( 'admin/user/edit_resources.html', form = form, USER = self.user )
+
+
+    def get_set_lock_flag(self):
+
+        flag = self.get_argument('islocked', None)
+        self.user.islocked = True if flag == 'true' else False
+        self.db2.commit()
+
+        url = self.reverse_url('admin:user')
+        url += '?id=%s&action=view' % self.user.id
+
+        self.redirect( url )
+
+    def get_edit_groups(self):
+
+        choices = []
+        default = []
+
+        groups = self.db2.query(Group).all()
+        for G in groups:
+            choices.append( (G.name, G.name) )
+            if G in self.user.groups:
+                default.append( G.name )
+
+        form = UserGroupEditForm()
+        form.groups.choices = choices
+        form.groups.default = default
+        form.process()
+
+        self.render( 'admin/user/edit_groups.html',
+                     form = form, USER = self.user )
+
+
+    def post_edit_groups(self):
+
+        groups = self.request.arguments.get('groups', [])
+        group_obj = []
+
+        for name in groups:
+            G = self.db2.query(Group).filter_by(name=name).first()
+            if G: group_obj.append( G )
+
+        self.user.groups = group_obj
+        self.db2.commit()
+
+        url = self.reverse_url('admin:user')
+        url += '?id=%s' % self.user.id
+        return self.redirect( url )

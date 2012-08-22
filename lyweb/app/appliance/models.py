@@ -59,7 +59,8 @@ class Appliance(ORMBase):
     filesize = Column( Integer )
     checksum = Column( String(32) ) # md5 value
 
-    is_useable = Column( Boolean, default = False)
+    isuseable = Column( Boolean, default = True)
+    isprivate = Column( Boolean, default = True)
     popularity = Column( Integer, default = 0 )
 
     created = Column( DateTime, default=datetime.utcnow() )
@@ -76,6 +77,7 @@ class Appliance(ORMBase):
         return _("[Appliance(%s)]") % self.name
 
 
+    @property
     def logo_url(self):
 
         if hasattr(self, 'logoname') and self.logoname:

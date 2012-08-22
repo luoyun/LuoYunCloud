@@ -1,18 +1,73 @@
 <%inherit file="/admin/admin_base.html" />
 
+<%block name="innav">
+<li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
+<li>${ _("View") } <a href="${ reverse_url('admin:group') }?id=${ GROUP.id }">${ GROUP.name }</a></li>
+</%block>
+
 <%block name="sidemain">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
-    <span><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></span>&gt;
-    <span>${ group.name }</span>
-  </div>
+<h2 class="title">${ _("Group View") }</h2>
+
+<div class="ly-table kvlist">
+  <table>
+    <tbody>
+      <tr>
+	<td>${ _("ID") }</td>
+	<td>${ GROUP.id }</td>
+      </tr>
+      <tr>
+	<td>${ _("Name") }</td>
+	<td>${ GROUP.name }</td>
+      </tr>
+      <tr>
+	<td>${ _("Islocked") }</td>
+	<td>${ GROUP.islocked }</td>
+      </tr>
+      <tr>
+	<td>${ _("description") }</td>
+	<td>${ GROUP.description }</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
-<div class="main-wrap">
-  <span><a class="button" href="${ reverse_url('admin:group') }?id=${ group.id }&action=edit">${ _("Edit") }</a></span>
-  <span><a class="button" href="${ reverse_url('admin:group') }?id=${ group.id }&action=delete">${ _("Delete") }</a></span>
+% if GROUP.users:
+<p><a class="ly-btn2 small blue" href="${ reverse_url('admin:group') }?id=${ GROUP.id }&action=users">${ _("View all users") }</a></p>
+% else:
+<p>${ _("No users in this group !") }</p>
+% endif
+
+<h3>${ _("Permission List") }</h3>
+
+% if GROUP.permissions:
+
+<div class="admin-group-view ly-table c">
+  <table>
+    <thead>
+      <tr>
+	<th>${ _("ID") }</th>
+	<th>${ _("Codename") }</th>
+	<th>${ _("Name") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for P in GROUP.permissions:
+      <tr>
+        <td>${ P.id }</td>
+	<td><a href="${ reverse_url('admin:permission') }?id=${ P.id }">${ P.codename }</a></td>
+	<td>${ P.name }</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
 </div>
+
+% else:
+
+<p>${ _("This group cantains no permissions !") }</p>
+
+% endif
+
 
 </%block>

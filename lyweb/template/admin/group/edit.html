@@ -1,22 +1,37 @@
 <%inherit file="/admin/admin_base.html" />
 
+<%block name="innav">
+<li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
+<li><a href="${ reverse_url('admin:group') }?id=${ GROUP.id }">${ GROUP.name }</a></li>
+<li>${ _("Edit Group") }</li>
+</%block>
+
 <%block name="sidemain">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
-    <span><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></span>&gt;
-    <span><a href="${ reverse_url('admin:group') }?id=${ group.id }&action=view">${ group.name }</a></span>&gt;
-    <span>${ _("Edit") }</span>
-  </div>
-</div>
+<h2 class="title">${ _("Edit Group") }</h2>
 
-<div class="main-wrap small-left-right-form">
+<div class="admin-group-form small-left-right-form c">
   <form method="POST">
     ${ form.name.label } ${ form.name() }<br/>
     ${ form.html_errors(form.name.errors) }
+
+    ${ form.description.label } ${ form.description() }<br/>
+    ${ form.html_errors(form.description.errors) }
+
+    ${ form.perms.label } ${ form.perms() }<br/>
+    ${ form.html_errors(form.perms.errors) }
+
     <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
   </form>
 </div>
+
+<script type="text/javascript">
+  $("#perms").multiselect2side({
+    selectedPosition: 'right',
+    moveOptions: false,
+    labelsx: '${ _("Available") }',
+    labeldx: '${ _("Selected") }',
+  });
+</script>
 
 </%block>

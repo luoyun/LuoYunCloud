@@ -1,0 +1,40 @@
+#message-center {
+}
+
+#message-center-sidebar, #message-center-sidemain {
+    float: left;
+}
+
+#message-center-sidebar {
+    width: 220px;
+    border-right: 1px solid #ECECEC;
+}
+#message-center-sidemain {
+    width: 700px;
+    padding-left: 20px;
+}
+#message-center-sidebar .action {
+    margin: 20px 0;
+}
+#message-center-sidebar .action li {
+    text-align: right;
+}
+#message-center-sidebar .new {
+    text-align: right;
+    padding: 20px 10px;
+}
+#message-center-sidebar .button {
+    float: right;
+}
+
+#message-home-sidemenu a {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-top: 12px;
+    text-decoration: none;
+}
+#message-home-sidemenu .current {
+    background-color: #3B5998;
+    border-radius: 3px 0 0 3px;
+    color: white;
+}

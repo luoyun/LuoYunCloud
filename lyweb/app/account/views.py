@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import os
 from datetime import datetime
 from lycustom import LyRequestHandler
 
@@ -7,8 +8,11 @@ from app.account.models import User, ApplyUser, UserProfile
 from app.instance.models import Instance
 from app.session.models import Session
 
+from app.instance.models import Instance
+from app.appliance.models import Appliance
+
 from app.account.forms import LoginForm, ResetPasswordForm, \
-    RegistrationForm
+    RegistrationForm, AvatarEditForm
 
 import random, time, pickle, base64
 from hashlib import md5, sha512, sha1
@@ -43,6 +47,7 @@ class AccountRequestHandler(LyRequestHandler):
         self.db2.commit()
 
 
+
     def delete_session(self, user_id):
         session_key = self.get_secure_cookie('session_key')
 
@@ -69,6 +74,10 @@ class Login(AccountRequestHandler):
         if form.validate():
             user = self.db2.query(User).filter_by(username=form.username.data).first()
             if user:
+                if user.islocked:
+                    form.password.errors.append( _('You have been lock by admin, can not login now. If you have any questions, contact admin first please !') )
+                    return self.render('account/login.html', form=form)
+
                 if check_password(form.password.data, user.password):
                     self.save_session(user.id)
                     user.last_login = datetime.utcnow()
@@ -194,86 +203,31 @@ class RegisterApply(AccountRequestHandler):
 
 class Index(LyRequestHandler):
 
-    ''' Show home of my '''
+    @authenticated
+    def get(self):
+
+        my = self.db2.query(User).get(self.current_user.id)
+        d = { 'title': _('My Account Center'),
+              'my': my }
+
+        self.render( 'account/index.html', **d)
+
+
+class MyPermission(LyRequestHandler):
 
     @authenticated
     def get(self):
 
         my = self.db2.query(User).get(self.current_user.id)
-        d = { 'my': my }
+        d = { 'title': _('My Permissions'),
+              'my': my }
 
-        show = self.get_argument('show', None)
-
-        if not show: 
-            d['title'] = _('My Account Center')
-            self.render( 'account/index.html', **d)
-
-        elif show == 'instances':
-            d['title'] = _('My Instances')
-            self.render( 'account/instances.html', **d)
-
-        elif show == 'appliances':
-            d['title'] = _('My Appliances')
-            self.render( 'account/appliances.html', **d)
-
-        elif show == 'groups':
-            d['title'] = _('My Groups')
-            self.render( 'account/groups.html', **d)
-
-        elif show == 'permissions':
-            d['title'] = _('My Permissions')
-            self.render( 'account/permissions.html', **d)
-
-        elif show == 'resources':
-            self.get_resources(d)
-
-
-    def get_resources(self, d):
-        d['title'] = _('My Resources')
-        insts = self.db2.query(Instance).filter(
-            Instance.user_id == self.current_user.id )
-        d['USED_INSTANCES'] = insts.count()
-        d['USED_CPUS'] = 0
-        d['USED_MEMORY'] = 0
-        for i in insts:
-            if i.status in [4, 5]:
-                d['USED_CPUS'] += i.cpus
-                d['USED_MEMORY'] += i.memory
-
-        #print "d = ", d
-        self.render( 'account/resources.html', **d)
-            
-
-
-
-class MyInstances(LyRequestHandler):
-
-    @authenticated
-    def get(self):
-
-        user = self.db2.query(User).get(self.current_user.id)
-
-        self.render( 'account/instances.html',
-                     title = _('My Instances'),
-                     INSTANCE_LIST = user.instances )
-
-
-class MyGroups(LyRequestHandler):
-
-    @authenticated
-    def get(self):
-
-        user = self.db2.query(User).get(self.current_user.id)
-
-        self.render( 'account/instances.html',
-                     title = _('My Instances') )
+        self.render( 'account/permissions.html', **d)
 
 
 
 class ViewUser(LyRequestHandler):
-
     ''' Show home of specified user '''
-
     def get(self, id):
 
         user = self.db2.query(User).get(id)
@@ -322,3 +276,70 @@ class ResetPassword(LyRequestHandler):
         self.render( 'account/reset_password.html', title = _('Reset Password'),
                      form = form )
 
+
+class AvatarEdit(LyRequestHandler):
+
+    @authenticated
+    def get(self):
+        form = AvatarEditForm()
+        d = { 'title': _('Change my avatar'),
+              'form': form }
+
+        self.render( 'account/avatar_edit.html', **d )
+
+
+    @authenticated
+    def post(self):
+        # Save logo file
+        form = AvatarEditForm()
+
+        if self.request.files:
+            r = self.save_avatar()
+            if r:
+                form.avatar.errors = [ r ] # TODO: a tuple
+            else:
+                url = self.reverse_url('account:index')
+                return self.redirect( url )
+
+        d = { 'title': _('Change my avatar'),
+              'form': form }
+        self.render( 'account/avatar_edit.html', **d )
+
+
+    def save_avatar(self):
+        support_image = ['jpg', 'png', 'jpeg', 'gif', 'bmp']
+        for f in self.request.files['avatar']:
+
+            if len(f['body']) > 368640: # 360 K
+                return _('Avatar file must smaller than 360K !')
+
+            ftype = 'unknown'
+            x = f['content_type'].split('/')
+            if len(x) == 2:
+                ftype = x[-1]
+            else:
+                x = f['filename'].split('.')
+                if len(x) == 2:
+                    ftype = x[-1]
+
+            ftype = ftype.lower()
+
+            if ftype not in support_image:
+                return _('No support image, support is %s' % support_image )
+
+            fpath = os.path.join( settings.STATIC_PATH,
+                              'user/%s' % self.current_user.id )
+
+            try:
+                if not os.path.exists( fpath ):
+                    os.mkdir( fpath )
+
+                fpath = os.path.join( fpath, 'avatar' )
+
+                savef = file(fpath, 'w')
+                savef.write(f['body'])
+                savef.close()
+                break # Just one upload file
+
+            except Exception, emsg:
+                return emsg

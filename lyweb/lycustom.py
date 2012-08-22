@@ -25,6 +25,13 @@ template_dir = os.path.join(
     os.path.dirname(__file__), 'template' )
 
 
+def lytime(t, f='%m-%d %H:%M'):
+
+    if t:
+        return t.strftime(f)
+    else:
+        return ''
+
 def fulltime(t):
 
     if t:
@@ -40,6 +47,13 @@ class LyRequestHandler(RequestHandler):
 
     def render(self, template_name, **kwargs):
         """ Redefine the render """
+
+        # TODO: if url have ajax arg, use XXX.ajax for template
+        ajax = self.get_argument('ajax', False)
+        if ajax:
+            x, y = template_name.split('.')
+            #x += '_ajax'
+            template_name = '.'.join([x,'ajax'])
 
         t = self.lookup.get_template(template_name)
 
@@ -59,7 +73,9 @@ class LyRequestHandler(RequestHandler):
 
             #method
             fulltime = fulltime,
+            lytime = lytime,
             has_permission = self.has_permission,
+            AJAX = ajax,
         )
 
         args.update(kwargs)
@@ -387,27 +403,27 @@ class LyProxyHandler(LyRequestHandler):
         # for link
         sre = u'href="/([^"]*)'
         if self.port == 80:
-            dre = u'href="http://luoyun.ylinux.org/proxy?host=%s&uri=/\g<1>"' % self.host
+            dre = u'href="/proxy?host=%s&uri=/\g<1>"' % self.host
         else:
-            dre = u'href="http://luoyun.ylinux.org/proxy?host=%s&port=%s&uri=/\g<1>"' % (self.host, self.port)
+            dre = u'href="/proxy?host=%s&port=%s&uri=/\g<1>"' % (self.host, self.port)
 
         body = re.sub(sre, dre, body)
 
         # for js, css
         sre = u'src="/([^"]*)'
         if self.port == 80:
-            dre = u'src="http://luoyun.ylinux.org/proxy?host=%s&uri=/\g<1>"' % self.host
+            dre = u'src="/proxy?host=%s&uri=/\g<1>"' % self.host
         else:
-            dre = u'src="http://luoyun.ylinux.org/proxy?host=%s&port=%s&uri=/\g<1>"' % (self.host, self.port)
+            dre = u'src="/proxy?host=%s&port=%s&uri=/\g<1>"' % (self.host, self.port)
 
         body = re.sub(sre, dre, body)
 
         # for url
         sre = u'url\(/([^"]*)\)'
         if self.port == 80:
-            dre = u'url(http://luoyun.ylinux.org/proxy?host=%s&uri=/\g<1>)' % self.host
+            dre = u'url(/proxy?host=%s&uri=/\g<1>)' % self.host
         else:
-            dre = u'url(http://luoyun.ylinux.org/proxy?host=%s&port=%s&uri=/\g<1>)' % (self.host, self.port)
+            dre = u'url(/proxy?host=%s&port=%s&uri=/\g<1>)' % (self.host, self.port)
 
         body = re.sub(sre, dre, body)
 

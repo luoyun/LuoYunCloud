@@ -2,44 +2,61 @@
 
 <%block name="main">
 
-% if REASON:
-<h1>${ REASON }</h1>
-% endif
+<div id="ly-notification-large" class="c">
+  <div id="no-resource-notification" class="c island">
 
-<%
-   USER = current_user
-%>
+    % if REASON:
+    <h1>${ REASON }</h1>
+    % endif
 
-% if USER.profile:
-<table class="kvlist">
-  <thead>
-    <tr>
-      <th>${ _("Resource Name") }</th>
-      <th>${ _("Total") }</th>
-      <th>${ _("Used") }</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>${ _("Memory") }</td>
-      <td>${ USER.profile.memory }</td>
-      <td>${ USED_MEMORY }</td>
-    </tr>
-    <tr>
-      <td>${ _("CPUs") }</td>
-      <td>${ USER.profile.cpus }</td>
-      <td>${ USED_CPUS }</td>
-    </tr>
-    <tr>
-      <td>${ _("Instances") }</td>
-      <td>${ USER.profile.instances }</td>
-      <td>${ USED_INSTANCES }</td>
-    </tr>
-  </tbody>
-</table>
-% endif
+    <%
+       USER = current_user
+       %>
+
+    % if USER.profile:
+    <table class="list">
+      <thead>
+	<tr>
+	  <th>${ _("Resource Name") }</th>
+	  <th>${ _("Total") }</th>
+	  <th>${ _("Used") }</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr>
+	  <td>${ _("Memory") }</td>
+	  <td>${ USER.profile.memory }</td>
+	  <td>${ USED_MEMORY }</td>
+	</tr>
+	<tr>
+	  <td>${ _("CPUs") }</td>
+	  <td>${ USER.profile.cpus }</td>
+	  <td>${ USED_CPUS }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Instances") }</td>
+	  <td>${ USER.profile.instances }</td>
+	  <td>${ USED_INSTANCES }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Storage") }</td>
+	  <td>${ USER.profile.storage }</td>
+	  <td>${ USED_STORAGE }</td>
+	</tr>
+      </tbody>
+    </table>
+    % endif
 
 
-<p>${ _("If you have any questions, please contact ") }<a href="mailto:${ ADMIN_EMAIL }">${ _("Admin") }</a></p>
+    <div class="help">
+      <p>${ _("If you have any questions, you can contact the admin by following method:") }</p>
+      <ul>
+	<li><a href="${ reverse_url('message:new') }?userid=${ ADMIN_ID }">${ _("Send a message") }</a></li>
+	<li><a href="mailto:${ ADMIN_EMAIL }">${ _("Send a email") }</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
 
 </%block>

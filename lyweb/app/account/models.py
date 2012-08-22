@@ -1,11 +1,13 @@
 #/usr/bin/env python2.5
 #Noah Gift
 
+import os
+
 from datetime import datetime
 from lyorm import ORMBase
 
 from sqlalchemy import Column, Integer, String, \
-    Sequence, DateTime, Table, ForeignKey, Boolean
+    Sequence, DateTime, Table, ForeignKey, Boolean, Text
 from sqlalchemy.orm import relationship, backref
 
 import settings
@@ -38,15 +40,22 @@ class Group(ORMBase):
 
     id = Column(Integer, Sequence('auth_group_id_seq'), primary_key=True)
     name = Column( String(30) )
-    #summary = Column( String(1024) )
-    #TODO: a flag, can not delete when the flag is set !!!
+    description = Column( Text() )
 
-    def __init__(self, name, summary = None):
+    #TODO: a flag, can not delete when the flag is set !!!
+    islocked = Column( Boolean, default = False)
+
+
+    def __init__(self, name, description = None, islocked = False):
         self.name = name
-        #self.summary = summary
+        self.islocked = islocked
+        if description:
+            self.description = description
+
 
     def __repr__(self):
-        return _("[User(%s)]") % self.username
+        return _("[Group(%s)]") % self.name
+
 
 
 class User(ORMBase):
@@ -56,6 +65,10 @@ class User(ORMBase):
     id = Column(Integer, Sequence('auth_user_id_seq'), primary_key=True)
     username = Column(String(30))
     password = Column(String(142))
+
+    # TODO: if user is locked, could not login again.
+    islocked = Column( Boolean, default = False )
+
     last_login = Column(DateTime(), default=datetime.utcnow())
     date_joined = Column(DateTime(), default=datetime.utcnow())
 
@@ -77,6 +90,30 @@ class User(ORMBase):
         return _("[User(%s)]") % self.username
 
 
+    # TODO
+    def notify(self):
+        ''' Add a notification to user '''
+
+        self.profile.notification += 1
+        
+
+    def decrease_notification(self):
+
+        # TODO: to avoid a negative number !
+        if self.profile.notification > 0:
+            self.profile.notification -= 1
+
+    @property
+    def avatar_url(self):
+
+        avatar = os.path.join( settings.STATIC_PATH,
+                               'user/%s/avatar' % self.id )
+        if os.path.exists(avatar):
+            return '%suser/%s/avatar' % (settings.STATIC_URL, self.id)
+
+        return os.path.join(settings.THEME_URL, 'img/user.png')
+
+        
 
 class UserProfile(ORMBase):
 
@@ -92,10 +129,14 @@ class UserProfile(ORMBase):
     locale = Column( String(16), default='zh_CN' ) # TODO: select list
     email = Column( String(64) )
 
-    # TODO: next version should use
-    memory = Column( Integer )
-    cpus = Column( Integer )
-    instances = Column( Integer )
+    # All notification of LuoYun System
+    notification = Column( Integer, default=0 )
+
+    # resource limit
+    memory = Column( Integer, default=256 )  # 256 M
+    cpus = Column( Integer, default=1 )      # 1 core
+    instances = Column( Integer, default=3 ) # 3 instances
+    storage = Column( Integer, default=2 )   # 2 G
 
 
     def __init__(self, user, email=''):
@@ -104,21 +145,15 @@ class UserProfile(ORMBase):
 
         if hasattr(settings, 'USER_DEFAULT_MEMORY'):
             self.memory = settings.USER_DEFAULT_MEMORY
-        else:
-            self.memory = 1024
         if hasattr(settings, 'USER_DEFAULT_CPUS'):
             self.cpus = settings.USER_DEFAULT_CPUS
-        else:
-            self.cpus = 2
         if hasattr(settings, 'USER_DEFAULT_INSTANCES'):
             self.instances = settings.USER_DEFAULT_INSTANCES
-        else:
-            self.instances = 10
-
+        if hasattr(settings, 'USER_DEFAULT_STORAGE'):
+            self.instances = settings.USER_DEFAULT_STORAGE
 
     def __repr__(self):
         return _("[UserProfile(%s)]") % (self.user_id)
-
 
 
 
@@ -164,3 +199,6 @@ class ApplyUser(ORMBase):
 
     def __repr__(self):
         return _("[ApplyUser(%s)]") % self.username
+
+
+

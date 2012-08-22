@@ -2,23 +2,31 @@
 
 <%block name="main">
 
-<div class="main-wrap small-left-right-form">
+<div id="ly-create-instance-form" class="main-wrap small-left-right-form">
   <form method="POST" enctype="multipart/form-data">
+    <div class="item">
     % if not appliance:
     ${ form.appliance.label } ${ form.appliance() }<br/>
     ${ form.html_errors( form.appliance.errors ) }
     % endif
+    </div>
 
+    <div class="item">
     ${ form.name.label } ${ form.name() }<br/>
     ${ form.html_errors( form.name.errors ) }
+    </div>
 
+    <div class="item">
     ${ form.cpus.label } ${ form.cpus() }<br/>
     ${ form.html_errors( form.cpus.errors ) }
+    </div>
 
+    <div class="item">
     ${ form.memory.label } ${ form.memory() }<br/>
     ${ form.html_errors( form.memory.errors ) }
+    </div>
 
-    <label>&nbsp;</label><input type="submit" value="${ _('Create') }" class="button" />
+    <label>&nbsp;</label><input type="submit" value="${ _('Create') }" class="ly-btn2 small green" />
   </form>
 </div>
 

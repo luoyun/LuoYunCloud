@@ -2,7 +2,7 @@
 
 <%block name="sidemain">
 
-<div class="main-wrap instance-list">
+<div class="c">
   % if messages:
   <h2>${ _("Outbox ") }</h2>
   <table class="list">
@@ -17,8 +17,8 @@
     <tbody>
       % for M in messages:
       <tr>
-        <td><a href="/user/${ M.receiver_id }">${ M.receiver.username }</a></td>
-        <td><a href="/message/${ M.id }">${ M.subject }</a></td>
+        <td><a href="${ reverse_url('account:view', M.receiver_id) }">${ M.receiver.username }</a></td>
+        <td><a href="${ reverse_url('message:view', M.id) }">${ M.subject }</a></td>
         <td>${ fulltime(M.created) }</td>
         <td>
   <form action="/message/${ M.id }/delete" method="GET">
@@ -30,7 +30,7 @@
     </tbody>
   </table>
   % else:
-  <p>${ _("You have not sent any message before !") }</p>
+  <p class="ly-large-center">${ _("You have not sent any message before !") }</p>
   % endif
 </div>
 

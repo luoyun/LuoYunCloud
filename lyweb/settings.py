@@ -1,26 +1,80 @@
 # coding: utf-8
 
-import os, sys
+import os, sys, ConfigParser
 
 ## Global PATH
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, 'lib'))
 #print sys.path
 
+LUOYUN_CONFIG_PATH = os.path.join(PROJECT_ROOT, 'luoyun.cfg')
+
 STATIC_PATH = os.path.join(PROJECT_ROOT, "static")
+TEMPLATE_DIR = os.path.join(PROJECT_ROOT, "template")
 STATIC_URL = "/static/"
 
 #THEME = "default"
 THEME = "default2"
 THEME_URL = "/static/themes/%s/" % THEME
 
-appliance_top_dir = '/opt/LuoYun/data/appliance/'
-appliance_top_url = '/dl/appliance/'
+# Nignx config path
+DEFAULT_NGINX_CONF_PATH = '/etc/nginx/conf.d/'
+DEFAULT_NGINX_LOG_PATH = '/opt/LuoYun/logs/nginx/'
+DEFAULT_NGINX_BIN_PATH = '/usr/sbin/nginx'
 
-control_server_ip = '127.0.0.1'
-control_server_port = 1369
+cf = ConfigParser.ConfigParser()
+cf.read( LUOYUN_CONFIG_PATH )
 
-ADMIN_EMAIL = 'contact@luoyun.co'
+if cf.has_option('base', 'appliance_top_dir'):
+    appliance_top_dir = cf.get('base', 'appliance_top_dir')
+else:
+    appliance_top_dir = '/opt/LuoYun/data/appliance/'
+
+if cf.has_option('base', 'appliance_top_url'):
+    appliance_top_url = cf.get('base', 'appliance_top_url')
+else:
+    appliance_top_url = '/dl/appliance/'
+
+if cf.has_option('clc', 'clc_ip'):
+    control_server_ip = cf.get('clc', 'clc_ip')
+else:
+    control_server_ip = '127.0.0.1'
+if cf.has_option('clc', 'clc_port'):
+    control_server_port = int(cf.get('clc', 'clc_port'))
+else:
+    control_server_port = 1369
+
+if cf.has_option('base', 'admin_email'):
+    ADMIN_EMAIL = cf.get('base', 'admin_email')
+else:
+    ADMIN_EMAIL = 'contact@luoyun.co'
+
+
+# Layout
+if cf.has_option('base', 'layout'):
+    DEFAULT_LAYOUT = cf.get('base', 'layout')
+else:
+    DEFAULT_LAYOUT = 'VPS' # home page is appliance
+
+
+# User resource limit
+USER_DEFAULT_MEMORY = 256    # 256 M
+USER_DEFAULT_CPUS = 1        # 1 core
+USER_DEFAULT_INSTANCES = 3   # 3 instance
+USER_DEFAULT_STORAGE = 2     # 2 G
+
+
+# INSTANCE display
+INSTANCE_HOME_PAGE_SIZE=10
+APPLIANCE_INSTANCE_LIST_PAGE_SIZE=10
+MYUN_INSTANCE_LIST_PAGE_SIZE=10
+
+INSTANCE_SLIST_ALL=[1, 2, 3, 4, 5]
+INSTANCE_SLIST_RUNING=[3, 4, 5]
+INSTANCE_SLIST_STOPED=[1, 2]
+
+# ADMIN display
+ADMIN_USER_LIST_PAGE_SIZE=10
 
 
 
@@ -35,15 +89,13 @@ LANGUAGES = (
 )
 
 
-# DB Connect format: "postgresql+psycopg2://username:password@HOST_ADDRESS/DB_NAME"
-SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://luoyun:luoyun@127.0.0.1/luoyun"
-
-
+MAX_STORAGE_SIZE=60 # 60G
 
 # Socket Request
 
 PKT_TYPE_WEB_NEW_JOB_REQUEST = 10001
 JOB_S_INITIATED = 100
+JOB_S_FAILED = 311
 
 JOB_TARGET = {
     'NODE': 3,             # JOB_TARGET_NODE
@@ -92,22 +144,23 @@ app = [
     'app.session',
     'app.system',
     'app.message',
+    'app.myun',
     ]
 
 
 luoyun_system_config = [
     # ( 'key', 'value' )
-    ('network.pool.start', '192.168.1.100'),
-    ('network.pool.end', '192.168.1.254'),
-    ('network.netmask', '255.255.255.0'),
-    ('network.gateway', '192.168.1.1'),
-    ('network.nameserver', '8.8.8.8'),
+    #('network.pool.start', '192.168.1.100'),
+    #('network.pool.end', '192.168.1.254'),
+    #('network.netmask', '255.255.255.0'),
+    #('network.gateway', '192.168.1.1'),
+    #('network.nameserver', '8.8.8.8'),
 ]
 
 default_permission = [
     # ( 'codename', 'name' )
     ('admin', 'Administrator'),
-    ('user', 'User'),  # default permission for all user
+    #('user', 'User'),  # default permission for all user
     ('appliance.upload', 'Can upload appliance'),
     ('instance.create', 'Can create instance'),
 ]
@@ -129,18 +182,19 @@ default_admin_user = 'admin'
 default_user_group = [
     # ( 'group name', 'username' )
     ('admin', 'admin'),
+    ('luoyun', 'user'),
 ]
 
 default_user_permission = [
     # ( 'username', 'permission codename' )
-    ('admin', 'admin'),
-    ('luoyun', 'user'),
+    #('admin', 'admin'),
+    #('luoyun', 'user'),
 ]
 
 default_group_permission = [
     # ( 'group name', 'permission codename' )
     ('admin', 'admin'),
-    ('user', 'user'),
+    #('user', 'user'),
     ('user', 'appliance.upload'),
     ('user', 'instance.create'),
 ]
@@ -148,9 +202,9 @@ default_group_permission = [
 
 default_appliance_catalog = [
     # ( 'name', 'summary' )
-    ('Default', 'Default Catalog'),
-    ('Office', 'Office support'),
-    ('OS Platform', 'Base os platform'),
+    ('LuoYun', 'Default Catalog'),
+#    ('Office', 'Office support'),
+#    ('OS Platform', 'Base os platform'),
 ]
 
 
@@ -158,3 +212,19 @@ default_wiki_catalog = [
     # ( 'name', 'summary' )
     ('Default', 'Default Catalog'),
 ]
+
+
+
+# TODO: restart main program
+
+CMD_ARGV=''
+def restart_luoyun_web():
+    """Restarts the current program.
+    Note: this function does not return. Any cleanup action (like
+    saving data) must be done before calling this function."""
+    global CMD_ARGV
+    print 'restart_luoyun_web: CMD_ARGV = ', CMD_ARGV
+    python = sys.executable
+    os.execl(python, python, *CMD_ARGV)
+
+

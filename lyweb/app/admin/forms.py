@@ -22,20 +22,12 @@ class UserResourceForm(Form):
     memory = IntegerField( _('Memory'), [validators.NumberRange(min=256, max=10240)])
     cpus = IntegerField( _('CPUs'), [validators.NumberRange(min=1, max=20)])
     instances = IntegerField( _('Instances'), [validators.NumberRange(min=1, max=100)])
+    storage = IntegerField( _('Storage'), [validators.NumberRange(min=2, max=100)])
 
 
-class CreateGroupForm(Form):
-    name = TextField( _('Name'), [validators.Length(min=4, max=25)] )
-
-
-class EditGroupForm(Form):
-    name = TextField( _('Name'), [validators.Length(min=4, max=25)] )
-
-
-class GroupAddUsersForm(Form):
-    userlist = TextAreaField( _('User List') )
-
-class GroupAddPermissionsForm(Form):
+class GroupForm(Form):
+    name = TextField( _('Name'), [validators.Length(min=2, max=25)] )
+    description = TextAreaField( _('Description') )
     perms = SelectMultipleField( _('Permissions') )
 
 
@@ -45,3 +37,7 @@ class CatalogForm(Form):
     name = TextField( _('Name'), [validators.Length(min=4, max=32)] )
     summary = TextField( _('Summary'), [validators.Length(min=4, max=256)] )
     description = TextAreaField( _('Description') )
+
+
+class UserGroupEditForm(Form):
+    groups = SelectMultipleField( _('Groups') )

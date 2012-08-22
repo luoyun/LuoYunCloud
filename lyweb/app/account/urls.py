@@ -1,15 +1,34 @@
 from tornado.web import url
 import app.account.views as account
+import app.message.views as msg
 
 handlers = [
-    url(r'/login', account.Login, name='login'),
-    url(r'/logout', account.Logout, name='logout'),
-    url(r'/register', account.Register, name='register'),
-    url(r'/register_apply', account.RegisterApply, name='register_apply'),
-    url(r'/account', account.Index, name='account:index'),
 
-    url(r'/user/([0-9]+)', account.ViewUser, name='account:view'),
-    #url(r'/user/([0-9]+)/send', account.SendMessage, name='account:send'),
-    url(r'/reset_password', account.ResetPassword, name='account:reset_password'),
+    url( r'/login', account.Login,
+         name='login'),
+
+    url( r'/logout', account.Logout,
+         name='logout'),
+
+    url( r'/register', account.Register,
+         name='register'),
+
+    url( r'/register_apply', account.RegisterApply,
+         name='register_apply'),
+
+    url( r'/account', account.Index,
+         name='account:index'),
+
+    url( r'/account/permission', account.MyPermission,
+         name='account:permission'),
+
+    url( r'/user/([0-9]+)', account.ViewUser,
+         name='account:view'),
+
+    url( r'/account/reset_password', account.ResetPassword,
+         name='account:reset_password'),
+
+    url( r'/account/avatar/edit', account.AvatarEdit,
+         name='account:avatar:edit'),
 
 ]

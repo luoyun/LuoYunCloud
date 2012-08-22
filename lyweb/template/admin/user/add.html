@@ -1,17 +1,14 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="user_base.html" />
+
+<%block name="usernav">
+<li>${ _("Create New User") }</li>
+</%block>
 
 <%block name="sidemain">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="/admin">${ _("Admin") }</a></span>&gt;
-    <span><a href="/admin/user">${ _("User") }</a></span>&gt;
-    <span>${ _("Create a new user") }</span>
-  </div>
-</div>
+<h2 class="title">${ _("Create New User") }</h2>
 
-
-<div class="main-wrap small-left-right-form">
+<div class="small-left-right-form c">
   <form method="POST">
     ${ form.username.label } ${ form.username() }<br/>
     ${ form.html_errors(form.username.errors) }

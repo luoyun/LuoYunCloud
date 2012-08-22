@@ -15,5 +15,6 @@ WTForms-1.0.1
 sqlalchemy
 SQLAlchemy*
 Mako*
+IPy-0.75
 tornadotools
 truemped-tornadotools-bd47622/

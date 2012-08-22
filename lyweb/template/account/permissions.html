@@ -2,9 +2,13 @@
 
 <%block name="sidemain">
 
-<div class="main-wrap">
+<div class="c">
+  % if not (my.permissions or my.groups):
+  ${ _("You have not any permission yet !") }
+  % endif
+
   % if my.permissions:
-  <h2>${ _("Single Permission List") }</h2>
+  <h2 class="title">${ _("Single Permission List") }</h2>
   <table class="list">
     <thead>
       <th>${ _("Codename") }</th>
@@ -22,7 +26,7 @@
   % endif
 
   % if my.groups:
-  <h2>${ _("Group Permission List") }</h2>
+  <h2 class="title">${ _("Group Permission List") }</h2>
   <table class="list">
     <thead>
       <th>${ _("Group") }</th>

@@ -1,0 +1,22 @@
+<%inherit file="instance_base.html"/>
+
+<%block name="maincenter">
+
+% if webssh and webssh.get('status') == 'enable':
+<h2>${ _("WebSSH Configure") }</h2>
+
+<p>${ _("Your webssh is enabled !") }</p>
+
+% if current_user and current_user.id == instance.user_id:
+<div class="action">
+  <a class="ly-btn2 small green" href="${ reverse_url('instance:webssh:disable', instance.id) }">${ _("Disable") }</a>
+</div>
+% endif
+
+% else:
+<p>${ _("Your webssh is disabled now.") }<a href="${ reverse_url('instance:webssh:enable', instance.id) }">${ _("Enable") }</a></p>
+% endif
+
+
+
+</%block>

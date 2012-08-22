@@ -1,0 +1,17 @@
+<h2>${ _("Edit Control Server's Configure") }</h2>
+
+<div class="main-wrap small-left-right-form">
+  <form method="POST" action="${ reverse_url('system:clc:edit') }">
+    ${ form.ip.label } ${ form.ip() }<br/>
+    ${ form.html_errors(form.ip.errors) }
+
+    ${ form.port.label } ${ form.port() }<br/>
+    ${ form.html_errors(form.port.errors) }
+
+    <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
+% if saved:
+<span id="saved-success">${ _("saved success") }</span>
+% endif
+
+  </form>
+</div>

@@ -2,100 +2,104 @@
 
 <%block name="main">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="/">${ _("Home") }</a></span>&gt;
-    <span><a href="/appliance">${ _("Appliances") }</a></span>&gt;
-    <span><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog.name }</a></span>&gt;
-    <span>${ _("View") } ${ appliance.name }</span>
-  </div>
+<div class="inner-nav">
+  <ol>
+    <li><a class="home" href="/">${ _("Home") }</a></li>
+    <li><a href="/appliance">${ _("Appliances") }</a></li>
+    <li><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog.name }</a></li>
+    <li>${ _("View") } ${ appliance.name }</li>
+  </ol>
 </div>
 
-<div id="view-appliance" class="main-wrap clearfix">
-
-  <div class="side">
-
-    <div class="logo">
-      <a href="${ reverse_url('appliance:view', appliance.id) }">
-        <img class="appliance-logo"
-             src="${ appliance.logo_url() }"
-             alt="Image Picture" /></a>
+<div id="app-baseinfo" class="c">
+  <div class="section island c">
+    <img class="app-logo" src="${ appliance.logo_url }" alt="Logo" />
+    <div class="app-desc">
+      <h1 class="app-name">${ appliance.name }</h1>
+      <h4 class="app-user">${ _("Owner") }<a href="${ reverse_url('account:view', appliance.user_id) }">${ appliance.user.username }</a></h4>
+      <p class="app-summary">
+      % if appliance.summary:
+      ${ appliance.summary }
+      % else:
+      ${ _("This is a appliance of LuoYun platform, you can create a instance from it.") }
+      % endif
+      </p>
+      <p><span class="create-instance"><a class="button" href="${ reverse_url('instance:create') }?appliance_id=${ appliance.id }">${ _("Create Instance") }</a></span></p>
     </div>
-
   </div>
 
-
-  <div class="base">
-
-    <h2 class="name">${ appliance.name }</h2>
-    
-    % if appliance.summary:
-    <p class="summary">${ appliance.summary }</p>
-    % endif
-
-    <table>
+  <div class="aside">
+    <table class="lrlist">
       <tbody>
-        <tr><td>${ _("ID") }</td>
-          <td>${ appliance.id }</td></tr>
-        <tr><td>${ _("Checksum") }</td>
-          <td>${ appliance.checksum }</td></tr>
-        <tr><td>${ _("Size") }</td>
-          <td>${ appliance.filesize }</td></tr>
-        <tr><td>${ _("Create Time") }</td>
-          <td>${ fulltime(appliance.created) }</td></tr>
-        <tr><td>${ _("Update Time") }</td>
-          <td>${ fulltime(appliance.updated) }</td></tr>
+	<tr>
+	  <td class="c1">${ _("Catalog") }</td>
+	  <td class="c2"><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog.name }</a></td>
+	</tr>
+	<tr>
+	  <td class="c1">${ _("Used") }</td>
+	  <td class="c2">${ len(appliance.instances) } ${ _("times") }</td>
+	</tr>
+        <tr>
+	  <td class="c1">${ _("Create Time") }</td>
+          <td class="c2">${ fulltime(appliance.created) }</td>
+	</tr>
+        <tr>
+	  <td class="c1">${ _("Update Time") }</td>
+          <td class="c2">${ fulltime(appliance.updated) }</td>
+	</tr>
       </tbody>
     </table>
 
-    <div class="action">
-      % if current_user and current_user.id == appliance.user_id:
+    % if current_user and current_user.id == appliance.user_id or has_permission('admin'):
+    <div class="app-admin c">
       <span class="edit"><a class="button" href="/appliance/${ appliance.id }/edit">${ _("Edit") }</a></span>
       <span class="delete"><a class="button" href="/appliance/${ appliance.id }/delete">${ _("Delete") }</a></span>
-      % endif
-      <span class="create"><a class="button" href="${ reverse_url('instance:create') }?appliance_id=${ appliance.id }">${ _("Create Instance") }</a></span>
     </div>
-
+    % endif
 
   </div>
-
 </div>
 
+
 % if appliance.description:
-<div class="main-wrap">
-  <div class="ly-appliance-description">
-    ${ appliance.description }
-  </div>
+<div class="section island c">
+  <h2 class="title2">${ _("About The Appliance") }</h2>
+  <p>${ appliance.description }</p>
 </div>
 % endif
 
 % if instances:
-<div class="main-wrap ly-appliance-instance-list">
+<div class="section island c">
   <h2>${ _("Instance List") }</h2>
-  <table>
-    <tbody>
-      % for I in instances:
-      <tr>
-        <td><span class="count">${ I.id }</span></td>
-        <td><a href="/instance/${ I.id }"
-               title="${ _('View Instance ') }${ I.name }"
-               >${ I.name }</a></td>
-      </tr>
-      % endfor
-    </tbody>
-  </table>
+  <% count = 0 %>
+  % for I in instances:
+
+  <ul class="v-instance">
+    <li class="i-logo">
+      <a
+	 % if I.status in [4, 5]:
+    	 href="${ I.home_url(current_user) }" title="${ I.ip }"
+	 % else:
+	 href="/instance/${I.id}" title="${ I.name }"
+         % endif
+	 target="_blank"><img src="${ I.logo_url }" /></a>
+    </li>
+    <div class="c"></div>
+    <li class="i-name c"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></li>
+    <li class="i-user"><span class="t">${ _("Owner") }</span><a href="${ reverse_url('account:view', I.user_id) }">${ I.user.username }</a></li>
+    <li class="i-status"><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ I.status_string }"/></li>
+  </ul>
+
+  % if count % 5 == 4:
+  <div class="c"></div>
+  % endif
+  <% count += 1 %>
+  % endfor
+
+  <div class="clearfix"></div>
+  ${ page_html }
+
 </div>
 % endif
-
-
-
-## Some hide information
-<div id="delete-confirm" style="display:none" >
-  ${ _("Are you sure ?") }
-</div>
-
-<script type="text/javascript">
-  DeleteInstance();
-</script>
 
 </%block>

@@ -9,6 +9,9 @@ from app.instance.models import Instance
 
 from lycustom import has_permission
 
+from sqlalchemy.sql.expression import asc, desc
+from sqlalchemy import and_
+
 
 class InstanceManagement(LyRequestHandler):
 
@@ -47,12 +50,63 @@ class InstanceManagement(LyRequestHandler):
         else:
             self.write( _('Wrong action value!') )
 
-
     def get_index(self):
-        instances = self.db2.query(Instance).order_by('id').all()
-        self.render( 'admin/instance/index.html',
-                     title = _('Instance Management'),
-                     INSTANCE_LIST = instances )
+
+        view = self.get_argument('view', 'all')
+        by = self.get_argument('by', 'id')
+        sort = self.get_argument('sort', 'desc')
+        status = self.get_argument('status', 'all')
+        page_size = int(self.get_argument('sepa', 30))
+        cur_page = int(self.get_argument('p', 1))
+        uid = int(self.get_argument('uid', 0))
+
+        start = (cur_page - 1) * page_size
+        stop = start + page_size
+
+        instances = self.db2.query(Instance)
+
+        if status != 'all':
+            if status == 'stoped':
+                slist = settings.INSTANCE_SLIST_STOPED
+            else: # show running
+                slist = settings.INSTANCE_SLIST_RUNING
+            instances = instances.filter(Instance.status.in_( slist))
+
+        U = self.db2.query(User).get( uid )
+        if U:
+            instances = instances.filter_by( user_id = uid )
+
+        if by == 'created':
+            by_obj = Instance.created
+        elif by == 'updated':
+            by_obj = Instance.updated
+        else:
+            by_obj = Instance.id
+
+
+        sort_by_obj = desc(by_obj) if sort == 'desc' else asc(by_obj)
+
+        instances = instances.order_by( sort_by_obj )
+
+        # TODO: may have a more highly active count ( use id )
+        total = instances.count()
+
+        instances = instances.slice(start, stop)
+
+        if total > page_size:
+            page_html = Pagination(
+                total = total,
+                page_size = page_size,
+                cur_page = cur_page ).html(self.get_page_url)
+        else:
+            page_html = ""
+
+        d = { 'title': _('Instance Management'),
+              'INSTANCE_LIST': instances, 'TOTAL_INSTANCE': total,
+              'PAGE_HTML': page_html,
+              'SORT_USER': U if U else None }
+
+        self.render( 'admin/instance/index.html', **d )
 
 
     def get_control_all(self, action):

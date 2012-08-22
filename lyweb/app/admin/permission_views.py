@@ -29,19 +29,10 @@ class PermissionManagement(LyRequestHandler):
     def get(self):
 
         if self.action == 'index':
-            self.get_index()
-
-        elif self.action == 'users':
-            self.get_users()
-
-        else:
-            self.write( _('Wrong action value!') )
-
-
-    def post(self):
-
-        if not self.action:
-            self.write( _('No action found !') )
+            if self.permission:
+                self.get_view()
+            else:
+                self.get_index()
 
         else:
             self.write( _('Wrong action value!') )
@@ -54,8 +45,9 @@ class PermissionManagement(LyRequestHandler):
                      PERMISSION_LIST = PERMISSION_LIST )
 
 
-    def get_users(self):
-        self.render( 'admin/permission/users.html',
-                     title = _("Users has permission"),
-                     permission = self.permission )
+    def get_view(self):
+
+        self.render( 'admin/permission/view.html',
+                     title = _("View Permission %s") % self.permission.name,
+                     PERMISSION = self.permission )
                      

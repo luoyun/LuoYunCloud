@@ -1,0 +1,30 @@
+#ly-registration-protocol {
+    margin: 100px 160px;
+}
+#ly-registration-protocol .title {
+    font-size: 22px;
+    text-align: center;
+    color: #D91F1C;
+    margin-bottom: 60px;
+}
+#ly-registration-protocol .body h1 {
+    font-size: 16px;
+    margin-top: 45px;
+    margin-bottom: 15px;
+}
+#ly-registration-protocol p {
+    font-size: 0.8em;
+    color: #2C2D2B;
+    line-height: 1.3em;
+    margin: 18px 12px;
+}
+#ly-registration-protocol ol {
+    margin: 30px;
+    list-style-type: decimal-leading-zero;
+}
+#ly-registration-protocol li {
+    margin: 15px;
+    font-size: 0.9em;
+    line-height: 1.5em;
+    color: #3AA60C;
+}

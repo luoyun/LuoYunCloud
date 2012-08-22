@@ -1,53 +1,79 @@
 <%inherit file="/admin/admin_base.html" />
 
+<%block name="innav">
+<li><a href="${ reverse_url('admin:instance') }">${ _("Instance") }</a></li>
+</%block>
+
 <%block name="sidemain">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
-    <span><a href="${ reverse_url('admin:instance') }">${ _("Instances") }</a></span>
-  </div>
-</div>
+<h2 class="title">${ _("LuoYun Instance Management") }</h2>
 
-<div class="main-wrap admin-instance">
+<p>${ _("Total instances: ") } ${ TOTAL_INSTANCE }</p>
+
+% if SORT_USER:
+<p>${ _("Sorted by") } <a href="${ reverse_url('admin:user') }?id=${ SORT_USER.id }">${ SORT_USER.username }</a></p>
+% endif
+
+<div class="admin-instance c">
 
   % if INSTANCE_LIST:
-  <table class="list">
-    <thead>
-      <tr>
-        <th>${ _("ID") }</th>
-        <th>${ _("Owner") }</th>
-        <th>${ _("Name") }</th>
-        <th>${ _("Status") }</th>
-        <th>${ _("Status Updated") }</th>
-        <th>${ _("Node") }</th>
-      </tr>
-    </thead>
-    <tbody>
-      % for I in INSTANCE_LIST:
-      <tr>
-        <td>${ I.id }</td>
-        <td>${ I.user.username }</td>
-        <td>${ I.name }</td>
-        <td><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" title="${ I.status_string }"/></td>
-        <td>${ fulltime(I.updated) }</td>
-        <td>
-          % if I.node and I.is_running:
-          <a href="${ reverse_url('admin:node') }?id=${ I.node_id }&action=view">${ I.node.ip } (${ I.node.hostname })</a>
-          % else:
-          ${ _("None") }
-          % endif
-        </td>
-      </tr>
-      % endfor
-    </tbody>
-  </table>
-  ${ page_html }
+  <div class="ly-table">
+    <table class="list">
+      <thead>
+	<tr>
+          <th>${ _("ID") }</th>
+          <th>${ _("Owner") }</th>
+          <th>${ _("Name") }</th>
+          <th>${ _("Isprivate") }</th>
+          <th>${ _("Status") }</th>
+          <th>${ _("Updated") }</th>
+          <th>${ _("Node") }</th>
+	</tr>
+      </thead>
+      <tbody>
+	% for I in INSTANCE_LIST:
+	<tr>
+          <td>${ I.id }</td>
+          <td>
+	    <div class="i-owner">
+	      <span class="i-link"><a href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a></span>
+	      <span class="i-uid" style="display:none;">${ I.user.id }</span>
+	    </div>
+	  </td>
+          <td><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></td>
+	  <td><input type="checkbox"
+		     % if I.isprivate:
+		     checked="checked"
+		     % endif
+		     />
+	  </td>
+          <td><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" title="${ I.status_string }"/></td>
+          <td>${ fulltime(I.updated) }</td>
+          <td>
+            % if I.node and I.is_running:
+            <a href="${ reverse_url('admin:node') }?id=${ I.node_id }&action=view">${ I.node.ip } (${ I.node.hostname })</a>
+            % else:
+            ${ _("None") }
+            % endif
+          </td>
+	</tr>
+	% endfor
+      </tbody>
+    </table>
+
+  ${ PAGE_HTML }
 
   % else:
   <p>${ _("No instances yet !") }</p>
   % endif
 
+  </div>
+
 </div>
+
+<script type="text/javascript">
+  var HTML_TEMP = "<div class=\"hover-content\"><a class='ly-btn2 small blue' href=\"${ reverse_url('admin:instance') }?uid=UID\">${ _('Instances owner by Me') }</a></div>";
+  lyAdminInstanceOwnerHover( HTML_TEMP );
+</script>
 
 </%block>

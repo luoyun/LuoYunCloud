@@ -1,0 +1,15 @@
+<%inherit file="instance_base.html"/>
+
+<%block name="maincenter">
+
+<h2>${ _("Delete instance") }</h2>
+
+% if current_user and current_user.id == instance.user_id:
+<p class="ly-warning2">${ _("Remove a instance is a dangrous action !") }</p>
+<div><a class="ly-btn2 small green" href="/instance/${ instance.id }/delete">${ _("Delete") }</a></div>
+% else:
+<p>${ _("Just owner can delete instance.") }</p>
+% endif
+
+
+</%block>

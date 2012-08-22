@@ -1,10 +1,10 @@
-import os
+import os, json
 
 from datetime import datetime
 from lyorm import ORMBase
 
 from sqlalchemy import Column, Integer, String, \
-    Sequence, DateTime, Text, ForeignKey
+    Sequence, DateTime, Text, ForeignKey, Boolean
 
 from sqlalchemy.orm import backref,relationship
 
@@ -39,17 +39,34 @@ class Instance(ORMBase):
     mac = Column( String(32) )
 
     status = Column( Integer, default=1 )
-    config = Column( String(256) ) # TODO
+    config = Column( Text() ) # Other configure
+
+    isprivate = Column( Boolean, default = True )
+    ischanged = Column( Boolean, default = False )
 
     created = Column( DateTime, default=datetime.utcnow() )
     updated = Column( DateTime, default=datetime.utcnow() )
+
+    subdomain = Column( String(32), unique = True )
 
 
     def __init__(self, name, user, appliance):
         self.name = name
         self.user_id = user.id
         self.appliance_id = appliance.id
+        self.init_config()
 
+
+    def init_config(self):
+        # Set a cookie
+        import random, time
+        from hashlib import sha1
+        session_key = sha1('%s%s' % (random.random(), time.time())).hexdigest()
+        self.config = json.dumps( {
+                'cookie': session_key,
+                'webssh': { 'status': 'enable',
+                            'port': 8001 }
+                } )
 
     def __str__(self):
         return _("<Instance(%s)>") % self.name
@@ -100,11 +117,56 @@ class Instance(ORMBase):
 
     @property
     def is_running(self):
-        return self.status in [4, 5]
+        return self.status in [3, 4, 5]
+
+
+    def home_url(self, user=None):
+
+        host = self.domain if self.domain else self.ip
+
+        if user and user.id == self.user_id and self.config:
+            cookie = json.loads(self.config).get('cookie')
+            if cookie:
+                return "http://%s:8080/index.html?cookie=%s" % (host, cookie)
+
+        return "http://%s:8080/index.html" % host
 
 
     @property
-    def home_url(self):
-        return "/proxy?host=%s&port=8080" % self.ip
-        #return "http://%s:8080" % self.ip
+    def domain(self):
+        if self.config:
+            config = json.loads(self.config)
+            if 'domain' in config.keys():
+                domain = config['domain']
+                if 'name' in domain.keys():
+                    return domain['name']
+        return None
 
+
+    @property
+    def access_ip(self):
+        ''' get the working ip '''
+
+        ip = None
+
+        if self.is_running and self.ip:
+            ip = self.ip
+
+        if not ip:
+            config = json.loads(self.config)
+            if 'network' in config.keys():
+                network = config['network'][0]
+                if 'ip' in network.keys():
+                    ip = network['ip']
+
+        return ip
+
+
+    @property
+    def storage(self):
+        config = json.loads(self.config)
+        if 'storage' in config.keys():
+            storage = config['storage'][0]
+            return int(storage.get('size', 0))
+
+        return 0

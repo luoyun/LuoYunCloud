@@ -1,55 +1,85 @@
-.account {
-    margin-top: 50px;
+.account-info {
+    border-bottom: 1px solid #ECECEC;
+}
+.account-info .username {
+    font-size: 1.1em;
+    text-align: center;
+    margin: 10px;
+}
+
+#user-avatar {
+    text-align: center;
+}
+#user-avatar img {
+    margin-left: auto;
+    margin-right: auto;
+    width: 90px;
+    height: 90px;
+    border-radius: 5px;
 }
 
 .account .sidebar {
-    width: 220px;
+    width: 180px;
     float: left;
     border-right: 1px solid #DEDEDE;
 }
 
 .account .sidemain {
-    width: 680px;
+    width: 760px;
     float: left;
-    margin-left: 15px;
     padding-left: 20px;
 }
 
-.account .account-info {
-    border-bottom: 1px solid #ECECEC;
-    padding: 5px 10px;
-    margin: 5px 5px 25px;
-}
-.account .account-info .username {
-    font-size: 1.2em;
-}
 
-.account .last-login {
+#u-home-side-welcome {
+    margin: 10px 0 30px;
+}
+#u-home-last-login {
+    text-align: center;
     font-size: 0.9em;
+    padding: 2px 0;
+    color: gray;
 }
 
-.account .action ul {
-    margin: 5px;
-    padding: 5px;
-    list-style-type: none;
+#u-home-side-menu {
+    text-align: right;
+}
+#u-home-side-menu li a {
+    display: inline-block;
+    padding: 6px 16px;
+    margin-top: 8px;
+    text-decoration: none;
+}
+#u-home-side-menu .current {
+    background-color: #3B5998;
+    border-radius: 3px 0 0 3px;
+    color: white;
+}
+#u-home-side-menu li a:hover {
+    /*color: #E2A105;*/
+    font-weight: 600;
+}
+
+.inner-nav {
+    margin: 20px 0 25px;
+}
+
+.island {
+    margin: 0;
+    padding: 0;
+}
+
+.title {
+    margin: 20px 0 12px;
+    color: #143340;
+    font-size: 16px;
 }
 
 
-.view-user {
-    margin: 50px 0;
-}
-
-.user-profile {
-    padding: 30px 5px;
-}
-
-.user-register, .login-form, .reset-password-form {
-    margin: 100px auto;
-    width: 380px;
-}
-.user-register .c1, .login-form .c1, .reset-password-form .c1 {
+#u-home-avatar-edit-form img.user-avatar {
     width: 120px;
+    height: 120px;
 }
-.user-register .c2, .login-form .c2, .reset-password-form .c2 {
-    width: 220px;
+#u-home-avatar-edit-form #avatar {
+    margin-top: 50px;
 }

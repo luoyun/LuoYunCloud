@@ -1,17 +1,15 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="user_base.html" />
+
+<%block name="usernav">
+<li><a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a></li>
+<li>${ _("Edit Resources") }</li>
+</%block>
 
 <%block name="sidemain">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="/admin">${ _("Admin") }</a></span>&gt;
-    <span><a href="/admin/user">${ _("User") }</a></span>&gt;
-    <span>${ _("Edit user: ") }${ USER.username }</span>
-  </div>
-</div>
+<h2 class="title">${ _("Edit User Resources") }</h2>
 
-
-<div class="main-wrap small-left-right-form">
+<div class="small-left-right-form c">
   <form method="POST">
     ${ form.memory.label } ${ form.memory() }<br/>
     ${ form.html_errors(form.memory.errors) }
@@ -21,6 +19,9 @@
 
     ${ form.instances.label } ${ form.instances() }<br/>
     ${ form.html_errors(form.instances.errors) }
+
+    ${ form.storage.label } ${ form.storage() }<br/>
+    ${ form.html_errors(form.storage.errors) }
 
     <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
   </form>

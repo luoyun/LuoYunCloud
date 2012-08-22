@@ -1,19 +1,21 @@
 <%inherit file="/admin/admin_base.html" />
 
+<%block name="innav">
+<li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
+<li>${ _("Create New Group") }</li>
+</%block>
+
 <%block name="sidemain">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
-    <span><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></span>&gt;
-    <span>${ _("Create a new group") }</span>
-  </div>
-</div>
+<h2 class="title">${ _("Create New Group") }</h2>
 
-<div class="main-wrap small-left-right-form">
+<div class="admin-group-form small-left-right-form c">
   <form method="POST">
     ${ form.name.label } ${ form.name() }<br/>
     ${ form.html_errors(form.name.errors) }
+
+    ${ form.description.label } ${ form.description() }<br/>
+    ${ form.html_errors(form.description.errors) }
     <label>&nbsp;</label><input type="submit" value="${ _('Create') }"/>
   </form>
 </div>
