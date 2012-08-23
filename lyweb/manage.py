@@ -47,7 +47,8 @@ def default_value(dbsession):
         if g:
             print '[W] group exist: %s' % name
         else:
-            g = Group(name = name)
+            # Group created defaultly is locked.
+            g = Group(name = name, islocked = True)
             dbsession.add(g)
 
     # User
@@ -63,12 +64,11 @@ def default_value(dbsession):
             u = User(username = username, password = enc_password)
             dbsession.add(u)
 
-
     # User Group
     for groupname, username in settings.default_user_group:
         u = dbsession.query(User).filter_by(username=username).first()
         g = dbsession.query(Group).filter_by(name=groupname).first()
-        if g not in u.groups:
+        if u and (g not in u.groups):
             u.groups.append(g)
 
     # User Permission

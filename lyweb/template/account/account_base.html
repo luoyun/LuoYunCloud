@@ -3,29 +3,40 @@
 <%block name="head">
 <link rel="stylesheet" href="${THEME_URL}account.css" />
 <link rel="stylesheet" href="${ THEME_URL }table.css" />
+<script type="text/javascript" src="${STATIC_URL}js/account.js"></script>
 </%block>
 
 <%block name="main">
-<div class="main-wrap account luoyun-min-height">
+
+<div class="inner-nav">
+  <ol>
+    <li><a class="home" href="/">${ _("Home") }</a></li>
+    <li><a href="${ reverse_url('account:index') }">${ _("My Account") }</a></li>
+    <%block name="innav"/>
+  </ol>
+</div>
+
+
+<div class="c account luoyun-min-height">
 
   <div class="sidebar min-height-600">
 
     <div class="account-info">
-      <div>${ _("Welcome to back, ") }
-        <span class="username"><a href="${ reverse_url('account:index') }">${ current_user.username }</a></span>
+      <div id="user-avatar">
+	<a href="${ reverse_url('account:index') }"><img src="${ current_user.avatar_url }" alt="User Avatar" /></a>
       </div>
-      <div class="last-login">${ _("Last login: ")}<span>${ fulltime(current_user.last_login) }</span></div>
+      <div class="username"><a href="${ reverse_url('account:index') }">${ current_user.username }</a></div>
     </div>
 
-    <div class="action">
+    <div id="u-home-side-welcome" class="c">
+      <p>${ _("Welcome, ") }${ current_user.username }</p>
+      <p>${ _("Last login:")}<div id="u-home-last-login">${ lytime(current_user.last_login) }</div></p>
+    </div>
+
+    <div id="u-home-side-menu">
       <ul>
         <li><a href="${ reverse_url('account:reset_password') }">${ _("Reset Password") }</a></li>
-##        <li><a href="">${ _("Configures") }</a></li>
-        <li><a href="${ reverse_url('account:index') }?show=groups">${ _("Groups") }</a></li>
-        <li><a href="${ reverse_url('account:index') }?show=permissions">${ _("Permissions") }</a></li>
-        <li><a href="${ reverse_url('account:index') }?show=resources">${ _("Resources") }</a></li>
-        <li><a href="${ reverse_url('account:index') }?show=appliances">${ _("Appliances") }</a></li>
-        <li><a href="${ reverse_url('account:index') }?show=instances">${ _("Instances") }</a></li>
+        <li><a href="${ reverse_url('account:avatar:edit') }">${ _("Change Avatar") }</a></li>
       </ul>
     </div>
 
@@ -34,6 +45,11 @@
   <div class="sidemain">
     <%block name="sidemain"/>
   </div>
+
+  <script type="text/javascript">
+    HomeSideMenuClick();
+    lyMenuSetCurrentEntry( "#u-home-side-menu a" );
+  </script>
 
 </div>
 </%block>

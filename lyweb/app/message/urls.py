@@ -3,7 +3,7 @@ import app.message.views as msg
 
 handlers = [
 
-    url(r'/message/index', msg.Index, name='message:index'),
+    url(r'/message', msg.Index, name='message:index'),
     url(r'/message/inbox', msg.Inbox, name='message:inbox'),
     url(r'/message/outbox', msg.Outbox, name='message:outbox'),
     url(r'/message/new', msg.NewMessage, name='message:new'),

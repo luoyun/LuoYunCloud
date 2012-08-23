@@ -48,7 +48,7 @@ class Index(LyRequestHandler):
         d = { 'title': 'Admin Console',
               'TOTAL_APPLIANCE': TOTAL_APPLIANCE,
               'TOTAL_INSTANCE': TOTAL_INSTANCE,
-              'TOTAL_CPU': TOTAL_CPU,
+              'TOTAL_CPU': TOTAL_CPU * 16, # TODO: a temp hack
               'TOTAL_MEMORY': TOTAL_MEMORY,
               'USED_CPU': USED_CPU,
               'USED_MEMORY': USED_MEMORY,

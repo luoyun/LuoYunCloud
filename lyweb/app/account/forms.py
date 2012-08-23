@@ -1,14 +1,14 @@
 from lyforms import Form
 from wtforms import BooleanField, TextField, \
     validators, DateTimeField, TextAreaField, IntegerField, \
-    PasswordField
+    PasswordField, FileField
 
 from wtforms.validators import ValidationError
 
 
 def password_confirm(form, field):
     if field.data != form.password_confirm.data:
-        raise ValidationError('password confirm failed')
+        raise ValidationError( _('password confirm failed') )
 
 
 
@@ -26,7 +26,7 @@ class ResetPasswordForm(Form):
 class RegistrationForm(ResetPasswordForm):
     username     = TextField( _('Username'), [validators.Length(min=4, max=25)])
     email        = TextField( _('Email Address'), [validators.Length(min=6, max=35), validators.Email()])
-    accept_rules = BooleanField( _('I accept the site rules'), [validators.Required()])
+    accept_rules = BooleanField( _('Registration Rules'), [validators.Required()])
 
 
 
@@ -38,4 +38,8 @@ class AdminProfileForm(ProfileForm):
     username = TextField('Username', [validators.Length(max=40)])
     level    = IntegerField('User Level', [validators.NumberRange(min=0, max=10)])
 
+
+class AvatarEditForm(Form):
+
+    avatar = FileField( _('Logo') )
 

@@ -89,7 +89,7 @@ style="width: 0%"
       <span class="name">${ I.name }</span>
       % if I.status in [4, 5]:
       <span class="ip">
-        <a href="${ I.home_url }" title="${ _('Service is running') }" target="_blank">${ I.ip }</a>
+        <a href="${ I.home_url(current_user) }" title="${ _('Service is running') }" target="_blank">${ I.ip }</a>
       </span>
       % endif
     </div>

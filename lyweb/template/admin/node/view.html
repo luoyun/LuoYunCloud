@@ -83,7 +83,7 @@
         <td>${ I.id }</td>
         <td><a href="/instance/${ I.id }">${ I.name }</a></td>
         <td>${ I.status_string }</td>
-        <td><a href="${ I.home_url }">${ I.ip }</a></td>
+        <td><a href="${ I.home_url(current_user) }">${ I.ip }</a></td>
       </tr>
       % endfor
     </tbody>

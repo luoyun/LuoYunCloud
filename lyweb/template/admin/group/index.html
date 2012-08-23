@@ -1,27 +1,47 @@
 <%inherit file="/admin/admin_base.html" />
 
+<%block name="innav">
+<li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
+</%block>
+
 <%block name="sidemain">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
-    <span><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></span>
-  </div>
+<h2 class="title">${ _("LuoYun Group Management") }</h2>
+
+<div class="manage-action c">
+  <a class="ly-btn2 small blue" href="${ reverse_url('admin:group') }?action=add">${ _("Create New Group") }</a>
 </div>
 
-<div class="main-wrap">
-  <span><a class="button" href="${ reverse_url('admin:group') }?action=add">${ _("Create New Group") }</a></span>
-</div>
-
-<div class="main-wrap admin-user-list">
+<h3>${ _("Total Groups: ") }${ len(GROUP_LIST) }</h3>
+<div class="admin-group-list ly-table">
   <table>
+    <thead>
+      <tr>
+	<th>${ _("ID") }</th>
+	<th>${ _("Name") }</th>
+	<th>${ _("Users") }</th>
+	<th></th>
+      </tr>
+    </thead>
     <tbody>
       % for G in GROUP_LIST:
       <tr>
         <td>${ G.id }</td>
-        <td><a href="${ reverse_url('admin:group') }?id=${ G.id }&action=view">${ G.name }</a></td>
-        <td><a href="${ reverse_url('admin:group') }?id=${ G.id }&action=users"><img src="${ THEME_URL }img/users.gif" title="${ _('Users') }"/></a></td>
-        <td><a href="${ reverse_url('admin:group') }?id=${ G.id }&action=permissions"><img src="${ THEME_URL }img/permission.png" title="${ _('Permissions') }"/></a></td>
+        <td><a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></td>
+	<td>
+	  % if G.users:
+	  <a href="${ reverse_url('admin:group') }?id=${ G.id }&action=users">${ len(G.users) }</a>
+	  % endif
+	</td>
+
+	<td>
+	  <a class="ly-btn2 small blue" href="${ reverse_url('admin:group') }?id=${ G.id }&action=edit">${ _("Edit") }</a>
+	  % if G.islocked:
+	  ${ _("locked") }
+	  % else:
+	  <a class="ly-btn2 small blue" href="${ reverse_url('admin:group') }?id=${ G.id }&action=delete">${ _("Delete") }</a>
+	  % endif
+	</td>
       </tr>
       % endfor
     </tbody>

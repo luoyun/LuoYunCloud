@@ -1,0 +1,27 @@
+% if STORAGE_LIST:
+
+% for storage in STORAGE_LIST:
+<h2>${ _("Storage Configure") }</h2>
+<table class="kvlist">
+  <tr>
+    <td>${ _("Type") }</td>
+    <td>${ storage['type'] }</td>
+  </tr>
+  <tr>
+    <td>${ _("Size") }</td>
+    <td>${ storage['size'] }</td>
+  </tr>
+</table>
+% endfor
+
+% if current_user and current_user.id == instance.user_id:
+<div class="action">
+  <a class="ly-btn2 small green" href="${ reverse_url('instance:storage:edit', instance.id) }">${ _("Edit") }</a>
+  <a class="ly-btn2 small green" href="${ reverse_url('instance:storage:delete', instance.id) }">${ _("Delete") }</a>
+</div>
+% endif
+
+% else:
+<p>${ _("You can add a storage. ") }</p>
+<p><a class="ly-btn2 small green" href="${ reverse_url('instance:storage:edit', instance.id) }">${ _("Add") }</a></p>
+% endif

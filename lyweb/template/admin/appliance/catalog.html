@@ -1,0 +1,43 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="innav">
+<li>${ _("Appliance") }</li>
+<li><a href="${ reverse_url('admin:appliance:catalog') }">${ _("Catalog") }</a></li>
+</%block>
+
+<%block name="sidemain">
+
+<h2 class="title">${ _("LuoYun Appliance Catalog Management") }</h2>
+
+<div class="c kvlist ly-table">
+  <table>
+    <thead>
+      <tr>
+	<th>${ _("ID") }</th>
+	<th>${ _("Name") }</th>
+	<th>${ _("Appliances") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for C in CATALOG_LIST:
+      <tr>
+        <td>${ C.id }</td>
+        <td>
+	  % if C.appliances:
+	  <a href="${ reverse_url('admin:appliance') }?catalog=${ C.id }">${ C.name }</a>
+	  % else:
+	  ${ C.name }
+	  % endif
+	</td>
+	<td>
+	  % if C.appliances:
+	  ${ len(C.appliances) }
+	  % endif
+	</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+</div>
+
+</%block>

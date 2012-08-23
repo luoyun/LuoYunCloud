@@ -1,31 +1,35 @@
 <%inherit file="/admin/admin_base.html" />
 
+<%block name="innav">
+<li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
+<li><a href="${ reverse_url('admin:group') }?id=${ GROUP.id }">${ GROUP.name }</a></li>
+<li>${ _("User List") }</li>
+</%block>
+
 <%block name="sidemain">
 
+<h2 class="title">${ _("Group User List") }</h2>
 
-<div class="main-wrap inner-navigator">
-  <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
-  <span><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></span>&gt;
-  <span><a href="${ reverse_url('admin:group') }?id=${ group.id }&action=view">${ group.name }</a></span>&gt;
-  <span>${ _("User List") }</span>
-</div>
+<p>${ _("All users in group ") } "${ GROUP.name }"</p>
 
-<div class="main-wrap">
-  <span><a class="button" href="${ reverse_url('admin:group') }?id=${ group.id }&action=add_users">${ _("Add users") }</a></span>
-</div>
-
-<div class="main-wrap">
-  <table class="list">
-    <tbody>
-      % for U in group.users:
+<div class="admin-group-users ly-table">
+  <table>
+    <thead>
       <tr>
-        <td><span class="count">${ U.id }</span></td>
-        <td><a href="${ reverse_url('admin:user') }?id=${ U.id }&action=view">${ U.username }</a></td>
+	<td>${ _("ID") }</td>
+	<td>${ _("Name") }</td>
+      </tr>
+    </thead>
+    <tbody>
+      % for U in USER_LIST:
+      <tr>
+	<td>${ U.id }</td>
+	<td><a href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a></td>
       </tr>
       % endfor
     </tbody>
   </table>
 </div>
 
-
+${ PAGE_HTML }
 </%block>

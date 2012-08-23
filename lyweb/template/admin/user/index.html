@@ -1,58 +1,66 @@
 <%inherit file="/admin/admin_base.html" />
 
+<%block name="innav">
+<li><a href="${ reverse_url('admin:user') }">${ _("User") }</a></li>
+</%block>
+
 <%block name="sidemain">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="/admin">${ _("Admin") }</a></span>&gt;
-    <span><a href="/admin/user">${ _("User") }</a></span>
-  </div>
+<h2 class="title">${ _("LuoYun User Management") }</h2>
+
+<div class="manage-action c">
+  <a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a></li>
 </div>
 
-<div class="main-wrap">
-  <span><a class="button" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a></span>
-</div>
-
-<div class="main-wrap admin-user-list">
+<h3>${ _("Total Users: ") }${ TOTAL_USER }</h3>
+<div class="admin-user-list ly-table">
   <table>
     <thead>
       <tr>
         <th>${ _("ID") }</th>
-        <th>${ _("Username") }</th>
-        <th>${ _("Edit") }</th>
-        <th>${ _("Info") }</th>
+        <th>${ _("Name") }</th>
+	<th>${ _("Groups") }</th>
+	<th>${ _("Appliance") }</th>
+	<th>${ _("Instance") }</th>
+	<th>${ _("Last Login") }</th>
       </tr>
     </thead>
     <tbody>
       % for U in USER_LIST:
       <tr>
         <td>${ U.id }</td>
-        <td><a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }&action=view">${ U.username }</a></td>
-
         <td>
-          <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }&action=reset_password"><img src="${ THEME_URL }img/reset_password.gif" title="${ _('Reset Password') }"/></a>
-          <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }&action=edit_resources"><img src="${ THEME_URL }img/resources.png" title="${ _('Edit Resources') }"/></a>
-        </td>
+	  <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a>
+	  % if U.islocked:
+	  <img src="${ THEME_URL }img/user-lock.gif" alt="${ _('locked') }"/>
+	  % endif
+	</td>
+	<td>
+	  % for G in U.groups:
+	  <p><a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></p>
+	  % endfor
+	</td>
 
-        <td>
+	<td>
+	  % if U.appliances:
+	  <a href="${ reverse_url('admin:appliance') }?uid=${ U.id }">${ len(U.appliances) }</a>
+	  % endif
+	</td>
 
-          % if U.groups:
-          <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }&action=groups"><img src="${ THEME_URL }img/group.png" title="${ _('Groups') }"/></a>
-          % endif
+	<td>
+	  % if U.instances:
+	  <a href="">${ len(U.instances) }</a>
+	  % endif
+	</td>
 
-          % if U.permissions or U.groups:
-          <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }&action=permissions"><img src="${ THEME_URL }img/permission.png" title="${ _('Permissions') }"/></a>
-          % endif
-
-          % if U.instances:
-          <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }&action=instances"><img src="${ THEME_URL }img/instances.gif" title="${ _('Instances') }"/></a>
-          % endif
-        </td>
+	<td>${ lytime(U.last_login, '%Y-%m-%d %H:%M') }</td>
       </tr>
       % endfor
     </tbody>
   </table>
 </div>
+
+${ PAGE_HTML }
 
 
 </%block>

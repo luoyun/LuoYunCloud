@@ -1,0 +1,25 @@
+<h2>${ _("Baseinfo of luoyun system") }</h2>
+
+<h3>${ _("Control server") }</h3>
+<table>
+  <tbody>
+    <tr>
+      <td>${ _("IP") }</td>
+      <td>${ CLC['ip'] }</td>
+    </tr>
+
+    <tr>
+      <td>${ _("Port") }</td>
+      <td>${ CLC['port'] }</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>${ _("Admin email") }</h3>
+<p>${ ADMIN_EMAIL }</p>
+
+<p><a href="${ reverse_url('system:baseinfo:edit') }">${ _("Edit") }</a></p>
+
+<p><a href="${ reverse_url('system:db:edit') }">${ _("DB Edit") }</a></p>
+
+

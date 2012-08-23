@@ -1,0 +1,161 @@
+<%inherit file="/base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${ THEME_URL }instance.css" />
+<link rel="stylesheet" href="${ THEME_URL }button.css" />
+<link rel="stylesheet" href="${ THEME_URL }table.css" />
+##<script type="text/javascript" src="${STATIC_URL}js/home.js"></script>
+<script type="text/javascript" src="${STATIC_URL}js/instance.js"></script>
+</%block>
+
+<%block name="main">
+<script type="text/javascript" src="${ STATIC_URL }js/url.js"></script>
+
+<div class="ly-description">
+  <p>${ _("There are all instances which is set public.") }
+    % if current_user:
+    <a href="${ reverse_url('myun:instance') }">${ _("View all instances of myself") }</a>
+    % endif
+  </p>
+</div>
+
+
+<div id="ly-instance-main" class="c">
+  <div class="section c">
+
+    % if not INSTANCE_LIST.count():
+    <p>${ _("Have not any instance yet !") }</p>
+    % endif
+
+    <% count = 0 %>
+    % for I in INSTANCE_LIST:
+
+    <ul class="i">
+      <li class="i-logo"><a href="${ reverse_url('instance:view', I.id) }"><img src="${ I.logo_url }" /></a></li>
+      <div class="c"></div>
+      <li class="i_name c"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></li>
+      <li class="i_user"><span class="t">${ _("Owner") }</span><a href="${ reverse_url('account:view', I.user_id) }">${ I.user.username }</a></li>
+##      <li class="i_user"><span class="t">${ _("Update") }</span>${ lytime(I.updated) }</li>
+##      <li class="i_status"><span class="t">${ _("Status") }</span><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ I.status_string }"/></li>
+      <li class="i_status"><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ I.status_string }"/></li>
+
+      <div class="i-logo-hover" style="display:none;">
+	<div class="arrowBox">
+	  <div calss="arrow"></div>
+	</div>
+	<h2 class="title">${ I.name }</h2>
+	<p class="owner"><span class="t">${ _("Owner") }</span><a href="${ reverse_url('account:view', I.user_id) }">${ I.user.username }</a></p>
+	<p class="summary">
+	  % if I.summary:
+	  ${ I.summary }
+	  % else:
+	  ${ _("No summary yet !") }
+	  % endif
+	</p>
+
+	<table>
+	  <tbody>
+	    <tr>
+	      <td>${ _("Status") }</td>
+	      <td>${ I.status_string }</td>
+	    </tr>
+	    <tr>
+	      <td>${ _("IP") }</td>
+	      <td><span class="i-ip">
+		% if I.status in [4, 5]:
+		<a href="${ I.home_url(current_user) }" target="_blank">${ I.ip }</a>
+		% else:
+		${ _("None") }
+		% endif
+		</span></td>
+	    </tr>
+	  </tbody>
+	</table>
+
+      </div>
+
+      <div class="i-owner-hover" style="display:none;">
+      </div>
+
+    </ul>
+
+    % if count % 5 == 4:
+    <div class="c"></div>
+    % endif
+    <% count += 1 %>
+    % endfor
+
+    <div class="clearfix"></div>
+    ${ page_html }
+  </div>
+
+  <div class="aside">
+
+    <div id="create-instance" class="c">
+      <a class="ly-btn2 medium blue" 
+	 title="${ _('Create a new instance') }" 
+	 href="${ reverse_url('instance:create') }">
+	${ _("Create New Instance") }</a>
+    </div>
+
+    % if current_user:
+    <div class="sort-select c">
+      <ul class="single-choice">
+	<h3>${ _("View") }</h3>
+	<li><input type='checkbox' value="all" />${ _("all") }</li>
+	<li><input type='checkbox' value="self" />${ _("myself") }</li>
+      </ul>
+    </div>
+    % endif
+
+    <div class="sort-select c">
+      <ul id="order-by-choice">
+	<h3>${ _("Order") }</h3>
+	<li><input type='checkbox' value="updated" />${ _("Updated") }</li>
+	<li><input type='checkbox' value="created" />${ _("Created") }</li>
+##	<li><input type='checkbox' value="username" />${ _("Username") }</li>
+      </ul>
+    </div>
+
+    <div class="sort-select c">
+      <ul id="sort-method-choice">
+	<h3>${ _("Sort") }</h3>
+	<li><input type='checkbox' value="desc" />${ _("DESC") }</li>
+	<li><input type='checkbox' value="asc" />${ _("ASC") }</li>
+      </ul>
+    </div>
+
+    <div class="sort-select c">
+      <ul id="status-choice">
+	<h3>${ _("Status") }</h3>
+	<li><input type='checkbox' value="running" />${ _("Running") }</li>
+	<li><input type='checkbox' value="stoped" />${ _("Stoped") }</li>
+	<li><input type='checkbox' value="all" />${ _("All") }</li>
+      </ul>
+    </div>
+
+    <div class="sort-select c">
+      <ul id="pagesize-choice">
+	<h3>${ _("Pagesize") }</h3>
+	<li><input type='checkbox' value="10" />${ _("10") }</li>
+	<li><input type='checkbox' value="20" />${ _("20") }</li>
+	<li><input type='checkbox' value="50" />${ _("50") }</li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+
+
+<script type="text/javascript">
+  lyInstanceSort( 'view', '.single-choice input:checkbox', 'all' );
+  lyInstanceSort( 'by', '#order-by-choice input:checkbox', 'updated' );
+  lyInstanceSort( 'sort', '#sort-method-choice input:checkbox', 'desc' );
+  lyInstanceSort( 'status', '#status-choice input:checkbox', 'running' );
+  lyInstanceSort( 'sepa', '#pagesize-choice input:checkbox', '20' );
+
+  indexInstanceLogoHover();
+</script>
+
+</%block>

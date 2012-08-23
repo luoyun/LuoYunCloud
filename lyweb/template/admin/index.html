@@ -2,32 +2,71 @@
 
 <%block name="sidemain">
 
-<p>LuoYun Admin Management Console</p>
+<h2 class="title">${ _("LuoYun Admin Management Console") }</h2>
+<div class="global-description">
+<p>${ _("This is admin management entry of LuoYun, you should be serious please !") }</p>
+</div>
 
-<div class="info-list">
+<div id="system-global-info">
 
   <table class="kvlist">
     <tbody>
       <tr>
         <td class="c1">${ _("Appliance") }</td>
-        <td class="c2">${ TOTAL_APPLIANCE }</td>
+        <td class="c2"><a href="${ reverse_url('admin:appliance') }">${ TOTAL_APPLIANCE }</a></td>
       </tr>
       <tr>
         <td class="c1">${ _("Instance") }</td>
-        <td class="c2">${ RUNNING_INSTANCE }/${ TOTAL_INSTANCE }</td>
-      </tr>
-      <tr>
-        <td class="c1">${ _("CPUs") }</td>
-        <td class="c2">${ TOTAL_CPU }</td>
-      </tr>
-      <tr>
-        <td class="c1">${ _("Memory(MB)") }</td>
-        <td class="c2">${ USED_MEMORY }/${ TOTAL_MEMORY }</td>
+        <td class="c2"><a href="${ reverse_url('admin:instance') }">${ TOTAL_INSTANCE }</a></td>
       </tr>
     </tbody>
   </table>
 
 </div>
 
+<div id="admin-pie-show" class="c">
+
+  <div class="admin-pie-item">
+    <div class="desc">
+      <h3>${ _("CPU") }</h3>
+      <div class="r-info">
+	<span class="total">${ TOTAL_CPU }${ _("core") }</span>
+	<span class="used">${ USED_CPU }${ _("core") }</span>
+      </div>
+      <div class="admin-pie-item-hover"></div>
+    </div>
+    <div id="admin-cpu-pie"></div>
+  </div>
+
+  <div class="admin-pie-item">
+    <div class="desc">
+      <h3>${ _("Memory") }</h3>
+      <div class="r-info">
+	<span class="total">${ TOTAL_MEMORY }M</span>
+	<span class="used">${ USED_MEMORY }M</span>
+      </div>
+      <div class="admin-pie-item-hover"></div>
+    </div>
+    <div id="admin-mem-pie"></div>
+  </div>
+
+</div>
+
+<%
+   PIE_CPU_USED_PER = (USED_CPU*100.0)/TOTAL_CPU if TOTAL_CPU else 0
+   PIE_MEM_USED_PER = (USED_MEMORY*100.0)/TOTAL_MEMORY if TOTAL_MEMORY else 0
+%>
+<script language="javascript" type="text/javascript" src="${ STATIC_URL }js/flot/jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="${ STATIC_URL }js/flot/jquery.flot.pie.js"></script>
+<script type="text/javascript">
+lyAdminShowPie("#admin-cpu-pie", [
+    { label: "${ _('Used') }",  data: ${PIE_CPU_USED_PER} },
+    { label: "${ _('Unused') }",  data: ${100 - PIE_CPU_USED_PER} },
+]);
+lyAdminShowPie("#admin-mem-pie", [
+    { label: "${ _('Used') }",  data: ${PIE_MEM_USED_PER} },
+    { label: "${ _('Unused') }",  data: ${100 - PIE_MEM_USED_PER} },
+]);
+</script> 
 
 </%block>

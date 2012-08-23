@@ -1,0 +1,78 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="innav">
+<li><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></li>
+<li><a href="${ reverse_url('admin:appliance') }?id=${ APPLIANCE.id }">${ APPLIANCE.name }</a></li>
+</%block>
+
+<%block name="sidemain">
+
+<h2 class="title">${ _("Appliance View") }</h2>
+
+<div class="a-view">
+
+  <div class="a-logo">
+    <img src="${ APPLIANCE.logo_url }" alt="Logo" />
+  </div>
+
+  <h3>${ _("Baseinfo") }</h3>
+
+  <div class="c ly-table kvlist">
+    <table>
+      <tbody>
+	<tr>
+	  <td>${ _("ID") }</td>
+	  <td>${ APPLIANCE.id }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Name") }</td>
+	  <td>${ APPLIANCE.name }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Owner") }</td>
+	  <td><a href="${ reverse_url('admin:user') }?id=${ APPLIANCE.user.id }">${ APPLIANCE.user.username }</a></td>
+	</tr>
+	<tr>
+	  <td>${ _("Catalog") }</td>
+	  <td>${ APPLIANCE.catalog.name }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Created") }</td>
+	  <td>${ lytime(APPLIANCE.created, '%Y-%m-%d %H:%M:%S') }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Updated") }</td>
+	  <td>${ lytime(APPLIANCE.updated, '%Y-%m-%d %H:%M:%S') }</td>
+	</tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <h3>${ _("Summary") }</h3>
+  <p>
+    % if APPLIANCE.summary:
+    ${ APPLIANCE.summary }
+    % else:
+    ${ _("No summary yet !") }
+    % endif
+  </p>
+
+
+  <h3>${ _("Description") }</h3>
+  <p>
+    % if APPLIANCE.description:
+    ${ APPLIANCE.description }
+    % else:
+    ${ _("No description yet !") }
+    % endif
+  </p>
+
+  <h3>${ _("Management") }</h3>
+  <p>
+    <a class="ly-btn2 small blue" href="${ reverse_url('admin:appliance:delete', APPLIANCE.id) }">${ _("Delete") }</a>
+  </p>
+
+</div>
+
+</%block>

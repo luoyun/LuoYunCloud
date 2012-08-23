@@ -1,30 +1,74 @@
 <%inherit file="/admin/admin_base.html" />
 
+<%block name="innav">
+<li><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></li>
+</%block>
+
 <%block name="sidemain">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
-    <span><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></span>
-  </div>
+<h2 class="title">${ _("LuoYun Appliance Management") }</h2>
+
+<div class="c catalog-list">
+  <ul>
+    % for C in CATALOG_LIST:
+    <li
+       % if CID and C.id == CID:
+       class="current"
+       % endif
+       ><a href="${ reverse_url('admin:appliance') }?catalog=${ C.id }">${ C.name }</a></li>
+    % endfor
+  </ul>
 </div>
 
-<div class="main-wrap">
-  <span><a href="${ reverse_url('admin:appliance') }?action=add_catalog">${ _("Create New Catalog") }</a></span>
-  <span><a href="${ reverse_url('admin:appliance') }?action=appliances">${ _("All appliances") }</a></span>
-</div>
+<p>${ _("Total Appliance in LuoYun :") } ${ TOTAL_APPLIANCE }</p>
 
-<div class="main-wrap">
-  <table class="checklist">
-    <tbody>
-      % for C in catalogs:
+% if USER:
+<p>${ _("Filter by user: ") }<a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a></p>
+% endif
+
+<div class="c ly-table">
+  <table>
+    <thead>
       <tr>
-        <td>${ C.id }</td>
-        <td><a href="${ reverse_url('admin:appliance') }?action=appliances&catalog=${ C.id }">${ C.name }</a></td>
+	<th>${ _("ID") }</th>
+	<th>${ _("Name") }</th>
+	<th>${ _("Owner") }</th>
+	<th>${ _("Catalog") }</th>
+	<th>${ _("Instances") }</th>
+	<th>${ _("Updated") }</th>
+	<th>${ _("Management") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for A in APPLIANCE_LIST:
+      <tr>
+	<td>${ A.id }</td>
+	<td><a href="${ reverse_url('admin:appliance') }?id=${ A.id }">${ A.name }</a></td>
+	<td>
+	  <div class="a-owner">
+	    <span class="a-link"><a href="${ reverse_url('admin:user') }?id=${ A.user.id }">${ A.user.username }</a></span>
+	    <span class="a-uid" style="display:none;">${ A.user.id }</span>
+	  </div>
+	</td>
+	<td>${ A.catalog.name }</td>
+	<td>
+	  % if A.instances:
+	  ${ len(A.instances) }
+	  % endif
+	</td>
+	<td>${ lytime(A.updated) }</td>
+	<td><a class="ly-btn2 small blue" href="${ reverse_url('admin:appliance:delete', A.id) }">${ _("Delete") }</a></td>
       </tr>
       % endfor
     </tbody>
   </table>
 </div>
+
+${ PAGE_HTML }
+
+<script type="text/javascript">
+  var HTML_TEMP = "<div class=\"hover-content\"><a class='ly-btn2 small blue' href=\"${ reverse_url('admin:appliance') }?uid=UID\">${ _('Appliances owner by Me') }</a></div>";
+  lyAdminApplianceOwnerHover( HTML_TEMP );
+</script>
 
 </%block>

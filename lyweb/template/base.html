@@ -30,10 +30,11 @@ LuoYun
           </div>
           <div id="navigator">
             <ul>
-              <li><a href="/">${ _("Home") }</a></li>
-              <li><a href="/appliance">${ _("Appliances") }</a></li>
-              <li><a href="/wiki">${ _("Wiki") }</a></li>
-##              % if current_user and current_user.id == 1:
+              <li><a href="/appliance">${ _("Appliance") }</a></li>
+              <li><a href="/instance">${ _("Instance") }</a></li>
+              % if current_user:
+	      <li><a href="${ reverse_url('myun:index') }">${ _("My LuoYun") }</a></li>
+	      % endif
               % if has_permission('admin'):
               <li><a href="/admin">${ _("Management") }</a></li>
               % endif
@@ -42,9 +43,9 @@ LuoYun
 
           <div id="login">
             %if current_user:
-            <span class="user">${ current_user.username }, <a href="${ reverse_url('account:index') }">${ _("My Account") }</a></span>
-            <span class="user"><a href="${ reverse_url('message:index') }">${ _("Message Box") }</a></span>
-            <span class="logout"><a href="${ reverse_url('logout') }">${ _("Sign Out") }</a></span>
+            <span id="my-profile-enter"><a href="${ reverse_url('account:index') }">${ current_user.username }</a></span>
+	    <span id="my-message-enter"><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }<span class="inbox-count">${ current_user.profile.notification }</span></a></span>
+            <span class="logout"><a href="${ reverse_url('logout') }"><img src="${ THEME_URL }img/logout.svg" alt="${ _('Sign Out') }" /></a></span>
             %else:
             <span class="login"><a href="${ reverse_url('login') }">${ _("Sign In") }</a></span>
             <span class="register"><a href="${ reverse_url('register') }">${ _("Register") }</a></span>
@@ -63,9 +64,7 @@ LuoYun
 
       <div id="footer">
         <div id="footer-wrap">
-          <span class="copyright">${ _("Copyright") } &copy <a href="http://www.luoyun.co">${ _("LuoYun Inc.") }</a></span>
-          <span class="about"><a href="/about">${ _("About") }</a></span>
-          <span class="contact"><a href="/contact">${ _("Contact") }</a></span>
+          <span id="powered-by"><span class="text">${ _("Powered by") }</span><a href="http://www.luoyun.co" target="_blank">${ _("LuoYun") }</a></span>
 
           <span id="select-language">
             % if locale.code == 'en_US':

@@ -1,13 +1,15 @@
 <%inherit file="/admin/admin_base.html" />
 
+<%block name="innav">
+<li><a href="${ reverse_url('admin:permission') }">${ _("Permission") }</a></li>
+<li>${ _("View All Permissions") }</li>
+</%block>
+
 <%block name="sidemain">
 
-<div class="main-wrap inner-navigator">
-  <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
-  <span><a href="${ reverse_url('admin:permission') }">${ _("Permission") }</a></span>
-</div>
+<h2 class="title">${ _("LuoYun Permission Management") }</h2>
 
-<div class="main-wrap">
+<div class="c ly-table admin-permission-list">
   <table>
     <thead>
       <tr>
@@ -20,9 +22,8 @@
       % for P in PERMISSION_LIST:
       <tr>
         <td>${ P.id }</td>
-        <td>${ P.codename }</td>
+        <td><a href="${ reverse_url('admin:permission') }?id=${ P.id }">${ P.codename }</a></td>
         <td>${ P.name }</td>
-        <td><a href="${ reverse_url('admin:permission') }?id=${ P.id }&action=users"><img src="${ THEME_URL }img/users.gif" title="${ _('Users') }"/></a></td>
       </tr>
       % endfor
     </tbody>

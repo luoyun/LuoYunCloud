@@ -10,58 +10,76 @@ from app.message.models import Message
 from app.message.forms import NewMessageForm,ReplyMessageForm
 
 
-class Index(LyRequestHandler):
+class MessageRequestHandler(LyRequestHandler):
+
+    def get_message(self, id):
+        message = self.db2.query(Message).get(id)
+
+        if not message:
+            self.write( _('Have not found message %s') % id )
+            return None
+
+        if not ( message.receiver_id == self.current_user.id or
+                 message.sender_id == self.current_user.id ) :
+            self.write( _("You have no permissions to read this message!") )
+            return None
+
+        return message
+
+
+class Index(MessageRequestHandler):
 
     @authenticated
     def get(self):
         self.render( 'message/index.html', title = _('Message Home') )
 
 
-class Inbox(LyRequestHandler):
+class Inbox(MessageRequestHandler):
 
     @authenticated
     def get(self):
-        my = self.db2.query(User).get(self.current_user.id)
-        messages = self.db2.query(Message).filter_by( receiver_id=my.id ).order_by(Message.created.desc()).all()
-        unread = self.db2.query(Message).filter_by( receiver_id=my.id, read=False ).all()
+
+        messages = self.db2.query(Message).filter_by( receiver_id=self.current_user.id ).order_by(Message.created.desc()).all()
+        unread = self.db2.query(Message).filter_by( receiver_id=self.current_user.id, read=False ).all()
 
         d = {
             'title': _('Message Inbox'),
             'messages': messages,
-            'user': my,
+            'user': self.current_user,
             'unread': len(unread)
         }
         self.render( 'message/inbox.html', **d )
 
 
-class Outbox(LyRequestHandler):
+class Outbox(MessageRequestHandler):
 
     @authenticated
     def get(self):
-        my = self.db2.query(User).get(self.current_user.id)
-        messages = self.db2.query(Message).filter_by(sender_id=my.id ).order_by(Message.created.desc()).all()
-        self.render( 'message/outbox.html', title = _('Message Outbox'), messages=messages, user = my )
+
+        messages = self.db2.query(Message).filter_by(sender_id=self.current_user.id ).order_by(Message.created.desc()).all()
+        self.render( 'message/outbox.html', title = _('Message Outbox'), messages=messages, user = self.current_user )
 
 
-class View(LyRequestHandler):
+class View(MessageRequestHandler):
 
     @authenticated
     def get(self, id):
 
-        my = self.db2.query(User).get(self.current_user.id)
-        message = self.db2.query(Message).get(id)
-        if not message:
-            return self.write('Have not found message %s' % id)
+        message = self.get_message(id)
+        if not message: return
 
         d = { 'title': _('View Message: %s') % message.subject,
-              'message': message, 'user': my}
+              'message': message, 'user': self.current_user }
 
-        # mark the message is read
-        message.read = True
+        if not message.read:
+            message.read = True
+            message.receiver.decrease_notification()
+            self.db2.commit()
+        
         self.render('message/view_message.html', **d)
 
 
-class NewMessage(LyRequestHandler):
+class NewMessage(MessageRequestHandler):
 
     @authenticated
     def get(self):
@@ -89,6 +107,10 @@ class NewMessage(LyRequestHandler):
 
                 self.db2.add(m)
                 self.db2.commit()
+
+                m.receiver.notify()
+                self.db2.commit()
+
                 url = self.reverse_url('message:outbox')
                 return self.redirect(url)
             else:
@@ -98,15 +120,16 @@ class NewMessage(LyRequestHandler):
         self.render( 'message/new_message.html', title = _('New Message'), form = form )
 
 
-class Delete(LyRequestHandler):
+class Delete(MessageRequestHandler):
 
     @authenticated
     def get(self, id):
 
-        message = self.db2.query(Message).get(id)
-        if not message:
-            return self.write('Have not found message %s' % id)
+        message = self.get_message(id)
+        if not message: return
 
+        if not message.read:
+            message.receiver.decrease_notification()
 
         self.db2.delete(message)
         self.db2.commit()
@@ -114,15 +137,13 @@ class Delete(LyRequestHandler):
         return self.redirect(self.reverse_url("message:outbox"))
 
 
-class Reply(LyRequestHandler):
+class Reply(MessageRequestHandler):
 
     @authenticated
     def get(self, id):
 
-        message = self.db2.query(Message).get(id)
-        if not message:
-            return self.write('Have not found message %s' % id)
-
+        message = self.get_message(id)
+        if not message: return
 
         # compose repily message content
         reply = "\n".join(map(lambda line:"> "+line, message.content.split("\n")))
@@ -147,6 +168,10 @@ class Reply(LyRequestHandler):
 
             self.db2.add(m)
             self.db2.commit()
+
+            m.receiver.notify()
+            self.db2.commit()
+
             url = self.reverse_url('message:outbox')
             return self.redirect(url)
 

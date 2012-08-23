@@ -37,10 +37,10 @@ class ApplianceManagement(LyRequestHandler):
     def get(self):
 
         if self.action == 'index':
-            self.get_index()
-
-        elif self.action == 'appliances':
-            self.get_appliances()
+            if self.appliance:
+                self.get_view()
+            else:
+                self.get_index()
 
         elif self.action == 'add_catalog':
             self.get_add_catalog()
@@ -68,30 +68,60 @@ class ApplianceManagement(LyRequestHandler):
 
 
     def get_index(self):
-        catalogs = self.db2.query(ApplianceCatalog).all()
-        self.render( 'admin/appliance/index.html',
-                     title = _('Appliance Management'),
-                     catalogs = catalogs )
 
-
-    def get_appliances(self):
-
+        catalog_id = self.catalog.id if self.catalog else 0
+        page_size = int( self.get_argument('sepa', 10) )
+        cur_page = int( self.get_argument('p', 1) )
         by = self.get_argument('by', 'id')
-        order = self.get_argument('order', 'asc')
-        if order == 'asc':
-            order_func = asc(by)
-        else:
-            order_func = desc(by)
+        sort = self.get_argument('sort', 'ASC')
+        uid = self.get_argument('uid', 0)
 
-        apps = self.db2.query(Appliance).order_by(order_func)
+        by_exp = desc(by) if sort == 'DESC' else asc(by)
+        start = (cur_page - 1) * page_size
+        stop = start + page_size
 
-        if self.catalog:
-            apps = apps.filter_by(catalog_id=self.catalog.id).order_by( order_func )
+        catalog = self.db2.query(ApplianceCatalog).get( catalog_id )
+        user = self.db2.query(User).get( uid )
 
-        self.render( 'admin/appliance/appliances.html',
-                     title = _('List appliances'),
-                     APPLIANCE_LIST = apps,
-                     catalog = self.catalog )
+        apps = self.db2.query(Appliance)
+
+        if catalog:
+            apps = apps.filter_by(catalog_id=catalog_id)
+
+        if user:
+            apps = apps.filter_by(user_id = uid)
+
+        apps = apps.order_by(by_exp)
+
+        total = apps.count()
+        apps = apps.slice(start, stop)
+            
+        pagination = Pagination(
+            total = total,
+            page_size = page_size, cur_page = cur_page )
+
+        page_html = pagination.html( self.get_page_url )
+
+        catalogs = self.db2.query(ApplianceCatalog).all()
+        for c in catalogs:
+            c.total = self.db2.query(Appliance.id).filter_by( catalog_id = c.id ).count()
+
+        d = { 'title': _('LuoYun Appliance Management'),
+              'CATALOG_LIST': catalogs, 'CID': catalog_id,
+              'APPLIANCE_LIST': apps, 'PAGE_HTML': page_html,
+              'CATALOG': catalog, 'USER': user,
+              'TOTAL_APPLIANCE': total }
+
+        self.render( 'admin/appliance/index.html', **d )
+
+
+
+    def get_view(self):
+        catalogs = self.db2.query(ApplianceCatalog).all()
+        self.render( 'admin/appliance/view.html',
+                     title = _('View Appliance %s') % self.appliance.name,
+                     CATALOG_LIST = catalogs,
+                     APPLIANCE = self.appliance )
 
 
 
@@ -155,3 +185,16 @@ class ApplianceManagement(LyRequestHandler):
         self.render( 'admin/appliance/add_catalog.html',
                      title = _('Add Appliance Catalog'),
                      form = form )
+
+
+class AdminCatalog(LyRequestHandler):
+
+    @has_permission('admin')
+    def get(self):
+
+        CL = self.db2.query(ApplianceCatalog).all()
+
+        d = { 'title': _(''),
+              'CATALOG_LIST': CL }
+
+        self.render( 'admin/appliance/catalog.html', **d )
