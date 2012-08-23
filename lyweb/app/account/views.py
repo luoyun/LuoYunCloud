@@ -4,6 +4,8 @@ import os
 from datetime import datetime
 from lycustom import LyRequestHandler
 
+from sqlalchemy.sql.expression import asc, desc
+
 from app.account.models import User, ApplyUser, UserProfile
 from app.instance.models import Instance
 from app.session.models import Session
@@ -235,11 +237,31 @@ class ViewUser(LyRequestHandler):
         if not user:
             return self.write('Have not found user by id %s' % id)
 
-        instances = self.db2.query(Instance).filter_by(user_id=id)
+        by = self.get_argument('by', 'updated')
+        sort = self.get_argument('sort', 'desc')
 
-        self.render( 'account/view_user.html',
-                     title = 'View User', user = user,
-                     INSTANCE_LIST = instances )
+        if by == 'created':
+            by_obj = Instance.created
+        elif by == 'updated':
+            by_obj = Instance.updated
+        else:
+            by_obj = Instance.id
+
+        sort_by_obj = desc(by_obj) if sort == 'desc' else asc(by_obj)
+
+        instances = self.db2.query(Instance).filter_by(
+            user_id = id ).filter(
+            Instance.isprivate != True ).order_by( sort_by_obj )
+
+        total = instances.count()
+        instances = instances.slice(0, 20).all() # TODO: show only
+
+        d = { 'title': _('View User %s') % user.username,
+              'USER': user, 'INSTANCE_LIST': instances,
+              'TOTAL_INSTANCE': total }
+
+        self.render( 'account/view_user.html', **d )
+
 
 
 

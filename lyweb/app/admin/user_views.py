@@ -98,12 +98,29 @@ class UserManagement(LyRequestHandler):
         cur_page = int( self.get_argument('p', 1) )
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'ASC')
+        gid = (self.get_argument('gid', 0))
+
+
+        if by == 'date_joined':
+            by = User.date_joined
+        elif by == 'last_login':
+            by = User.last_login
+        else:
+            by = User.id
 
         by_exp = desc(by) if sort == 'DESC' else asc(by)
+
         start = (cur_page - 1) * page_size
         stop = start + page_size
 
-        UL = self.db2.query(User).order_by( by_exp )
+        UL = self.db2.query(User)
+
+        GROUP = self.db2.query(Group).get(gid)
+        if GROUP:
+            UL = UL.filter( User.groups.contains(GROUP) )
+
+        UL = UL.order_by( by_exp )
+
         total = UL.count()
         UL = UL.slice(start, stop)
 
@@ -116,7 +133,8 @@ class UserManagement(LyRequestHandler):
 
         d = { 'title': _('Admin User Management'),
               'USER_LIST': UL, 'PAGE_HTML': page_html,
-              'TOTAL_USER': total }
+              'TOTAL_USER': total,
+              'GROUP': GROUP }
 
         self.render( 'admin/user/index.html', **d )
 

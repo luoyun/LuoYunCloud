@@ -33,7 +33,7 @@
 </div>
 
 % if GROUP.users:
-<p><a class="ly-btn2 small blue" href="${ reverse_url('admin:group') }?id=${ GROUP.id }&action=users">${ _("View all users") }</a></p>
+<p><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?gid=${ GROUP.id }">${ _("View all users") }</a></p>
 % else:
 <p>${ _("No users in this group !") }</p>
 % endif
