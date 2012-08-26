@@ -12,7 +12,12 @@
   <a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a></li>
 </div>
 
+% if GROUP:
+<h3>${ _("Total Users in ") } ${ GROUP.name } : ${ TOTAL_USER }</h3>
+% else:
 <h3>${ _("Total Users: ") }${ TOTAL_USER }</h3>
+% endif
+
 <div class="admin-user-list ly-table">
   <table>
     <thead>
@@ -22,6 +27,7 @@
 	<th>${ _("Groups") }</th>
 	<th>${ _("Appliance") }</th>
 	<th>${ _("Instance") }</th>
+	<th>${ _("Email") }</th>
 	<th>${ _("Last Login") }</th>
       </tr>
     </thead>
@@ -50,6 +56,12 @@
 	<td>
 	  % if U.instances:
 	  <a href="">${ len(U.instances) }</a>
+	  % endif
+	</td>
+
+	<td>
+	  % if U.profile and U.profile.email:
+	  ${ U.profile.email }
 	  % endif
 	</td>
 

@@ -12,6 +12,8 @@ from tornado.web import authenticated, asynchronous
 
 from sqlalchemy.sql.expression import asc, desc
 
+from settings import INSTANCE_DELETED_STATUS as DELETED_S
+
 import settings
 
 
@@ -25,8 +27,8 @@ class Index(LyRequestHandler):
 
         INSTANCE_LIST = self.db2.query(Instance).filter_by(
                 user_id = self.current_user.id).filter(
-            Instance.status != settings.INSTANCE_DELETED_STATUS
-            )
+            Instance.status != DELETED_S )
+
         USED_INSTANCE = INSTANCE_LIST.count()
 
         TOTAL_APPLIANCE = self.db2.query(Appliance.id).filter_by(
@@ -101,11 +103,16 @@ class MyunInstance(LyRequestHandler):
         elif status == 'stoped':
             slist = settings.INSTANCE_SLIST_STOPED
         else:
-            slist = settings.INSTANCE_SLIST_ALL
+            slist = None
 
-        instances = self.db2.query(Instance).filter(
-            Instance.status.in_( slist) ).filter_by(
-            user_id = self.current_user.id )
+        if slist:
+            instances = self.db2.query(Instance).filter(
+                Instance.status.in_( slist) ).filter_by(
+                user_id = self.current_user.id )
+        else:
+            instances = self.db2.query(Instance).filter(
+                Instance.status != DELETED_S ).filter_by(
+                user_id = self.current_user.id )
 
         # TODO: does this work ?
         if by == 'created':

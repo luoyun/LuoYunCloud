@@ -1,58 +1,88 @@
-<%inherit file="account_base.html" />
+<%inherit file="/base.html" />
+
+<%block name="head">
+<link rel="stylesheet" href="${ THEME_URL }view-user.css" />
+<link rel="stylesheet" href="${ THEME_URL }button.css" />
+</%block>
 
 <%block name="main">
 
+<div id="account-view" class="luoyun-min-height c">
 
-<div class="main-wrap view-user">
-  <table class="kvlist">
-    <tbody>
-      <tr>
-        <td>${ _("Username") }</td>
-        <td>${ user.username } 
-        
-   <a href=/message/new?userid=${ user.id} > Send Message</a>
-        
-        </td>
-      </tr>
-      <tr>
-        <td>${ _("ID") }</td>
-        <td>${ user.id }</td>
-      </tr>
-      <tr>
-        <td>${ _("Date Joined") }</td>
-        <td>${ fulltime(user.date_joined) }</td>
-      </tr>
-      <tr>
-        <td>${ _("Last Login") }</td>
-        <td>${ fulltime(user.last_login) }</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+  <div class="sidebar">
 
+    <div class="account-info">
+      <div id="user-avatar">
+	<a href="${ reverse_url('account:view', USER.id) }"><img src="${ USER.avatar_url }" alt="User Avatar" /></a>
+      </div>
+      <div class="username"><a href="${ reverse_url('account:view', USER.id) }">${ USER.username }</a></div>
+    </div>
 
-% if INSTANCE_LIST:
-<div class="main-wrap instance-list">
-  <h2>${ _("Instance List") }</h2>
-  <table class="list">
-    <thead>
-      <th>${ _("ID") }</th>
-      <th>${ _("Name") }</th>
-      <th>${ _("Status") }</th>
-      <th>${ _("IP") }</th>
-    </thead>
-    <tbody>
+    <p class="action"><a class="ly-btn2 small blue" href=/message/new?userid=${ USER.id} >${ _("Leave a message") }</a></p>
+
+  </div>
+
+  <div class="sidemain">
+
+    <div class="baseinfo">
+      <table class="kvlist">
+	<tbody>
+	  <tr>
+            <td>${ _("ID") }</td>
+            <td>${ USER.id }</td>
+	  </tr>
+	  <tr>
+            <td>${ _("Date Joined") }</td>
+            <td>${ fulltime(USER.date_joined) }</td>
+	  </tr>
+	  <tr>
+            <td>${ _("Last Login") }</td>
+            <td>${ fulltime(USER.last_login) }</td>
+	  </tr>
+	</tbody>
+      </table>
+    </div>
+
+    <p class="show-instances">${ _("Total public instances : ") } ${ TOTAL_INSTANCE }</p>
+
+    % if INSTANCE_LIST:
+    <div class="section c">
+      <% count = 0 %>
       % for I in INSTANCE_LIST:
-      <tr>
-        <td>${ I.id }</td>
-        <td><a href="/instance/${ I.id }">${ I.name }</a></td>
-        <td>${ I.status_string }</td>
-        <td><a href="${ I.home_url(current_user) }">${ I.ip }</a></td>
-      </tr>
+
+      <ul class="v-instance">
+	<li class="i-logo">
+	  <a
+	     % if I.status in [4, 5]:
+    	     href="${ I.home_url(current_user) }" title="${ I.ip }"
+	     % else:
+	     href="/instance/${I.id}" title="${ I.name }"
+             % endif
+	     target="_blank"><img src="${ I.logo_url }" /></a>
+	</li>
+	<div class="c"></div>
+	<li class="i-name c"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></li>
+	<li class="i-ip">
+	  % if I.status in [4, 5]:
+	  <div id="i-ip">
+	    <a href="${ I.home_url(current_user) }" target="_blank">${ I.ip }</a>
+	  </div>
+	  % endif
+	</li>
+	<li class="i-status"><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ I.status_string }"/></li>
+      </ul>
+
+      % if count % 5 == 4:
+      <div class="c"></div>
+      % endif
+      <% count += 1 %>
       % endfor
-    </tbody>
-  </table>
+
+    </div>
+    % endif
+
+  </div>
 </div>
-% endif
+
 
 </%block>

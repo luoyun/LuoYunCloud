@@ -30,7 +30,7 @@
         <td><a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></td>
 	<td>
 	  % if G.users:
-	  <a href="${ reverse_url('admin:group') }?id=${ G.id }&action=users">${ len(G.users) }</a>
+	  <a href="${ reverse_url('admin:user') }?gid=${ G.id }">${ len(G.users) }</a>
 	  % endif
 	</td>
 

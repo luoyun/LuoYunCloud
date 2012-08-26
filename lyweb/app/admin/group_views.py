@@ -50,9 +50,6 @@ class GroupManagement(LyRequestHandler):
         elif self.action == 'delete':
             self.get_delete()
 
-        elif self.action == 'users':
-            self.get_users()
-
         else:
             self.write( _('Wrong action value!') )
 
@@ -174,37 +171,4 @@ class GroupManagement(LyRequestHandler):
             self.redirect( url )
 
 
-
-    def get_users(self):
-
-        page_size = int( self.get_argument('sepa', USER_PS) )
-        cur_page = int( self.get_argument('p', 1) )
-        by = self.get_argument('by', 'id')
-        sort = self.get_argument('sort', 'ASC')
-
-        by_exp = desc(by) if sort == 'DESC' else asc(by)
-        start = (cur_page - 1) * page_size
-        stop = start + page_size
-
-        UL = self.db2.query(User).filter(
-            User.groups.contains(self.group) )#.order_by( by_exp )
-
-        print 'UL = ', UL
-
-        total = UL.count()
-        UL = UL.slice(start, stop)
-
-        pagination = Pagination(
-            total = total, page_size = page_size,
-            cur_page = cur_page )
-
-        page_html = pagination.html( self.get_page_url )
-            
-
-        d = { 'title': _('Admin User Management'),
-              'USER_LIST': UL, 'PAGE_HTML': page_html,
-              'TOTAL_USER': total }
-
-        self.render( 'admin/group/users.html', GROUP = self.group,
-                     USER_LIST = UL )
 
