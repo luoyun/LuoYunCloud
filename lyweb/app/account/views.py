@@ -6,7 +6,8 @@ from lycustom import LyRequestHandler
 
 from sqlalchemy.sql.expression import asc, desc
 
-from app.account.models import User, ApplyUser, UserProfile
+from app.account.models import User, ApplyUser, UserProfile, \
+    UserResetpass, Group
 from app.instance.models import Instance
 from app.session.models import Session
 
@@ -14,7 +15,7 @@ from app.instance.models import Instance
 from app.appliance.models import Appliance
 
 from app.account.forms import LoginForm, ResetPasswordForm, \
-    RegistrationForm, AvatarEditForm
+    RegistrationForm, AvatarEditForm, ResetPasswordApplyForm
 
 import random, time, pickle, base64
 from hashlib import md5, sha512, sha1
@@ -23,6 +24,8 @@ import tornado
 from tornado.web import authenticated, asynchronous
 
 from app.account.utils import encrypt_password, check_password
+
+from lymail import send_email
 
 
 import settings
@@ -168,7 +171,7 @@ class Register(AccountRequestHandler):
                 # send_mail()
                 self.save_session(newuser.id)
 
-                url = self.application.reverse_url('account:index')
+                url = self.reverse_url('account:index')
                 return self.redirect( url )
 
         # Have a error
@@ -262,6 +265,30 @@ class ViewUser(LyRequestHandler):
 
         self.render( 'account/view_user.html', **d )
 
+
+
+class ViewGroup(LyRequestHandler):
+
+    @authenticated
+    def get(self, gid):
+
+        group = self.db2.query(Group).get(gid)
+
+        if not group:
+            return self.write(_('No such group: %s !') % gid)
+
+        users = self.db2.query(User).filter(
+            User.groups.contains(group) )
+
+        total = users.count()
+
+        users = users.slice(0, 20).all() # TODO: show only
+
+        d = { 'title': _('View Group %s') % group.name,
+              'GROUP': group, 'USER_LIST': users,
+              'TOTAL_USER': total }
+
+        self.render( 'account/view_group.html', **d )
 
 
 
@@ -365,3 +392,146 @@ class AvatarEdit(LyRequestHandler):
 
             except Exception, emsg:
                 return emsg
+
+
+
+class ResetPasswordApply(LyRequestHandler):
+
+    ''' Apply to reset password '''
+
+    EMAIL_TEMPLATE = _('''
+Reset Password for Your LuoYun Cloud Account.
+
+Click the url to complete : %(URL)s
+
+If you can not click the link above, copy and paste it on your brower address.
+''')
+
+
+    def get(self):
+
+        d = { 'title': _('Forget My Password') ,
+              'form': ResetPasswordApplyForm() }
+
+        self.render( 'account/reset_password_apply.html', **d )
+
+
+    def post(self):
+
+        form = ResetPasswordApplyForm(self.request.arguments)
+
+        if form.validate():
+
+            profile = self.db2.query(UserProfile).filter(
+                UserProfile.email == form.email.data ).first()
+
+            if profile:
+
+                # check exist request
+                exist = self.db2.query(UserResetpass).filter_by(
+                    user_id = profile.user.id ).all()
+                exist = [ x for x in exist if not x.completed ]
+                if exist:
+                    RQ = exist[0]
+                else:
+                    RQ = UserResetpass( profile.user )
+                    self.db2.add( RQ )
+                    self.db2.commit()
+
+                # send email
+                from settings import cf
+                if cf.has_option('site', 'home'):
+                    SITE_HOME = cf.get('site', 'home').rstrip('/')
+                else:
+                    SITE_HOME = 'http://127.0.0.1'
+
+                url = self.reverse_url('reset_password_complete')
+                url = SITE_HOME + url + '?key=%s' % RQ.key
+
+                ret = send_email(form.email.data, _('[ LuoYun Cloud ] Reset Password'), self.EMAIL_TEMPLATE % { 'URL': url } )
+
+                if ret:
+                    return self.render( 'account/reset_password_apply_successed.html', APPLY = RQ )
+                else:
+                    return self.write( _('Send Email Failed !') )
+
+            else:
+                form.email.errors.append( _("No such email address: %s") % form.email.data )
+
+        d = { 'title': _('Reset Password'), 'form': form }
+
+        self.render( 'account/reset_password_apply.html', **d )
+
+
+
+class ResetPasswordComplete(AccountRequestHandler):
+
+    ''' Apply to reset password '''
+
+    def prepare(self):
+
+        key = self.get_argument('key', None)
+        if not key:
+            self.write('No Key !')
+            return self.finish()
+
+        print 'key = ', key
+        applys = self.db2.query(UserResetpass).filter(
+            UserResetpass.key == key ).all()
+
+        print 'applys = ', applys
+        d = { 'title': _('Forget My Password') , 'ERROR': None,
+              'USER': None }
+
+        if applys:
+
+            for A in applys:
+                # TODO
+                #d['ERROR'] = _('The validity period for a certificate has passed')
+                if not A.completed:
+                    d['USER'] = A.user
+                    break
+
+            if not d['USER']:
+
+                d['ERROR'] = _('You have completed reset password.')
+
+        else:
+            d['ERROR'] = _('No such key: %s !') % key
+
+        if d['ERROR']:
+            self.render( 'account/reset_password_complete.html', **d )
+            return self.finish()
+
+        self.d = d
+        self.key = key
+
+
+    def get(self):
+        self.d['form'] = ResetPasswordForm()
+        self.render( 'account/reset_password_complete.html', **self.d )
+
+    def post(self):
+        self.d['form'] = ResetPasswordForm( self.request.arguments )
+        if self.d['form'].validate():
+
+            salt = md5(str(random.random())).hexdigest()[:12]
+            hsh = encrypt_password(salt, self.d['form'].password.data)
+            enc_password = "%s$%s" % (salt, hsh)
+
+            self.d['USER'].password = enc_password
+            self.db2.commit()
+
+            # TODO: set reset password request completed
+            applys = self.db2.query(UserResetpass).filter(
+                UserResetpass.key == self.key ).all()
+            for A in applys:
+                A.completed = datetime.utcnow()
+            self.db2.commit()
+
+            self.save_session( self.d['USER'].id )
+
+            url = self.reverse_url('account:index')
+            return self.redirect( url )
+
+        self.render( 'account/reset_password_complete.html', **self.d )

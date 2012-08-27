@@ -18,6 +18,10 @@ handlers = [
     url(r'/admin', admin.Index, name='admin:index'),
 
     url(r'/admin/user', user.UserManagement, name='admin:user'),
+    #url(r'/admin/user/([0-9])/sendmail', user.UserSendmail, name='admin:user:sendmail'),
+    url(r'/admin/user/resetpass', user.ResetpassApply,
+        name='admin:user:resetpass'),
+
     url(r'/admin/group', group.GroupManagement, name='admin:group'),
     url(r'/admin/permission', permission.PermissionManagement, name='admin:permission'),
     url(r'/admin/system', system.SystemManagement, name='admin:system'),

@@ -18,7 +18,7 @@
       <div class="username"><a href="${ reverse_url('account:view', USER.id) }">${ USER.username }</a></div>
     </div>
 
-    <p class="action"><a class="ly-btn2 small blue" href=/message/new?userid=${ USER.id} >${ _("Leave a message") }</a></p>
+    <p class="action"><a class="ly-btn2 small blue" href="${ reverse_url('message:new') }?userid=${ USER.id}">${ _("Leave a message") }</a></p>
 
   </div>
 
@@ -38,6 +38,28 @@
 	  <tr>
             <td>${ _("Last Login") }</td>
             <td>${ fulltime(USER.last_login) }</td>
+	  </tr>
+	  <tr>
+	    <td>${ _("Group") }</td>
+	    <td>
+	      % if USER.groups:
+	      <ul>
+		% for G in USER.groups:
+		<li><a href="${ reverse_url('account:group:view', G.id) }">${ G.name }</a></li>
+		% endfor
+	      </ul>
+	      % else:
+	      ${ _("No group") }
+	      % endif
+	    </td>
+	  </tr>
+	  <tr>
+	    <td>${ _("Last Activate") }</td>
+	    <td>${ lytime(USER.last_active, '%Y-%m-%d %H:%M:%S') }</td>
+	  </tr>
+	  <tr>
+	    <td>${ _("Last Entry") }</td>
+	    <td>${ USER.last_entry }</td>
 	  </tr>
 	</tbody>
       </table>

@@ -64,6 +64,12 @@ def default_value(dbsession):
             u = User(username = username, password = enc_password)
             dbsession.add(u)
 
+            if not u.profile:
+                from app.account.models import UserProfile
+                profile = UserProfile(user, email = '%s@localhost' % user.username)
+                dbsession.add(profile)
+
+
     # User Group
     for groupname, username in settings.default_user_group:
         u = dbsession.query(User).filter_by(username=username).first()
@@ -145,7 +151,10 @@ def i18n():
                     po_file = os.path.join(po_path, po)
                     mo_file = os.path.join(po_path, "%s.mo" % name)
                     cmd = 'msgfmt %s -o %s' % (po_file, mo_file)
-                    r = subprocess.call(cmd.split())
+                    try:
+                        r = subprocess.call(cmd.split())
+                    except Exception, e:
+                        lylog.error('exec msgfmt error, maybe gettext was not install : %s' % e)
                     if r == 0:
                         lylog.debug('build %s success' % mo_file)
                     else:

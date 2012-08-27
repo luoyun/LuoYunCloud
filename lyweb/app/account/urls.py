@@ -16,6 +16,13 @@ handlers = [
     url( r'/register_apply', account.RegisterApply,
          name='register_apply'),
 
+    url( r'/account/reset_password_apply',
+         account.ResetPasswordApply, name='reset_password_apply'),
+
+    url( r'/account/reset_password_complete',
+         account.ResetPasswordComplete, name='reset_password_complete'),
+
+
     url( r'/account', account.Index,
          name='account:index'),
 
@@ -24,6 +31,9 @@ handlers = [
 
     url( r'/user/([0-9]+)', account.ViewUser,
          name='account:view'),
+
+    url( r'/group/([0-9]+)', account.ViewGroup,
+         name='account:group:view'),
 
     url( r'/account/reset_password', account.ResetPassword,
          name='account:reset_password'),

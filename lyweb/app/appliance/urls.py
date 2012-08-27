@@ -4,7 +4,7 @@ import app.appliance.views as appliance
 handlers = [
 
     url(r'/appliance', appliance.Index, name='appliance:index'),
-    url(r'/myun/appliance/upload', appliance.Upload, name='appliance:upload'),
+    url(r'/appliance/upload', appliance.Upload, name='appliance:upload'),
     url(r'/appliance/([0-9]+)', appliance.View, name='appliance:view'),
     url(r'/appliance/([0-9]+)/edit', appliance.Edit, name='appliance:edit'),
     url(r'/appliance/([0-9]+)/delete', appliance.Delete, name='appliance:delete'),

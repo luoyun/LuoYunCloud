@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from lyorm import ORMBase
 
 from sqlalchemy import Column, Integer, String, \
@@ -19,10 +19,9 @@ class Session(ORMBase):
     def __init__(self, key, data):
         self.session_key = key
         self.session_data = data
-        # TODO:
-        now = datetime.utcnow()
-        self.expire_date = datetime(now.year, now.month,
-                                    now.day, now.hour)
+        # TODO: a configable value for expire_date
+        self.expire_date = datetime.datetime.utcnow() + datetime.timedelta(days=30)
+
 
     def __repr__(self):
         return _("[Session(%s)]") % self.session_key

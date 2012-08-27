@@ -4,7 +4,8 @@ import logging, datetime, time, re
 from lycustom import LyRequestHandler,  Pagination
 from tornado.web import authenticated, asynchronous
 
-from app.account.models import User, Group, UserProfile
+from app.account.models import User, Group, UserProfile, \
+    UserResetpass
 from app.instance.models import Instance
 
 from app.account.forms import ResetPasswordForm
@@ -165,7 +166,7 @@ class UserManagement(LyRequestHandler):
             self.user.password = enc_password
             self.db2.commit()
 
-            url = self.application.reverse_url('admin:user')
+            url = self.reverse_url('admin:user')
             url += '?id=%s&action=view' % self.user.id
             return self.redirect( url )
 
@@ -298,3 +299,15 @@ class UserManagement(LyRequestHandler):
         url = self.reverse_url('admin:user')
         url += '?id=%s' % self.user.id
         return self.redirect( url )
+
+
+
+class ResetpassApply(LyRequestHandler):
+
+    @has_permission('admin')
+    def get(self):
+
+        applys = self.db2.query(UserResetpass).all()
+
+        self.render( 'admin/user/reset_password_history.html',
+                     APPLY_LIST = applys )

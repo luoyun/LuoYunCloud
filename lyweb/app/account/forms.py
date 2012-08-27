@@ -23,6 +23,10 @@ class ResetPasswordForm(Form):
     password_confirm = PasswordField( _('Confirm Password') )
 
 
+class ResetPasswordApplyForm(Form):
+    email = TextField( _('Email Address'), [validators.Length(min=6, max=35), validators.Email()])
+
+
 class RegistrationForm(ResetPasswordForm):
     username     = TextField( _('Username'), [validators.Length(min=4, max=25)])
     email        = TextField( _('Email Address'), [validators.Length(min=6, max=35), validators.Email()])

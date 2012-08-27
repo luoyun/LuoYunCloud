@@ -1,7 +1,8 @@
 #/usr/bin/env python2.5
 #Noah Gift
 
-import os
+import os, random
+from hashlib import sha1
 
 from datetime import datetime
 from lyorm import ORMBase
@@ -57,6 +58,17 @@ class Group(ORMBase):
         return _("[Group(%s)]") % self.name
 
 
+    @property
+    def avatar_url(self):
+
+        avatar = os.path.join( settings.STATIC_PATH,
+                               'group/%s/avatar' % self.id )
+        if os.path.exists(avatar):
+            return '%sgroup/%s/avatar' % (settings.STATIC_URL, self.id)
+
+        return os.path.join(settings.THEME_URL, 'img/user-group-icon.png')
+
+
 
 class User(ORMBase):
 
@@ -80,6 +92,9 @@ class User(ORMBase):
 
     profile = relationship("UserProfile", uselist=False, backref="user")
     #TODO: a flag, can not delete when the flag is set !!!
+
+    last_active = Column( DateTime() )
+    last_entry = Column( String(256) )
 
 
     def __init__(self, username, password):
@@ -201,4 +216,30 @@ class ApplyUser(ORMBase):
         return _("[ApplyUser(%s)]") % self.username
 
 
+
+class UserResetpass(ORMBase):
+
+    ''' reset password apply '''
+
+    __tablename__ = 'user_resetpass'
+
+    id = Column(Integer, Sequence('user_resetpass_id_seq'), primary_key=True)
+
+    user_id = Column( Integer, ForeignKey('auth_user.id') )
+    user = relationship("User", order_by = id)
+
+    key = Column( String(128) )
+
+    created  = Column( DateTime(), default=datetime.utcnow() )
+    completed  = Column( DateTime() )
+
+
+    def __init__(self, user):
+        self.key = sha1(str(random.random())).hexdigest()
+        self.user = user
+        self.user_id = user.id
+
+
+    def __repr__(self):
+        return _("[User reset password apply (%s)]") % self.id
 

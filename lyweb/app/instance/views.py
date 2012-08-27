@@ -200,6 +200,24 @@ class InstRequestHandler(LyRequestHandler):
         return True, _('Successed !')
 
 
+    def get_domain(self, I): # I is a instance obj
+
+        domain = self.db2.query(LuoYunConfig).filter_by(key='domain').first()
+
+        if not domain: return ''
+
+        domain =  json.loads(domain.value)
+        topdomain = domain['topdomain'].strip('.')
+
+        if I.subdomain:
+            subdomain = I.subdomain
+        else:
+            prefix = domain['prefix']
+            suffix = domain['suffix']
+            subdomain = '%s%s%s' % (prefix, I.id, suffix)
+
+        return '.'.join([subdomain, topdomain])
+
 
 
 class Index(InstRequestHandler):
@@ -539,6 +557,7 @@ class Run(InstRequestHandler):
 
         # TODO: a temp hack
         self.set_nameservers(inst)
+        self.rebinding_domain(inst)
 
         json = { 'jid': -1, 'desc': _('Unknown error !') }
 
@@ -607,7 +626,16 @@ class Run(InstRequestHandler):
             instance.config = json.dumps(config)
             self.db2.commit()
                 
-        
+
+    # TODO: rebinding domain
+    def rebinding_domain(self, instance):
+        # Binding in nginx
+        from tool.domain import binding_domain_in_nginx
+        ret, reason = binding_domain_in_nginx(
+            self.db2, instance.id, domain = self.get_domain(instance) )
+        if not ret:
+            logging.warning(_('binding domain error: %s') % reason)
+
 
 
 
@@ -674,6 +702,7 @@ class CreateInstance(InstRequestHandler):
 
             instance.cpus = form.cpus.data
             instance.memory = form.memory.data
+            instance.isprivate = form.isprivate.data
 
             self.db2.add(instance)
             self.db2.commit()

@@ -1,0 +1,71 @@
+<%inherit file="/base.html" />
+
+<%block name="head">
+<link rel="stylesheet" href="${ THEME_URL }view-group.css" />
+<link rel="stylesheet" href="${ THEME_URL }button.css" />
+</%block>
+
+<%block name="main">
+
+<div id="group-view" class="luoyun-min-height c">
+
+  <div class="sidebar">
+
+    <div class="group-info">
+      <div id="group-avatar">
+	<a href="${ reverse_url('account:group:view', GROUP.id) }"><img src="${ GROUP.avatar_url }" alt="Group Avatar" /></a>
+      </div>
+      <div class="groupname"><a href="${ reverse_url('account:group:view', GROUP.id) }">${ GROUP.name }</a></div>
+    </div>
+
+  </div>
+
+  <div class="sidemain">
+
+    <div class="baseinfo">
+      <table class="kvlist">
+	<tbody>
+	  <tr>
+            <td>${ _("ID") }</td>
+            <td>${ GROUP.id }</td>
+	  </tr>
+	  <tr>
+            <td>${ _("Name") }</td>
+            <td>${ GROUP.name }</td>
+	  </tr>
+	  <tr>
+            <td>${ _("Description") }</td>
+            <td>${ GROUP.description }</td>
+	  </tr>
+	</tbody>
+      </table>
+    </div>
+
+    <p class="show-users">${ _("Total users : ") } ${ TOTAL_USER }</p>
+
+    % if USER_LIST:
+    <div class="section c">
+      <% count = 0 %>
+      % for U in USER_LIST:
+
+      <ul class="v-user">
+	<li class="avatar">
+	  <a href="${ reverse_url('account:view', U.id) }"><img src="${ U.avatar_url }"/></a>
+	</li>
+	<li class="username"><a href="${ reverse_url('account:view', U.id) }">${ U.username }</a></li>
+      </ul>
+
+      % if count % 5 == 4:
+      <div class="c"></div>
+      % endif
+      <% count += 1 %>
+      % endfor
+
+    </div>
+    % endif
+
+  </div>
+</div>
+
+
+</%block>

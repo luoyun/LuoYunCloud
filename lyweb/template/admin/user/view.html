@@ -12,6 +12,7 @@
   <div class="u-avatar">
     <a href="${ reverse_url('admin:user') }?id=${ user.id }"><img src="${ user.avatar_url }" alt="User Avatar" /></a>
     <span class="u-name">${ user.username }</span>
+    <p class="action"><a class="ly-btn2 small blue" href="${ reverse_url('message:new') }?userid=${ user.id}">${ _("Leave a message") }</a></p>
   </div>
 
 

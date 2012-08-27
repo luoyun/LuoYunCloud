@@ -26,6 +26,11 @@
     ${ form.html_errors( form.memory.errors ) }
     </div>
 
+    <div class="item">
+    ${ form.isprivate.label } ${ form.isprivate() }<br/>
+    ${ form.html_errors( form.isprivate.errors ) }
+    </div>
+
     <label>&nbsp;</label><input type="submit" value="${ _('Create') }" class="ly-btn2 small green" />
   </form>
 </div>

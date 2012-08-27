@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import os, base64, pickle, logging, struct, socket, re
+import os, base64, pickle, logging, struct, socket, re, datetime
 import gettext
 from hashlib import md5, sha512, sha1
 import settings
@@ -87,20 +87,20 @@ class LyRequestHandler(RequestHandler):
         html = t.render(**args)
         self.finish(html)
 
-    def get_current_user(self):
-        """Override to determine the current user from, e.g., a cookie."""
-        session_key = self.get_secure_cookie('session_key')
-        if not session_key:
-            return None
 
-        #session = self.db2.query(Session).filter_by(
-        #    session_key = session_key).first()
+    def get_current_user(self):
+
         try:
             session = self.db2.query(Session).filter_by(
-                session_key = session_key).one()
+                session_key = self.get_secure_cookie('session_key')).one()
         except MultipleResultsFound:
-            logging.error('session: MultipleResultsFound, %s' % session_key)
+            logging.error( 'session: MultipleResultsFound, %s' %
+                           self.get_secure_cookie('session_key') )
         except NoResultFound:
+            return None
+
+        # Does session expired ?
+        if session.expire_date < datetime.datetime.utcnow():
             return None
 
         sk = self.settings["session_secret"]
@@ -118,14 +118,12 @@ class LyRequestHandler(RequestHandler):
         user = self.db2.query(User).get(
             session_dict.get('user_id', 0) )
 
-        # TODO: a temp hack
-        if not user.profile:
-            # Create profile
-            from app.account.models import UserProfile
-            profile = UserProfile(user, email = 'user%s@luoyun.co' % user.id)
-            self.db2.add(profile)
-            self.db2.commit()
-            
+        if user.islocked: return None
+
+        if user:
+            user.last_active = datetime.datetime.utcnow()
+            user.last_entry = self.request.uri
+            #self.db2.commit()
 
         return user
 
