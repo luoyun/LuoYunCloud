@@ -14,7 +14,11 @@
 % endif
 
 % else:
-<p>${ _("WebSSH of the instance is disabled.") }<a href="${ reverse_url('instance:webssh:enable', instance.id) }">${ _("Enable") }</a></p>
+<p>${ _("WebSSH of the instance is disabled.") }</p>
+% if current_user and current_user.id == instance.user_id:
+<div class="action">
+  <a class="ly-btn2 small green" href="${ reverse_url('instance:webssh:enable', instance.id) }">${ _("Enable") }</a>
+</div>
 % endif
 
 

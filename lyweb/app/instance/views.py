@@ -357,7 +357,7 @@ class View(InstRequestHandler):
             if 'network' in config.keys():
                 network = config['network']
 
-        d = { 'title': _('Network configure of instance %s') % self.inst.id,
+        d = { 'title': _('Network configuration of instance %s') % self.inst.id,
               'instance': inst, 'NETWORK_LIST': network }
 
         self.render('instance/network.html', **d)
@@ -373,7 +373,7 @@ class View(InstRequestHandler):
             if 'storage' in config.keys():
                 storage = config['storage']
 
-        d = { 'title': _('Storage configure of instance %s') % self.inst.id,
+        d = { 'title': _('Storage configuration of instance %s') % self.inst.id,
               'instance': inst, 'STORAGE_LIST': storage }
 
         self.render('instance/storage.html', **d)
@@ -394,7 +394,7 @@ class View(InstRequestHandler):
             if 'public_key' in config.keys():
                 form.key.data = config['public_key']
 
-        d = { 'title': _('Secret Configure'),
+        d = { 'title': _('Configure Password'),
               'instance': inst, 'password': password,
               'form': form,
               'saved': self.get_argument('saved', None) }
@@ -405,7 +405,7 @@ class View(InstRequestHandler):
 
     def get_delete(self):
 
-        d = { 'title': _('Delete instance'),
+        d = { 'title': _('Delete Instance'),
               'instance': self.inst }
 
         self.render('instance/delete.html', **d)
@@ -419,7 +419,7 @@ class View(InstRequestHandler):
         JOB_LIST.order_by( desc('created') )
         JOB_LIST = JOB_LIST.limit(10)
 
-        d = { 'title': _('Job List'),
+        d = { 'title': _('Job History'),
               'instance': self.inst,
               'JOB_LIST': JOB_LIST }
 
@@ -443,7 +443,7 @@ class View(InstRequestHandler):
         else:
             webssh = None
 
-        d = { 'title': _('WebSSH Configure'),
+        d = { 'title': _('Configure WebSSH'),
               'instance': self.inst, 'webssh': webssh }
 
         self.render('instance/webssh.html', **d)
@@ -1102,7 +1102,7 @@ class PasswordEdit(InstRequestHandler):
 
         form = PasswordForm()
 
-        d = { 'title': _('Edit Root Password Of Instance'),
+        d = { 'title': _('Edit Root Password for Instance'),
               'instance': inst, 'form': form }
 
         self.render('instance/password_edit.html', **d)
@@ -1137,7 +1137,7 @@ class PasswordEdit(InstRequestHandler):
             return self.redirect( url )
 
         # Get error
-        d = { 'title': _('Edit Root Password Of Instance'),
+        d = { 'title': _('Edit Root Password for Instance'),
               'instance': inst, 'form': form }
         self.render('instance/password_edit.html', **d)
 
@@ -1232,7 +1232,7 @@ class DomainEdit(InstRequestHandler):
         inst = self.get_instance(id, isowner=True)
         if not inst: return
 
-        d = { 'title': _('Config Subdomain'),
+        d = { 'title': _('Configure Domain'),
               'instance': inst, 'ERROR': [] }
 
         d['subdomain'], d['topdomain'] = self.get_domain2( inst )
@@ -1251,7 +1251,7 @@ class DomainEdit(InstRequestHandler):
         inst = self.get_instance(id, isowner=True)
         if not inst: return
 
-        d = { 'title': _('Config Subdomain'),
+        d = { 'title': _('Configure Domain'),
               'instance': inst, 'ERROR': [] }
 
         oldsub, d['topdomain'] = self.get_domain2( inst )
