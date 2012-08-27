@@ -122,7 +122,7 @@ class InstRequestHandler(LyRequestHandler):
         # Just user can do
         if isowner:
             if inst.user_id != self.current_user.id:
-                self.done( _('Just owner can do this !') )
+                self.done( _('Only owner can do this!') )
                 return None
 
         return inst
@@ -138,7 +138,7 @@ class InstRequestHandler(LyRequestHandler):
                 Job.action == action_id,
                 Job.status == settings.JOB_S_INITIATED ) ).all()
 
-        if old: return (None,  _("Don't run duplication job !"))
+        if old: return (None,  _("Can not run duplication job!"))
 
         # TODO: when a job is running, can not rerun also !
 
@@ -197,7 +197,7 @@ class InstRequestHandler(LyRequestHandler):
         inst.config = json.dumps( config )
         self.db2.commit()
 
-        return True, _('Successed !')
+        return True, _('Success!')
 
 
     def get_domain(self, I): # I is a instance obj
@@ -464,7 +464,7 @@ class Delete(InstRequestHandler):
 
         # TODO: no running delete !
         if inst.is_running:
-            return self.done( _("Cann't delete a running instance !") )
+            return self.done( _("Can not delete a running instance!") )
 
         # TODO: delete domain binding
         ret, reason = self.domain_delete( inst )
@@ -482,7 +482,7 @@ class Delete(InstRequestHandler):
         # delete instance files
         job, msg = self.run_job(id, JOB_ACTION['DESTROY_INSTANCE'])
         if job:
-            self.done( _('Delete instance %s success !' % id) )
+            self.done( _('Instance %s is deleted!' % id) )
         else:
             self.done( msg )
 
@@ -497,14 +497,14 @@ class Stop(InstRequestHandler):
         if not inst: return
 
         if not inst.is_running:
-            return self.write( _('Instance is no running !') )
+            return self.write( _('Instance is not running!') )
 
         json = { 'jid': -1, 'desc': _('Unknown error !') }
 
         job, msg = self.run_job(id, JOB_ACTION['STOP_INSTANCE'])
         if job:
             json['jid'] = job.id
-            json['desc'] = _("Stop instance success")
+            json['desc'] = _("Stop instance succeed")
 
             inst.updated = datetime.utcnow()
             if inst.ischanged:
@@ -533,7 +533,7 @@ class Query(InstRequestHandler):
         job, msg = self.run_job(id, JOB_ACTION['QUERY_INSTANCE'])
         if job:
             json['jid'] = job.id
-            json['desc'] = _('Query instance %s success !') % id
+            json['desc'] = _('Query instance %s succeed!') % id
         else:
             json['desc'] = msg
 
@@ -564,7 +564,7 @@ class Run(InstRequestHandler):
         job, msg = self.run_job(id, JOB_ACTION['RUN_INSTANCE'])
         if job:
             json['jid'] = job.id
-            json['desc'] = _('Run instance %s success !') % id
+            json['desc'] = _('Run instance %s succeed!') % id
 
             inst.updated = datetime.utcnow()
             if inst.ischanged:
@@ -595,9 +595,9 @@ class Run(InstRequestHandler):
             desc = _('No resources to run instance:')
 
             if USED_CPUS > self.current_user.profile.cpus:
-                desc += _('the total cpus you owned is %s, but now were used %s.') % (self.current_user.profile.cpus, USED_CPUS - inst.cpus)
+                desc += _('the total number of CPUs you have is %s, %s used.') % (self.current_user.profile.cpus, USED_CPUS - inst.cpus)
             if USED_MEMORY > self.current_user.profile.memory:
-                desc += _('the total memory you owned is %s MB, but now were used %s MB.') % (self.current_user.profile.memory, USED_MEMORY - inst.memory)
+                desc += _('the total amount of memory you have is %s MB, %s MB used.') % (self.current_user.profile.memory, USED_MEMORY - inst.memory)
 
             ajax = self.get_argument('ajax', 0)
 
@@ -664,7 +664,7 @@ class CreateInstance(InstRequestHandler):
             form = CreateInstanceForm()
             apps = self.db2.query(Appliance)
             if not apps.count():
-                return self.write( _("No appliances found, please upload a appliance first !") )
+                return self.write( _("No appliance found, please upload appliance first!") )
             form.appliance.query = apps.all()
         else:
             form = CreateInstanceBaseForm()
@@ -693,7 +693,7 @@ class CreateInstance(InstRequestHandler):
                 name = form.name.data).filter_by(
                 user_id = self.current_user.id).first()
             if exist_inst:
-                form.name.errors.append( _('You have used this name !') )
+                form.name.errors.append( _('Name is used!') )
                 return self.render( 'instance/create.html', **d )
 
             # Create new instance
@@ -1240,7 +1240,7 @@ class DomainEdit(InstRequestHandler):
             d['ERROR'].append( _('can not get domain, domain may not be configured in administrator console.') )
 
         if not inst.access_ip:
-            d['ERROR'].append( _('Can not get access_ip, please configure your network or run you instance') )
+            d['ERROR'].append( _('Can not get access_ip, please configure instance network or run instance') )
 
         self.render('instance/domain_edit.html', **d)
 
@@ -1258,7 +1258,7 @@ class DomainEdit(InstRequestHandler):
 
         subdomain = self.get_argument('subdomain', None)
         if not subdomain:
-            d['ERROR'].append( _('No subdomain specified!') )
+            d['ERROR'].append( _('Domain is not configured!') )
 
         if subdomain != oldsub:
             d['subdomain'] = subdomain
@@ -1266,11 +1266,11 @@ class DomainEdit(InstRequestHandler):
                 exist_domain = self.db2.query(Instance.id).filter(
                     Instance.status != DELETED_S ).filter_by( subdomain = subdomain ).first()
                 if exist_domain:
-                    d['ERROR'].append( _('This domain was taken !') )
+                    d['ERROR'].append( _('Domain name is taken!') )
                 if len(subdomain) > 16:
-                    d['ERROR'].append( _("It's a thought too long.") )
+                    d['ERROR'].append( _("Domain name is too long.") )
             else:
-                d['ERROR'].append( _('If you want get your own subdomain, use alpha char !') )
+                d['ERROR'].append( _('Please use alpha characters in domain name!') )
 
         if d['ERROR']:
             return self.render('instance/domain_edit.html', **d)
