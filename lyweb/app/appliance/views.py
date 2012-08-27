@@ -171,7 +171,7 @@ class Edit(LyRequestHandler):
         appliance = self.db2.query(Appliance).get(id)
 
         if appliance.user_id != self.current_user.id:
-            return self.write( _('You have not permissions !') )
+            return self.write( _('No permission!') )
 
         form = EditApplianceForm()
         form.name.data = appliance.name
@@ -189,7 +189,7 @@ class Edit(LyRequestHandler):
         appliance = self.db2.query(Appliance).get(id)
 
         if appliance.user_id != self.current_user.id:
-            return self.write( _('You have not permissions !') )
+            return self.write( _('No permission!') )
 
         form = EditApplianceForm( self.request.arguments )
 
@@ -263,7 +263,7 @@ class Delete(AppRequestHandler):
 
         # auth delete
         if  not (self.current_user.id == app.user_id or self.has_permission('admin')):
-            msg = _('No permissions to delete appliance !')
+            msg = _('No permission to delete appliance !')
             return self.done( msg )
 
         # TODO: have any instances exist ?
@@ -386,11 +386,11 @@ class SetUseable(AppRequestHandler):
 
         app = self.db2.query(Appliance).get(id)
         if not app:
-            return self.write( _('No such appliance !') )
+            return self.write( _('No such appliance!') )
 
         if not ( app.user_id == self.current_user.id or
                  self.has_permission('admin') ):
-            return self.write( _('No permissions !') )
+            return self.write( _('No permission!') )
 
         flag = self.get_argument('isuseable', None)
         app.isuseable = True if flag == 'true' else False
@@ -416,7 +416,7 @@ class SetPrivate(AppRequestHandler):
 
         if not ( app.user_id == self.current_user.id or
                  self.has_permission('admin') ):
-            return self.write( _('No permissions !') )
+            return self.write( _('No permission!') )
 
         flag = self.get_argument('isprivate', None)
         app.isprivate = True if flag == 'true' else False

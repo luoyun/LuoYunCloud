@@ -105,7 +105,7 @@ class EditTopic(LyRequestHandler):
 
         if not ( self.topic.user_id == self.current_user.id or
                  self.has_permission('admin') ):
-            self.write('You have not permission !')
+            self.write('No permission!')
             return self.finish()
 
 
@@ -146,7 +146,7 @@ class DeleteTopic(LyRequestHandler):
             return self.write('Have not found topic %s' % id)
 
         if self.current_user.id != topic.user_id:
-            return self.write('You have not permission to edit this topic !')
+            return self.write('No permission!')
 
         self.db2.delete(topic)
         self.db2.commit()

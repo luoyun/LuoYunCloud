@@ -10,6 +10,6 @@
 % endif
 
 % else:
-<p>${ _("You have not binding a domain yet.") }</p>
+<p>${ _("Domain is not configured.") }</p>
 <p><a class="ly-btn2 small green" href="${ reverse_url('instance:domain:edit', instance.id) }">${ _("Add") }</a></p>
 % endif

@@ -457,10 +457,10 @@ class Delete(InstRequestHandler):
 
         inst = self.db2.query(Instance).get(id)
         if not inst:
-            return self.done( _('No instance %s !') % id )
+            return self.done( _('No instance %s!') % id )
 
         if self.current_user.id not in [inst.user_id, 1]:
-            return self.done( _('No permissions !') )
+            return self.done( _('No permission!') )
 
         # TODO: no running delete !
         if inst.is_running:
@@ -1237,10 +1237,10 @@ class DomainEdit(InstRequestHandler):
 
         d['subdomain'], d['topdomain'] = self.get_domain2( inst )
         if not d['subdomain']:
-            d['ERROR'].append( _('can not get domain, maybe you have not set domain in admin console.') )
+            d['ERROR'].append( _('can not get domain, domain may not be configured in administrator console.') )
 
         if not inst.access_ip:
-            d['ERROR'].append( _('Can not get access_ip, please config your network or run you instance') )
+            d['ERROR'].append( _('Can not get access_ip, please configure your network or run you instance') )
 
         self.render('instance/domain_edit.html', **d)
 
@@ -1402,11 +1402,11 @@ class SetPrivate(InstRequestHandler):
 
         inst = self.db2.query(Instance).get(id)
         if not inst:
-            return self.write( _('No such instance !') )
+            return self.write( _('No such instance!') )
 
         if not ( inst.user_id == self.current_user.id or
                  self.has_permission('admin') ):
-            return self.write( _('No permissions !') )
+            return self.write( _('No permission!') )
 
         flag = self.get_argument('isprivate', None)
         inst.isprivate = True if flag == 'true' else False

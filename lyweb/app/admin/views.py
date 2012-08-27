@@ -18,7 +18,7 @@ class Index(LyRequestHandler):
     def get(self):
 
 #        if self.current_user.id not in [ 1 ]:
-#            return self.write( _('No permissions !') )
+#            return self.write( _('No permission!') )
 
         # TODO:
         TOTAL_INSTANCE = self.db2.query(Instance.id).count()

@@ -5,7 +5,7 @@
 % if instance.domain:
 <h2>${ _("Domain Binding") }</h2>
 
-<p>${ _("Your binding domain is ") }${ instance.domain }</p>
+<p>${ _("Domain name of the instance is ") }${ instance.domain }</p>
 % if current_user and current_user.id == instance.user_id:
 <div class="action">
   <a class="ly-btn2 small green" href="${ reverse_url('instance:domain:edit', instance.id) }">${ _("Edit") }</a>
@@ -14,7 +14,7 @@
 % endif
 
 % else:
-<p>${ _("You have not binding a domain yet.") }</p>
+<p>${ _("Domain is not configured.") }</p>
 <p><a class="ly-btn2 small green" href="${ reverse_url('instance:domain:edit', instance.id) }">${ _("Add") }</a></p>
 % endif
 
