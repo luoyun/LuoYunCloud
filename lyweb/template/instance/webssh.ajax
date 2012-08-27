@@ -1,7 +1,7 @@
 % if webssh and webssh.get('status') == 'enable':
-<h2>${ _("WebSSH Configure") }</h2>
+<h2>${ _("WebSSH") }</h2>
 
-<p>${ _("Your webssh is enabled !") }</p>
+<p>${ _("WebSSH of the instance is enabled.") }</p>
 
 % if current_user and current_user.id == instance.user_id:
 <div class="action">
@@ -10,5 +10,5 @@
 % endif
 
 % else:
-<p>${ _("Your webssh is disabled now.") }<a href="${ reverse_url('instance:webssh:enable', instance.id) }">${ _("Enable") }</a></p>
+<p>${ _("WebSSH of the instance is disabled.") }<a href="${ reverse_url('instance:webssh:enable', instance.id) }">${ _("Enable") }</a></p>
 % endif

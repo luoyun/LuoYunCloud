@@ -1,4 +1,4 @@
-<h2>${ _("Domain Configure") }</h2>
+<h2>${ _("Configure Domain") }</h2>
 
 % if ERROR:
 <p>${ ERROR }</p>

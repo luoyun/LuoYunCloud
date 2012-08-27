@@ -11,7 +11,7 @@
   <p class="myun-instance-action"><a class="ly-btn2 small blue" title="${ _('Create a new instance') }" href="${ reverse_url('instance:create') }">${ _("Create New Instance") }</a></p>
 
   % if not INSTANCE_LIST:
-  <p>${ _("No instances now !") }</p>
+  <p>${ _("No instance found!") }</p>
   % endif
   % for I in INSTANCE_LIST:
   <div class="v-instance c">
