@@ -12,9 +12,9 @@
 <script type="text/javascript" src="${ STATIC_URL }js/url.js"></script>
 
 <div class="ly-description">
-  <p>${ _("There are all instances which is set public.") }
+  <p>${ _("Public Instances") }
     % if current_user:
-    <a href="${ reverse_url('myun:instance') }">${ _("View all instances of myself") }</a>
+    <a href="${ reverse_url('myun:instance') }">${ _("(My Instances)") }</a>
     % endif
   </p>
 </div>
@@ -102,15 +102,15 @@
     <div class="sort-select c">
       <ul class="single-choice">
 	<h3>${ _("View") }</h3>
-	<li><input type='checkbox' value="all" />${ _("all") }</li>
-	<li><input type='checkbox' value="self" />${ _("myself") }</li>
+	<li><input type='checkbox' value="all" />${ _("All Public") }</li>
+	<li><input type='checkbox' value="self" />${ _("My  Public") }</li>
       </ul>
     </div>
     % endif
 
     <div class="sort-select c">
       <ul id="order-by-choice">
-	<h3>${ _("Order") }</h3>
+	<h3>${ _("Selection") }</h3>
 	<li><input type='checkbox' value="updated" />${ _("Updated") }</li>
 	<li><input type='checkbox' value="created" />${ _("Created") }</li>
 ##	<li><input type='checkbox' value="username" />${ _("Username") }</li>
@@ -119,9 +119,9 @@
 
     <div class="sort-select c">
       <ul id="sort-method-choice">
-	<h3>${ _("Sort") }</h3>
-	<li><input type='checkbox' value="desc" />${ _("DESC") }</li>
-	<li><input type='checkbox' value="asc" />${ _("ASC") }</li>
+	<h3>${ _("Order") }</h3>
+	<li><input type='checkbox' value="desc" />${ _("Descending") }</li>
+	<li><input type='checkbox' value="asc" />${ _("Ascending") }</li>
       </ul>
     </div>
 
@@ -136,7 +136,7 @@
 
     <div class="sort-select c">
       <ul id="pagesize-choice">
-	<h3>${ _("Pagesize") }</h3>
+	<h3>${ _("PageSize") }</h3>
 	<li><input type='checkbox' value="10" />${ _("10") }</li>
 	<li><input type='checkbox' value="20" />${ _("20") }</li>
 	<li><input type='checkbox' value="50" />${ _("50") }</li>

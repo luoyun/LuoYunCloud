@@ -22,7 +22,7 @@
 ## ${ form.accept_rules() }
       <input type="checkbox" value="y" name="accept_rules" id="accept_rules">
       <span>${ _("I accept the site rules .") }</span>
-      <span id="ly-read-registration-protocol"><a href="${ reverse_url('registration_protocol') }" target="_blank">${ _("Read Registration Protocol") }</a></span>
+      <span id="ly-read-registration-protocol"><a href="${ reverse_url('registration_protocol') }" target="_blank">${ _("Read Registration Policy") }</a></span>
       <br/>
       ${ form.html_errors(form.accept_rules.errors) }
 

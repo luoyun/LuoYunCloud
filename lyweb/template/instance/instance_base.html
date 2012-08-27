@@ -122,7 +122,7 @@
   </div>
   <div id="inst-center">
     % if current_user and instance.ischanged and current_user.id == instance.user_id:
-    <div class="ly-warning">${ _("Instance configure is modified, please reboot it !") }</div>
+    <div class="ly-warning">${ _("Instance configuration has changed, please restart instance for new settings to be effective!") }</div>
     % endif
     <div id="admin-center" class="min-height-300">
       <%block name="maincenter"/>

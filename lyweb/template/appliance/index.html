@@ -3,9 +3,9 @@
 <%block name="main">
 
 <div class="ly-description">
-  <p>${ _("There are all appliances which is set public.") }
+  <p>${ _("Public Appliances") }
     % if current_user:
-    <a href="${ reverse_url('myun:appliance') }">${ _("View all appliances of myself") }</a>
+    <a href="${ reverse_url('myun:appliance') }">${ _("(My Appliances)") }</a>
     % endif
   </p>
 </div>

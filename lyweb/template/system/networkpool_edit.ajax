@@ -1,4 +1,4 @@
-<h2>${ _("Edit Network Pool") }</h2>
+<h2>${ _("Edit IP Address Pool") }</h2>
 
 <div class="main-wrap small-left-right-form">
   <form method="POST" action="${ reverse_url('system:networkpool:edit') }">

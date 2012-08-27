@@ -4,7 +4,7 @@
 % if instance.summary:
 ${ instance.summary }
 % else:
-${ _("This a instance of LuoYun system.") }
+${ _("This is an instance of LuoYun Cloud platform.") }
 % endif
 </p>
 
