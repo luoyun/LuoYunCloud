@@ -1,17 +1,15 @@
 <%inherit file="/admin/admin_base.html" />
 
+<%block name="innav">
+<li><a href="${ reverse_url('admin:appliance:catalog') }">${ _("Appliance Catalog") }</a></li>
+<li>${ _("New Catalog") }</li>
+</%block>
+
 <%block name="sidemain">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="/">${ _("Home") }</a></span>&gt;
-    <span><a href="/admin">${ _("Admin") }</a></span>&gt;
-    <span><a href="/admin/appliance">${ _("Appliances") }</a></span>&gt;
-    <span>${ _("Add Catalog") }</span>
-  </div>
-</div>
+<h2 class="title">${ _("Create Appliance Catalog") }</h2>
 
-<div class="main-wrap small-left-right-form">
+<div class="small-left-right-form c">
   <form method="POST">
     ${ form.name.label } ${ form.name() }<br/>
     ${ form.html_errors( form.name.errors ) }

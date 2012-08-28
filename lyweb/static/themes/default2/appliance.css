@@ -20,6 +20,8 @@ h5 {
     color: #1D306B;
     font-size: 13px;
     margin-bottom: 20px;
+    padding-right: 5px;
+    text-align: right;
 }
 .sidemain {
     background-color: white;

@@ -40,6 +40,14 @@
             <td>${ fulltime(USER.last_login) }</td>
 	  </tr>
 	  <tr>
+	    <td>${ _("Last Activate") }</td>
+	    <td>${ lytime(USER.last_active, '%Y-%m-%d %H:%M:%S') }</td>
+	  </tr>
+	  <tr>
+	    <td>${ _("Last Entry") }</td>
+	    <td>${ USER.last_entry }</td>
+	  </tr>
+	  <tr>
 	    <td>${ _("Group") }</td>
 	    <td>
 	      % if USER.groups:
@@ -52,14 +60,6 @@
 	      ${ _("No group") }
 	      % endif
 	    </td>
-	  </tr>
-	  <tr>
-	    <td>${ _("Last Activate") }</td>
-	    <td>${ lytime(USER.last_active, '%Y-%m-%d %H:%M:%S') }</td>
-	  </tr>
-	  <tr>
-	    <td>${ _("Last Entry") }</td>
-	    <td>${ USER.last_entry }</td>
 	  </tr>
 	</tbody>
       </table>

@@ -34,8 +34,8 @@ class GroupForm(Form):
 # Support wiki catalog and appliance catalog
 class CatalogForm(Form):
 
-    name = TextField( _('Name'), [validators.Length(min=4, max=32)] )
-    summary = TextField( _('Summary'), [validators.Length(min=4, max=256)] )
+    name = TextField( _('Name'), [validators.Length(min=2, max=32)] )
+    summary = TextField( _('Summary'), [validators.Length(min=2, max=256)] )
     description = TextAreaField( _('Description') )
 
 

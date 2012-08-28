@@ -35,7 +35,8 @@ class Application(tornado.web.Application):
             set_network_pool(self.db2)
 
             # Normal web server
-            return tornado.web.Application.__init__(self, app_handlers, **app_settings)
+            return tornado.web.Application.__init__(
+                self, app_handlers, **app_settings )
 
         except OperationalError, msg:
             # DB connect error, show the install step

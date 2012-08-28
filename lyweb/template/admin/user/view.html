@@ -38,6 +38,15 @@
           <td>${ fulltime(user.last_login) }</td>
 	</tr>
 
+	<tr>
+          <td>${ _("Last Active") }</td>
+          <td>${ fulltime(user.last_active) }</td>
+	</tr>
+	<tr>
+          <td>${ _("Last Entry") }</td>
+          <td>${ user.last_entry }</td>
+	</tr>
+
 	% if user.profile:
 	<tr>
           <td>${ _("Email") }</td>
@@ -103,7 +112,7 @@
 	  <td>${ _("Appliances") }</td>
 	  <td>
 	    % if user.appliances:
-	    <a href="">${ len(user.appliances) }</a>
+	    <a href="${ reverse_url('admin:appliance') }?uid=${ user.id }">${ len(user.appliances) }</a>
 	    % else:
 	    ${ _("None") }
 	    % endif
@@ -114,7 +123,7 @@
 	  <td>${ _("Instances") }</td>
 	  <td>
 	    % if user.instances:
-	    <a href="">${ len(user.instances) }</a>
+	    <a href="${ reverse_url('admin:instance') }?uid=${ user.id }">${ len(user.instances) }</a>
 	    % else:
 	    ${ _("None") }
 	    % endif

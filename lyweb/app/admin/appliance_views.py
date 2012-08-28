@@ -42,12 +42,6 @@ class ApplianceManagement(LyRequestHandler):
             else:
                 self.get_index()
 
-        elif self.action == 'add_catalog':
-            self.get_add_catalog()
-
-        elif self.action == 'edit_catalog':
-            self.get_edit_catalog()
-
         else:
             self.write( _('Wrong action value!') )
 
@@ -56,12 +50,6 @@ class ApplianceManagement(LyRequestHandler):
 
         if not self.action:
             self.write( _('No action found !') )
-
-        elif self.action == 'add_catalog':
-            self.post_add_catalog()
-
-        elif self.action == 'edit_catalog':
-            self.post_edit_catalog()
 
         else:
             self.write( _('Wrong action value!') )
@@ -125,52 +113,96 @@ class ApplianceManagement(LyRequestHandler):
 
 
 
-    def get_add_catalog(self):
 
-        form = CatalogForm()
+class CatalogManagement(LyRequestHandler):
 
-        self.render( 'admin/appliance/add_catalog.html',
+    @has_permission('admin')
+    def prepare(self):
+
+        self.action = self.get_argument('action', 'index')
+
+        cid = int( self.get_argument('id', 0) )
+        self.catalog = self.db2.query(ApplianceCatalog).get(cid)
+
+        if self.action in ['edit'] and not self.catalog:
+            self.write( _('No catalog specified !') )
+            return self.finish()
+
+
+    def get(self):
+
+        if self.action == 'index':
+            self.get_index()
+
+        elif self.action == 'new':
+            self.get_new()
+
+        elif self.action == 'edit':
+            self.get_edit()
+
+        else:
+            self.write( _('Wrong action: %s') % self.action )
+
+
+    def post(self):
+
+        if self.action == 'new':
+            self.post_new()
+
+        elif self.action == 'edit':
+            self.post_edit()
+
+        else:
+            self.write( _('Wrong action: %s') % self.action )
+
+
+    def get_index(self):
+
+        CL = self.db2.query(ApplianceCatalog).order_by('id').all()
+
+        d = { 'title': _('Appliance Catalog'),
+              'CATALOG_LIST': CL }
+
+        self.render( 'admin/appliance/catalog.html', **d )
+
+
+    def get_new(self):
+        self.render( 'admin/appliance/catalog_new.html',
                      title = _('Add Appliance Catalog'),
-                     form = form )
+                     form = CatalogForm() )
 
-
-    def post_add_catalog(self):
+    def post_new(self):
 
         form = CatalogForm( self.request.arguments )
         if form.validate():
-            c = ApplianceCatalog( name = form.name.data,
-                                  summary = form.summary.data,
-                                  description = form.description.data )
+            c = ApplianceCatalog(
+                name = form.name.data,
+                summary = form.summary.data,
+                description = form.description.data )
             self.db2.add( c )
             self.db2.commit()
 
-            url = self.reverse_url('admin:appliance')
+            url = self.reverse_url('admin:appliance:catalog')
             return self.redirect( url )
 
-        self.render( 'admin/appliance/add_catalog.html',
+        self.render( 'admin/appliance/catalog_new.html',
                      title = _('Add Appliance Catalog'),
                      form = form )
 
 
-    def get_edit_catalog(self):
+    def get_edit(self):
 
-        if not self.catalog:
-            return self.write( _('No catalog found') )
-        
         form = CatalogForm()
         form.name.data = self.catalog.name
         form.summary.data = self.catalog.summary
         form.description.data = self.catalog.description
 
-        self.render( 'admin/appliance/edit_catalog.html',
-                     title = _('Edit appliance catalog: %s') % self.catalog.name,
+        self.render( 'admin/appliance/catalog_edit.html',
+                     title = _('Edit Appliance Catalog: %s') % self.catalog.name,
                      form = form )
 
 
-    def post_edit_catalog(self):
-
-        if not self.catalog:
-            return self.write( _('No catalog found') )
+    def post_edit(self):
 
         form = CatalogForm( self.request.arguments )
         if form.validate():
@@ -179,22 +211,10 @@ class ApplianceManagement(LyRequestHandler):
             self.catalog.description = form.description.data
             self.db2.commit()
 
-            url = self.reverse_url('admin:appliance')
+            url = self.reverse_url('admin:appliance:catalog')
             return self.redirect( url )
 
-        self.render( 'admin/appliance/add_catalog.html',
-                     title = _('Add Appliance Catalog'),
+        self.render( 'admin/appliance/catalog_edit.html',
+                     title = _('Edit Appliance Catalog: %s') % self.catalog.name,
                      form = form )
 
-
-class AdminCatalog(LyRequestHandler):
-
-    @has_permission('admin')
-    def get(self):
-
-        CL = self.db2.query(ApplianceCatalog).all()
-
-        d = { 'title': _(''),
-              'CATALOG_LIST': CL }
-
-        self.render( 'admin/appliance/catalog.html', **d )

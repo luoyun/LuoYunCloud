@@ -9,13 +9,16 @@
 
 <h2 class="title">${ _("LuoYun Appliance Catalog Management") }</h2>
 
-<div class="c kvlist ly-table">
+<p><a class="ly-btn2 small blue" href="${ reverse_url('admin:appliance:catalog') }?action=new">${ _("New Catalog") }</a></p>
+
+<div class="c ly-table">
   <table>
     <thead>
       <tr>
 	<th>${ _("ID") }</th>
 	<th>${ _("Name") }</th>
 	<th>${ _("Appliances") }</th>
+	<th></th>
       </tr>
     </thead>
     <tbody>
@@ -31,13 +34,17 @@
 	</td>
 	<td>
 	  % if C.appliances:
-	  ${ len(C.appliances) }
+	  <a href="${ reverse_url('admin:appliance') }?catalog=${ C.id }">${ len(C.appliances) }</a>
 	  % endif
+	</td>
+	<td>
+	  <a href="${ reverse_url('admin:appliance:catalog') }?id=${ C.id }&action=edit">${ _("Edit") }</a>
 	</td>
       </tr>
       % endfor
     </tbody>
   </table>
 </div>
+
 
 </%block>

@@ -31,6 +31,8 @@ class AppRequestHandler(LyRequestHandler):
 
 class Index(AppRequestHandler):
 
+    def initialize(self, title = _('Appliance Home')):
+        self.title = title
 
     def get(self):
 
@@ -62,7 +64,7 @@ class Index(AppRequestHandler):
 
         page_html = pagination.html( self.get_page_url )
 
-        d = { 'title': "Appliance Home",
+        d = { 'title': self.title,
               'appliances': apps,
               'catalogs': catalogs,
               'cur_catalog': catalog_id,

@@ -41,16 +41,24 @@ LuoYun
             </ul>
           </div>
 
-          <div id="login">
-            %if current_user:
-            <span id="my-profile-enter"><a href="${ reverse_url('account:index') }">${ current_user.username }</a></span>
-	    <span id="my-message-enter"><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }<span class="inbox-count">${ current_user.profile.notification }</span></a></span>
-            <span class="logout"><a href="${ reverse_url('logout') }"><img src="${ THEME_URL }img/logout.svg" alt="${ _('Sign Out') }" /></a></span>
-            %else:
-            <span class="login"><a href="${ reverse_url('login') }">${ _("Sign In") }</a></span>
-            <span class="register"><a href="${ reverse_url('register') }">${ _("Register") }</a></span>
-            %endif
-          </div>
+	  <div id="account">
+            <div id="login">
+              %if current_user:
+              <span id="my-profile-enter"><a href="${ reverse_url('account:index') }">${ current_user.username }</a></span>
+	      <span id="my-message-enter"><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }<span class="inbox-count">${ current_user.profile.notification }</span></a></span>
+
+              %else:
+              <span class="login"><a href="${ reverse_url('login') }">${ _("Sign In") }</a></span>
+              <span class="register"><a href="${ reverse_url('register') }">${ _("Register") }</a></span>
+              %endif
+            </div>
+
+            % if current_user:
+	    <div id="logout">
+	      <a href="${ reverse_url('logout') }"><img src="${ THEME_URL }img/logout.svg" alt="${ _('Sign Out') }" /></a>
+	    </div>
+	    % endif
+	  </div>
 
         </div>
       </div>

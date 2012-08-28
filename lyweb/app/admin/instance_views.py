@@ -6,6 +6,7 @@ from tornado.web import authenticated, asynchronous
 
 from app.account.models import User, Group, Permission
 from app.instance.models import Instance
+from app.appliance.models import Appliance
 
 from lycustom import has_permission
 
@@ -58,7 +59,8 @@ class InstanceManagement(LyRequestHandler):
         status = self.get_argument('status', 'all')
         page_size = int(self.get_argument('sepa', 30))
         cur_page = int(self.get_argument('p', 1))
-        uid = int(self.get_argument('uid', 0))
+        uid = int(self.get_argument('uid', 0)) # sort by user
+        aid = int(self.get_argument('aid', 0)) # sort by appliance
 
         start = (cur_page - 1) * page_size
         stop = start + page_size
@@ -75,6 +77,10 @@ class InstanceManagement(LyRequestHandler):
         U = self.db2.query(User).get( uid )
         if U:
             instances = instances.filter_by( user_id = uid )
+
+        APPLIANCE = self.db2.query(Appliance).get( aid )
+        if APPLIANCE:
+            instances = instances.filter_by( appliance_id = aid )
 
         if by == 'created':
             by_obj = Instance.created
@@ -104,7 +110,7 @@ class InstanceManagement(LyRequestHandler):
         d = { 'title': _('Instance Management'),
               'INSTANCE_LIST': instances, 'TOTAL_INSTANCE': total,
               'PAGE_HTML': page_html,
-              'SORT_USER': U if U else None }
+              'SORT_USER': U, 'SORT_APPLIANCE': APPLIANCE }
 
         self.render( 'admin/instance/index.html', **d )
 

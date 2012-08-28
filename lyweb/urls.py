@@ -61,7 +61,7 @@ def get_home_hander():
 
 handlers =  message_urls + account_urls + admin_urls + appliance_urls + wiki_urls + instance_urls + job_urls + node_urls + system_urls + myun_urls + home_urls + [
 
-    (r'/', get_home_hander()),
+    (r'/', get_home_hander(), dict(title=_("LuoYun Cloud Home"))),
 
     # Utils
     (r'/proxy', LyProxyHandler),

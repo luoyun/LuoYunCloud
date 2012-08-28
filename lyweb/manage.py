@@ -63,10 +63,11 @@ def default_value(dbsession):
             enc_password = "%s$%s" % (salt, hsh)
             u = User(username = username, password = enc_password)
             dbsession.add(u)
+            dbsession.commit()
 
             if not u.profile:
                 from app.account.models import UserProfile
-                profile = UserProfile(user, email = '%s@localhost' % user.username)
+                profile = UserProfile(u, email = '%s@localhost' % u.username)
                 dbsession.add(profile)
 
 

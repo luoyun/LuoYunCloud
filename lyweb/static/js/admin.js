@@ -164,9 +164,9 @@ function lyAdminApplianceOwnerHover ( HOVER_TEMP ) {
 	    });
 
 	    var $top = $(this).parents(toptag);
-	    var uid = $top.children('.a-uid').html();
+	    var aid = $top.children('.i-aid').html();
 
-	    $top.append( HOVER_TEMP.replace('UID', uid) );
+	    $top.append( HOVER_TEMP.replace('AID', aid) );
 
 	    // Mouse moveout, remove .hover-content
 	    $('.hover-content').hover(
@@ -184,28 +184,26 @@ function lyAdminApplianceOwnerHover ( HOVER_TEMP ) {
 }
 
 
-function lyAdminInstanceOwnerHover ( HOVER_TEMP ) {
 
-    var toptag = '.i-owner';
-    var ownertag = '.i-link a';
+function lyAdminSortByHover ( HOVER_TEMP, toptag, selecttag ) {
+
+    var obj = toptag + ' .link';
     var hovertag = '.hover-content';
 
-    $(ownertag).hover(
+    $(obj).hover(
 	function () {
 
 	    $(hovertag).each( function () {
 		$(this).remove();
 	    });
 
-	    var $top = $(this).parents(toptag);
-	    var uid = $top.children('.i-uid').html();
-
-	    $top.append( HOVER_TEMP.replace('UID', uid) );
+	    var $top = $(this).parent();
+	    var select = $top.children(selecttag).html();
+	    $top.append( HOVER_TEMP.replace('SELECT', select) );
 
 	    // Mouse moveout, remove .hover-content
-	    $('.hover-content').hover(
-		function () {
-		},
+	    $(hovertag).hover(
+		function () {},
 		function () {
 		    $(this).remove();
 		}

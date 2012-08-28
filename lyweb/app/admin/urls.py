@@ -27,7 +27,7 @@ handlers = [
     url(r'/admin/system', system.SystemManagement, name='admin:system'),
 
     url(r'/admin/appliance', appliance.ApplianceManagement, name='admin:appliance'),
-    url(r'/admin/appliance/catalog', appliance.AdminCatalog, name='admin:appliance:catalog'),
+    url(r'/admin/appliance/catalog', appliance.CatalogManagement, name='admin:appliance:catalog'),
 
     # TODO:
     url(r'/admin/appliance/([0-9]+)/delete', appliance_orig.Delete, name='admin:appliance:delete'),

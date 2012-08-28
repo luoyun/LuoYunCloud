@@ -10,6 +10,7 @@
 
 <div class="c catalog-list">
   <ul>
+    <li><a href="${ reverse_url('admin:appliance') }">${ _("All") }</a></li>
     % for C in CATALOG_LIST:
     <li
        % if CID and C.id == CID:
@@ -46,14 +47,14 @@
 	<td><a href="${ reverse_url('admin:appliance') }?id=${ A.id }">${ A.name }</a></td>
 	<td>
 	  <div class="a-owner">
-	    <span class="a-link"><a href="${ reverse_url('admin:user') }?id=${ A.user.id }">${ A.user.username }</a></span>
-	    <span class="a-uid" style="display:none;">${ A.user.id }</span>
+	    <span class="link"><a href="${ reverse_url('admin:user') }?id=${ A.user.id }">${ A.user.username }</a></span>
+	    <span class="uid" style="display:none;">${ A.user.id }</span>
 	  </div>
 	</td>
 	<td>${ A.catalog.name }</td>
 	<td>
 	  % if A.instances:
-	  ${ len(A.instances) }
+	  <a href="${ reverse_url('admin:instance') }?aid=${ A.id }">${ len(A.instances) }</a>
 	  % endif
 	</td>
 	<td>${ lytime(A.updated) }</td>
@@ -67,8 +68,8 @@
 ${ PAGE_HTML }
 
 <script type="text/javascript">
-  var HTML_TEMP = "<div class=\"hover-content\"><a class='ly-btn2 small blue' href=\"${ reverse_url('admin:appliance') }?uid=UID\">${ _('Appliances owner by Me') }</a></div>";
-  lyAdminApplianceOwnerHover( HTML_TEMP );
+  var HTML_TEMP = "<div class=\"hover-content\"><a class='ly-btn2 small blue' href=\"${ reverse_url('admin:appliance') }?uid=SELECT\">${ _('Appliances owner by Me') }</a></div>";
+  lyAdminSortByHover( HTML_TEMP, '.a-owner', '.uid' );
 </script>
 
 </%block>

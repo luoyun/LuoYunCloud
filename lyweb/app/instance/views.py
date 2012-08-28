@@ -223,6 +223,10 @@ class InstRequestHandler(LyRequestHandler):
 class Index(InstRequestHandler):
     ''' Index home '''
 
+    def initialize(self, title = _('LuoYun Home')):
+        self.title = title
+
+
     def get(self):
 
         # TODO: a temp hack for status sync
@@ -285,7 +289,7 @@ class Index(InstRequestHandler):
         else:
             page_html = ""
 
-        d = { 'title': _('LuoYun Home'),
+        d = { 'title': self.title,
               'INSTANCE_LIST': instances,
               'cur_page': cur_page,
               'page_html': page_html }

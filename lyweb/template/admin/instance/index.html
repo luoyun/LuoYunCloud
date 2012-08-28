@@ -10,9 +10,14 @@
 
 <p>${ _("Total instances: ") } ${ TOTAL_INSTANCE }</p>
 
+<p>${ _("Sorted by") } 
 % if SORT_USER:
-<p>${ _("Sorted by") } <a href="${ reverse_url('admin:user') }?id=${ SORT_USER.id }">${ SORT_USER.username }</a></p>
+<a href="${ reverse_url('admin:user') }?id=${ SORT_USER.id }">${ SORT_USER.username }</a>
 % endif
+% if SORT_APPLIANCE:
+<a href="${ reverse_url('admin:appliance') }?id=${ SORT_APPLIANCE.id }">${ SORT_APPLIANCE.name }</a>
+% endif
+</p>
 
 <div class="admin-instance c">
 
@@ -25,6 +30,7 @@
           <th>${ _("Owner") }</th>
           <th>${ _("Name") }</th>
           <th>${ _("Isprivate") }</th>
+	  <th>${ _("Appliance") }</th>
           <th>${ _("Status") }</th>
           <th>${ _("Updated") }</th>
           <th>${ _("Node") }</th>
@@ -36,8 +42,8 @@
           <td>${ I.id }</td>
           <td>
 	    <div class="i-owner">
-	      <span class="i-link"><a href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a></span>
-	      <span class="i-uid" style="display:none;">${ I.user.id }</span>
+	      <span class="link"><a href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a></span>
+	      <span class="uid" style="display:none;">${ I.user.id }</span>
 	    </div>
 	  </td>
           <td><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></td>
@@ -46,6 +52,12 @@
 		     checked="checked"
 		     % endif
 		     />
+	  </td>
+	  <td>
+	    <div class="i-app">
+	      <span class="link"><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></span>
+	      <span class="id" style="display:none;">${ I.appliance_id }</span>
+	    </div>
 	  </td>
           <td><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" title="${ I.status_string }"/></td>
           <td>${ fulltime(I.updated) }</td>
@@ -72,8 +84,11 @@
 </div>
 
 <script type="text/javascript">
-  var HTML_TEMP = "<div class=\"hover-content\"><a class='ly-btn2 small blue' href=\"${ reverse_url('admin:instance') }?uid=UID\">${ _('Instances owner by Me') }</a></div>";
-  lyAdminInstanceOwnerHover( HTML_TEMP );
+  var HTML_TEMP = "<div class=\"hover-content\"><a class='ly-btn2 small blue' href=\"${ reverse_url('admin:instance') }?uid=SELECT\">${ _('Instances owner by Me') }</a></div>";
+  lyAdminSortByHover( HTML_TEMP, '.i-owner', '.uid' );
+
+  var HTML_TEMP = "<div class=\"hover-content\"><a class=\"ly-btn2 small blue\" href=\"${ reverse_url('admin:instance') }?aid=SELECT\">${ _('Instances created from Me') }</a></div>";
+  lyAdminSortByHover( HTML_TEMP, '.i-app', '.id' );
 </script>
 
 </%block>

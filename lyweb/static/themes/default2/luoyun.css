@@ -167,9 +167,12 @@ body {
     /*padding-top: 6px;*/
 }
 
+#account {
+    float: right;
+}
 #login {
     text-align: right;
-    float: right;
+    float: left;
     margin-top: 16px;
 }
 #login a {
@@ -215,15 +218,16 @@ body {
     color: #08562D !important;
 }
 
-.logout {
+#logout {
     font-size: 0.9em;
     color: #B5F99E;
+    float: left;
+    margin: 15px 0 0 12px;
 }
-.logout img {
-    width: 22px;
-    float: right;
-    display: inline-block;
-    margin-left: 10px;
+#logout img {
+    width: 18px;
+    float: left;
+/*    margin-left: 10px;*/
 }
 
 /* End Header */
