@@ -683,11 +683,28 @@ class CreateInstance(InstRequestHandler):
         USED_INSTANCES = self.db2.query(Instance.id).filter(
             Instance.user_id == self.current_user.id ).count()
 
-        if USED_INSTANCES + 1 > self.current_user.profile.instances:
-            url = self.get_no_resource_url()
-            url += "?reason=Resource Limit"
+        RUNNING_INST_LIST = self.db2.query(Instance).filter( and_(
+            Instance.status.in_( settings.INSTANCE_SLIST_RUNING ),
+            Instance.user_id == self.current_user.id ) )
+        USED_CPUS, USED_MEMORY = 0, 0
+        for I in RUNNING_INST_LIST:
+            if I.is_running:
+                USED_CPUS += I.cpus
+                USED_MEMORY += I.memory
+
+        profile = self.current_user.profile
+        if ( (USED_INSTANCES >= profile.instances) or 
+             (USED_CPUS >= profile.cpus) or
+             (USED_MEMORY >= profile.memory) ):
+            url = self.get_no_resource_url() + "?reason=Resource Limit"
             self.redirect( url )
             return self.finish()
+
+        self.USED_CPUS = USED_CPUS
+        self.USED_MEMORY = USED_MEMORY
+        self.d = { 'title': _('Create Instance'),
+                   'USED_CPUS': USED_CPUS,
+                   'USED_MEMORY': USED_MEMORY }
 
 
     def get(self):
@@ -702,8 +719,9 @@ class CreateInstance(InstRequestHandler):
             form = CreateInstanceBaseForm()
             form.name.data = self.appliance.name
 
-        self.render( 'instance/create.html', title = _('Create Instance'),
-                     form = form, APPLIANCE = self.appliance )
+        self.d['APPLIANCE'] = self.appliance
+        self.d['form'] = form
+        self.render( 'instance/create.html', **self.d )
 
 
     def post(self):
@@ -716,7 +734,8 @@ class CreateInstance(InstRequestHandler):
             form.appliance.query = self.db2.query(Appliance).all()
             app = form.appliance.data
 
-        d = { 'title': _('Create Instance'), 'form': form, 'APPLIANCE': app }
+        self.d['APPLIANCE'] = app
+        self.d['form'] = form
 
         if form.validate():
 
@@ -725,8 +744,18 @@ class CreateInstance(InstRequestHandler):
                 name = form.name.data).filter_by(
                 user_id = self.current_user.id).first()
             if exist_inst:
-                form.name.errors.append( _('Name is used!') )
-                return self.render( 'instance/create.html', **d )
+                form.name.errors.append( _('You have used the name for a instance !') )
+
+            # TODO: resource limit
+            profile = self.current_user.profile
+            if (form.cpus.data + self.USED_CPUS) > profile.cpus:
+                form.cpus.errors.append( _('cpus can not greater than %s') % (profile.cpus - self.USED_CPUS) )
+            if (form.memory.data + self.USED_MEMORY) > profile.memory:
+                form.memory.errors.append( _('memory can not greater than %s') % (profile.memory - self.USED_MEMORY) )
+
+            if ( form.name.errors or form.cpus.errors
+                 or form.memory.errors ):
+                return self.render( 'instance/create.html', **self.d )
 
             # Create new instance
             instance = Instance(
@@ -752,7 +781,7 @@ class CreateInstance(InstRequestHandler):
             return self.redirect(url)
 
         # Something is wrong
-        self.render( 'instance/create.html', **d )
+        self.render( 'instance/create.html', **self.d )
 
 
     def set_ip(self, instance):

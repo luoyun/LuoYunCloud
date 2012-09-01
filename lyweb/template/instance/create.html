@@ -45,6 +45,7 @@
 	${ form.html_errors( form.cpus.errors ) }
 	<div class="hidden" style="display: none;">
 	  <p>${ _("The cpus of your instance.") }</p>
+	  <p>${ _("total: %s, used: %s") % (current_user.profile.cpus, USED_CPUS) }</p>
 	</div>
       </div>
     </div>
@@ -56,6 +57,7 @@
 	${ form.html_errors( form.memory.errors ) }
 	<div class="hidden" style="display: none;">
 	  <p>${ _("The memory of your instance.") }</p>
+	  <p>${ _("total: %s, used: %s") % (current_user.profile.memory, USED_MEMORY) }</p>
 	</div>
       </div>
     </div>

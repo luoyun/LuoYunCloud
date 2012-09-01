@@ -14,9 +14,9 @@ from app.instance.models import Instance
 
 class CreateInstanceBaseForm(Form):
 
-    name = TextField( _('Name'), [validators.Length(min=3, max=30)] )
-    cpus = IntegerField( _('CPU'), [NumberRange( min = 1, max = 2)], default = 1 )
-    memory = IntegerField( _('Memory(M)'), [NumberRange( min = 64, max = 1024 )], default = 256 )
+    name = TextField( _('Name'), [validators.Length(min=2, max=30)] )
+    cpus = IntegerField( _('CPU'), [NumberRange( min = 1 )], default = 1 )
+    memory = IntegerField( _('Memory(M)'), [NumberRange( min = 64 )], default = 256 )
     isprivate = BooleanField( _('Hide'), default = True )
 
 
