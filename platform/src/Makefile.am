@@ -8,7 +8,7 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-SUBDIRS = luoyun util compute clc osmanager
+SUBDIRS = luoyun util compute clc
 
 AM_CFLAGS = -g -O -std=gnu99 -D_GNU_SOURCE -DVERSION=\"$(VERSION)\" -DPROG="\"$(PACKAGE)\""
 
