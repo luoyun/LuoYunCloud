@@ -98,7 +98,7 @@ class UserManagement(LyRequestHandler):
         page_size = int( self.get_argument('sepa', USER_PS) )
         cur_page = int( self.get_argument('p', 1) )
         by = self.get_argument('by', 'id')
-        sort = self.get_argument('sort', 'ASC')
+        sort = self.get_argument('sort', 'DESC')
         gid = (self.get_argument('gid', 0))
 
 

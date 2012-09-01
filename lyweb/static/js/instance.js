@@ -112,6 +112,49 @@ function InstanceControl() {
 }
 
 
+function InitInstanceStatus( ID ) {
+
+    $.ajax({
+        url: '/instance/' + ID + 'isrunning?ajax=1',
+        type: 'GET',
+        success: function (data) {
+            if (! data.jid) {
+                $('#job-status-desc').html( data.desc );
+                return
+            }
+
+	    // set link is unaviable
+            $obj.attr('href', "javascript:void(0);");
+
+	    // change img on clicked status
+	    var imgp = $obj.children('img').attr('src');
+	    imgp = imgp.replace(/(\w+).png/, '$1-clicked.png')
+	    $obj.children('img').attr('src', imgp);
+
+	    // add a clicked class
+            $obj.addClass('clicked');
+
+	    if ( data.jid == -1 ) {
+                $('#job-status-desc').html( data.desc );
+		return
+	    }
+
+            // set status img of instance
+            var imgp = $('#i-status-img').attr('src');
+            imgp = imgp.replace(/\d+\.png/, 'running.gif');
+            $('#i-status-img').attr('src', imgp);
+
+            $('#job-id').html(data.jid);
+            //alert(data.desc + data.jid);
+            // TODO: change action between run and stop
+            InstanceDynamicStatus();
+        }
+    });
+
+
+}
+
+
 function MenuClick() {
     $("#admin-menu a").click(function(event) {
         event.preventDefault();
@@ -216,4 +259,32 @@ function indexInstanceLogoHover ( ) {
 	    $(this).hide();
 	}
     );
+}
+
+
+
+// show/hide the .hidden obj in sild
+function lyItemHover ( tag ) {
+
+    var x = 22;
+    var y = 20;
+
+    $( tag ).hover(
+
+	function ( e ) {
+	    var $hidden = $(this).children(".hidden");
+	    $hidden.css({top:(e.pageY - y ) + 'px',left:(e.pageX + x ) + 'px'}).fadeIn('fast');
+	},
+
+	function () {
+            $(this).children(".hidden").hide();
+	}
+
+    );
+
+    $( tag ).mousemove( function(e) {
+	var $hidden = $(this).children(".hidden");
+	$hidden.css({top:(e.pageY -y ) + 'px',left:(e.pageX + x ) + 'px'});
+    });
+
 }

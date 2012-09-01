@@ -19,10 +19,10 @@ class CreateUserForm(Form):
     password_confirm = PasswordField( _('Confirm Password') )
 
 class UserResourceForm(Form):
-    memory = IntegerField( _('Memory'), [validators.NumberRange(min=256, max=10240)])
+    memory = IntegerField( _('Memory(M)'), [validators.NumberRange(min=256, max=10240)])
     cpus = IntegerField( _('CPUs'), [validators.NumberRange(min=1, max=20)])
     instances = IntegerField( _('Instances'), [validators.NumberRange(min=1, max=100)])
-    storage = IntegerField( _('Storage'), [validators.NumberRange(min=2, max=100)])
+    storage = IntegerField( _('Storage(G)'), [validators.NumberRange(min=2, max=100)])
 
 
 class GroupForm(Form):

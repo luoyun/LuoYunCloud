@@ -109,11 +109,13 @@ class InstRequestHandler(LyRequestHandler):
             self.done( _('No such instance: %s !') % id )
             return None
 
-        if ( inst.isprivate and
-             (self.current_user.id != inst.user_id) and
-             not self.has_permission('admin') ):
-            self.done( _('Instance %s is private !') % id )
-            return None
+        if inst.isprivate:
+            if ( (not self.current_user) or (
+                    (self.current_user.id != inst.user_id) and
+                    (not self.has_permission('admin')) )
+                 ):
+                self.done( _('Instance %s is private !') % id )
+                return None
 
         if inst.status == DELETED_S:
             self.done( _('Instance %s is deleted !') % id )
@@ -642,6 +644,32 @@ class Run(InstRequestHandler):
 
 
 
+class Isrunning(InstRequestHandler):
+    ''' Does the instance is running ? '''
+
+    def get(self, id):
+
+        inst = self.get_instance(id)
+        if not inst: return
+
+        # TODO: Need query ?
+
+        json = { 'jid': -1, 'desc': _('Unknown error !') }
+
+        job = self.db2.query(Job).filter( and_(
+                Job.target_type == JOB_TARGET['INSTANCE'],
+                Job.target_id == id,
+                Job.ended == None ) ).order_by(desc('id')).first()
+
+        if job:
+            json['jid'] = job.id
+            json['desc'] = _('Have job running on instance %s.') % id
+        else:
+            json['desc'] = _('Have not job running on instance %s.') % id
+
+        self.write(json)
+
+
 
 class CreateInstance(InstRequestHandler):
 
@@ -675,7 +703,7 @@ class CreateInstance(InstRequestHandler):
             form.name.data = self.appliance.name
 
         self.render( 'instance/create.html', title = _('Create Instance'),
-                     form = form, appliance = self.appliance )
+                     form = form, APPLIANCE = self.appliance )
 
 
     def post(self):
@@ -688,7 +716,7 @@ class CreateInstance(InstRequestHandler):
             form.appliance.query = self.db2.query(Appliance).all()
             app = form.appliance.data
 
-        d = { 'title': _('Create Instance'), 'form': form, 'appliance': app }
+        d = { 'title': _('Create Instance'), 'form': form, 'APPLIANCE': app }
 
         if form.validate():
 

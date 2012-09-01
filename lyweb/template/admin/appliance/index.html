@@ -6,7 +6,7 @@
 
 <%block name="sidemain">
 
-<h2 class="title">${ _("LuoYun Appliance Management") }</h2>
+<h2 class="title">${ _("Appliance Management") }</h2>
 
 <div class="c catalog-list">
   <ul>
@@ -21,7 +21,7 @@
   </ul>
 </div>
 
-<p>${ _("Total Appliance in LuoYun :") } ${ TOTAL_APPLIANCE }</p>
+<p>${ _("Total Appliance :") } ${ TOTAL_APPLIANCE }</p>
 
 % if USER:
 <p>${ _("Filter by user: ") }<a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a></p>

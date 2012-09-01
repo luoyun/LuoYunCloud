@@ -65,10 +65,10 @@ def default_value(dbsession):
             dbsession.add(u)
             dbsession.commit()
 
-            if not u.profile:
-                from app.account.models import UserProfile
-                profile = UserProfile(u, email = '%s@localhost' % u.username)
-                dbsession.add(profile)
+        if not u.profile:
+            from app.account.models import UserProfile
+            profile = UserProfile(u, email = '%s@localhost' % u.username)
+            dbsession.add(profile)
 
 
     # User Group

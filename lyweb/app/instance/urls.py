@@ -35,4 +35,6 @@ handlers = [
     url(r'/instance/([0-9]+)/set_private',
         instance.SetPrivate, name='instance:set_private'),
 
+    url(r'/instance/([0-9]+)/isrunning', instance.Isrunning, name='instance:isrunning'),
+
 ]

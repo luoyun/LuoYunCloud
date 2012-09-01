@@ -2,38 +2,83 @@
 
 <%block name="main">
 
-<div id="ly-create-instance-form" class="main-wrap small-left-right-form">
+<div id="ly-create-instance-form" class="c">
+  <h2 class="title">${ _("Create My Instance") }</h2>
   <form method="POST" enctype="multipart/form-data">
+
     <div class="item">
-    % if not appliance:
-    ${ form.appliance.label } ${ form.appliance() }<br/>
-    ${ form.html_errors( form.appliance.errors ) }
-    % endif
+      % if APPLIANCE:
+      <div class="c1">
+	<img class="app-logo" src="${ APPLIANCE.logo_url }" alt="Logo"/>
+      </div>
+      <div class="c2">
+	<h3>${ APPLIANCE.name }</h3>
+	<p class="desc">${ APPLIANCE.summary }</p>
+      </div>
+      % else:
+      <div class="c1">${ form.appliance.label }</div>
+      <div class="c2">
+	${ form.appliance() }
+	${ form.html_errors( form.appliance.errors ) }
+	<div class="hidden" style="display: none;">
+	  <p>${ _("Select a appliance to create instance.") }</p>
+	</div>
+      </div>
+      % endif
     </div>
 
     <div class="item">
-    ${ form.name.label } ${ form.name() }<br/>
-    ${ form.html_errors( form.name.errors ) }
+      <div class="c1">${ form.name.label }</div>
+      <div class="c2">
+	${ form.name() }
+	${ form.html_errors( form.name.errors ) }
+	<div class="hidden" style="display: none;">
+	  <p>${ _("Please give a human instance name, can not be the same as others.") }</p>
+	</div>
+      </div>
     </div>
 
     <div class="item">
-    ${ form.cpus.label } ${ form.cpus() }<br/>
-    ${ form.html_errors( form.cpus.errors ) }
+      <div class="c1">${ form.cpus.label }</div>
+      <div class="c2">
+	${ form.cpus() }
+	${ form.html_errors( form.cpus.errors ) }
+	<div class="hidden" style="display: none;">
+	  <p>${ _("The cpus of your instance.") }</p>
+	</div>
+      </div>
     </div>
 
     <div class="item">
-    ${ form.memory.label } ${ form.memory() }<br/>
-    ${ form.html_errors( form.memory.errors ) }
+      <div class="c1">${ form.memory.label }</div>
+      <div class="c2">
+	${ form.memory() }
+	${ form.html_errors( form.memory.errors ) }
+	<div class="hidden" style="display: none;">
+	  <p>${ _("The memory of your instance.") }</p>
+	</div>
+      </div>
     </div>
 
-    <div class="item">
-    ${ form.isprivate.label } ${ form.isprivate() }<br/>
-    ${ form.html_errors( form.isprivate.errors ) }
+    <div class="item c">
+      <div class="c1">${ form.isprivate.label }</div>
+      <div class="c2">
+	${ form.isprivate() }
+	${ form.html_errors( form.isprivate.errors ) }
+	<div class="hidden" style="display: none;">
+	  <p>${ _("If a instance is private, can not be viable by any others except administrator.") }</p>
+	</div>
+      </div>
     </div>
 
-    <label>&nbsp;</label><input type="submit" value="${ _('Create') }" class="ly-btn2 small green" />
+    <div class="submit item">
+      <input type="submit" value="${ _('Create') }" class="ly-btn2 small green" />
+    </div>
   </form>
 </div>
 
+<script type="text/javascript">
+  lyItemHover( ".c2" );
+</script>
 
 </%block>

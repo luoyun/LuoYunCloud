@@ -16,7 +16,7 @@ class CreateInstanceBaseForm(Form):
 
     name = TextField( _('Name'), [validators.Length(min=3, max=30)] )
     cpus = IntegerField( _('CPU'), [NumberRange( min = 1, max = 2)], default = 1 )
-    memory = IntegerField( _('Memory'), [NumberRange( min = 64, max = 1024 )], default = 256 )
+    memory = IntegerField( _('Memory(M)'), [NumberRange( min = 64, max = 1024 )], default = 256 )
     isprivate = BooleanField( _('Hide'), default = True )
 
 
@@ -35,7 +35,7 @@ class BaseinfoForm(Form):
 class ResourceForm(Form):
 
     cpus = IntegerField( _('CPU'), [NumberRange( min = 1, max = 2)], default = 1 )
-    memory = IntegerField( _('Memory'), [NumberRange( min = 64, max = 1024 )], default = 256 )
+    memory = IntegerField( _('Memory(M)'), [NumberRange( min = 64, max = 1024 )], default = 256 )
 
 
 NetworkType=[

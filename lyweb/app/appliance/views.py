@@ -12,6 +12,8 @@ from app.instance.models import Instance
 from app.appliance.models import Appliance, ApplianceCatalog
 from app.appliance.forms import EditApplianceForm
 
+from lycustom import has_permission
+
 
 
 class AppRequestHandler(LyRequestHandler):
@@ -76,13 +78,14 @@ class Index(AppRequestHandler):
 
 class Upload(AppRequestHandler):
 
-    @authenticated
+    @has_permission('appliance.upload')
     def get(self):
 
         d = { 'title': "Upload Appliance" }
         self.render("appliance/upload_appliance.html", **d)
 
-    @authenticated
+
+    @has_permission('appliance.upload')
     def post(self):
 
         # pull in details created by the nginx upload module

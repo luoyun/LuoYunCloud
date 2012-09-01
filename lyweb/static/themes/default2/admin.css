@@ -377,7 +377,7 @@ table th {
     border: 1px solid #DEDEDE;*/
 }
 .hover-content .ly-btn2.small {
-    border-radius: 0px 22px 0px 22px;
+    /*border-radius: 0px 22px 0px 22px;*/
 }
 .a-view .a-logo {
     float: right;

@@ -37,10 +37,12 @@
     <div id="i-center-status-left">
       <img id="i-status-img" src="${ THEME_URL }icons/InstanceStatus/${ instance.status }.png"/>
       <div id="i-action">
-	% if current_user and current_user.id == instance.user_id:
+	% if (current_user and current_user.id == instance.user_id) or has_permission('admin'):
 
 	% if instance.can_run:
 	<span class="run"><a href="/instance/${ instance.id }/run" title="${ _('Run') }"><img src="${ THEME_URL }img/run-instance.png"/></a></span>
+	% elif instance.status == 245:
+	<span class="query"><a href="/instance/${ instance.id }/query"><img src="${ THEME_URL }img/query-instance.png"/></a></span>
 	% else:
 	<span class="stop"><a href="/instance/${ instance.id }/stop" title="${ _('Stop') }"><img src="${ THEME_URL }img/shutdown-instance.png"/></a></span>
 	% endif
@@ -58,9 +60,6 @@
 	<span id="job-result">${ JOB_RESULT }</span>
 	% endif
       </span> 
-      % if instance.status == 245:
-      <span class="query"><a href="/instance/${ instance.id }/query">${ _('Query') }</a></span>
-      % endif
     </div>
 
 
@@ -105,7 +104,7 @@
   <div id="inst-sidebar">
     % if current_user and current_user.id == instance.user_id:
     <div id="admin-menu" class="island c">
-      <div class="head" id="admin-config-tool"><img src="${ THEME_URL }img/settings.svg"/></div>
+      <div class="head" id="admin-config-tool"><img src="${ THEME_URL }img/settings.png"/></div>
       <ul style="display:none;">
         <li><a class="current" href="/instance/${ instance.id }?view=baseinfo">${ _("Baseinfo") }</a></li>
         <li><a href="/instance/${ instance.id }?view=resource">${ _("Resource") }</a></li>
