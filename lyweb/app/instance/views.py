@@ -889,6 +889,29 @@ class ResourceEdit(InstRequestHandler):
 
         form = ResourceForm( self.request.arguments )
         if form.validate():
+
+            # TODO: resource limit
+            RUNNING_INST_LIST = self.db2.query(Instance).filter( and_(
+                    Instance.status.in_( settings.INSTANCE_SLIST_RUNING ),
+                    Instance.user_id == inst.user_id ) )
+
+            USED_CPUS, USED_MEMORY = 0, 0
+            for I in RUNNING_INST_LIST:
+                if I.is_running:
+                    USED_CPUS += I.cpus
+                    USED_MEMORY += I.memory
+
+            profile = inst.user.profile
+            if (form.cpus.data + USED_CPUS) > profile.cpus:
+                form.cpus.errors.append( _('cpus can not greater than %s') % (profile.cpus - USED_CPUS) )
+            if (form.memory.data + USED_MEMORY) > profile.memory:
+                form.memory.errors.append( _('memory can not greater than %s') % (profile.memory - USED_MEMORY) )
+            if form.cpus.errors or form.memory.errors:
+                d = { 'title': _('Edit Resource'),
+                      'instance': inst, 'form': form }
+                self.render('instance/resource_edit.html', **d)
+                
+
             inst.cpus = form.cpus.data
             inst.memory = form.memory.data
             if inst.is_running:
@@ -1073,10 +1096,10 @@ class StorageEdit(InstRequestHandler):
 
             # Is there have storage resource ?
             used_storage = self.get_used_storage_size()
-            print '''inst.user.profile.storage = %s,
-used_storage = %s,
-inst.storage = %s''' % (inst.user.profile.storage,
-                        used_storage, inst.storage)
+#            print '''inst.user.profile.storage = %s,
+#used_storage = %s,
+#inst.storage = %s''' % (inst.user.profile.storage,
+#                        used_storage, inst.storage)
             if ( inst.user.profile.storage
                  + inst.storage # Add this instance's storage
                  - used_storage
