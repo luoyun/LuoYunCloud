@@ -14,9 +14,9 @@ from app.instance.models import Instance
 
 class CreateInstanceBaseForm(Form):
 
-    name = TextField( _('Name'), [validators.Length(min=3, max=30)] )
-    cpus = IntegerField( _('CPU'), [NumberRange( min = 1, max = 2)], default = 1 )
-    memory = IntegerField( _('Memory(M)'), [NumberRange( min = 64, max = 1024 )], default = 256 )
+    name = TextField( _('Name'), [validators.Length(min=2, max=30)] )
+    cpus = IntegerField( _('CPU'), [NumberRange( min = 1 )], default = 1 )
+    memory = IntegerField( _('Memory(M)'), [NumberRange( min = 64 )], default = 256 )
     isprivate = BooleanField( _('Hide'), default = True )
 
 
@@ -34,8 +34,8 @@ class BaseinfoForm(Form):
 
 class ResourceForm(Form):
 
-    cpus = IntegerField( _('CPU'), [NumberRange( min = 1, max = 2)], default = 1 )
-    memory = IntegerField( _('Memory(M)'), [NumberRange( min = 64, max = 1024 )], default = 256 )
+    cpus = IntegerField( _('CPU'), [NumberRange( min = 1 )], default = 1 )
+    memory = IntegerField( _('Memory(M)'), [NumberRange( min = 64 )], default = 256 )
 
 
 NetworkType=[
@@ -60,7 +60,7 @@ StorageType=[
 if hasattr(settings, 'MAX_STORAGE_SIZE'):
     MAX_STORAGE_SIZE = settings.MAX_STORAGE_SIZE
 else:
-    MAX_STORAGE_SIZE = 60 # G
+    MAX_STORAGE_SIZE = 120 # G
 class StorageForm(Form):
 
     type = SelectField( _('Type'), choices=StorageType )

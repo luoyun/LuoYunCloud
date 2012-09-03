@@ -232,7 +232,6 @@ class UserManagement(LyRequestHandler):
                      form = form, USER = self.user )
     
 
-
     def post_edit_resources(self):
 
         form = UserResourceForm(self.request.arguments)
@@ -245,7 +244,7 @@ class UserManagement(LyRequestHandler):
             self.user.profile.storage = form.storage.data
             self.db2.commit()
 
-            url = self.application.reverse_url('admin:user')
+            url = self.reverse_url('admin:user')
             url += '?id=%s&action=view' % self.user.id
             return self.redirect( url )
 

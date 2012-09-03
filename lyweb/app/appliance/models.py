@@ -8,6 +8,9 @@ from sqlalchemy.orm import backref,relationship
 
 import settings
 
+from markdown import Markdown
+YMK = Markdown(extensions=['fenced_code', 'tables'])
+
 
 
 class ApplianceCatalog(ORMBase):
@@ -35,6 +38,10 @@ class ApplianceCatalog(ORMBase):
 
     def __repr__(self):
         return _("[Catalog(%s)]") % self.name
+
+    @property
+    def description_html(self):
+        return YMK.convert( self.description )
 
 
 
@@ -86,3 +93,8 @@ class Appliance(ORMBase):
                 self.logoname)
         else:
             return '%simg/appliance.png' % settings.THEME_URL
+
+
+    @property
+    def description_html(self):
+        return YMK.convert( self.description )

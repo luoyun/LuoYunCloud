@@ -64,7 +64,9 @@
 % if appliance.description:
 <div class="section island c">
   <h2 class="title2">${ _("About The Appliance") }</h2>
-  <p>${ appliance.description }</p>
+  <div id="appliance-description" class="markdown">
+    ${ appliance.description_html }
+  </div>
 </div>
 % endif
 

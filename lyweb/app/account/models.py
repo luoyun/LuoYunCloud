@@ -1,5 +1,4 @@
 #/usr/bin/env python2.5
-#Noah Gift
 
 import os, random
 from hashlib import sha1
