@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include <string.h>
 #include "lyxml.h"
 
 #define LUOYUN_XML_DATA_MAX     2048
@@ -34,25 +35,20 @@
     if (buf == NULL || size == 0) {\
         size = LUOYUN_XML_DATA_MAX;\
         buf = malloc(size);\
-        caller_buf_flag = 0;\
+        flag = 0;\
     }\
-    if (buf == NULL) {\
-        free(buf);\
+    if (buf == NULL)\
         return NULL;\
-    }\
 }
 
-#define __LUOYUN_XML_DATA_RETURN(flag, buf, len) \
+#define __LUOYUN_XML_DATA_RETURN(flag, buf, size, len) \
 {\
-    if (flag || len > LUOYUN_XML_DATA_MAX/2)\
-        return buf;\
-    char * ptr = realloc(buf, len+1);\
-    if (ptr == NULL) {\
-        free(buf);\
+    if (len <= 0 || len >= size) {\
+        if (flag == 0 && buf != NULL)\
+            free(buf);\
         return NULL;\
     }\
-    ptr[len] = '\0';\
-    return ptr;\
+    return buf;\
 }
 
 /*
@@ -82,9 +78,7 @@ char * lyxml_data_join(int id, char * host, int port,
                        LY_ENTITY_CLC, 
                        LY_ENTITY_NODE, 
                        id, (char *)(BAD_CAST host), port);
-    if (len < 0 || len >= size)
-        return NULL;
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
 #else
@@ -174,7 +168,6 @@ char * lyxml_data_node_register(NodeInfo * ni, char * buf, unsigned int size)
 
     int caller_buf_flag = 1;
     __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
-
     int len = snprintf(buf, size, LUOYUN_XML_DATA_NODE_REGISTER, 
                        LY_ENTITY_NODE, 
                        LY_ENTITY_CLC, 
@@ -191,10 +184,7 @@ char * lyxml_data_node_register(NodeInfo * ni, char * buf, unsigned int size)
                        ni->cpu_mhz, ni->cpu_max, ni->cpu_commit,
                        ni->storage_total, ni->storage_free,
                        ni->load_average);
-    if (len < 0 || len >= size)
-        return NULL;
-
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
 /*
@@ -221,17 +211,13 @@ char * lyxml_data_reply_auth_info(LYReply * reply,
 
     int caller_buf_flag = 1;
     __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
-
     AuthInfo * ai = reply->data;
     int len = snprintf(buf, size, LUOYUN_XML_DATA_REPLY_AUTH_INFO,
                        reply->from, reply->to,
                        reply->req_id, reply->status,
                        ai->tag, 
                        ai->data[0] != '\0' ? (char *)(BAD_CAST ai->data) : "");
-    if (len < 0 || len >= size)
-        return NULL;
-
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
 
@@ -254,14 +240,10 @@ char * lyxml_data_node_info(int req_id, char * buf, unsigned int size)
 {
     int caller_buf_flag = 1;
     __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
-
     int len = snprintf(buf, size, LUOYUN_XML_DATA_NODE_INFO,
                        LY_ENTITY_CLC, LY_ENTITY_NODE,
                        req_id, LY_A_NODE_QUERY);
-    if (len < 0 || len >= size)
-        return NULL;
-
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
 /*
@@ -299,7 +281,6 @@ char * lyxml_data_reply_node_info(LYReply * reply, char * buf, unsigned int size
 
     int caller_buf_flag = 1;
     __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
-
     NodeInfo * ni = reply->data; 
     int len = snprintf(buf, size, LUOYUN_XML_DATA_REPLY_NODE_INFO, 
                        reply->from, reply->to,
@@ -311,10 +292,7 @@ char * lyxml_data_reply_node_info(LYReply * reply, char * buf, unsigned int size
                        ni->mem_commit,
                        ni->storage_free,
                        ni->load_average);
-    if (len < 0 || len >= size)
-        return NULL;
-
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
 /*
@@ -368,7 +346,18 @@ char * lyxml_data_instance_run(NodeCtrlInstance * ii, char * buf, unsigned int s
         return NULL;
 
     int caller_buf_flag = 1;
-    __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
+    int json_len = 0;
+    if (ii->osm_json)
+        json_len = strlen(ii->osm_json);
+    if (json_len) {
+        if (buf == NULL || size < (json_len + LUOYUN_XML_DATA_MAX)) {
+            size = json_len + LUOYUN_XML_DATA_MAX;
+            buf = malloc(size);
+            if (buf == NULL)
+                return NULL;
+            caller_buf_flag = 0;
+        }
+    }
 
     int len = snprintf(buf, size, LUOYUN_XML_DATA_INSTANCE_RUN,
                        LY_ENTITY_CLC, 
@@ -390,10 +379,7 @@ char * lyxml_data_instance_run(NodeCtrlInstance * ii, char * buf, unsigned int s
                        ii->storage_ip ? (char *)(BAD_CAST ii->storage_ip) : "",
                        ii->storage_method,
                        ii->storage_parm ? (char *)(BAD_CAST ii->storage_parm) : "");
-    if (len < 0 || len >= size)
-        return NULL;
-
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
 /*
@@ -423,16 +409,12 @@ char * lyxml_data_instance_stop(NodeCtrlInstance * ii, char * buf, unsigned int 
 
     int caller_buf_flag = 1;
     __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
-
     int len = snprintf(buf, size, LUOYUN_XML_DATA_INSTANCE_STOP,
                        LY_ENTITY_CLC, 
                        LY_ENTITY_NODE, 
                        ii->req_id, ii->req_action, ii->ins_id,
                        ii->ins_domain ? (char *)(BAD_CAST ii->ins_domain) : "");
-    if (len < 0 || len >= size)
-        return NULL;
-
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
 /*
@@ -462,16 +444,12 @@ char * lyxml_data_instance_other(NodeCtrlInstance * ii, char * buf, unsigned int
 
     int caller_buf_flag = 1;
     __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
-
     int len = snprintf(buf, size, LUOYUN_XML_DATA_INSTANCE_OTHER,
                        LY_ENTITY_CLC, 
                        LY_ENTITY_NODE, 
                        ii->req_id, ii->req_action, ii->ins_id,
                        ii->ins_domain ? (char *)(BAD_CAST ii->ins_domain) : "");
-    if (len < 0 || len >= size)
-        return NULL;
-
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
 /*
@@ -500,15 +478,11 @@ char * lyxml_data_instance_register(int id, char * hostname, char * ip,
 {
     int caller_buf_flag = 1;
     __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
-
     int len = snprintf(buf, size, LUOYUN_XML_DATA_INSTANCE_REGISTER,
                        id, 
                        (char *)(BAD_CAST hostname),
                        (char *)(BAD_CAST ip));
-    if (len < 0 || len >= size)
-        return NULL;
-
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
 /*
@@ -531,15 +505,11 @@ char * lyxml_data_reply(LYReply * reply, char * buf, unsigned int size)
 
     int caller_buf_flag = 1;
     __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
-
     int len = snprintf(buf, size, LUOYUN_XML_DATA_REPLY,
                        reply->from, reply->to, reply->req_id,
                        reply->status,
                        reply->msg ? (char *)(BAD_CAST reply->msg) : "");
-    if (len < 0 || len >= size)
-        return NULL;
-
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
 /*
@@ -569,7 +539,6 @@ char * lyxml_data_reply_instance_info(LYReply * reply, char * buf,
 
     int caller_buf_flag = 1;
     __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
-
     int len = snprintf(buf, size, LUOYUN_XML_DATA_INSTANCE_INFO,
                        reply->from, reply->to, reply->req_id,
                        reply->status,
@@ -577,10 +546,7 @@ char * lyxml_data_reply_instance_info(LYReply * reply, char * buf,
                        ii->id,
                        ii->status,
                        ii->ip ? (char *)(BAD_CAST ii->ip) : "");
-    if (len < 0 || len >= size)
-        return NULL;
-
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
 /*
@@ -601,14 +567,10 @@ char * lyxml_data_report(LYReport * r, char * buf, unsigned int size)
 {
     int caller_buf_flag = 1;
     __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
-
     int len = snprintf(buf, size, LUOYUN_XML_DATA_REPORT,
                        r->from, r->to, r->status,
                        r->msg ? (char *)(BAD_CAST r->msg) : "");
-    if (len < 0 || len >= size)
-        return NULL;
-
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
 
@@ -646,7 +608,6 @@ char * lyxml_data_report_node_info(LYReport * r, char * buf, unsigned int size)
 
     int caller_buf_flag = 1;
     __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
-
     NodeInfo * ni = r->data; 
     int len = snprintf(buf, size, LUOYUN_XML_DATA_REPORT_NODE_INFO, 
                        r->from, r->to,
@@ -655,9 +616,6 @@ char * lyxml_data_report_node_info(LYReport * r, char * buf, unsigned int size)
                        ni->mem_commit,
                        ni->storage_free,
                        ni->load_average);
-    if (len < 0 || len >= size)
-        return NULL;
-
-    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, len)
+    __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 
