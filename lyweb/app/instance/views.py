@@ -1321,7 +1321,7 @@ class DomainEdit(InstRequestHandler):
 
         d['subdomain'], d['topdomain'] = self.get_domain2( inst )
         if not d['subdomain']:
-            d['ERROR'].append( _('can not get domain, domain may not be configured in administrator console.') )
+            d['ERROR'].append( _('can not get domain, domain may not have been configured in Administration Console.') )
 
         if not inst.access_ip:
             d['ERROR'].append( _('Can not get access_ip, please configure instance network or run instance') )
