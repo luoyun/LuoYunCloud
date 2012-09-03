@@ -18,13 +18,13 @@ ${ _("This is an instance of LuoYun Cloud platform.") }
 <div class="c"></div>
 
 <h2>${ _("Description") }</h2>
-<p id="instance-baseinfo-description">
+<div id="instance-baseinfo-description" class="markdown">
 % if instance.description:
-${ instance.description }
+${ instance.description_html }
 % else:
 ${ _("No description.") }
 % endif
-</p>
+</div>
 
 <script type="text/javascript">
   BaseinfoFunc();

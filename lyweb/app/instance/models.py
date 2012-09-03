@@ -10,6 +10,9 @@ from sqlalchemy.orm import backref,relationship
 
 import settings
 
+from markdown import Markdown
+YMK = Markdown(extensions=['fenced_code', 'tables'])
+
 
 class Instance(ORMBase):
 
@@ -170,3 +173,8 @@ class Instance(ORMBase):
             return int(storage.get('size', 0))
 
         return 0
+
+
+    @property
+    def description_html(self):
+        return YMK.convert( self.description )
