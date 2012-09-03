@@ -477,8 +477,9 @@ int db_job_update_status(LYJobInfo * job)
     if (snprintf(sql, LINE_MAX,
                  "UPDATE job SET status = %d, "
                  "started = %ld::abstime::timestamp, "
-                 "ended = 'now' WHERE status != %d and id = %d;",
-                  job->j_status, (long)job->j_started,
+                 "ended = %ld::abstime::timestamp "
+                 "WHERE status != %d and id = %d;",
+                  job->j_status, (long)job->j_started, (long)job->j_ended,
                   job->j_status, job->j_id) >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
