@@ -68,8 +68,10 @@
 ${ PAGE_HTML }
 
 <script type="text/javascript">
+% if not USER:
   var HTML_TEMP = "<div class=\"hover-content\"><a class='ly-btn2 small blue' href=\"${ reverse_url('admin:appliance') }?uid=SELECT\">${ _('Appliances owner by Me') }</a></div>";
   lyAdminSortByHover( HTML_TEMP, '.a-owner', '.uid' );
+% endif
 </script>
 
 </%block>

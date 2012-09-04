@@ -84,11 +84,15 @@
 </div>
 
 <script type="text/javascript">
+% if not SORT_USER:
   var HTML_TEMP = "<div class=\"hover-content\"><a class='ly-btn2 small blue' href=\"${ reverse_url('admin:instance') }?uid=SELECT\">${ _('Instances owner by Me') }</a></div>";
   lyAdminSortByHover( HTML_TEMP, '.i-owner', '.uid' );
+% endif
 
+% if not SORT_APPLIANCE:
   var HTML_TEMP = "<div class=\"hover-content\"><a class=\"ly-btn2 small blue\" href=\"${ reverse_url('admin:instance') }?aid=SELECT\">${ _('Instances created from Me') }</a></div>";
   lyAdminSortByHover( HTML_TEMP, '.i-app', '.id' );
+% endif
 </script>
 
 </%block>
