@@ -220,6 +220,10 @@ class InstRequestHandler(LyRequestHandler):
 
         return '.'.join([subdomain, topdomain])
 
+    def get_domain2(self, I):
+        L = self.get_domain(I).split('.')
+        return (L[0], '.'.join(L[1:])) if L else (None, None)
+
 
 
 class Index(InstRequestHandler):
@@ -776,6 +780,7 @@ class CreateInstance(InstRequestHandler):
 
             # TODO
             self.set_ip( instance )
+            self.binding_domain( instance )
 
             url = self.reverse_url('instance:view', instance.id)
             return self.redirect(url)
@@ -815,6 +820,43 @@ class CreateInstance(InstRequestHandler):
         self.db2.commit()
 
         self.update_ipassign( ip, instance )
+
+
+    def binding_domain(self, instance):
+
+        # Updated instance subdomain value
+        sub, top= self.get_domain2( instance )
+        if sub and top:
+            instance.subdomain = sub
+            self.db2.commit()
+        else:
+            return None
+
+        full_domain = self.get_domain( instance )
+        # Binding in nginx
+        from tool.domain import binding_domain_in_nginx
+        ret, reason = binding_domain_in_nginx(
+            self.db2, instance.id, domain = full_domain )
+        if not ret:
+            return None
+
+        if not instance.config:
+            instance.init_config()
+
+        config = json.loads(instance.config)
+            
+        if 'domain' in config.keys():
+            domain = config['domain']
+        else:
+            domain = {}
+
+        domain['name'] = full_domain
+        domain['ip'] = instance.access_ip
+        config['domain'] = domain
+
+        instance.config = json.dumps( config )
+        instance.updated = datetime.utcnow()
+        self.db2.commit()
 
 
 
@@ -1278,37 +1320,6 @@ class PublicKeyEdit(InstRequestHandler):
 
 
 class DomainEdit(InstRequestHandler):
-
-
-    def get_domain(self, I): # I is a instance obj
-
-        domain = self.db2.query(LuoYunConfig).filter_by(key='domain').first()
-
-        if not domain: return ''
-
-        domain =  json.loads(domain.value)
-        topdomain = domain['topdomain'].strip('.')
-
-        if I.subdomain:
-            subdomain = I.subdomain
-        else:
-            prefix = domain['prefix']
-            suffix = domain['suffix']
-            subdomain = '%s%s%s' % (prefix, I.id, suffix)
-
-        return '.'.join([subdomain, topdomain])
-
-    def get_domain2(self, I):
-        L = self.get_domain(I).split('.')
-        return (L[0], '.'.join(L[1:])) if L else (None, None)
-
-    def get_subdomain(self, I):
-        L = self.get_domain(I).split('.')
-        return L[0] if L else None
-
-    def get_topdomain(self, I):
-        L = self.get_domain(I).split('.')
-        return '.'.join(L[1:]) if L else None
 
     @authenticated
     def get(self, id):

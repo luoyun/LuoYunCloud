@@ -73,7 +73,13 @@
 	% if instance.domain:
         <tr>
           <td class="c1">${ _("Domain") }</td>
-          <td class="c2"><a href="${ instance.home_url(current_user) }" target="_blank">${ instance.domain }</a></td>
+          <td class="c2">
+	    % if instance.is_running:
+	    <a href="${ instance.home_url(current_user) }" target="_blank">${ instance.domain }</a>
+	    % else:
+	    ${ instance.domain }
+	    % endif
+	  </td>
         </tr>
 	% endif
         <tr>
