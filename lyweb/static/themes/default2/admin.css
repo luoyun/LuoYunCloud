@@ -399,3 +399,12 @@ table th {
     left: 45px;
 }
 /* End Admin Instance */
+
+#registration-policy-eform {
+    width: 800px;
+    padding: 0;
+}
+#registration-policy-eform textarea {
+    width: 720px;
+    height: 280px;
+}

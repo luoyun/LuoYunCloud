@@ -4,11 +4,13 @@
 
 <h2>${ _("Registration Policy Edit") }</h2>
 
-<div class="main-wrap small-left-right-form">
+<p><a href="${ reverse_url('registration_protocol') }" target="_blank">${ _("Read Registration Policy") }</a></p>
+
+<div id="registration-policy-eform" class="small-left-right-form c">
   <form method="POST" action="${ reverse_url('system:protocol:edit') }">
-    ${ form.text.label } ${ form.text() }<br/>
+    ${ form.text() }<br/>
     ${ form.html_errors(form.text.errors) }
-    <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
+    <input type="submit" value="${ _('Save') }"/>
 % if saved:
 <span id="saved-success">${ _("saved success") }</span>
 % endif
