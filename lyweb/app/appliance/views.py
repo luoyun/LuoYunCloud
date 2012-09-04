@@ -81,7 +81,7 @@ class Upload(AppRequestHandler):
     @has_permission('appliance.upload')
     def get(self):
 
-        d = { 'title': "Upload Appliance" }
+        d = { 'title': _("Upload Appliance") }
         self.render("appliance/upload_appliance.html", **d)
 
 
@@ -319,7 +319,7 @@ class View(AppRequestHandler):
         instances, page_html = self.page_view_instances(app)
         #instances = self.db2.query(Instance).filter_by( appliance_id=app.id ).all()
 
-        d = { 'title': "View Appliance", 'appliance': app,
+        d = { 'title': _("View Appliance"), 'appliance': app,
               'instances': instances, 'page_html': page_html }
 
         self.render('appliance/view.html', **d)

@@ -45,7 +45,7 @@ class Index(LyRequestHandler):
             USED_MEMORY += i.memory * 1024
 
 
-        d = { 'title': 'Admin Console',
+        d = { 'title': _('Admin Console'),
               'TOTAL_APPLIANCE': TOTAL_APPLIANCE,
               'TOTAL_INSTANCE': TOTAL_INSTANCE,
               'TOTAL_CPU': TOTAL_CPU * 16, # TODO: a temp hack

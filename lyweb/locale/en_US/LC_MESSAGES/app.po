@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-17 12:47+0800\n"
+"POT-Creation-Date: 2012-09-04 17:16+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,25 +17,1229 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: urls.py:55
+#: app/wiki/models.py:34
+#, python-format
+msgid "[WikiCatalog(%s)]"
+msgstr ""
+
+#: app/wiki/models.py:73
+#, python-format
+msgid "[Topic(%s)]"
+msgstr ""
+
+#: app/wiki/views.py:23
+msgid "Servers Home"
+msgstr ""
+
+#: app/wiki/views.py:35
+#, python-format
+msgid "View topic: %s"
+msgstr ""
+
+#: app/wiki/views.py:63
+msgid "Catalog not found"
+msgstr ""
+
+#: app/wiki/views.py:70 app/wiki/views.py:88
+msgid "New Topic"
+msgstr ""
+
+#: app/wiki/views.py:119
+#, python-format
+msgid "Edit Topic %s"
+msgstr ""
+
+#: app/wiki/views.py:135
+msgid "Edit Topic"
+msgstr ""
+
+#: app/wiki/forms.py:19 app/wiki/forms.py:26 app/appliance/forms.py:12
+#: app/instance/forms.py:17 app/instance/forms.py:30 app/admin/forms.py:29
+#: app/admin/forms.py:37
+msgid "Name"
+msgstr ""
+
+#: app/wiki/forms.py:20 app/wiki/forms.py:27
+msgid "Body"
+msgstr ""
+
+#: app/wiki/forms.py:21 app/wiki/forms.py:28 app/appliance/forms.py:14
+msgid "Catalog"
+msgstr ""
+
+#: app/job/models.py:12 app/instance/models.py:83
 msgid "unknown"
 msgstr ""
 
-#: urls.py:56
-msgid "new domain that hasn't run once"
+#: app/job/models.py:13
+msgid "action initialized"
 msgstr ""
 
-#: urls.py:57
-msgid "stopped"
+#: app/job/models.py:17
+msgid "running"
 msgstr ""
 
-#: urls.py:58
-msgid "started by hypervisor"
+#: app/job/models.py:18
+msgid "searching for node server"
 msgstr ""
 
-#: app/home/views.py:57
-msgid "LuoYun Home"
+#: app/job/models.py:19
+msgid "sending request to node server"
 msgstr ""
 
-msgid "unread"
+#: app/job/models.py:20
+msgid "waiting for resource available on node server"
+msgstr ""
+
+#: app/job/models.py:21
+msgid "downloading appliance image"
+msgstr ""
+
+#: app/job/models.py:22
+msgid "checking appliance image"
+msgstr ""
+
+#: app/job/models.py:23
+msgid "creating instance disk file"
+msgstr ""
+
+#: app/job/models.py:24
+msgid "mounting instance disk file"
+msgstr ""
+
+#: app/job/models.py:25
+msgid "configuring instance"
+msgstr ""
+
+#: app/job/models.py:26
+msgid "unmounting instance disk file"
+msgstr ""
+
+#: app/job/models.py:27
+msgid "starting instance virtual machine"
+msgstr ""
+
+#: app/job/models.py:28
+msgid "stopping instance virtual machine"
+msgstr ""
+
+#: app/job/models.py:29
+msgid "Last Running Status"
+msgstr ""
+
+#: app/job/models.py:33
+msgid "finished"
+msgstr ""
+
+#: app/job/models.py:34
+msgid "finished successfully"
+msgstr ""
+
+#: app/job/models.py:35
+msgid "instance running already"
+msgstr ""
+
+#: app/job/models.py:36
+msgid "instance not running"
+msgstr ""
+
+#: app/job/models.py:37
+msgid "instance not exist"
+msgstr ""
+
+#: app/job/models.py:38
+msgid "failed"
+msgstr ""
+
+#: app/job/models.py:39
+msgid "node server not available"
+msgstr ""
+
+#: app/job/models.py:40
+msgid "node server busy"
+msgstr ""
+
+#: app/job/models.py:41
+msgid "appliance not available"
+msgstr ""
+
+#: app/job/models.py:42
+msgid "appliance error"
+msgstr ""
+
+#: app/job/models.py:43
+msgid "Last Finish Status"
+msgstr ""
+
+#: app/job/models.py:47
+msgid "waiting"
+msgstr ""
+
+#: app/job/models.py:48
+msgid "starting OS manager"
+msgstr ""
+
+#: app/job/models.py:49
+msgid "syncing with OS manager"
+msgstr ""
+
+#: app/job/models.py:50
+msgid "checking instance status"
+msgstr ""
+
+#: app/job/models.py:51
+msgid "Last Waiting Status"
+msgstr ""
+
+#: app/job/models.py:54
+msgid "pending"
+msgstr ""
+
+#: app/job/models.py:57
+msgid "timeout"
+msgstr ""
+
+#: app/job/models.py:59
+msgid "cancel"
+msgstr ""
+
+#: app/job/models.py:60
+msgid "Internal Error"
+msgstr ""
+
+#: app/job/models.py:61
+msgid "work started already"
+msgstr ""
+
+#: app/job/models.py:62
+msgid "node/instance busy"
+msgstr ""
+
+#: app/job/models.py:63
+msgid "request cancelled"
+msgstr ""
+
+#: app/job/models.py:64
+msgid "Last Cancel Status"
+msgstr ""
+
+#: app/job/models.py:69
+msgid "enable node"
+msgstr ""
+
+#: app/job/models.py:70
+msgid "disable node"
+msgstr ""
+
+#: app/job/models.py:72
+msgid "run"
+msgstr ""
+
+#: app/job/models.py:73
+msgid "stop"
+msgstr ""
+
+#: app/job/models.py:74
+msgid "destroy"
+msgstr ""
+
+#: app/job/models.py:75
+msgid "query"
+msgstr ""
+
+#: app/job/models.py:108
+#, python-format
+msgid "[Job(%s)]"
+msgstr ""
+
+#: app/job/models.py:112 app/job/models.py:116
+msgid "Unknown"
+msgstr ""
+
+#: app/appliance/models.py:40
+#, python-format
+msgid "[Catalog(%s)]"
+msgstr ""
+
+#: app/appliance/models.py:84
+#, python-format
+msgid "[Appliance(%s)]"
+msgstr ""
+
+#: app/appliance/views.py:36
+msgid "Appliance Home"
+msgstr ""
+
+#: app/appliance/views.py:84
+msgid "Upload Appliance"
+msgstr ""
+
+#: app/appliance/views.py:112
+#, python-format
+msgid "Save %s failed: %s"
+msgstr ""
+
+#: app/appliance/views.py:179 app/appliance/views.py:197
+#: app/appliance/views.py:398 app/appliance/views.py:424
+#: app/instance/views.py:473 app/instance/views.py:1504
+msgid "No permission!"
+msgstr ""
+
+#: app/appliance/views.py:189
+msgid "Edit Appliance "
+msgstr ""
+
+#: app/appliance/views.py:209
+#, python-format
+msgid "%s"
+msgstr ""
+
+#: app/appliance/views.py:217
+#, python-format
+msgid "DB : %s"
+msgstr ""
+
+#: app/appliance/views.py:218
+msgid "Edit Appliance"
+msgstr ""
+
+#: app/appliance/views.py:227
+msgid "Logo file must smaller than 2M !"
+msgstr ""
+
+#: app/appliance/views.py:241 app/account/views.py:377
+#, python-format
+msgid "No support image, support is %s"
+msgstr ""
+
+#: app/appliance/views.py:266
+#, python-format
+msgid "Have not found appliance %s !"
+msgstr ""
+
+#: app/appliance/views.py:271
+msgid "No permission to delete appliance !"
+msgstr ""
+
+#: app/appliance/views.py:278
+msgid "Have instances exist"
+msgstr ""
+
+#: app/appliance/views.py:290
+#, python-format
+msgid "Delete %s failed: %s"
+msgstr ""
+
+#: app/appliance/views.py:322
+msgid "View Appliance"
+msgstr ""
+
+#: app/appliance/views.py:394
+msgid "No such appliance!"
+msgstr ""
+
+#: app/appliance/views.py:420
+msgid "No such appliance !"
+msgstr ""
+
+#: app/appliance/forms.py:13 app/instance/forms.py:31 app/admin/forms.py:38
+msgid "Summary"
+msgstr ""
+
+#: app/appliance/forms.py:15 app/account/forms.py:48
+msgid "Logo"
+msgstr ""
+
+#: app/appliance/forms.py:16 app/instance/forms.py:32 app/admin/forms.py:30
+#: app/admin/forms.py:39
+msgid "Description"
+msgstr ""
+
+#: app/message/models.py:39
+#, python-format
+msgid "[Message(%s:%s)]"
+msgstr ""
+
+#: app/message/views.py:19
+#, python-format
+msgid "Have not found message %s"
+msgstr ""
+
+#: app/message/views.py:24
+msgid "You have no permissions to read this message!"
+msgstr ""
+
+#: app/message/views.py:34
+msgid "Message Home"
+msgstr ""
+
+#: app/message/views.py:46
+msgid "Message Inbox"
+msgstr ""
+
+#: app/message/views.py:60
+msgid "Message Outbox"
+msgstr ""
+
+#: app/message/views.py:71
+#, python-format
+msgid "View Message: %s"
+msgstr ""
+
+#: app/message/views.py:93 app/message/views.py:120
+msgid "New Message"
+msgstr ""
+
+#: app/message/views.py:117 app/account/views.py:94
+msgid "No such user !"
+msgstr ""
+
+#: app/message/views.py:153 app/message/views.py:178
+msgid "Reply Message"
+msgstr ""
+
+#: app/message/forms.py:17
+msgid "Send To"
+msgstr ""
+
+#: app/message/forms.py:18 app/message/forms.py:23
+msgid "Subject"
+msgstr ""
+
+#: app/message/forms.py:19 app/message/forms.py:24
+msgid "Content"
+msgstr ""
+
+#: app/system/models.py:31 app/install/models.py:31
+#, python-format
+msgid "[LuoYun(%s=%s)]"
+msgstr ""
+
+#: app/system/views.py:205
+msgid "Network pool of LuoYun"
+msgstr ""
+
+#: app/system/forms.py:32
+#, python-format
+msgid "Error IP: %s"
+msgstr ""
+
+#: app/system/forms.py:38
+msgid "Save directory"
+msgstr ""
+
+#: app/system/forms.py:39
+msgid "Download url prefix"
+msgstr ""
+
+#: app/system/forms.py:40
+msgid "Admin email"
+msgstr ""
+
+#: app/system/forms.py:45 app/instance/forms.py:51
+msgid "IP"
+msgstr ""
+
+#: app/system/forms.py:46
+msgid "Port"
+msgstr ""
+
+#: app/system/forms.py:51 app/install/forms.py:15
+msgid "server"
+msgstr ""
+
+#: app/system/forms.py:52 app/install/forms.py:16
+msgid "engine"
+msgstr ""
+
+#: app/system/forms.py:53 app/install/forms.py:17
+msgid "username"
+msgstr ""
+
+#: app/system/forms.py:54 app/install/forms.py:18
+msgid "password"
+msgstr ""
+
+#: app/system/forms.py:55 app/install/forms.py:19
+msgid "db name"
+msgstr ""
+
+#: app/system/forms.py:60 app/system/forms.py:69
+msgid "Nameservers"
+msgstr ""
+
+#: app/system/forms.py:65
+msgid "Start IP"
+msgstr ""
+
+#: app/system/forms.py:66
+msgid "End IP"
+msgstr ""
+
+#: app/system/forms.py:67 app/instance/forms.py:52
+msgid "Netmask"
+msgstr ""
+
+#: app/system/forms.py:68 app/instance/forms.py:53
+msgid "Gateway"
+msgstr ""
+
+#: app/system/forms.py:70
+msgid "Exclude ip list"
+msgstr ""
+
+#: app/system/forms.py:76
+msgid "Top domain"
+msgstr ""
+
+#: app/system/forms.py:77
+msgid "Name prefix"
+msgstr ""
+
+#: app/system/forms.py:78
+msgid "Name suffix"
+msgstr ""
+
+#: app/system/forms.py:84
+msgid "Config dir"
+msgstr ""
+
+#: app/system/forms.py:85
+msgid "Log dir"
+msgstr ""
+
+#: app/system/forms.py:86
+msgid "Nginx program"
+msgstr ""
+
+#: app/system/forms.py:91
+msgid "Registration Protocol"
+msgstr ""
+
+#: app/instance/models.py:75
+#, python-format
+msgid "<Instance(%s)>"
+msgstr ""
+
+#: app/instance/models.py:84
+msgid "new instance that hasn't run once"
+msgstr ""
+
+#: app/instance/models.py:85
+msgid "instance is stopped"
+msgstr ""
+
+#: app/instance/models.py:86
+msgid "instance is started by hypervisor"
+msgstr ""
+
+#: app/instance/models.py:87
+msgid "osm in instance connected"
+msgstr ""
+
+#: app/instance/models.py:88
+msgid "application is running"
+msgstr ""
+
+#: app/instance/models.py:89
+msgid "instance is suspend"
+msgstr ""
+
+#: app/instance/models.py:90
+msgid "instance is deleted"
+msgstr ""
+
+#: app/instance/models.py:91
+msgid "instance needs queryed"
+msgstr ""
+
+#: app/instance/models.py:92
+msgid "instance is not exist"
+msgstr ""
+
+#: app/instance/models.py:95
+msgid "Unknown Status"
+msgstr ""
+
+#: app/instance/views.py:109
+#, python-format
+msgid "No such instance: %s !"
+msgstr ""
+
+#: app/instance/views.py:117
+#, python-format
+msgid "Instance %s is private !"
+msgstr ""
+
+#: app/instance/views.py:121
+#, python-format
+msgid "Instance %s is deleted !"
+msgstr ""
+
+#: app/instance/views.py:127
+msgid "Only owner can do this!"
+msgstr ""
+
+#: app/instance/views.py:143
+msgid "Can not run duplication job!"
+msgstr ""
+
+#: app/instance/views.py:162
+#, python-format
+msgid "Connect to control server error: %s"
+msgstr ""
+
+#: app/instance/views.py:197
+#, python-format
+msgid "unbinding domain error: %s"
+msgstr ""
+
+#: app/instance/views.py:202
+msgid "Success!"
+msgstr ""
+
+#: app/instance/views.py:232
+msgid "LuoYun Public Instance"
+msgstr ""
+
+#: app/instance/views.py:346
+#, python-format
+msgid "Baseinfo of instance %s"
+msgstr ""
+
+#: app/instance/views.py:355
+#, python-format
+msgid "Resource of instance %s"
+msgstr ""
+
+#: app/instance/views.py:370
+#, python-format
+msgid "Network configuration of instance %s"
+msgstr ""
+
+#: app/instance/views.py:386
+#, python-format
+msgid "Storage configuration of instance %s"
+msgstr ""
+
+#: app/instance/views.py:407
+msgid "Configure Password"
+msgstr ""
+
+#: app/instance/views.py:418
+msgid "Delete Instance"
+msgstr ""
+
+#: app/instance/views.py:432
+msgid "Job History"
+msgstr ""
+
+#: app/instance/views.py:440
+msgid "Domain Binding"
+msgstr ""
+
+#: app/instance/views.py:456
+msgid "Configure WebSSH"
+msgstr ""
+
+#: app/instance/views.py:470
+#, python-format
+msgid "No instance %s!"
+msgstr ""
+
+#: app/instance/views.py:477
+msgid "Can not delete a running instance!"
+msgstr ""
+
+#: app/instance/views.py:495
+#, python-format
+msgid "Instance %s is deleted!"
+msgstr ""
+
+#: app/instance/views.py:510
+msgid "Instance is not running!"
+msgstr ""
+
+#: app/instance/views.py:512 app/instance/views.py:541
+#: app/instance/views.py:572 app/instance/views.py:661
+msgid "Unknown error !"
+msgstr ""
+
+#: app/instance/views.py:517
+msgid "Stop instance succeed"
+msgstr ""
+
+#: app/instance/views.py:546
+#, python-format
+msgid "Query instance %s succeed!"
+msgstr ""
+
+#: app/instance/views.py:566
+msgid "Instance is running already!"
+msgstr ""
+
+#: app/instance/views.py:577
+#, python-format
+msgid "Run instance %s succeed!"
+msgstr ""
+
+#: app/instance/views.py:605
+msgid "No resources to run instance:"
+msgstr ""
+
+#: app/instance/views.py:608
+#, python-format
+msgid "the total number of CPUs you have is %s, %s used."
+msgstr ""
+
+#: app/instance/views.py:610
+#, python-format
+msgid "the total amount of memory you have is %s MB, %s MB used."
+msgstr ""
+
+#: app/instance/views.py:647 app/instance/views.py:1382
+#, python-format
+msgid "binding domain error: %s"
+msgstr ""
+
+#: app/instance/views.py:670
+#, python-format
+msgid "Have job running on instance %s."
+msgstr ""
+
+#: app/instance/views.py:672
+#, python-format
+msgid "Have not job running on instance %s."
+msgstr ""
+
+#: app/instance/views.py:709
+msgid "Create Instance"
+msgstr ""
+
+#: app/instance/views.py:720
+msgid "No appliance found, please upload appliance first!"
+msgstr ""
+
+#: app/instance/views.py:751
+msgid "You have used the name for a instance !"
+msgstr ""
+
+#: app/instance/views.py:756 app/instance/views.py:948
+#, python-format
+msgid "cpus can not greater than %s"
+msgstr ""
+
+#: app/instance/views.py:758 app/instance/views.py:950
+#, python-format
+msgid "memory can not greater than %s"
+msgstr ""
+
+#: app/instance/views.py:877 app/instance/views.py:902
+msgid "Edit Baseinfo"
+msgstr ""
+
+#: app/instance/views.py:920 app/instance/views.py:952
+#: app/instance/views.py:968
+msgid "Edit Resource"
+msgstr ""
+
+#: app/instance/views.py:1014 app/instance/views.py:1070
+msgid "Edit Network"
+msgstr ""
+
+#: app/instance/views.py:1124 app/instance/views.py:1175
+msgid "Edit Storage"
+msgstr ""
+
+#: app/instance/views.py:1231 app/instance/views.py:1266
+msgid "Edit Root Password for Instance"
+msgstr ""
+
+#: app/instance/views.py:1286 app/instance/views.py:1316
+msgid "Edit SSH Public Key"
+msgstr ""
+
+#: app/instance/views.py:1330 app/instance/views.py:1349
+msgid "Configure Domain"
+msgstr ""
+
+#: app/instance/views.py:1335
+msgid ""
+"can not get domain, domain may not have been configured in Administration "
+"Console."
+msgstr ""
+
+#: app/instance/views.py:1338
+msgid ""
+"Can not get access_ip, please configure instance network or run instance"
+msgstr ""
+
+#: app/instance/views.py:1356
+msgid "Domain is not configured!"
+msgstr ""
+
+#: app/instance/views.py:1364
+msgid "Domain name is taken!"
+msgstr ""
+
+#: app/instance/views.py:1366
+msgid "Domain name is too long."
+msgstr ""
+
+#: app/instance/views.py:1368
+msgid "Please use alpha characters in domain name!"
+msgstr ""
+
+#: app/instance/views.py:1500
+msgid "No such instance!"
+msgstr ""
+
+#: app/instance/forms.py:18 app/instance/forms.py:37
+msgid "CPU"
+msgstr ""
+
+#: app/instance/forms.py:19 app/instance/forms.py:38 app/admin/forms.py:22
+msgid "Memory(M)"
+msgstr ""
+
+#: app/instance/forms.py:20
+msgid "Hide"
+msgstr ""
+
+#: app/instance/forms.py:25
+msgid "Appliance"
+msgstr ""
+
+#: app/instance/forms.py:42
+msgid "Default"
+msgstr ""
+
+#: app/instance/forms.py:50 app/instance/forms.py:66
+msgid "Type"
+msgstr ""
+
+#: app/instance/forms.py:57
+msgid "Virtual disk"
+msgstr ""
+
+#: app/instance/forms.py:67
+msgid "Size (GB)"
+msgstr ""
+
+#: app/instance/forms.py:72 app/account/forms.py:17 app/account/forms.py:22
+#: app/admin/forms.py:17
+msgid "Password"
+msgstr ""
+
+#: app/instance/forms.py:73
+msgid "Confirm"
+msgstr ""
+
+#: app/instance/forms.py:78
+msgid "SSH Public Key"
+msgstr ""
+
+#: app/account/models.py:57
+#, python-format
+msgid "[Group(%s)]"
+msgstr ""
+
+#: app/account/models.py:104
+#, python-format
+msgid "[User(%s)]"
+msgstr ""
+
+#: app/account/models.py:170
+#, python-format
+msgid "[UserProfile(%s)]"
+msgstr ""
+
+#: app/account/models.py:191
+#, python-format
+msgid "[UserPermission(%s)]"
+msgstr ""
+
+#: app/account/models.py:215
+#, python-format
+msgid "[ApplyUser(%s)]"
+msgstr ""
+
+#: app/account/models.py:243
+#, python-format
+msgid "[User reset password apply (%s)]"
+msgstr ""
+
+#: app/account/views.py:83
+msgid ""
+"You have been lock by admin, can not login now. If you have any questions, "
+"contact admin first please !"
+msgstr ""
+
+#: app/account/views.py:92
+msgid "password is wrong !"
+msgstr ""
+
+#: app/account/views.py:136
+msgid "No key found !"
+msgstr ""
+
+#: app/account/views.py:138
+msgid "No apply record found !"
+msgstr ""
+
+#: app/account/views.py:156 app/admin/user_views.py:192
+msgid "This username is occupied"
+msgstr ""
+
+#: app/account/views.py:215
+msgid "My Account Center"
+msgstr ""
+
+#: app/account/views.py:227
+msgid "My Permissions"
+msgstr ""
+
+#: app/account/views.py:262
+#, python-format
+msgid "View User %s"
+msgstr ""
+
+#: app/account/views.py:278
+#, python-format
+msgid "No such group: %s !"
+msgstr ""
+
+#: app/account/views.py:287 app/admin/group_views.py:39
+#, python-format
+msgid "View Group %s"
+msgstr ""
+
+#: app/account/views.py:303 app/account/views.py:325 app/account/views.py:461
+#: app/admin/user_views.py:152 app/admin/user_views.py:173
+msgid "Reset Password"
+msgstr ""
+
+#: app/account/views.py:334 app/account/views.py:353
+msgid "Change my avatar"
+msgstr ""
+
+#: app/account/views.py:363
+msgid "Avatar file must smaller than 360K !"
+msgstr ""
+
+#: app/account/views.py:402
+#, python-format
+msgid ""
+"\n"
+"Reset Password for Your LuoYun Cloud Account.\n"
+"\n"
+"Click the url to complete : %(URL)s\n"
+"\n"
+"If you can not click the link above, copy and paste it on your brower "
+"address.\n"
+msgstr ""
+
+#: app/account/views.py:413 app/account/views.py:483
+msgid "Forget My Password"
+msgstr ""
+
+#: app/account/views.py:451
+msgid "[ LuoYun Cloud ] Reset Password"
+msgstr ""
+
+#: app/account/views.py:456
+msgid "Send Email Failed !"
+msgstr ""
+
+#: app/account/views.py:459
+#, python-format
+msgid "No such email address: %s"
+msgstr ""
+
+#: app/account/views.py:497
+msgid "You have completed reset password."
+msgstr ""
+
+#: app/account/views.py:500
+#, python-format
+msgid "No such key: %s !"
+msgstr ""
+
+#: app/account/forms.py:11
+msgid "password confirm failed"
+msgstr ""
+
+#: app/account/forms.py:16 app/account/forms.py:31 app/admin/forms.py:15
+msgid "Username"
+msgstr ""
+
+#: app/account/forms.py:23 app/admin/forms.py:19
+msgid "Confirm Password"
+msgstr ""
+
+#: app/account/forms.py:27 app/account/forms.py:32 app/admin/forms.py:16
+msgid "Email Address"
+msgstr ""
+
+#: app/account/forms.py:33
+msgid "Registration Policy"
+msgstr ""
+
+#: app/session/models.py:27
+#, python-format
+msgid "[Session(%s)]"
+msgstr ""
+
+#: app/admin/appliance_views.py:29
+#, python-format
+msgid "No such appliance : %s"
+msgstr ""
+
+#: app/admin/appliance_views.py:46 app/admin/appliance_views.py:55
+#: app/admin/instance_views.py:43 app/admin/instance_views.py:52
+#: app/admin/job_views.py:40 app/admin/job_views.py:49
+#: app/admin/group_views.py:54 app/admin/group_views.py:69
+#: app/admin/wiki_views.py:51 app/admin/wiki_views.py:66
+#: app/admin/node_views.py:43 app/admin/node_views.py:52
+#: app/admin/user_views.py:72 app/admin/user_views.py:93
+#: app/admin/permission_views.py:38 app/admin/system_views.py:30
+#: app/admin/system_views.py:39
+msgid "Wrong action value!"
+msgstr ""
+
+#: app/admin/appliance_views.py:52 app/admin/instance_views.py:49
+#: app/admin/job_views.py:46 app/admin/group_views.py:60
+#: app/admin/wiki_views.py:57 app/admin/node_views.py:49
+#: app/admin/user_views.py:78 app/admin/system_views.py:36
+msgid "No action found !"
+msgstr ""
+
+#: app/admin/appliance_views.py:97
+msgid "LuoYun Appliance Management"
+msgstr ""
+
+#: app/admin/appliance_views.py:110
+#, python-format
+msgid "View Appliance %s"
+msgstr ""
+
+#: app/admin/appliance_views.py:128
+msgid "No catalog specified !"
+msgstr ""
+
+#: app/admin/appliance_views.py:144 app/admin/appliance_views.py:156
+#, python-format
+msgid "Wrong action: %s"
+msgstr ""
+
+#: app/admin/appliance_views.py:163
+msgid "Appliance Catalog"
+msgstr ""
+
+#: app/admin/appliance_views.py:171 app/admin/appliance_views.py:189
+msgid "Add Appliance Catalog"
+msgstr ""
+
+#: app/admin/appliance_views.py:201 app/admin/appliance_views.py:218
+#, python-format
+msgid "Edit Appliance Catalog: %s"
+msgstr ""
+
+#: app/admin/instance_views.py:30
+#, python-format
+msgid "No such instance : %s"
+msgstr ""
+
+#: app/admin/instance_views.py:110
+msgid "Instance Management"
+msgstr ""
+
+#: app/admin/instance_views.py:129
+#, python-format
+msgid "Unknown action \"%s\" !"
+msgstr ""
+
+#: app/admin/instance_views.py:140
+#, python-format
+msgid "%s all instance success: %s"
+msgstr ""
+
+#: app/admin/job_views.py:27 app/admin/node_views.py:27
+msgid "No such node"
+msgstr ""
+
+#: app/admin/group_views.py:30
+#, python-format
+msgid "No such group : %s"
+msgstr ""
+
+#: app/admin/group_views.py:76
+msgid "Group Management"
+msgstr ""
+
+#: app/admin/group_views.py:81
+msgid "Create New Group"
+msgstr ""
+
+#: app/admin/group_views.py:92
+msgid "This name is occupied"
+msgstr ""
+
+#: app/admin/group_views.py:129
+#, python-format
+msgid "Edit Group %s"
+msgstr ""
+
+#: app/admin/wiki_views.py:28
+#, python-format
+msgid "No such topic : %s"
+msgstr ""
+
+#: app/admin/wiki_views.py:72
+msgid "Wiki Management"
+msgstr ""
+
+#: app/admin/wiki_views.py:84
+msgid "List appliances"
+msgstr ""
+
+#: app/admin/wiki_views.py:95 app/admin/wiki_views.py:113
+msgid "Add Wiki Catalog"
+msgstr ""
+
+#: app/admin/wiki_views.py:120 app/admin/wiki_views.py:135
+msgid "No catalog found"
+msgstr ""
+
+#: app/admin/wiki_views.py:128
+#, python-format
+msgid "Edit catalog: %s"
+msgstr ""
+
+#: app/admin/wiki_views.py:148
+msgid "Edit Catalog"
+msgstr ""
+
+#: app/admin/node_views.py:58
+msgid "Node Management"
+msgstr ""
+
+#: app/admin/views.py:48
+msgid "Admin Console"
+msgstr ""
+
+#: app/admin/user_views.py:41
+#, python-format
+msgid "No such user : %s"
+msgstr ""
+
+#: app/admin/user_views.py:135
+msgid "Admin User Management"
+msgstr ""
+
+#: app/admin/user_views.py:180
+msgid "Creat New User"
+msgstr ""
+
+#: app/admin/user_views.py:231
+#, python-format
+msgid "Edit User %s"
+msgstr ""
+
+#: app/admin/permission_views.py:25
+#, python-format
+msgid "No such permission : %s"
+msgstr ""
+
+#: app/admin/permission_views.py:44
+msgid "Permission Management"
+msgstr ""
+
+#: app/admin/permission_views.py:51
+#, python-format
+msgid "View Permission %s"
+msgstr ""
+
+#: app/admin/forms.py:23
+msgid "CPUs"
+msgstr ""
+
+#: app/admin/forms.py:24
+msgid "Instances"
+msgstr ""
+
+#: app/admin/forms.py:25
+msgid "Storage(G)"
+msgstr ""
+
+#: app/admin/forms.py:31
+msgid "Permissions"
+msgstr ""
+
+#: app/admin/forms.py:43
+msgid "Groups"
+msgstr ""
+
+#: app/admin/system_views.py:44
+msgid "System Management"
+msgstr ""
+
+#: app/node/models.py:43
+#, python-format
+msgid "<Node(%s:%s)>"
+msgstr ""
+
+#: app/node/views.py:29
+msgid "No action specified"
+msgstr ""
+
+#: app/home/views.py:51
+msgid "Permission Denied"
+msgstr ""
+
+#: app/home/views.py:66
+msgid "No Resource"
+msgstr ""
+
+#: app/myun/views.py:61
+msgid "My LuoYun"
+msgstr ""
+
+#: app/myun/views.py:82
+msgid "My Instances"
+msgstr ""
+
+#: app/myun/views.py:151
+msgid "My Appliances"
+msgstr ""
+
+#: urls.py:64
+msgid "LuoYun Cloud Home"
+msgstr ""
+
+#: tool/domain.py:31
+msgid "Can not get domain."
+msgstr ""
+
+#: tool/domain.py:39
+msgid "Can not get access_ip."
+msgstr ""
+
+#: tool/domain.py:48 tool/domain.py:170
+#, python-format
+msgid "No such dir or file: %s"
+msgstr ""
+
+#: tool/domain.py:150 tool/domain.py:188
+#, python-format
+msgid "reload nginx error: %s"
+msgstr ""
+
+#: tool/domain.py:154 tool/domain.py:191
+msgid "OK"
+msgstr ""
+
+#: tool/domain.py:179
+#, python-format
+msgid "remove nginx config error: %s"
 msgstr ""

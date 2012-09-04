@@ -10,11 +10,9 @@
     <script type="text/javascript" src="${ STATIC_URL }js/qtip/jquery.qtip.js"></script>
     <script type="text/javascript" src="${ STATIC_URL }js/luoyun.js"></script>
     <%block name="head"/>
-    <title>
+    <title>${ _("LuoYun Cloud") }
 % if title:
-${ title }
-% else:
-LuoYun
+ - ${ title }
 % endif
 </title>
   </head>
@@ -30,8 +28,8 @@ LuoYun
           </div>
           <div id="navigator">
             <ul>
-              <li><a href="/appliance">${ _("Appliance") }</a></li>
-              <li><a href="/instance">${ _("Instance") }</a></li>
+              <li><a href="/appliance">${ _("Appliances") }</a></li>
+              <li><a href="/instance">${ _("Instances") }</a></li>
               % if current_user:
 	      <li><a href="${ reverse_url('myun:index') }">${ _("My LuoYun") }</a></li>
 	      % endif

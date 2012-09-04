@@ -229,7 +229,7 @@ class InstRequestHandler(LyRequestHandler):
 class Index(InstRequestHandler):
     ''' Index home '''
 
-    def initialize(self, title = _('LuoYun Home')):
+    def initialize(self, title = _('LuoYun Public Instance')):
         self.title = title
 
 
@@ -1283,7 +1283,7 @@ class PublicKeyEdit(InstRequestHandler):
             if 'public_key' in config.keys():
                 form.key.data = config['public_key']
 
-        d = { 'title': _('Edit SSH Publick Key'),
+        d = { 'title': _('Edit SSH Public Key'),
               'instance': inst, 'form': form }
 
         self.render('instance/publickey_edit.html', **d)

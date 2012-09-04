@@ -81,18 +81,18 @@ class Instance(ORMBase):
 
         INSTANCE_STATUS_STR = {
             0: _('unknown'),
-            1: _("new domain that hasn't run once"),
-            2: _('stopped'),
-            3: _('started by hypervisor'),
-            4: _('osm connected'),
+            1: _("new instance that hasn't run once"),
+            2: _('instance is stopped'),
+            3: _('instance is started by hypervisor'),
+            4: _('osm in instance connected'),
             5: _('application is running'),
-            9: _('suspend'),
-            settings.INSTANCE_DELETED_STATUS: _('deleted'),
-            245: _('needs queryed'),
-            255: _('not exist'),
+            9: _('instance is suspend'),
+            settings.INSTANCE_DELETED_STATUS: _('instance is deleted'),
+            245: _('instance needs queryed'),
+            255: _('instance is not exist'),
         }
 
-        return INSTANCE_STATUS_STR.get( self.status, _('Unknown') )
+        return INSTANCE_STATUS_STR.get( self.status, _('Unknown Status') )
 
     @property
     def logo_url(self):
