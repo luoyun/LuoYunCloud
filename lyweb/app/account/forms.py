@@ -28,7 +28,7 @@ class ResetPasswordApplyForm(Form):
 
 
 class RegistrationForm(ResetPasswordForm):
-    username     = TextField( _('Username'), [validators.Length(min=4, max=25)])
+    username     = TextField( _('Username'), [validators.Length(min=2, max=25)])
     email        = TextField( _('Email Address'), [validators.Length(min=6, max=35), validators.Email()])
     accept_rules = BooleanField( _('Registration Policy'), [validators.Required()])
 
