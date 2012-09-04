@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-04 07:20+0800\n"
+"POT-Creation-Date: 2012-09-04 11:58+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,24 +45,24 @@ msgstr "无权限"
 
 #: app/message/views.py:34
 msgid "Message Home"
-msgstr ""
+msgstr "落云云平台邮箱首页"
 
 #: app/message/views.py:46
 msgid "Message Inbox"
-msgstr ""
+msgstr "落云云平台收件箱"
 
 #: app/message/views.py:60
 msgid "Message Outbox"
-msgstr ""
+msgstr "落云云平台发件箱"
 
 #: app/message/views.py:71
 #, python-format
 msgid "View Message: %s"
-msgstr ""
+msgstr "查看邮件: %s"
 
 #: app/message/views.py:93 app/message/views.py:120
 msgid "New Message"
-msgstr ""
+msgstr "新建邮件"
 
 #: app/message/views.py:117 app/account/views.py:94
 msgid "No such user !"
@@ -71,7 +71,7 @@ msgstr "无此用户!"
 #: app/message/views.py:153 app/message/views.py:178
 #: template/message/reply_message.html:6
 msgid "Reply Message"
-msgstr ""
+msgstr "回复邮件"
 
 #: app/admin/node_views.py:27 app/admin/job_views.py:27
 msgid "No such node"
@@ -87,7 +87,7 @@ msgstr "无此节点服务器"
 #: app/admin/system_views.py:39 app/admin/user_views.py:72
 #: app/admin/user_views.py:93
 msgid "Wrong action value!"
-msgstr ""
+msgstr "错误的命令!"
 
 #: app/admin/node_views.py:49 app/admin/appliance_views.py:52
 #: app/admin/wiki_views.py:57 app/admin/group_views.py:60
@@ -98,7 +98,7 @@ msgstr ""
 
 #: app/admin/node_views.py:58
 msgid "Node Management"
-msgstr ""
+msgstr "节点管理"
 
 #: app/admin/forms.py:15 app/account/forms.py:16 app/account/forms.py:31
 #: template/admin/user/view.html:25
@@ -112,7 +112,7 @@ msgstr "电子邮件"
 
 #: app/admin/forms.py:17 app/instance/forms.py:72 app/account/forms.py:17
 #: app/account/forms.py:22 template/admin/user/view.html:75
-#: template/instance/secret.html:5
+#: template/instance/secret.html:5 template/instance/secret.ajax:1
 msgid "Password"
 msgstr "密码"
 
@@ -165,7 +165,7 @@ msgstr "名字"
 #: app/admin/forms.py:30 app/admin/forms.py:39 app/instance/forms.py:32
 #: app/appliance/forms.py:16 template/admin/permission/view.html:41
 #: template/admin/appliance/view.html:62 template/instance/baseinfo.html:24
-#: template/account/view_group.html:37
+#: template/account/view_group.html:37 template/instance/baseinfo.ajax:20
 msgid "Description"
 msgstr "详细描述"
 
@@ -184,6 +184,7 @@ msgid "Groups"
 msgstr "用户组"
 
 #: app/admin/appliance_views.py:29
+#, python-format
 msgid "No such appliance : %s"
 msgstr "无此应用: %s"
 
@@ -192,12 +193,13 @@ msgid "LuoYun Appliance Management"
 msgstr "LuoYun 应用管理"
 
 #: app/admin/appliance_views.py:110
+#, python-format
 msgid "View Appliance %s"
-msgstr "应用 %s"
+msgstr "查看应用 %s"
 
 #: app/admin/appliance_views.py:128
 msgid "No catalog specified !"
-msgstr "无此分类！"
+msgstr "未指定分类！"
 
 #: app/admin/appliance_views.py:144 app/admin/appliance_views.py:156
 #, python-format
@@ -214,10 +216,12 @@ msgid "Add Appliance Catalog"
 msgstr "增加应用分类"
 
 #: app/admin/appliance_views.py:201 app/admin/appliance_views.py:218
+#, python-format
 msgid "Edit Appliance Catalog: %s"
 msgstr "编辑应用分类: %s"
 
 #: app/admin/wiki_views.py:28
+#, python-format
 msgid "No such topic : %s"
 msgstr "没有找到这个页面: %s"
 
@@ -238,6 +242,7 @@ msgid "No catalog found"
 msgstr "无此分类"
 
 #: app/admin/wiki_views.py:128
+#, python-format
 msgid "Edit catalog: %s"
 msgstr "编辑目录: %s"
 
@@ -246,6 +251,7 @@ msgid "Edit Catalog"
 msgstr "编辑目录"
 
 #: app/admin/group_views.py:30
+#, python-format
 msgid "No such group : %s"
 msgstr "无此用户组: %s"
 
@@ -273,6 +279,7 @@ msgid "Edit Group %s"
 msgstr "编辑用户组 %s"
 
 #: app/admin/instance_views.py:30
+#, python-format
 msgid "No such instance : %s"
 msgstr "无此虚拟机: %s"
 
@@ -291,6 +298,7 @@ msgid "%s all instance success: %s"
 msgstr "%s all instance success: %s"
 
 #: app/admin/permission_views.py:25
+#, python-format
 msgid "No such permission : %s"
 msgstr "无此权限: %s"
 
@@ -301,13 +309,14 @@ msgstr "权限管理"
 #: app/admin/permission_views.py:51
 #, python-format
 msgid "View Permission %s"
-msgstr "权限 %s"
+msgstr "查看权限 %s"
 
 #: app/admin/system_views.py:44
 msgid "System Management"
 msgstr "系统管理"
 
 #: app/admin/user_views.py:41
+#, python-format
 msgid "No such user : %s"
 msgstr "无此用户: %s"
 
@@ -402,7 +411,7 @@ msgstr "隐藏"
 #: template/myun/instances.html:43 template/instance/instance_base.html:84
 #: template/home/index.html:19 template/account/index.html:14
 msgid "Appliance"
-msgstr "应用库"
+msgstr "应用"
 
 #: app/instance/forms.py:42
 msgid "Default"
@@ -410,8 +419,9 @@ msgstr "默认"
 
 #: app/instance/forms.py:50 app/instance/forms.py:66
 #: template/instance/storage.html:11 template/instance/network.html:11
+#: template/instance/storage.ajax:7 template/instance/network.ajax:7
 msgid "Type"
-msgstr ""
+msgstr "类型"
 
 #: app/instance/forms.py:51 app/system/forms.py:45
 #: template/admin/node/index.html:20 template/admin/node/instances.html:22
@@ -419,22 +429,26 @@ msgstr ""
 #: template/admin/user/instances.html:21 template/instance/index.html:63
 #: template/instance/network.html:19 template/home/index.html:115
 #: template/system/networkpool.html:35 template/system/baseinfo.html:11
+#: template/instance/network.ajax:15 template/system/baseinfo.ajax:7
+#: template/system/networkpool.ajax:32
 msgid "IP"
-msgstr ""
+msgstr "IP地址"
 
 #: app/instance/forms.py:52 app/system/forms.py:67
 #: template/instance/network.html:23 template/system/networkpool.html:11
+#: template/instance/network.ajax:19 template/system/networkpool.ajax:8
 msgid "Netmask"
-msgstr ""
+msgstr "IP地址掩码"
 
 #: app/instance/forms.py:53 app/system/forms.py:68
 #: template/instance/network.html:27 template/system/networkpool.html:15
+#: template/instance/network.ajax:23 template/system/networkpool.ajax:12
 msgid "Gateway"
-msgstr ""
+msgstr "IP地址网关"
 
 #: app/instance/forms.py:57
 msgid "Virtual disk"
-msgstr ""
+msgstr "虚拟磁盘"
 
 #: app/instance/forms.py:67
 msgid "Size (GB)"
@@ -445,36 +459,38 @@ msgid "Confirm"
 msgstr "密码确认"
 
 #: app/instance/forms.py:78 template/instance/secret.html:12
+#: template/instance/secret.ajax:8
 msgid "SSH Public Key"
-msgstr ""
+msgstr "SSH公开密钥"
 
 #: app/instance/models.py:75
+#, python-format
 msgid "<Instance(%s)>"
 msgstr "<虚拟机(%s)>"
 
 #: app/instance/models.py:83 app/job/models.py:12
 msgid "unknown"
-msgstr ""
+msgstr "未知"
 
 #: app/instance/models.py:84
 msgid "new domain that hasn't run once"
-msgstr ""
+msgstr "新建虚拟机，还未运行过"
 
 #: app/instance/models.py:85
 msgid "stopped"
-msgstr ""
+msgstr "停止了"
 
 #: app/instance/models.py:86
 msgid "started by hypervisor"
-msgstr ""
+msgstr "已经启动"
 
 #: app/instance/models.py:87
 msgid "osm connected"
-msgstr ""
+msgstr "连接到 OS Manager"
 
 #: app/instance/models.py:88
 msgid "application is running"
-msgstr ""
+msgstr "虚拟应用已运行"
 
 #: app/instance/models.py:89
 msgid "suspend"
@@ -486,31 +502,34 @@ msgstr "删除"
 
 #: app/instance/models.py:91
 msgid "needs queryed"
-msgstr ""
+msgstr "状态查询"
 
 #: app/instance/models.py:92
 msgid "not exist"
-msgstr ""
+msgstr "不存在"
 
 #: app/instance/models.py:95 app/job/models.py:112 app/job/models.py:116
 msgid "Unknown"
-msgstr ""
+msgstr "未知"
 
 #: app/instance/views.py:109
+#, python-format
 msgid "No such instance: %s !"
 msgstr "无此虚拟机: %s!"
 
 #: app/instance/views.py:117
+#, python-format
 msgid "Instance %s is private !"
-msgstr ""
+msgstr "虚拟机 %s 为私用"
 
 #: app/instance/views.py:121
+#, python-format
 msgid "Instance %s is deleted !"
 msgstr "虚拟机 %s 已删除!"
 
 #: app/instance/views.py:127
 msgid "Only owner can do this!"
-msgstr ""
+msgstr "只有所有者有此操作权限"
 
 #: app/instance/views.py:143
 msgid "Can not run duplication job!"
@@ -519,22 +538,23 @@ msgstr "重复操作无效"
 #: app/instance/views.py:162
 #, python-format
 msgid "Connect to control server error: %s"
-msgstr ""
+msgstr "连接至云控制器错误: %s"
 
 #: app/instance/views.py:197
 #, python-format
 msgid "unbinding domain error: %s"
-msgstr ""
+msgstr "解除域名错误: %s"
 
 #: app/instance/views.py:202
 msgid "Success!"
-msgstr ""
+msgstr "成功"
 
 #: app/instance/views.py:228
 msgid "LuoYun Home"
 msgstr "落云首页"
 
 #: app/instance/views.py:342
+#, python-format
 msgid "Baseinfo of instance %s"
 msgstr "虚拟机 %s 基本信息"
 
@@ -566,6 +586,7 @@ msgid "Job History"
 msgstr "任务列表"
 
 #: app/instance/views.py:436 template/instance/domain.html:6
+#: template/instance/domain.ajax:2
 msgid "Domain Binding"
 msgstr "域名配置"
 
@@ -574,6 +595,7 @@ msgid "Configure WebSSH"
 msgstr "WebSSH 配置"
 
 #: app/instance/views.py:466
+#, python-format
 msgid "No instance %s!"
 msgstr ""
 
@@ -589,6 +611,7 @@ msgid "Can not delete a running instance!"
 msgstr "虚拟机在运行，不能删除"
 
 #: app/instance/views.py:491
+#, python-format
 msgid "Instance %s is deleted!"
 msgstr "虚拟机 %s 已删除"
 
@@ -599,7 +622,7 @@ msgstr "虚拟机未运行"
 #: app/instance/views.py:508 app/instance/views.py:537
 #: app/instance/views.py:568 app/instance/views.py:657
 msgid "Unknown error !"
-msgstr ""
+msgstr "未知错误"
 
 #: app/instance/views.py:513
 msgid "Stop instance succeed"
@@ -608,15 +631,16 @@ msgstr "虚拟机已停止"
 #: app/instance/views.py:542
 #, python-format
 msgid "Query instance %s succeed!"
-msgstr ""
+msgstr "虚拟机 %s 状态查询完成"
 
 #: app/instance/views.py:562
 msgid "Instance is running already!"
 msgstr "虚拟机在运行"
 
 #: app/instance/views.py:573
+#, python-format
 msgid "Run instance %s succeed!"
-msgstr ""
+msgstr "虚拟机 %s 成功启动"
 
 #: app/instance/views.py:601
 msgid "No resources to run instance:"
@@ -635,13 +659,15 @@ msgstr "内存资源 %s MB, %s MB 已用"
 #: app/instance/views.py:643 app/instance/views.py:1371
 #, python-format
 msgid "binding domain error: %s"
-msgstr ""
+msgstr "创建域名错误: %s"
 
 #: app/instance/views.py:666
+#, python-format
 msgid "Have job running on instance %s."
-msgstr ""
+msgstr "虚拟机 %s 正在执行命令"
 
 #: app/instance/views.py:668
+#, python-format
 msgid "Have not job running on instance %s."
 msgstr ""
 
@@ -655,7 +681,7 @@ msgstr "无可用应用, 请安装应用"
 
 #: app/instance/views.py:747
 msgid "You have used the name for a instance !"
-msgstr ""
+msgstr "虚拟机名已用"
 
 #: app/instance/views.py:752 app/instance/views.py:906
 #, python-format
@@ -698,7 +724,7 @@ msgid "Edit SSH Public Key"
 msgstr "配置 SSH Publick Key"
 
 #: app/instance/views.py:1319 app/instance/views.py:1338
-#: template/instance/domain_edit.html:5
+#: template/instance/domain_edit.html:5 template/instance/domain_edit.ajax:1
 msgid "Configure Domain"
 msgstr "配置域名"
 
@@ -836,11 +862,11 @@ msgstr "节点服务器忙"
 
 #: app/job/models.py:41
 msgid "appliance not available"
-msgstr ""
+msgstr "应用不可用"
 
 #: app/job/models.py:42
 msgid "appliance error"
-msgstr ""
+msgstr "应用错误"
 
 #: app/job/models.py:43
 msgid "Last Finish Status"
@@ -923,6 +949,7 @@ msgid "query"
 msgstr "查询"
 
 #: app/job/models.py:108
+#, python-format
 msgid "[Job(%s)]"
 msgstr ""
 
@@ -940,41 +967,44 @@ msgid "Download url prefix"
 msgstr ""
 
 #: app/system/forms.py:40 template/system/baseinfo.html:22
+#: template/system/baseinfo.ajax:18
 msgid "Admin email"
 msgstr ""
 
 #: app/system/forms.py:46 template/system/baseinfo.html:16
+#: template/system/baseinfo.ajax:12
 msgid "Port"
-msgstr ""
+msgstr "端口"
 
 #: app/system/forms.py:60 app/system/forms.py:69
 #: template/admin/admin_base.html:58 template/system/networkpool.html:19
+#: template/system/networkpool.ajax:16
 msgid "Nameservers"
 msgstr "域名服务器"
 
 #: app/system/forms.py:65
 msgid "Start IP"
-msgstr ""
+msgstr "起始IP"
 
 #: app/system/forms.py:66
 msgid "End IP"
-msgstr ""
+msgstr "终止IP"
 
 #: app/system/forms.py:70
 msgid "Exclude ip list"
-msgstr ""
+msgstr "排除以下IP地址"
 
 #: app/system/forms.py:76
 msgid "Top domain"
-msgstr ""
+msgstr "一级域名"
 
 #: app/system/forms.py:77
 msgid "Name prefix"
-msgstr ""
+msgstr "二级域名前缀"
 
 #: app/system/forms.py:78
 msgid "Name suffix"
-msgstr ""
+msgstr "二级域名后缀"
 
 #: app/system/forms.py:84
 msgid "Config dir"
@@ -993,8 +1023,9 @@ msgid "Registration Protocol"
 msgstr ""
 
 #: app/system/views.py:205 template/system/networkpool.html:4
+#: template/system/networkpool.ajax:1
 msgid "Network pool of LuoYun"
-msgstr ""
+msgstr "IP地址池"
 
 #: app/account/forms.py:11
 msgid "password confirm failed"
@@ -1035,6 +1066,7 @@ msgid "[ApplyUser(%s)]"
 msgstr ""
 
 #: app/account/models.py:243
+#, python-format
 msgid "[User reset password apply (%s)]"
 msgstr ""
 
@@ -1067,19 +1099,20 @@ msgstr "我的权限"
 #: app/account/views.py:262
 #, python-format
 msgid "View User %s"
-msgstr ""
+msgstr "查看用户 %s"
 
 #: app/account/views.py:278
+#, python-format
 msgid "No such group: %s !"
-msgstr ""
+msgstr "无此用户组: %s "
 
 #: app/account/views.py:334 app/account/views.py:353
 msgid "Change my avatar"
-msgstr ""
+msgstr "改变头像"
 
 #: app/account/views.py:363
 msgid "Avatar file must smaller than 360K !"
-msgstr ""
+msgstr "头像文件不得大于360K!"
 
 #: app/account/views.py:377 app/appliance/views.py:241
 #, python-format
@@ -1109,17 +1142,19 @@ msgstr "重置密码"
 
 #: app/account/views.py:456
 msgid "Send Email Failed !"
-msgstr ""
+msgstr "邮件发送失败"
 
 #: app/account/views.py:459
+#, python-format
 msgid "No such email address: %s"
-msgstr ""
+msgstr "无此邮箱: %s"
 
 #: app/account/views.py:497
 msgid "You have completed reset password."
-msgstr ""
+msgstr "密码重置完成"
 
 #: app/account/views.py:500
+#, python-format
 msgid "No such key: %s !"
 msgstr ""
 
@@ -1150,6 +1185,7 @@ msgid "Servers Home"
 msgstr ""
 
 #: app/wiki/views.py:35
+#, python-format
 msgid "View topic: %s"
 msgstr ""
 
@@ -1165,17 +1201,19 @@ msgstr "发表文章"
 #: app/wiki/views.py:119
 #, python-format
 msgid "Edit Topic %s"
-msgstr ""
+msgstr "修改文章 %s"
 
 #: app/wiki/views.py:135
 msgid "Edit Topic"
 msgstr "编辑文章"
 
 #: app/appliance/models.py:40
+#, python-format
 msgid "[Catalog(%s)]"
 msgstr ""
 
 #: app/appliance/models.py:84
+#, python-format
 msgid "[Appliance(%s)]"
 msgstr ""
 
@@ -1208,15 +1246,16 @@ msgstr "修改应用配置"
 
 #: app/appliance/views.py:227
 msgid "Logo file must smaller than 2M !"
-msgstr ""
+msgstr "Logo文件必须小于2M"
 
 #: app/appliance/views.py:266
+#, python-format
 msgid "Have not found appliance %s !"
-msgstr ""
+msgstr "未找到应用 %s"
 
 #: app/appliance/views.py:271
 msgid "No permission to delete appliance !"
-msgstr ""
+msgstr "无应用删除权限"
 
 #: app/appliance/views.py:278
 msgid "Have instances exist"
@@ -1225,23 +1264,23 @@ msgstr ""
 #: app/appliance/views.py:290
 #, python-format
 msgid "Delete %s failed: %s"
-msgstr ""
+msgstr "删除 %s 失败: %s"
 
 #: app/appliance/views.py:394
 msgid "No such appliance!"
-msgstr ""
+msgstr "无此应用"
 
 #: app/appliance/views.py:420
 msgid "No such appliance !"
-msgstr ""
+msgstr "无此应用"
 
 #: urls.py:64
 msgid "LuoYun Cloud Home"
-msgstr ""
+msgstr "落云云平台首页"
 
 #: tool/domain.py:31
 msgid "Can not get domain."
-msgstr ""
+msgstr "无法获得域名"
 
 #: tool/domain.py:39
 msgid "Can not get access_ip."
@@ -1269,44 +1308,44 @@ msgstr ""
 #: template/message/index.html:5 template/myun/myun_base.html:31
 #: template/account/account_base.html:32
 msgid "Welcome, "
-msgstr ""
+msgstr "欢迎, "
 
 #: template/message/reply_message.html:12
 msgid "Reply To:"
-msgstr ""
+msgstr "回复给:"
 
 #: template/message/new_message.html:6
 msgid "Write Message"
-msgstr ""
+msgstr "编辑邮件"
 
 #: template/message/message_base.html:15 template/message/inbox.html:7
 #: template/base.html:48
 msgid "Inbox"
-msgstr ""
+msgstr "收件箱"
 
 #: template/message/message_base.html:16
 msgid "Outbox"
-msgstr ""
+msgstr "发件箱"
 
 #: template/message/message_base.html:21
 msgid "New"
-msgstr ""
+msgstr "新建"
 
 #: template/message/inbox.html:7
 msgid "unread"
-msgstr ""
+msgstr "未读"
 
 #: template/message/inbox.html:11
 msgid "From"
-msgstr ""
+msgstr "来自"
 
 #: template/message/inbox.html:12 template/message/outbox.html:12
 msgid "Title"
-msgstr ""
+msgstr "标题"
 
 #: template/message/inbox.html:13 template/message/outbox.html:13
 msgid "Date"
-msgstr ""
+msgstr "日期"
 
 #: template/message/inbox.html:14 template/message/outbox.html:14
 msgid "Deletion"
@@ -1314,35 +1353,35 @@ msgstr "删除"
 
 #: template/message/inbox.html:39
 msgid "You have not receiverd any message yet !"
-msgstr ""
+msgstr "尚无邮件收取"
 
 #: template/message/outbox.html:7
 msgid "Outbox "
-msgstr ""
+msgstr "发件箱"
 
 #: template/message/outbox.html:33
 msgid "You have not sent any message before !"
-msgstr ""
+msgstr "还未收到邮件"
 
 #: template/message/view_message.html:6
 msgid "Message Details"
-msgstr ""
+msgstr "邮件内容"
 
 #: template/admin/index.html:5
 msgid "LuoYun Administration Console"
-msgstr "管理控制台"
+msgstr "管理后台"
 
 #: template/admin/index.html:7
 msgid ""
 "Note: Any changes here will affect overall operation of LuoYunCloud "
 "platform. Please be careful!"
-msgstr "请注意: 操作管理控制台会影响落云云平台的整体运行!"
+msgstr "请谨慎操作: 管理后台的操作会影响落云云平台的整体运行!"
 
 #: template/admin/index.html:19 template/admin/instance/index.html:4
 #: template/admin/user/index.html:29 template/admin/admin_base.html:47
 #: template/base.html:34 template/myun/index.html:17
 #: template/home/index.html:24 template/system/networkpool.html:37
-#: template/account/index.html:19
+#: template/account/index.html:19 template/system/networkpool.ajax:34
 msgid "Instance"
 msgstr "虚拟机"
 
@@ -1354,6 +1393,7 @@ msgstr "CPU"
 #: template/admin/index.html:43 template/admin/node/view.html:51
 #: template/admin/user/view.html:88 template/myun/index.html:41
 #: template/instance/resource.html:10 template/home/no_resource.html:27
+#: template/instance/resource.ajax:6
 msgid "Memory"
 msgstr "内存"
 
@@ -1364,6 +1404,8 @@ msgstr "内存"
 #: template/admin/wiki/edit_catalog.html:7
 #: template/admin/wiki/add_catalog.html:8 template/admin/wiki/topics.html:7
 #: template/admin/appliance/catalog_edit.html:7
+#: template/admin/job/index.ajax:6 template/admin/system/index.ajax:3
+#: template/admin/wiki/index.ajax:3
 msgid "Admin"
 msgstr ""
 
@@ -1386,7 +1428,7 @@ msgstr "节点"
 #: template/admin/appliance/index.html:34
 #: template/admin/appliance/catalog.html:18
 #: template/admin/appliance/view.html:24 template/account/view_group.html:29
-#: template/account/view_user.html:31
+#: template/account/view_user.html:31 template/admin/job/index.ajax:17
 msgid "ID"
 msgstr ""
 
@@ -1399,6 +1441,7 @@ msgstr ""
 #: template/admin/instance/index.html:34 template/admin/user/instances.html:20
 #: template/admin/job/index.html:22 template/instance/index.html:59
 #: template/instance/index.html:130 template/home/index.html:111
+#: template/admin/job/index.ajax:19
 msgid "Status"
 msgstr "状态"
 
@@ -1408,18 +1451,21 @@ msgstr "内存(MB)"
 
 #: template/admin/node/index.html:23 template/admin/job/index.html:25
 #: template/instance/joblist.html:13 template/instance/view_job.html:13
+#: template/admin/job/index.ajax:22 template/instance/joblist.ajax:9
 msgid "Action"
 msgstr "命令"
 
 #: template/admin/node/index.html:24
 msgid "Info"
-msgstr ""
+msgstr "信息"
 
 #: template/admin/node/index.html:37 template/instance/webssh.html:20
+#: template/instance/webssh.ajax:13
 msgid "Enable"
 msgstr "启用"
 
 #: template/admin/node/index.html:39 template/instance/webssh.html:12
+#: template/instance/webssh.ajax:8
 msgid "Disable"
 msgstr "禁用"
 
@@ -1462,7 +1508,7 @@ msgstr "创建时间"
 #: template/admin/node/view.html:63 template/admin/instance/index.html:35
 #: template/admin/appliance/index.html:39
 #: template/admin/appliance/view.html:44 template/instance/index.html:114
-#: template/system/networkpool.html:38
+#: template/system/networkpool.html:38 template/system/networkpool.ajax:35
 msgid "Updated"
 msgstr "更新时间"
 
@@ -1506,11 +1552,11 @@ msgstr "还没有任何虚拟机 !"
 #: template/admin/admin_base.html:34 template/account/permissions.html:32
 #: template/account/view_user.html:51
 msgid "Group"
-msgstr ""
+msgstr "用户组"
 
 #: template/admin/group/index.html:15
 msgid "Total Groups: "
-msgstr ""
+msgstr "用户组总数: "
 
 #: template/admin/group/index.html:22
 msgid "Users"
@@ -1522,7 +1568,11 @@ msgstr "用戶"
 #: template/instance/network.html:42 template/instance/domain.html:11
 #: template/system/networkpool.html:6 template/system/baseinfo.html:25
 #: template/wiki/view_topic.html:24 template/appliance/view.html:55
-#: template/appliance/edit.html:8
+#: template/appliance/edit.html:8 template/instance/storage.ajax:19
+#: template/instance/baseinfo.ajax:14 template/instance/domain.ajax:7
+#: template/instance/resource.ajax:12 template/instance/network.ajax:31
+#: template/instance/network.ajax:38 template/system/baseinfo.ajax:21
+#: template/system/networkpool.ajax:3
 msgid "Edit"
 msgstr "编辑"
 
@@ -1534,7 +1584,8 @@ msgstr "锁定 "
 #: template/admin/appliance/view.html:73 template/instance/delete.html:9
 #: template/instance/storage.html:24 template/instance/instance_base.html:116
 #: template/instance/domain.html:12 template/wiki/view_topic.html:25
-#: template/appliance/view.html:56
+#: template/appliance/view.html:56 template/instance/storage.ajax:20
+#: template/instance/domain.ajax:8 template/instance/delete.ajax:5
 msgid "Delete"
 msgstr "删除"
 
@@ -1544,7 +1595,7 @@ msgstr "删除"
 
 #: template/admin/group/delete_failed.html:12
 msgid "Delete Group Failed"
-msgstr ""
+msgstr "删除用户组失败"
 
 #: template/admin/group/delete_failed.html:15
 msgid ""
@@ -1565,11 +1616,11 @@ msgstr "查看"
 
 #: template/admin/group/view.html:10
 msgid "Group View"
-msgstr ""
+msgstr "查看用户组"
 
 #: template/admin/group/view.html:24
 msgid "Islocked"
-msgstr ""
+msgstr "已锁定"
 
 #: template/admin/group/view.html:28
 msgid "description"
@@ -1577,15 +1628,15 @@ msgstr "详细描述"
 
 #: template/admin/group/view.html:36
 msgid "View all users"
-msgstr ""
+msgstr "查看所有用户"
 
 #: template/admin/group/view.html:38
 msgid "No users in this group !"
-msgstr ""
+msgstr "此用户组无用户"
 
 #: template/admin/group/view.html:41
 msgid "Permission List"
-msgstr ""
+msgstr "权限列表"
 
 #: template/admin/group/view.html:50 template/admin/permission/index.html:17
 #: template/admin/permission/view.html:20 template/account/permissions.html:14
@@ -1594,11 +1645,11 @@ msgstr ""
 
 #: template/admin/group/view.html:68
 msgid "This group cantains no permissions !"
-msgstr ""
+msgstr "此用户组无权限约定"
 
 #: template/admin/group/edit.html:6 template/admin/group/edit.html:11
 msgid "Edit Group"
-msgstr "编辑"
+msgstr "编辑用户组"
 
 #: template/admin/user/reset_password_history.html:4
 #: template/admin/user/reset_password_history.html:20
@@ -1606,6 +1657,8 @@ msgstr "编辑"
 #: template/admin/user/instances.html:8 template/admin/job/index.html:21
 #: template/admin/admin_base.html:33 template/instance/joblist.html:12
 #: template/instance/view_job.html:12 template/system/networkpool.html:36
+#: template/admin/job/index.ajax:18 template/instance/joblist.ajax:8
+#: template/system/networkpool.ajax:33
 msgid "User"
 msgstr "用戶"
 
@@ -1619,21 +1672,21 @@ msgstr ""
 
 #: template/admin/user/reset_password_history.html:12
 msgid "Total: "
-msgstr ""
+msgstr "总数: "
 
 #: template/admin/user/reset_password_history.html:24
-#: template/admin/job/index.html:26
+#: template/admin/job/index.html:26 template/admin/job/index.ajax:23
 msgid "Completed"
 msgstr "完成时间"
 
 #: template/admin/user/index.html:9 template/admin/user/user_base.html:10
 msgid "User Management"
-msgstr ""
+msgstr "用户管理"
 
 #: template/admin/user/index.html:12 template/admin/user/add.html:4
 #: template/admin/user/add.html:9
 msgid "Create New User"
-msgstr ""
+msgstr "创建新用户"
 
 #: template/admin/user/index.html:16
 msgid "Total Users in "
@@ -1658,13 +1711,13 @@ msgstr "没有发现任何虚拟机 ！"
 
 #: template/admin/user/view.html:15 template/account/view_user.html:21
 msgid "Leave a message"
-msgstr ""
+msgstr "发送邮件"
 
 #: template/admin/user/view.html:21 template/admin/admin_base.html:55
 #: template/admin/appliance/view.html:18
 #: template/instance/instance_base.html:109
 msgid "Baseinfo"
-msgstr ""
+msgstr "基本信息"
 
 #: template/admin/user/view.html:33 template/account/view_user.html:35
 msgid "Date Joined"
@@ -1684,28 +1737,28 @@ msgstr "语言"
 
 #: template/admin/user/view.html:62
 msgid "Locked"
-msgstr ""
+msgstr "已锁定"
 
 #: template/admin/user/view.html:66
 msgid "Unlock"
-msgstr ""
+msgstr "未锁定"
 
 #: template/admin/user/view.html:69
 msgid "Lock"
-msgstr ""
+msgstr "锁定"
 
 #: template/admin/user/view.html:83
 msgid "Resources"
-msgstr ""
+msgstr "资源配置"
 
 #: template/admin/user/view.html:84
 msgid "Change User Resources"
-msgstr ""
+msgstr "修改用户资源配置"
 
 #: template/admin/user/view.html:100 template/myun/index.html:53
 #: template/instance/instance_base.html:112 template/home/no_resource.html:42
 msgid "Storage"
-msgstr ""
+msgstr "存储配置"
 
 #: template/admin/user/view.html:107 template/base.html:75
 msgid "LuoYun"
@@ -1721,46 +1774,47 @@ msgstr "应用库"
 
 #: template/admin/user/view.html:140
 msgid "Edit Groups"
-msgstr ""
+msgstr "编辑用户组"
 
 #: template/admin/user/view.html:146
 msgid "Group Name"
-msgstr ""
+msgstr "用户组组名"
 
 #: template/admin/user/view.html:171
 msgid "User has no group!"
-msgstr ""
+msgstr "此用户无用户组"
 
 #: template/admin/user/edit_groups.html:5
 #: template/admin/user/edit_groups.html:22
 msgid "Edit User Groups"
-msgstr ""
+msgstr "修改用户所在用户组"
 
 #: template/admin/user/edit_resources.html:5
 msgid "Edit Resources"
-msgstr ""
+msgstr "修改资源配置"
 
 #: template/admin/user/edit_resources.html:10
 msgid "Edit User Resources"
-msgstr ""
+msgstr "修改用户资源"
 
-#: template/admin/job/index.html:10
+#: template/admin/job/index.html:10 template/admin/job/index.ajax:7
 msgid "Jobs"
 msgstr "任务历史"
 
-#: template/admin/job/index.html:23
+#: template/admin/job/index.html:23 template/admin/job/index.ajax:20
 msgid "Target Type"
 msgstr "对象类型"
 
-#: template/admin/job/index.html:24
+#: template/admin/job/index.html:24 template/admin/job/index.ajax:21
 msgid "Target ID"
 msgstr "对象ID"
 
 #: template/admin/system/index.html:8 template/admin/admin_base.html:53
+#: template/admin/system/index.ajax:4
 msgid "System"
-msgstr ""
+msgstr "系统"
 
-#: template/admin/system/index.html:13
+#: template/admin/system/index.html:13 template/admin/system/index.ajax:9
 msgid "Sync DB"
 msgstr ""
 
@@ -1792,16 +1846,16 @@ msgstr ""
 
 #: template/admin/admin_base.html:57
 msgid "Control Server"
-msgstr ""
+msgstr "云控制器"
 
 #: template/admin/admin_base.html:59
 msgid "IP Address Pool"
-msgstr ""
+msgstr "IP地址池"
 
 #: template/admin/admin_base.html:60 template/instance/instance_base.html:75
 #: template/instance/instance_base.html:114
 msgid "Domain"
-msgstr ""
+msgstr "域名"
 
 #: template/admin/admin_base.html:61
 msgid "Nginx"
@@ -1813,15 +1867,15 @@ msgstr ""
 
 #: template/admin/permission/index.html:5
 msgid "View All Permissions"
-msgstr ""
+msgstr "查看所有权限"
 
 #: template/admin/permission/view.html:10
 msgid "Permission View"
-msgstr ""
+msgstr "查看权限"
 
 #: template/admin/permission/view.html:31
 msgid "Group List"
-msgstr ""
+msgstr "用户组列表"
 
 #: template/admin/permission/view.html:58
 msgid "Have no groups contain this permission !"
@@ -1829,15 +1883,15 @@ msgstr ""
 
 #: template/admin/wiki/index.html:8 template/admin/wiki/edit_catalog.html:8
 #: template/admin/wiki/topics.html:8 template/wiki/view_topic.html:8
-#: template/wiki/view_catalog.html:8
+#: template/wiki/view_catalog.html:8 template/admin/wiki/index.ajax:4
 msgid "Wiki"
 msgstr "讨论"
 
-#: template/admin/wiki/index.html:13
+#: template/admin/wiki/index.html:13 template/admin/wiki/index.ajax:9
 msgid "Create New Catalog"
 msgstr "创建新目录"
 
-#: template/admin/wiki/index.html:14
+#: template/admin/wiki/index.html:14 template/admin/wiki/index.ajax:10
 msgid "All topics"
 msgstr ""
 
@@ -1851,17 +1905,16 @@ msgid "Add Catalog"
 msgstr "新建目录"
 
 #: template/admin/appliance/index.html:9
-#, fuzzydd
 msgid "Appliance Management"
-msgstr ""
+msgstr "应用管理"
 
 #: template/admin/appliance/index.html:13 template/instance/index.html:133
 msgid "All"
-msgstr ""
+msgstr "全部"
 
 #: template/admin/appliance/index.html:24
 msgid "Total Appliance :"
-msgstr ""
+msgstr "应用总数: "
 
 #: template/admin/appliance/index.html:27
 msgid "Filter by user: "
@@ -1870,11 +1923,11 @@ msgstr ""
 #: template/admin/appliance/index.html:40
 #: template/admin/appliance/view.html:71
 msgid "Management"
-msgstr ""
+msgstr "管理"
 
 #: template/admin/appliance/catalog.html:10
 msgid "Appliance Catalog Management"
-msgstr ""
+msgstr "应用分类管理"
 
 #: template/admin/appliance/catalog.html:12
 #: template/admin/appliance/catalog_new.html:5
@@ -1887,15 +1940,15 @@ msgstr "创建新目录"
 
 #: template/admin/appliance/view.html:10
 msgid "Appliance View"
-msgstr ""
+msgstr "查看应用"
 
 #: template/admin/appliance/view.html:57 template/instance/index.html:52
 msgid "No summary yet !"
-msgstr "没有概述"
+msgstr "概述尚未填写，为方便使用，请填写概述！"
 
 #: template/admin/appliance/view.html:67
 msgid "No description yet !"
-msgstr "没有详细描述"
+msgstr "详细描述尚无，为方便使用，请填写虚拟应用的相关使用说明"
 
 #: template/install/index.html:7
 msgid "DB Configure"
@@ -1907,7 +1960,7 @@ msgstr ""
 
 #: template/install/index.html:28
 msgid "reboot"
-msgstr ""
+msgstr "重启"
 
 #: template/install/index.html:28
 msgid "web server !"
@@ -1919,7 +1972,7 @@ msgstr ""
 
 #: template/install/base.html:33
 msgid "Copyright"
-msgstr ""
+msgstr "版权"
 
 #: template/install/base.html:33
 msgid "LuoYun Inc."
@@ -1964,7 +2017,7 @@ msgstr "还没有任何虚拟机 !"
 
 #: template/myun/instances.html:28 template/myun/appliances.html:28
 msgid "Please give a summary for this instance."
-msgstr ""
+msgstr "请填写虚拟机概述"
 
 #: template/myun/instances.html:47 template/myun/appliances.html:37
 #: template/instance/instance_base.html:88 template/appliance/view.html:43
@@ -1983,15 +2036,15 @@ msgstr "私用"
 
 #: template/myun/appliances.html:14
 msgid "No appliances now !"
-msgstr ""
+msgstr "尚无应用"
 
 #: template/myun/appliances.html:45 template/myun/appliances.html:55
 msgid "Useable"
-msgstr ""
+msgstr "可用"
 
 #: template/myun/appliances.html:50
 msgid "Unuseable"
-msgstr ""
+msgstr "不可用"
 
 #: template/myun/appliances.html:66
 msgid "Public"
@@ -2061,7 +2114,7 @@ msgstr ""
 msgid "50"
 msgstr ""
 
-#: template/instance/secret.html:8
+#: template/instance/secret.html:8 template/instance/secret.ajax:4
 msgid "Reset Root Password"
 msgstr "重置密码"
 
@@ -2070,75 +2123,89 @@ msgstr "重置密码"
 #: template/system/registration_protocol_edit.html:13
 #: template/system/clc_edit.html:17 template/system/domain_edit.html:20
 #: template/system/baseinfo_edit.html:20 template/system/db_edit.html:26
-#: template/system/networkpool_edit.html:29
+#: template/system/networkpool_edit.html:29 template/instance/secret.ajax:16
+#: template/system/clc_edit.ajax:13 template/system/nginx_edit.ajax:16
+#: template/system/baseinfo_edit.ajax:16 template/system/db_edit.ajax:22
+#: template/system/registration_protocol_edit.ajax:9
+#: template/system/domain_edit.ajax:16
+#: template/system/networkpool_edit.ajax:25
+#: template/system/nameservers_edit.ajax:10
 msgid "saved success"
 msgstr ""
 
-#: template/instance/baseinfo.html:11
+#: template/instance/baseinfo.html:11 template/instance/baseinfo.ajax:7
 msgid "This is an instance of LuoYun Cloud platform."
-msgstr ""
+msgstr "落云云平台虚拟机，为方便使用，请填写虚拟机使用概述"
 
-#: template/instance/baseinfo.html:29
+#: template/instance/baseinfo.html:29 template/instance/baseinfo.ajax:25
 msgid "No description."
-msgstr "无详细描述"
+msgstr "详细描述尚无，为方便使用，请填写虚拟应用的相关使用说明"
 
 #: template/instance/joblist.html:7 template/instance/view_job.html:7
+#: template/instance/joblist.ajax:3
 msgid "Recent Job History"
 msgstr "最近任务历史"
 
 #: template/instance/joblist.html:11 template/instance/view_job.html:11
+#: template/instance/joblist.ajax:7
 msgid "Job ID"
 msgstr "任务ID"
 
 #: template/instance/joblist.html:14 template/instance/view_job.html:14
+#: template/instance/joblist.ajax:10
 msgid "Result"
 msgstr "结果"
 
 #: template/instance/joblist.html:15 template/instance/view_job.html:15
+#: template/instance/joblist.ajax:11
 msgid "Start Time"
 msgstr "开始时间"
 
 #: template/instance/joblist.html:16 template/instance/view_job.html:16
+#: template/instance/joblist.ajax:12
 msgid "End Time"
 msgstr "结束时间"
 
 #: template/instance/webssh.html:6 template/instance/instance_base.html:115
+#: template/instance/webssh.ajax:2
 msgid "WebSSH"
 msgstr ""
 
-#: template/instance/webssh.html:8
+#: template/instance/webssh.html:8 template/instance/webssh.ajax:4
 msgid "WebSSH of the instance is enabled."
-msgstr ""
+msgstr "启动虚拟机WebSSH功能"
 
-#: template/instance/webssh.html:17
+#: template/instance/webssh.html:17 template/instance/webssh.ajax:13
 msgid "WebSSH of the instance is disabled."
-msgstr ""
+msgstr "禁用虚拟机WebSSH功能"
 
 #: template/instance/storage_edit.html:6 template/instance/storage.html:8
+#: template/instance/storage.ajax:4
 msgid "Configure Storage"
 msgstr "配置存储"
 
-#: template/instance/resource.html:5
+#: template/instance/resource.html:5 template/instance/resource.ajax:1
 msgid "Resource of "
-msgstr ""
+msgstr "资源配置: "
 
-#: template/instance/resource.html:9
+#: template/instance/resource.html:9 template/instance/resource.ajax:5
 msgid "CPU numbers"
 msgstr "CPU个数"
 
-#: template/instance/delete.html:5
+#: template/instance/delete.html:5 template/instance/delete.ajax:1
 msgid "Delete instance"
 msgstr "删除虚拟机"
 
 #: template/instance/delete.html:8
 msgid "Remove a instance is a dangrous action !"
-msgstr ""
+msgstr "请谨慎删除虚拟机"
 
 #: template/instance/delete.html:11
 msgid "Just owner can delete instance."
-msgstr ""
+msgstr "只有创建者可以删除虚拟机"
 
 #: template/instance/network_edit.html:5 template/instance/network.html:6
+#: template/instance/network.ajax:2
 msgid "Configure Network"
 msgstr "配置网络"
 
@@ -2158,11 +2225,11 @@ msgstr "选择应用"
 
 #: template/instance/create.html:36
 msgid "Please give a human instance name, can not be the same as others."
-msgstr ""
+msgstr "请指定虚拟机名称"
 
 #: template/instance/create.html:47
 msgid "The cpus of your instance."
-msgstr ""
+msgstr "虚拟机所用CPU"
 
 #: template/instance/create.html:48 template/instance/create.html:60
 #, python-format
@@ -2171,7 +2238,7 @@ msgstr "总数: %s, 已用: %s"
 
 #: template/instance/create.html:59
 msgid "The memory of your instance."
-msgstr ""
+msgstr "虚拟机所用内存"
 
 #: template/instance/create.html:71
 msgid ""
@@ -2179,15 +2246,16 @@ msgid ""
 "administrator."
 msgstr ""
 
-#: template/instance/storage.html:15
+#: template/instance/storage.html:15 template/instance/storage.ajax:11
 msgid "Size"
 msgstr "大小"
 
-#: template/instance/storage.html:29
+#: template/instance/storage.html:29 template/instance/storage.ajax:25
 msgid "You can add a disk for the instance. "
 msgstr "增加虚拟磁盘"
 
 #: template/instance/storage.html:30 template/instance/domain.html:18
+#: template/instance/storage.ajax:26 template/instance/domain.ajax:14
 msgid "Add"
 msgstr "增加"
 
@@ -2211,33 +2279,33 @@ msgstr "CPU个数"
 msgid "Memory:"
 msgstr "内存大小"
 
-#: template/instance/network.html:15
+#: template/instance/network.html:15 template/instance/network.ajax:11
 msgid "MAC"
 msgstr "MAC地址"
 
-#: template/instance/network.html:36
+#: template/instance/network.html:36 template/instance/network.ajax:32
 msgid "Reset"
 msgstr "重置"
 
-#: template/instance/network.html:41
+#: template/instance/network.html:41 template/instance/network.ajax:37
 msgid "Appliance Default Configuration"
 msgstr ""
 
 #: template/instance/instance_base.html:110
 msgid "Resource"
-msgstr ""
+msgstr "资源配置"
 
 #: template/instance/instance_base.html:111
 msgid "Network"
-msgstr ""
+msgstr "网络配置"
 
 #: template/instance/instance_base.html:113
 msgid "Secret"
-msgstr ""
+msgstr "密码配置"
 
 #: template/instance/instance_base.html:117
 msgid "History"
-msgstr ""
+msgstr "历史记录"
 
 #: template/instance/instance_base.html:124
 msgid ""
@@ -2245,11 +2313,11 @@ msgid ""
 "to be effective!"
 msgstr "虚拟机配置已修改，请停止虚拟机并重新运行"
 
-#: template/instance/domain.html:8
+#: template/instance/domain.html:8 template/instance/domain.ajax:4
 msgid "Domain name of the instance is "
 msgstr "虚拟机域名为"
 
-#: template/instance/domain.html:17
+#: template/instance/domain.html:17 template/instance/domain.ajax:13
 msgid "Domain is not configured."
 msgstr "域名未配置"
 
@@ -2275,7 +2343,7 @@ msgstr ""
 
 #: template/home/index.html:63
 msgid "all"
-msgstr ""
+msgstr "全部"
 
 #: template/home/index.html:98
 msgid "Instance "
@@ -2283,28 +2351,28 @@ msgstr "虚拟机"
 
 #: template/home/no_resource.html:20
 msgid "Resource Name"
-msgstr ""
+msgstr "资源"
 
 #: template/home/no_resource.html:21
 msgid "Total"
-msgstr ""
+msgstr "总数"
 
 #: template/home/no_resource.html:22 template/appliance/view.html:39
 msgid "Used"
-msgstr ""
+msgstr "已用"
 
 #: template/home/no_resource.html:52 template/home/no_permission.html:21
 msgid ""
 "If you have any questions, you can contact the admin by following method:"
-msgstr ""
+msgstr "有任何问题，请与系统管理员联系"
 
 #: template/home/no_resource.html:54 template/home/no_permission.html:23
 msgid "Send a message"
-msgstr ""
+msgstr "发送消息"
 
 #: template/home/no_resource.html:55 template/home/no_permission.html:24
 msgid "Send a email"
-msgstr ""
+msgstr "发送邮件"
 
 #: template/home/registration_protocol.html:17
 msgid "No default registration protocol yet !"
@@ -2312,59 +2380,62 @@ msgstr ""
 
 #: template/home/no_permission.html:9
 msgid "NO PERMISSIONS !"
-msgstr ""
+msgstr "无权限"
 
 #: template/home/no_permission.html:10
 msgid "This action need permissions"
-msgstr ""
+msgstr "无权限"
 
-#: template/system/index.html:5
+#: template/system/index.html:5 template/system/index.ajax:1
 msgid "System settings of LuoYun"
-msgstr ""
+msgstr "系统配置"
 
-#: template/system/baseinfo.html:5
+#: template/system/baseinfo.html:5 template/system/baseinfo.ajax:1
 msgid "Baseinfo of luoyun system"
-msgstr ""
+msgstr "基本信息"
 
-#: template/system/baseinfo.html:7
+#: template/system/baseinfo.html:7 template/system/baseinfo.ajax:3
 msgid "Control server"
-msgstr ""
+msgstr "云控制器"
 
-#: template/system/nginx_edit.html:5
+#: template/system/nginx_edit.html:5 template/system/nginx_edit.ajax:1
 msgid "Edit Nginx"
 msgstr ""
 
 #: template/system/nameservers_edit.html:5
+#: template/system/nameservers_edit.ajax:1
 msgid "Edit Nameservers"
-msgstr ""
+msgstr "编辑域名服务器"
 
 #: template/system/registration_protocol_edit.html:5
+#: template/system/registration_protocol_edit.ajax:1
 msgid "Registration Policy Edit"
-msgstr ""
+msgstr "编辑注册条款"
 
-#: template/system/clc_edit.html:5
+#: template/system/clc_edit.html:5 template/system/clc_edit.ajax:1
 msgid "Edit Control Server's Configure"
 msgstr ""
 
-#: template/system/domain_edit.html:5
+#: template/system/domain_edit.html:5 template/system/domain_edit.ajax:1
 msgid "Edit Domain"
-msgstr ""
+msgstr "编辑域名"
 
-#: template/system/baseinfo_edit.html:5
+#: template/system/baseinfo_edit.html:5 template/system/baseinfo_edit.ajax:1
 msgid "Edit baseinfo of luoyun system"
-msgstr ""
+msgstr "编辑基本信息"
 
-#: template/system/db_edit.html:5
+#: template/system/db_edit.html:5 template/system/db_edit.ajax:1
 msgid "Edit DB configure"
 msgstr ""
 
 #: template/system/networkpool_edit.html:5
+#: template/system/networkpool_edit.ajax:1
 msgid "Edit IP Address Pool"
-msgstr ""
+msgstr "编辑IP地址池"
 
 #: template/account/avatar_edit.html:4 template/account/account_base.html:39
 msgid "Change Avatar"
-msgstr ""
+msgstr "修改头像"
 
 #: template/account/login.html:8
 msgid "Sign in LuoYun System"
@@ -2372,7 +2443,7 @@ msgstr "登录LuoYun"
 
 #: template/account/account_base.html:14
 msgid "My Account"
-msgstr ""
+msgstr "我的帐户"
 
 #: template/account/register.html:7
 msgid "Create a account on LuoYun"
@@ -2380,15 +2451,15 @@ msgstr "创建用户"
 
 #: template/account/register.html:24
 msgid "I accept the site rules ."
-msgstr ""
+msgstr "我接受此网站使用条款"
 
 #: template/account/register.html:25
 msgid "Read Registration Policy"
-msgstr ""
+msgstr "阅读网站注册条款"
 
 #: template/account/view_group.html:44
 msgid "Total users : "
-msgstr ""
+msgstr "用户总数: "
 
 #: template/account/reset_password_complete.html:8
 msgid "Complete Reset Password"
@@ -2412,7 +2483,7 @@ msgstr ""
 
 #: template/account/view_user.html:68
 msgid "Total public instances : "
-msgstr ""
+msgstr "全部公用虚拟机: "
 
 #: template/account/reset_password_apply_successed.html:8
 msgid ""
@@ -2476,3 +2547,19 @@ msgstr "Logo图像"
 #: template/appliance/edit.html:97
 msgid "Description:"
 msgstr "详细描述:"
+
+#: template/instance/domain_edit.ajax:10
+msgid "Subdomain"
+msgstr "域名"
+
+#: template/instance/delete.ajax:4
+msgid "Wait! All the instance data will be lost after instance is deleted."
+msgstr "请注意，虚拟机删除后，虚拟机内的所有数据也随之删除"
+
+#: template/instance/delete.ajax:7
+msgid "Only owner can delete instance."
+msgstr "只有创建者可以删除虚拟机"
+
+#: template/system/baseinfo.ajax:23
+msgid "DB Edit"
+msgstr "修改数据库"
