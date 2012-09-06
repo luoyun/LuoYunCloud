@@ -8,7 +8,11 @@ handlers = [
     url(r'/message/outbox', msg.Outbox, name='message:outbox'),
     url(r'/message/new', msg.NewMessage, name='message:new'),
     url(r'/message/([0-9]+)', msg.View, name='message:view'),
+    url(r'/message/inbox/([0-9]+)', msg.View, name='message:inbox:view'),
+    url(r'/message/outbox/([0-9]+)', msg.OutMsgView, name='message:outbox:view'),
     url(r'/message/([0-9]+)/delete', msg.Delete, name='message:delete'),
     url(r'/message/([0-9]+)/reply', msg.Reply, name='message:reply'),
+    url(r'/message/inbox/([0-9]+)/reply', msg.Reply, name='message:inbox:reply'),
+
 ]
 

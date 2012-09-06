@@ -82,3 +82,25 @@ function lyMenuSetCurrentEntry ( tag ) {
     });
 }
 
+
+
+function lyMenuSetCurrentEntry2 ( tag ) {
+    var current = '';
+    var pattern = /^(\/[-_\/a-zA-Z]*)/;
+    var matchs = window.location.pathname.match(pattern);
+    if (matchs) {
+        current = matchs[1];
+    }
+
+    //alert ( 'tag = ' + tag );
+    $(tag).each(function (index) {
+	var href = $(this).attr('href');
+	//alert( 'current = ' + current + ', href = ' + href);
+	if (current.indexOf(href) == 0) {
+	    $(this).addClass('current');
+	} else {
+	    $(this).removeClass('current');
+	};
+    });
+}
+

@@ -15,11 +15,11 @@ from lyorm import db
 class NewMessageForm(Form):
 
     sendto = TextField( _('Send To') )
-    subject = TextField( _('Subject'), [validators.Length(min=6, max=200) ] )
-    content = TextAreaField( _('Content'), [validators.Length(min=12, max=10240) ] )
+    subject = TextField( _('Subject'), [validators.Length(min=2, max=120) ] )
+    content = TextAreaField( _('Content'), [validators.Length(min=6, max=10240) ] )
 
 class ReplyMessageForm(Form):
     
-    subject = TextField( _('Subject'), [validators.Length(min=6, max=200) ] )
-    content = TextAreaField( _('Content'), [validators.Length(min=12, max=20480) ] )
+    subject = TextField( _('Subject'), [validators.Length(min=2, max=120) ] )
+    content = TextAreaField( _('Content'), [validators.Length(min=6, max=20480) ] )
 

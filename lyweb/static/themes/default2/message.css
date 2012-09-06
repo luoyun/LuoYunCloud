@@ -38,3 +38,197 @@
     border-radius: 3px 0 0 3px;
     color: white;
 }
+
+/* Start markdown style */
+.markdown {
+    padding: 10px;
+    width: 600px;
+}
+.markdown p {
+    line-height: 2em;
+}
+.markdown pre {
+    margin: 10px;
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    display: block;
+    overflow: auto;
+    background: #f4f4f4;
+    padding: 5px 10px;
+    border: 1px solid #eee;
+    word-wrap:break-word; /* Internet Explorer 5.5+ */
+    white-space: pre-wrap; /* Firefox */
+}
+.markdown blockquote {
+    font-size: 0.9em;
+    color: #447251;
+    margin: 10px 0 20px 20px;
+    border: 1px solid #CEDBE1;
+    border-radius: 3px;
+    padding: 10px;
+}
+/* End markdown style */
+
+
+/* Start inbox style */
+.message-list {
+    margin: 15px;
+}
+.message-list table {
+    color:#333333;
+    border-collapse:collapse;
+    /*border:1px solid #CEDBE1;*/
+}
+.message-list thead {
+    border-bottom:1px solid #CEDBE1;
+    line-height: 30px;
+}
+.message-list th {
+    padding: 10px;
+}
+.message-list td {
+    padding: 10px;
+    vertical-align:middle;
+}
+.message-list tr {
+    line-height: 26px;
+}
+.message-list .read .subject a {
+    color: #555;
+}
+.message-list .user-avatar img {
+    width: 48px;
+    height: 48px;
+    float: left;
+}
+.message-list .user > a {
+    display: block;
+}
+.message-list .username {
+    float: left;
+    display: inline-block;
+}
+.message-list .action img {
+    width: 16px;
+    height: 16px;
+    float: left;
+    margin: 3px 6px;
+}
+.message-list .datetime {
+    font-size: 0.9em;
+    color: #333;
+}
+/* End inbox style */
+
+/* Start inbox view message */
+.view-message {
+    margin: 30px;
+}
+.view-message h1 {
+    font-size: 18px;
+    color: #08562D;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #CEDBE1;
+    margin: 10px 60px 30px;
+}
+.view-message h2 {
+    font-size: 16px;
+    color: #303030;
+}
+.view-message .subject {
+    
+}
+.view-message .user a {
+    display: block;
+}
+.view-message .user-avatar img {
+    width: 60px;
+    height: 60px;
+}
+.view-message .left,
+.view-message .right {
+    float: left;
+}
+.view-message .left {
+    width: 420px;
+}
+.view-message .right {
+    margin-left: 30px;
+    width: 120px;
+}
+.view-message .body {
+
+}
+.view-message .right .action {
+    margin-top: 30px;
+    text-align: center;
+}
+/* End inbox view message */
+
+/* Start outbox view message */
+.view-out-message {
+    margin: 30px;
+}
+.view-out-message .to img {
+    width: 46px;
+    height: 46px;
+}
+.view-out-message .to a {
+    display: block;
+}
+.view-out-message .subject {
+    font-size: 18px;
+    color: #303030;
+}
+.view-out-message .body {
+    border: 1px solid #CEDBE1;
+}
+.view-out-message td {
+    padding: 12px 10px;
+}
+.view-out-message td:first-child {
+    font-weight: bold;
+    text-align: right;
+    color: #303030;
+}
+/* End outbox view message */
+
+.edit-message h1 {
+    font-size: 18px;
+    color: #08562D;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #CEDBE1;
+    margin: 20px 10px;
+}
+.reply-message .title {
+    margin: 20px 0;
+    font-weight: bold;
+}
+.reply-message .title .datetime {
+    color: #D1BD0A;
+}
+.reply-message .orig-message {
+    border: 1px solid #CEDBE1;
+    border-radius: 3px;
+    margin: 15px 0;
+    background-color: #F1F7F3;
+}
+.reply-message .orig-message .body {
+    padding: 15px 10px;
+}
+.reply-message .orig-message .subject {
+    font-size: 16px;
+    background-color: #3B5998;
+    padding: 10px;
+    color: #FFF;
+    border-radius: 3px 3px 0 0
+    border: 1px solid #3b5998;
+}
+
+
+

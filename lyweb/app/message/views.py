@@ -68,6 +68,9 @@ class View(MessageRequestHandler):
         message = self.get_message(id)
         if not message: return
 
+        if message.receiver_id != self.current_user.id:
+            return self.write( _("Not your message !") )
+
         d = { 'title': _('View Message: %s') % message.subject,
               'message': message, 'user': self.current_user }
 
@@ -77,6 +80,29 @@ class View(MessageRequestHandler):
             self.db2.commit()
         
         self.render('message/view_message.html', **d)
+
+
+class OutMsgView(MessageRequestHandler):
+
+    @authenticated
+    def get(self, id):
+
+        message = self.get_message(id)
+        if not message: return
+
+        if message.sender_id != self.current_user.id:
+            return self.write( _("Not your send message !") )
+
+        d = { 'title': _('View Message: %s') % message.subject,
+              'message': message, 'user': self.current_user }
+
+        if not message.read:
+            #message.read = True
+            message.receiver.decrease_notification()
+            self.db2.commit()
+        
+        self.render('message/view_out_message.html', **d)
+
 
 
 class NewMessage(MessageRequestHandler):
@@ -128,12 +154,16 @@ class Delete(MessageRequestHandler):
         message = self.get_message(id)
         if not message: return
 
+        if message.sender_id == self.current_user.id:
+            return self.write( _("Can not delete this message ! \
+A word spoken is past recalling.") )
+
         if not message.read:
             message.receiver.decrease_notification()
 
         self.db2.delete(message)
         self.db2.commit()
-        self.write('Delete message %s success !' % id)
+        self.write( _('Delete message %s success !') % id)
         return self.redirect(self.reverse_url("message:outbox"))
 
 
@@ -148,7 +178,7 @@ class Reply(MessageRequestHandler):
         # compose repily message content
         reply = "\n".join(map(lambda line:"> "+line, message.content.split("\n")))
 
-        content = "On %s, %s wrote:\n%s" %(fulltime(message.created), message.sender.username, reply)
+        content = _("On %s, %s wrote:\n%s") %(fulltime(message.created), message.sender.username, reply)
         form = ReplyMessageForm(subject="Re:"+message.subject, content=content)
         self.render( 'message/reply_message.html', tilte = _('Reply Message'), message = message, form = form)
 

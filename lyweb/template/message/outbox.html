@@ -4,34 +4,35 @@
 
 <div class="c">
   % if messages:
-  <h2>${ _("Outbox ") }</h2>
-  <table class="list">
-    <thead>
-      <tr>
-        <th>${ _("Send To") }</th>
-        <th>${ _("Title") }</th>
-        <th>${ _("Date") }</th>
-        <th>${ _("Deletion") }</th>
-      </tr>
-    </thead>
-    <tbody>
-      % for M in messages:
-      <tr>
-        <td><a href="${ reverse_url('account:view', M.receiver_id) }">${ M.receiver.username }</a></td>
-        <td><a href="${ reverse_url('message:view', M.id) }">${ M.subject }</a></td>
-        <td>${ fulltime(M.created) }</td>
-        <td>
-  <form action="/message/${ M.id }/delete" method="GET">
-    <label>&nbsp;</label><input type="submit" value="${ _('Delete') }" class="button" />
-  </form>
-        </td>
-      </tr>
-      % endfor
-    </tbody>
-  </table>
-  % else:
-  <p class="ly-large-center">${ _("You have not sent any message before !") }</p>
-  % endif
+  <div class="outbox-list message-list">
+    <table>
+      <thead>
+	<tr>
+          <th>${ _("Send To") }</th>
+          <th>${ _("Title") }</th>
+	</tr>
+      </thead>
+      <tbody>
+	% for M in messages:
+	<tr>
+          <td class="to">
+	    <div class="user">
+	      <a class="user-avatar" href="${ reverse_url('account:view', M.receiver_id) }" target="_blank"><img src="${ M.receiver.avatar_url }" alt="${ M.receiver.username }" /></a>
+	      <a class="username" href="${ reverse_url('account:view', M.receiver_id) }">${ M.receiver.username }</a>
+	    </div>
+	  </td>
+          <td>
+	    <div class="subject"><a href="${ reverse_url('message:outbox:view', M.id) }">${ M.subject }</a></div>
+            <div class="datetime">${ fulltime(M.created) }</div>
+	  </td>
+	</tr>
+	% endfor
+      </tbody>
+    </table>
+    % else:
+    <p class="ly-large-center">${ _("You have not sent any message before !") }</p>
+    % endif
+  </div>
 </div>
 
 </%block>

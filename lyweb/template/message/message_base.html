@@ -14,12 +14,10 @@
       <ul>
         <li><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }</a></li>
         <li><a href="${ reverse_url('message:outbox') }">${ _("Outbox") }</a></li>
-##        <li><a href="${ reverse_url('message:new') }">${ _("New") }</a></li>
       </ul>
     </div>
 
     <div class="new c"><a class="ly-btn2 medium blue" href="${ reverse_url('message:new') }">${ _("New") }</a></div>
-
 
   </div>
 
@@ -30,6 +28,6 @@
 </div>
 
 <script type="text/javascript">
-  lyMenuSetCurrentEntry( "#message-home-sidemenu a" );
+  lyMenuSetCurrentEntry2( "#message-home-sidemenu a" );
 </script>
 </%block>
