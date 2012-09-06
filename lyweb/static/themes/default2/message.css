@@ -205,6 +205,9 @@
     border-bottom: 1px solid #CEDBE1;
     margin: 20px 10px;
 }
+.reply-message input[type="text"] {
+    width: 100%;
+}
 .reply-message .title {
     margin: 20px 0;
     font-weight: bold;
