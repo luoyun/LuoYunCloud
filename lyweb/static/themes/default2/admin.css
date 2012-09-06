@@ -400,10 +400,11 @@ table th {
 }
 /* End Admin Instance */
 
-#registration-policy-eform {
+#welcome-new-user-eform, #registration-policy-eform {
     width: 800px;
     padding: 0;
 }
+#welcome-new-user-eform textarea,
 #registration-policy-eform textarea {
     width: 720px;
     height: 280px;

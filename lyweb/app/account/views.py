@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import os
+import os, json
 from datetime import datetime
 from lycustom import LyRequestHandler
 
@@ -13,6 +13,7 @@ from app.session.models import Session
 
 from app.instance.models import Instance
 from app.appliance.models import Appliance
+from app.message.models import Message
 
 from app.account.forms import LoginForm, ResetPasswordForm, \
     RegistrationForm, AvatarEditForm, ResetPasswordApplyForm
@@ -29,6 +30,7 @@ from lymail import send_email
 
 
 import settings
+from app.system.models import LuoYunConfig
 
 
 
@@ -168,14 +170,39 @@ class Register(AccountRequestHandler):
                 self.db2.add(profile)
                 self.db2.commit()
 
+                # send_message
+                self.send_message( newuser )
+
                 # send_mail()
+
                 self.save_session(newuser.id)
 
-                url = self.reverse_url('account:index')
-                return self.redirect( url )
+                return self.redirect( self.reverse_url('account:index') )
 
         # Have a error
         self.render( 'account/register.html', form = form )
+
+
+    def send_message(self, user):
+        admin = self.db2.query(User).filter_by(username='admin').first()
+        if admin:
+
+            welcome = self.db2.query(LuoYunConfig).filter_by(key='welcome_new_user').first()
+
+            if welcome:
+                wc = json.loads(welcome.value).get('text')
+
+                m = Message( sender = admin,  receiver = user,
+                             subject = _('Welcome to use LuoYun Cloud !'),
+                             content = wc )
+
+                self.db2.add(m)
+                self.db2.commit()
+
+                m.receiver.notify()
+                self.db2.commit()
+
+
 
 
 
@@ -535,3 +562,4 @@ class ResetPasswordComplete(AccountRequestHandler):
             return self.redirect( url )
 
         self.render( 'account/reset_password_complete.html', **self.d )
+

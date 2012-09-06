@@ -1,0 +1,21 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<h2>${ _("Welcome New User Edit") }</h2>
+
+<p><a href="${ reverse_url('welcome_new_user') }" target="_blank">${ _("Read Welcome New User") }</a></p>
+
+<div id="welcome-new-user-eform" class="small-left-right-form c">
+  <form method="POST" action="${ reverse_url('system:welcome:edit') }">
+    ${ form.text() }<br/>
+    ${ form.html_errors(form.text.errors) }
+    <input type="submit" value="${ _('Save') }"/>
+% if saved:
+<span id="saved-success">${ _("saved success") }</span>
+% endif
+
+  </form>
+</div>
+
+</%block>

@@ -9,5 +9,7 @@ handlers = [
     url( r'/no_resource', home.NoResource ),
     url( r'/registration_protocol', home.RegistrationProtocol,
          name="registration_protocol" ),
+    url( r'/welcome_new_user', home.WelcomeNewUser,
+         name="welcome_new_user" ),
 
 ]

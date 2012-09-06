@@ -90,3 +90,9 @@ class RegistrationProtocolForm(Form):
     # TODO: make sure it's exist
     text = TextAreaField( _('Registration Protocol'), [ validators.Length(min=6, max=12000) ] )
 
+
+class WelcomeNewUserForm(Form):
+
+    # TODO: make sure it's exist
+    text = TextAreaField( _('Welcome New User'), [ validators.Length(min=6, max=12000) ] )
+

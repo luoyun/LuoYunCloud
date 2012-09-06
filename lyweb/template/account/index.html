@@ -3,57 +3,8 @@
 <%block name="sidemain">
 
 <div>
-  welcome ! this is your control panel.
+  ${ _("welcome ! this is your control panel.") }
 </div>
 
-<%doc>
-<div id="banner">
-  <div class="info-list">
-
-    <div class="info">
-      <div class="c1">${ _("Appliance") }</div>
-      <div class="c2">${ TOTAL_APPLIANCE }</div>
-    </div>
-
-    <div class="info">
-      <div class="c1">${ _("Instance") }</div>
-      <div class="c2">
-	<span class="count">${ USED_INSTANCE }/${ TOTAL_INSTANCE }</span>
-      </div>
-    </div>
-
-    <div class="info">
-      <div class="c1">${ _("CPUs") }</div>
-      <div class="c2"><span class="count">
-          ${ USED_CPU }/${ TOTAL_CPU }</span>
-      </div>
-    </div>
-
-    <div class="info">
-      <div class="c1">${ _("Memory(MB)") }</div>
-      <div class="c2">
-	<div class="count">${ USED_MEMORY }/${ TOTAL_MEMORY }</div>
-	<div class="total"><div class="used" 
-				% if TOTAL_MEMORY:
-				style="width: ${ (100 * USED_MEMORY)/TOTAL_MEMORY }%"
-				% else:
-				style="width: 0%"
-				% endif
-				></div></div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="c">
-  <div id="u-home-cpu-pie">
-  </div>
-  <div id="u-home-mem-pie">
-  </div>
-  <div id="u-home-instance-pie">
-  </div>
-</div>
-</%doc>
 
 </%block>

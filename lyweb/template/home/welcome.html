@@ -1,0 +1,23 @@
+<%inherit file="/base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${ THEME_URL }luoyun2.css" />
+</%block>
+
+<%block name="main">
+
+<div id="ly-welcome-new-user">
+
+  <h1 class="title">${ _("Welcome !") }</h1>
+
+  <div class="body">
+    % if WELCOME:
+    ${ WELCOME }
+    % else:
+    ${ _("Welcome to use LuoYun Cloud !") }
+    % endif
+  </div>
+
+</div>
+
+</%block>

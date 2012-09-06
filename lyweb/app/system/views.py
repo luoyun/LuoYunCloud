@@ -11,7 +11,7 @@ from sqlalchemy.sql.expression import asc, desc
 from app.system.models import LuoYunConfig
 from app.system.forms import BaseinfoForm, DBForm, \
     CLCForm, NameserversForm, NetworkPoolForm, DomainForm, \
-    NginxForm, RegistrationProtocolForm
+    NginxForm, RegistrationProtocolForm, WelcomeNewUserForm
 
 
 from lycustom import has_permission
@@ -435,3 +435,45 @@ class RegistrationProtocolEdit(LyRequestHandler):
             saved = True
 
         self.render('system/registration_protocol_edit.html', form = form, saved = saved)
+
+
+
+class WelcomeNewUserEdit(LyRequestHandler):
+
+    @has_permission('admin')
+    def prepare(self):
+
+        self.welcome = self.db2.query(LuoYunConfig).filter_by(key='welcome_new_user').first()
+
+    def get(self):
+
+        form = WelcomeNewUserForm()
+
+        # TODO: needed give a default welcome info ?
+        if self.welcome:
+            welcome = json.loads(self.welcome.value)
+            form.text.data = welcome.get('text')
+
+        self.render('system/welcome_new_user_edit.html', form = form)
+
+
+    def post(self):
+
+        saved = None
+        form = WelcomeNewUserForm( self.request.arguments )
+        if form.validate():
+
+            welcome = json.dumps({
+                    'text': form.text.data,
+                    'html': YMK.convert(form.text.data) })
+
+            if self.welcome:
+                self.welcome.value = welcome
+            else:
+                c = LuoYunConfig('welcome_new_user', welcome)
+                self.db2.add(c)
+
+            self.db2.commit()
+            saved = True
+
+        self.render('system/welcome_new_user_edit.html', form = form, saved = saved)

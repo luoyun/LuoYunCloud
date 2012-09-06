@@ -33,4 +33,7 @@ handlers = [
     url( r'/admin/system/protocol/edit', system.RegistrationProtocolEdit,
          name='system:protocol:edit' ),
 
+    url( r'/admin/system/welcome/edit', system.WelcomeNewUserEdit,
+         name='system:welcome:edit' ),
+
 ]

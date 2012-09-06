@@ -15,6 +15,8 @@ from app.system.models import LuoYunConfig
 
 import settings
 
+from lycustom import has_permission
+
 
 class SetLocale(LyRequestHandler):
 
@@ -100,3 +102,20 @@ class RegistrationProtocol(LyRequestHandler):
 
         self.render( 'home/registration_protocol.html',
                      REGISTRATION_PROTOCOL = rp )
+
+
+
+class WelcomeNewUser(LyRequestHandler):
+
+    # just admin can view this
+    @has_permission('admin')
+    def get(self):
+
+        welcome = self.db2.query(LuoYunConfig).filter_by(key='welcome_new_user').first()
+        if welcome:
+            wc = json.loads(welcome.value).get('html')
+        else:
+            wc = None
+
+        self.render( 'home/welcome.html',
+                     WELCOME = wc )
