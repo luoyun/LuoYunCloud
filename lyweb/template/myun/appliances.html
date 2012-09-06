@@ -42,35 +42,27 @@
               <td class="c2">${ fulltime(I.updated) }</td>
             </tr>
             <tr>
+	      <% URL = reverse_url('appliance:set_useable', I.id) %>
               <td class="c1">${ _("Useable") }</td>
 	      <td class="c2">
-	      % if I.isuseable:
-	      <img class="ly-status-flag" src="${ THEME_URL }img/true.png" alt="${ _('Yes') }" />
-	      <span>
-		<a class="ly-btn2 small blue" href="${ reverse_url('appliance:set_useable', I.id) }?isuseable=false&next_url=${ reverse_url('myun:appliance') }">${ _("Unuseable") }</a>
-	      </span>
-	      % else:
-	      <img class="ly-status-flag" src="${ THEME_URL }img/false.png" alt="${ _('No') }" />
-	      <span>
-		<a class="ly-btn2 small blue" href="${ reverse_url('appliance:set_useable', I.id) }?isuseable=true&next_url=${ reverse_url('myun:appliance') }"><span>${ _("Useable") }</span></a>
-	      </span>
-	      % endif
+		<input type="checkbox"
+		       onclick="true_false_toggle(this, '${URL}')"
+		       % if I.isuseable:
+		       checked="checked"
+		       % endif
+		       />
 	      </td>
             </tr>
             <tr>
+	      <% URL = reverse_url('appliance:set_private', I.id) %>
               <td class="c1">${ _("Private") }</td>
 	      <td class="c2">
-	      % if I.isprivate:
-	      <img class="ly-status-flag" src="${ THEME_URL }img/true.png" alt="${ _('Yes') }" />
-	      <span>
-		<a class="ly-btn2 small blue" href="${ reverse_url('appliance:set_private', I.id) }?isprivate=false&next_url=${ reverse_url('myun:appliance') }"><span>${ _("Public") }</span></a>
-	      </span>
-	      % else:
-	      <img class="ly-status-flag" src="${ THEME_URL }img/false.png" alt="${ _('No') }" />
-	      <span>
-		<a class="ly-btn2 small blue" href="${ reverse_url('appliance:set_private', I.id) }?isprivate=true&next_url=${ reverse_url('myun:appliance') }"><span>${ _("Private") }</span></a>
-	      </span>
-	      % endif
+		<input type="checkbox"
+		       onclick="true_false_toggle(this, '${URL}')"
+		       % if I.isprivate:
+		       checked="checked"
+		       % endif
+		       />
 	      </td>
             </tr>
 	  </tbody>

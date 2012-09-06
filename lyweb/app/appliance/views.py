@@ -58,7 +58,9 @@ class Index(AppRequestHandler):
             
         catalogs = self.db2.query(ApplianceCatalog).all()
         for c in catalogs:
-            c.total = self.db2.query(Appliance.id).filter_by( catalog_id = c.id ).count()
+            c.total = self.db2.query(Appliance.id).filter_by(
+                catalog_id = c.id ).filter_by(
+            isuseable=True).filter_by(isprivate=False).count()
 
         pagination = Pagination(
             total = total,
@@ -397,7 +399,7 @@ class SetUseable(AppRequestHandler):
                  self.has_permission('admin') ):
             return self.write( _('No permission!') )
 
-        flag = self.get_argument('isuseable', None)
+        flag = self.get_argument('flag', None)
         app.isuseable = True if flag == 'true' else False
         self.db2.commit()
 
@@ -423,7 +425,7 @@ class SetPrivate(AppRequestHandler):
                  self.has_permission('admin') ):
             return self.write( _('No permission!') )
 
-        flag = self.get_argument('isprivate', None)
+        flag = self.get_argument('flag', None)
         app.isprivate = True if flag == 'true' else False
         self.db2.commit()
 

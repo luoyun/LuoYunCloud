@@ -104,3 +104,27 @@ function lyMenuSetCurrentEntry2 ( tag ) {
     });
 }
 
+
+function true_false_toggle ( obj, URL ) {
+
+    var check = this.checked;
+
+    if ( $(obj).attr("checked") == "checked" )
+	check_value = 'true';
+    else
+	check_value = 'false';
+
+    if ( URL.indexOf('?') == 0 )
+	URL += "&flag=";
+    else
+	URL += "?flag=";
+
+    $.ajax({
+        url: URL + check_value,
+        type: 'GET',
+        success: function (data) {
+	    this.checked = !check;
+        }
+    });
+
+};

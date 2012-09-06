@@ -52,10 +52,11 @@
               <td class="c2">${ fulltime(I.updated) }</td>
             </tr>
             <tr>
+	      <% URL = reverse_url('instance:set_private', I.id) %>
               <td class="c1">${ _("Private") }</td>
 	      <td class="c2 isprivate-checkbox">
 		<input type="checkbox"
-		       onclick="instance_isprivate_toggle(this, ${ I.id })"
+		       onclick="true_false_toggle(this, '${URL}')"
 		       % if I.isprivate:
 		       checked="checked"
 		       % endif

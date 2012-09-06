@@ -59,27 +59,3 @@ function lyShowPie( tag, data ) {
     $(tag).bind("plothover", pieHover);
 //    $(tag).bind("plotclick", pieClick);
 }
-
-
-
-function instance_isprivate_toggle ( obj, ID ) {
-
-
-    var check = this.checked;
-
-    if ( $(obj).attr("checked") == "checked" )
-	check_value = 'true';
-    else
-	check_value = 'false';
-
-    var URL = "/instance/" + ID + "/set_private?isprivate=" + check_value;
-
-    $.ajax({
-        url: URL,
-        type: 'GET',
-        success: function (data) {
-	    this.checked = !check;
-        }
-    });
-
-};

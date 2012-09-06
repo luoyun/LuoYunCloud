@@ -1503,7 +1503,7 @@ class SetPrivate(InstRequestHandler):
                  self.has_permission('admin') ):
             return self.write( _('No permission!') )
 
-        flag = self.get_argument('isprivate', None)
+        flag = self.get_argument('flag', None)
         inst.isprivate = True if flag == 'true' else False
         self.db2.commit()
 
