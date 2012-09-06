@@ -88,7 +88,7 @@ class MyunInstance(LyRequestHandler):
     def page_view_my_instances(self):
 
         view = self.get_argument('view', 'all')
-        by = self.get_argument('by', 'updated')
+        by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'desc')
         status = self.get_argument('status', 'all')
         page_size = int(self.get_argument(
@@ -120,7 +120,7 @@ class MyunInstance(LyRequestHandler):
         elif by == 'username':
             by_obj = Instance.user.username
         else:
-            by_obj = Instance.updated
+            by_obj = Instance.id
 
         sort_by_obj = desc(by_obj) if sort == 'desc' else asc(by_obj)
 
