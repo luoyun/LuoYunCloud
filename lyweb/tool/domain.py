@@ -62,6 +62,7 @@ def binding_domain_in_nginx(db, id, domain=None):
 
         location / {
             proxy_read_timeout 1800;
+            client_max_body_size 10m;
             proxy_pass_header Server;
             proxy_set_header Host $http_host;
             proxy_redirect off;
@@ -89,6 +90,7 @@ def binding_domain_in_nginx(db, id, domain=None):
 
         location / {
             proxy_read_timeout 1800;
+            client_max_body_size 512m;
             proxy_pass_header Server;
             proxy_set_header Host $http_host;
             proxy_redirect off;
@@ -116,6 +118,7 @@ def binding_domain_in_nginx(db, id, domain=None):
 
         location / {
             proxy_read_timeout 1800;
+            client_max_body_size 10m;
             proxy_pass_header Server;
             proxy_set_header Host $http_host;
             proxy_redirect off;
