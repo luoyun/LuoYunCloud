@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-04 17:16+0800\n"
+"POT-Creation-Date: 2012-09-06 17:55+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -266,79 +266,93 @@ msgstr ""
 msgid "[Appliance(%s)]"
 msgstr ""
 
-#: app/appliance/views.py:36
+#: app/appliance/views.py:38
+#, python-format
+msgid "No such appliance: %s !"
+msgstr ""
+
+#: app/appliance/views.py:46
+#, python-format
+msgid "Appliance %s is private !"
+msgstr ""
+
+#: app/appliance/views.py:52 app/instance/views.py:127
+msgid "Only owner can do this!"
+msgstr ""
+
+#: app/appliance/views.py:62
 msgid "Appliance Home"
 msgstr ""
 
-#: app/appliance/views.py:84
+#: app/appliance/views.py:111
 msgid "Upload Appliance"
 msgstr ""
 
-#: app/appliance/views.py:112
+#: app/appliance/views.py:139
 #, python-format
 msgid "Save %s failed: %s"
 msgstr ""
 
-#: app/appliance/views.py:179 app/appliance/views.py:197
-#: app/appliance/views.py:398 app/appliance/views.py:424
-#: app/instance/views.py:473 app/instance/views.py:1504
+#: app/appliance/views.py:206 app/appliance/views.py:224
+#: app/appliance/views.py:421 app/appliance/views.py:447
+#: app/instance/views.py:473 app/instance/views.py:1512
 msgid "No permission!"
 msgstr ""
 
-#: app/appliance/views.py:189
+#: app/appliance/views.py:216
 msgid "Edit Appliance "
 msgstr ""
 
-#: app/appliance/views.py:209
+#: app/appliance/views.py:236
 #, python-format
 msgid "%s"
 msgstr ""
 
-#: app/appliance/views.py:217
+#: app/appliance/views.py:244
 #, python-format
 msgid "DB : %s"
 msgstr ""
 
-#: app/appliance/views.py:218
+#: app/appliance/views.py:245
 msgid "Edit Appliance"
 msgstr ""
 
-#: app/appliance/views.py:227
+#: app/appliance/views.py:254
 msgid "Logo file must smaller than 2M !"
 msgstr ""
 
-#: app/appliance/views.py:241 app/account/views.py:377
+#: app/appliance/views.py:268 app/account/views.py:404
 #, python-format
 msgid "No support image, support is %s"
 msgstr ""
 
-#: app/appliance/views.py:266
+#: app/appliance/views.py:293
 #, python-format
 msgid "Have not found appliance %s !"
 msgstr ""
 
-#: app/appliance/views.py:271
+#: app/appliance/views.py:298
 msgid "No permission to delete appliance !"
 msgstr ""
 
-#: app/appliance/views.py:278
+#: app/appliance/views.py:305
 msgid "Have instances exist"
 msgstr ""
 
-#: app/appliance/views.py:290
+#: app/appliance/views.py:317
 #, python-format
 msgid "Delete %s failed: %s"
 msgstr ""
 
-#: app/appliance/views.py:322
+#: app/appliance/views.py:345
 msgid "View Appliance"
 msgstr ""
 
-#: app/appliance/views.py:394
+#: app/appliance/views.py:417
 msgid "No such appliance!"
 msgstr ""
 
-#: app/appliance/views.py:420
+#: app/appliance/views.py:443
 msgid "No such appliance !"
 msgstr ""
 
@@ -381,20 +395,44 @@ msgstr ""
 msgid "Message Outbox"
 msgstr ""
 
-#: app/message/views.py:71
+#: app/message/views.py:72
+msgid "Not your message !"
+msgstr ""
+
+#: app/message/views.py:74 app/message/views.py:96
 #, python-format
 msgid "View Message: %s"
 msgstr ""
 
-#: app/message/views.py:93 app/message/views.py:120
+#: app/message/views.py:94
+msgid "Not your send message !"
+msgstr ""
+
+#: app/message/views.py:119 app/message/views.py:146
 msgid "New Message"
 msgstr ""
 
-#: app/message/views.py:117 app/account/views.py:94
+#: app/message/views.py:143 app/account/views.py:96
 msgid "No such user !"
 msgstr ""
 
-#: app/message/views.py:153 app/message/views.py:178
+#: app/message/views.py:158
+msgid "Can not delete this message ! A word spoken is past recalling."
+msgstr ""
+
+#: app/message/views.py:166
+#, python-format
+msgid "Delete message %s success !"
+msgstr ""
+
+#: app/message/views.py:181
+#, python-format
+msgid ""
+"On %s, %s wrote:\n"
+"%s"
+msgstr ""
+
+#: app/message/views.py:183 app/message/views.py:208
 msgid "Reply Message"
 msgstr ""
 
@@ -516,6 +554,10 @@ msgstr ""
 msgid "Registration Protocol"
 msgstr ""
 
+#: app/system/forms.py:97
+msgid "Welcome New User"
+msgstr ""
+
 #: app/instance/models.py:75
 #, python-format
 msgid "<Instance(%s)>"
@@ -574,10 +616,6 @@ msgstr ""
 #: app/instance/views.py:121
 #, python-format
 msgid "Instance %s is deleted !"
-msgstr ""
-
-#: app/instance/views.py:127
-msgid "Only owner can do this!"
 msgstr ""
 
 #: app/instance/views.py:143
@@ -697,7 +735,7 @@ msgstr ""
 msgid "the total amount of memory you have is %s MB, %s MB used."
 msgstr ""
 
-#: app/instance/views.py:647 app/instance/views.py:1382
+#: app/instance/views.py:647 app/instance/views.py:1390
 #, python-format
 msgid "binding domain error: %s"
 msgstr ""
@@ -712,85 +750,95 @@ msgstr ""
 msgid "Have not job running on instance %s."
 msgstr ""
 
-#: app/instance/views.py:709
+#: app/instance/views.py:687
+#, python-format
+msgid "Appliance is private: %s"
+msgstr ""
+
+#: app/instance/views.py:691
+#, python-format
+msgid "Appliance is locked: %s"
+msgstr ""
+
+#: app/instance/views.py:717
 msgid "Create Instance"
 msgstr ""
 
-#: app/instance/views.py:720
+#: app/instance/views.py:728
 msgid "No appliance found, please upload appliance first!"
 msgstr ""
 
-#: app/instance/views.py:751
+#: app/instance/views.py:759
 msgid "You have used the name for a instance !"
 msgstr ""
 
-#: app/instance/views.py:756 app/instance/views.py:948
+#: app/instance/views.py:764 app/instance/views.py:956
 #, python-format
 msgid "cpus can not greater than %s"
 msgstr ""
 
-#: app/instance/views.py:758 app/instance/views.py:950
+#: app/instance/views.py:766 app/instance/views.py:958
 #, python-format
 msgid "memory can not greater than %s"
 msgstr ""
 
-#: app/instance/views.py:877 app/instance/views.py:902
+#: app/instance/views.py:885 app/instance/views.py:910
 msgid "Edit Baseinfo"
 msgstr ""
 
-#: app/instance/views.py:920 app/instance/views.py:952
-#: app/instance/views.py:968
+#: app/instance/views.py:928 app/instance/views.py:960
+#: app/instance/views.py:976
 msgid "Edit Resource"
 msgstr ""
 
-#: app/instance/views.py:1014 app/instance/views.py:1070
+#: app/instance/views.py:1022 app/instance/views.py:1078
 msgid "Edit Network"
 msgstr ""
 
-#: app/instance/views.py:1124 app/instance/views.py:1175
+#: app/instance/views.py:1132 app/instance/views.py:1183
 msgid "Edit Storage"
 msgstr ""
 
-#: app/instance/views.py:1231 app/instance/views.py:1266
+#: app/instance/views.py:1239 app/instance/views.py:1274
 msgid "Edit Root Password for Instance"
 msgstr ""
 
-#: app/instance/views.py:1286 app/instance/views.py:1316
+#: app/instance/views.py:1294 app/instance/views.py:1324
 msgid "Edit SSH Public Key"
 msgstr ""
 
-#: app/instance/views.py:1330 app/instance/views.py:1349
+#: app/instance/views.py:1338 app/instance/views.py:1357
 msgid "Configure Domain"
 msgstr ""
 
-#: app/instance/views.py:1335
+#: app/instance/views.py:1343
 msgid ""
 "can not get domain, domain may not have been configured in Administration "
 "Console."
 msgstr ""
 
-#: app/instance/views.py:1338
+#: app/instance/views.py:1346
 msgid ""
 "Can not get access_ip, please configure instance network or run instance"
 msgstr ""
 
-#: app/instance/views.py:1356
+#: app/instance/views.py:1364
 msgid "Domain is not configured!"
 msgstr ""
 
-#: app/instance/views.py:1364
+#: app/instance/views.py:1372
 msgid "Domain name is taken!"
 msgstr ""
 
-#: app/instance/views.py:1366
+#: app/instance/views.py:1374
 msgid "Domain name is too long."
 msgstr ""
 
-#: app/instance/views.py:1368
+#: app/instance/views.py:1376
 msgid "Please use alpha characters in domain name!"
 msgstr ""
 
-#: app/instance/views.py:1500
+#: app/instance/views.py:1508
 msgid "No such instance!"
 msgstr ""
 
@@ -869,65 +917,69 @@ msgstr ""
 msgid "[User reset password apply (%s)]"
 msgstr ""
 
-#: app/account/views.py:83
+#: app/account/views.py:85
 msgid ""
 "You have been lock by admin, can not login now. If you have any questions, "
 "contact admin first please !"
 msgstr ""
 
-#: app/account/views.py:92
+#: app/account/views.py:94
 msgid "password is wrong !"
 msgstr ""
 
-#: app/account/views.py:136
+#: app/account/views.py:138
 msgid "No key found !"
 msgstr ""
 
-#: app/account/views.py:138
+#: app/account/views.py:140
 msgid "No apply record found !"
 msgstr ""
 
-#: app/account/views.py:156 app/admin/user_views.py:192
+#: app/account/views.py:158 app/admin/user_views.py:192
 msgid "This username is occupied"
 msgstr ""
 
-#: app/account/views.py:215
+#: app/account/views.py:196
+msgid "Welcome to use LuoYun Cloud !"
+msgstr ""
+
+#: app/account/views.py:242
 msgid "My Account Center"
 msgstr ""
 
-#: app/account/views.py:227
+#: app/account/views.py:254
 msgid "My Permissions"
 msgstr ""
 
-#: app/account/views.py:262
+#: app/account/views.py:289
 #, python-format
 msgid "View User %s"
 msgstr ""
 
-#: app/account/views.py:278
+#: app/account/views.py:305
 #, python-format
 msgid "No such group: %s !"
 msgstr ""
 
-#: app/account/views.py:287 app/admin/group_views.py:39
+#: app/account/views.py:314 app/admin/group_views.py:39
 #, python-format
 msgid "View Group %s"
 msgstr ""
 
-#: app/account/views.py:303 app/account/views.py:325 app/account/views.py:461
+#: app/account/views.py:330 app/account/views.py:352 app/account/views.py:488
 #: app/admin/user_views.py:152 app/admin/user_views.py:173
 msgid "Reset Password"
 msgstr ""
 
-#: app/account/views.py:334 app/account/views.py:353
+#: app/account/views.py:361 app/account/views.py:380
 msgid "Change my avatar"
 msgstr ""
 
-#: app/account/views.py:363
+#: app/account/views.py:390
 msgid "Avatar file must smaller than 360K !"
 msgstr ""
 
-#: app/account/views.py:402
+#: app/account/views.py:429
 #, python-format
 msgid ""
 "\n"
@@ -939,28 +991,28 @@ msgid ""
 "address.\n"
 msgstr ""
 
-#: app/account/views.py:413 app/account/views.py:483
+#: app/account/views.py:440 app/account/views.py:510
 msgid "Forget My Password"
 msgstr ""
 
-#: app/account/views.py:451
+#: app/account/views.py:478
 msgid "[ LuoYun Cloud ] Reset Password"
 msgstr ""
 
-#: app/account/views.py:456
+#: app/account/views.py:483
 msgid "Send Email Failed !"
 msgstr ""
 
-#: app/account/views.py:459
+#: app/account/views.py:486
 #, python-format
 msgid "No such email address: %s"
 msgstr ""
 
-#: app/account/views.py:497
+#: app/account/views.py:524
 msgid "You have completed reset password."
 msgstr ""
 
-#: app/account/views.py:500
+#: app/account/views.py:527
 #, python-format
 msgid "No such key: %s !"
 msgstr ""
@@ -1193,11 +1245,11 @@ msgstr ""
 msgid "No action specified"
 msgstr ""
 
-#: app/home/views.py:51
+#: app/home/views.py:53
 msgid "Permission Denied"
 msgstr ""
 
-#: app/home/views.py:66
+#: app/home/views.py:68
 msgid "No Resource"
 msgstr ""
 
@@ -1225,21 +1277,21 @@ msgstr ""
 msgid "Can not get access_ip."
 msgstr ""
 
-#: tool/domain.py:48 tool/domain.py:170
+#: tool/domain.py:48 tool/domain.py:173
 #, python-format
 msgid "No such dir or file: %s"
 msgstr ""
 
-#: tool/domain.py:150 tool/domain.py:188
+#: tool/domain.py:153 tool/domain.py:191
 #, python-format
 msgid "reload nginx error: %s"
 msgstr ""
 
-#: tool/domain.py:154 tool/domain.py:191
+#: tool/domain.py:157 tool/domain.py:194
 msgid "OK"
 msgstr ""
 
-#: tool/domain.py:179
+#: tool/domain.py:182
 #, python-format
 msgid "remove nginx config error: %s"
 msgstr ""

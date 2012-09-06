@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-06 15:22+0800\n"
+"POT-Creation-Date: 2012-09-06 18:18+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,7 +59,7 @@ msgstr ""
 msgid "update"
 msgstr ""
 
-#: template/wiki/view_topic.html:24 template/appliance/view.html:55
+#: template/wiki/view_topic.html:24 template/appliance/view.html:59
 #: template/appliance/edit.html:8 template/system/networkpool.html:6
 #: template/system/baseinfo.html:25 template/instance/storage.html:23
 #: template/instance/domain.html:11 template/instance/baseinfo.html:18
@@ -73,7 +73,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: template/wiki/view_topic.html:25 template/appliance/view.html:56
+#: template/wiki/view_topic.html:25 template/appliance/view.html:60
 #: template/message/view_message.html:18 template/instance/delete.html:9
 #: template/instance/storage.html:24 template/instance/domain.html:12
 #: template/instance/instance_base.html:122
@@ -96,7 +96,7 @@ msgstr ""
 msgid "Appliances"
 msgstr ""
 
-#: template/appliance/view.html:19 template/appliance/view.html:91
+#: template/appliance/view.html:19 template/appliance/view.html:95
 #: template/instance/index.html:37 template/instance/index.html:47
 #: template/instance/instance_base.html:86
 #: template/admin/appliance/view.html:32
@@ -110,11 +110,15 @@ msgid ""
 "This is a appliance of LuoYun platform, you can create a instance from it."
 msgstr ""
 
-#: template/appliance/view.html:27
+#: template/appliance/view.html:28
 msgid "Create Instance"
 msgstr ""
 
-#: template/appliance/view.html:35 template/appliance/edit.html:71
+#: template/appliance/view.html:30
+msgid "This appliance is locked, you can not use it."
+msgstr ""
+
+#: template/appliance/view.html:39 template/appliance/edit.html:71
 #: template/appliance/index.html:18 template/admin/admin_base.html:43
 #: template/admin/appliance/view.html:36
 #: template/admin/appliance/catalog.html:5
@@ -122,29 +126,29 @@ msgstr ""
 msgid "Catalog"
 msgstr ""
 
-#: template/appliance/view.html:39 template/home/no_resource.html:22
+#: template/appliance/view.html:43 template/home/no_resource.html:22
 msgid "Used"
 msgstr ""
 
-#: template/appliance/view.html:40
+#: template/appliance/view.html:44
 msgid "times"
 msgstr ""
 
-#: template/appliance/view.html:43 template/instance/instance_base.html:94
+#: template/appliance/view.html:47 template/instance/instance_base.html:94
 #: template/myun/appliances.html:37 template/myun/instances.html:47
 msgid "Create Time"
 msgstr ""
 
-#: template/appliance/view.html:47 template/instance/instance_base.html:98
+#: template/appliance/view.html:51 template/instance/instance_base.html:98
 #: template/myun/appliances.html:41 template/myun/instances.html:51
 msgid "Update Time"
 msgstr ""
 
-#: template/appliance/view.html:66
+#: template/appliance/view.html:70
 msgid "About The Appliance"
 msgstr ""
 
-#: template/appliance/view.html:75 template/appliance/delete_failed.html:15
+#: template/appliance/view.html:79 template/appliance/delete_failed.html:15
 #: template/admin/node/view.html:72 template/admin/node/instances.html:16
 msgid "Instance List"
 msgstr ""
@@ -1475,21 +1479,12 @@ msgstr ""
 msgid "Please give a summary for this instance."
 msgstr ""
 
-#: template/myun/appliances.html:45 template/myun/appliances.html:55
+#: template/myun/appliances.html:46
 msgid "Useable"
 msgstr ""
 
-#: template/myun/appliances.html:50
-msgid "Unuseable"
-msgstr ""
-
-#: template/myun/appliances.html:61 template/myun/appliances.html:71
-#: template/myun/instances.html:55
+#: template/myun/appliances.html:58 template/myun/instances.html:56
 msgid "Private"
-msgstr ""
-
-#: template/myun/appliances.html:66
-msgid "Public"
 msgstr ""
 
 #: template/system/baseinfo.ajax:23
