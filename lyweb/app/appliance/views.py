@@ -30,6 +30,32 @@ class AppRequestHandler(LyRequestHandler):
                          msg = msg )
 
 
+    def get_appliance(self, id, isowner=False):
+
+        app = self.db2.query(Appliance).get(id)
+
+        if not app:
+            self.done( _('No such appliance: %s !') % id )
+            return None
+
+        if app.isprivate:
+            if ( (not self.current_user) or (
+                    (self.current_user.id != app.user_id) and
+                    (not self.has_permission('admin')) )
+                 ):
+                self.done( _('Appliance %s is private !') % id )
+                return None
+
+        # Just user can do
+        if isowner:
+            if app.user_id != self.current_user.id:
+                self.done( _('Only owner can do this!') )
+                return None
+
+        return app
+
+
+
 
 class Index(AppRequestHandler):
 
@@ -50,7 +76,6 @@ class Index(AppRequestHandler):
 
         apps = self.db2.query(Appliance).filter_by(
             catalog_id=catalog_id).filter_by(
-            isuseable=True).filter_by(
             isprivate=False).order_by(by_exp)
 
         total = apps.count()
@@ -60,7 +85,7 @@ class Index(AppRequestHandler):
         for c in catalogs:
             c.total = self.db2.query(Appliance.id).filter_by(
                 catalog_id = c.id ).filter_by(
-            isuseable=True).filter_by(isprivate=False).count()
+                isprivate=False).count()
 
         pagination = Pagination(
             total = total,
@@ -309,17 +334,13 @@ class View(AppRequestHandler):
 
     def get(self, id):
 
-        ajax = self.get_argument('ajax', 0)
-
-        app = self.db2.query(Appliance).get(id)
+        app = self.get_appliance(id)
         if not app:
             return self.render(
                 'appliance/action_result.html',
                 msg = 'Have not found appliance %s !' % id )
 
-        # TODO: page
         instances, page_html = self.page_view_instances(app)
-        #instances = self.db2.query(Instance).filter_by( appliance_id=app.id ).all()
 
         d = { 'title': _("View Appliance"), 'appliance': app,
               'instances': instances, 'page_html': page_html }

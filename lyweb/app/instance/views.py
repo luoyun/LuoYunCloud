@@ -683,6 +683,14 @@ class CreateInstance(InstRequestHandler):
         _id = self.get_argument('appliance_id', 0)
         self.appliance = self.db2.query(Appliance).get(_id)
 
+        if self.appliance and self.appliance.isprivate:
+            self.write( _('Appliance is private: %s') % _id )
+            return self.finish()
+
+        if self.appliance and not self.appliance.isuseable:
+            self.write( _('Appliance is locked: %s') % _id )
+            return self.finish()
+
         # Have resources ?
         USED_INSTANCES = self.db2.query(Instance.id).filter(
             Instance.user_id == self.current_user.id ).count()

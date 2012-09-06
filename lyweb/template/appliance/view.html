@@ -24,7 +24,11 @@
       ${ _("This is a appliance of LuoYun platform, you can create a instance from it.") }
       % endif
       </p>
-      <p><span class="create-instance"><a class="button" href="${ reverse_url('instance:create') }?appliance_id=${ appliance.id }">${ _("Create Instance") }</a></span></p>
+      % if appliance.isuseable:
+      <p><span class="create-instance"><a class="ly-btn2 medium green" href="${ reverse_url('instance:create') }?appliance_id=${ appliance.id }">${ _("Create Instance") }</a></span></p>
+      % else:
+      <p class="app-unuseable">${ _("This appliance is locked, you can not use it.") }</p>
+      % endif
     </div>
   </div>
 
@@ -50,10 +54,10 @@
       </tbody>
     </table>
 
-    % if current_user and current_user.id == appliance.user_id or has_permission('admin'):
+    % if current_user and current_user.id == appliance.user_id:
     <div class="app-admin c">
-      <span class="edit"><a class="button" href="/appliance/${ appliance.id }/edit">${ _("Edit") }</a></span>
-      <span class="delete"><a class="button" href="/appliance/${ appliance.id }/delete">${ _("Delete") }</a></span>
+      <span class="edit"><a class="ly-btn2 small blue" href="${ reverse_url('appliance:edit', appliance.id) }">${ _("Edit") }</a></span>
+      <span class="delete"><a class="ly-btn2 small blue" href="${ reverse_url('appliance:delete', appliance.id) }">${ _("Delete") }</a></span>
     </div>
     % endif
 

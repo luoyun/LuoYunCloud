@@ -35,7 +35,7 @@
   </div>
 
 
-  <div class="sidemain island c">
+  <div class="c">
 
     <div class="appliance-list">
 
@@ -44,14 +44,18 @@
       % endif
 
       % for app in appliances:
+      <% USEABLE = 'useable' if app.isuseable else 'unuseable' %>
       <div class="appliance">
-        <div class="logo">
-          <a href="${ reverse_url('appliance:view', app.id) }"><img src="${ app.logo_url }" alt="Appliance Picture" /></a>
-        </div>
-        <div class="desc">
-          <span class="name">${ app.name }</span>
-        </div>
-
+	<div class="${USEABLE}">
+          <div class="logo">
+            <a href="${ reverse_url('appliance:view', app.id) }"><img src="${ app.logo_url }" alt="Appliance Picture" /></a>
+          </div>
+	</div>
+	<div class="a-desc">
+	  <ul>
+	    <li><span class="a-name">${ app.name }</span></li>
+	  </ul>
+	</div>
       </div>
       % endfor
     </div>
