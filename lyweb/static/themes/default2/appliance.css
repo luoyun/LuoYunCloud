@@ -14,7 +14,7 @@ h5 {
     font-weight: 700;
 }
 .sidebar {
-    padding: 10px 10px 20px 0;
+    padding: 0px 10px 20px 0;
 }
 .menu h3 {
     color: #1D306B;
@@ -25,13 +25,15 @@ h5 {
 }
 .sidemain {
     background-color: white;
-    border: 1px solid #E9E9E9;
+    border-top: 2px solid #E9E9E9;
+    border-left: 2px solid #E9E9E9;
     border-radius: 3px;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    padding: 20px 10px 30px 13px;
 }
 
 .appliance-home {
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .sort-method {
@@ -43,7 +45,7 @@ h5 {
 
 .appliance {
     float: left;
-    width: 130px;
+    width: 125px;
     margin: 8px;
     font-size: 0.9em;
     text-align: center;

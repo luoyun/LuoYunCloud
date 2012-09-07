@@ -683,7 +683,8 @@ class CreateInstance(InstRequestHandler):
         _id = self.get_argument('appliance_id', 0)
         self.appliance = self.db2.query(Appliance).get(_id)
 
-        if self.appliance and self.appliance.isprivate:
+        if ( self.appliance and self.appliance.isprivate and
+             self.current_user.id != self.appliance.user_id ):
             self.write( _('Appliance is private: %s') % _id )
             return self.finish()
 

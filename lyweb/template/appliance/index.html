@@ -35,7 +35,7 @@
   </div>
 
 
-  <div class="c">
+  <div class="sidemain c">
 
     <div class="appliance-list">
 
@@ -43,6 +43,7 @@
       <p>${ _("Have not any appliances yet !") }</p>
       % endif
 
+      <% count = 0 %>
       % for app in appliances:
       <% USEABLE = 'useable' if app.isuseable else 'unuseable' %>
       <div class="appliance">
@@ -57,6 +58,11 @@
 	  </ul>
 	</div>
       </div>
+
+      % if count % 5 == 4:
+      <div class="c"></div>
+      % endif
+      <% count += 1 %>
       % endfor
     </div>
 
