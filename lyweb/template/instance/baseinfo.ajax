@@ -25,7 +25,3 @@ ${ instance.description_html }
 ${ _("No description.") }
 % endif
 </div>
-
-<script type="text/javascript">
-  BaseinfoFunc();
-</script>
