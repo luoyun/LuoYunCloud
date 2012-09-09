@@ -29,6 +29,14 @@
 	  <td>${ APPLIANCE.name }</td>
 	</tr>
 	<tr>
+	  <td>${ _("Checksum") }</td>
+	  <td>${ APPLIANCE.checksum }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Size") }</td>
+	  <td>${ human_size(APPLIANCE.filesize) }</td>
+	</tr>
+	<tr>
 	  <td>${ _("Owner") }</td>
 	  <td><a href="${ reverse_url('admin:user') }?id=${ APPLIANCE.user.id }">${ APPLIANCE.user.username }</a></td>
 	</tr>

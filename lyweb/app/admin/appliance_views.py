@@ -11,6 +11,7 @@ from app.appliance.models import Appliance, ApplianceCatalog
 from app.admin.forms import CatalogForm
 
 from lycustom import has_permission
+from lytool.filesize import size as human_size
 
 
 class ApplianceManagement(LyRequestHandler):
@@ -98,7 +99,8 @@ class ApplianceManagement(LyRequestHandler):
               'CATALOG_LIST': catalogs, 'CID': catalog_id,
               'APPLIANCE_LIST': apps, 'PAGE_HTML': page_html,
               'CATALOG': catalog, 'USER': user,
-              'TOTAL_APPLIANCE': total }
+              'TOTAL_APPLIANCE': total,
+              'human_size': human_size }
 
         self.render( 'admin/appliance/index.html', **d )
 
@@ -109,7 +111,8 @@ class ApplianceManagement(LyRequestHandler):
         self.render( 'admin/appliance/view.html',
                      title = _('View Appliance %s') % self.appliance.name,
                      CATALOG_LIST = catalogs,
-                     APPLIANCE = self.appliance )
+                     APPLIANCE = self.appliance,
+                     human_size = human_size )
 
 
 

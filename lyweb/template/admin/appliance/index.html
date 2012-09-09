@@ -33,6 +33,7 @@
       <tr>
 	<th>${ _("ID") }</th>
 	<th>${ _("Name") }</th>
+	<th>${ _("Size") }</th>
 	<th>${ _("Owner") }</th>
 	<th>${ _("Catalog") }</th>
 	<th>${ _("Instances") }</th>
@@ -45,6 +46,7 @@
       <tr>
 	<td>${ A.id }</td>
 	<td><a href="${ reverse_url('admin:appliance') }?id=${ A.id }">${ A.name }</a></td>
+	<td>${ human_size(A.filesize) }</td>
 	<td>
 	  <div class="a-owner">
 	    <span class="link"><a href="${ reverse_url('admin:user') }?id=${ A.user.id }">${ A.user.username }</a></span>
