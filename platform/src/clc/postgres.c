@@ -542,13 +542,13 @@ int db_instance_update_secret(int id, char * secret)
 int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
 {
     char s_ip[100];
-    if (ii->ip == NULL || ii->ip[0] == '\0' || ii->ip[0] == ' ')
+    if (ii == NULL || ii->ip == NULL || ii->ip[0] == '\0' || ii->ip[0] == ' ')
         s_ip[0] = '\0';
     else
         snprintf(s_ip, 100, "ip = '%s',", ii->ip);
 
     char s_status[20];
-    if (ii->status == DOMAIN_S_UNKNOWN)
+    if (ii == NULL || ii->status == DOMAIN_S_UNKNOWN)
         s_status[0] = '\0';
     else
         snprintf(s_status, 20, "status = %d,", ii->status);
