@@ -1,8 +1,10 @@
 Files in top directory:
 
 README     - this file
-lyweb      - web server of LuoYun Cloud Computing Software
-platform   - Cloud Controller, Node Server and OS Manager of
-             LuoYun Cloud Computing Software
-osmanager  - separate OS manager implementation
-tools      - some helper scripts
+lyweb      - web server of LuoYunCloud Software
+platform   - Cloud Controller and Node Server of LuoYunCloud Software
+             the C implementation of LuoYunCloud OS Manager is obsoleted since LuoYunCloud version 0.2
+             See file platform/INSTALL for more detail
+osmanager  - LuoYunCloud OS manager written in Python, effective since LuoYunCloud version 0.4
+             See file osmanager/README for more detail
+tools      - some helper scripts (not very useful, yet)
