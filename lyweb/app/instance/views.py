@@ -482,10 +482,12 @@ class Delete(InstRequestHandler):
             return self.done( reason )
 
         inst.status = DELETED_S
+        inst.subdomain = ''
+        self.db2.commit()
 
-        ipassign = self.db2.query(IpAssign).filter_by(
-            instance_id = inst.id ).first()
-        if ipassign:
+        ipassign_list = self.db2.query(IpAssign).filter_by(
+            instance_id = inst.id ).all()
+        for ipassign in ipassign_list:
             self.db2.delete( ipassign )
             self.db2.commit()
 
@@ -1367,8 +1369,8 @@ class DomainEdit(InstRequestHandler):
         if subdomain != oldsub:
             d['subdomain'] = subdomain
             if subdomain.isalpha():
-                exist_domain = self.db2.query(Instance.id).filter(
-                    Instance.status != DELETED_S ).filter_by( subdomain = subdomain ).first()
+                exist_domain = self.db2.query(Instance.id).filter_by(
+                    subdomain = subdomain ).first()
                 if exist_domain:
                     d['ERROR'].append( _('Domain name is taken!') )
                 if len(subdomain) > 16:
