@@ -28,7 +28,13 @@ def get_network_pool(networkpool):
 
     network = '%s/%s' % (networkpool['start'], networkpool['netmask'])
     for x in IP(network, make_net=True):
-        if start <= IP(x) <= end:
+
+        cur_ip = IP(x)
+
+        if cur_ip > end:
+            break
+
+        if start <= cur_ip:
             ip_str = x.strNormal()
             if ip_str not in exclude_ips:
                 NETWORK_POOL.append( ip_str )
