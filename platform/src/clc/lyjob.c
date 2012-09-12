@@ -373,7 +373,7 @@ static int __job_start_instance(LYJobInfo * job)
         }
     }
 
-    if (node_id <= 0) {
+    if (node_id <= 0 || ci.ins_status == DOMAIN_S_NEW) {
         logdebug(_("search node for instance %d\n"), ci.ins_id);
         ent_id = node_schedule();
         if (ent_id == NODE_SCHEDULE_NODE_BUSY) {
@@ -414,6 +414,11 @@ static int __job_start_instance(LYJobInfo * job)
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
             goto failed;
         }
+    }
+
+    if (db_instance_update_status(ci.ins_id, NULL, node_id) < 0) {
+        logerror(_("db error %(%d)\n"), __func__, __LINE__);
+        return -1;
     }
 
     char *xml = lyxml_data_instance_run(&ci, NULL, 0);
