@@ -1059,3 +1059,47 @@ img.ly-status-flag {
     color: #5C6466;
 }
 
+
+/* Start Markdown */
+.markdown {
+    color: #2F2F2F;
+}
+.markdown h1 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1B900E;
+    margin-top: 25px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #D9D9D9;
+}
+.markdown p {
+    margin: 15px;
+    line-height: 22px;
+}
+.markdown ul, .markdown ol {
+    margin-left: 20px;
+    padding: 0px;
+}
+.markdown li {
+    padding:0px;
+    margin: 20px;
+}
+.markdown ul li {
+    /*list-style-type: circle;*/
+    list-style-type:none;
+    list-style-image: url(img/ul_li.gif);
+}
+.markdown ol li {
+    list-style-type: decimal;
+}
+.markdown li p {
+    margin: 0;
+    padding: 0;
+}
+.markdown pre {
+    padding: 10px;
+    border: 1px solid #D9D9D9;
+    border-radius: 3px;
+    background-color: #F4F8F3;
+}
+/* End Markdown */

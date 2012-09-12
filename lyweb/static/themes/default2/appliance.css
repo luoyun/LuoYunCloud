@@ -1,6 +1,5 @@
 h1 {
     color: #C63717;
-    font: italic 24px Georgia,serif;
     margin-bottom: 16px;
 }
 h2 {
@@ -132,11 +131,12 @@ h5 {
     margin: 30px 0 20px;
 }
 .section {
-    width: 740px
-}
-.section p, .section ul {
-    color: #666666;
-    line-height: 1.3em;
+    width: 740px;
+    border: 1px solid #D9D9D9;
+    border-radius: 3px;
+    background-color: white;
+    padding: 15px 10px 30px;
+    margin-top: 8px;
 }
 .title2 {
     margin: 10px 0 20px;
@@ -152,6 +152,7 @@ h5 {
     float: left;
     margin: 5px 20px 5px 0;
     width: 120px;
+    height: 120px;
 }
 .app-desc {
     float: left;
@@ -159,6 +160,7 @@ h5 {
 }
 .app-name {
     margin: 5px;
+    font-size: 18px;
 }
 .app-name h1 {
     color: #333333;
