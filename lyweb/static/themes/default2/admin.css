@@ -435,3 +435,16 @@ table th {
     color: red;
 }
 /* End Send Mail */
+
+.admin-user-list .hidden {
+    position: absolute;
+    top: 58px;
+    left: 15px;
+    width: 280px;
+    border-radius: 3px;
+    border: 1px solid #DCDCDC;
+    background: #F9FAF9;
+    color: #575758;
+    padding: 12px;
+    z-index: 3;
+}

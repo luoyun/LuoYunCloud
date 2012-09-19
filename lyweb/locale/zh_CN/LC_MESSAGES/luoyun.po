@@ -864,7 +864,7 @@ msgstr "欢迎, "
 
 #: template/account/account_base.html:33 template/myun/myun_base.html:32
 msgid "Last login:"
-msgstr "最后登录时间"
+msgstr "最后登录"
 
 #: template/account/account_base.html:39 template/account/avatar_edit.html:4
 msgid "Change Avatar"
@@ -913,11 +913,11 @@ msgstr "注册时间"
 #: template/account/view_user.html:39 template/admin/user/view.html:37
 #: template/admin/user/index.html:32
 msgid "Last Login"
-msgstr "最后登录时间"
+msgstr "最后登录"
 
 #: template/account/view_user.html:43
 msgid "Last Activate"
-msgstr "最后活跃时间"
+msgstr "最后活跃"
 
 #: template/account/view_user.html:47 template/admin/user/view.html:46
 msgid "Last Entry"

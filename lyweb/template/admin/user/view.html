@@ -85,6 +85,16 @@
       </tbody>
     </table>
 
+    <h3>${ _("Description") }</h3>
+    <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?id=${ user.id }&action=edit_description">${ _("Edit Description") }</a></p>
+    <div class="description">
+    % if user.description:
+    ${ user.description }
+    % else:
+    ${ _("No description now.") }
+    % endif
+    </div>
+
     % if user.profile:
     <h3>${ _("Resources") }</h3>
     <div><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?id=${ user.id }&action=edit_resources">${ _("Change User Resources") }</a></div>

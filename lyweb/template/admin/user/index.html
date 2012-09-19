@@ -32,6 +32,7 @@
   (${ _('Total : ') }${ TOTAL_USER })
 </h3>
 
+<script charset="utf-8" src="${ STATIC_URL }js/instance.js"></script>
 <div class="admin-user-list ly-table">
   <table>
     <thead>
@@ -42,19 +43,32 @@
 	<th>${ _("Appliance") }</th>
 	<th>${ _("Instance") }</th>
 	<th>${ _("Email") }</th>
-	<th>${ _("Last Login") }</th>
+##	<th>${ _("Last Login") }</th>
       </tr>
     </thead>
     <tbody>
       % for U in USER_LIST:
       <tr>
         <td>${ U.id }</td>
-        <td>
+        <td class="username">
 	  <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a>
 	  <a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" title="${ _('Send a email to ') } ${ U.username }" target="_blank"><img src="${ THEME_URL }img/email.gif" alt="Email"/></a>
 	  % if U.islocked:
 	  <img src="${ THEME_URL }img/user-lock.gif" alt="${ _('locked') }"/>
 	  % endif
+	  <div class="hidden" style="display: none;">
+	    <ul>
+	      <li>${ _("Date Joined") }: ${ fulltime(U.date_joined) }</li>
+	      <li>${ _("Last Login") }: ${ fulltime(U.last_login) }</li>
+	      <li>${ _("Last Activate") }: ${ lytime(U.last_active, '%Y-%m-%d %H:%M:%S') }</li>
+	      <li>${ _("Last Entry") }: ${ U.last_entry }</li>
+	    </ul>
+
+	    % if U.description:
+	    <h3>${ _("Description") }</h3>
+	    <div class="description">${ U.description }</div>
+	    % endif
+	  </div>
 	</td>
 	<td>
 	  % for G in U.groups:
@@ -80,7 +94,7 @@
 	  % endif
 	</td>
 
-	<td>${ lytime(U.last_login, '%Y-%m-%d %H:%M') }</td>
+##	<td>${ lytime(U.last_login, '%Y-%m-%d %H:%M') }</td>
       </tr>
       % endfor
     </tbody>
@@ -89,5 +103,8 @@
 
 ${ PAGE_HTML }
 
+<script type="text/javascript">
+  lyItemHover( ".username" );
+</script>
 
 </%block>

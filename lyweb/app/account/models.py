@@ -92,6 +92,9 @@ class User(ORMBase):
     profile = relationship("UserProfile", uselist=False, backref="user")
     #TODO: a flag, can not delete when the flag is set !!!
 
+    # A field can modified by admin just only, descript user
+    description = Column( Text() )
+
     last_active = Column( DateTime() )
     last_entry = Column( String(256) )
 

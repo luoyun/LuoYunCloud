@@ -69,6 +69,9 @@ class UserManagement(LyRequestHandler):
         elif self.action == 'edit_groups':
             self.get_edit_groups()
 
+        elif self.action == 'edit_description':
+            return self.render( 'admin/user/edit_description.html', USER = self.user )
+
         else:
             self.write( _('Wrong action value!') )
 
@@ -89,6 +92,9 @@ class UserManagement(LyRequestHandler):
 
         elif self.action == 'edit_groups':
             self.post_edit_groups()
+
+        elif self.action == 'edit_description':
+            self.post_edit_description()
 
         else:
             self.write( _('Wrong action value!') )
@@ -313,6 +319,15 @@ class UserManagement(LyRequestHandler):
         url += '?id=%s' % self.user.id
         return self.redirect( url )
 
+    def post_edit_description(self):
+        description = self.get_argument('description', '')
+        if description and self.user:
+            self.user.description = description
+            self.db2.commit()
+
+        url = '%s?id=%s' % (self.reverse_url('admin:user'), self.user.id)
+        return self.redirect( url )
+        
 
 
 class ResetpassApply(LyRequestHandler):
