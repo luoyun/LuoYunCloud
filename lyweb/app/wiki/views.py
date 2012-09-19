@@ -8,10 +8,10 @@ from tornado.web import authenticated, asynchronous
 from app.wiki.models import WikiCatalog, Topic
 from app.wiki.forms import TopicForm, NewTopicForm
 
+from lycustom import has_permission
 
 from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'tables'])
-
 
 
 class Index(LyRequestHandler):
@@ -54,7 +54,7 @@ class ViewTopicSource(LyRequestHandler):
 
 class NewTopic(LyRequestHandler):
 
-    @authenticated
+    @has_permission('admin')
     def get(self):
 
         catalog_id = self.get_argument('catalog', 1)
@@ -70,7 +70,7 @@ class NewTopic(LyRequestHandler):
         self.render( 'wiki/new_topic.html', title = _('New Topic'), form = form )
 
 
-    @authenticated
+    @has_permission('admin')
     def post(self):
 
         form = NewTopicForm( self.request.arguments )
@@ -91,9 +91,7 @@ class NewTopic(LyRequestHandler):
 
 class EditTopic(LyRequestHandler):
 
-
-
-    @authenticated
+    @has_permission('admin')
     def prepare(self):
 
         _id = re.match('.*/([0-9]+)/.*', self.request.path).groups()[0]
@@ -138,15 +136,12 @@ class EditTopic(LyRequestHandler):
 
 class DeleteTopic(LyRequestHandler):
 
-    @authenticated
+    @has_permission('admin')
     def get(self, id):
 
         topic = self.db2.query(Topic).get(id)
         if not topic:
             return self.write('Have not found topic %s' % id)
-
-        if self.current_user.id != topic.user_id:
-            return self.write('No permission!')
 
         self.db2.delete(topic)
         self.db2.commit()

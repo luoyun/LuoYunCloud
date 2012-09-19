@@ -8,8 +8,12 @@ from tornado.web import authenticated, asynchronous
 from app.instance.models import Instance
 from app.appliance.models import Appliance
 from app.node.models import Node
+from app.account.models import User
+from app.job.models import Job
 
 from lycustom import has_permission
+
+from sqlalchemy.sql.expression import asc, desc
 
 class Index(LyRequestHandler):
 
@@ -44,6 +48,10 @@ class Index(LyRequestHandler):
             RUNNING_INSTANCE += 1
             USED_MEMORY += i.memory * 1024
 
+        new_users = self.db2.query(User).order_by(
+            desc(User.id) ).limit(10)
+        new_jobs = self.db2.query(Job).order_by(
+            desc(Job.id) ).limit(10)
 
         d = { 'title': _('Admin Console'),
               'TOTAL_APPLIANCE': TOTAL_APPLIANCE,
@@ -52,7 +60,9 @@ class Index(LyRequestHandler):
               'TOTAL_MEMORY': TOTAL_MEMORY,
               'USED_CPU': USED_CPU,
               'USED_MEMORY': USED_MEMORY,
-              'RUNNING_INSTANCE': RUNNING_INSTANCE }
+              'RUNNING_INSTANCE': RUNNING_INSTANCE,
+              'NEW_USER_LIST': new_users,
+              'NEW_JOB_LIST': new_jobs }
 
         self.render('admin/index.html', **d)
 

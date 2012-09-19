@@ -41,4 +41,7 @@ handlers = [
     url( r'/account/avatar/edit', account.AvatarEdit,
          name='account:avatar:edit'),
 
+    url( r'/account/([0-9]+)/delete', account.Delete,
+         name='account:delete'),
+
 ]

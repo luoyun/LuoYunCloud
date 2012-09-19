@@ -21,6 +21,7 @@ from sqlalchemy.sql.expression import asc, desc
 from lycustom import has_permission
 
 from settings import ADMIN_USER_LIST_PAGE_SIZE as USER_PS
+import settings
 
 
 class UserManagement(LyRequestHandler):
@@ -99,8 +100,8 @@ class UserManagement(LyRequestHandler):
         cur_page = int( self.get_argument('p', 1) )
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'DESC')
-        gid = (self.get_argument('gid', 0))
-
+        gid = int(self.get_argument('gid', -1))
+        online = self.get_argument('online', False)
 
         if by == 'date_joined':
             by = User.date_joined
@@ -116,9 +117,22 @@ class UserManagement(LyRequestHandler):
 
         UL = self.db2.query(User)
 
-        GROUP = self.db2.query(Group).get(gid)
-        if GROUP:
-            UL = UL.filter( User.groups.contains(GROUP) )
+        if online:
+            # TODO
+            try:
+                online = int(online)
+            except:
+                online = settings.USER_ACTIVE_MIN
+            deadline = datetime.datetime.utcnow() - datetime.timedelta(seconds = online)
+            UL = UL.filter( User.last_active > deadline )
+
+        GROUP = None
+        if gid == 0:
+            UL = UL.filter( ~User.groups.any() )
+        elif gid > 0:
+            GROUP = self.db2.query(Group).get(gid)
+            if GROUP:
+                UL = UL.filter( User.groups.contains(GROUP) )
 
         UL = UL.order_by( by_exp )
 
@@ -135,7 +149,7 @@ class UserManagement(LyRequestHandler):
         d = { 'title': _('Admin User Management'),
               'USER_LIST': UL, 'PAGE_HTML': page_html,
               'TOTAL_USER': total,
-              'GROUP': GROUP }
+              'GROUP': GROUP, 'GID': gid, 'ONLINE': online }
 
         self.render( 'admin/user/index.html', **d )
 

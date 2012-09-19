@@ -164,7 +164,7 @@ class UserProfile(ORMBase):
         if hasattr(settings, 'USER_DEFAULT_INSTANCES'):
             self.instances = settings.USER_DEFAULT_INSTANCES
         if hasattr(settings, 'USER_DEFAULT_STORAGE'):
-            self.instances = settings.USER_DEFAULT_STORAGE
+            self.storage = settings.USER_DEFAULT_STORAGE
 
     def __repr__(self):
         return _("[UserProfile(%s)]") % (self.user_id)

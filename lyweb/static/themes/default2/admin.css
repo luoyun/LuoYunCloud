@@ -234,6 +234,10 @@ table th {
     width: 100px;
     height: 100px;
 }
+.admin-view-user .u-avatar .action img {
+    width: 18px;
+    height: 18px;
+}
 .admin-view-user .u-name {
     display: block;
     text-align: center;
@@ -409,3 +413,25 @@ table th {
     width: 720px;
     height: 280px;
 }
+
+/* Start Send Mail */
+#ly-sendmail-form {
+}
+#ly-sendmail-form td {
+    padding: 10px;
+}
+#ly-sendmail-form td:first-child {
+    text-align: right;
+    vertical-align: top;
+}
+#ly-sendmail-form .subject input {
+    line-height: 2em;
+}
+#ly-sendmail-form .body textarea {
+    width: 600px;
+    height: 300px;
+}
+#ly-sendmail-form .errors {
+    color: red;
+}
+/* End Send Mail */

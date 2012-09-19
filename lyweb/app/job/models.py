@@ -108,6 +108,26 @@ class Job(ORMBase):
         return _("[Job(%s)]") % self.id
 
     @property
+    def target_name(self):
+        # TODO: merge with settings.JOB_TARGET
+        TARGET_NAME = {
+            3: _('NODE'),
+            4: _('INSTANCE'),
+            }
+        return TARGET_NAME.get(self.target_type, _('Unknown'))
+
+    @property
+    def target_url(self):
+        # TODO: use reverse_url
+        if self.target_type == 3:
+            return '/admin/node?id=%s&action=view' % self.target_id
+        elif self.target_type == 4:
+            return '/instance/%s' % self.target_id
+
+        else:
+            return ''
+
+    @property
     def action_string(self):
         return JOB_ACTION_STR.get( self.action, _('Unknown') )
 

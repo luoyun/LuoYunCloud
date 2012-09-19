@@ -96,3 +96,18 @@ class WelcomeNewUserForm(Form):
     # TODO: make sure it's exist
     text = TextAreaField( _('Welcome New User'), [ validators.Length(min=6, max=12000) ] )
 
+
+class SendMailForm(Form):
+    #fromaddr = TextField( _('From'), [validators.Length(min=6, max=35), validators.Email()] )
+    #totype = SelectField( _('To Type'), choices=[
+    #        ('user', _('Single User')),
+    #        ('group', _('Group User')),
+    #        ] )
+    to = TextAreaField( _('To') )
+    cc = TextAreaField( _('CC') )
+    bcc = TextAreaField( _('BCC') )
+    subject = TextField( _('Subject') )
+    body = TextAreaField( _('Body'), [ validators.Length(min=6, max=12000) ] )
+    
+
+    

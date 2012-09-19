@@ -921,7 +921,7 @@ msgstr "最后活跃时间"
 
 #: template/account/view_user.html:47 template/admin/user/view.html:46
 msgid "Last Entry"
-msgstr "最后登录时间"
+msgstr "最后痕迹"
 
 #: template/account/view_user.html:51 template/account/permissions.html:32
 #: template/admin/admin_base.html:34 template/admin/group/view.html:4

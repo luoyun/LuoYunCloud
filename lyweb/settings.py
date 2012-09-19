@@ -60,12 +60,14 @@ else:
 # User resource limit
 USER_DEFAULT_MEMORY = 256    # 256 M
 USER_DEFAULT_CPUS = 1        # 1 core
-USER_DEFAULT_INSTANCES = 3   # 3 instance
+USER_DEFAULT_INSTANCES = 10  # 10 instance
 USER_DEFAULT_STORAGE = 2     # 2 G
+
+USER_ACTIVE_MIN = 30*60 # Min actie time for user, seconds.
 
 
 # INSTANCE display
-INSTANCE_HOME_PAGE_SIZE=10
+INSTANCE_HOME_PAGE_SIZE=50
 APPLIANCE_INSTANCE_LIST_PAGE_SIZE=10
 MYUN_INSTANCE_LIST_PAGE_SIZE=10
 
@@ -74,8 +76,40 @@ INSTANCE_SLIST_RUNING=[3, 4, 5]
 INSTANCE_SLIST_STOPED=[1, 2]
 
 # ADMIN display
-ADMIN_USER_LIST_PAGE_SIZE=20
+ADMIN_USER_LIST_PAGE_SIZE=50
 
+
+# Email Setting
+MAIL_SENDER = 'LuoYunCloud Administrator'  # Sender name
+MAIL_HOST = None  # SMTP server
+MAIL_PORT = 25    # SMTP port
+MAIL_FROM = None  # From email address
+MAIL_USER = None  # login username
+MAIL_PASS = None  # login password
+
+from settings import cf
+
+if cf.has_option('email', 'smtp_server'):
+    MAIL_SERVER = cf.get('email', 'smtp_server')
+
+if cf.has_option('email', 'smtp_port'):
+    MAIL_PORT = int( cf.get('email', 'smtp_port') )
+
+if cf.has_option('email', 'name'):
+    MAIL_SENDER = cf.get('email', 'name')
+
+if cf.has_option('email', 'from'):
+    MAIL_FROM = cf.get('email', 'from')
+
+if cf.has_option('email', 'username'):
+    MAIL_USER = cf.get('email', 'username')
+
+if cf.has_option('email', 'password'):
+    MAIL_PASS = cf.get('email', 'password')
+
+if MAIL_USER and '@' in MAIL_USER:
+    if not MAIL_FROM:
+        MAIL_FROM = MAIL_USER
 
 
 ## i18n

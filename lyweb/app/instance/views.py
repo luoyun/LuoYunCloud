@@ -726,7 +726,9 @@ class CreateInstance(InstRequestHandler):
  
         if not self.appliance:
             form = CreateInstanceForm()
-            apps = self.db2.query(Appliance)
+            apps = self.db2.query(Appliance).filter_by(
+                isprivate = False).filter_by(
+                isuseable = True)
             if not apps.count():
                 return self.write( _("No appliance found, please upload appliance first!") )
             form.appliance.query = apps.all()
@@ -746,14 +748,14 @@ class CreateInstance(InstRequestHandler):
             app = self.appliance 
         else:
             form = CreateInstanceForm( self.request.arguments )
-            form.appliance.query = self.db2.query(Appliance).all()
+            form.appliance.query = self.db2.query(Appliance).filter_by(
+                isprivate = False).filter_by(isuseable = True).all()
             app = form.appliance.data
 
         self.d['APPLIANCE'] = app
         self.d['form'] = form
 
         if form.validate():
-
             # instance name have used by myself ?
             exist_inst = self.db2.query(Instance).filter_by(
                 name = form.name.data).filter_by(

@@ -5,6 +5,7 @@ import gettext
 from hashlib import md5, sha512, sha1
 import settings
 import mako
+from mako.exceptions import RichTraceback
 import tornado
 
 from mako.template import Template
@@ -25,17 +26,37 @@ template_dir = os.path.join(
     os.path.dirname(__file__), 'template' )
 
 
-def lytime(t, f='%m-%d %H:%M'):
+from dateutil import tz
+
+from_zone = tz.gettz('UTC')  # UTC Zone
+to_zone = tz.gettz('CST')    # China Zone
+
+def lytime(t, f='%m-%d %H:%M', UTC=False):
 
     if t:
-        return t.strftime(f)
+
+        if UTC:
+            local = t
+        else:
+            utc = t.replace(tzinfo=from_zone)
+            local = utc.astimezone(to_zone)
+
+        return datetime.datetime.strftime(local, f)
+
     else:
         return ''
 
-def fulltime(t):
+
+def fulltime(t, UTC=False):
 
     if t:
-        return t.strftime('%Y-%m-%d %H:%M:%S')
+        if UTC:
+            local = t
+        else:
+            utc = t.replace(tzinfo=from_zone)
+            local = utc.astimezone(to_zone)
+
+        return datetime.datetime.strftime(local, '%Y-%m-%d %H:%M:%S')
     else:
         return ''
 
@@ -84,7 +105,28 @@ class LyRequestHandler(RequestHandler):
         if hasattr(self, 'view_kwargs'):
             args.update(self.view_kwargs)
 
-        html = t.render(**args)
+        # TODO: more readable bug track
+        # http://docs.makotemplates.org/en/latest/usage.html#handling-exceptions
+        try:
+            html = t.render(**args)
+        except:
+            traceback = RichTraceback()
+            html = u'''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="/static/css/mako.css" />
+    <title>LuoYun Mako Template System Trac Info</title>
+  </head>
+  <body>
+    <h1>LuoYun Mako Template System Trac Info</h1>
+    <pre>'''
+            for (filename, lineno, function, line) in traceback.traceback:
+                html += "File %s, line %s, in %s" % (filename, lineno, function)
+                html += "%s\n" % line
+            html += "%s: %s" % (str(traceback.error.__class__.__name__), traceback.error)
+            html += "</pre></body></html>"
         self.finish(html)
 
 

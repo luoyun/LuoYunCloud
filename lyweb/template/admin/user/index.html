@@ -9,14 +9,28 @@
 <h2 class="title">${ _("User Management") }</h2>
 
 <div class="manage-action c">
-  <a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a></li>
+  <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a></p>
+  <p><a href="${ reverse_url('admin:user') }?online=180">${ _("Last activate in 3 minutes ") }</a></p>
+  <p><a href="${ reverse_url('admin:user') }?online=900">${ _("Last activate in 15 minutes") }</a></p>
+  <p><a href="${ reverse_url('admin:user') }?online=3600">${ _("Last activate in 1 hour") }</a></p>
 </div>
 
-% if GROUP:
-<h3>${ _("Total Users in ") } ${ GROUP.name } : ${ TOTAL_USER }</h3>
-% else:
-<h3>${ _("Total Users: ") }${ TOTAL_USER }</h3>
-% endif
+<h3>
+  % if ONLINE:
+  ${ _('View Online User') }
+  % else:
+  ${ _('View') }
+  % endif
+
+  % if GID == 0:
+  "${ _('No Group User') }"
+  % elif GID > 0:
+  "${ GROUP.name }"
+  % else:
+  "${ _('ALL User') }"
+  % endif
+  (${ _('Total : ') }${ TOTAL_USER })
+</h3>
 
 <div class="admin-user-list ly-table">
   <table>
@@ -28,7 +42,6 @@
 	<th>${ _("Appliance") }</th>
 	<th>${ _("Instance") }</th>
 	<th>${ _("Email") }</th>
-##	<th>${ _("Date Joined") }</th>
 	<th>${ _("Last Login") }</th>
       </tr>
     </thead>
@@ -38,6 +51,7 @@
         <td>${ U.id }</td>
         <td>
 	  <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a>
+	  <a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" title="${ _('Send a email to ') } ${ U.username }" target="_blank"><img src="${ THEME_URL }img/email.gif" alt="Email"/></a>
 	  % if U.islocked:
 	  <img src="${ THEME_URL }img/user-lock.gif" alt="${ _('locked') }"/>
 	  % endif
@@ -66,7 +80,6 @@
 	  % endif
 	</td>
 
-##	<td>${ lytime(U.date_joined, '%Y-%m-%d %H:%M') }</td>
 	<td>${ lytime(U.last_login, '%Y-%m-%d %H:%M') }</td>
       </tr>
       % endfor

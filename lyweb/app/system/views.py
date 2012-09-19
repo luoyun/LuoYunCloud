@@ -11,10 +11,18 @@ from sqlalchemy.sql.expression import asc, desc
 from app.system.models import LuoYunConfig
 from app.system.forms import BaseinfoForm, DBForm, \
     CLCForm, NameserversForm, NetworkPoolForm, DomainForm, \
-    NginxForm, RegistrationProtocolForm, WelcomeNewUserForm
+    NginxForm, RegistrationProtocolForm, WelcomeNewUserForm, \
+    SendMailForm
+
+from app.account.models import User, Group
 
 
 from lycustom import has_permission
+from email.Utils import parseaddr, formataddr
+from lymail import LyMail, validate_email
+
+from markdown import Markdown
+YMK = Markdown(extensions=['fenced_code', 'tables'])
 
 import settings
 
@@ -477,3 +485,135 @@ class WelcomeNewUserEdit(LyRequestHandler):
             saved = True
 
         self.render('system/welcome_new_user_edit.html', form = form, saved = saved)
+
+
+
+class SendMail(LyRequestHandler):
+
+    @has_permission('admin')
+    def prepare(self):
+        totype = self.get_argument('totype', False)
+        idlist = self.get_argument('idlist', None)
+
+        UL, GL = [], []
+        if totype == 'user':
+            UL = self.get_email_from_userlist( idlist )
+        elif totype == 'group':
+            GL = self.get_email_from_grouplist( idlist )
+        elif totype == 'all':
+            UL = self.db2.query(User)
+        #else:
+        #    return self.write( _('No totype specified !') )
+
+        self.UL = UL
+        self.GL = GL
+        self.totype = totype
+
+        self.d = { 'title': _('LuoYun Send Mail'),
+                   'FROM': settings.MAIL_FROM,
+                   'TOTYPE': self.totype,
+                   'USER_LIST': self.UL,
+                   'GROUP_LIST': self.GL }
+
+
+    def get(self):
+
+        form = SendMailForm()
+
+        self.d['form'] = form
+        self.render('system/sendmail.html', **self.d)
+
+
+    def post(self):
+
+        form = SendMailForm( self.request.arguments )
+        self.d['form'] = form
+        self.d['INVALID_EMAIL'] = []
+
+        if form.validate():
+
+            lymail = LyMail(HTML=True)
+
+            subject = form.subject.data
+            #body = YMK.convert( form.body.data )
+            body = form.body.data
+
+            CC, INVALID = self.get_email_from_text(form.cc.data)
+            if len(INVALID):
+                self.d['INVALID_EMAIL'].extend(INVALID)
+
+            BCC, INVALID = self.get_email_from_text(form.bcc.data)
+            if len(INVALID):
+                self.d['INVALID_EMAIL'].extend(INVALID)
+
+            # TODO: CC policy
+            CC_ENABLE = True if len(self.UL) == 1 else False
+            for U in self.UL:
+                if CC_ENABLE:
+                    lymail.sendmail(U.profile.email, subject, body, cc = CC, bcc = BCC)
+                else:
+                    lymail.sendmail(U.profile.email, subject, body)
+
+            for G in self.GL:
+                for U in G.users:
+                    lymail.sendmail(U.profile.email, subject, body)
+
+            TO, INVALID = self.get_email_from_text(form.to.data)
+            if len(INVALID):
+                self.d['INVALID_EMAIL'].extend(INVALID)
+
+            for toaddr in TO:
+                lymail.sendmail(toaddr, subject, body, cc = CC, bcc = BCC)
+
+            lymail.close()
+
+            form.body.data = body
+            return self.render('system/sendmail_success.html', **self.d)
+
+        self.render('system/sendmail.html', **self.d)
+
+
+    def get_email_from_text(self, text):
+        VALID, INVALID = [], []
+        for line in text.split('\n'):
+            line = line.strip().strip(',')
+            for toaddr in line.split(','):
+                if validate_email(toaddr):
+                    VALID.append(toaddr)
+                else:
+                    INVALID.append(toaddr)
+
+        return VALID, INVALID
+
+
+    def get_email_from_userlist(self, to):
+
+        if not to: return []
+
+        L = []
+        for x in to.split(','):
+            try:
+                x = int(x)
+            except:
+                continue
+
+            u = self.db2.query(User).get(x)
+            if u:
+                L.append(u)
+        return L
+
+    def get_email_from_grouplist(self, to):
+
+        if not to: return []
+
+        L = []
+        for x in to.split(','):
+            try:
+                x = int(x)
+            except:
+                continue
+            g = self.db2.query(Group).get(x)
+            if g:
+                L.append(g)
+        return L
+

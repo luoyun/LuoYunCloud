@@ -1,0 +1,86 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<h2>${ _("Send Email Success") }</h2>
+
+<div id="ly-sendmail-form">
+  <table>
+    <tbody>
+      <tr>
+	<td>${ _("From") }</td>
+	<td>
+	  <span class="from">${ FROM }</span>
+	</td>
+      </tr>
+
+      <tr>
+	<td>
+	  % if TOTYPE == 'user':
+	  ${ _("To User") }
+	  % elif TOTYPE == 'group':
+	  ${ _("To Group") }
+	  % else:
+	  ${ _("To") }
+	  % endif
+	</td>
+	<td>
+	  % if USER_LIST or GROUP_LIST:
+	  <ul>
+	    % if USER_LIST:
+	    % for U in USER_LIST:
+	    <li><a href="${ reverse_url('admin:user') }?id=${ U.id }" target="_blank">${ U.username }</a> &lt;${ U.profile.email }&gt;,</li>
+	    % endfor
+	    % elif GROUP_LIST:
+	    % for G in GROUP_LIST:
+	    <li><a href="${ reverse_url('admin:group') }?id=${ G.id }" target="_blank">${ G.name }</a>,</li>
+	    % endfor
+	    % endif
+	  </ul>
+	  % endif
+	  ${ form.to.data }
+	</td>
+      </tr>
+
+      % if form.cc.data:
+      <tr>
+	<td>${ _("CC") }</td>
+	<td>${ form.cc.data }</td>
+      </tr>
+      % endif
+
+      % if form.bcc.data:
+      <tr>
+	<td>${ _("BCC") }</td>
+	<td>${ form.bcc.data }</td>
+      </tr>
+      % endif
+
+      <tr class="subject">
+	<td>${ _("Subject") }</td>
+	<td>${ form.subject.data }</td>
+      </tr>
+
+      <tr class="body">
+	<td>${ _("Body") }</td>
+	<td><div class="markdown">${ form.body.data }</div></td>
+      </tr>
+
+      % if INVALID_EMAIL:
+      <tr>
+	<td>${ _("Invalid email") }</td>
+	<td>
+	  <ul class="errors">
+	    % for e in INVALID_EMAIL:
+	    <li>${ e }</li>
+	    % endfor
+	  </ul>
+	</td>
+      </tr>
+      % endif
+    </tbody>
+  </table>
+</div>
+
+
+</%block>

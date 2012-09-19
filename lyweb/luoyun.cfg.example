@@ -17,14 +17,16 @@ db_password = luoyun
 [email]
 
 name = Admin
-address = admin@luoyun.co
 from = admin@luoyun.co
 
 smtp_server = mail.luoyun.co
 smtp_port = 25
 username = admin@luoyun.co
-password = lie@#$!$AD+30-4aie
+password = XXXXXX
 
 [site]
 
 #home = http://www.luoyuncloud.com
+
+[registration]
+user_default_group_id = 2

@@ -28,6 +28,8 @@ from app.account.utils import encrypt_password, check_password
 
 from lymail import send_email
 
+from lycustom import has_permission
+
 
 import settings
 from app.system.models import LuoYunConfig
@@ -167,6 +169,17 @@ class Register(AccountRequestHandler):
                 self.db2.commit()
                 # Create profile
                 profile = UserProfile(newuser, email = form.email.data)
+                # Add to default group
+                from settings import cf
+                if cf.has_option('registration', 'user_default_group_id'):
+                    try:
+                        DGID = int(cf.get('registration', 'user_default_group_id'))
+                        G = self.db2.query(Group).get(DGID)
+                        newuser.groups = [G]
+                        self.db2.commit()
+                    except:
+                        pass
+
                 self.db2.add(profile)
                 self.db2.commit()
 
@@ -563,3 +576,43 @@ class ResetPasswordComplete(AccountRequestHandler):
 
         self.render( 'account/reset_password_complete.html', **self.d )
 
+
+
+class Delete(LyRequestHandler):
+    ''' Delete User '''
+
+    @has_permission('admin')
+    def get(self, id):
+
+        d = { 'title': _('Delete Account'), 'ERROR': [], 'USER': None }
+
+        user = self.db2.query(User).get(id)
+
+        if user:
+            d['USERNAME'] = user.username
+            if user.id == self.current_user.id:
+                d['ERROR'].append(_('You can not delete yourself!'))
+            if user.instances:
+                d['ERROR'].append(_('User "%s" have instances exist, please remove them first.') % user.username)
+            if user.appliances:
+                d['ERROR'].append(_('User "%s" have appliances exist, please remove them first.') % user.username)
+        else:
+            d['ERROR'].append(_('Have not found user by id %s') % id)
+
+        if not d['ERROR']:
+
+            # delete message
+            from sqlalchemy import or_
+            messages = self.db2.query(Message).filter(
+                or_(Message.receiver_id == user.id,
+                    Message.sender_id == user.id) )
+            for M in messages:
+                self.db2.delete(M)
+
+            self.db2.delete( user )
+            self.db2.commit()
+        else:
+            if user:
+                d['USER'] = user
+
+        self.render( 'account/delete.html', **d )

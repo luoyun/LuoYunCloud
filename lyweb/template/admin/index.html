@@ -67,6 +67,82 @@ lyAdminShowPie("#admin-mem-pie", [
     { label: "${ _('Used') }",  data: ${PIE_MEM_USED_PER} },
     { label: "${ _('Unused') }",  data: ${100 - PIE_MEM_USED_PER} },
 ]);
-</script> 
+</script>
+
+% if NEW_USER_LIST:
+<div id="admin-new-user" class="admin-user-list ly-table c">
+  <h3>${ _("Last 10 users") }</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>${ _("ID") }</th>
+        <th>${ _("Name") }</th>
+	<th>${ _("Groups") }</th>
+	<th>${ _("Email") }</th>
+	<th>${ _("Last Login") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for U in NEW_USER_LIST:
+      <tr>
+        <td>${ U.id }</td>
+        <td>
+	  <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a>
+	  % if U.islocked:
+	  <img src="${ THEME_URL }img/user-lock.gif" alt="${ _('locked') }"/>
+	  % endif
+	</td>
+	<td>
+	  % for G in U.groups:
+	  <p><a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></p>
+	  % endfor
+	</td>
+	<td>
+	  % if U.profile and U.profile.email:
+	  ${ U.profile.email }
+	  % endif
+	</td>
+	<td>${ lytime(U.last_login, '%Y-%m-%d %H:%M') }</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }">${ _("View All User") }</a></p>
+</div>
+% endif
+
+% if NEW_JOB_LIST:
+<div id="admin-new-job" class="ly-table c">
+  <h3>${ _("Last 10 jobs") }</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>${ _("ID") }</th>
+        <th>${ _("User") }</th>
+        <th>${ _("Status") }</th>
+        <th>${ _("Target Type") }</th>
+        <th>${ _("Target ID") }</th>
+        <th>${ _("Action") }</th>
+        <th>${ _("Completed") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for j in NEW_JOB_LIST:
+      <tr>
+        <td>${ j.id }</td>
+        <td><a href="${ reverse_url('account:view', j.user.id) }">${ j.user.username }</a></td>
+        <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png" alt="${ j.status_string }"/></td>
+        <td>${ j.target_name }</td>
+        <td><a href="${ j.target_url }">${ j.target_id }</a></td>
+        <td>${ j.action_string }</td>
+        <td>${ fulltime(j.ended, UTC=True) }</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:job') }">${ _("View All Job") }</a></p>
+</div>
+% endif
+
 
 </%block>

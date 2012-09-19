@@ -9,7 +9,9 @@
 <h2 class="title">${ _("Group Management") }</h2>
 
 <div class="manage-action c">
-  <a class="ly-btn2 small blue" href="${ reverse_url('admin:group') }?action=add">${ _("Create New Group") }</a>
+  <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:group') }?action=add">${ _("Create New Group") }</a></p>
+  <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?gid=0">${ _("No Group User") }</a></p>
+
 </div>
 
 <h3>${ _("Total Groups: ") }${ len(GROUP_LIST) }</h3>
@@ -40,6 +42,9 @@
 	  ${ _("locked") }
 	  % else:
 	  <a class="ly-btn2 small blue" href="${ reverse_url('admin:group') }?id=${ G.id }&action=delete">${ _("Delete") }</a>
+	  % endif
+	  % if G.users:
+	  <a href="${ reverse_url('system:sendmail') }?totype=group&idlist=${ G.id }" title="${ _('Send a email to users in group: ') } ${ G.name }" target="_blank"><img src="${ THEME_URL }img/email.gif" alt="Email"/></a>
 	  % endif
 	</td>
       </tr>

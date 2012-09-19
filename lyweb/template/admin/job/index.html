@@ -1,18 +1,19 @@
 <%inherit file="/admin/admin_base.html"/>
 
+<%block name="innav">
+<li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
+</%block>
+
 <%block name="sidemain">
+
+<h2 class="title">${ _("Job List") }</h2>
+
 <script type="text/javascript" src="${ STATIC_URL }js/checkbox.js"></script>
 <script type="text/javascript" src="${ STATIC_URL }js/url.js"></script>
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
-    <span><a href="${ reverse_url('admin:job') }">${ _("Jobs") }</a></span>
-  </div>
-</div>
 
 % if JOB_LIST.count():
-<div class="main-wrap">
+<div class="ly-table">
   <table class="checklist">
     <thead>
       <tr>
@@ -31,12 +32,12 @@
       <tr>
         <td><input type="checkbox" value="a" name="test"/></td>
         <td>${ j.id }</td>
-        <td>${ j.user.username }</td>
-        <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png"  alt="${ j.status_string }"/></td>
-        <td>${ j.target_type }</td>
-        <td>${ j.target_id }</td>
+        <td><a href="${ reverse_url('account:view', j.user.id) }">${ j.user.username }</a></td>
+        <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png" alt="${ j.status_string }"/></td>
+        <td>${ j.target_name }</td>
+        <td><a href="${ j.target_url }">${ j.target_id }</a></td>
         <td>${ j.action_string }</td>
-        <td>${ fulltime(j.ended) }</td>
+        <td>${ fulltime(j.ended, UTC=True) }</td>
       </tr>
       % endfor
     </tbody>

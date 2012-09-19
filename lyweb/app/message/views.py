@@ -39,15 +39,18 @@ class Inbox(MessageRequestHandler):
     @authenticated
     def get(self):
 
-        messages = self.db2.query(Message).filter_by( receiver_id=self.current_user.id ).order_by(Message.created.desc()).all()
-        unread = self.db2.query(Message).filter_by( receiver_id=self.current_user.id, read=False ).all()
+        messages = self.db2.query(Message).filter_by(
+            receiver_id=self.current_user.id ).order_by(
+            Message.id.desc()).all()
+        unread = self.db2.query(Message.id).filter_by(
+            receiver_id=self.current_user.id, read=False ).count()
 
         d = {
             'title': _('Message Inbox'),
             'messages': messages,
             'user': self.current_user,
-            'unread': len(unread)
-        }
+            'unread': unread }
+
         self.render( 'message/inbox.html', **d )
 
 
