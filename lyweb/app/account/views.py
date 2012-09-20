@@ -396,7 +396,7 @@ class AvatarEdit(LyRequestHandler):
 
 
     def save_avatar(self):
-        support_image = ['jpg', 'png', 'jpeg', 'gif', 'bmp']
+        support_image = ['jpg', 'png', 'jpeg', 'gif', 'bmp', 'pjpeg']
         for f in self.request.files['avatar']:
 
             if len(f['body']) > 368640: # 360 K
