@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import os, logging, json
+import os, logging, json, time
 
 from lycustom import LyRequestHandler, Pagination
 from tornado.web import authenticated
@@ -12,10 +12,12 @@ from app.appliance.models import Appliance
 from app.node.models import Node
 from app.account.models import Permission
 from app.system.models import LuoYunConfig
+from app.home.models import Attachment
 
 import settings
 
 from lycustom import has_permission
+
 
 
 class SetLocale(LyRequestHandler):
@@ -119,3 +121,30 @@ class WelcomeNewUser(LyRequestHandler):
 
         self.render( 'home/welcome.html',
                      WELCOME = wc )
+
+
+class UploadKindeditor(LyRequestHandler):
+
+    @authenticated
+    def post(self):
+        if self.request.files:
+            for f in self.request.files["imgFile"]:
+                try:
+                    # Size check
+                    if len(f['body']) > settings.ATTACHMENT_MAXSIZE:
+                        raise Exception(_('File is large than %s' % settings.ATTACHMENT_MAXSIZE))
+
+                    att = Attachment(self.current_user, f)
+                    att.description = _('Upload from kindeditor')
+                    self.db2.add(att)
+                    self.db2.commit()
+                    info = { "error" : 0, "url" : att.url }
+                except Exception, ex:
+                    info = { "error" : 1, "message" : str(ex) }
+
+        else:
+            info = {"error" : 1, "message": _("You have not upload any file !")}
+
+        info = json.dumps(info)
+        self.write(info)
+

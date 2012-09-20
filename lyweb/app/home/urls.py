@@ -12,4 +12,7 @@ handlers = [
     url( r'/welcome_new_user', home.WelcomeNewUser,
          name="welcome_new_user" ),
 
+    url( r'/ly/upload/kindeditor', home.UploadKindeditor,
+         name="upload:kindeditor" ),
+
 ]

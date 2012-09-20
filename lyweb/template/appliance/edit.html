@@ -8,106 +8,68 @@
   <span>${ _("Edit") } ${ appliance.name }</span>
 </div>
 
-<div class="main-wrap small-left-right-form">
-  <div><a href="${ reverse_url('appliance:view', appliance.id) } ">
-    <img class="appliance-logo"
-         src="${ appliance.logo_url }"
-         alt="Image Picture" /></a></div>
-
+<div id="appliance-edit-form" class="c">
   <form method="POST" enctype="multipart/form-data">
-    ${ form.name.label } ${ form.name() }<br />
-    ${ form.html_errors( form.name.errors ) }
-
-    ${ form.summary.label } ${ form.summary() }<br />
-    ${ form.html_errors( form.summary.errors ) }
-
-    ${ form.catalog.label } ${ form.catalog() }<br />
-    ${ form.html_errors( form.catalog.errors ) }
-
-    ${ form.logo.label } ${ form.logo() }<br />
-    ${ form.html_errors( form.logo.errors ) }
-
-    ${ form.description.label } ${ form.description() }<br />
-    ${ form.html_errors( form.description.errors ) }
-
-    <label>&nbsp;</label><input type="submit" value="${ _('Save') }" class="button" />
+    <table>
+      <tbody>
+	<tr>
+	  <td>${ form.name.label }</td>
+	  <td>
+	    ${ form.name() }
+	    ${ form.html_errors( form.name.errors ) }
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ form.summary.label }</td>
+	  <td>
+	    ${ form.summary() }
+	    ${ form.html_errors( form.summary.errors ) }
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ form.catalog.label }</td>
+	  <td>
+	    ${ form.catalog() }
+	    ${ form.html_errors( form.catalog.errors ) }
+	  </td>
+	</tr>
+	<tr>
+	  <td><span class="logo"><a href="${ reverse_url('appliance:view', appliance.id) } "><img class="appliance-logo" src="${ appliance.logo_url }" alt="Image Picture" /></a></span></td>
+	  <td class="select-new-logo">
+	    <h3>${ _("Select a new logo") }</h3>
+	    ${ form.logo() }
+	    ${ form.html_errors( form.logo.errors ) }
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ form.description.label }</td>
+	  <td class="app-description">
+	    ${ form.description() }
+	    ${ form.html_errors( form.description.errors ) }
+	  </td>
+	</tr>
+	<tr>
+	  <td></td>
+	  <td><input type="submit" value="${ _('Save') }" class="button" /></td>
+	</tr>
+      </tbody>
+    </table>
   </form>
 </div>
 
-
-<%doc>
-<div class="lrform edit-appliance">
-  <h2>${_("Edit appliance")}</h2>
-  <form method="POST" enctype="multipart/form-data">
-
-    % if ERROR:
-    <ol>
-      % for e in ERROR:
-      <li>${ e }</li>
-      % endfor
-    </ol>
-    % endif
-
-    <div class="item">
-      <div class="c1">
-        <label for="id_name">${ _("Name") }</label>
-      </div>
-      <div class="c2">
-        <input id="id_name" type="text" name="name" maxlength="30" value="${ name }"/>
-      </div>
-    </div>
-
-    <div class="item">
-      <div class="c1">
-        <label for="id_summary">${ _("Summary") }</label>
-      </div>
-      <div class="c2">
-        <input id="id_summary" type="text" name="summary" maxlength="128" value="${ summary }"/>
-      </div>
-    </div>
-
-    <div class="item">
-      <div class="c1">
-        <label for="id_catalog">${ _("Catalog") }</label>
-      </div>
-      <div class="c2">
-        <select name="catalog" id="id_catalog">
-          %for c in catalogs:
-          <option value="${ c.id }" 
-                  %if c.id == catalog_id:
-                  selected="selected"
-                  %endif
-                  >${ c.name }</option>
-          %endfor
-        </select>
-      </div>
-    </div>
-
-    <div class="item">
-      <div class="c1">
-        <label for="id_logo">${ _("Logo Image") }</label>
-      </div>
-      <div class="c2">
-        <input name="logo" type="file"/>
-      </div>
-    </div>
-
-    <div class="item">
-      <div class="c1">
-        <label for="id_description">${_("Description:")}</label>
-      </div>
-      <div class="c2">
-        <textarea id="id_description" name="description">${ description }</textarea>
-      </div>
-    </div>
-
-    <div class="submit">
-      <input type="submit" value="${ _('Submit') }"/>
-    </div>
-
-  </form>
-</div>
-</%doc>
-
+<script charset="utf-8" src="${ STATIC_URL }kindeditor/kindeditor.js"></script>
+<script charset="utf-8" src="${ STATIC_URL }kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript">
+  var editor;
+  KindEditor.ready(function(K) {
+  editor = K.create('#description', {
+      width: '780px',
+      height: '300px',
+      uploadJson : '/ly/upload/kindeditor',
+      fileManagerJson : '/ly/upload/kindeditor',
+      allowFileManager : true
+  });
+  });
+</script>
 
 </%block>

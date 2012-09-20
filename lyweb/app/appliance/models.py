@@ -98,3 +98,4 @@ class Appliance(ORMBase):
     @property
     def description_html(self):
         return YMK.convert( self.description )
+

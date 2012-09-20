@@ -17,6 +17,11 @@ STATIC_URL = "/static/"
 THEME = "default2"
 THEME_URL = "/static/themes/%s/" % THEME
 
+#ATTACHMENT
+ATTACHMENT_PATH = os.path.join(PROJECT_ROOT, "static/attachment")
+ATTACHMENT_URL = "/static/attachment/"
+ATTACHMENT_MAXSIZE = 10 * 1024 * 1024 # 10M
+
 # Nignx config path
 DEFAULT_NGINX_CONF_PATH = '/etc/nginx/conf.d/'
 DEFAULT_NGINX_LOG_PATH = '/opt/LuoYun/logs/nginx/'

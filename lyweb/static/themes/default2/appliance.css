@@ -248,3 +248,37 @@ h5 {
 /*    border-radius: 3px;
     border: 1px solid #B1D632;*/
 }
+
+
+/* Start Appliance Edit Form */
+#appliance-edit-form {
+}
+#appliance-edit-form td {
+    padding: 10px;
+}
+#appliance-edit-form td:first-child {
+    text-align: right;
+    vertical-align: top;
+}
+#appliance-edit-form .subject input {
+    line-height: 2em;
+}
+#appliance-edit-form .body textarea {
+    width: 600px;
+    height: 300px;
+}
+#appliance-edit-form .errors {
+    color: red;
+}
+#appliance-edit-form .logo img {
+    width: 60px;
+    height: 60px;
+    margin: 10px 0;
+    float: left;
+}
+#appliance-edit-form .select-new-logo h3 {
+    font-size: 16px;
+    color: #3B5998;
+    margin: 15px 0 10px;
+}
+/* End Appliance Edit */

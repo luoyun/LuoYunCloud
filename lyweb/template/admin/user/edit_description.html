@@ -22,7 +22,11 @@
 <script>
   var editor;
   KindEditor.ready(function(K) {
-  editor = K.create('#description');
+  editor = K.create('#description', {
+    uploadJson : '/ly/upload/kindeditor',
+    fileManagerJson : '/ly/upload/kindeditor',
+    allowFileManager : true
+  });
   });
 </script>
 

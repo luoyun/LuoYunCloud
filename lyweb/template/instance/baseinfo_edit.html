@@ -4,7 +4,7 @@
 
 
 <h2>${ _("Edit Baseinfo") }</h2>
-<div class="main-wrap small-left-right-form">
+<div class="large-tbform">
   <form method="POST">
     ${ form.name.label } ${ form.name() }<br/>
     ${ form.html_errors(form.name.errors) }
@@ -19,5 +19,19 @@
   </form>
 </div>
 
+<script charset="utf-8" src="${ STATIC_URL }kindeditor/kindeditor.js"></script>
+<script charset="utf-8" src="${ STATIC_URL }kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript">
+  var editor;
+  KindEditor.ready(function(K) {
+    editor = K.create('#description', {
+      width: '90%',
+      height: '300px',
+      uploadJson : '/ly/upload/kindeditor',
+      fileManagerJson : '/ly/upload/kindeditor',
+      allowFileManager : true
+    });
+  });
+</script>
 
 </%block>
