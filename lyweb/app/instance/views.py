@@ -647,6 +647,31 @@ class Run(InstRequestHandler):
             self.db2, instance.id, domain = self.get_domain(instance) )
         if not ret:
             logging.warning(_('binding domain error: %s') % reason)
+        # TODO: update config about domain
+        self.binding_domain(instance)
+
+    def binding_domain(self, instance):
+
+        full_domain = self.get_domain( instance )
+
+        if not instance.config:
+            instance.init_config()
+
+        config = json.loads(instance.config)
+            
+        if 'domain' in config.keys():
+            domain = config['domain']
+        else:
+            domain = {}
+
+        domain['name'] = full_domain
+        domain['ip'] = instance.access_ip
+        config['domain'] = domain
+
+        instance.config = json.dumps( config )
+        instance.updated = datetime.utcnow()
+        self.db2.commit()
+
 
 
 
