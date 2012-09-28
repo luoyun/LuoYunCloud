@@ -51,7 +51,7 @@ am_lynode_OBJECTS = domain.$(OBJEXT) handler.$(OBJEXT) \
 lynode_OBJECTS = $(am_lynode_OBJECTS)
 lynode_DEPENDENCIES = ../luoyun/libluoyun.a ../util/libutil.a \
 	../../lib/libding.a ../../lib/json-parser/libjson_parser.a
-lynode_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(lynode_LDFLAGS) \
+lynode_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
@@ -265,7 +265,7 @@ clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 lynode$(EXEEXT): $(lynode_OBJECTS) $(lynode_DEPENDENCIES) 
 	@rm -f lynode$(EXEEXT)
-	$(lynode_LINK) $(lynode_OBJECTS) $(lynode_LDADD) $(LIBS)
+	$(lynode_LINK) $(lynode_OBJECTS) $(lynode_LDADD) $(LIBS) $(lynode_LDFLAGS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

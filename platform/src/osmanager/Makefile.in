@@ -50,7 +50,7 @@ am_lyosm_OBJECTS = events.$(OBJEXT) lyauth.$(OBJEXT) \
 	osmutil.$(OBJEXT) osmlog.$(OBJEXT) options.$(OBJEXT)
 lyosm_OBJECTS = $(am_lyosm_OBJECTS)
 lyosm_LDADD = $(LDADD)
-lyosm_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(lyosm_LDFLAGS) \
+lyosm_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
@@ -260,7 +260,7 @@ clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 lyosm$(EXEEXT): $(lyosm_OBJECTS) $(lyosm_DEPENDENCIES) 
 	@rm -f lyosm$(EXEEXT)
-	$(lyosm_LINK) $(lyosm_OBJECTS) $(lyosm_LDADD) $(LIBS)
+	$(lyosm_LINK) $(lyosm_OBJECTS) $(lyosm_LDADD) $(LIBS) $(lyosm_LDFLAGS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

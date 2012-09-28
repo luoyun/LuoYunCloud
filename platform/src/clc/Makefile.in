@@ -52,7 +52,7 @@ am_lyclc_OBJECTS = lyclc.$(OBJEXT) options.$(OBJEXT) entity.$(OBJEXT) \
 lyclc_OBJECTS = $(am_lyclc_OBJECTS)
 lyclc_DEPENDENCIES = ../luoyun/libluoyun.a ../util/libutil.a \
 	../../lib/libding.a
-lyclc_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(lyclc_LDFLAGS) \
+lyclc_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
@@ -266,7 +266,7 @@ clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 lyclc$(EXEEXT): $(lyclc_OBJECTS) $(lyclc_DEPENDENCIES) 
 	@rm -f lyclc$(EXEEXT)
-	$(lyclc_LINK) $(lyclc_OBJECTS) $(lyclc_LDADD) $(LIBS)
+	$(lyclc_LINK) $(lyclc_OBJECTS) $(lyclc_LDADD) $(LIBS) $(lyclc_LDFLAGS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
