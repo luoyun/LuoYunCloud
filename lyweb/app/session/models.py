@@ -20,7 +20,7 @@ class Session(ORMBase):
         self.session_key = key
         self.session_data = data
         # TODO: a configable value for expire_date
-        self.expire_date = datetime.datetime.utcnow + datetime.timedelta(days=30)
+        self.expire_date = datetime.datetime.utcnow() + datetime.timedelta(days=30)
 
 
     def __repr__(self):
