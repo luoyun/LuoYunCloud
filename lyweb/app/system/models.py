@@ -47,8 +47,8 @@ class IpAssign(ORMBase):
     instance_id = Column( ForeignKey('instance.id') )
     instance = relationship("Instance", backref=backref('static_ips', order_by=id))
 
-    created = Column( DateTime, default=datetime.utcnow() )
-    updated = Column( DateTime, default=datetime.utcnow() )
+    created = Column( DateTime, default=datetime.utcnow )
+    updated = Column( DateTime, default=datetime.utcnow )
 
 
     def __init__(self, ip, user, instance=None):

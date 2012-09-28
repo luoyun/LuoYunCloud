@@ -47,8 +47,8 @@ class Instance(ORMBase):
     isprivate = Column( Boolean, default = True )
     ischanged = Column( Boolean, default = False )
 
-    created = Column( DateTime, default=datetime.utcnow() )
-    updated = Column( DateTime, default=datetime.utcnow() )
+    created = Column( DateTime, default=datetime.utcnow )
+    updated = Column( DateTime, default=datetime.utcnow )
 
     subdomain = Column( String(32), unique = True )
 

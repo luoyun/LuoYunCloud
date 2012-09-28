@@ -80,8 +80,8 @@ class User(ORMBase):
     # TODO: if user is locked, could not login again.
     islocked = Column( Boolean, default = False )
 
-    last_login = Column(DateTime(), default=datetime.utcnow())
-    date_joined = Column(DateTime(), default=datetime.utcnow())
+    last_login = Column(DateTime(), default=datetime.utcnow)
+    date_joined = Column(DateTime(), default=datetime.utcnow)
 
     groups = relationship( "Group", secondary=user_groups,
                            backref="users" )
@@ -206,7 +206,7 @@ class ApplyUser(ORMBase):
     email    = Column( String(32) )
     key      = Column( String(128) )
     ip       = Column( String(32) )
-    created  = Column( DateTime(), default=datetime.utcnow() )
+    created  = Column( DateTime(), default=datetime.utcnow )
 
     def __init__(self, email, ip):
         self.email = email
@@ -232,7 +232,7 @@ class UserResetpass(ORMBase):
 
     key = Column( String(128) )
 
-    created  = Column( DateTime(), default=datetime.utcnow() )
+    created  = Column( DateTime(), default=datetime.utcnow )
     completed  = Column( DateTime() )
 
 

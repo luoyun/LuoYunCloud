@@ -21,8 +21,8 @@ class WikiCatalog(ORMBase):
 
     position = Column( Integer , default = 0 )
 
-    created = Column(DateTime(), default=datetime.utcnow())
-    updated = Column(DateTime(), default=datetime.utcnow())
+    created = Column(DateTime(), default=datetime.utcnow)
+    updated = Column(DateTime(), default=datetime.utcnow)
 
 
     def __init__(self, name, summary='', description=''):
@@ -55,8 +55,8 @@ class Topic(ORMBase):
     views = Column( Integer, default = 0 )
     closed = Column( Boolean, default = False ) # TODO:
 
-    created = Column(DateTime(), default=datetime.utcnow())
-    updated = Column(DateTime(), default=datetime.utcnow())
+    created = Column(DateTime(), default=datetime.utcnow)
+    updated = Column(DateTime(), default=datetime.utcnow)
 
     def __init__(self, catalog, user, name, body=''):
 

@@ -95,7 +95,7 @@ class Job(ORMBase):
 
     started = Column( DateTime() )
     ended = Column( DateTime() )
-    created = Column(DateTime(), default=datetime.utcnow())
+    created = Column(DateTime(), default=datetime.utcnow)
 
 
     def __init__(self, user, target_type, target_id, action):

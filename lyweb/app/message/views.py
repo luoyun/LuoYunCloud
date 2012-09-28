@@ -167,7 +167,7 @@ A word spoken is past recalling.") )
         self.db2.delete(message)
         self.db2.commit()
         self.write( _('Delete message %s success !') % id)
-        return self.redirect(self.reverse_url("message:outbox"))
+        return self.redirect(self.reverse_url("message:inbox"))
 
 
 class Reply(MessageRequestHandler):
