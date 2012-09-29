@@ -213,7 +213,6 @@ default_group = [
 default_user = [
     # ( 'username', 'password' )
     ('admin', 'admin'),
-    ('luoyun', 'luoyun'),  # For test
 ]
 
 default_admin_user = 'admin'
@@ -221,7 +220,6 @@ default_admin_user = 'admin'
 default_user_group = [
     # ( 'group name', 'username' )
     ('admin', 'admin'),
-    ('luoyun', 'user'),
 ]
 
 default_user_permission = [
