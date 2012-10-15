@@ -406,7 +406,8 @@ static int __instance_info_update(xmlDoc * doc, xmlNode * node,
     if (xpathCtx == NULL) {
         logerror(_("unable to create new XPath context %s, %d\n"),
                  __func__, __LINE__);
-        goto failed;
+        *j_status = LY_S_FINISHED_FAILURE;
+        return 0;
     }
 
     InstanceInfo ii;
@@ -441,10 +442,12 @@ static int __instance_info_update(xmlDoc * doc, xmlNode * node,
 
     if (ii.ip)
         free(ii.ip);
-    return 0;
+    goto done;
 
 failed:
     *j_status = LY_S_FINISHED_FAILURE;
+done:
+    xmlXPathFreeContext(xpathCtx);
     return 0;
 }
 
@@ -472,7 +475,8 @@ static int __node_info_update(xmlDoc * doc, xmlNode * node,
     if (xpathCtx == NULL) {
         logerror(_("unable to create new XPath context %s, %d\n"),
                  __func__, __LINE__);
-        goto failed;
+        *j_status = LY_S_FINISHED_FAILURE;
+        return 0;
     }
 
     char *str;
@@ -529,10 +533,12 @@ static int __node_info_update(xmlDoc * doc, xmlNode * node,
     }
 
     /* no need to update j_status */
-    return 0;
+    goto done;
 
 failed:
     *j_status = LY_S_FINISHED_FAILURE;
+done:
+    xmlXPathFreeContext(xpathCtx);
     return 0;
 }
 

@@ -101,6 +101,10 @@ static void __main_clean(int keeppid)
         free(g_c->clc_mcast_ip);
     if (g_c->clc_data_dir)
         free(g_c->clc_data_dir);
+    if (g_c->vm_name_prefix)
+        free(g_c->vm_name_prefix);
+    if (g_c->pid_path)
+        free(g_c->pid_path);
     lyxml_cleanup();
     logclose();
     free(g_c);

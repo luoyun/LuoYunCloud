@@ -705,10 +705,11 @@ int db_instance_get_node(int id)
         return -1;
 
     ret = PQntuples(res);
-    if (ret <= 0)
-        return ret;
+    if (ret > 0)
+        ret = atoi(PQgetvalue(res, 0, 0));
 
-    return atoi(PQgetvalue(res, 0, 0));
+    PQclear(res);
+    return ret;
 }
 
 int * db_instance_get_all(int * num)
@@ -718,16 +719,17 @@ int * db_instance_get_all(int * num)
 
     if (num == NULL)
         return NULL;
+    *num = -1;
 
     char sql[LINE_MAX];
     if (snprintf(sql, LINE_MAX, "SELECT id from instance;") >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-        goto out;
+        return NULL;
     }
 
     PGresult *res = __db_select(sql);
     if (res == NULL)
-        goto out;
+        return NULL;
 
     ret = PQntuples(res);
     if (ret <= 0)
@@ -747,6 +749,7 @@ int * db_instance_get_all(int * num)
 
 out:
     *num = ret;
+    PQclear(res);
     return ids;
 }
 
