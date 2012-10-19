@@ -1,0 +1,103 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<h2>${ _("Send Mail") }</h2>
+
+<div id="ly-sendmail-form" class="c">
+  <form method="POST">
+    <table>
+      <tbody>
+	<tr>
+	  <td>${ _("From") }</td>
+	  <td>
+	    <span class="from">${ FROM }</span>
+	  </td>
+	</tr>
+	<tr>
+	  <td>
+	  % if TOTYPE == 'user':
+	  ${ _("To User") }
+	  % elif TOTYPE == 'group':
+	  ${ _("To Group") }
+	  % else:
+	  ${ _("To") }
+	  % endif
+	  </td>
+	  <td>
+	    % if TOTYPE == 'all':
+	    ${ _("ALL users in LuoYunCloud") }
+	    % else:
+
+	    % if USER_LIST or GROUP_LIST:
+	    <ul>
+	      % if USER_LIST:
+	      % for U in USER_LIST:
+	      <li><a href="${ reverse_url('admin:user') }?id=${ U.id }" target="_blank">${ U.username }</a> &lt;${ U.profile.email }&gt;,</li>
+	      % endfor
+	      % elif GROUP_LIST:
+	      % for G in GROUP_LIST:
+	      <li><a href="${ reverse_url('admin:group') }?id=${ G.id }" target="_blank">${ G.name }</a>,</li>
+	      % endfor
+	      % endif
+	    </ul>
+	    <h3>${ _("Add more reciver") }</h3>
+	    % endif
+
+	    % endif
+	    ${ form.to() }
+	    ${ form.html_errors(form.to.errors) }
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ form.cc.label }</td>
+	  <td>
+	    ${ form.cc() }
+	    ${ form.html_errors(form.cc.errors) }
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ form.bcc.label }</td>
+	  <td>
+	    ${ form.bcc() }
+	    ${ form.html_errors(form.bcc.errors) }
+	  </td>
+	</tr>
+	<tr class="subject">
+	  <td>${ form.subject.label }</td>
+	  <td>
+	    ${ form.subject() }
+	    ${ form.html_errors(form.subject.errors) }
+	  </td>
+	</tr>
+	<tr class="body">
+	  <td>${ form.body.label }</td>
+	  <td>
+	    ${ form.body() }
+	    ${ form.html_errors(form.body.errors) }
+	  </td>
+	</tr>
+
+	% if INVALID_EMAIL:
+	<tr>
+	  <td>${ _("Invalid email") }</td>
+	  <td>
+	    <ul class="errors">
+	      % for e in INVALID_EMAIL:
+	      <li>${ e }</li>
+	      % endfor
+	    </ul>
+	  </td>
+	</tr>
+	% endif
+
+	<tr>
+	  <td></td>
+	  <td><input type="submit" value="${ _('Send Mail') }"/></td>
+	</tr>
+      </tbody>
+    </table>
+  </form>
+</div>
+
+</%block>

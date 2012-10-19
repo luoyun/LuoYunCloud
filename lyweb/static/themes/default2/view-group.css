@@ -1,0 +1,57 @@
+#group-view {
+    padding: 50px 0 100px;
+}
+#group-avatar img {
+    width: 85px;
+    height: 85px;
+}
+#group-avatar, .sidebar .groupname {
+    text-align: center;
+}
+
+.baseinfo {
+    margin-bottom: 30px;
+}
+.baseinfo table {
+    font-size: 0.9em;
+    margin-bottom: 30px;
+}
+.baseinfo table td {
+    padding: 5px 10px;
+}
+.baseinfo table td:first-child {
+    font-weight: bold;
+}
+
+.v-user {
+    margin: 15px 10px;
+    font-weight: bold;
+    float: left;
+    text-align: center;
+}
+
+.v-user .avatar img {
+    width: 60px;
+    height: 60px;
+    border: 1px solid #E9E9E9;
+    border-radius: 3px;
+}
+.v-user .username {
+    font-size: 0.9em;
+    padding: 5px 0;
+    text-align: center;
+}
+.v-user .username a {
+    text-decoration: none;
+    /* Following is a */
+    display:block;  
+    width:80px;
+    margin: 0px 0px 0px 3px;  
+    white-space: nowrap;  
+    overflow: hidden;  
+    float: left;  
+    -o-text-overflow: ellipsis;    /**//* for Opera */  
+    text-overflow: ellipsis;        /**//* for IE */  
+
+}
+.v-user .username a:after{ content: ""; }/**//* for Firefox */

@@ -23,8 +23,8 @@ typedef unsigned char boolean;
 
 int str_filter_white_space(char *str);
 int file_not_exist(char *file);
-char *file2str(const char *path);       /* read file 'path' into a new string */
-char *fp2str(FILE * fp);
+char *file2str(const char *path, int size);       /* read file 'path' into a new string */
+char *fp2str(FILE * fp, int size);
 int touch(const char *path);
 int diff(const char *path1, const char *path2);
 

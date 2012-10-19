@@ -192,7 +192,7 @@ int libvirt_max_cpus(void)
 
 int libvirt_node_info(NodeInfo * ni)
 {
-    if (g_conn == NULL)
+    if (g_conn == NULL || ni == NULL)
         return -1;
 
     virNodeInfo *nf;
@@ -205,6 +205,7 @@ int libvirt_node_info(NodeInfo * ni)
     /* success = 0, failed = -1 */
     if (virNodeGetInfo(g_conn, nf) < 0) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        free(nf);
         return -1;
     }
 
@@ -227,7 +228,7 @@ int libvirt_node_info(NodeInfo * ni)
 
 int libvirt_node_info_update(NodeInfo * ni)
 {
-    if (g_conn == NULL)
+    if (g_conn == NULL || ni == NULL)
         return -1;
 
     int ret = -1;

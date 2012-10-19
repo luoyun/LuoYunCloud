@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="SHORTCUT ICON" href="${ STATIC_URL }favicon.ico" />
+    <link rel="stylesheet" href="${ THEME_URL }luoyun.css" />
+    <script type="text/javascript" src="${ STATIC_URL }js/jquery-1.7.min.js"></script>
+    <script type="text/javascript" src="${ STATIC_URL }js/qtip/jquery.qtip.js"></script>
+    <%block name="head"/>
+    <title>${ _("Install LuoYun") }</title>
+  </head>
+
+  <body>
+
+    <div id="pager">
+
+      <div id="header">
+        <div id="header-wrap">
+          <div id="logo">
+            <a href="/"><img src="${ STATIC_URL }image/logo_white_42.png" /></a>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="main" class="luoyun-min-height">
+        <%block name="main"/>
+      </div>
+
+      <div id="footer">
+        <div id="footer-wrap">
+          <span class="copyright">${ _("Copyright") } &copy <a href="http://www.luoyun.co">${ _("LuoYun Inc.") }</a></span>
+          <span class="about"><a href="/about">${ _("About") }</a></span>
+          <span class="contact"><a href="/contact">${ _("Contact") }</a></span>
+
+          <span id="select-language">
+            % if locale.code == 'en_US':
+            <img src="${ THEME_URL }img/zh_CN.png" />
+            <a href="/i18n/setlang?language=zh_CN&next=${ request.uri }">${ u"\u4e2d\u6587(\u7b80\u4f53)" }</a>
+            % else:
+            <img src="${ THEME_URL }img/en_US.png" />
+            <a href="/i18n/setlang?language=en_US&next=${ request.uri }">English</a>
+            % endif
+          </span>
+        </div>
+      </div>
+
+  </div>
+
+  <script type="text/javascript">
+  </script>
+
+  </body>
+</html>

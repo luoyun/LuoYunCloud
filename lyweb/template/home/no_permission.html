@@ -1,0 +1,31 @@
+<%inherit file="home_base.html"/>
+
+<%block name="main">
+
+<div id="ly-notification-large" class="c">
+  <div id="no-permission-notification" class="island c">
+
+    % if PERMS:
+    <h1>${ _("NO PERMISSIONS !") }</h1>
+    <h2>${ _("This action need permissions") }</h2>
+    <div class="permissions">
+      <ul>
+	% for p in PERMS:
+	<li>${ p.codename } ( ${ p.name } )</li>
+	% endfor
+      </ul>
+      % endif
+    </div>
+
+    <div class="help">
+      <p>${ _("If you have any questions, you can contact the admin by following method:") }</p>
+      <ul>
+	<li><a href="${ reverse_url('message:new') }?userid=${ ADMIN_ID }">${ _("Send a message") }</a></li>
+	<li><a href="mailto:${ ADMIN_EMAIL }">${ _("Send a email") }</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+</%block>

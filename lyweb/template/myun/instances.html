@@ -1,0 +1,77 @@
+<%inherit file="myun_base.html" />
+
+<%block name="innav">
+<li><a href="${ reverse_url('myun:instance') }">${ _("Instances") }</a></li>
+</%block>
+
+<%block name="sidemain">
+
+<div id="u-home-instances" class="c">
+
+  <p class="myun-instance-action"><a class="ly-btn2 small blue" title="${ _('Create a new instance') }" href="${ reverse_url('instance:create') }">${ _("Create New Instance") }</a></p>
+
+  % if not INSTANCE_LIST:
+  <p>${ _("No instance found!") }</p>
+  % endif
+  % for I in INSTANCE_LIST:
+  <div class="v-instance c">
+
+    <div class="i-logo"><a href="/instance/${I.id}"><img src="${ I.logo_url }" /></a></div>
+
+    <div class="i-other">
+      <div class="i-name-summary">
+	<h3 class="i-name"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></h3>
+	<div class="i-summary">
+	% if I.summary:
+	${ I.summary }
+	% else:
+	${ _("Please give a summary for this instance.") }
+	% endif
+	</div>
+	<div><img id="i-status-img" src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png"/></div>
+	% if I.domain:
+        <div>
+          <span class="i-domain"><a href="http://${ I.domain }:8080/index.html" target="_blank">${ I.domain }</a></span>
+        </div>
+	% endif
+      </div>
+
+      <div class="i-baseinfo">
+	<table>
+	  <tbody>
+            <tr>
+              <td class="c1">${ _("Appliance") }</td>
+              <td class="c2"><a href="${ reverse_url('appliance:view', I.appliance.id) }">${ I.appliance.name }</a></td>
+            </tr>
+            <tr>
+              <td class="c1">${ _("Create Time") }</td>
+              <td class="c2">${ fulltime(I.created) }</td>
+            </tr>
+            <tr>
+              <td class="c1">${ _("Update Time") }</td>
+              <td class="c2">${ fulltime(I.updated) }</td>
+            </tr>
+            <tr>
+	      <% URL = reverse_url('instance:set_private', I.id) %>
+              <td class="c1">${ _("Private") }</td>
+	      <td class="c2 isprivate-checkbox">
+		<input type="checkbox"
+		       onclick="true_false_toggle(this, '${URL}')"
+		       % if I.isprivate:
+		       checked="checked"
+		       % endif
+		       />
+	      </td>
+            </tr>
+	  </tbody>
+	</table>
+      </div>
+    </div>
+
+  </div>
+  % endfor
+
+  ${ page_html }
+</div>
+
+</%block>

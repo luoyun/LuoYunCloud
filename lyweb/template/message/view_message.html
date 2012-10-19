@@ -1,0 +1,26 @@
+<%inherit file="message_base.html" />
+
+<%block name="sidemain">
+
+<div class="view-message">
+
+  <h1>${ message.subject }</h1>
+
+  <div class="c">
+    <div class="left body markdown">${ message.content_html }</div>
+    <div class="right">
+      <div class="user">
+	<a class="user-avatar" href="${ reverse_url('account:view', message.sender_id) }" target="_blank"><img src="${ message.sender.avatar_url }" alt="${ message.sender.username }" /></a>
+	<a class="username" href="${ reverse_url('account:view', message.sender_id) }" target="_blank">${ message.sender.username }</a>
+      </div>
+      <p class="action">
+	<a class="ly-btn2 small blue" href="${ reverse_url('message:inbox:reply', message.id) }">${ _("Reply") }</a>
+	<a class="ly-btn2 small blue" href="${ reverse_url('message:delete', message.id) }">${ _("Delete") }</a>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+
+</%block>

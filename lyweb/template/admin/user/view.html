@@ -1,0 +1,195 @@
+<%inherit file="user_base.html" />
+
+
+<%block name="usernav">
+<li>${ user.username }</li>
+</%block>
+
+<%block name="usermain">
+
+<div class="admin-view-user c">
+
+  <div class="u-avatar">
+    <a href="${ reverse_url('admin:user') }?id=${ user.id }"><img src="${ user.avatar_url }" alt="User Avatar" /></a>
+    <span class="u-name">${ user.username }</span>
+    <p class="action">
+      <a class="ly-btn2 small blue" href="${ reverse_url('message:new') }?userid=${ user.id}">${ _("Leave a message") }</a>
+      <a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ user.id }" title="${ _('Send a email to ') } ${ user.username }" target="_blank"><img src="${ THEME_URL }img/email.gif" alt="Email"/></a>
+    </p>
+    <p>
+      <a class="ly-btn2 small orange" href="${ reverse_url('account:delete', user.id) }" target="_blank">${ _("Delete Accout") }</a>
+    </p>
+  </div>
+
+
+  <div class="u-info kvlist">
+
+    <h3>${ _("Baseinfo") }</h3>
+    <table>
+      <tbody>
+	<tr>
+          <td>${ _("Username") }</td>
+          <td>${ user.username }</td>
+	</tr>
+	<tr>
+          <td>${ _("ID") }</td>
+          <td>${ user.id }</td>
+	</tr>
+	<tr>
+          <td>${ _("Date Joined") }</td>
+          <td>${ fulltime(user.date_joined) }</td>
+	</tr>
+	<tr>
+          <td>${ _("Last Login") }</td>
+          <td>${ fulltime(user.last_login) }</td>
+	</tr>
+
+	<tr>
+          <td>${ _("Last Active") }</td>
+          <td>${ fulltime(user.last_active) }</td>
+	</tr>
+	<tr>
+          <td>${ _("Last Entry") }</td>
+          <td>${ user.last_entry }</td>
+	</tr>
+
+	% if user.profile:
+	<tr>
+          <td>${ _("Email") }</td>
+          <td>${ user.profile.email }</td>
+	</tr>
+	<tr>
+          <td>${ _("Locale") }</td>
+          <td>${ user.profile.locale }</td>
+	</tr>
+	% endif
+
+	<tr>
+	  <td>${ _("Locked") }</td>
+	  <td>
+	    % if user.islocked:
+	    <img src="${ THEME_URL }img/user-lock.gif" alt="${ _('locked') }"/>
+	    <a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?id=${ user.id }&action=set_lock_flag&islocked=false">${ _('Unlock') }</a>
+	    % else:
+	    <img src="${ THEME_URL }img/user-unlock.gif" alt="${ _('locked') }"/>
+	    <a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?id=${ user.id }&action=set_lock_flag&islocked=true">${ _('Lock') }</a>
+	    % endif
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>${ _("Password") }</td>
+	  <td><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?id=${ user.id }&action=reset_password">${ _("Reset Password") }</a></td>
+	</tr>
+
+      </tbody>
+    </table>
+
+    <h3>${ _("Description") }</h3>
+    <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?id=${ user.id }&action=edit_description">${ _("Edit Description") }</a></p>
+    <div class="description">
+    % if user.description:
+    ${ user.description }
+    % else:
+    ${ _("No description now.") }
+    % endif
+    </div>
+
+    % if user.profile:
+    <h3>${ _("Resources") }</h3>
+    <div><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?id=${ user.id }&action=edit_resources">${ _("Change User Resources") }</a></div>
+    <table>
+      <tbody>
+	<tr>
+          <td>${ _("Memory") }</td>
+          <td>${ user.profile.memory } M</td>
+	</tr>
+	<tr>
+          <td>${ _("CPUs") }</td>
+          <td>${ user.profile.cpus } core</td>
+	</tr>
+	<tr>
+          <td>${ _("Instances") }</td>
+          <td>${ user.profile.instances }</td>
+	</tr>
+	<tr>
+          <td>${ _("Storage") }</td>
+          <td>${ user.profile.storage } G</td>
+	</tr>
+      </tbody>
+    </table>
+    % endif
+
+    <h3>${ _("LuoYun") }</h3>
+    <table>
+      <tbody>
+
+	<tr>
+	  <td>${ _("Appliances") }</td>
+	  <td>
+	    % if user.appliances:
+	    <a href="${ reverse_url('admin:appliance') }?uid=${ user.id }">${ len(user.appliances) }</a>
+	    % else:
+	    ${ _("None") }
+	    % endif
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>${ _("Instances") }</td>
+	  <td>
+	    % if user.instances:
+	    <a href="${ reverse_url('admin:instance') }?uid=${ user.id }">${ len(user.instances) }</a>
+	    % else:
+	    ${ _("None") }
+	    % endif
+	  </td>
+	</tr>
+
+      </tbody>
+    </table>
+
+    <h3>${ _("Group") }</h3>
+
+## If user in admin group, should have any permissions !
+
+    <div><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?id=${ user.id }&action=edit_groups">${ _("Edit Groups") }</a></div>
+
+    % if user.groups:
+    <table class="list">
+      <thead>
+	<tr>
+	  <th>${ _("Group Name") }</th>
+	  <th>${ _("Permissions") }</th>
+	</tr>
+      </thead>
+      <tbody>
+	% for G in user.groups:
+	<tr>
+          <td><a href="${reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></td>
+          <td class="have-table">
+	    <table class="inner-table">
+	      <tbody>
+		% for P in G.permissions:
+		<tr>
+		  <td><a href="${ reverse_url('admin:permission') }?id=${ P.id }">${ P.codename }</a></td>
+		  <td>${ P.name }</td>
+		</tr>
+		% endfor
+	      </tbody>
+	    </table>
+          </td>
+	</tr>
+	% endfor
+      </tbody>
+    </table>
+    % else:
+    <p>${ _("User has no group!") }</p>
+    % endif
+
+  </div>
+
+</div>
+
+
+</%block>

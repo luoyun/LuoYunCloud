@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <signal.h>
 #include <uuid/uuid.h>
 
 #define logsimple printf
@@ -44,6 +45,11 @@ static LYSignal g_signals_all[] = {
     { SIGUNUSED, "SIGUNUSED", NULL },
     { 0, NULL, NULL }
 };
+
+void __signal_handler_default(int signo)
+{
+    return;
+}
 
 /* init default behavior of handling signals */
 int lyutil_signal_init()

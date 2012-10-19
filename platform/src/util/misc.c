@@ -81,10 +81,10 @@ int file_not_exist(char *file)
 ** read file content into a string
 ** calling function should free the string after being used
 */
-char *fp2str(FILE * fp)
+char *fp2str(FILE * fp, int size)
 {
 #define INCREMENT 512
-    int buf_max = INCREMENT;
+    int buf_max = size <= 0 || size > INCREMENT ? INCREMENT : size;
     int buf_current = 0;
     char *last_read;
     char *buf = NULL;
@@ -112,7 +112,14 @@ char *fp2str(FILE * fp)
                        buf_current, buf_max, last_read ? "no" : "yes");
         } while (last_read && buf_max > buf_current + 1);       /* +1 is needed for fgets() to put \0 */
 
-        buf_max += INCREMENT;   /* in case it is full */
+        if (size <= 0)
+            buf_max += INCREMENT;   /* in case it is full */
+        else if (buf_max >= size)
+            break;
+        else if (buf_max + INCREMENT > size)
+            buf_max = size;
+        else
+            buf_max += INCREMENT;
     } while (last_read);
 
     if (buf_current < 1) {
@@ -124,7 +131,7 @@ char *fp2str(FILE * fp)
 }
 
 /* read file 'path' into a new string */
-char *file2str(const char *path)
+char *file2str(const char *path, int size)
 {
     char *content = NULL;
     int file_size;
@@ -135,6 +142,12 @@ char *file2str(const char *path)
         return content;
     }
     file_size = mystat.st_size;
+
+    if (size > 0 && file_size > size) {
+        logerror("%s: %s file too large(%d > %d).\n", __func__, path,
+                  file_size, size);
+        return content;
+    }
 
     if ((content = malloc(file_size + 1)) == NULL) {
         logerror("%s: allocate memory failed.\n", __func__);
@@ -151,12 +164,7 @@ char *file2str(const char *path)
 
     int bytes;
     int bytes_total = 0;
-#if SSIZE_MAX > INT_MAX
-    /* SSIZE_MAX is defined as LONG_MAX */
     int to_read = file_size;
-#else
-    int to_read = (SSIZE_MAX) < file_size ? (SSIZE_MAX) : file_size;
-#endif
     char *p = content;
     while ((bytes = read(fp, p, to_read)) > 0) {
         bytes_total += bytes;
@@ -191,7 +199,7 @@ char *system_output(char *shell_command)
     logdebug(_("system_output(): [%s]\n"), shell_command);
     if ((fp = popen(shell_command, "r")) == NULL)
         return NULL;            /* caller can check errno */
-    buf = fp2str(fp);
+    buf = fp2str(fp, 0);
 
     pclose(fp);
     return buf;

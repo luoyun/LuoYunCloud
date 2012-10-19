@@ -1,0 +1,79 @@
+The purpose of os mananger is to allow better control of instance in the cloud.
+Also, since os manager runs in the instance, it's decided to use python to 
+implement os manager so that it can be easily modified to fit instance's need.
+
+1. OS Manager Explanation
+
+LuoYun Cloud passes instance runtime configuration through instance's floppy
+disk. Script osmanager.sh is the entry point of OS manager. It reads 
+configuration data from floppy and copy it to a standard location, which is
+/LuoYun/conf/luoyun.conf. It then starts various components of OS manager.
+
+Currently, there are four main components in OS mamanger. These components
+are under bin/ directory.
+
+pyosc	- pyosc configures essential system settings such as root password,
+          root ssh key, network interface address and name server.
+
+pyweb	- pyweb runs after instance network interface is properly set up
+          and enabled. Currently pyweb starts a simple HTTP server and serves
+          simple web pages for the instance. The web pages are under
+          custom/www directory.
+
+pyosm	- pyosm runs after instance network interface is properly set up
+          and enabled. Based on information provided by instance
+          configuration file, it registers the instance in LuoYun cloud
+          and maintains the connection as long as the instance is in running
+          state. Currently, pyosm also periodically runs 'status' script
+          that's under custom/scripts directory. The 'status' command 
+          currently tells Cloud Controller whether pyweb is properly running.
+
+webssh	- webssh runs after instance network interface is properly set up
+          and enabled. Instance owner can also choose to not run the webssh
+          client when instance gets started. The control option is given on
+          LuoYun Cloud Web interface.
+
+Under top level directory of OS Manager, there's a custom/ subdirectory. All
+the files under custom/ directory are subject to change while installing OS
+Manager in appliance. The files under custom/ are used by other components
+of OS manager. 
+
+2. OS Manager Installation
+
+Here are the steps to install os manager in instance,
+1) Create top level OS Manager in instance root file system. Typically,
+   /LuoYun is used.
+2) Copy all the files/directories into the directory created above. Typically,
+   it is /LuoYun. Please notice that webssh requires Shell-in-a-box executable
+   binary shellinaboxd to be under /LuoYun/bin/webssh. The pre-built binary
+   file can be obtained in OS Manager installation package on LuoYun company
+   web site luoyun.co.
+3) Create build/ subdirectory under /LuoYun in instance, and create following
+   regular text files under build/
+   BASE: info about instance base OS
+   BUILD: build info about instance
+   CHANGELOG: chnagelog of instance
+   PACKAGES: list of packages installed in instance
+   VERSION: the version of instance and the version of main application
+            installed in instance
+   Currently, only file VERSION is used by pyweb to build the web pages served
+   by pyweb, all the other files are optional.
+4) Review and modify files under /LuoYun/custom/ directory.
+   /LuoYun/custom/www - contains files used by pyweb. These files should be
+                        modified with information specific to the application
+                        installed in instance.
+   /LuoYun/custom/scrtips/config - is the file used to configure application.
+                                   It's invoked by osmanager.sh.
+5) Review mand modify osmanager.sh when neceassry.
+6) Run /LuoYun/install.sh to start OS Manager automatically when instance gets
+   started.
+
+While installing OS Manager in appliance, make sure stop 5 above is done in
+chroot or similar environment.
+
+3. Uninstall OS Manager
+1) Run /LuoYun/uninstall.sh
+2) Remove whole directory of /LuoYun
+
+Any question, please send email to contact@luoyun.co
+

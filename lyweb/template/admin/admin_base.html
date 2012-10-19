@@ -2,5 +2,86 @@
 
 <%block name="head">
 <link rel="stylesheet" href="${ THEME_URL }admin.css" />
-<script type="text/javascript" src="${STATIC_URL}js/admin.js"></script>
+<link rel="stylesheet" href="${ THEME_URL }button.css" />
+<link rel="stylesheet" href="${ THEME_URL }table.css" />
+<script type="text/javascript" src="${ STATIC_URL }js/admin.js"></script>
+
+<link rel="stylesheet" href="${ STATIC_URL }js/jquery.multiselect2side/css/jquery.multiselect2side.css" />
+<script type="text/javascript" src="${STATIC_URL}js/jquery.multiselect2side/js/jquery.multiselect2side.js"></script>
+
+<script type="text/javascript" src="${STATIC_URL}js/jquery.blockUI.js"></script>
+<%block name="subhead" />
+</%block>
+
+<%block name="main">
+
+<div class="inner-nav">
+  <ol>
+    <li><a class="home" href="/">${ _("Home") }</a></li>
+    <li><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></li>
+    <%block name="innav"/>
+  </ol>
+</div>
+
+<div id="ly-admin" class="c">
+
+  <div id="ly-admin-sidebar">
+
+    <div id="ly-admin-menu">
+      <ul>
+        <li class="dropdown"><span><span class="show-flag"></span>${ _("Account") }</span>
+          <ul>
+            <li><a href="${ reverse_url('admin:user') }">${ _("User") }</a></li>
+            <li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
+            <li><a href="${ reverse_url('admin:permission') }">${ _("Permission") }</a></li>
+            <li><a href="${ reverse_url('admin:user:resetpass') }">${ _("Reset Password History") }</a></li>
+          </ul>
+        </li>
+
+        <li class="dropdown"><span><span class="show-flag"></span>${ _("Appliance") }</span>
+          <ul>
+            <li><a href="${ reverse_url('admin:appliance') }">${ _("Appliances") }</a></li>
+            <li><a href="${ reverse_url('admin:appliance:catalog') }">${ _("Catalog") }</a></li>
+          </ul>
+        </li>
+
+        <li class="dropdown"><span><span class="show-flag"></span>${ _("Instance") }</span>
+          <ul>
+            <li><a href="${ reverse_url('admin:instance') }">${ _("Instances") }</a></li>
+          </ul>
+        </li>
+
+        <li class="dropdown"><span><span class="show-flag"></span>${ _("System") }</span>
+          <ul>
+            <li><a href="${ reverse_url('system:baseinfo:edit') }">${ _("Baseinfo") }</a></li>
+            <li><a href="${ reverse_url('system:db:edit') }">${ _("DB") }</a></li>
+            <li><a href="${ reverse_url('system:clc:edit') }">${ _("Control Server") }</a></li>
+            <li><a href="${ reverse_url('system:nameservers:edit') }">${ _("Nameservers") }</a></li>
+            <li><a href="${ reverse_url('system:networkpool') }">${ _("IP Address Pool") }</a></li>
+            <li><a href="${ reverse_url('system:domain:edit') }">${ _("Domain") }</a></li>
+            <li><a href="${ reverse_url('system:nginx:edit') }">${ _("Nginx") }</a></li>
+            <li><a href="${ reverse_url('system:protocol:edit') }">${ _("Registration Policy") }</a></li>
+            <li><a href="${ reverse_url('system:welcome:edit') }">${ _("Welcome New User") }</a></li>
+            <li><a href="${ reverse_url('system:sendmail') }">${ _("Send Mail") }</a></li>
+            <li><a href="${ reverse_url('admin:job') }">${ _("Job") }</a></li>
+            <li><a href="${ reverse_url('admin:node') }">${ _("Node") }</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="ly-admin-sidemain" class="ly-box luoyun-min-height">
+    <%block name="sidemain"/>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+  lyAdminMenuInit();
+  lyAdminMenuHover();
+//  MenuClick();
+//  AdminSideMenuClick();
+</script>
+
 </%block>

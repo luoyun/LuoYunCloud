@@ -21,11 +21,18 @@ typedef struct CLCConfig_t {
     char *db_pass;           /* db user password */
     char *conf_path;         /* config file path */
     char *log_path;          /* log file path */
+    char *pid_path;          /* pid file path */
+    char *vm_name_prefix;    /* VM name prefix */
+    int   node_select;
+    int   node_storage_low;
     int   verbose;
     int   debug;
     int   daemon;
+    int   node_cpu_factor, node_mem_factor;
 } CLCConfig;
 
+#define NODE_SELECT_ANY		0 
+#define NODE_SELECT_LAST_ONLY	1
 
 #define CLC_CONFIG_RET_HELP		1
 #define CLC_CONFIG_RET_VER		2

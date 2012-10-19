@@ -2,20 +2,25 @@
 
 <%block name="main">
 
-<div class="main-wrap">
+<div id="ly-notification-large" class="c">
 
-  % if ERROR:
-  <p class="error">${ ERROR }</p>
-  % endif
+  <div id="appliance-delete-failed">
 
-  % if INSTANCE_LIST:
-  <h2>${ _("Instance List") }</h2>
-  <ul>
-    % for I in INSTANCE_LIST:
-    <li><a href="/instance/${ I.id }">${ I.name }</a></li>
-    % endfor
-  </ul>
-  % endif
+    <h2>${ _("Delete Appliance Failed") }</h2>
+    % if ERROR:
+    <p class="error">${ ERROR }</p>
+    % endif
+
+    % if INSTANCE_LIST:
+    <h3>${ _("Instance List") }</h3>
+    <ul>
+      % for I in INSTANCE_LIST:
+      <li><a href="/instance/${ I.id }">${ I.name }</a></li>
+      % endfor
+    </ul>
+    % endif
+
+  </div>
 
 </div>
 

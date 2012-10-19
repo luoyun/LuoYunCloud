@@ -1,0 +1,92 @@
+#!/usr/bin/python
+
+import sys
+import os
+import getopt
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
+DEFAULT_OSM_CONF_PATH = b'/LuoYun/conf/luoyun.conf'
+DEFAULT_APP_CONF_PATH = b'/var/www/luoyun.php'
+
+def usage():
+  print '%s LuoYun Cloud Instance Web ssh client.' % PROGRAM_NAME
+  print 'Usage : %s [OPTION] ' % PROGRAM_NAME
+  print '  -c, --config    config file, must be full path'
+  print '                  default is  %s' % DEFAULT_OSM_CONF_PATH
+  print '  -a, --app       application config file'
+  print '                  default is  %s' % DEFAULT_APP_CONF_PATH
+  print '  -h, --help      '
+
+if __name__ == '__main__':
+    confpath = DEFAULT_OSM_CONF_PATH
+    appconfpath = DEFAULT_APP_CONF_PATH
+    try:
+        opts, args = getopt.getopt(sys.argv[1:],
+                                   "hc:a:",
+                                   ["help", "config=", "app="])
+    except getopt.GetoptError:
+        print 'Wrong command options, use -h to list command options'
+        sys.exit(1)
+    for o, a in opts:
+        if o in ("-h", "--help"):
+            usage()
+            sys.exit()
+        if o in ("-c", "--config"):
+            confpath = a
+        if o in ("-a", "--app"):
+            appconfpath = a
+        else:
+            print 'Wrong command options'
+            sys.exit(1)
+
+    jsonstr = ""
+    try:
+        f = open(confpath, "r")
+        for l in f.readlines():
+            if l[:5] == 'JSON=':
+                jsonstr = l[5:]
+                break
+        f.close()
+    except IOError:
+        print "IOError: processing %s" % confpath
+        sys.exit(1)
+
+    domainname = None
+    if jsonstr:
+        j = json.loads(jsonstr)
+        if j and j.get("domain") and j["domain"].get("name"):
+            domainname = j["domain"]["name"]
+    if not domainname:
+        f = os.popen("/sbin/ifconfig eth0")
+        for l in f.readlines():
+            l = l.strip().split(":")
+            if len(l) >= 2 and l[0] == "inet addr":
+                domainname = l[1].split()[0]
+                break
+    if not domainname:
+        print "app config error: no domainname/ip found"
+        sys.exit(1)
+
+    try:
+        f = open(appconfpath, "w")
+        f.write('\
+<?php\n\
+    global $CFG;\n\
+    $CFG->wwwroot   = \'http://%s\';\n' % domainname)
+        f.close()
+    except IOError:
+        print "app config error: writing %s failed" % appconfpath
+        sys.exit(1)
+
+    f = os.popen("service apache2 restart 2>&1")
+    l = "".join([ l for l in f.readlines() ])
+    if l:
+        print l
+    if f.close():
+        print "app config error: restart apache failed"
+        sys.exit(1)
+

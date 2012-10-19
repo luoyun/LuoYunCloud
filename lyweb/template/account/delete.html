@@ -1,0 +1,55 @@
+<%inherit file="/base.html" />
+
+<%block name="head">
+<link rel="stylesheet" href="${ THEME_URL }delete-user.css" />
+</%block>
+
+<%block name="main">
+
+<div id="account-delete" class="min-height-300 c">
+  <h2>${ _("Delete Account ") } ${ USERNAME }</h2>
+  <div class="body">
+    % if ERROR:
+    <h3>${ _("Errors:") }</h3>
+    <ol class="errors">
+      % for E in ERROR:
+      <li>${ E }</li>
+      % endfor
+    </ol>
+
+    % if USER:
+
+    % if USER.instances:
+    <div class="instances">
+      <h3>${ _("Instance List") }</h3>
+      <ul>
+	% for I in USER.instances:
+	<li><a href="${ reverse_url('instance:view', I.id) }" target="_blank">${ I.name }</a></li>
+	% endfor
+      </ul>
+    </div>
+    % endif
+
+    % if USER.appliances:
+    <div class="appliances">
+      <h3>${ _("Appliance List") }</h3>
+      <ul>
+	% for A in USER.appliances:
+	<li><a href="${ reverse_url('appliance:view', A.id) }" target="_blank">${ A.name }</a></li>
+	% endfor
+      </ul>
+    </div>
+    % endif
+
+    % endif
+
+    % else:
+
+    <p>${ _("Delete account success !") }</p>
+
+    % endif
+  </div>
+</div>
+
+
+</%block>

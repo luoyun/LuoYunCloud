@@ -10,11 +10,9 @@
     <script type="text/javascript" src="${ STATIC_URL }js/qtip/jquery.qtip.js"></script>
     <script type="text/javascript" src="${ STATIC_URL }js/luoyun.js"></script>
     <%block name="head"/>
-    <title>
+    <title>${ _("LuoYun Cloud") }
 % if title:
-${ title }
-% else:
-LuoYun
+ - ${ title }
 % endif
 </title>
   </head>
@@ -30,28 +28,41 @@ LuoYun
           </div>
           <div id="navigator">
             <ul>
-              <li><a href="/">${ _("Home") }</a></li>
               <li><a href="/appliance">${ _("Appliances") }</a></li>
-              <li><a href="/wiki">${ _("Wiki") }</a></li>
-              % if current_user and current_user.id == 1:
-              <li><a href="/admin">${ _("Management") }</a></li>
+              <li><a href="/instance">${ _("Instances") }</a></li>
+              % if current_user:
+	      <li><a href="${ reverse_url('myun:index') }">${ _("My LuoYun") }</a></li>
+	      % endif
+              % if has_permission('admin'):
+              <li><a href="/admin">${ _("Administration") }</a></li>
               % endif
+              <li><a href="/wiki">${ _("FAQ") }</a></li>
             </ul>
           </div>
 
-          <div id="login">
-            %if current_user:
-            <span class="user"><a href="/account/${ current_user.id }">${ current_user.username }</a></span>
-            <span class="logout"><a href="/account/logout">${ _("Sign Out") }</a></span>
-            %else:
-            <span class="login"><a href="/account/login">${ _("Sign In") }</a></span>
-            %endif
-          </div>
+	  <div id="account">
+            <div id="login">
+              %if current_user:
+              <span id="my-profile-enter"><a href="${ reverse_url('account:index') }">${ current_user.username }</a></span>
+	      <span id="my-message-enter"><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }<span class="inbox-count">${ current_user.profile.notification }</span></a></span>
+
+              %else:
+              <span class="login"><a href="${ reverse_url('login') }">${ _("Sign In") }</a></span>
+              <span class="register"><a href="${ reverse_url('register') }">${ _("Register") }</a></span>
+              %endif
+            </div>
+
+            % if current_user:
+	    <div id="logout">
+	      <a href="${ reverse_url('logout') }" title="${ _('Logout') }"><img src="${ THEME_URL }img/logout.png" alt="${ _('Sign Out') }" /></a>
+	    </div>
+	    % endif
+	  </div>
 
         </div>
       </div>
 
-      <div id="main">
+      <div id="main" class="luoyun-min-height">
         <%block name="main"/>
         <div id="lyentry">
           <%block name="lyentry"/>
@@ -60,9 +71,7 @@ LuoYun
 
       <div id="footer">
         <div id="footer-wrap">
-          <span class="copyright">${ _("Copyright") } &copy <a href="http://www.luoyun.co">${ _("LuoYun Inc.") }</a></span>
-          <span class="about"><a href="/about">${ _("About") }</a></span>
-          <span class="contact"><a href="/contact">${ _("Contact") }</a></span>
+          <span id="powered-by"><span class="text">${ _("Powered by") }</span><a href="http://www.luoyun.co" target="_blank">${ _("LuoYun") }</a></span>
 
           <span id="select-language">
             % if locale.code == 'en_US':

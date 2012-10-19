@@ -1,0 +1,41 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="/admin">${ _("Admin") }</a></span>&gt;
+    <span><a href="/admin/user">${ _("User") }</a></span>&gt;
+    <span><a href="${ reverse_url('admin:user') }?id=${ user.id }">${ user.username }</a></span>&gt;
+    <span>${ _("Instances") }</span>
+  </div>
+</div>
+
+<div class="main-wrap instance-list">
+  % if INSTANCE_LIST.count():
+  <table class="list">
+    <thead>
+      <th>${ _("ID") }</th>
+      <th>${ _("Name") }</th>
+      <th>${ _("Status") }</th>
+      <th>${ _("IP") }</th>
+    </thead>
+    <tbody>
+      % for I in INSTANCE_LIST:
+      <tr>
+        <td>${ I.id }</td>
+        <td><a href="/instance/${ I.id }">${ I.name }</a></td>
+        <td><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" title="${ I.status_string }"/></td>
+        <td><a href="${ I.home_url(current_user) }">${ I.ip }</a></td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  % else:
+  <p>${ user.username }${_(" have not created any instance yet.") }</p>
+  % endif
+</div>
+
+
+
+</%block>

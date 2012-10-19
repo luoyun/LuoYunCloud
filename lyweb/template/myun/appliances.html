@@ -1,0 +1,82 @@
+<%inherit file="myun_base.html" />
+
+<%block name="innav">
+<li><a href="${ reverse_url('myun:appliance') }">${ _("Appliances") }</a></li>
+</%block>
+
+<%block name="sidemain">
+
+<div id="u-home-appliances" class="c">
+
+  <p class="myun-appliance-action"><a class="ly-btn2 small blue" href="${ reverse_url('appliance:upload') }">${_("Upload Appliance")}</a></p>
+
+  % if not APPLIANCE_LIST:
+  <p>${ _("No appliances now !") }</p>
+  % endif
+  % for I in APPLIANCE_LIST:
+  <div class="v-appliance c">
+
+    <div class="i-logo"><a href="${ reverse_url('appliance:view', I.id ) }"><img src="${ I.logo_url }" /></a></div>
+
+    <div class="i-other">
+      <div class="i-name-summary">
+	<h3 class="i-name"><a href="${ reverse_url('appliance:view', I.id) }">${ I.name }</a></h3>
+	<div class="i-summary">
+	% if I.summary:
+	${ I.summary }
+	% else:
+	${ _("Please give a summary for this instance.") }
+	% endif
+	</div>
+      </div>
+
+      <div class="i-baseinfo">
+	<table>
+	  <tbody>
+            <tr>
+              <td class="c1">${ _("Create Time") }</td>
+              <td class="c2">${ fulltime(I.created) }</td>
+            </tr>
+            <tr>
+              <td class="c1">${ _("Update Time") }</td>
+              <td class="c2">${ fulltime(I.updated) }</td>
+            </tr>
+            <tr>
+	      <% URL = reverse_url('appliance:set_useable', I.id) %>
+              <td class="c1">${ _("Useable") }</td>
+	      <td class="c2">
+		<input type="checkbox"
+		       onclick="true_false_toggle(this, '${URL}')"
+		       % if I.isuseable:
+		       checked="checked"
+		       % endif
+		       />
+	      </td>
+            </tr>
+            <tr>
+	      <% URL = reverse_url('appliance:set_private', I.id) %>
+              <td class="c1">${ _("Private") }</td>
+	      <td class="c2">
+		<input type="checkbox"
+		       onclick="true_false_toggle(this, '${URL}')"
+		       % if I.isprivate:
+		       checked="checked"
+		       % endif
+		       />
+	      </td>
+            </tr>
+	  </tbody>
+	</table>
+      </div>
+    </div>
+
+  </div>
+  % endfor
+
+  ${ page_html }
+</div>
+
+<script type="text/javascript">
+</script>
+
+</%block>

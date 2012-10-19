@@ -33,8 +33,9 @@
 #include "../util/logging.h"
 #include "../util/lyxml.h"
 #include "../util/lyutil.h"
-#include "entity.h"
+#include "lyclc.h"
 #include "lyjob.h"
+#include "entity.h"
 #include "postgres.h"
 
 /* node register and authtication */
@@ -182,6 +183,18 @@ static int __node_xml_register(xmlDoc * doc, xmlNode * node, int ent_id)
     nf->mem_commit = atoi(str);
     free(str);
     str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/request/parameters/storage/total");
+    if (str == NULL)
+        goto xml_err;
+    nf->storage_total = atoi(str);
+    free(str);
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/request/parameters/storage/free");
+    if (str == NULL)
+        goto xml_err;
+    nf->storage_free = atoi(str);
+    free(str);
+    str = xml_xpath_text_from_ctx(xpathCtx,
                           "/" LYXML_ROOT "/request/parameters/load/average");
     if (str == NULL)
         goto xml_err;
@@ -246,44 +259,57 @@ static int __node_xml_register(xmlDoc * doc, xmlNode * node, int ent_id)
                        nf->host_tag, nf->host_ip, nf->status);
             nf->status = NODE_STATUS_UNINITIALIZED;
         }
-        if (db_nf.secret)
+        if (db_nf.secret) {
             logwarn(_("new node takes ip(%s) used by tagged node\n"), nf->host_ip);
+            db_node_reginfo_free(&db_nf);
+            bzero(&db_nf, sizeof(DBNodeRegInfo));
+        }
+            
         ret = db_node_insert(nf);
         if (ret < 0) {
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
             goto new_done;
         }
+        db_nf.id = ret;
         loginfo(_("new node %s added in db(%d)\n"), nf->host_ip, ret);
-        ly_entity_update(ent_id, ret, LY_ENTITY_FLAG_STATUS_ONLINE);
-        loginfo(_("new node %s added in db\n"), nf->host_ip);
-        ret = LY_S_REGISTERING_INIT;
+
+        /* enable node if node is control server */
+        if (ly_is_clc_ip(nf->host_ip)) {
+            if (db_node_enable(ret, 1) != 0 ||
+                db_node_find(DB_NODE_FIND_BY_ID, &ret, &db_nf) != 1) {
+                logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+                ret = -1;
+                goto new_done;
+            }
+        }
+    }
+    else
+        logdebug(_("untagged node for ip(%s) found in db\n"), nf->host_ip);
+
+    ly_entity_update(ent_id, db_nf.id, LY_ENTITY_FLAG_STATUS_ONLINE);
+    if (db_nf.enabled) {
+        AuthConfig * ac = ly_entity_auth(ent_id);
+        ret = -1;
+        if (ac->secret) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            goto new_done;
+        }
+        ac->secret = lyauth_secret();
+        if (ac->secret == NULL) {
+            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+            goto new_done;
+        }
+        nf->host_tag = db_nf.id;
+        ret = LY_S_REGISTERING_CONFIG;
     }
     else {
-        logdebug(_("untagged node for ip(%s) found in db\n"), nf->host_ip);
-        if (db_nf.enabled) {
-            AuthConfig * ac = ly_entity_auth(ent_id);
-            ret = -1;
-            if (ac->secret) {
-                logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-                goto new_done;
-            }
-            ac->secret = lyauth_secret();
-            if (ac->secret == NULL) {
-                logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-                goto new_done;
-            }
-            nf->host_tag = db_nf.id;
-            ret = LY_S_REGISTERING_CONFIG;
-        }
-        else {
-            logdebug(_("untagged node %s register request done\n"), nf->host_ip);
-            ret = LY_S_REGISTERING_INIT;
-        }
-        ly_entity_update(ent_id, db_nf.id, LY_ENTITY_FLAG_STATUS_ONLINE);
-        if (db_node_update(DB_NODE_FIND_BY_ID, &db_nf.id, nf) < 0) {
-            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-            ret = -1;
-        }
+        logdebug(_("register request done, node %s not enabled\n"), nf->host_ip);
+        ret = LY_S_REGISTERING_INIT;
+    }
+    nf->status = NODE_STATUS_ONLINE;
+    if (db_node_update(DB_NODE_FIND_BY_ID, &db_nf.id, nf) < 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        ret = -1;
     }
 
 new_done:
@@ -380,7 +406,8 @@ static int __instance_info_update(xmlDoc * doc, xmlNode * node,
     if (xpathCtx == NULL) {
         logerror(_("unable to create new XPath context %s, %d\n"),
                  __func__, __LINE__);
-        goto failed;
+        *j_status = LY_S_FINISHED_FAILURE;
+        return 0;
     }
 
     InstanceInfo ii;
@@ -415,10 +442,12 @@ static int __instance_info_update(xmlDoc * doc, xmlNode * node,
 
     if (ii.ip)
         free(ii.ip);
-    return 0;
+    goto done;
 
 failed:
     *j_status = LY_S_FINISHED_FAILURE;
+done:
+    xmlXPathFreeContext(xpathCtx);
     return 0;
 }
 
@@ -446,7 +475,8 @@ static int __node_info_update(xmlDoc * doc, xmlNode * node,
     if (xpathCtx == NULL) {
         logerror(_("unable to create new XPath context %s, %d\n"),
                  __func__, __LINE__);
-        goto failed;
+        *j_status = LY_S_FINISHED_FAILURE;
+        return 0;
     }
 
     char *str;
@@ -469,6 +499,13 @@ static int __node_info_update(xmlDoc * doc, xmlNode * node,
     if (str == NULL)
         goto failed;
     nf->mem_free = atoi(str);
+    free(str);
+
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/response/data/storage/free");
+    if (str == NULL)
+        goto failed;
+    nf->storage_free = atoi(str);
     free(str);
 
     str = xml_xpath_text_from_ctx(xpathCtx,
@@ -496,10 +533,12 @@ static int __node_info_update(xmlDoc * doc, xmlNode * node,
     }
 
     /* no need to update j_status */
-    return 0;
+    goto done;
 
 failed:
     *j_status = LY_S_FINISHED_FAILURE;
+done:
+    xmlXPathFreeContext(xpathCtx);
     return 0;
 }
 
@@ -623,6 +662,13 @@ static int __node_resource_update(xmlDoc * doc, xmlNode * node, int ent_id)
     if (str == NULL)
         goto failed;
     nf->mem_commit = atoi(str);
+    free(str);
+
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/report/resource/storage/free");
+    if (str == NULL)
+        goto failed;
+    nf->storage_free = atoi(str);
     free(str);
 
     str = xml_xpath_text_from_ctx(xpathCtx,

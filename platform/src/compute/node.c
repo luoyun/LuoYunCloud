@@ -128,6 +128,12 @@ int ly_node_info_update()
         return -1;
     }
 
+    nf->storage_free = lyutil_free_storage(g_c->config.ins_data_dir);
+    if (nf->storage_free == 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
     int load_average = lyutil_load_average(LOAD_AVERAGE_LAST_1M);
     if (load_average < 0) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
@@ -156,6 +162,11 @@ int ly_node_info_update()
 
 NodeInfo * ly_node_info_init(void)
 {
+    if (g_c == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return NULL;
+    }
+
     NodeInfo * nf = malloc(sizeof(NodeInfo));
     if (nf == NULL) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
@@ -190,6 +201,18 @@ NodeInfo * ly_node_info_init(void)
 
     nf->mem_free = lyutil_free_memory();
     if (nf->mem_free == 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        goto failed;
+    }
+
+    nf->storage_free = lyutil_free_storage(g_c->config.ins_data_dir);
+    if (nf->storage_free == 0) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        goto failed;
+    }
+
+    nf->storage_total = lyutil_total_storage(g_c->config.ins_data_dir);
+    if (nf->storage_free == 0) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto failed;
     }

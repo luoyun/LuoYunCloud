@@ -1,0 +1,29 @@
+<%inherit file="message_base.html" />
+
+<%block name="sidemain">
+
+<div class="edit-message">
+
+  <h1>${ _("New Message") }</h1>
+
+  <div class="large-tbform">
+    <form method="POST">
+      ${ form.sendto.label }
+      ${ form.sendto() }
+      ${ form.html_errors( form.sendto.errors ) }
+
+      ${ form.subject.label }
+      ${ form.subject() }
+      ${ form.html_errors( form.subject.errors ) }
+
+      ${ form.content.label }
+      ${ form.content() }
+      ${ form.html_errors( form.content.errors ) }
+
+      <input type="submit" value="${ _('Submit') }" class="button" />
+    </form>
+  </div>
+
+</div>
+
+</%block>

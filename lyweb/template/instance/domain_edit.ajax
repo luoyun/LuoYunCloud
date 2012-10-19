@@ -1,0 +1,17 @@
+<h2>${ _("Configure Domain") }</h2>
+
+% if ERROR:
+<p>${ ERROR }</p>
+% else:
+
+<div class="main-wrap small-left-right-form">
+  <form method="POST">
+
+    <label for="subdomain">${ _("Subdomain") }</label>
+    <input id="subdomain" name="subdomain" type="text" value="${ subdomain }">${ topdomain }<br/>
+
+    <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
+  </form>
+</div>
+
+% endif

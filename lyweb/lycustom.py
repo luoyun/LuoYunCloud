@@ -1,10 +1,11 @@
 # coding: utf-8
 
-import os, base64, pickle, logging, struct, socket, re
+import os, base64, pickle, logging, struct, socket, re, datetime
 import gettext
 from hashlib import md5, sha512, sha1
 import settings
 import mako
+from mako.exceptions import RichTraceback
 import tornado
 
 from mako.template import Template
@@ -15,24 +16,65 @@ from mako.exceptions import TemplateLookupException
 
 from tornado.web import RequestHandler
 
+from app.account.models import User
+from app.session.models import Session
+
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+
+
 template_dir = os.path.join(
     os.path.dirname(__file__), 'template' )
 
 
-def fulltime(t):
+from dateutil import tz
+
+from_zone = tz.gettz('UTC')  # UTC Zone
+to_zone = tz.gettz('CST')    # China Zone
+
+def lytime(t, f='%m-%d %H:%M', UTC=False):
 
     if t:
-        return t.strftime('%Y-%m-%d %H:%M:%S')
+
+        if UTC:
+            local = t
+        else:
+            utc = t.replace(tzinfo=from_zone)
+            local = utc.astimezone(to_zone)
+
+        return datetime.datetime.strftime(local, f)
+
+    else:
+        return ''
+
+
+def fulltime(t, UTC=False):
+
+    if t:
+        if UTC:
+            local = t
+        else:
+            utc = t.replace(tzinfo=from_zone)
+            local = utc.astimezone(to_zone)
+
+        return datetime.datetime.strftime(local, '%Y-%m-%d %H:%M:%S')
     else:
         return ''
 
 
 class LyRequestHandler(RequestHandler):
 
-    lookup = TemplateLookup([ template_dir ])
+    lookup = TemplateLookup([ template_dir ],
+                            input_encoding="utf-8")
 
     def render(self, template_name, **kwargs):
         """ Redefine the render """
+
+        # TODO: if url have ajax arg, use XXX.ajax for template
+        ajax = self.get_argument('ajax', False)
+        if ajax:
+            x, y = template_name.split('.')
+            #x += '_ajax'
+            template_name = '.'.join([x,'ajax'])
 
         t = self.lookup.get_template(template_name)
 
@@ -52,7 +94,9 @@ class LyRequestHandler(RequestHandler):
 
             #method
             fulltime = fulltime,
+            lytime = lytime,
             has_permission = self.has_permission,
+            AJAX = ajax,
         )
 
         args.update(kwargs)
@@ -61,21 +105,44 @@ class LyRequestHandler(RequestHandler):
         if hasattr(self, 'view_kwargs'):
             args.update(self.view_kwargs)
 
-        html = t.render(**args)
+        # TODO: more readable bug track
+        # http://docs.makotemplates.org/en/latest/usage.html#handling-exceptions
+        try:
+            html = t.render(**args)
+        except:
+            traceback = RichTraceback()
+            html = u'''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="/static/css/mako.css" />
+    <title>LuoYun Mako Template System Trac Info</title>
+  </head>
+  <body>
+    <h1>LuoYun Mako Template System Trac Info</h1>
+    <pre>'''
+            for (filename, lineno, function, line) in traceback.traceback:
+                html += "File %s, line %s, in %s" % (filename, lineno, function)
+                html += "%s\n" % line
+            html += "%s: %s" % (str(traceback.error.__class__.__name__), traceback.error)
+            html += "</pre></body></html>"
         self.finish(html)
 
+
     def get_current_user(self):
-        """Override to determine the current user from, e.g., a cookie."""
-        session_key = self.get_secure_cookie('session_key')
-        if not session_key:
+
+        try:
+            session = self.db2.query(Session).filter_by(
+                session_key = self.get_secure_cookie('session_key')).one()
+        except MultipleResultsFound:
+            logging.error( 'session: MultipleResultsFound, %s' %
+                           self.get_secure_cookie('session_key') )
+        except NoResultFound:
             return None
 
-        session = self.db.get(
-            'SELECT session_data FROM \
-auth_session WHERE session_key=%s;',
-            session_key )
-
-        if not session:
+        # Does session expired ?
+        if session.expire_date < datetime.datetime.utcnow():
             return None
 
         sk = self.settings["session_secret"]
@@ -90,34 +157,27 @@ auth_session WHERE session_key=%s;',
         except:
             session_dict = {}
 
-        user_id = session_dict.get('user_id', None)
-        if not user_id:
-            return None
+        user = self.db2.query(User).get(
+            session_dict.get('user_id', 0) )
 
-        user = self.db.get(
-            "SELECT id, username, \
-to_char(last_login, 'yyyy-MM-dd HH24:MI:SS') AS last_login, \
-to_char(date_joined, 'yyyy-MM-dd HH24:MI:SS') AS date_joined \
-FROM auth_user WHERE id = %s;",
-            user_id )
+        if user.islocked: return None
 
-        if not user:
-            return None
-
-        user.prefs = self.db.get(
-            'SELECT * from user_profile WHERE user_id = %s;',
-            user.id )
+        if user:
+            user.last_active = datetime.datetime.utcnow()
+            user.last_entry = self.request.uri
+            #self.db2.commit()
 
         return user
+
+
 
     def get_user_locale(self):
         user_locale = self.get_cookie("user_locale")
 
         if ( not user_locale and
              self.current_user and
-             self.current_user.prefs and
-             "locale" in self.current_user.prefs ):
-            user_locale = self.current_user.prefs["locale"]
+             self.current_user.profile ):
+            user_locale = self.current_user.profile.locale
 
         if user_locale:
             # TODO: app and template have different i18n
@@ -137,22 +197,25 @@ FROM auth_user WHERE id = %s;",
         if not user:
             return False
 
-        user_perms = self.db.query(
-            'SELECT * from user_permissions WHERE user_id=%s;',
-            user.id)
-
-        for up in user_perms:
-            p = self.db.get(
-                'SELECT * from auth_permission WHERE id=%s;',
-                up.permission_id )
-            if p and p.codename == perm:
+        for p in self.current_user.permissions:
+            if p.codename == perm or p.codename == 'admin':
                 return True
-                
+
+        for g in self.current_user.groups:
+            for p in g.permissions:
+                if p.codename == perm or p.codename == 'admin':
+                    return True
+
         return False
+
 
     @property
     def db(self):
         return self.application.db
+
+    @property
+    def db2(self):
+        return self.application.db2
 
     def _job_notify(self, id):
         ''' Notify the new job signal to control server '''
@@ -166,23 +229,6 @@ FROM auth_user WHERE id = %s;",
 
         sk.sendall(rqhead)
         sk.close()
-
-
-    def new_job(self, target_type, target_id, action):
-
-        SQL = "INSERT INTO job \
-(user_id, status, target_type, target_id, action, created, started) \
-VALUES (%s, %s, %s, %s, %s, 'now', 'now') RETURNING id;" % (
-self.current_user.id, settings.JOB_S_INITIATED, target_type, target_id, action)
-        try:
-            r = self.db.query(SQL)
-            #print 'new job id = ', r[0].id
-            jid = r[0].id
-            self._job_notify(jid)
-            return jid
-
-        except Exception, emsg:
-            logging.error('Add new job to DB error: %s' % emsg)
 
 
     def get_page_url(self, p, path=None):
@@ -205,118 +251,53 @@ self.current_user.id, settings.JOB_S_INITIATED, target_type, target_id, action)
             return path + '?%s' % the_p
 
 
-    def appliance_logo_url(self, logoname):
+    def get_no_permission_url(self):
+        self.require_setting("no_permission_url", "@has_permission")
+        return self.application.settings["no_permission_url"]
 
-        return '%s%s' % (
-            self.settings['appliance_top_url'], logoname )
-
-    def instance_logo_url(self, logoname):
-
-        p = os.path.join(
-            self.settings['static_path'],
-            'instance_logo/%s' % logoname )
-
-        if not os.path.exists(p):
-            logoname = 'default.png'
-
-        return '%s%s' % (
-            '/static/instance_logo/', logoname )
+    def get_no_resource_url(self):
+        self.require_setting("no_resource_url")
+        return self.application.settings["no_resource_url"]
 
 
-    def job_status(self, code):
-        # TODO: have a lazy translation
 
-        JOB_STATUS_STR = {
-            0: _('unknown'),
-            100: _('action initialized'),
+import functools, urlparse, urllib
+def has_permission(codename):
+    """ Needed permission 'codename'. """
+    def foo(method):
+        @functools.wraps(method)
+        def wrapper(self, *args, **kwargs):
+            if not self.current_user:
+                if self.request.method in ("GET", "HEAD"):
+                    url = self.get_login_url()
+                    if "?" not in url:
+                        if urlparse.urlsplit(url).scheme:
+                            # if login url is absolute, make next absolute too
+                            next_url = self.request.full_url()
+                        else:
+                            next_url = self.request.uri
+                            url += "?" + urllib.urlencode(dict(next=next_url))
+                    self.redirect(url)
+                    return
+                raise HTTPError(403)
 
-            # mid-state of LY_A_NODE_RUN_INSTANCE
+            # User is authenticated
+            for p in self.current_user.permissions:
+                if p.codename == codename or p.codename == 'admin':
+                    return method(self, *args, **kwargs)
 
-            200: _('running'),
-            201: _('searching for node server'),
-            202: _('sending request to node server'),
-            210: _('waiting for resource available on node server'),
-            211: _('downloading appliance image'),
-            212: _('checking appliance image'),
-            213: _('creating instance disk file'),
-            214: _('mounting instance disk file'),
-            215: _('configuring instance'),
-            216: _('unmounting instance disk file'),
-            221: _('starting instance virtual machine'),
-            250: _('stopping instance virtual machine'),
-            299: _('Last Running Status'),
+            for g in self.current_user.groups:
+                for p in g.permissions:
+                    if p.codename == codename or p.codename == 'admin':
+                        return method(self, *args, **kwargs)
 
-            # end of mid-state of LY_A_NODE_RUN_INSTANCE
+            #raise HTTPError(403, 'Need permission "%s"', codename)
+            url = self.get_no_permission_url()
+            url += "?codenames=%s" % codename
+            return self.redirect( url )
 
-            300: _('finished'),
-            301: _('finished successfully'),
-            302: _('instance running already'),
-            303: _('instance not running'),
-            304: _('instance not exist'),
-            311: _('failed'),
-            321: _('node server not available'),
-            322: _('node server busy'),
-            331: _('appliance not available'),
-            332: _('appliance error'),
-            399: _('Last Finish Status'),
-
-            # waiting for osmanager/application to start
-
-            400: _('waiting'),
-            411: _('starting OS manager'),
-            412: _('syncing with OS manager'),
-            421: _('checking instance status'),
-            499: _('Last Waiting Status'),
-
-            # job is pending
-            500: _('pending'),
-
-            # job is timed out
-            600: _('timeout'),
-
-            700: _('cancel'),
-            701: _('Internal Error'),
-            702: _('work started already'),
-            703: _('node/instance busy'),
-            711: _('request cancelled'),
-            799: _('Last Cancel Status'),
-            }
-
-        return JOB_STATUS_STR.get( code, _('Unknown') )
-
-
-    # TODO: have a lazy translation
-    def job_action(self, code):
-
-        JOB_ACTION_STR = {
-            102: _('enable node'),
-            103: _('disable node'),
-
-            201: _('run'),
-            202: _('stop'),
-            206: _('destroy'),
-            207: _('query'),
-        }
-
-        return JOB_ACTION_STR.get( code, _('Unknown') )
-        
-
-    # TODO: have a lazy translation
-    def instance_status(self, code):
-
-        INSTANCE_STATUS_STR = {
-            0: _('unknown'),
-            1: _("new domain that hasn't run once"),
-            2: _('stopped'),
-            3: _('started by hypervisor'),
-            4: _('osm connected'),
-            5: _('application is running'),
-            9: _('suspend'),
-            245: _('needs queryed'),
-            255: _('not exist'),
-        }
-
-        return INSTANCE_STATUS_STR.get( code, _('Unknown') )
+        return wrapper
+    return foo
 
 
 
@@ -441,7 +422,7 @@ class LyProxyHandler(LyRequestHandler):
                 logging.error("Tornado signalled HTTPError %s", x)
  
     def _on_proxy(self, response):
-        logging.info('response = %s' % response)
+        #logging.info('response = %s' % response)
         if response.error and not isinstance(response.error,
                                              tornado.httpclient.HTTPError):
             raise HTTPError(500)
@@ -462,27 +443,27 @@ class LyProxyHandler(LyRequestHandler):
         # for link
         sre = u'href="/([^"]*)'
         if self.port == 80:
-            dre = u'href="http://luoyun.ylinux.org/proxy?host=%s&uri=/\g<1>"' % self.host
+            dre = u'href="/proxy?host=%s&uri=/\g<1>"' % self.host
         else:
-            dre = u'href="http://luoyun.ylinux.org/proxy?host=%s&port=%s&uri=/\g<1>"' % (self.host, self.port)
+            dre = u'href="/proxy?host=%s&port=%s&uri=/\g<1>"' % (self.host, self.port)
 
         body = re.sub(sre, dre, body)
 
         # for js, css
         sre = u'src="/([^"]*)'
         if self.port == 80:
-            dre = u'src="http://luoyun.ylinux.org/proxy?host=%s&uri=/\g<1>"' % self.host
+            dre = u'src="/proxy?host=%s&uri=/\g<1>"' % self.host
         else:
-            dre = u'src="http://luoyun.ylinux.org/proxy?host=%s&port=%s&uri=/\g<1>"' % (self.host, self.port)
+            dre = u'src="/proxy?host=%s&port=%s&uri=/\g<1>"' % (self.host, self.port)
 
         body = re.sub(sre, dre, body)
 
         # for url
         sre = u'url\(/([^"]*)\)'
         if self.port == 80:
-            dre = u'url(http://luoyun.ylinux.org/proxy?host=%s&uri=/\g<1>)' % self.host
+            dre = u'url(/proxy?host=%s&uri=/\g<1>)' % self.host
         else:
-            dre = u'url(http://luoyun.ylinux.org/proxy?host=%s&port=%s&uri=/\g<1>)' % (self.host, self.port)
+            dre = u'url(/proxy?host=%s&port=%s&uri=/\g<1>)' % (self.host, self.port)
 
         body = re.sub(sre, dre, body)
 

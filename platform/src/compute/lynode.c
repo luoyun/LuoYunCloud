@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <signal.h>
 #include <time.h>
 
@@ -38,8 +39,6 @@
 #include "events.h"
 #include "domain.h"
 #include "node.h"
-
-#define LYNODE_PID_DIR "/var/run"
 
 /* Global value */
 NodeControl *g_c = NULL;
@@ -76,32 +75,31 @@ static void __main_clean(int keeppid)
     ly_epoll_close();
     libvirt_close();
     if (keeppid == 0)
-        lyutil_remove_pid_file(LYNODE_PID_DIR, PROGRAM_NAME);
+        lyutil_remove_pid_file(c->pid_path, PROGRAM_NAME);
     lyauth_free(&g_c->auth);
-    if (c->clc_ip)
-        free(c->clc_ip);
-    if (c->clc_mcast_ip)
-        free(c->clc_mcast_ip);
-    if (c->conf_path)
-        free(c->conf_path);
-    if (c->sysconf_path)
-        free(c->sysconf_path);
-    if (c->node_data_dir)
-        free(c->node_data_dir);
-    if (c->ins_data_dir)
-        free(c->ins_data_dir);
-    if (c->app_data_dir)
-        free(c->app_data_dir);
-    if (c->log_path)
-        free(c->log_path);
-    if (s->clc_ip)
-        free(s->clc_ip);
-    if (s->node_secret)
-        free(s->node_secret);
-    if (g_c->clc_ip)
-        free(g_c->clc_ip);
-    if (g_c->node_ip)
-        free(g_c->node_ip);
+#define MY_SAFE_FREE(p) if (p) { free(p); }
+    MY_SAFE_FREE(c->clc_ip)
+    MY_SAFE_FREE(c->clc_mcast_ip)
+    MY_SAFE_FREE(c->conf_path)
+    MY_SAFE_FREE(c->sysconf_path)
+    MY_SAFE_FREE(c->node_data_dir)
+    MY_SAFE_FREE(c->ins_data_dir)
+    MY_SAFE_FREE(c->app_data_dir)
+    MY_SAFE_FREE(c->log_path)
+    MY_SAFE_FREE(c->vm_template_path)
+    MY_SAFE_FREE(c->vm_xml)
+    MY_SAFE_FREE(c->vm_template_net_nat_path)
+    MY_SAFE_FREE(c->vm_xml_net_nat)
+    MY_SAFE_FREE(c->vm_template_net_br_path)
+    MY_SAFE_FREE(c->vm_xml_net_br)
+    MY_SAFE_FREE(c->vm_template_disk_path)
+    MY_SAFE_FREE(c->vm_xml_disk)
+    MY_SAFE_FREE(c->net_primary)
+    MY_SAFE_FREE(c->net_secondary)
+    MY_SAFE_FREE(s->clc_ip)
+    MY_SAFE_FREE(s->node_secret)
+    MY_SAFE_FREE(g_c->clc_ip)
+    MY_SAFE_FREE(g_c->node_ip)
     if (g_c->node) {
         luoyun_node_info_cleanup(g_c->node);
         free(g_c->node);
@@ -245,8 +243,15 @@ int main(int argc, char *argv[])
         g_c->auth.secret = strdup(s->node_secret);
 
     /* for debuuging */
-    if (c->debug)
+    if (c->debug) {
+        char cwd[1024];
+        if (getcwd(cwd, 1024) == NULL) {
+            printf("Error: failed getting current directory\n");
+            goto out;
+        }
+        printf("current directory is %s\n", cwd);
         __print_config(c);
+    }
 
     /* make sure data directory exists */
     if (lyutil_create_dir(c->node_data_dir)) {
@@ -256,7 +261,7 @@ int main(int argc, char *argv[])
     }
 
     /* check whether program is started already */
-    ret = lyutil_check_pid_file(LYNODE_PID_DIR, PROGRAM_NAME);
+    ret = lyutil_check_pid_file(c->pid_path, PROGRAM_NAME);
     if (ret == 1) {
         printf(_("%s is running already.\n"), PROGRAM_NAME);
         ret = 0;
@@ -269,7 +274,7 @@ int main(int argc, char *argv[])
 
     /* Connect to libvirt daemon */
     if (libvirt_check(c->driver) < 0) {
-        logsimple(_("error connecting hypervisor.\n"));
+        printf(_("error connecting hypervisor.\n"));
         ret = -255;
         goto out;
     }
@@ -280,13 +285,21 @@ int main(int argc, char *argv[])
             printf(_("Run as daemon, log to %s.\n"), c->log_path);
         lyutil_daemonize(__main_clean, keeppidfile);
         logfile(c->log_path, c->debug ? LYDEBUG : c->verbose ? LYINFO : LYWARN);
+
+        /* log currently work dir */
+        char cwd[1024];
+        if (getcwd(cwd, 1024) == NULL) {
+            logsimple(_("failed getting current directory\n"));
+            goto out;
+        }
+        loginfo(_("current directory is %s\n"), cwd);
     }
     else
         logfile(NULL, c->debug ? LYDEBUG : c->verbose ? LYINFO : LYWARN);
     logcallback(ly_node_send_report, 0);
 
     /* create lock file */
-    ret = lyutil_create_pid_file(LYNODE_PID_DIR, PROGRAM_NAME);
+    ret = lyutil_create_pid_file(c->pid_path, PROGRAM_NAME);
     if (ret == 1) {
         logsimple(_("%s is running already.\n"), PROGRAM_NAME);
         goto out;

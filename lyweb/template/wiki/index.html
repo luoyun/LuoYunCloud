@@ -3,29 +3,28 @@
 <%block name="main">
 
 <div id="wiki-main">
+  % if has_permission('admin'):
   <div class="action clearfix">
-    <a id="add-topic" class="button"
-       href="/wiki/topic/add"
-       title="${ _('Post a new topic') }"
-       >${ _("New Topic") }</a>
+    <a id="add-topic" class="ly-btn2 small blue" href="${ reverse_url('wiki:new') }" title="${ _('Post a new topic') }" target="_blank">${ _("New Topic") }</a>
   </div>
+  % endif
 
   % if catalogs:
 
   % for c in catalogs:
-  <div class="catalog">
+  <div class="catalog c">
 
-    <h2><a href="/wiki/catalog/${ c.id }">${ c.name }</a></h2>
+    <h2>${ c.name }</h2>
 
     % for t in c.topics:
-    <div class="topic clearfix">
+    <div class="item c">
       <div class="name">
-        <a href="/wiki/topic/${ t.id }">${ t.name }</a>
+        <a href="${ reverse_url('wiki:view', t.id) }">${ t.name }</a>
       </div>
       <div class="description">
-        <span class="updated">${ fulltime(t.updated) }</span>
+        <span class="datetime">${ fulltime(t.updated) }</span>
         ${ _("by") }
-        <span class="user"><a href="/account/${ t.user_id }">${ t.user.username }</a></span>
+        <span class="user"><a href="${ reverse_url('account:view', t.user_id) }">${ t.user.username }</a></span>
         ${ _("update") }
       </div>
     </div>

@@ -43,6 +43,40 @@ LYCLC_DATA_DIR = @DEFAULT_LYCLC_DATA_DIR@
 LYCLC_LOG_PATH = @DEFAULT_LYCLC_LOG_PATH@
 
 #
+# pid file
+#
+# Default setting is /var/run/lyclc.pid
+#
+LYCLC_PID_PATH = @DEFAULT_LYCLC_PID_PATH@
+
+# 
+# CPU/Memory factors for calculating node resource limit
+#
+LYCLC_NODE_CPU_FACTOR = 4
+LYCLC_NODE_MEM_FACTOR = 2
+
+#
+# Storage limit, in GB
+#
+# if the available space under LYNODE_DATA_DIR is below this setting,
+# new instance won't be allowed to be created on this node
+#
+LYCLC_NODE_STORAGE_LOW = 50
+
+#
+# Virtual Machine name prefix, must be less than 10 characters long
+#
+LYCLC_VM_NAME_PREFIX = i-
+
+#
+# Determine how the node is selected to run an instance
+# 1 : select any node that's available
+# 2 : stop with failure if the node that the instance
+#     was successfully run is not available
+#
+LYCLC_NODE_SELECT = 2
+
+#
 # daemon mode, 1: in daemon mode, 0: not in daemon mode, 
 #              any other values are not valid
 #

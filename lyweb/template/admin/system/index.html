@@ -1,0 +1,17 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
+    <span><a href="${ reverse_url('admin:system') }">${ _("System") }</a></span>
+  </div>
+</div>
+
+<div class="main-wrap">
+  <span><a class="button" href="${ reverse_url('admin:system') }?action=syncdb">${ _("Sync DB") }</a></span>
+</div>
+
+
+</%block>

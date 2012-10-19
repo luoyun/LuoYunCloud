@@ -1,6 +1,7 @@
 <%inherit file="home_base.html"/>
 
 <%block name="main">
+<script type="text/javascript" src="${ STATIC_URL }js/url.js"></script>
 
 
 <div id="banner">
@@ -9,33 +10,27 @@
   <div id="create-instance">
     <a class="button qtiplink" 
        title="${ _('Create a new instance') }" 
-       href="/appliance">${ _("Create New Instance") }</a>
+       href="${ reverse_url('instance:create') }">${ _("Create New Instance") }</a>
   </div>
-  % endif
 
   <div class="info-list">
 
     <div class="info">
       <div class="c1">${ _("Appliance") }</div>
-      <div class="c2">
-        <a class="qtiplink"
-           title="${ _('View all appliance') }" 
-           href="/appliance"><span class="count">
-            ${ TOTAL_APPLIANCE }</span></a>
-      </div>
+      <div class="c2">${ TOTAL_APPLIANCE }</div>
     </div>
 
     <div class="info">
       <div class="c1">${ _("Instance") }</div>
       <div class="c2">
-        <span class="count">${ RUNNING_INSTANCE }/${ TOTAL_INSTANCE }</span>
+        <span class="count">${ USED_INSTANCE }/${ TOTAL_INSTANCE }</span>
       </div>
     </div>
 
     <div class="info">
       <div class="c1">${ _("CPUs") }</div>
       <div class="c2"><span class="count">
-          ${ TOTAL_CPU }</span>
+          ${ USED_CPU }/${ TOTAL_CPU }</span>
       </div>
     </div>
 
@@ -55,23 +50,26 @@ style="width: 0%"
 
   </div>
 
+  % else:
+  <div>${ _("Welcome, guest !") }</div>
+  % endif
 </div>
 
+% if current_user:
+<div class="view-method">
+  <div class="single-choice">
+    ${ _("View") }
+    <input type='checkbox' value="self" />${ _("myself") }
+    <input type='checkbox' value="all" />${ _("all") }
+  </div>
+</div>
+% endif
 
 <div id="instance-list" class="clearfix">
-  <h2>${ _("Instances List") }</h2>
-<%doc>
-  <div class="sort-method">
-    <span>${ _("Current instances, sorted by") }</span>
-    <span><a href="/">${ _("Default") }</a></span>
-    <span>
-      <a title="${ _('Sorted by updated') }" 
-         href="/?by=updated">${ _("Updated") }</a></span>
-  </div>
-</%doc>
+##  <h2>${ _("Instances List") }</h2>
 
-  % if not INSTANCE_LIST:
-  <p>${ _("Have not any instance yet !") }</p>
+  % if not INSTANCE_LIST.count():
+  <p>${ _("No instance found!") }</p>
   % endif
 
   % for I in INSTANCE_LIST:
@@ -79,15 +77,11 @@ style="width: 0%"
 
     <div class="logo">
       <a href="/instance/${I.id}">
-        <img src="${ instance_logo_url(I.logo) }" /></a>
+        <img src="${ I.logo_url }" /></a>
       <span class="count instance-id">${ I.id }</span>
       <span class="instance-status">
-        % if I.status not in [0, 1, 2, 4, 5, 9, 245, 255]:
-        <img src="${ THEME_URL }icons/InstanceStatus/running.gif"/>
-        % else:
         <img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png"  alt="Stauts Image"/>
-        % endif
-        <span class="status-string" style="display: none;">${ instance_status(I.status) }</span>
+        <span class="status-string" style="display: none;">${ I.status_string }</span>
       </span>
     </div>
 
@@ -95,8 +89,7 @@ style="width: 0%"
       <span class="name">${ I.name }</span>
       % if I.status in [4, 5]:
       <span class="ip">
-        <a href="/proxy?host=${ I.ip }&port=8080" title="${ _('Service is running') }">${ I.ip }</a>
-##        <a href="http://${ I.ip }:8080" title="${ _('Service is running') }">${ I.ip }</a>
+        <a href="${ I.home_url(current_user) }" title="${ _('Service is running') }" target="_blank">${ I.ip }</a>
       </span>
       % endif
     </div>
@@ -116,7 +109,7 @@ style="width: 0%"
           </tr>
           <tr>
             <td>${ _("Status") }</td>
-            <td>${ instance_status(I.status) }</td>
+            <td>${ I.status_string }</td>
           </tr>
           <tr>
             <td>${ _("IP") }</td>
@@ -139,6 +132,7 @@ style="width: 0%"
 <script type="text/javascript">
   InstanceLogoHover();
   InstanceStatusHover();
+  instance_view_method();
 </script>
 
 </%block>

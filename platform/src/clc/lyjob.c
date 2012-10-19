@@ -190,42 +190,54 @@ int job_update_status(LYJobInfo * job, int status)
         JOB_IS_CANCELLED(status))
         time(&job->j_ended);
 
-    if (db_job_update_status(job) < 0)
+    if (db_job_update_status(job) < 0) {
+        logerror(_("db error %(%d)\n"), __func__, __LINE__);
         return -1;
+    }
 
     if (status == LY_S_WAITING_STARTING_OSM) {
         InstanceInfo ii;
         ii.ip = "0.0.0.0";
         ii.status = DOMAIN_S_START;
         int node_id = ly_entity_db_id(job->j_ent_id);
-        return db_instance_update_status(job->j_target_id, &ii, node_id);
+        if (db_instance_update_status(job->j_target_id, &ii, node_id) < 0) {
+            logerror(_("db error %(%d)\n"), __func__, __LINE__);
+            return -1;
+        }
+        return 0;
     }
 
     if (JOB_IS_FINISHED(status) ||
         JOB_IS_TIMEOUT(status) ||
         JOB_IS_CANCELLED(status)) {
-        /* job ended with various reason */
-        job_remove(job);
-
+        
         /* check whether any further action should be taken
         ** as a result of job status change
         */
         if (JOB_IS_CANCELLED(status) ||
-            job->j_target_type != JOB_TARGET_INSTANCE)
+            job->j_target_type != JOB_TARGET_INSTANCE) {
+            job_remove(job);
             return 0;
+        }
 
         /* update instance info */
         InstanceInfo ii;
+        int ret = 0;
 
         /* need to query status if timed out */
         if (JOB_IS_TIMEOUT(status)) {
+            loginfo(_("job %d is timed out\n"), job->j_id);
+            int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, job->j_target_id);
+            if (ent_id > 0) {
+                loginfo(_("release entity %d\n"), ent_id);
+                ly_entity_release(ent_id);
+            }
             ii.ip = NULL;
             ii.status = DOMAIN_S_NEED_QUERY;
-            return db_instance_update_status(job->j_target_id, &ii, -1);
+            ret = db_instance_update_status(job->j_target_id, &ii, -1);
+            job_internal_query_instance(job->j_target_id);
         }
-
-        ii.ip = "0.0.0.0";
-        if (job->j_action == LY_A_NODE_RUN_INSTANCE && 
+        else if (job->j_action == LY_A_NODE_RUN_INSTANCE && 
             status == LY_S_FINISHED_SUCCESS) {
             /*
             int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, job->j_target_id);
@@ -233,20 +245,33 @@ int job_update_status(LYJobInfo * job, int status)
             ii.ip = oi->ip;
             ii.status = DOMAIN_S_SERVING;
             int node_id = ly_entity_db_id(job->j_ent_id);
-            return db_instance_update_status(job->j_target_id, &ii, node_id);
+            ret = db_instance_update_status(job->j_target_id, &ii, node_id);
             */
-            return 0; /* done while processing osm report */
+            ret = 0; /* done while processing osm report */
         }
         else if (job->j_action == LY_A_NODE_STOP_INSTANCE &&
                  (status == LY_S_FINISHED_SUCCESS ||
                   status == LY_S_FINISHED_INSTANCE_NOT_RUNNING)) {
+            logdebug(_("instance %d stopped\n"), job->j_target_id);
+            int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, job->j_target_id);
+            if (ent_id > 0) {
+                loginfo(_("release entity %d\n"), ent_id);
+                ly_entity_release(ent_id);
+            }
+            ii.ip = "0.0.0.0";
             ii.status = DOMAIN_S_STOP;
-            return db_instance_update_status(job->j_target_id, &ii, -1);
+            ret = db_instance_update_status(job->j_target_id, &ii, -1);
         }
         else if (job->j_action == LY_A_NODE_DESTROY_INSTANCE &&
                  status == LY_S_FINISHED_SUCCESS) {
-            ii.status = DOMAIN_S_STOP;
-            return db_instance_update_status(job->j_target_id, &ii, 0);
+            logdebug(_("delete instance %d\n"), job->j_target_id);
+            ret = db_instance_delete(job->j_target_id);
+        }
+
+        job_remove(job);
+        if (ret < 0)  {
+            logerror(_("db error %(%d)\n"), __func__, __LINE__);
+            return ret;
         }
     }
 
@@ -303,6 +328,7 @@ static int __job_start_instance(LYJobInfo * job)
         return -1;
     }
 
+    int job_status = JOB_S_FAILED;
     int node_id = 0;
     NodeCtrlInstance ci;
     bzero(&ci, sizeof(NodeCtrlInstance));
@@ -326,26 +352,43 @@ static int __job_start_instance(LYJobInfo * job)
         if (ly_entity_is_registered(ent_id) && ly_entity_is_enabled(ent_id))
             logdebug(_("node %d is ready on entity %d\n"), node_id, ent_id);
         else {
-            if (!ly_entity_is_enabled(ent_id))
-                loginfo(_("node %d is not enabled\n"), node_id);
-            else if (!ly_entity_is_online(ent_id) == 0)
-                loginfo(_("node %d is not online\n"), node_id);
-            else
-                loginfo(_("node %d is not regisered\n"), node_id);
+            if (!ly_entity_is_enabled(ent_id)) {
+                logwarn(_("node %d is not enabled\n"), node_id);
+                job_status = LY_S_FINISHED_FAILURE_NODE_NOT_ENABLED;
+            }
+            else if (!ly_entity_is_online(ent_id) == 0) {
+                logwarn(_("node %d is not online\n"), node_id);
+                job_status = LY_S_FINISHED_FAILURE_NODE_NOT_ONLINE;
+            }
+            else {
+                logwarn(_("node %d is not regisered\n"), node_id);
+                job_status = LY_S_FINISHED_FAILURE_NODE_NOT_REGISTERED;
+            }
+            if (g_c->node_select == NODE_SELECT_LAST_ONLY) {
+                logerror(_("node %d is not ready\n" ), node_id);
+                goto failed;
+            }
             node_id = 0;
+            job_status = JOB_S_FAILED;
         }
     }
 
-    if (node_id <= 0) {
+    if (node_id <= 0 || ci.ins_status == DOMAIN_S_NEW) {
         logdebug(_("search node for instance %d\n"), ci.ins_id);
         ent_id = node_schedule();
-        if (ent_id < 0) {
-            logwarn(_("no node available to run instance(%d). "
-                      "job pending...\n"),
-                       ci.ins_id);
-            job_update_status(job, JOB_S_PENDING);
-            return 0;
+        if (ent_id == NODE_SCHEDULE_NODE_BUSY) {
+            logwarn(_("failed to run instance %d, "
+                      "all nodes are busy.\n"), ci.ins_id);
+            job_status = LY_S_FINISHED_FAILURE_NODE_BUSY;
+            goto failed;
         }
+        else if (ent_id < 0) {
+            logwarn(_("failed to run instance %d, "
+                      "no node is available.\n"), ci.ins_id);
+            job_status = LY_S_FINISHED_FAILURE_NODE_NOT_AVAIL;
+            goto failed;
+        }
+
         node_id = ly_entity_db_id(ent_id);
     }
 
@@ -372,28 +415,11 @@ static int __job_start_instance(LYJobInfo * job)
             goto failed;
         }
     }
-#if 0
-    char path[PATH_MAX];
-    snprintf(path, PATH_MAX, "%s/%d", g_c->clc_data_dir, ci.ins_id);
-    ci.storage_method = STORAGE_NFS;
-    ci.storage_parm = strdup(path);
-    if (ci.ins_status == DOMAIN_S_NEW) {
-        if (access(path, F_OK) != 0 && mkdir(path, 0700) != 0) {
-            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-            goto failed;
-        }
-        snprintf(path, PATH_MAX, "%s/%d/scripts", g_c->clc_data_dir, ci.ins_id);
-        if (access(path, F_OK) != 0 && mkdir(path, 0700) != 0) {
-            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-            goto failed;
-        }
-        snprintf(path, PATH_MAX, "%s/%d/data", g_c->clc_data_dir, ci.ins_id);
-        if (access(path, F_OK) != 0 && mkdir(path, 0700) != 0) {
-            logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-            goto failed;
-        }
+
+    if (db_instance_update_status(ci.ins_id, NULL, node_id) < 0) {
+        logerror(_("db error %(%d)\n"), __func__, __LINE__);
+        return -1;
     }
-#endif
 
     char *xml = lyxml_data_instance_run(&ci, NULL, 0);
     if (xml == NULL) {
@@ -417,7 +443,7 @@ static int __job_start_instance(LYJobInfo * job)
 
 failed:
     luoyun_node_ctrl_instance_cleanup(&ci);
-    job_update_status(job, JOB_S_FAILED);
+    job_update_status(job, job_status);
     return -1;
 }
 
@@ -449,9 +475,11 @@ static int __job_control_instance_simple(LYJobInfo * job)
         luoyun_node_ctrl_instance_print(&ci);
 
     if (node_id <= 0) {
-        logerror(_("no node found for job %d\n"), job->j_id);
-        job_update_status(job, JOB_S_FINISHED);
+        logwarn(_("no node found for job %d\n"), job->j_id);
         //goto failed;
+        luoyun_node_ctrl_instance_cleanup(&ci);
+        job_update_status(job, JOB_S_FINISHED);
+        return 0;
     }
     logdebug(_("send job to node %d\n"), node_id);
 
@@ -486,14 +514,6 @@ static int __job_control_instance_simple(LYJobInfo * job)
         goto failed;
     }
     free(xml);
-
-    /* release instance entity for certain action */
-    if (job->j_action == LY_A_NODE_REBOOT_INSTANCE || 
-        job->j_action == LY_A_NODE_STOP_INSTANCE) {
-        ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, ci.ins_id);
-        loginfo(_("release entity %d\n"), ent_id);
-        ly_entity_release(ent_id);
-    }
 
     luoyun_node_ctrl_instance_cleanup(&ci);
     return 0;
@@ -756,6 +776,7 @@ int job_init(void)
 
     /* init instance status in db */
     db_instance_init_status();
+    db_node_init_status();
 
     return 0;
 }

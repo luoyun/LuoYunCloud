@@ -6,33 +6,1300 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: LuoYun 0.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-17 12:47+0800\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2012-09-06 18:06+0800\n"
+"PO-Revision-Date: 2012-09-04 15:31+0800\n"
+"Last-Translator: Li Jian <lijian@luoyun.co>\n"
+"Language-Team: LuoYun <contact@luoyun.co>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: urls.py:55
+#: app/wiki/models.py:34
+#, python-format
+msgid "[WikiCatalog(%s)]"
+msgstr ""
+
+#: app/wiki/models.py:73
+#, python-format
+msgid "[Topic(%s)]"
+msgstr ""
+
+#: app/wiki/views.py:23
+msgid "Servers Home"
+msgstr ""
+
+#: app/wiki/views.py:35
+#, python-format
+msgid "View topic: %s"
+msgstr ""
+
+#: app/wiki/views.py:63
+msgid "Catalog not found"
+msgstr ""
+
+#: app/wiki/views.py:70 app/wiki/views.py:88
+msgid "New Topic"
+msgstr ""
+
+#: app/wiki/views.py:119
+#, python-format
+msgid "Edit Topic %s"
+msgstr ""
+
+#: app/wiki/views.py:135
+msgid "Edit Topic"
+msgstr ""
+
+#: app/wiki/forms.py:19 app/wiki/forms.py:26 app/appliance/forms.py:12
+#: app/instance/forms.py:17 app/instance/forms.py:30 app/admin/forms.py:29
+#: app/admin/forms.py:37
+msgid "Name"
+msgstr "名字"
+
+#: app/wiki/forms.py:20 app/wiki/forms.py:27
+msgid "Body"
+msgstr "正文"
+
+#: app/wiki/forms.py:21 app/wiki/forms.py:28 app/appliance/forms.py:14
+msgid "Catalog"
+msgstr "目录"
+
+#: app/job/models.py:12 app/instance/models.py:83
 msgid "unknown"
 msgstr "未知"
 
-#: urls.py:56
-msgid "new domain that hasn't run once"
-msgstr "还未运行过"
+#: app/job/models.py:13
+msgid "action initialized"
+msgstr "任务已经初始化"
 
-#: urls.py:57
-msgid "stopped"
-msgstr "关机"
+#: app/job/models.py:17
+msgid "running"
+msgstr "正在运行"
 
-#: urls.py:58
-msgid "started by hypervisor"
-msgstr "虚拟机器正在启动"
+#: app/job/models.py:18
+msgid "searching for node server"
+msgstr "查找云节点"
 
-#: app/home/views.py:57
-msgid "LuoYun Home"
+#: app/job/models.py:19
+msgid "sending request to node server"
+msgstr "向云节点发送请求"
+
+#: app/job/models.py:20
+msgid "waiting for resource available on node server"
+msgstr "等待云节点上的资源可用"
+
+#: app/job/models.py:21
+msgid "downloading appliance image"
+msgstr "正在下载应用库"
+
+#: app/job/models.py:22
+msgid "checking appliance image"
+msgstr "正在检查应用库"
+
+#: app/job/models.py:23
+msgid "creating instance disk file"
+msgstr "正在创建虚拟磁盘"
+
+#: app/job/models.py:24
+msgid "mounting instance disk file"
+msgstr "正在挂载虚拟磁盘"
+
+#: app/job/models.py:25
+msgid "configuring instance"
+msgstr "正在配置虚拟机"
+
+#: app/job/models.py:26
+msgid "unmounting instance disk file"
+msgstr "正在卸载虚拟磁盘"
+
+#: app/job/models.py:27
+msgid "starting instance virtual machine"
+msgstr "正在启动虚拟服务器"
+
+#: app/job/models.py:28
+msgid "stopping instance virtual machine"
+msgstr "正在停止虚拟服务器"
+
+#: app/job/models.py:29
+msgid "Last Running Status"
+msgstr "最终运行状态"
+
+#: app/job/models.py:33
+msgid "finished"
+msgstr "已完成"
+
+#: app/job/models.py:34
+msgid "finished successfully"
+msgstr "已正确完成"
+
+#: app/job/models.py:35
+msgid "instance running already"
+msgstr "虚拟服务器已经启动"
+
+#: app/job/models.py:36
+msgid "instance not running"
+msgstr "虚拟服务器没有运行"
+
+#: app/job/models.py:37
+msgid "instance not exist"
+msgstr "虚拟服务器不存在"
+
+#: app/job/models.py:38
+msgid "failed"
+msgstr "失败"
+
+#: app/job/models.py:39
+msgid "node server not available"
+msgstr "没有可用的云节点"
+
+#: app/job/models.py:40
+msgid "node server busy"
+msgstr "云节点现在非常忙"
+
+#: app/job/models.py:41
+msgid "appliance not available"
+msgstr "应用库不可用"
+
+#: app/job/models.py:42
+msgid "appliance error"
+msgstr "应用库错误"
+
+#: app/job/models.py:43
+msgid "Last Finish Status"
+msgstr "最终完成状态"
+
+#: app/job/models.py:47
+msgid "waiting"
+msgstr "等待中"
+
+#: app/job/models.py:48
+msgid "starting OS manager"
+msgstr "正在启动虚拟服务器后台程序"
+
+#: app/job/models.py:49
+msgid "syncing with OS manager"
+msgstr "正在与虚拟服务器后台程序同步"
+
+#: app/job/models.py:50
+msgid "checking instance status"
+msgstr "正在检查虚拟服务器的状态"
+
+#: app/job/models.py:51
+msgid "Last Waiting Status"
+msgstr "最终等待状态"
+
+#: app/job/models.py:54
+msgid "pending"
+msgstr "任务挂起"
+
+#: app/job/models.py:57
+msgid "timeout"
+msgstr "任务超时"
+
+#: app/job/models.py:59
+msgid "cancel"
+msgstr "任务取消"
+
+#: app/job/models.py:60
+msgid "Internal Error"
+msgstr "内部错误"
+
+#: app/job/models.py:61
+msgid "work started already"
+msgstr "任务已经开始"
+
+#: app/job/models.py:62
+msgid "node/instance busy"
+msgstr "云节点/虚拟服务器忙碌"
+
+#: app/job/models.py:63
+msgid "request cancelled"
+msgstr "任务取消"
+
+#: app/job/models.py:64
+msgid "Last Cancel Status"
+msgstr "最终取消状态"
+
+#: app/job/models.py:69
+msgid "enable node"
+msgstr "启动云节点"
+
+#: app/job/models.py:70
+msgid "disable node"
+msgstr "禁用云节点"
+
+#: app/job/models.py:72
+msgid "run"
+msgstr "运行"
+
+#: app/job/models.py:73
+msgid "stop"
+msgstr "停止"
+
+#: app/job/models.py:74
+msgid "destroy"
+msgstr "注销"
+
+#: app/job/models.py:75
+msgid "query"
+msgstr "查询"
+
+#: app/job/models.py:108
+#, python-format
+msgid "[Job(%s)]"
+msgstr "[任务(%s)]"
+
+#: app/job/models.py:112 app/job/models.py:116
+msgid "Unknown"
+msgstr "未知"
+
+#: app/appliance/models.py:40
+#, python-format
+msgid "[Catalog(%s)]"
+msgstr "[类别(%s)]"
+
+#: app/appliance/models.py:84
+#, python-format
+msgid "[Appliance(%s)]"
+msgstr "[应用库(%s)]"
+
+#: app/appliance/views.py:38
+#, python-format
+msgid "No such appliance: %s !"
+msgstr "无此应用： %s！"
+
+#: app/appliance/views.py:46
+#, python-format
+msgid "Appliance %s is private !"
+msgstr "应用 %s 是私有的！"
+
+#: app/appliance/views.py:52 app/instance/views.py:127
+msgid "Only owner can do this!"
+msgstr "只有所有者才能这样做！"
+
+#: app/appliance/views.py:62
+msgid "Appliance Home"
+msgstr "公共应用库"
+
+#: app/appliance/views.py:111
+msgid "Upload Appliance"
+msgstr "上传应用"
+
+#: app/appliance/views.py:139
+#, python-format
+msgid "Save %s failed: %s"
+msgstr "保存 %s 失败: %s"
+
+#: app/appliance/views.py:206 app/appliance/views.py:224
+#: app/appliance/views.py:421 app/appliance/views.py:447
+#: app/instance/views.py:473 app/instance/views.py:1512
+msgid "No permission!"
+msgstr "没有权限！"
+
+#: app/appliance/views.py:216
+msgid "Edit Appliance "
+msgstr "编辑应用 "
+
+#: app/appliance/views.py:236
+#, python-format
+msgid "%s"
+msgstr ""
+
+#: app/appliance/views.py:244
+#, python-format
+msgid "DB : %s"
+msgstr "数据库： %s"
+
+#: app/appliance/views.py:245
+msgid "Edit Appliance"
+msgstr "编辑应用"
+
+#: app/appliance/views.py:254
+msgid "Logo file must smaller than 2M !"
+msgstr "应用图标文件需小于2M！"
+
+#: app/appliance/views.py:268 app/account/views.py:404
+#, python-format
+msgid "No support image, support is %s"
+msgstr "不支持的图像格式，当前系统支持图像格式有 %s"
+
+#: app/appliance/views.py:293
+#, python-format
+msgid "Have not found appliance %s !"
+msgstr "没有找到这个应用：%s ！"
+
+#: app/appliance/views.py:298
+msgid "No permission to delete appliance !"
+msgstr "没有权限删除应用！"
+
+#: app/appliance/views.py:305
+msgid "Have instances exist"
+msgstr "正在被虚拟服务器使用"
+
+#: app/appliance/views.py:317
+#, python-format
+msgid "Delete %s failed: %s"
+msgstr "删除 %s 失败： %s"
+
+#: app/appliance/views.py:345
+msgid "View Appliance"
+msgstr "查看应用"
+
+#: app/appliance/views.py:417
+msgid "No such appliance!"
+msgstr "无此应用！"
+
+#: app/appliance/views.py:443
+msgid "No such appliance !"
+msgstr "无此应用！"
+
+#: app/appliance/forms.py:13 app/instance/forms.py:31 app/admin/forms.py:38
+msgid "Summary"
+msgstr "概述"
+
+#: app/appliance/forms.py:15 app/account/forms.py:48
+msgid "Logo"
+msgstr "图标"
+
+#: app/appliance/forms.py:16 app/instance/forms.py:32 app/admin/forms.py:30
+#: app/admin/forms.py:39
+msgid "Description"
+msgstr "详细描述"
+
+#: app/message/models.py:39
+#, python-format
+msgid "[Message(%s:%s)]"
+msgstr "[站内信(%s:%s)]"
+
+#: app/message/views.py:19
+#, python-format
+msgid "Have not found message %s"
+msgstr "没有发现此消息：%s"
+
+#: app/message/views.py:24
+msgid "You have no permissions to read this message!"
+msgstr "您无权限阅读此消息！"
+
+#: app/message/views.py:34
+msgid "Message Home"
+msgstr "我的站内信"
+
+#: app/message/views.py:46
+msgid "Message Inbox"
+msgstr "收件箱"
+
+#: app/message/views.py:60
+msgid "Message Outbox"
+msgstr "发件箱"
+
+#: app/message/views.py:72
+msgid "Not your message !"
+msgstr "这不是您的消息！"
+
+#: app/message/views.py:74 app/message/views.py:96
+#, python-format
+msgid "View Message: %s"
+msgstr "查看站内信：%s"
+
+#: app/message/views.py:94
+msgid "Not your send message !"
+msgstr "这不是您的消息！"
+
+#: app/message/views.py:119 app/message/views.py:146
+msgid "New Message"
+msgstr "新消息"
+
+#: app/message/views.py:143 app/account/views.py:96
+msgid "No such user !"
+msgstr "无此用户！"
+
+#: app/message/views.py:158
+msgid "Can not delete this message ! A word spoken is past recalling."
+msgstr "不能删除这条消息！因为“说出去的话如泼出去的水”。"
+
+#: app/message/views.py:166
+#, python-format
+msgid "Delete message %s success !"
+msgstr "删除消息 %s 成功！"
+
+#: app/message/views.py:181
+#, python-format
+msgid ""
+"On %s, %s wrote:\n"
+"%s"
+msgstr ""
+"在 %s ， %s 写到：\n"
+"%s"
+
+#: app/message/views.py:183 app/message/views.py:208
+msgid "Reply Message"
+msgstr "回复消息"
+
+#: app/message/forms.py:17
+msgid "Send To"
+msgstr "发送到"
+
+#: app/message/forms.py:18 app/message/forms.py:23
+msgid "Subject"
+msgstr "标题"
+
+#: app/message/forms.py:19 app/message/forms.py:24
+msgid "Content"
+msgstr "正文"
+
+#: app/system/models.py:31 app/install/models.py:31
+#, python-format
+msgid "[LuoYun(%s=%s)]"
+msgstr ""
+
+#: app/system/views.py:205
+msgid "Network pool of LuoYun"
+msgstr "IP地址池"
+
+#: app/system/forms.py:32
+#, python-format
+msgid "Error IP: %s"
+msgstr "错误IP： %s"
+
+#: app/system/forms.py:38
+msgid "Save directory"
+msgstr "保存目录"
+
+#: app/system/forms.py:39
+msgid "Download url prefix"
+msgstr "下载地址前缀"
+
+#: app/system/forms.py:40
+msgid "Admin email"
+msgstr "管理员邮箱"
+
+#: app/system/forms.py:45 app/instance/forms.py:51
+msgid "IP"
+msgstr ""
+
+#: app/system/forms.py:46
+msgid "Port"
+msgstr "端口"
+
+#: app/system/forms.py:51 app/install/forms.py:15
+msgid "server"
+msgstr "主机地址"
+
+#: app/system/forms.py:52 app/install/forms.py:16
+msgid "engine"
+msgstr "数据库引擎"
+
+#: app/system/forms.py:53 app/install/forms.py:17
+msgid "username"
+msgstr "用户名"
+
+#: app/system/forms.py:54 app/install/forms.py:18
+msgid "password"
+msgstr "密码"
+
+#: app/system/forms.py:55 app/install/forms.py:19
+msgid "db name"
+msgstr "数据库名"
+
+#: app/system/forms.py:60 app/system/forms.py:69
+msgid "Nameservers"
+msgstr "域名解析服务器"
+
+#: app/system/forms.py:65
+msgid "Start IP"
+msgstr "开始IP"
+
+#: app/system/forms.py:66
+msgid "End IP"
+msgstr "结束IP"
+
+#: app/system/forms.py:67 app/instance/forms.py:52
+msgid "Netmask"
+msgstr "子网掩码"
+
+#: app/system/forms.py:68 app/instance/forms.py:53
+msgid "Gateway"
+msgstr "网关"
+
+#: app/system/forms.py:70
+msgid "Exclude ip list"
+msgstr "排除在外的IP"
+
+#: app/system/forms.py:76
+msgid "Top domain"
+msgstr "一级域名"
+
+#: app/system/forms.py:77
+msgid "Name prefix"
+msgstr "名称前缀"
+
+#: app/system/forms.py:78
+msgid "Name suffix"
+msgstr "名称后缀"
+
+#: app/system/forms.py:84
+msgid "Config dir"
+msgstr "配置文件目录"
+
+#: app/system/forms.py:85
+msgid "Log dir"
+msgstr "日志文件目录"
+
+#: app/system/forms.py:86
+msgid "Nginx program"
+msgstr "Nginx 程序路径"
+
+#: app/system/forms.py:91
+msgid "Registration Protocol"
+msgstr "注册协议"
+
+#: app/system/forms.py:97
+msgid "Welcome New User"
+msgstr "欢迎新用户"
+
+#: app/instance/models.py:75
+#, python-format
+msgid "<Instance(%s)>"
+msgstr "<虚拟服务器(%s)>"
+
+#: app/instance/models.py:84
+msgid "new instance that hasn't run once"
+msgstr "新建虚拟服务器还未运行过"
+
+#: app/instance/models.py:85
+msgid "instance is stopped"
+msgstr "虚拟服务器已经关机"
+
+#: app/instance/models.py:86
+msgid "instance is started by hypervisor"
+msgstr "虚拟服务器已经启动"
+
+#: app/instance/models.py:87
+msgid "osm in instance connected"
+msgstr "虚拟服务器管理程序已经连接上"
+
+#: app/instance/models.py:88
+msgid "application is running"
+msgstr "虚拟服务器服务程序正在运行"
+
+#: app/instance/models.py:89
+msgid "instance is suspend"
+msgstr "虚拟服务器已经暂停"
+
+#: app/instance/models.py:90
+msgid "instance is deleted"
+msgstr "虚拟服务器已被删除"
+
+#: app/instance/models.py:91
+msgid "instance needs queryed"
+msgstr "虚拟服务器需要查询"
+
+#: app/instance/models.py:92
+msgid "instance is not exist"
+msgstr "虚拟服务器不存在"
+
+#: app/instance/models.py:95
+msgid "Unknown Status"
+msgstr "未知"
+
+#: app/instance/views.py:109
+#, python-format
+msgid "No such instance: %s !"
+msgstr "无此虚拟服务器：%s !"
+
+#: app/instance/views.py:117
+#, python-format
+msgid "Instance %s is private !"
+msgstr "虚拟服务器 %s 是私有的！"
+
+#: app/instance/views.py:121
+#, python-format
+msgid "Instance %s is deleted !"
+msgstr "虚拟服务器 %s 已被删除！"
+
+#: app/instance/views.py:143
+msgid "Can not run duplication job!"
+msgstr "请不要重复运行同一个任务！"
+
+#: app/instance/views.py:162
+#, python-format
+msgid "Connect to control server error: %s"
+msgstr "连接云控制服务器错误： %s"
+
+#: app/instance/views.py:197
+#, python-format
+msgid "unbinding domain error: %s"
+msgstr "绑定域名错误：%s"
+
+#: app/instance/views.py:202
+msgid "Success!"
+msgstr "成功！"
+
+#: app/instance/views.py:232
+msgid "LuoYun Public Instance"
+msgstr "公共虚拟服务器"
+
+#: app/instance/views.py:346
+#, python-format
+msgid "Baseinfo of instance %s"
+msgstr "虚拟服务器 %s 的基本信息"
+
+#: app/instance/views.py:355
+#, python-format
+msgid "Resource of instance %s"
+msgstr "虚拟服务器 %s 的资源"
+
+#: app/instance/views.py:370
+#, python-format
+msgid "Network configuration of instance %s"
+msgstr "虚拟服务器 %s 的网络配置"
+
+#: app/instance/views.py:386
+#, python-format
+msgid "Storage configuration of instance %s"
+msgstr "虚拟服务器 %s 的存储配置"
+
+#: app/instance/views.py:407
+msgid "Configure Password"
+msgstr "配置密码"
+
+#: app/instance/views.py:418
+msgid "Delete Instance"
+msgstr "删除虚拟服务器"
+
+#: app/instance/views.py:432
+msgid "Job History"
+msgstr "任务历史"
+
+#: app/instance/views.py:440
+msgid "Domain Binding"
+msgstr "域名绑定"
+
+#: app/instance/views.py:456
+msgid "Configure WebSSH"
+msgstr "配置 WebSSH"
+
+#: app/instance/views.py:470
+#, python-format
+msgid "No instance %s!"
+msgstr "无此虚拟服务器 %s！"
+
+#: app/instance/views.py:477
+msgid "Can not delete a running instance!"
+msgstr "虚拟服务器正在运行，不能删除！"
+
+#: app/instance/views.py:495
+#, python-format
+msgid "Instance %s is deleted!"
+msgstr "虚拟服务器 %s 已被删除！"
+
+#: app/instance/views.py:510
+msgid "Instance is not running!"
+msgstr "虚拟服务器未运行！"
+
+#: app/instance/views.py:512 app/instance/views.py:541
+#: app/instance/views.py:572 app/instance/views.py:661
+msgid "Unknown error !"
+msgstr "未知错误！"
+
+#: app/instance/views.py:517
+msgid "Stop instance succeed"
+msgstr "停止虚拟服务器成功"
+
+#: app/instance/views.py:546
+#, python-format
+msgid "Query instance %s succeed!"
+msgstr "查询虚拟服务器 %s 成功！"
+
+#: app/instance/views.py:566
+msgid "Instance is running already!"
+msgstr "虚拟服务器已在运行！"
+
+#: app/instance/views.py:577
+#, python-format
+msgid "Run instance %s succeed!"
+msgstr "运行虚拟服务器 %s 成功！"
+
+#: app/instance/views.py:605
+msgid "No resources to run instance:"
+msgstr "没有足够资源运行虚拟服务器："
+
+#: app/instance/views.py:608
+#, python-format
+msgid "the total number of CPUs you have is %s, %s used."
+msgstr "您总共拥有 %s 个 CPU 资源, 已经使用 %s 个。"
+
+#: app/instance/views.py:610
+#, python-format
+msgid "the total amount of memory you have is %s MB, %s MB used."
+msgstr "您总共拥有 %s MB 的内存资源，已经使用 %s MB 。"
+
+#: app/instance/views.py:647 app/instance/views.py:1390
+#, python-format
+msgid "binding domain error: %s"
+msgstr "绑定域名失败：%s"
+
+#: app/instance/views.py:670
+#, python-format
+msgid "Have job running on instance %s."
+msgstr "针对虚拟服务器 %s 的任务正在运行。"
+
+#: app/instance/views.py:672
+#, python-format
+msgid "Have not job running on instance %s."
+msgstr "没有针对虚拟服务器 %s 的任务在运行。"
+
+#: app/instance/views.py:687
+#, python-format
+msgid "Appliance is private: %s"
+msgstr "应用 %s 是私有的！"
+
+#: app/instance/views.py:691
+#, python-format
+msgid "Appliance is locked: %s"
+msgstr "应用已被锁定： %s"
+
+#: app/instance/views.py:717
+msgid "Create Instance"
+msgstr "创建虚拟服务器"
+
+#: app/instance/views.py:728
+msgid "No appliance found, please upload appliance first!"
+msgstr "没有发现可用应用，请先上传应用！"
+
+#: app/instance/views.py:759
+msgid "You have used the name for a instance !"
+msgstr "在某个虚拟服务器上你已经用过这个名字！不可以重复使用。"
+
+#: app/instance/views.py:764 app/instance/views.py:956
+#, python-format
+msgid "cpus can not greater than %s"
+msgstr "CPU 个数不能超过 %s"
+
+#: app/instance/views.py:766 app/instance/views.py:958
+#, python-format
+msgid "memory can not greater than %s"
+msgstr "内存大小不能超过 %s MB"
+
+#: app/instance/views.py:885 app/instance/views.py:910
+msgid "Edit Baseinfo"
+msgstr "编辑基本信息"
+
+#: app/instance/views.py:928 app/instance/views.py:960
+#: app/instance/views.py:976
+msgid "Edit Resource"
+msgstr "配置资源"
+
+#: app/instance/views.py:1022 app/instance/views.py:1078
+msgid "Edit Network"
+msgstr "配置网络"
+
+#: app/instance/views.py:1132 app/instance/views.py:1183
+msgid "Edit Storage"
+msgstr "配置存储"
+
+#: app/instance/views.py:1239 app/instance/views.py:1274
+msgid "Edit Root Password for Instance"
+msgstr "配置虚拟服务器 root 用户密码"
+
+#: app/instance/views.py:1294 app/instance/views.py:1324
+msgid "Edit SSH Public Key"
+msgstr "配置 SSH 公钥"
+
+#: app/instance/views.py:1338 app/instance/views.py:1357
+msgid "Configure Domain"
+msgstr "配置域名"
+
+#: app/instance/views.py:1343
+msgid ""
+"can not get domain, domain may not have been configured in Administration "
+"Console."
+msgstr "无法获得域名信息，请联系管理员确认域名是否已正确配置。"
+
+#: app/instance/views.py:1346
+msgid ""
+"Can not get access_ip, please configure instance network or run instance"
+msgstr "无法获得虚拟服务器的IP，请配置网络或运行虚拟服务器"
+
+#: app/instance/views.py:1364
+msgid "Domain is not configured!"
+msgstr "域名未配置！"
+
+#: app/instance/views.py:1372
+msgid "Domain name is taken!"
+msgstr "此名字已被占用！"
+
+#: app/instance/views.py:1374
+msgid "Domain name is too long."
+msgstr "域名太长。"
+
+#: app/instance/views.py:1376
+msgid "Please use alpha characters in domain name!"
+msgstr "自定义的域名只能包含英文字符！"
+
+#: app/instance/views.py:1508
+msgid "No such instance!"
+msgstr "无此虚拟服务器！"
+
+#: app/instance/forms.py:18 app/instance/forms.py:37
+msgid "CPU"
+msgstr "处理器"
+
+#: app/instance/forms.py:19 app/instance/forms.py:38 app/admin/forms.py:22
+msgid "Memory(M)"
+msgstr "内存（M）"
+
+#: app/instance/forms.py:20
+msgid "Hide"
+msgstr "隐藏"
+
+#: app/instance/forms.py:25
+msgid "Appliance"
+msgstr "应用"
+
+#: app/instance/forms.py:42
+msgid "Default"
+msgstr "默认"
+
+#: app/instance/forms.py:50 app/instance/forms.py:66
+msgid "Type"
+msgstr "类型"
+
+#: app/instance/forms.py:57
+msgid "Virtual disk"
+msgstr "虚拟磁盘"
+
+#: app/instance/forms.py:67
+msgid "Size (GB)"
+msgstr "大小（GB）"
+
+#: app/instance/forms.py:72 app/account/forms.py:17 app/account/forms.py:22
+#: app/admin/forms.py:17
+msgid "Password"
+msgstr "密码"
+
+#: app/instance/forms.py:73
+msgid "Confirm"
+msgstr "密码确认"
+
+#: app/instance/forms.py:78
+msgid "SSH Public Key"
+msgstr "SSH 公钥"
+
+#: app/account/models.py:57
+#, python-format
+msgid "[Group(%s)]"
+msgstr "[组(%s)]"
+
+#: app/account/models.py:104
+#, python-format
+msgid "[User(%s)]"
+msgstr "[用户(%s)]"
+
+#: app/account/models.py:170
+#, python-format
+msgid "[UserProfile(%s)]"
+msgstr "[用户属性(%s)]"
+
+#: app/account/models.py:191
+#, python-format
+msgid "[UserPermission(%s)]"
+msgstr "[用户权限(%s)]"
+
+#: app/account/models.py:215
+#, python-format
+msgid "[ApplyUser(%s)]"
+msgstr "[注册申请用户(%s)]"
+
+#: app/account/models.py:243
+#, python-format
+msgid "[User reset password apply (%s)]"
+msgstr "[用户重置密码申请(%s)]"
+
+#: app/account/views.py:85
+msgid ""
+"You have been lock by admin, can not login now. If you have any questions, "
+"contact admin first please !"
+msgstr "您的账户被管理员锁定，不能登录。如有任何问题，请联系管理员！"
+
+#: app/account/views.py:94
+msgid "password is wrong !"
+msgstr "密码错误！"
+
+#: app/account/views.py:138
+msgid "No key found !"
+msgstr "没有提供 key ！"
+
+#: app/account/views.py:140
+msgid "No apply record found !"
+msgstr "无申请记录！"
+
+#: app/account/views.py:158 app/admin/user_views.py:192
+msgid "This username is occupied"
+msgstr "此用户名被占用"
+
+#: app/account/views.py:196
+msgid "Welcome to use LuoYun Cloud !"
+msgstr ""
+
+#: app/account/views.py:242
+msgid "My Account Center"
+msgstr "我的账户"
+
+#: app/account/views.py:254
+msgid "My Permissions"
+msgstr "我的权限"
+
+#: app/account/views.py:289
+#, python-format
+msgid "View User %s"
+msgstr "查看用户 %s"
+
+#: app/account/views.py:305
+#, python-format
+msgid "No such group: %s !"
+msgstr "无此组：%s ！"
+
+#: app/account/views.py:314 app/admin/group_views.py:39
+#, python-format
+msgid "View Group %s"
+msgstr "查看用户组 %s"
+
+#: app/account/views.py:330 app/account/views.py:352 app/account/views.py:488
+#: app/admin/user_views.py:152 app/admin/user_views.py:173
+msgid "Reset Password"
+msgstr "重置密码"
+
+#: app/account/views.py:361 app/account/views.py:380
+msgid "Change my avatar"
+msgstr "修改我的图像"
+
+#: app/account/views.py:390
+msgid "Avatar file must smaller than 360K !"
+msgstr "图像文件必须小于 360K ！"
+
+#: app/account/views.py:429
+#, python-format
+msgid ""
+"\n"
+"Reset Password for Your LuoYun Cloud Account.\n"
+"\n"
+"Click the url to complete : %(URL)s\n"
+"\n"
+"If you can not click the link above, copy and paste it on your brower "
+"address.\n"
+msgstr ""
+"\n"
+"重置您的账户密码 - LuoYun Cloud\n"
+"\n"
+"请点击后面的链接进行密码重置： %(URL)s\n"
+"\n"
+"如果您不能点击链接地址，请手动拷贝链接地址到浏览器完成密码重置。\n"
+
+#: app/account/views.py:440 app/account/views.py:510
+msgid "Forget My Password"
+msgstr "忘记密码"
+
+#: app/account/views.py:478
+msgid "[ LuoYun Cloud ] Reset Password"
+msgstr "[ LuoYun Cloud ] 重置用户密码"
+
+#: app/account/views.py:483
+msgid "Send Email Failed !"
+msgstr "发送邮件失败！"
+
+#: app/account/views.py:486
+#, python-format
+msgid "No such email address: %s"
+msgstr "无此邮件地址： %s"
+
+#: app/account/views.py:524
+msgid "You have completed reset password."
+msgstr "您已经完成密码重置。"
+
+#: app/account/views.py:527
+#, python-format
+msgid "No such key: %s !"
+msgstr "查无此 key: %s ！"
+
+#: app/account/forms.py:11
+msgid "password confirm failed"
+msgstr "您两次输入的密码不一致"
+
+#: app/account/forms.py:16 app/account/forms.py:31 app/admin/forms.py:15
+msgid "Username"
+msgstr "用户名"
+
+#: app/account/forms.py:23 app/admin/forms.py:19
+msgid "Confirm Password"
+msgstr "密码确认"
+
+#: app/account/forms.py:27 app/account/forms.py:32 app/admin/forms.py:16
+msgid "Email Address"
+msgstr "邮件地址"
+
+#: app/account/forms.py:33
+msgid "Registration Policy"
+msgstr "注册条款"
+
+#: app/session/models.py:27
+#, python-format
+msgid "[Session(%s)]"
+msgstr "[会话(%s)]"
+
+#: app/admin/appliance_views.py:29
+#, python-format
+msgid "No such appliance : %s"
+msgstr "无此应用： %s"
+
+#: app/admin/appliance_views.py:46 app/admin/appliance_views.py:55
+#: app/admin/instance_views.py:43 app/admin/instance_views.py:52
+#: app/admin/job_views.py:40 app/admin/job_views.py:49
+#: app/admin/group_views.py:54 app/admin/group_views.py:69
+#: app/admin/wiki_views.py:51 app/admin/wiki_views.py:66
+#: app/admin/node_views.py:43 app/admin/node_views.py:52
+#: app/admin/user_views.py:72 app/admin/user_views.py:93
+#: app/admin/permission_views.py:38 app/admin/system_views.py:30
+#: app/admin/system_views.py:39
+msgid "Wrong action value!"
+msgstr "错误的 action 值！"
+
+#: app/admin/appliance_views.py:52 app/admin/instance_views.py:49
+#: app/admin/job_views.py:46 app/admin/group_views.py:60
+#: app/admin/wiki_views.py:57 app/admin/node_views.py:49
+#: app/admin/user_views.py:78 app/admin/system_views.py:36
+msgid "No action found !"
+msgstr "没有发现 action 值！"
+
+#: app/admin/appliance_views.py:97
+msgid "LuoYun Appliance Management"
+msgstr "LuoYun 应用管理"
+
+#: app/admin/appliance_views.py:110
+#, python-format
+msgid "View Appliance %s"
+msgstr "查看应用 %s"
+
+#: app/admin/appliance_views.py:128
+msgid "No catalog specified !"
+msgstr "没有匹配应用类别！"
+
+#: app/admin/appliance_views.py:144 app/admin/appliance_views.py:156
+#, python-format
+msgid "Wrong action: %s"
+msgstr "错误的 action: %s"
+
+#: app/admin/appliance_views.py:163
+msgid "Appliance Catalog"
+msgstr "应用目录"
+
+#: app/admin/appliance_views.py:171 app/admin/appliance_views.py:189
+msgid "Add Appliance Catalog"
+msgstr "新建应用目录"
+
+#: app/admin/appliance_views.py:201 app/admin/appliance_views.py:218
+#, python-format
+msgid "Edit Appliance Catalog: %s"
+msgstr "编辑应用目录： %s"
+
+#: app/admin/instance_views.py:30
+#, python-format
+msgid "No such instance : %s"
+msgstr "无此虚拟服务器：%s"
+
+#: app/admin/instance_views.py:110
+msgid "Instance Management"
+msgstr "虚拟服务器管理"
+
+#: app/admin/instance_views.py:129
+#, python-format
+msgid "Unknown action \"%s\" !"
+msgstr "未知 action \"%s\" ！"
+
+#: app/admin/instance_views.py:140
+#, python-format
+msgid "%s all instance success: %s"
+msgstr "%s所有虚拟服务器成功：%s"
+
+#: app/admin/job_views.py:27 app/admin/node_views.py:27
+msgid "No such node"
+msgstr "无此云节点"
+
+#: app/admin/group_views.py:30
+#, python-format
+msgid "No such group : %s"
+msgstr "无此用户组：%s"
+
+#: app/admin/group_views.py:76
+msgid "Group Management"
+msgstr "用户组管理"
+
+#: app/admin/group_views.py:81
+msgid "Create New Group"
+msgstr "新建用户组"
+
+#: app/admin/group_views.py:92
+msgid "This name is occupied"
+msgstr "此名称已被使用"
+
+#: app/admin/group_views.py:129
+#, python-format
+msgid "Edit Group %s"
+msgstr "编辑用户组 %s"
+
+#: app/admin/wiki_views.py:28
+#, python-format
+msgid "No such topic : %s"
+msgstr ""
+
+#: app/admin/wiki_views.py:72
+msgid "Wiki Management"
+msgstr ""
+
+#: app/admin/wiki_views.py:84
+msgid "List appliances"
+msgstr ""
+
+#: app/admin/wiki_views.py:95 app/admin/wiki_views.py:113
+msgid "Add Wiki Catalog"
+msgstr ""
+
+#: app/admin/wiki_views.py:120 app/admin/wiki_views.py:135
+msgid "No catalog found"
+msgstr ""
+
+#: app/admin/wiki_views.py:128
+#, python-format
+msgid "Edit catalog: %s"
+msgstr ""
+
+#: app/admin/wiki_views.py:148
+msgid "Edit Catalog"
+msgstr ""
+
+#: app/admin/node_views.py:58
+msgid "Node Management"
+msgstr "云节点管理"
+
+#: app/admin/views.py:48
+msgid "Admin Console"
+msgstr "管理后台"
+
+#: app/admin/user_views.py:41
+#, python-format
+msgid "No such user : %s"
+msgstr "无此用户： %s"
+
+#: app/admin/user_views.py:135
+msgid "Admin User Management"
+msgstr "用户管理"
+
+#: app/admin/user_views.py:180
+msgid "Creat New User"
+msgstr "创建新用户"
+
+#: app/admin/user_views.py:231
+#, python-format
+msgid "Edit User %s"
+msgstr "编辑用户 %s"
+
+#: app/admin/permission_views.py:25
+#, python-format
+msgid "No such permission : %s"
+msgstr "无此权限： %s"
+
+#: app/admin/permission_views.py:44
+msgid "Permission Management"
+msgstr "权限管理"
+
+#: app/admin/permission_views.py:51
+#, python-format
+msgid "View Permission %s"
+msgstr "查看权限 %s"
+
+#: app/admin/forms.py:23
+msgid "CPUs"
+msgstr "处理器"
+
+#: app/admin/forms.py:24
+msgid "Instances"
+msgstr "虚拟服务器"
+
+#: app/admin/forms.py:25
+msgid "Storage(G)"
+msgstr "存储（G）"
+
+#: app/admin/forms.py:31
+msgid "Permissions"
+msgstr "权限"
+
+#: app/admin/forms.py:43
+msgid "Groups"
+msgstr "用户组"
+
+#: app/admin/system_views.py:44
+msgid "System Management"
+msgstr "系统管理"
+
+#: app/node/models.py:43
+#, python-format
+msgid "<Node(%s:%s)>"
+msgstr "<云节点(%s:%s)>"
+
+#: app/node/views.py:29
+msgid "No action specified"
+msgstr "没有提供 action"
+
+#: app/home/views.py:53
+msgid "Permission Denied"
+msgstr "无权限"
+
+#: app/home/views.py:68
+msgid "No Resource"
+msgstr "无资源"
+
+#: app/myun/views.py:61
+msgid "My LuoYun"
+msgstr "我的落云"
+
+#: app/myun/views.py:82
+msgid "My Instances"
+msgstr "我的虚拟服务器"
+
+#: app/myun/views.py:151
+msgid "My Appliances"
+msgstr "我的应用"
+
+#: urls.py:64
+msgid "LuoYun Cloud Home"
 msgstr "落云首页"
+
+#: tool/domain.py:31
+msgid "Can not get domain."
+msgstr "无法获取域名信息"
+
+#: tool/domain.py:39
+msgid "Can not get access_ip."
+msgstr "无法获取访问IP"
+
+#: tool/domain.py:48 tool/domain.py:173
+#, python-format
+msgid "No such dir or file: %s"
+msgstr "无此目录或文件： %s"
+
+#: tool/domain.py:153 tool/domain.py:191
+#, python-format
+msgid "reload nginx error: %s"
+msgstr "重新加载 nginx 失败：%s"
+
+#: tool/domain.py:157 tool/domain.py:194
+msgid "OK"
+msgstr "成功"
+
+#: tool/domain.py:182
+#, python-format
+msgid "remove nginx config error: %s"
+msgstr "删除 nginx 配置失败： %s"

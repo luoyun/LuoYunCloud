@@ -1,77 +1,455 @@
-.inner-navigator {
-    margin: 50px;
+.island {
+    padding:0;
+    margin: 0;
 }
-#view-instance {
-    margin: 20px;
+.inner-nav {
+    margin: 36px 0 26px;;
 }
 
-#view-instance .logo,
-#view-instance .base {
+#admin-center p {
+    font-size: 0.8em;
+    color: #727479;
+}
+#admin-center table {
+    margin: 20px 0;
+    font-size: 0.9em;
+}
+#admin-center table td {
+    padding: 2px 15px 2px 0;
+}
+#admin-center .action {
+    margin: 10px 0 25px;
+}
+#admin-center textarea {
+    width: 580px;
+    height: 160px;
+}
+
+#inst-status .status img {
+    width: 18px;
+    height: 18px;
+}
+
+
+#ly-instance-main {
+    margin-top: 30px;
+}
+#ly-instance-main .island {
+    padding: 0;
+    border-radius: 5px;
+    /*background-image: -moz-linear-gradient(#FFFFFF, #ECF1F7);*/
+}
+#create-instance {
+    margin: 15px auto 35px;
+}
+.section {
+    width: 740px;
     float: left;
 }
+.aside {
+    width: 200px;
+    float: right;
+}
 
-#view-instance .logo {
-    width: 360px;
+.i {
+    position: relative;
+    width: 123px;
+    /*z-index: 0;*/
+}
+.i {
+    float: left;
+    margin: 2px 12px 30px;
+}
+.i-logo {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-radius: 3px;
+    border: 1px solid #D9D9D9;
+}
+.i-logo img {
+    width: 120px;
+    height: 120px;
+    border-radius: 5px;
+}
+.i_name {
+    font-size: 0.9em;
+    padding: 5px 0;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.i_name a {
+    text-decoration: none;
+    /* Following is a */
+    display: block;  
+    width: 120px;  
+    margin: 0px 0px 0px 3px;  
+    white-space: nowrap;  
+    overflow: hidden;  
+    float: left;  
+    -o-text-overflow: ellipsis;    /**//* for Opera */  
+    text-overflow: ellipsis;        /**//* for IE */  
+
+}
+.i_name:after{ content: ""; }/**//* for Firefox */
+
+.i_status {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    color: #494D52;
+    font-size: 0.9em;
+    font-weight: 600;
+/*    background-color: #F7FAFC;*/
+    border-radius: 5px 0 5px 0;
+    padding: 3px 5px;
+}
+.i_status img {
+    width: 16px;
+    height: 16px;
+}
+li.i_id:hover {
+    padding: 5px 10px;
+    font-size: 1.1em;
+}
+.i .t {
+    padding: 2px 5px 2px 0;
+    font-weight: 600;
+    font-size: 0.9em;
+/*    width: 60px;
+    display: inline-block;*/
+}
+.i li {
+    color: #909090;
+    font-size: 0.9em;
+}
+
+.sort-select {
+    margin: 10px 2px 20px;
+}
+.sort-select h3 {
+    font-size: 0.9em;
+    font-weight: 600;
+}
+.sort-select li {
+    font-size: 0.9em;
+}
+
+#inst-sidebar {
+    float: left;
+    /*width: 100px;*/
+    /*border-right: 1px solid #D9D9D9;*/
+}
+#inst-center {
+    float: right;
+    padding: 18px 5px;
+}
+#i-show-main, #i-main {
+    width: 100%;
+}
+#i-show-main {
+    position: relative;
+}
+#i-main {
+    margin-top: 10px;
+}
+#admin-center {
+    padding: 0 30px;
+    width: 800px;
+}
+#admin-center h2 {
+    margin: 20px 0 12px;
+    color: #143340;
+    font-size: 16px;
+}
+#admin-center p {
+    margin: 10px;
+}
+#i-logo, #i-center-status {
+    float: left;
+}
+#i-baseinfo {
+    float: right;
+    font-size: 0.9em;
+    margin: 35px 10px;
+}
+#i-logo img {
+    width: 120px;
+    height: 120px;
+    border-radius: 5px;
+    margin: 15px 20px 8px;
+}
+#i-ip {
+    text-align: center;
+    margin: 2px 5px 10px;
+}
+#i-ip a {
+    font-size: 0.9em;
+    padding: 5px;
+    margin: 5px 5px 10px;
+    text-decoration: none;
+}
+#i-ip a:hover {
+    border-bottom: 2px solid #D9D9D9;
+    padding-bottom: 3px;
+}
+
+#i-center-status {
+    margin-left: 30px;
+    width: 490px;
+}
+#i-center-status-left, #i-status {
+    float: left;
+}
+#i-center-status-left {
+    text-align: center;
+    margin-top: 55px;
+}
+#i-action {
+    margin: 2px 0 2px 12px;
+}
+#i-action img {
+    width: 36px;
+    height: 36px;
+}
+
+#i-status {
+    margin: 50px 10px 10px;
+    width: 400px;
+}
+#job-status {
+/*    border: 1px solid #D9D9D9;
+    border-radius: 5px;*/
+    padding: 5px;
+    display: inline-block;
+    width: 380px;
+}
+#job-result {
+    color: red;
+    font-size: 0.9em;
+    /*display: block;*/
+}
+
+#i-status-img {
+    margin-left: 15px;
+    margin-bottom: 10px;
+    width: 16px;
+    height: 16px;
+}
+#job-status-value {
+    font-size: 0.9em;
+    color: green;
+}
+#job-status-desc {
+    font-size: 0.8em;
+    color: #D2CD9F;
+}
+
+#i-baseinfo td {
+    padding: 1px;
+}
+#i-baseinfo td.c1 {
+    /*text-align: right;*/
+    padding-right: 6px;
+    font-weight: 600;
+    color: #848627;
+    white-space: pre;
+}
+#i-baseinfo td.c2 {
+    white-space: nowrap;
+}
+
+#admin-menu ul, #admin-menu li {
+    list-style:none;
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+#admin-menu li a {
+    padding: 5px 6px;
+    text-decoration: none;
+    line-height: 16px;
+    display: inline-block;
+    /*float: left;*/
+    border-bottom: 1px solid #f9f9f9;
+    width: 90px;
+}
+#admin-menu li a:hover, #admin-menu a.current {
+    color: #E2A105;
+    font-weight: 600;
+}
+#admin-menu .head {
+    background-color: #E2EDBF;
+}
+#admin-menu .island {
+    border-radius: 0 0 5px 0;
+}
+
+#admin-config-tool {
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: 500px;
+}
+
+/*
+div {
+    border: 1px solid #D9D9D9;
+}
+*/
+
+/* Start create instance form */
+#ly-create-instance-form {
+    width: 580px;
+    margin: 50px auto;
+    padding-top: 36px;
+    padding-bottom: 60px;
+    border: 1px solid #D9D9D9;
+    border-radius: 3px;
+    background-color: white;
+}
+#ly-create-instance-form .item {
+    margin: 20px 0;
+    clear: both;
+}
+#ly-create-instance-form .submit {
     text-align: center;
 }
-
-#view-instance .base {
-    background-color: #F4F8FC;
-    background: -webkit-gradient(linear, left top, left bottom, from(#FCFDFE), to(#F4F8FC));
-    background: -moz-linear-gradient(#FCFDFE, #F4F8FC) repeat scroll 0 0 #FCFDFE;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FCFDFE', endColorstr='#F4F8FC');
-
-    border: 1px solid #D9D9D9;
+#ly-create-instance-form .c1,
+#ly-create-instance-form .c2 {
+    float: left;
+    /*padding: 10px;*/
+    margin: 15px 0;
+}
+#ly-create-instance-form .c1 {
+    width: 180px;
+    text-align: right;
+    font-weight: bold;
+    color: #143340;
+    margin-right: 10px;
+}
+#ly-create-instance-form .c2 {
+    width: 300px;
+}
+#ly-create-instance-form .c1 label,
+#ly-create-instance-form .c2 input,
+#ly-create-instance-form .c2 select {
+    padding: 4px 5px;
+    margin: 10px 5px;
+}
+#ly-create-instance-form .c1 label {
+    float: right;
+}
+#ly-create-instance-form .c2 input {
+    height: 1.8em;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #DCDCDC;
+    box-shadow: 0 1px 1px #DEDEDE inset;
+    font-size: 14px;
+    border-radius: 3px;
+}
+#ly-create-instance-form .title {
+    text-align: center;
+    font-size: 22px;
+    color: #143340;
+    padding-bottom: 25px;
+    margin-bottom: 30px;
+    border-bottom: 2px dotted #D9D9D9;
+}
+#ly-create-instance-form .c1 img {
+    width: 85px;
+    height: 85px;
     border-radius: 5px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-
-    padding: 10px 15px;
-    width: 500px;
+    margin-right: 10px;
+    float: right;
 }
-
-#view-instance .status {
-    display: block;
-    margin: 10px auto;
+#ly-create-instance-form .errors {
+    color: red;
 }
-
-#view-instance .action {
-    clear: both;
-    margin-top: 35px;
-}
-
-#view-instance table {
-    border: none;
-    font-size: 0.9em;
-    color: #666;
-}
-#view-instance table td {
-    border: none;
-    padding: 2px 5px;
-}
-#view-instance ul {
-    list-style: none;
+#ly-create-instance-form h3 {
+    font-size: 16px;
+    color: #848627;
     margin: 10px 0;
-    padding: 2px 0;
 }
-#view-instance li {
-    padding: 3px 0;
+#ly-create-instance-form .c2 p.desc {
+    color: #484848;
+    margin: 15px 0;
 }
+#ly-create-instance-form .hidden {
+    position: absolute;
+    top: 58px;
+    left: 15px;
+    width: 300px;
+    border-radius: 3px;
+    border: 1px solid #DCDCDC;
+    background: #EFF7F2;
+    color: #575758;
+    padding: 10px;
+    z-index: 3;
+}
+#ly-create-instance-form .submit {
+    padding-top: 28px;
+}
+/* End create instance form */
 
-.ly-instance-description, .ly-instance-job-list {
-    clear: both;
-    border-top: 1px solid #D9D9D9;
-    margin-top: 30px;
-    padding: 30px;
-}
 
+/* Start Instance Logo Hover */
+.i-logo-hover {
+    position: absolute;
+    top: 120px;
+    /*left: 100px;*/
+    padding: 10px;
+    width: 204px;
+    z-index: 3;
 
-.create-instance, .edit-instance {
-    width: 480px;
-    margin: 60px auto 120px;
+    font-size: 0.9em;
+    color: #313231;
+    margin-top: 12px;
+
+    background: none repeat scroll 0 0 #FFF;
+    border: 1px solid #C6CFDD;
+    border-radius: 3px;
+    height: auto;
+    padding: 0 10px 10px;
 }
-.create-instance .c1, .edit-instance .c1 {
-    width: 100px;
+.i-logo-hover .arrowBox {
+    background: url("http://mat1.gtimg.com/news/imgcss_article_qq/tit_info_mb.png") no-repeat scroll 0 0 transparent;
+    font-size: 1px;
+    height: 7px;
+    line-height: 1px;
+    margin: -7px 0 0 20px;
+    position: absolute;
+    width: 14px;
 }
-.create-instance .c2, .edit-instance .c2 {
-    width: 320px;
+.i-logo-hover .title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #E2A105;
+    margin: 10px 0;
 }
+.i-logo-hover .owner {
+    font-size: 13px;
+    padding-left: 10px;
+}
+.i-logo-hover .summary {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+.i-logo-hover table {
+    *border-collapse: collapse; /* IE7 and lower */
+    border-spacing: 0;
+    width: 100%;
+}
+.i-logo-hover tr {
+    -o-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;		
+}
+.i-logo-hover td {
+    padding: 5px;
+    font-size: 12px;
+}
+.i-logo-hover td:first-child {
+    font-weight: bold;
+}
+/* End Instance Logo Hover */

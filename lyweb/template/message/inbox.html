@@ -1,0 +1,43 @@
+<%inherit file="message_base.html" />
+
+<%block name="sidemain">
+
+<div class="c">
+  % if messages:
+  <div class="inbox-list message-list">
+    <table>
+      <thead>
+	<tr>
+          <th>${ _("From") }</th>
+          <th>${ _("Subject") }</th>
+	</tr>
+      </thead>
+      <tbody>
+	% for M in messages:
+	<% READ = 'read' if M.read else '' %>
+	<tr class="${ READ }">
+          <td class="from">
+	    <div class="user">
+	      <a class="user-avatar" href="${ reverse_url('account:view', M.sender_id) }" target="_blank"><img src="${ M.sender.avatar_url }" alt="${ M.sender.username }" /></a>
+	      <a class="username" href="${ reverse_url('account:view', M.sender_id) }" target="_blank">${ M.sender.username }</a>
+	    </div>
+	  </td>
+          <td>
+	    <div class="subject"><a href="${ reverse_url('message:inbox:view', M.id) }">${ M.subject }</a></div>
+            <div class="datetime">${ fulltime(M.created) }</div>
+            <div class="action">
+	      <a href="${ reverse_url('message:inbox:reply', M.id) }" title="${ _('Reply') }"><img src="${ THEME_URL }img/reply.gif" alt="${ _('Reply') }" /></a>
+	      <a href="${ reverse_url('message:delete', M.id) }" title="${ _('Delete') }"><img src="${ THEME_URL }img/delete.png" alt="${ _('Delete') }" /></a>
+	    </div>
+	  </td>
+	</tr>
+	% endfor
+      </tbody>
+    </table>
+  </div>
+  % else:
+  <p class="ly-large-center">${ _("You have not receiverd any message yet !") }</p>
+  % endif
+</div>
+
+</%block>

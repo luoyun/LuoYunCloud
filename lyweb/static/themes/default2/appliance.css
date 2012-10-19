@@ -1,16 +1,38 @@
-.sidebar {
-    padding: 10px 10px 20px 0;
+h1 {
+    color: #C63717;
+    margin-bottom: 16px;
 }
-
-.sidebar .addon {
+h2 {
+    color: #333333;
+    font: italic 18px Georgia,serif;
+}
+h4 {
+    font-size: 14px;
+}
+h5 {
+    font-weight: 700;
+}
+.sidebar {
+    padding: 0px 10px 20px 0;
+}
+.menu h3 {
+    color: #1D306B;
+    font-size: 13px;
+    margin-bottom: 20px;
+    padding-right: 5px;
     text-align: right;
-    font-size: 0.9em;
-    color: #666;
-    margin-top: 20px;
+}
+.sidemain {
+    background-color: white;
+    border-top: 2px solid #E9E9E9;
+    border-left: 2px solid #E9E9E9;
+    border-radius: 3px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    padding: 20px 10px 30px 13px;
 }
 
 .appliance-home {
-    padding: 60px 0 50px;
+    margin-top: 20px;
 }
 
 .sort-method {
@@ -19,131 +41,58 @@
 .appliance-list {
     height: 320px;
 }
-.appliance {
-    background-color: #F4F8FC;
-    background: -webkit-gradient(linear, left top, left bottom, from(#FCFDFE), to(#F4F8FC));
-    background: -moz-linear-gradient(#FCFDFE, #F4F8FC) repeat scroll 0 0 #FCFDFE;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FCFDFE', endColorstr='#F4F8FC');
-
-    border: 1px solid #D9D9D9;
-    border-radius: 5px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    color: #666666;
-    font-size: 14px;
-}
-
 
 .appliance {
     float: left;
-    width: 130px;
-    height: 135px;
-    margin: 15px 10px;
+    width: 125px;
+    margin: 8px;
     font-size: 0.9em;
-
     text-align: center;
-
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-.appliance .logo img {
-    width: 90px;
-    height: 90px;
-}
-
-.appliance {
-    position: relative;
-}
-.appliance-base-info {
-    /*position: relative;*/
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: #FFF;
-    height: 200px;
-    text-align: left;
-    padding: 10px 5px;
-}
-
-
-.inner-navigator {
-    margin: 50px 0;
-}
-#view-appliance {
-    margin: 20px 0 80px;
-}
-
-#view-appliance .side,
-#view-appliance .base {
-    float: left;
-}
-
-#view-appliance .side {
-    width: 260px;
-    text-align: center;
-}
-
-#view-appliance .base {
-    background-color: #F4F8FC;
-    background: -webkit-gradient(linear, left top, left bottom, from(#FCFDFE), to(#F4F8FC));
-    background: -moz-linear-gradient(#FCFDFE, #F4F8FC) repeat scroll 0 0 #FCFDFE;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FCFDFE', endColorstr='#F4F8FC');
-
+.appliance .logo {
+    background: none repeat scroll 0 0 #FFFFFF;
     border: 1px solid #D9D9D9;
+    border-radius: 3px 3px 3px 3px;
+}
+.appliance .logo img {
+    width: 120px;
+    height: 120px;
     border-radius: 5px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-
-    padding: 10px 15px;
-    width: 660px;
 }
-
-#view-appliance .status {
-    display: block;
-    margin: 10px auto;
+.a-desc {
+    margin-top: 12px;
 }
-
-#view-appliance .action {
-    clear: both;
-    margin-top: 35px;
+.a-name {
+    white-space:normal;
+    width:120px;
+    margin: 5px;
 }
-
-#view-appliance table {
-    border: none;
-    font-size: 0.9em;
-    color: #666;
+.appliance{
+    position:relative;
+    padding: 5px;
+    color:#000;
+    /*
+    border:1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;*/
+    _overflow:hidden;
 }
-#view-appliance table td {
-    border: none;
-    padding: 2px 5px;
+.useable{
+/*    background:#fff;*/
+/*margin:0 10px;*/
 }
-#view-appliance ul {
-    list-style: none;
-    margin: 10px 0;
-    padding: 2px 0;
+.unuseable{
+/*    width: 100%;
+    height:100%;*/
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)"; /*IE8*/
+    filter:alpha(opacity=30);  /*IE5、IE5.5、IE6、IE7*/
+    opacity: .3;  /*Opera9.0+、Firefox1.5+、Safari、Chrome*/
+    *z-index: -1;  /*让其位于in的下面*/
+    background:#fff;
 }
-#view-appliance li {
-    padding: 3px 0;
-}
-
-.ly-appliance-description, .ly-appliance-instance-list {
-    clear: both;
-    border-top: 1px solid #D9D9D9;
-    margin-top: 30px;
-    padding: 30px;
-}
-
-
-.create-instance, .edit-appliance {
-    width: 480px;
-    margin: 60px auto 120px;
-}
-.create-instance .c1, .edit-appliance .c1 {
-    width: 100px;
-}
-.create-instance .c2, .edit-appliance .c2 {
-    width: 320px;
-}
-
 
 /* Start progress */
 .bar {
@@ -176,3 +125,160 @@
 #upload input {
     height: 2em;
 }
+
+
+.inner-nav {
+    margin: 30px 0 20px;
+}
+.section {
+    width: 740px;
+    border: 1px solid #D9D9D9;
+    border-radius: 3px;
+    background-color: white;
+    padding: 15px 10px 30px;
+    margin-top: 8px;
+}
+.title2 {
+    margin: 10px 0 20px;
+}
+.aside {
+    width: 200px;
+    float: right;
+}
+#app-baseinfo {
+    width: 100%;
+}
+.app-logo {
+    float: left;
+    margin: 5px 20px 5px 0;
+    width: 120px;
+    height: 120px;
+}
+.app-desc {
+    float: left;
+    width: 600px;
+}
+.app-name {
+    margin: 5px;
+    font-size: 18px;
+}
+.app-name h1 {
+    color: #333333;
+}
+.app-user {
+    margin: 15px 5px;
+    font-size: 0.9em;
+    color: #6A6A6D;
+}
+.app-summary {
+    margin: 15px 5px 30px;
+    padding: 10px 0;
+}
+.app-unuseable {
+    color: red !important;
+    font-size: 18px;
+    font-weight: bold;
+}
+.aside table td.c1 {
+    width: 80px;
+}
+.app-admin {
+    margin: 20px;
+    float: right;
+}
+
+.section h2 {
+    margin-bottom: 20px;
+}
+/* Start instance list in appliance view */
+.v-instance {
+    float: left;
+    margin: 15px 10px;
+    width: 120px;
+    text-align: center;
+    position: relative;
+}
+.v-instance .i-logo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+}
+.v-instance .i-status {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+}
+.v-instance .i-name {
+    font-size: 0.9em;
+    padding: 5px 0;
+    text-align: center;
+}
+.v-instance .i-name a {
+    text-decoration: none;
+    /* Following is a */
+    display:block;  
+    width:120px;  
+    margin: 0px 0px 0px 3px;  
+    white-space: nowrap;  
+    overflow: hidden;  
+    float: left;  
+    -o-text-overflow: ellipsis;    /**//* for Opera */  
+    text-overflow: ellipsis;        /**//* for IE */  
+}
+.v-instance .i-name a:after{ content: ""; }/**//* for Firefox */
+.v-instance .t {
+    padding: 2px 5px 2px 0;
+    font-weight: 600;
+    font-size: 0.9em;
+/*    width: 60px;
+    display: inline-block;*/
+}
+.v-instance li {
+    color: #909090;
+    font-size: 0.9em;
+}
+/* End instance list in appliance view */
+
+#appliance-delete-failed {
+    margin: 100px 0;
+}
+
+
+#appliance-description {
+/*    border-radius: 3px;
+    border: 1px solid #B1D632;*/
+}
+
+
+/* Start Appliance Edit Form */
+#appliance-edit-form {
+}
+#appliance-edit-form td {
+    padding: 10px;
+}
+#appliance-edit-form td:first-child {
+    text-align: right;
+    vertical-align: top;
+}
+#appliance-edit-form .subject input {
+    line-height: 2em;
+}
+#appliance-edit-form .body textarea {
+    width: 600px;
+    height: 300px;
+}
+#appliance-edit-form .errors {
+    color: red;
+}
+#appliance-edit-form .logo img {
+    width: 60px;
+    height: 60px;
+    margin: 10px 0;
+    float: left;
+}
+#appliance-edit-form .select-new-logo h3 {
+    font-size: 16px;
+    color: #3B5998;
+    margin: 15px 0 10px;
+}
+/* End Appliance Edit */

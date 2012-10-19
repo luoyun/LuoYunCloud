@@ -1,0 +1,73 @@
+#ly-registration-protocol {
+    margin: 100px 160px;
+}
+#ly-registration-protocol .title {
+    font-size: 22px;
+    text-align: center;
+    color: #D91F1C;
+    margin-bottom: 60px;
+}
+#ly-registration-protocol .body h1 {
+    font-size: 16px;
+    margin-top: 45px;
+    margin-bottom: 15px;
+}
+#ly-registration-protocol p {
+    font-size: 0.8em;
+    color: #2C2D2B;
+    line-height: 1.3em;
+    margin: 18px 12px;
+}
+#ly-registration-protocol ol {
+    margin: 30px;
+    list-style-type: decimal-leading-zero;
+}
+#ly-registration-protocol li {
+    margin: 15px;
+    font-size: 0.9em;
+    line-height: 1.5em;
+    color: #3AA60C;
+}
+
+
+
+
+/* Start Welcome Style */
+#ly-welcome-new-user {
+    margin: 100px 160px;
+}
+#ly-welcome-new-user .title {
+    font-size: 22px;
+    text-align: center;
+    color: #D91F1C;
+    margin-bottom: 60px;
+}
+#ly-welcome-new-user .body h1 {
+    font-size: 16px;
+    margin-top: 45px;
+    margin-bottom: 15px;
+}
+#ly-welcome-new-user p {
+    font-size: 0.8em;
+    color: #2C2D2B;
+    line-height: 1.3em;
+    margin: 18px 12px;
+}
+#ly-welcome-new-user ol {
+    margin: 30px;
+    list-style-type: decimal-leading-zero;
+}
+#ly-welcome-new-user li {
+    margin: 15px;
+    font-size: 0.9em;
+    line-height: 1.5em;
+    color: #3AA60C;
+}
+#ly-welcome-new-user pre {
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+/* End Welcome Style */

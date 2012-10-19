@@ -19,25 +19,23 @@ The file contains following sections.
 The LuoYun Cloud platform applications are developed with GNU Auto tools.
 So it follows standard source code building procedures.
 
-Assuming the tar ball of source files is copied into the current directory,
-and all the applications and supporting files are to be installed
+Assuming all the source files have been copied/downloaded into the current
+directory, and both controler server and node server are to be installed
 under /opt/LuoYun/platform, the build commands are,
-[dongwu@localhost tmp]$ tar xzf luoyun-cloud-0.2.tar.gz
-[dongwu@localhost tmp]$ cd luoyun-cloud-0.2/
-[dongwu@localhost luoyun-cloud-0.2]$ ./configure --prefix=/opt/LuoYun/platform
-[dongwu@localhost luoyun-cloud-0.2]$ make
-[dongwu@localhost luoyun-cloud-0.2]$ sudo make install
+[dongwu@localhost platform]$ ./configure --prefix=/opt/LuoYun/platform
+[dongwu@localhost platform]$ make
+[dongwu@localhost platform]$ sudo make install
 Password: 
-[dongwu@localhost luoyun-cloud-0.2]$
+[dongwu@localhost platform]$
 
 Assuming the machine is used as the cloud controller, 
-[dongwu@localhost luoyun-cloud-0.2]$ sudo /opt/LuoYun/platform/bin/lyclc
+[dongwu@localhost platform]$ sudo /opt/LuoYun/platform/bin/lyclc
 
 Assuming the same machine is used as the node server as well,
-[dongwu@localhost luoyun-cloud-0.2]$ sudo /opt/LuoYun/platform/bin/lynode
+[dongwu@localhost platform]$ sudo /opt/LuoYun/platform/bin/lynode
 
-Now a LuoYun Cloud platform that comprises one machine is up and ready to 
-serve the request from LuoYun Cloud web server.
+Now a Single Machine Deployment of LuoYunCloud platform is up and ready to
+serve the request from LuoYunCloud web server.
 
 
 
@@ -45,7 +43,7 @@ serve the request from LuoYun Cloud web server.
 2. Install details
 ##########################################################################
 
-Here are the defails of building LuoYun Cloud platform applications from
+Here are the defails of building LuoYunCloud applications from
 source code, assuming the source files are ready in the current directory.
 
 2.1  The first step is to run the configure script, which can be as
@@ -69,39 +67,34 @@ source code, assuming the source files are ready in the current directory.
 
      If you have specified "prefix" in the first step, all the files will
      be installed to the specified directory. Otherwise, the files will be
-     installed to directories per Linux standard. For example, executables
+     installed to directories per Linux standard, for example, executables
      will be installed into /usr/local/bin, config files go to /etc, etc.
 
      When /opt/LuoYun/platform is used as install prefix, all the resulting
-     files are
-     [dongwu@localhost luoyun-cloud-0.2]$ find /opt/LuoYun/platform
+     files are as follows,
+     [dongwu@localhost platform]$ find /opt/LuoYun/platform
      /opt/LuoYun/platform
      /opt/LuoYun/platform/bin
      /opt/LuoYun/platform/bin/lyclc
      /opt/LuoYun/platform/bin/lynode
-     /opt/LuoYun/platform/bin/lyosm
      /opt/LuoYun/platform/etc
      /opt/LuoYun/platform/etc/luoyun-cloud
      /opt/LuoYun/platform/etc/luoyun-cloud/lyclc.conf
      /opt/LuoYun/platform/etc/luoyun-cloud/lynode.conf
-     [dongwu@localhost luoyun-cloud-0.2]$ 
+     [dongwu@localhost platform]$ 
 
-     Among all the files installed, only the three binary excutables are
+     Among all the files installed, only the two binary excutables are
      needed. Other files, including configuration files can be omitted if
      all the default settings are to be used. The default settings should
      work in most cases.
 
-     lyclc  - this is the cloud controller application. Along with the
-              LuoYun Cloud web application, it needs to be installed on
-              a machine which is designated to control LuoYun Cloud system.
+     lyclc  - this is the Cloud Controller application. Along with the
+              LuoYunCloud Web Server, it needs to be installed on
+              a machine which is designated to control LuoYunCloud platform.
 
-     lynode - this is the node server application. It needs to be installed
+     lynode - this is the Node Server application. It needs to be installed
               on a physical machine that supports virtualization. Currently
               only KVM is supported.
-
-     lyosm  - this is the OS manager application. It needs to be installed
-              on each instance or virtual machine that's created and managed
-              through LuoYun Cloud platform.
 
 
 ##########################################################################
@@ -110,9 +103,9 @@ source code, assuming the source files are ready in the current directory.
 
 3.1 Deployment on single machine
 
-LuoYun Cloud platform applications work well on a single machine. The
-commands listed in Overview section are the example of setting up LuoYun
-Cloud platform on a single machine.
+LuoYunCloud software work well on a single machine. The commands listed in
+Overview section are the example of setting up LuoYunCloud platform on a
+single machine.
 
 The machine needs to have KVM properly configured. And it's suggested to
 use RHEL6/CentOS6, or the compliant Linux distribution, as the OS running
@@ -130,8 +123,8 @@ machine can be used as Cloud Controller, for the purpose of performance,
 it's recommended to use a physical machine.
 
 To set up the Cloud Controller machine,
-  1) Start and configure postgresql DB per requirement from LuoYun Cloud
-     Web server.
+  1) Start and configure postgresql DB per requirement from LuoYunCloud
+     Web Server.
   2) In default configuration, lyclc registers each node server
      automatically by multicasting register request through multicast
      IP adddress 228.0.0.1. If defautl settings are used, make sure
@@ -146,7 +139,7 @@ To set up the Cloud Controller machine,
 
 LuoYun Cloud platform can be easily expanded to include more physical
 machines as node server. To set up a node server,
-  1) Configure KVM and enable bridging mode. Make sure full-virtualization
+  1) Configure KVM and enable bridge mode. Make sure full-virtualization
      virtual machine can be created with KVM.
   2) In default configuration, lynode registers to cloud controller
      automatically by listening on multicast IP adddress 228.0.0.1 for
@@ -162,10 +155,13 @@ machines as node server. To set up a node server,
 
 3.3 Deployment on instances(virtual machine)
 
-In other to manage instances effectively in LuoYun Cloud platform, it's 
-desired to have each instances installed with OS manager(lyosm) and started
-automatically when instances get started. All instances developed by
-LuoYun Co have OS manager pre-installed and configured. See LuoYun Cloud
+Note: lyosm is obsoleted, replaced by pyosm, see osmanager directory on the
+      top level directory of LuoYunCloud project
+
+In other to manage instances effectively in LuoYunCloud platform, it's 
+desired to have each instance installed with OS manager and started
+automatically when the instance gets started. All instances developed by
+LuoYun have OS manager pre-installed and configured. See LuoYunCloud
 Instance Devleopment Guide for more details.
 
 

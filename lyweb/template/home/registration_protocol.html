@@ -1,0 +1,23 @@
+<%inherit file="/base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${ THEME_URL }luoyun2.css" />
+</%block>
+
+<%block name="main">
+
+<div id="ly-registration-protocol">
+
+  <h1 class="title">${ _("Registration Policy") }</h1>
+
+  <div class="body">
+    % if REGISTRATION_PROTOCOL:
+    ${ REGISTRATION_PROTOCOL }
+    % else:
+    ${ _("No default registration protocol yet !") }
+    % endif
+  </div>
+
+</div>
+
+</%block>

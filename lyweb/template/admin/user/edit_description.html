@@ -1,0 +1,33 @@
+<%inherit file="user_base.html" />
+
+<%block name="usernav">
+<li><a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a></li>
+<li>${ _("Edit Resources") }</li>
+</%block>
+
+<%block name="sidemain">
+
+<h2 class="title">${ _("Edit User Resources") }</h2>
+
+<% DESC = USER.description if USER.description else '' %>
+<div class="large-tbform c">
+  <form method="POST">
+    <textarea name="description" id="description">${ DESC }</textarea>
+    <input type="submit" value="${ _('Save') }"/>
+  </form>
+</div>
+
+<script charset="utf-8" src="${ STATIC_URL }kindeditor/kindeditor.js"></script>
+<script charset="utf-8" src="${ STATIC_URL }kindeditor/lang/zh_CN.js"></script>
+<script>
+  var editor;
+  KindEditor.ready(function(K) {
+  editor = K.create('#description', {
+    uploadJson : '/ly/upload/kindeditor',
+    fileManagerJson : '/ly/upload/kindeditor',
+    allowFileManager : true
+  });
+  });
+</script>
+
+</%block>

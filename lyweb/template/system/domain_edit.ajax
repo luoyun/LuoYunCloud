@@ -1,0 +1,20 @@
+<h2>${ _("Edit Domain") }</h2>
+
+<div class="main-wrap small-left-right-form">
+  <form method="POST" action="${ reverse_url('system:domain:edit') }">
+    ${ form.topdomain.label } ${ form.topdomain() }<br/>
+    ${ form.html_errors(form.topdomain.errors) }
+
+    ${ form.prefix.label } ${ form.prefix() }<br/>
+    ${ form.html_errors(form.prefix.errors) }
+
+    ${ form.suffix.label } ${ form.suffix() }<br/>
+    ${ form.html_errors(form.suffix.errors) }
+
+    <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
+% if saved:
+<span id="saved-success">${ _("saved success") }</span>
+% endif
+
+  </form>
+</div>

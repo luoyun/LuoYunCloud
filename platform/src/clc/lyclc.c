@@ -48,8 +48,6 @@
 #include "lyclc.h"
 
 
-#define LYCLC_PID_DIR "/var/run"
-
 /* Global value */
 CLCConfig *g_c = NULL;
 
@@ -61,11 +59,15 @@ static int __print_config(CLCConfig * c)
              "  conf_path = %s\n"
              "  log_path = %s\n"
              "  DB info = %s,%s,%s\n"
+             "  factor = %d,%d\n"
+             "  vm_name_prefix = %s\n"
              "  verbose = %d\n" "  debug = %d\n" "  daemon = %d\n",
              c->clc_ip, c->clc_port,
              c->clc_mcast_ip, c->clc_mcast_port,
              c->conf_path, c->log_path,
              c->db_name, c->db_user, c->db_pass,
+             c->node_cpu_factor, c->node_mem_factor,
+             c->vm_name_prefix,
              c->verbose, c->debug, c->daemon);
 
     return 0;
@@ -82,7 +84,7 @@ static void __main_clean(int keeppid)
     ly_entity_store_destroy();
     ly_epoll_close();
     if (keeppid == 0)
-        lyutil_remove_pid_file(LYCLC_PID_DIR, PROGRAM_NAME);
+        lyutil_remove_pid_file(g_c->pid_path, PROGRAM_NAME);
     if (g_c->conf_path)
         free(g_c->conf_path);
     if (g_c->log_path)
@@ -99,6 +101,10 @@ static void __main_clean(int keeppid)
         free(g_c->clc_mcast_ip);
     if (g_c->clc_data_dir)
         free(g_c->clc_data_dir);
+    if (g_c->vm_name_prefix)
+        free(g_c->vm_name_prefix);
+    if (g_c->pid_path)
+        free(g_c->pid_path);
     lyxml_cleanup();
     logclose();
     free(g_c);
@@ -156,6 +162,12 @@ int main(int argc, char *argv[])
     if (ret != 0)
         goto out;
 
+    /* node cpu/mem factors */
+    if (c->node_cpu_factor == 0)
+        c->node_cpu_factor = DEFAULT_NODE_CPU_FACTOR;
+    if (c->node_mem_factor == 0)
+        c->node_mem_factor = DEFAULT_NODE_MEM_FACTOR;
+
     /* for debuuging */
     if (c->debug)
         __print_config(c);
@@ -168,7 +180,7 @@ int main(int argc, char *argv[])
     }
 
     /* check whether program is started already */
-    ret = lyutil_check_pid_file(LYCLC_PID_DIR, PROGRAM_NAME);
+    ret = lyutil_check_pid_file(c->pid_path, PROGRAM_NAME);
     if (ret == 1) {
         printf(_("%s is running already.\n"), PROGRAM_NAME);
         goto out;
@@ -202,7 +214,7 @@ int main(int argc, char *argv[])
         logfile(NULL, c->debug ? LYDEBUG : c->verbose ? LYINFO : LYWARN);
 
     /* create lock file */
-    ret = lyutil_create_pid_file(LYCLC_PID_DIR, PROGRAM_NAME);
+    ret = lyutil_create_pid_file(c->pid_path, PROGRAM_NAME);
     if (ret == 1) {
         logsimple(_("%s is running already.\n"), PROGRAM_NAME);
         ret = 0;

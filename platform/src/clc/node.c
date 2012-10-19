@@ -30,13 +30,14 @@
 
 #include "../luoyun/luoyun.h"
 #include "../util/logging.h"
+#include "lyclc.h"
 #include "entity.h"
 #include "node.h"
 
 int node_schedule()
 {
     int ent_curr = -1;
-    int ent_id = -1;
+    int ent_id = NODE_SCHEDULE_NODE_UNAVAIL;
     int cpu_avail_max = 0;
     while(1) {
         NodeInfo * ni = ly_entity_data_next(LY_ENTITY_NODE, &ent_curr);
@@ -44,6 +45,11 @@ int node_schedule()
             break;
         if (!ly_entity_is_registered(ent_curr) ||
             !ly_entity_is_enabled(ent_curr))
+            continue;
+
+        if (ent_id < 0)
+            ent_id = NODE_SCHEDULE_NODE_BUSY;
+        if (ni->storage_free <= g_c->node_storage_low)
             continue;
         logdebug("%s:%d %d %d %d\n", __func__,
                   ni->cpu_commit,

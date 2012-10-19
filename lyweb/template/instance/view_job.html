@@ -1,0 +1,35 @@
+<%inherit file="instance_base.html"/>
+
+<%block name="maincenter">
+
+  % if JOB_LIST.count():
+  <div class="ly-instance-job-list">
+    <h2>${ _("Recent Job History") }</h2>
+    <table class="list">
+      <tbody>
+        <tr>
+          <th>${ _("Job ID") }</th>
+          <th>${ _("User") }</th>
+          <th>${ _("Action") }</th>
+          <th>${ _("Result") }</th>
+          <th>${ _("Start Time") }</th>
+          <th>${ _("End Time") }</th>
+        </tr>
+        % for J in JOB_LIST:
+        <tr>
+          <td><span class="count">${ J.id }</span></td>
+          <td><a href="${ reverse_url('account:view', J.user.id) }">${ J.user.username }</a></td>
+          <td>${ J.action_string }</td>
+          <td>${ J.status_string }</td>
+          <td>${ fulltime(J.started) }</td>
+          <td>${ fulltime(J.ended) }</td>
+        </tr>
+        % endfor
+      </tbody>
+    </table>
+
+  </div>
+  % endif
+
+
+</%block>

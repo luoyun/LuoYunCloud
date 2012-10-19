@@ -32,6 +32,7 @@
 #include <libpq-fe.h>
 
 #include "../util/logging.h"
+#include "../luoyun/luoyun.h"
 #include "lyclc.h"
 #include "lyjob.h"
 #include "postgres.h"
@@ -332,10 +333,10 @@ int db_node_insert(NodeInfo * nf)
 {
     char sql[LINE_MAX];
     if (snprintf(sql, LINE_MAX,
-                 "INSERT INTO node (hostname, ip, arch, memory, "
+                 "INSERT INTO node (id, hostname, ip, arch, memory, "
                  "status, cpus, cpu_model, "
                  "cpu_mhz, created, updated) "
-                 "VALUES ('%s', '%s', %d, %d, "
+                 "VALUES (nextval('node_id_seq'), '%s', '%s', %d, %d, "
                  "%d, %d, '%s', "
                  "%d, 'now', 'now');",
                  nf->host_name, nf->host_ip, nf->cpu_arch, nf->mem_max,
@@ -476,8 +477,9 @@ int db_job_update_status(LYJobInfo * job)
     if (snprintf(sql, LINE_MAX,
                  "UPDATE job SET status = %d, "
                  "started = %ld::abstime::timestamp, "
-                 "ended = 'now' WHERE status != %d and id = %d;",
-                  job->j_status, (long)job->j_started,
+                 "ended = %ld::abstime::timestamp "
+                 "WHERE status != %d and id = %d;",
+                  job->j_status, (long)job->j_started, (long)job->j_ended,
                   job->j_status, job->j_id) >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
@@ -540,13 +542,13 @@ int db_instance_update_secret(int id, char * secret)
 int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
 {
     char s_ip[100];
-    if (ii->ip == NULL || ii->ip[0] == '\0' || ii->ip[0] == ' ')
+    if (ii == NULL || ii->ip == NULL || ii->ip[0] == '\0' || ii->ip[0] == ' ')
         s_ip[0] = '\0';
     else
         snprintf(s_ip, 100, "ip = '%s',", ii->ip);
 
     char s_status[20];
-    if (ii->status == DOMAIN_S_UNKNOWN)
+    if (ii == NULL || ii->status == DOMAIN_S_UNKNOWN)
         s_status[0] = '\0';
     else
         snprintf(s_status, 20, "status = %d,", ii->status);
@@ -571,6 +573,19 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
     return __db_exec(sql);
 }
 
+int db_instance_delete(int instance_id)
+{
+    char sql[LINE_MAX];
+    if (snprintf(sql, LINE_MAX, "DELETE from instance WHERE id = %d "
+                                "and status = %d;", 
+                                instance_id, DOMAIN_S_DELETE) >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    return __db_exec(sql);
+}
+
 int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
 {
     char sql[LINE_MAX];
@@ -578,7 +593,8 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
                  "SELECT instance.name, instance.cpus, instance.memory, "
                  "instance.ip, instance.mac, instance.node_id, "
                  "instance.appliance_id, appliance.name, "
-                 "appliance.checksum, instance.status, instance.key "
+                 "appliance.checksum, instance.status, instance.key, "
+                 "instance.config "
                  "from instance, appliance "
                  "where instance.id = %d and "
                  "appliance.id = instance.appliance_id;",
@@ -619,8 +635,14 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
         if (s && strlen(s))
             ci->osm_secret = strdup(s);
         ci->osm_tag = ci->ins_id;
-        char ins_domain[20];
-        snprintf(ins_domain, 20, "i-%d", ci->ins_id);
+        s = PQgetvalue(res, 0, 11);
+        if (s && strlen(s))
+            ci->osm_json = strdup(s);
+        char ins_domain[21];
+        if (g_c->vm_name_prefix == NULL)
+            snprintf(ins_domain, 20, "i-%d", ci->ins_id);
+        else
+            snprintf(ins_domain, 20, "%s%d", g_c->vm_name_prefix, ci->ins_id);
         ci->ins_domain = strdup(ins_domain);
         ret = 0;
     }
@@ -683,40 +705,52 @@ int db_instance_get_node(int id)
         return -1;
 
     ret = PQntuples(res);
-    if (ret <= 0)
-        return ret;
+    if (ret > 0)
+        ret = atoi(PQgetvalue(res, 0, 0));
 
-    return atoi(PQgetvalue(res, 0, 0));
+    PQclear(res);
+    return ret;
 }
 
-int db_instance_get_all(int **ids)
+int * db_instance_get_all(int * num)
 {
+    int ret = -1;
+    int * ids = NULL;
+
+    if (num == NULL)
+        return NULL;
+    *num = -1;
+
     char sql[LINE_MAX];
-    int ret = snprintf(sql, LINE_MAX, "SELECT id from instance;");
-    if (ret >= LINE_MAX) {
+    if (snprintf(sql, LINE_MAX, "SELECT id from instance;") >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-        return -1;
+        return NULL;
     }
 
     PGresult *res = __db_select(sql);
     if (res == NULL)
-        return -1;
+        return NULL;
 
     ret = PQntuples(res);
     if (ret <= 0)
-        return ret;
+        goto out;
 
-    int * id = malloc(ret * sizeof(int));
-    if (id == NULL)
-        return -1;
+    if (*num > 0)
+        ret = ret > (*num) ? (*num) : ret;
+
+    ids =  malloc(ret * sizeof(int));
+    if (ids == NULL)
+        goto out;
 
     int i;
     for (i = 0; i < ret; i++) {
-        id[i] = atoi(PQgetvalue(res, i, 0));
+        ids[i] = atoi(PQgetvalue(res, i, 0));
     }
-    *ids = id;
 
-    return ret;
+out:
+    *num = ret;
+    PQclear(res);
+    return ids;
 }
 
 int db_instance_init_status()
@@ -733,6 +767,22 @@ int db_instance_init_status()
 
     return __db_exec(sql);
 }
+
+int db_node_init_status()
+{
+    char sql[LINE_MAX];
+    if (snprintf(sql, LINE_MAX, "UPDATE node SET status = %d "
+                                "where status >= %d and status <= %d;",
+                                NODE_STATUS_OFFLINE,
+                                NODE_STATUS_INITIALIZED,
+                                NODE_STATUS_REGISTERED) >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+
+    return __db_exec(sql);
+}
+
 
 int ly_db_init(void)
 {

@@ -1,0 +1,35 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<h2>${ _("Edit IP Address Pool") }</h2>
+
+<div class="main-wrap small-left-right-form">
+  <form method="POST" action="${ reverse_url('system:networkpool:edit') }">
+    ${ form.start.label } ${ form.start() }<br/>
+    ${ form.html_errors(form.start.errors) }
+
+    ${ form.end.label } ${ form.end() }<br/>
+    ${ form.html_errors(form.end.errors) }
+
+    ${ form.netmask.label } ${ form.netmask() }<br/>
+    ${ form.html_errors(form.netmask.errors) }
+
+    ${ form.gateway.label } ${ form.gateway() }<br/>
+    ${ form.html_errors(form.gateway.errors) }
+
+    ${ form.nameservers.label } ${ form.nameservers() }<br/>
+    ${ form.html_errors(form.nameservers.errors) }
+
+    ${ form.exclude_ips.label } ${ form.exclude_ips() }<br/>
+    ${ form.html_errors(form.exclude_ips.errors) }
+
+    <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
+% if saved:
+<span id="saved-success">${ _("saved success") }</span>
+% endif
+
+  </form>
+</div>
+
+</%block>

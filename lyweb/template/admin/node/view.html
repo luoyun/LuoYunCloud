@@ -1,0 +1,94 @@
+<%inherit file="/admin/admin_base.html"/>
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <a href="${ reverse_url('admin:index') }">${ _("Admin") }</a>&gt;
+    <a href="${ reverse_url('admin:node') }">${ _("Nodes") }</a>&gt;
+    <a href="${ reverse_url('admin:node') }?id=${ NODE.id }&action=view">${ NODE.hostname }</a>
+  </div>
+</div>
+
+<div class="main-wrap">
+  <table class="kvlist">
+    <tbody>
+      <tr>
+        <td>${ _("ID") }</td>
+        <td>${ NODE.id }</td>
+      </tr>
+      <tr>
+        <td>${ _("Hostname") }</td>
+        <td>${ NODE.hostname }</td>
+      </tr>
+        <td>${ _("Key") }</td>
+        <td>${ NODE.key }</td>
+      <tr>
+        <td>${ _("IP") }</td>
+        <td>${ NODE.ip }</td>
+      </tr>
+      <tr>
+        <td>${ _("Arch") }</td>
+        <td>${ NODE.arch }</td>
+      </tr>
+      <tr>
+        <td>${ _("CPU Model") }</td>
+        <td>${ NODE.cpu_model }</td>
+      </tr>
+      <tr>
+        <td>${ _("CPU Mhz") }</td>
+        <td>${ NODE.cpu_mhz }</td>
+      </tr>
+      <tr>
+        <td>${ _("Status") }</td>
+        <td>${ NODE.status }</td>
+      </tr>
+      <tr>
+        <td>${ _("Isenable") }</td>
+        <td>${ NODE.isenable }</td>
+      </tr>
+      <tr>
+        <td>${ _("Memory") }</td>
+        <td>${ NODE.memory }</td>
+      </tr>
+      <tr>
+        <td>${ _("CPUS") }</td>
+        <td>${ NODE.cpus }</td>
+      </tr>
+      <tr>
+        <td>${ _("Created") }</td>
+        <td>${ NODE.created }</td>
+      </tr>
+      <tr>
+        <td>${ _("Updated") }</td>
+        <td>${ NODE.updated }</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+% if INSTANCE_LIST:
+<div class="main-wrap">
+  <h2>${ _("Instance List") }</h2>
+  <table class="list">
+    <thead>
+      <th>${ _("ID") }</th>
+      <th>${ _("Name") }</th>
+      <th>${ _("Status") }</th>
+      <th>${ _("IP") }</th>
+    </thead>
+    <tbody>
+      % for I in INSTANCE_LIST:
+      <tr>
+        <td>${ I.id }</td>
+        <td><a href="/instance/${ I.id }">${ I.name }</a></td>
+        <td>${ I.status_string }</td>
+        <td><a href="${ I.home_url(current_user) }">${ I.ip }</a></td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+</div>
+% endif
+
+</%block>

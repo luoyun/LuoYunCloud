@@ -29,6 +29,7 @@
 #include <strings.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/statvfs.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -453,22 +454,10 @@ int lyutil_create_file(const char *path, int dir_only)
 ** check lock file with pid of running process 
 ** return 0: not exist, 1: exist already, -1: error
 */
-int lyutil_check_pid_file(const char *dir, const char *name)
+int lyutil_check_pid_file(const char *path, const char *name)
 {
-    if (dir == NULL || name == NULL)
+    if (path == NULL || name == NULL)
         return -1;
-
-    /* check whether it's writable */
-    if (access(dir, W_OK)) {
-        logerror(_("directory %s not writable\n"), dir);
-        return -1;
-    }
-
-    char path[MAX_PATH];
-    if (snprintf(path, MAX_PATH, "%s/%s.pid", dir, name) >= MAX_PATH) {
-        logerror(_("path max exceeded %s\n"), __func__);
-        return -1;
-    }
 
     /* check proc fs should be mounted */
     /* assume it's mounted on /proc, but it may not be true... */
@@ -517,6 +506,12 @@ int lyutil_check_pid_file(const char *dir, const char *name)
                  "old pid file ignored.\n"));
     }
 
+    /* make sure the file is wriable */
+    int fd = creat(path, S_IWUSR|S_IRUSR);
+    if (fd < 0) {
+        logerror(_("can not create file %s\n"), path);
+        return -1;
+    }
     return 0;
 }
 
@@ -524,17 +519,11 @@ int lyutil_check_pid_file(const char *dir, const char *name)
 ** create lock file with pid of running process 
 ** return 0: sucess, 1: exist already, -1: error
 */
-int lyutil_create_pid_file(const char *dir, const char *name)
+int lyutil_create_pid_file(const char *path, const char *name)
 {
-    int ret = lyutil_check_pid_file(dir, name);
+    int ret = lyutil_check_pid_file(path, name);
     if (ret != 0)
         return ret;
-
-    char path[MAX_PATH];
-    if (snprintf(path, MAX_PATH, "%s/%s.pid", dir, name) >= MAX_PATH) {
-        logerror(_("path max exceeded %s\n"), __func__);
-        return -1;
-    }
 
 #if 0
     FILE *fp = fopen(path, "w");
@@ -560,16 +549,11 @@ int lyutil_create_pid_file(const char *dir, const char *name)
 }
 
 /* remove pid file */
-int lyutil_remove_pid_file(const char *dir, const char *name)
+int lyutil_remove_pid_file(const char *path, const char *name)
 {
-    if (dir == NULL || name == NULL)
+    if (path == NULL || name == NULL)
         return -1;
 
-    char path[MAX_PATH];
-    if (snprintf(path, MAX_PATH, "%s/%s.pid", dir, name) >= MAX_PATH) {
-        logerror(_("path max exceeded %s\n"), __func__);
-        return -1;
-    }
     unlink(path);
 
     return 0;
@@ -607,7 +591,9 @@ int lyutil_decompress_bzip2(const char *srcfile, const char *dstfile)
     while (bzerror == BZ_OK) {
         nBuf = BZ2_bzRead(&bzerror, b, buf, BZ_BUF_SIZE);
         if (fwrite(buf, nBuf, 1, t) != nBuf) {
-            logerror(_("writing %s failed.\n"), dstfile);
+            char err[100];
+            logerror(_("writing %s failed. error: %d, %s\n"),
+                        dstfile, errno, strerror_r(errno, err, 100));
             goto out;
         }
     }
@@ -648,7 +634,9 @@ int lyutil_decompress_gz(const char *srcfile, const char *dstfile)
     int num_read = 0;
     while ((num_read = gzread(in, buffer, sizeof(buffer))) > 0) {
         if (fwrite(buffer, 1, num_read, out) != num_read) {
-            logerror(_("writing %s failed.\n"), dstfile);
+            char err[100];
+            logerror(_("writing %s failed. error: %d, %s\n"),
+                        dstfile, errno, strerror_r(errno, err, 100));
             goto out;
         }
     }
@@ -769,6 +757,34 @@ unsigned long long lyutil_free_memory(void)
 
     return (free + buffers + cached);
 }
+
+/* get storage info in giga-bytes */
+#define GET_STORAGE_TOTAL 0
+#define GET_STORAGE_AVAIL 1
+static unsigned int __lyutil_storage(char * path, int type)
+{
+    struct statvfs data;
+    if((statvfs(path, &data)) < 0 ) {
+        logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
+                                                  strerror(errno), errno);
+        return 0;
+    }
+    if (type == GET_STORAGE_TOTAL)
+        return data.f_blocks/((1<<30)/data.f_bsize);
+    else if (type == GET_STORAGE_AVAIL)
+        return data.f_bfree/((1<<30)/data.f_bsize);
+    else
+        return 0;
+}
+unsigned int lyutil_total_storage(char * path)
+{
+    return __lyutil_storage(path, GET_STORAGE_TOTAL);
+}
+unsigned int lyutil_free_storage(char * path)
+{
+    return __lyutil_storage(path, GET_STORAGE_AVAIL);
+}
+
 
 /* logging signal before calling default/old handler */
 static void __signal_handler_default(int signo)

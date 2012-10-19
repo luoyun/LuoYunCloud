@@ -1,0 +1,63 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="innav">
+<li><a href="${ reverse_url('admin:permission') }">${ _("Permission") }</a></li>
+<li>${ _("View") } <a href="${ reverse_url('admin:permission') }?id=${ PERMISSION.id }">${ PERMISSION.codename }</a></li>
+</%block>
+
+<%block name="sidemain">
+
+<h2 class="title">${ _("Permission View") }</h2>
+
+<div class="ly-table kvlist">
+  <table>
+    <tbody>
+      <tr>
+	<td>${ _("ID") }</td>
+	<td>${ PERMISSION.id }</td>
+      </tr>
+      <tr>
+	<td>${ _("Codename") }</td>
+	<td>${ PERMISSION.codename }</td>
+      </tr>
+      <tr>
+	<td>${ _("Name") }</td>
+	<td>${ PERMISSION.name }</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>${ _("Group List") }</h3>
+
+% if PERMISSION.groups:
+
+<div class="admin-permission-view ly-table c">
+  <table>
+    <thead>
+      <tr>
+	<th>${ _("ID") }</th>
+	<th>${ _("Name") }</th>
+	<th>${ _("Description") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for G in PERMISSION.groups:
+      <tr>
+        <td>${ G.id }</td>
+	<td><a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></td>
+	<td>${ G.description }</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+</div>
+
+% else:
+
+<p>${ _("Have no groups contain this permission !") }</p>
+
+% endif
+
+
+</%block>

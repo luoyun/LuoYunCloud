@@ -2,62 +2,75 @@
 
 <%block name="main">
 
-<div class="appliance-home clearfix">
+<div class="ly-description">
+  <p>${ _("Public Appliances") }
+    % if current_user:
+    <a href="${ reverse_url('myun:appliance') }">${ _("(My Appliances)") }</a>
+    % endif
+  </p>
+</div>
+
+<div class="appliance-home c">
 
   <div class="sidebar">
 
     <div class="menu">
+      <h3>${ _("Catalog") }</h3>
       <ul>
         % for c in catalogs:
-        <li id="catalog${ c.id }"
+	% if c.total:
+        <li id="catalog${ c.id }"><a
             % if c.id == cur_catalog:
             class="current"
             % endif
-            ><a href="/appliance?c=${ c.id }">${ c.name }</a>
+				     href="${ reverse_url('appliance:index') }?c=${ c.id }">${ c.name }
+            <span> ( ${ c.total } )</span>
+          </a>
         </li>
+	% endif
         % endfor
       </ul>
     </div>
 
-    <div class="addon">
-      <a class="button" href="/appliance/upload">${_("Upload Appliance")}</a>
-    </div>
-
   </div>
 
-  <div class="sidemain clearfix">
 
-<%doc>
-    <div class="sort-method">
-      <span>${ _("Sorted by") }</span>
-      <span><a href="/appliance?c=${ cur_catalog }">${ _("Default") }</a></span>
-      <span><a href="/appliance?c=${ cur_catalog }&by=updated">${ _("Updated") }</a></span>
-    </div>
-</%doc>
+  <div class="sidemain c">
 
-<div class="appliance-list">
+    <div class="appliance-list">
 
-   % if not appliances:
-   <p>${ _("Have not any appliances yet !") }</p>
-   % endif
+      % if not appliances:
+      <p>${ _("Have not any appliances yet !") }</p>
+      % endif
 
-    % for app in appliances:
-    <div class="appliance">
-      <div class="logo">
-        <a href="/appliance/${ app.id }"><img src="${ app_logo_url(app) }" alt="Appliance Picture" /></a>
+      <% count = 0 %>
+      % for app in appliances:
+      <% USEABLE = 'useable' if app.isuseable else 'unuseable' %>
+      <div class="appliance">
+	<div class="${USEABLE}">
+          <div class="logo">
+            <a href="${ reverse_url('appliance:view', app.id) }"><img src="${ app.logo_url }" alt="Appliance Picture" /></a>
+          </div>
+	</div>
+	<div class="a-desc">
+	  <ul>
+	    <li><span class="a-name">${ app.name }</span></li>
+	  </ul>
+	</div>
       </div>
-      <div class="desc">
-        <span class="name">${ app.name }</span>
-      </div>
 
+      % if count % 5 == 4:
+      <div class="c"></div>
+      % endif
+      <% count += 1 %>
+      % endfor
     </div>
-    % endfor
-</div>
 
     <div class="clearfix"></div>
     ${ page_html }
 
   </div>
+</div>
 
 <script type="text/javascript">
   ApplianceHover();

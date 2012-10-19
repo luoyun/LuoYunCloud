@@ -1,0 +1,23 @@
+<%inherit file="instance_base.html"/>
+
+<%block name="maincenter">
+
+% if instance.domain:
+<h2>${ _("Domain Binding") }</h2>
+
+<p>${ _("Domain name of the instance is ") }${ instance.domain }</p>
+% if current_user and current_user.id == instance.user_id:
+<div class="action">
+  <a class="ly-btn2 small green" href="${ reverse_url('instance:domain:edit', instance.id) }">${ _("Edit") }</a>
+  <a class="ly-btn2 small green" href="${ reverse_url('instance:domain:delete', instance.id) }">${ _("Delete") }</a>
+</div>
+% endif
+
+% else:
+<p>${ _("Domain is not configured.") }</p>
+<p><a class="ly-btn2 small green" href="${ reverse_url('instance:domain:edit', instance.id) }">${ _("Add") }</a></p>
+% endif
+
+
+
+</%block>

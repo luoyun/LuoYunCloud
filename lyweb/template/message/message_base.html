@@ -1,0 +1,33 @@
+<%inherit file="/base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${ THEME_URL }message.css" />
+<link rel="stylesheet" href="${ THEME_URL }button.css" />
+</%block>
+
+<%block name="main">
+<div id="message-center" class="luoyun-min-height c">
+
+  <div id="message-center-sidebar" class="min-height-600">
+
+    <div id="message-home-sidemenu" class="action">
+      <ul>
+        <li><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }</a></li>
+        <li><a href="${ reverse_url('message:outbox') }">${ _("Outbox") }</a></li>
+      </ul>
+    </div>
+
+    <div class="new c"><a class="ly-btn2 medium blue" href="${ reverse_url('message:new') }">${ _("New") }</a></div>
+
+  </div>
+
+  <div id="message-center-sidemain">
+    <%block name="sidemain"/>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+  lyMenuSetCurrentEntry2( "#message-home-sidemenu a" );
+</script>
+</%block>

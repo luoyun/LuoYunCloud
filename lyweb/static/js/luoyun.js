@@ -17,13 +17,19 @@ function lySetCurrentNavigator () {
         current = matchs[1];
     }
 
-    if (current == '/instance')
-        $("#navigator li:first").addClass("current");
+//    if (current == '/instance')
+//        $("#navigator li:first").addClass("current");
 
 
     if (current != '/') {
-        var link = "#navigator a[href^='{0}']".format(current);
-        $(link).parent().addClass("current");
+	if (current == '/message') {
+	    $('#my-message-enter').addClass("current");
+	} else if (current == '/account') {
+	    $('#my-profile-enter').addClass("current");
+	} else {
+            var link = "#navigator a[href^='{0}']".format(current);
+            $(link).parent().addClass("current");
+	}
     } else {
         $("#navigator li:first").addClass("current");
     }
@@ -56,3 +62,69 @@ function lyHover(id) {
 }
 
 
+function lyMenuSetCurrentEntry ( tag ) {
+    var current = '';
+    var pattern = /^(\/[-_\/a-zA-Z]*)/;
+    var matchs = window.location.pathname.match(pattern);
+    if (matchs) {
+        current = matchs[1];
+    }
+
+    //alert ( 'tag = ' + tag );
+    $(tag).each(function (index) {
+	var href = $(this).attr('href');
+	//alert( 'current = ' + current + ', href = ' + href);
+	if (href == current) {
+	    $(this).addClass('current');
+	} else {
+	    $(this).removeClass('current');
+	};
+    });
+}
+
+
+
+function lyMenuSetCurrentEntry2 ( tag ) {
+    var current = '';
+    var pattern = /^(\/[-_\/a-zA-Z]*)/;
+    var matchs = window.location.pathname.match(pattern);
+    if (matchs) {
+        current = matchs[1];
+    }
+
+    //alert ( 'tag = ' + tag );
+    $(tag).each(function (index) {
+	var href = $(this).attr('href');
+	//alert( 'current = ' + current + ', href = ' + href);
+	if (current.indexOf(href) == 0) {
+	    $(this).addClass('current');
+	} else {
+	    $(this).removeClass('current');
+	};
+    });
+}
+
+
+function true_false_toggle ( obj, URL ) {
+
+    var check = this.checked;
+
+    if ( $(obj).attr("checked") == "checked" )
+	check_value = 'true';
+    else
+	check_value = 'false';
+
+    if ( URL.indexOf('?') == 0 )
+	URL += "&flag=";
+    else
+	URL += "?flag=";
+
+    $.ajax({
+        url: URL + check_value,
+        type: 'GET',
+        success: function (data) {
+	    this.checked = !check;
+        }
+    });
+
+};

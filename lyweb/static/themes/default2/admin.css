@@ -1,19 +1,450 @@
-.admin {
-    padding: 50px auto;
+/* Start Common Style */
+table th {
+    color: #2A3539;
+}
+.warning {
+    width: 480px;
+    margin: 50px auto;
+}
+.warning h3 {
+    color: red !important;
+    text-align: center;
+    margin: 15px 0;
+}
+.warning p {
+    color: #2A3539;
+    margin: 25px 0 35px;
+    text-align: center;
+}
+#ly-admin-sidemain p {
+    margin: 15px 0;
+}
+/* End Common Style */
+
+
+#ly-admin {
+    margin: 10px 0 50px;
+}
+#ly-admin-sidebar, #ly-admin-sidemain {
+    float: left;
+}
+#ly-admin-sidebar {
+    width: 135px;
+    text-align: right;
+}
+/* Start Admin Sidemain */
+#ly-admin-sidemain {
+    width: 790px;
+    padding: 15px 25px 50px;
+}
+#ly-admin-sidemain h2 {
+    margin: 20px 0 12px;
+    color: #143340;
+    font-size: 16px;
+}
+#ly-admin-sidemain .title {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+#ly-admin-sidemain h3 {
+    font-size: 16px;
+    margin: 25px 0 15px;
+    color: #0B5667;
+}
+#ly-admin-sidemain .global-description {
+    width: 600px;
+    margin: 10px auto;
+    padding: 10px 20px;
+}
+#ly-admin-sidemain .manage-action {
+    margin: 15px 0 20px;
+}
+.small-left-right-form {
+    margin: 50px auto;
+    width: 600px;
+}
+#ly-admin-sidemain input[type="submit"] {
+
+    margin-top: 30px;
+    border-radius: 5px;
+
+    /* A semi-transparent text shadow */
+    text-shadow:1px 1px 0 rgba(255,255,255,0.4);
+    
+    /* Overriding the default underline styling of the links */
+    text-decoration:none !important;
+    white-space:nowrap;
+    
+    display:inline-block;
+    vertical-align:baseline;
+    position:relative;
+    cursor:pointer;
+    padding:10px 20px;
+    
+    background-repeat:no-repeat;
+
+    /* The following two rules are fallbacks, in case
+       the browser does not support multiple backgrounds. */
+
+    background-position:bottom left;
+    background-image:url('button_bg.png');
+    
+    /* Multiple backgrounds version. The background images
+       are defined individually in color classes */
+    
+    background-position:bottom left, top right, 0 0, 0 0;
+    background-clip:border-box;
+    
+    /* Applying a default border raidus of 8px */
+    
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    border-radius:8px;
+    
+    /* A 1px highlight inside of the button */
+    
+    -moz-box-shadow:0 0 1px #fff inset;
+    -webkit-box-shadow:0 0 1px #fff inset;
+    box-shadow:0 0 1px #fff inset;
+    
+    /* Animating the background positions with CSS3 */
+    /* Currently works only in Safari/Chrome */
+    
+    -webkit-transition:background-position 1s;
+    -moz-transition:background-position 1s;
+    transition:background-position 1s;
+
+}
+/* End Admin Sidemain */
+
+/* Start admin menu */
+#ly-admin-menu {
+    margin-top: 50px;
 }
 
-.sidebar {
-    margin: 20px 0;
+#ly-admin-menu .dropdown > span {
+    display: inline-block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 8px 12px;
+    background-color: #3B5998;
+    border-radius: 3px 0 0 3px;
+    color: white;
+    width: 110px;
 }
+#ly-admin-menu li > ul {
+    margin-top: 12px;
+    margin-bottom: 16px;
+}
+#ly-admin-menu li ul li a {
+    margin: 3px 0;
+    padding: 3px 12px;
+    display: inline-block;
+    font-size: 0.9em;
+    text-decoration: none;
+}
+#ly-admin-menu li ul li a:hover,
+#ly-admin-menu a.current {
+    font-weight: bold;
+    color: #DFB911;
+}
+#ly-admin-menu .show-flag {
+    float: left;
+    font-weight: bold;
+}
+/* End amdin menu */
 
-.sidemain {
-    padding: 50px 10px;
-}
 
-.admin-user-list {
-    margin: 50px;
+/* Start home */
+#admin-pie-show {
+    width: 520px;
+    margin: 10px auto;
 }
-.admin-user-list td {
+#admin-cpu-pie, #admin-mem-pie {
+    width: 180px;
+    height: 180px;
+    border: 1px dashed gainsboro;
+}
+.admin-pie-item {
+    float: left;
+    padding-top: 15px;
+    margin: 5px 30px;
+}
+.admin-pie-item .desc {
+    margin: 0;
+    padding-top: 15px;
+    border-top: 1px dashed gainsboro;
+    border-left: 1px dashed gainsboro;
+    border-right: 1px dashed gainsboro;
+}
+.admin-pie-item-hover {
+    height: 16px;
+    padding: 5px;
+    font-size: 13px;
+    text-align: center;
+}
+.admin-pie-item h3 {
+    font-size: 16px;
+    color: #E2A105;
+    text-align: center;
+    margin: 0 5px 10px;
+}
+.admin-pie-item .r-info {
+    text-align: center;
+    font-size: 13px;
+    color: #606030;
+}
+.admin-pie-item .r-info .total {
+    padding-right: 5px;
+}
+.admin-pie-item .r-info .used {
+    border-left: 1px solid #DEDEDE;
+    padding-left: 5px;
+    color: red;
+}
+/* End home */
+
+
+/* Start Admin Home Index */
+#system-global-info {
+    margin: 35px auto;
+    width: 300px;
+}
+/* End Admin Home Index */
+
+
+/* Start Admin User */
+.ly-table td img,
+.admin-view-user td img {
+    width: 16px;
+    height: 16px;
+}
+.ly-table td {
+    padding: 6px 8px;
+    font-size: 0.9em;
+}
+.admin-view-user {
+    margin: 60px 50px;
+}
+.admin-view-user .u-avatar {
+    float: right;
+}
+.admin-view-user .u-avatar img {
+    width: 100px;
+    height: 100px;
+}
+.admin-view-user .u-avatar .action img {
+    width: 18px;
+    height: 18px;
+}
+.admin-view-user .u-name {
+    display: block;
+    text-align: center;
     padding: 5px 10px;
 }
+.admin-view-user .ly-table table {
+    width: 380px;
+}
+.admin-view-user .u-info > table,
+.admin-view-user .u-info > p,
+.admin-view-user .u-info > div {
+    margin: 15px 20px;
+}
+.admin-view-user .u-info td {
+    padding: 6px 8px;
+    font-size: 12px;
+    padding: 15px 20px;
+}
+.kvlist > table > tbody > tr > td:first-child {
+    font-size: 13px;
+    font-weight: bold;
+    color: #2A3539;
 
+    background-color: #dce9f9;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+    background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: linear-gradient(top, #ebf3fc, #dce9f9);
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#ebf3fc, endColorstr=#dce9f9);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#ebf3fc, endColorstr=#dce9f9)";
+    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+    -moz-box-shadow:0 1px 0 rgba(255,255,255,.8) inset;
+    box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+    border-top: none;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+
+    width: 120px;
+    border-radius: 3px;
+}
+.admin-view-user .u-info > table > tr > td:last-child {
+    width: 300px;
+    border-radius: 3px;
+}
+.u-info td.have-table {
+    margin: 0;
+    padding: 0;
+}
+.u-info td.have-table table {
+    width: 100%;
+}
+.u-info td.have-table table td {
+    border: 1px solid #DEDEDE;
+}
+.u-info td.have-table table td:first-child {
+    width: 160px;
+}
+.admin-view-user tr:hover {
+    background-color: #F5F9FA;
+}
+.inner-table td {
+    border: none;
+    background-color: white;
+}
+.inner-table td:first-child {
+    color: #2A3539;
+    font-weight: bold;
+}
+#admin-user-edit-groups {
+    width: 600px;
+    margin: 50px auto;
+}
+#admin-user-edit-groups .ms2side__div .ms2side__select > select{
+    padding: 10px;
+}
+#admin-user-edit-groups .ms2side__div .ms2side__header {
+    padding: 10px 0;
+    text-align: center;
+    background-color: #FFF;
+    font-weight: bold;
+    font-size: 16px;
+}
+#admin-user-edit-groups .ms2side__div .ms2side__options {
+    margin-top: 20px;
+}
+#admin-user-edit-groups h3 {
+    margin-top: 30px;
+}
+/* End Admin User */
+
+
+
+/* Start Admin Group */
+.admin-group-form.small-left-right-form {
+    width: 780px;
+}
+.admin-group-form .ms2side__div {
+    float: none;
+    clear: none;
+    margin-top: 20px;
+}
+/* End Admin Group */
+
+
+
+/* Start Admin Permission */
+/* End Admin Permission */
+
+
+/* Start Admin Appliance */
+.catalog-list {
+    margin: 15px 0;
+}
+.catalog-list ul {
+    list-style: none outside none;
+}
+.catalog-list li {
+    float: left;
+    margin-right: 8px;
+    border-radius: 5px;
+    border: 1px solid #DEDEDE;
+    padding: 8px 10px;
+}
+.catalog-list li a {
+    text-decoration: none;
+}
+.catalog-list li.current {
+    background-color: #F5F9FA;
+}
+.a-owner, .i-app {
+    position: relative;
+}
+.hover-content {
+    position: absolute;
+    top: 10px;
+    left: 45px;
+    /*width: 200px;*/
+/*    z-index: 3;*/
+    /*background-color: #dce9f9;
+    border: 1px solid #DEDEDE;*/
+}
+.hover-content .ly-btn2.small {
+    /*border-radius: 0px 22px 0px 22px;*/
+}
+.a-view .a-logo {
+    float: right;
+}
+.a-view .a-logo img {
+    width: 100px;
+    height: 100px;
+}
+/* End Admin Appliance */
+
+
+/* Start Admin Instance */
+.i-owner {
+    position: relative;
+}
+.i-owner .hover-content {
+    position: absolute;
+    top: 10px;
+    left: 45px;
+}
+/* End Admin Instance */
+
+#welcome-new-user-eform, #registration-policy-eform {
+    width: 800px;
+    padding: 0;
+}
+#welcome-new-user-eform textarea,
+#registration-policy-eform textarea {
+    width: 720px;
+    height: 280px;
+}
+
+/* Start Send Mail */
+#ly-sendmail-form {
+}
+#ly-sendmail-form td {
+    padding: 10px;
+}
+#ly-sendmail-form td:first-child {
+    text-align: right;
+    vertical-align: top;
+}
+#ly-sendmail-form .subject input {
+    line-height: 2em;
+}
+#ly-sendmail-form .body textarea {
+    width: 600px;
+    height: 300px;
+}
+#ly-sendmail-form .errors {
+    color: red;
+}
+/* End Send Mail */
+
+.admin-user-list .hidden {
+    position: absolute;
+    top: 58px;
+    left: 15px;
+    width: 280px;
+    border-radius: 3px;
+    border: 1px solid #DCDCDC;
+    background: #F9FAF9;
+    color: #575758;
+    padding: 12px;
+    z-index: 3;
+}

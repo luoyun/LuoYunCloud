@@ -1,0 +1,34 @@
+<%inherit file="base.html"/>
+
+<%block name="main">
+
+<h1>Base configure for LuoYun platform</h1>
+
+<h2>${ _("DB Configure") }</h2>
+
+<div class="main-wrap small-left-right-form">
+  <form method="POST">
+    ${ form.dbtype.label } ${ form.dbtype() }<br/>
+    ${ form.html_errors(form.dbtype.errors) }
+
+    ${ form.dbhost.label } ${ form.dbhost() }<br/>
+    ${ form.html_errors(form.dbhost.errors) }
+
+    ${ form.dbname.label } ${ form.dbname() }<br/>
+    ${ form.html_errors(form.dbname.errors) }
+
+    ${ form.dbuser.label } ${ form.dbuser() }<br/>
+    ${ form.html_errors(form.dbuser.errors) }
+
+    ${ form.dbpass.label } ${ form.dbpass() }<br/>
+    ${ form.html_errors(form.dbpass.errors) }
+
+    <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
+% if saved:
+<span id="saved-success">${ _("saved success, please") }<a href="${ reverse_url('reload') }">${ _("reboot") }</a>${ _("web server !") }</span>
+% endif
+
+  </form>
+</div>
+
+</%block>

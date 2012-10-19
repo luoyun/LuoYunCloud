@@ -1,0 +1,31 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="sidemain">
+
+<div class="main-wrap">
+  <div class="inner-navigator">
+    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
+    <span><a href="${ reverse_url('admin:wiki') }">${ _("Wiki") }</a></span>
+    % if catalog:
+    &gt;
+    <span><a href="${ reverse_url('admin:wiki') }?action=topics&catalog=${ catalog.id }">${ catalog.name }</a></span>
+    % endif
+  </div>
+</div>
+
+<div class="main-wrap">
+  <table class="list">
+    <tbody>
+      % for T in TOPIC_LIST:
+      <tr>
+        <td><span class="count">${ T.id }</span></td>
+        <td><a href="${ reverse_url('wiki:view', T.id) }">${ T.name }</a></td>
+        <td><a href="${ reverse_url('admin:user') }?id=${ T.user.id }&action=view">${ T.user.username }</a></td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+</div>
+
+
+</%block>

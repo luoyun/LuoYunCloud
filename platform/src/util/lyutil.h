@@ -39,9 +39,9 @@ int lyutil_create_dir(const char *dir);
 int lyutil_create_file(const char *path, int dir_only);
 
 /* process lock file */
-int lyutil_check_pid_file(const char *dir, const char *name);
-int lyutil_create_pid_file(const char *dir, const char *name);
-int lyutil_remove_pid_file(const char *dir, const char *name);
+int lyutil_check_pid_file(const char *path, const char *name);
+int lyutil_create_pid_file(const char *path, const char *name);
+int lyutil_remove_pid_file(const char *path, const char *name);
 
 /* file decompression */
 int lyutil_decompress_bzip2(const char *srcfile, const char *dstfile);
@@ -60,6 +60,8 @@ char *lyutil_uuid(char * in, int in_len);
 #define LOAD_AVERAGE_LAST_15M 3
 int lyutil_load_average(int type);
 unsigned long long lyutil_free_memory(void);
+unsigned int lyutil_total_storage(char * path);
+unsigned int lyutil_free_storage(char * path);
 
 int lyutil_signal_init();
 

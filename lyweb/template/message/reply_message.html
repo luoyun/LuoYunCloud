@@ -1,0 +1,35 @@
+<%inherit file="message_base.html" />
+
+<%block name="sidemain">
+
+<div class="edit-message reply-message">
+  <p class="title">
+    <span class="datetime">${ fulltime(message.created) }</span>
+    <a class="username" href="${ reverse_url('account:view', message.sender_id) }">${ message.sender.username }</a>
+    <span>${ _("Write :") }</span>
+  </p>
+
+  <div class="orig-message">
+    <h2 class="subject">${ message.subject }</h2>
+    <div class="markdown body">${ message.content_html }</div>
+  </div>
+
+  <h1>${ _("Reply Message") }</h1>
+
+  <div class="large-tbform">
+    <form method="POST">
+      ${ form.subject.label }
+      ${ form.subject() }
+      ${ form.html_errors( form.subject.errors ) }
+
+      ${ form.content.label }
+      ${ form.content() }
+      ${ form.html_errors( form.content.errors ) }
+
+      <input type="submit" value="${ _('Submit') }" class="button" />
+    </form>
+  </div>
+
+</div>
+
+</%block>

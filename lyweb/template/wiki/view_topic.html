@@ -1,33 +1,32 @@
 <%inherit file="wiki_base.html"/>
 
-<%block name="lymain">
+<%block name="main">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="/">${ _("Home") }</a></span>&gt;
-    <span><a href="/wiki">${ _("Wiki") }</a></span>&gt;
-    <span><a href="/wiki/catalog/${ topic.catalog_id }">
-        ${ topic.catalog.name }</a></span>&gt;
-    <span>${ _("View") } ${ topic.name }</span>
+<div class="c">
+  <div class="inner-nav">
+    <ol>
+      <li><a href="/">${ _("Home") }</a></li>
+      <li><a href="/wiki">${ _("FAQ") }</a></li>
+      <li>${ _("View") } ${ topic.name }</li>
+    </ol>
   </div>
 </div>
 
-<div class="main-wrap">
-  <div class="topic">
-    <div class="topic-name">
+<div class="c">
+  <div class="view-topic">
+    <div class="title">
       <h2>${ topic.name }</h2>
     </div>
-    <div class="topic-info">
+    <div class="info">
       <span>${ fulltime(topic.updated) } updated by ${ topic.user.username }</span>
       % if current_user:
-      % if current_user.id in [1, topic.user_id]:
+      % if current_user.id == topic.user_id or has_permission('admin'):
       <span><a href="/wiki/topic/${ topic.id }/edit">${ _("Edit") }</a></span>
       <span><a href="/wiki/topic/${ topic.id }/delete">${ _("Delete") }</a></span>
       % endif
       % endif
-      <span><a href="/wiki/topic/${ topic.id }/source">${ _("Source") }</a></span>
     </div>
-    <div class="topic-body markup1">
+    <div class="body markdown">
       ${ topic.body_html }
     </div>
   </div>

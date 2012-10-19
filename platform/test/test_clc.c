@@ -101,14 +101,14 @@ static int __db_exec(char *sql)
 int setup_applaince_in_db()
 {
     char sql[1024];
-    snprintf(sql, 1024, "SELECT id from appliance where name = 'rhel56n1';");
+    snprintf(sql, 1024, "SELECT id from appliance where name = 'mediawiki';");
     PGresult * res = __db_select(sql);
     if (res == NULL)
         return -1;
 
     if (PQntuples(res) > 0) {
         ubantu_app_keep = 1;
-        printf("app rhel56n1 exists already.\n");
+        printf("app mediawiki exists already.\n");
         PQclear(res);
         return 0;
     }
@@ -118,7 +118,7 @@ int setup_applaince_in_db()
                  "created, updated) "
                  "VALUES ('%s', %d, '%s',"
                  "'now', 'now');",
-                 "rhel56n1", 372803101, "6219855488130d275d7abb43db7467f9"
+                 "mediawiki", 271819262, "6077d5053a8e0dd8e2b3ddf189722905"
                  ) >= LINE_MAX) {
         printf("error in %s(%d)\n", __func__, __LINE__);
         return -1;
@@ -132,7 +132,7 @@ int reset_applaince_in_db()
     if (ubantu_app_keep)
         return 0;
     char sql[1024];
-    snprintf(sql, 1024, "delete from appliance where name = 'rhel56n1';");
+    snprintf(sql, 1024, "delete from appliance where name = 'mediawiki';");
     printf("%s\n", sql);
     return __db_exec(sql);
 }
@@ -151,7 +151,7 @@ int setup_instance_in_db()
         return 0;
     }
 
-    snprintf(sql, 1024, "SELECT id from appliance where name = 'rhel56n1';");
+    snprintf(sql, 1024, "SELECT id from appliance where name = 'mediawiki';");
     res = __db_select(sql);
     if (res == NULL)
         return -1;

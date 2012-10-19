@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-31 11:15+0800\n"
+"POT-Creation-Date: 2012-09-06 18:18+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,212 +17,70 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: template/admin/index.html:7 template/admin/wiki.html:7
-#: template/admin/instance.html:7 template/admin/user.html:7
-#: template/admin/appliance.html:7
-#: template/admin/appliance_edit_catalog.html:7
-#: template/admin/appliance_add_catalog.html:7 template/job/index.html:7
-#: template/wiki/view_catalog.html:6 template/wiki/view_topic.html:7
-#: template/instance/view.html:6 template/instance/edit.html:6
+#: template/404.html:10
+msgid "404 Error"
+msgstr ""
+
+#: template/404.html:11
+msgid "No such page: "
+msgstr ""
+
+#: template/wiki/view_catalog.html:7 template/wiki/view_topic.html:7
 #: template/appliance/view.html:7 template/appliance/edit.html:6
-#: template/base.html:33 template/node/index.html:7 template/node/view.html:8
+#: template/instance/edit.html:6 template/instance/instance_base.html:16
+#: template/account/account_base.html:13
+#: template/admin/wiki/add_catalog.html:7 template/admin/admin_base.html:19
+#: template/myun/myun_base.html:13
 msgid "Home"
 msgstr ""
 
-#: template/admin/index.html:8 template/admin/wiki.html:8
-#: template/admin/instance.html:8 template/admin/user.html:8
-#: template/admin/appliance.html:8
-#: template/admin/appliance_edit_catalog.html:8
-#: template/admin/appliance_add_catalog.html:8 template/job/index.html:8
-#: template/node/index.html:8 template/node/view.html:9
-msgid "Admin"
-msgstr ""
-
-#: template/admin/index.html:20 template/admin/user.html:9
-#: template/job/index.html:20 template/instance/view.html:96
-msgid "User"
-msgstr ""
-
-#: template/admin/index.html:23 template/admin/appliance.html:9
-#: template/admin/appliance_edit_catalog.html:9
-#: template/admin/appliance_add_catalog.html:9 template/appliance/view.html:8
-#: template/appliance/edit.html:7 template/base.html:34
-msgid "Appliances"
-msgstr ""
-
-#: template/admin/index.html:26 template/admin/instance.html:9
-msgid "Instances"
-msgstr ""
-
-#: template/admin/index.html:29 template/admin/wiki.html:9
-#: template/wiki/view_catalog.html:7 template/wiki/view_topic.html:8
-#: template/base.html:35
+#: template/wiki/view_catalog.html:8 template/wiki/view_topic.html:8
+#: template/admin/wiki/topics.html:8 template/admin/wiki/index.html:8
+#: template/admin/wiki/edit_catalog.html:8 template/admin/wiki/index.ajax:4
 msgid "Wiki"
 msgstr ""
 
-#: template/admin/index.html:32
-msgid "Node"
-msgstr ""
-
-#: template/admin/index.html:35
-msgid "Job"
-msgstr ""
-
-#: template/admin/wiki.html:33 template/admin/appliance.html:34
-#: template/admin/appliance_add_catalog.html:10
-msgid "Add Catalog"
-msgstr ""
-
-#: template/admin/wiki.html:35
-msgid "Edit Catalog"
-msgstr ""
-
-#: template/admin/wiki.html:46 template/admin/instance.html:21
-#: template/admin/appliance.html:46 template/appliance/edit.html:25
-#: template/home/index.html:110
-msgid "Name"
-msgstr ""
-
-#: template/admin/wiki.html:50 template/admin/appliance.html:50
-#: template/appliance/edit.html:34
-msgid "Summary"
-msgstr ""
-
-#: template/admin/wiki.html:54 template/admin/appliance.html:54
-msgid "Position"
-msgstr ""
-
-#: template/admin/wiki.html:58 template/admin/appliance.html:58
-msgid "Created"
-msgstr ""
-
-#: template/admin/wiki.html:62 template/admin/instance.html:23
-#: template/admin/appliance.html:62 template/appliance/index.html:34
-#: template/home/index.html:69
-msgid "Updated"
-msgstr ""
-
-#: template/admin/wiki_edit_catalog.html:7
-#: template/admin/appliance_edit_catalog.html:10
-msgid "Edit catalog"
-msgstr ""
-
-#: template/admin/wiki_edit_catalog.html:22
-#: template/admin/wiki_add_catalog.html:22
-#: template/admin/appliance_edit_catalog.html:29
-#: template/admin/appliance_add_catalog.html:29
-#: template/wiki/new_topic.html:21 template/wiki/edit_topic.html:19
-msgid "* Name:"
-msgstr ""
-
-#: template/admin/wiki_edit_catalog.html:31
-#: template/admin/wiki_add_catalog.html:31
-#: template/admin/appliance_edit_catalog.html:38
-#: template/admin/appliance_add_catalog.html:38
-msgid "Summary:"
-msgstr ""
-
-#: template/admin/wiki_edit_catalog.html:40
-#: template/admin/wiki_add_catalog.html:40
-#: template/admin/appliance_edit_catalog.html:47
-#: template/admin/appliance_add_catalog.html:47
-#: template/wiki/new_topic.html:47 template/wiki/edit_topic.html:46
-#: template/appliance/edit.html:69
-msgid "Description:"
-msgstr ""
-
-#: template/admin/instance.html:19 template/job/index.html:19
-#: template/account/view_user.html:18 template/instance/view.html:41
-#: template/appliance/view.html:37 template/appliance/view_by_ajax.html:11
-msgid "ID"
-msgstr ""
-
-#: template/admin/instance.html:20 template/instance/view.html:40
-#: template/home/index.html:114
-msgid "Owner"
-msgstr ""
-
-#: template/admin/instance.html:22 template/job/index.html:21
-#: template/home/index.html:118
-msgid "Status"
-msgstr ""
-
-#: template/admin/instance.html:41
-msgid "Stop All Instances"
-msgstr ""
-
-#: template/admin/instance.html:42
-msgid "Start All Instances"
-msgstr ""
-
-#: template/admin/instance.html:46
-msgid "No instances yet !"
-msgstr ""
-
-#: template/admin/user.html:22
-msgid "reset password"
-msgstr ""
-
-#: template/admin/user.html:32
-msgid "Create Account"
-msgstr ""
-
-#: template/admin/appliance.html:41 template/wiki/view_topic.html:24
-#: template/wiki/edit_topic.html:6 template/account/user_list.html:35
-#: template/instance/view.html:71 template/instance/view_by_ajax.html:25
-#: template/appliance/view.html:52 template/appliance/edit.html:8
-#: template/appliance/view_by_ajax.html:20
-msgid "Edit"
-msgstr ""
-
-#: template/admin/wiki_add_catalog.html:7
-msgid "Create a new catalog"
-msgstr ""
-
-#: template/job/index.html:9
-msgid "Jobs"
-msgstr ""
-
-#: template/job/index.html:15
-msgid "Job List"
-msgstr ""
-
-#: template/job/index.html:22
-msgid "Completed"
-msgstr ""
-
-#: template/job/index.html:23
-msgid "Target Type"
-msgstr ""
-
-#: template/job/index.html:24
-msgid "Target ID"
-msgstr ""
-
-#: template/job/index.html:25 template/instance/view.html:97
-msgid "Action"
-msgstr ""
-
-#: template/wiki/index.html:10 template/wiki/view_catalog.html:17
-msgid "New Topic"
-msgstr ""
-
-#: template/wiki/index.html:27 template/wiki/view_catalog.html:31
-msgid "by"
-msgstr ""
-
-#: template/wiki/index.html:29 template/wiki/view_catalog.html:33
-msgid "update"
-msgstr ""
-
-#: template/wiki/view_catalog.html:8 template/wiki/view_topic.html:11
-#: template/instance/view.html:7 template/appliance/view.html:9
+#: template/wiki/view_catalog.html:9 template/wiki/view_topic.html:11
+#: template/appliance/view.html:10 template/instance/index.html:104
+#: template/admin/group/view.html:5 template/admin/permission/view.html:5
+#: template/home/index.html:61
 msgid "View"
 msgstr ""
 
-#: template/wiki/view_topic.html:25 template/account/user_list.html:34
-#: template/instance/view.html:72 template/instance/view_by_ajax.html:26
-#: template/appliance/view.html:53 template/appliance/view_by_ajax.html:21
+#: template/wiki/view_catalog.html:19 template/wiki/index.html:10
+msgid "New Topic"
+msgstr ""
+
+#: template/wiki/view_catalog.html:33 template/wiki/index.html:27
+msgid "by"
+msgstr ""
+
+#: template/wiki/view_catalog.html:35 template/wiki/index.html:29
+msgid "update"
+msgstr ""
+
+#: template/wiki/view_topic.html:24 template/appliance/view.html:59
+#: template/appliance/edit.html:8 template/system/networkpool.html:6
+#: template/system/baseinfo.html:25 template/instance/storage.html:23
+#: template/instance/domain.html:11 template/instance/baseinfo.html:18
+#: template/instance/resource.html:16 template/instance/network.html:35
+#: template/instance/network.html:42 template/admin/appliance/catalog.html:41
+#: template/admin/group/index.html:38 template/system/baseinfo.ajax:21
+#: template/system/networkpool.ajax:3 template/instance/domain.ajax:7
+#: template/instance/resource.ajax:12 template/instance/network.ajax:31
+#: template/instance/network.ajax:38 template/instance/baseinfo.ajax:14
+#: template/instance/storage.ajax:19
+msgid "Edit"
+msgstr ""
+
+#: template/wiki/view_topic.html:25 template/appliance/view.html:60
+#: template/message/view_message.html:18 template/instance/delete.html:9
+#: template/instance/storage.html:24 template/instance/domain.html:12
+#: template/instance/instance_base.html:122
+#: template/admin/appliance/view.html:73
+#: template/admin/appliance/index.html:61 template/admin/group/index.html:42
+#: template/instance/domain.ajax:8 template/instance/storage.ajax:20
+#: template/instance/delete.ajax:5
 msgid "Delete"
 msgstr ""
 
@@ -230,146 +88,559 @@ msgstr ""
 msgid "Source"
 msgstr ""
 
-#: template/wiki/new_topic.html:7
-msgid "Create a new topic"
+#: template/appliance/view.html:8 template/appliance/edit.html:7
+#: template/base.html:31 template/admin/wiki/add_catalog.html:9
+#: template/admin/admin_base.html:42 template/admin/appliance/catalog.html:20
+#: template/admin/user/view.html:112 template/myun/myun_base.html:38
+#: template/myun/appliances.html:4
+msgid "Appliances"
 msgstr ""
 
-#: template/wiki/new_topic.html:30 template/wiki/edit_topic.html:28
-msgid "Image catalog:"
+#: template/appliance/view.html:19 template/appliance/view.html:95
+#: template/instance/index.html:37 template/instance/index.html:47
+#: template/instance/instance_base.html:86
+#: template/admin/appliance/view.html:32
+#: template/admin/appliance/index.html:36
+#: template/admin/instance/index.html:30 template/home/index.html:107
+msgid "Owner"
 msgstr ""
 
-#: template/account/login.html:7
-msgid "Sign in LuoYun System"
+#: template/appliance/view.html:24
+msgid ""
+"This is a appliance of LuoYun platform, you can create a instance from it."
 msgstr ""
 
-#: template/account/login.html:23 template/account/view_user.html:14
-#: template/account/register.html:19 template/account/create.html:19
-msgid "Username"
+#: template/appliance/view.html:28
+msgid "Create Instance"
 msgstr ""
 
-#: template/account/login.html:32 template/account/register.html:28
-#: template/account/create.html:28
-msgid "Password"
+#: template/appliance/view.html:30
+msgid "This appliance is locked, you can not use it."
 msgstr ""
 
-#: template/account/view_user.html:8
-msgid "Reset Password"
+#: template/appliance/view.html:39 template/appliance/edit.html:71
+#: template/appliance/index.html:18 template/admin/admin_base.html:43
+#: template/admin/appliance/view.html:36
+#: template/admin/appliance/catalog.html:5
+#: template/admin/appliance/index.html:37
+msgid "Catalog"
 msgstr ""
 
-#: template/account/view_user.html:22
-msgid "Date Joined"
+#: template/appliance/view.html:43 template/home/no_resource.html:22
+msgid "Used"
 msgstr ""
 
-#: template/account/view_user.html:26
-msgid "Last Login"
+#: template/appliance/view.html:44
+msgid "times"
 msgstr ""
 
-#: template/account/view_user.html:31
-msgid "Email"
-msgstr ""
-
-#: template/account/view_user.html:35
-msgid "Locale"
-msgstr ""
-
-#: template/account/view_user.html:39
-msgid "First Name"
-msgstr ""
-
-#: template/account/view_user.html:43
-msgid "Last Name"
-msgstr ""
-
-#: template/account/view_user.html:54 template/appliance/view.html:71
-#: template/appliance/delete_failed.html:12
-msgid "Instance List"
-msgstr ""
-
-#: template/account/register.html:6 template/account/create.html:6
-msgid "LuoYun User Register"
-msgstr ""
-
-#: template/account/register.html:37 template/account/create.html:37
-#: template/account/reset_password.html:29
-msgid "Password Confirm"
-msgstr ""
-
-#: template/account/reset_password.html:6
-msgid "Reset password"
-msgstr ""
-
-#: template/account/reset_password.html:20
-msgid "New Password"
-msgstr ""
-
-#: template/account/chat.html:9
-msgid "Sign out"
-msgstr ""
-
-#: template/instance/view.html:42 template/home/index.html:19
-msgid "Appliance"
-msgstr ""
-
-#: template/instance/view.html:43
-msgid "CPU numbers"
-msgstr ""
-
-#: template/instance/view.html:44
-msgid "Memory"
-msgstr ""
-
-#: template/instance/view.html:45 template/appliance/view.html:43
-#: template/appliance/view_by_ajax.html:13
+#: template/appliance/view.html:47 template/instance/instance_base.html:94
+#: template/myun/appliances.html:37 template/myun/instances.html:47
 msgid "Create Time"
 msgstr ""
 
-#: template/instance/view.html:46 template/appliance/view.html:45
-#: template/appliance/view_by_ajax.html:14
+#: template/appliance/view.html:51 template/instance/instance_base.html:98
+#: template/myun/appliances.html:41 template/myun/instances.html:51
 msgid "Update Time"
 msgstr ""
 
-#: template/instance/view.html:52
-msgid "Virtual Machine Configure"
+#: template/appliance/view.html:70
+msgid "About The Appliance"
 msgstr ""
 
-#: template/instance/view.html:53
-msgid "Libvirtd Configure"
+#: template/appliance/view.html:79 template/appliance/delete_failed.html:15
+#: template/admin/node/view.html:72 template/admin/node/instances.html:16
+msgid "Instance List"
 msgstr ""
 
-#: template/instance/view.html:54
-msgid "Osmanager Configure"
+#: template/appliance/delete_failed.html:9
+msgid "Delete Appliance Failed"
 msgstr ""
 
-#: template/instance/view.html:62 template/instance/view_by_ajax.html:22
-msgid "Run"
+#: template/appliance/edit.html:40
+msgid "Edit appliance"
 msgstr ""
 
-#: template/instance/view.html:64 template/instance/view_by_ajax.html:20
-msgid "Stop"
+#: template/appliance/edit.html:53 template/account/view_group.html:33
+#: template/account/permissions.html:15 template/admin/appliance/view.html:28
+#: template/admin/appliance/catalog.html:19
+#: template/admin/appliance/index.html:35 template/admin/group/view.html:20
+#: template/admin/group/view.html:51
+#: template/admin/group/delete_failed.html:25
+#: template/admin/group/index.html:21 template/admin/user/instances.html:19
+#: template/admin/user/index.html:26 template/admin/instance/index.html:31
+#: template/admin/node/view.html:76 template/admin/node/instances.html:20
+#: template/admin/permission/view.html:24
+#: template/admin/permission/view.html:40
+#: template/admin/permission/index.html:18 template/home/index.html:103
+msgid "Name"
 msgstr ""
 
-#: template/instance/view.html:68
-msgid "Query"
+#: template/appliance/edit.html:62 template/admin/appliance/view.html:52
+msgid "Summary"
 msgstr ""
 
-#: template/instance/view.html:91
-msgid "Recently Job List"
+#: template/appliance/edit.html:88
+msgid "Logo Image"
 msgstr ""
 
-#: template/instance/view.html:95
+#: template/appliance/edit.html:97
+msgid "Description:"
+msgstr ""
+
+#: template/appliance/index.html:6
+msgid "Public Appliances"
+msgstr ""
+
+#: template/appliance/index.html:8
+msgid "(My Appliances)"
+msgstr ""
+
+#: template/appliance/index.html:43
+msgid "Have not any appliances yet !"
+msgstr ""
+
+#: template/message/view_message.html:17
+msgid "Reply"
+msgstr ""
+
+#: template/message/outbox.html:11 template/message/view_out_message.html:14
+msgid "Send To"
+msgstr ""
+
+#: template/message/outbox.html:12 template/message/view_out_message.html:10
+#: template/message/inbox.html:12
+msgid "Subject"
+msgstr ""
+
+#: template/message/outbox.html:33
+msgid "You have not sent any message before !"
+msgstr ""
+
+#: template/message/message_base.html:15 template/base.html:46
+msgid "Inbox"
+msgstr ""
+
+#: template/message/message_base.html:16
+msgid "Outbox"
+msgstr ""
+
+#: template/message/message_base.html:20
+msgid "New"
+msgstr ""
+
+#: template/message/reply_message.html:9
+msgid "Write :"
+msgstr ""
+
+#: template/message/reply_message.html:17
+msgid "Reply Message"
+msgstr ""
+
+#: template/message/new_message.html:7
+msgid "New Message"
+msgstr ""
+
+#: template/message/view_out_message.html:21
+msgid "Body"
+msgstr ""
+
+#: template/message/inbox.html:11
+msgid "From"
+msgstr ""
+
+#: template/message/inbox.html:39
+msgid "You have not receiverd any message yet !"
+msgstr ""
+
+#: template/message/index.html:5
+msgid "Here is your message boxes"
+msgstr ""
+
+#: template/system/nameservers_edit.html:5
+#: template/system/nameservers_edit.ajax:1
+msgid "Edit Nameservers"
+msgstr ""
+
+#: template/system/nameservers_edit.html:14 template/system/nginx_edit.html:20
+#: template/system/clc_edit.html:17 template/system/db_edit.html:26
+#: template/system/welcome_new_user_edit.html:15
+#: template/system/registration_protocol_edit.html:15
+#: template/system/baseinfo_edit.html:20
+#: template/system/networkpool_edit.html:29
+#: template/system/domain_edit.html:20 template/instance/secret.html:20
+#: template/system/registration_protocol_edit.ajax:9
+#: template/system/clc_edit.ajax:13 template/system/baseinfo_edit.ajax:16
+#: template/system/domain_edit.ajax:16
+#: template/system/networkpool_edit.ajax:25 template/system/db_edit.ajax:22
+#: template/system/nameservers_edit.ajax:10 template/system/nginx_edit.ajax:16
+#: template/instance/secret.ajax:16
+msgid "saved success"
+msgstr ""
+
+#: template/system/networkpool.html:4 template/system/networkpool.ajax:1
+msgid "Network pool of LuoYun"
+msgstr ""
+
+#: template/system/networkpool.html:11 template/instance/network.html:23
+#: template/system/networkpool.ajax:8 template/instance/network.ajax:19
+msgid "Netmask"
+msgstr ""
+
+#: template/system/networkpool.html:15 template/instance/network.html:27
+#: template/system/networkpool.ajax:12 template/instance/network.ajax:23
+msgid "Gateway"
+msgstr ""
+
+#: template/system/networkpool.html:19 template/admin/admin_base.html:58
+#: template/system/networkpool.ajax:16
+msgid "Nameservers"
+msgstr ""
+
+#: template/system/networkpool.html:35 template/system/baseinfo.html:11
+#: template/instance/network.html:19 template/instance/index.html:63
+#: template/admin/user/instances.html:21 template/admin/node/view.html:27
+#: template/admin/node/view.html:78 template/admin/node/instances.html:22
+#: template/admin/node/index.html:20 template/home/index.html:115
+#: template/system/baseinfo.ajax:7 template/system/networkpool.ajax:32
+#: template/instance/network.ajax:15
+msgid "IP"
+msgstr ""
+
+#: template/system/networkpool.html:36 template/instance/view_job.html:12
+#: template/instance/joblist.html:12 template/admin/job/index.html:21
+#: template/admin/admin_base.html:33 template/admin/user/instances.html:8
+#: template/admin/user/index.html:4
+#: template/admin/user/reset_password_history.html:4
+#: template/admin/user/reset_password_history.html:20
+#: template/admin/user/user_base.html:4 template/system/networkpool.ajax:33
+#: template/instance/joblist.ajax:8 template/admin/job/index.ajax:18
+msgid "User"
+msgstr ""
+
+#: template/system/networkpool.html:37 template/admin/admin_base.html:47
+#: template/admin/user/index.html:29 template/admin/instance/index.html:4
+#: template/admin/index.html:19 template/home/index.html:24
+#: template/myun/index.html:17 template/system/networkpool.ajax:34
+msgid "Instance"
+msgstr ""
+
+#: template/system/networkpool.html:38 template/instance/index.html:114
+#: template/admin/appliance/view.html:44
+#: template/admin/appliance/index.html:39
+#: template/admin/instance/index.html:35 template/admin/node/view.html:63
+#: template/system/networkpool.ajax:35
+msgid "Updated"
+msgstr ""
+
+#: template/system/nginx_edit.html:5 template/system/nginx_edit.ajax:1
+msgid "Edit Nginx"
+msgstr ""
+
+#: template/system/clc_edit.html:5 template/system/clc_edit.ajax:1
+msgid "Edit Control Server's Configure"
+msgstr ""
+
+#: template/system/baseinfo.html:5 template/system/baseinfo.ajax:1
+msgid "Baseinfo of luoyun system"
+msgstr ""
+
+#: template/system/baseinfo.html:7 template/system/baseinfo.ajax:3
+msgid "Control server"
+msgstr ""
+
+#: template/system/baseinfo.html:16 template/system/baseinfo.ajax:12
+msgid "Port"
+msgstr ""
+
+#: template/system/baseinfo.html:22 template/system/baseinfo.ajax:18
+msgid "Admin email"
+msgstr ""
+
+#: template/system/db_edit.html:5 template/system/db_edit.ajax:1
+msgid "Edit DB configure"
+msgstr ""
+
+#: template/system/welcome_new_user_edit.html:5
+msgid "Welcome New User Edit"
+msgstr ""
+
+#: template/system/welcome_new_user_edit.html:7
+msgid "Read Welcome New User"
+msgstr ""
+
+#: template/system/registration_protocol_edit.html:5
+#: template/system/registration_protocol_edit.ajax:1
+msgid "Registration Policy Edit"
+msgstr ""
+
+#: template/system/registration_protocol_edit.html:7
+#: template/account/register.html:25
+msgid "Read Registration Policy"
+msgstr ""
+
+#: template/system/index.html:5 template/system/index.ajax:1
+msgid "System settings of LuoYun"
+msgstr ""
+
+#: template/system/baseinfo_edit.html:5 template/system/baseinfo_edit.ajax:1
+msgid "Edit baseinfo of luoyun system"
+msgstr ""
+
+#: template/system/networkpool_edit.html:5
+#: template/system/networkpool_edit.ajax:1
+msgid "Edit IP Address Pool"
+msgstr ""
+
+#: template/system/domain_edit.html:5 template/system/domain_edit.ajax:1
+msgid "Edit Domain"
+msgstr ""
+
+#: template/install/base.html:11
+msgid "Install LuoYun"
+msgstr ""
+
+#: template/install/base.html:33
+msgid "Copyright"
+msgstr ""
+
+#: template/install/base.html:33
+msgid "LuoYun Inc."
+msgstr ""
+
+#: template/install/base.html:34
+msgid "About"
+msgstr ""
+
+#: template/install/base.html:35
+msgid "Contact"
+msgstr ""
+
+#: template/install/index.html:7
+msgid "DB Configure"
+msgstr ""
+
+#: template/install/index.html:28
+msgid "saved success, please"
+msgstr ""
+
+#: template/install/index.html:28
+msgid "reboot"
+msgstr ""
+
+#: template/install/index.html:28
+msgid "web server !"
+msgstr ""
+
+#: template/base.html:13
+msgid "LuoYun Cloud"
+msgstr ""
+
+#: template/base.html:32 template/instance/instance_base.html:17
+#: template/admin/admin_base.html:49 template/admin/appliance/index.html:38
+#: template/admin/user/view.html:96 template/admin/user/view.html:123
+#: template/admin/user/instances.html:10 template/admin/node/instances.html:10
+#: template/home/no_resource.html:37 template/myun/myun_base.html:37
+#: template/myun/instances.html:4
+msgid "Instances"
+msgstr ""
+
+#: template/base.html:34 template/myun/myun_base.html:14
+msgid "My LuoYun"
+msgstr ""
+
+#: template/base.html:37
+msgid "Administration"
+msgstr ""
+
+#: template/base.html:49
+msgid "Sign In"
+msgstr ""
+
+#: template/base.html:50
+msgid "Register"
+msgstr ""
+
+#: template/base.html:73
+msgid "Powered by"
+msgstr ""
+
+#: template/base.html:73 template/admin/user/view.html:107
+msgid "LuoYun"
+msgstr ""
+
+#: template/instance/delete.html:5 template/instance/delete.ajax:1
+msgid "Delete instance"
+msgstr ""
+
+#: template/instance/delete.html:8
+msgid "Remove a instance is a dangrous action !"
+msgstr ""
+
+#: template/instance/delete.html:11
+msgid "Just owner can delete instance."
+msgstr ""
+
+#: template/instance/storage_edit.html:6 template/instance/storage.html:8
+#: template/instance/storage.ajax:4
+msgid "Configure Storage"
+msgstr ""
+
+#: template/instance/storage.html:11 template/instance/network.html:11
+#: template/instance/network.ajax:7 template/instance/storage.ajax:7
+msgid "Type"
+msgstr ""
+
+#: template/instance/storage.html:15 template/instance/storage.ajax:11
+msgid "Size"
+msgstr ""
+
+#: template/instance/storage.html:29 template/instance/storage.ajax:25
+msgid "You can add a disk for the instance. "
+msgstr ""
+
+#: template/instance/storage.html:30 template/instance/domain.html:18
+#: template/instance/domain.ajax:14 template/instance/storage.ajax:26
+msgid "Add"
+msgstr ""
+
+#: template/instance/domain.html:6 template/instance/domain.ajax:2
+msgid "Domain Binding"
+msgstr ""
+
+#: template/instance/domain.html:8 template/instance/domain.ajax:4
+msgid "Domain name of the instance is "
+msgstr ""
+
+#: template/instance/domain.html:17 template/instance/domain.ajax:13
+msgid "Domain is not configured."
+msgstr ""
+
+#: template/instance/create.html:6
+msgid "Create My Instance"
+msgstr ""
+
+#: template/instance/create.html:24
+msgid "Select a appliance to create instance."
+msgstr ""
+
+#: template/instance/create.html:36
+msgid "Please give a human instance name, can not be the same as others."
+msgstr ""
+
+#: template/instance/create.html:47
+msgid "The cpus of your instance."
+msgstr ""
+
+#: template/instance/create.html:48 template/instance/create.html:60
+#, python-format
+msgid "total: %s, used: %s"
+msgstr ""
+
+#: template/instance/create.html:59
+msgid "The memory of your instance."
+msgstr ""
+
+#: template/instance/create.html:71
+msgid ""
+"If a instance is private, can not be viable by any others except "
+"administrator."
+msgstr ""
+
+#: template/instance/view_job.html:7 template/instance/joblist.html:7
+#: template/instance/joblist.ajax:3
+msgid "Recent Job History"
+msgstr ""
+
+#: template/instance/view_job.html:11 template/instance/joblist.html:11
+#: template/instance/joblist.ajax:7
 msgid "Job ID"
 msgstr ""
 
-#: template/instance/view.html:98
+#: template/instance/view_job.html:13 template/instance/joblist.html:13
+#: template/admin/job/index.html:25 template/admin/node/index.html:23
+#: template/instance/joblist.ajax:9 template/admin/job/index.ajax:22
+msgid "Action"
+msgstr ""
+
+#: template/instance/view_job.html:14 template/instance/joblist.html:14
+#: template/instance/joblist.ajax:10
 msgid "Result"
 msgstr ""
 
-#: template/instance/view.html:100
+#: template/instance/view_job.html:15 template/instance/joblist.html:15
+#: template/instance/joblist.ajax:11
 msgid "Start Time"
 msgstr ""
 
-#: template/instance/view.html:101
+#: template/instance/view_job.html:16 template/instance/joblist.html:16
+#: template/instance/joblist.ajax:12
 msgid "End Time"
+msgstr ""
+
+#: template/instance/secret.html:5 template/admin/user/view.html:75
+#: template/instance/secret.ajax:1
+msgid "Password"
+msgstr ""
+
+#: template/instance/secret.html:8 template/instance/secret.ajax:4
+msgid "Reset Root Password"
+msgstr ""
+
+#: template/instance/secret.html:12 template/instance/secret.ajax:8
+msgid "SSH Public Key"
+msgstr ""
+
+#: template/instance/baseinfo.html:11 template/instance/baseinfo.ajax:7
+msgid "This is an instance of LuoYun Cloud platform."
+msgstr ""
+
+#: template/instance/baseinfo.html:24 template/account/view_group.html:37
+#: template/admin/appliance/view.html:62
+#: template/admin/permission/view.html:41 template/instance/baseinfo.ajax:20
+msgid "Description"
+msgstr ""
+
+#: template/instance/baseinfo.html:29 template/instance/baseinfo.ajax:25
+msgid "No description."
+msgstr ""
+
+#: template/instance/webssh.html:6 template/instance/instance_base.html:121
+#: template/instance/webssh.ajax:2
+msgid "WebSSH"
+msgstr ""
+
+#: template/instance/webssh.html:8 template/instance/webssh.ajax:4
+msgid "WebSSH of the instance is enabled."
+msgstr ""
+
+#: template/instance/webssh.html:12 template/admin/node/index.html:39
+#: template/instance/webssh.ajax:8
+msgid "Disable"
+msgstr ""
+
+#: template/instance/webssh.html:17 template/instance/webssh.ajax:13
+msgid "WebSSH of the instance is disabled."
+msgstr ""
+
+#: template/instance/webssh.html:20 template/admin/node/index.html:37
+#: template/instance/webssh.ajax:13
+msgid "Enable"
+msgstr ""
+
+#: template/instance/resource_edit.html:6
+msgid "Edit Resource"
+msgstr ""
+
+#: template/instance/network_edit.html:5 template/instance/network.html:6
+#: template/instance/network.ajax:2
+msgid "Configure Network"
+msgstr ""
+
+#: template/instance/network_edit.html:8
+msgid ""
+"IP address pool is not configured or all IP addresses are being used. Please "
+"contact system administrator !"
 msgstr ""
 
 #: template/instance/edit.html:8
@@ -380,8 +651,7 @@ msgstr ""
 msgid "Edit Instance"
 msgstr ""
 
-#: template/instance/edit.html:26 template/instance/add.html:37
-#: template/appliance/create_instance.html:28
+#: template/instance/edit.html:26
 msgid "Instance Name:"
 msgstr ""
 
@@ -389,154 +659,846 @@ msgstr ""
 msgid "Cpu Number:"
 msgstr ""
 
-#: template/instance/edit.html:44 template/instance/view_by_ajax.html:10
+#: template/instance/edit.html:44
 msgid "Memory:"
 msgstr ""
 
-#: template/instance/view_by_ajax.html:9
-msgid "CPU numbers:"
+#: template/instance/resource.html:5 template/instance/resource.ajax:1
+msgid "Resource of "
 msgstr ""
 
-#: template/instance/add.html:6
-msgid "Create a new instance"
+#: template/instance/resource.html:9 template/instance/resource.ajax:5
+msgid "CPU numbers"
 msgstr ""
 
-#: template/instance/add.html:20
-msgid "Appliance catalog:"
+#: template/instance/resource.html:10 template/admin/user/view.html:88
+#: template/admin/node/view.html:51 template/admin/index.html:43
+#: template/home/no_resource.html:27 template/myun/index.html:41
+#: template/instance/resource.ajax:6
+msgid "Memory"
 msgstr ""
 
-#: template/appliance/index.html:23
-msgid "Upload Appliance"
+#: template/instance/network.html:15 template/instance/network.ajax:11
+msgid "MAC"
 msgstr ""
 
-#: template/appliance/index.html:32
-msgid "Sorted by"
+#: template/instance/network.html:36 template/instance/network.ajax:32
+msgid "Reset"
 msgstr ""
 
-#: template/appliance/index.html:33 template/home/index.html:66
-msgid "Default"
+#: template/instance/network.html:41 template/instance/network.ajax:37
+msgid "Appliance Default Configuration"
 msgstr ""
 
-#: template/appliance/index.html:41
-msgid "Have not any appliances yet !"
+#: template/instance/index.html:15
+msgid "Public Instances"
 msgstr ""
 
-#: template/appliance/view.html:39
-msgid "Checksum"
+#: template/instance/index.html:17
+msgid "(My Instances)"
 msgstr ""
 
-#: template/appliance/view.html:41 template/appliance/view_by_ajax.html:12
-msgid "Size"
-msgstr ""
-
-#: template/appliance/view.html:55 template/appliance/view_by_ajax.html:23
-msgid "Create Instance"
-msgstr ""
-
-#: template/appliance/view.html:91
-msgid "Are you sure ?"
-msgstr ""
-
-#: template/appliance/edit.html:12
-msgid "Edit appliance"
-msgstr ""
-
-#: template/appliance/edit.html:43
-msgid "Catalog"
-msgstr ""
-
-#: template/appliance/edit.html:60
-msgid "Logo Image"
-msgstr ""
-
-#: template/appliance/create_instance.html:7
-msgid "Create a new instance from"
-msgstr ""
-
-#: template/404.html:10
-msgid "404 Error"
-msgstr ""
-
-#: template/404.html:11
-msgid "No such page: "
-msgstr ""
-
-#: template/base.html:37
-msgid "Management"
-msgstr ""
-
-#: template/base.html:45
-msgid "Sign Out"
-msgstr ""
-
-#: template/base.html:47
-msgid "Sign In"
-msgstr ""
-
-#: template/base.html:63
-msgid "Copyright"
-msgstr ""
-
-#: template/base.html:63
-msgid "LuoYun Inc."
-msgstr ""
-
-#: template/base.html:64
-msgid "About"
-msgstr ""
-
-#: template/base.html:65
-msgid "Contact"
-msgstr ""
-
-#: template/home/index.html:12
-msgid "Create New Instance"
-msgstr ""
-
-#: template/home/index.html:29
-msgid "Instance"
-msgstr ""
-
-#: template/home/index.html:36
-msgid "CPUs"
-msgstr ""
-
-#: template/home/index.html:43
-msgid "Memory(MB)"
-msgstr ""
-
-#: template/home/index.html:62
-msgid "Instances List"
-msgstr ""
-
-#: template/home/index.html:65
-msgid "Current instances, sorted by"
-msgstr ""
-
-#: template/home/index.html:74
+#: template/instance/index.html:27
 msgid "Have not any instance yet !"
 msgstr ""
 
-#: template/home/index.html:105
-msgid "Instance "
+#: template/instance/index.html:52 template/admin/appliance/view.html:57
+msgid "No summary yet !"
 msgstr ""
 
-#: template/home/index.html:122
-msgid "IP"
+#: template/instance/index.html:59 template/instance/index.html:130
+#: template/admin/job/index.html:22 template/admin/user/instances.html:20
+#: template/admin/instance/index.html:34 template/admin/node/view.html:43
+#: template/admin/node/view.html:77 template/admin/node/instances.html:21
+#: template/admin/node/index.html:21 template/home/index.html:111
+#: template/admin/job/index.ajax:19
+msgid "Status"
 msgstr ""
 
-#: template/node/index.html:9 template/node/view.html:10
+#: template/instance/index.html:68 template/admin/user/view.html:117
+#: template/admin/user/view.html:128 template/admin/instance/index.html:68
+msgid "None"
+msgstr ""
+
+#: template/instance/index.html:98 template/home/index.html:13
+#: template/myun/instances.html:11 template/myun/index.html:10
+msgid "Create New Instance"
+msgstr ""
+
+#: template/instance/index.html:105
+msgid "All Public"
+msgstr ""
+
+#: template/instance/index.html:106
+msgid "My  Public"
+msgstr ""
+
+#: template/instance/index.html:113
+msgid "Selection"
+msgstr ""
+
+#: template/instance/index.html:115 template/admin/appliance/view.html:40
+#: template/admin/user/reset_password_history.html:23
+#: template/admin/node/view.html:59
+msgid "Created"
+msgstr ""
+
+#: template/instance/index.html:122
+msgid "Order"
+msgstr ""
+
+#: template/instance/index.html:123
+msgid "Descending"
+msgstr ""
+
+#: template/instance/index.html:124
+msgid "Ascending"
+msgstr ""
+
+#: template/instance/index.html:131
+msgid "Running"
+msgstr ""
+
+#: template/instance/index.html:132
+msgid "Stoped"
+msgstr ""
+
+#: template/instance/index.html:133 template/admin/appliance/index.html:13
+msgid "All"
+msgstr ""
+
+#: template/instance/index.html:139
+msgid "PageSize"
+msgstr ""
+
+#: template/instance/index.html:140
+msgid "10"
+msgstr ""
+
+#: template/instance/index.html:141
+msgid "20"
+msgstr ""
+
+#: template/instance/index.html:142
+msgid "50"
+msgstr ""
+
+#: template/instance/publickey_edit.html:6
+msgid "Edit SSH Public Key"
+msgstr ""
+
+#: template/instance/password_edit.html:6
+#: template/account/account_base.html:38
+#: template/account/reset_password.html:4 template/admin/user/view.html:76
+#: template/admin/user/reset_password.html:5
+#: template/admin/user/reset_password.html:10
+msgid "Reset Password"
+msgstr ""
+
+#: template/instance/baseinfo_edit.html:6
+msgid "Edit Baseinfo"
+msgstr ""
+
+#: template/instance/instance_base.html:75
+#: template/instance/instance_base.html:120 template/admin/admin_base.html:60
+msgid "Domain"
+msgstr ""
+
+#: template/instance/instance_base.html:90 template/admin/admin_base.html:40
+#: template/admin/appliance/view.html:4
+#: template/admin/appliance/catalog_edit.html:8
+#: template/admin/appliance/catalog.html:4
+#: template/admin/appliance/index.html:4 template/admin/user/index.html:28
+#: template/admin/instance/index.html:33 template/admin/index.html:15
+#: template/home/index.html:19 template/myun/instances.html:43
+msgid "Appliance"
+msgstr ""
+
+#: template/instance/instance_base.html:115 template/admin/admin_base.html:55
+#: template/admin/appliance/view.html:18 template/admin/user/view.html:21
+msgid "Baseinfo"
+msgstr ""
+
+#: template/instance/instance_base.html:116
+msgid "Resource"
+msgstr ""
+
+#: template/instance/instance_base.html:117
+msgid "Network"
+msgstr ""
+
+#: template/instance/instance_base.html:118 template/admin/user/view.html:100
+#: template/home/no_resource.html:42 template/myun/index.html:53
+msgid "Storage"
+msgstr ""
+
+#: template/instance/instance_base.html:119
+msgid "Secret"
+msgstr ""
+
+#: template/instance/instance_base.html:123
+msgid "History"
+msgstr ""
+
+#: template/instance/instance_base.html:130
+msgid ""
+"Instance configuration has changed, please restart instance for new settings "
+"to be effective!"
+msgstr ""
+
+#: template/instance/domain_edit.html:5 template/instance/domain_edit.ajax:1
+msgid "Configure Domain"
+msgstr ""
+
+#: template/account/reset_password_complete.html:8
+msgid "Complete Reset Password"
+msgstr ""
+
+#: template/account/account_base.html:14
+msgid "My Account"
+msgstr ""
+
+#: template/account/account_base.html:32 template/myun/myun_base.html:31
+msgid "Welcome, "
+msgstr ""
+
+#: template/account/account_base.html:33 template/myun/myun_base.html:32
+msgid "Last login:"
+msgstr ""
+
+#: template/account/account_base.html:39 template/account/avatar_edit.html:4
+msgid "Change Avatar"
+msgstr ""
+
+#: template/account/register.html:7
+msgid "Create a account on LuoYun"
+msgstr ""
+
+#: template/account/register.html:24
+msgid "I accept the site rules ."
+msgstr ""
+
+#: template/account/reset_password_apply_successed.html:8
+msgid ""
+"A email contain a url have send to the following address for reset password. "
+"Please check you email to complete it."
+msgstr ""
+
+#: template/account/view_user.html:21 template/admin/user/view.html:15
+msgid "Leave a message"
+msgstr ""
+
+#: template/account/view_user.html:31 template/account/view_group.html:29
+#: template/admin/job/index.html:20 template/admin/appliance/view.html:24
+#: template/admin/appliance/catalog.html:18
+#: template/admin/appliance/index.html:34 template/admin/group/view.html:16
+#: template/admin/group/view.html:49
+#: template/admin/group/delete_failed.html:24
+#: template/admin/group/index.html:20 template/admin/user/view.html:29
+#: template/admin/user/instances.html:18 template/admin/user/index.html:25
+#: template/admin/user/reset_password_history.html:19
+#: template/admin/instance/index.html:29 template/admin/node/view.html:17
+#: template/admin/node/view.html:75 template/admin/node/instances.html:19
+#: template/admin/node/index.html:18 template/admin/permission/view.html:16
+#: template/admin/permission/view.html:39
+#: template/admin/permission/index.html:16 template/admin/job/index.ajax:17
+msgid "ID"
+msgstr ""
+
+#: template/account/view_user.html:35 template/admin/user/view.html:33
+msgid "Date Joined"
+msgstr ""
+
+#: template/account/view_user.html:39 template/admin/user/view.html:37
+#: template/admin/user/index.html:32
+msgid "Last Login"
+msgstr ""
+
+#: template/account/view_user.html:43
+msgid "Last Activate"
+msgstr ""
+
+#: template/account/view_user.html:47 template/admin/user/view.html:46
+msgid "Last Entry"
+msgstr ""
+
+#: template/account/view_user.html:51 template/account/permissions.html:32
+#: template/admin/admin_base.html:34 template/admin/group/view.html:4
+#: template/admin/group/delete_failed.html:4 template/admin/group/add.html:4
+#: template/admin/group/edit.html:4 template/admin/group/index.html:4
+#: template/admin/user/view.html:136
+msgid "Group"
+msgstr ""
+
+#: template/account/view_user.html:60
+msgid "No group"
+msgstr ""
+
+#: template/account/view_user.html:68
+msgid "Total public instances : "
+msgstr ""
+
+#: template/account/index.html:6
+msgid "welcome ! this is your control panel."
+msgstr ""
+
+#: template/account/view_group.html:44
+msgid "Total users : "
+msgstr ""
+
+#: template/account/reset_password_apply.html:8
+msgid "Forget Password"
+msgstr ""
+
+#: template/account/reset_password_apply.html:12
+msgid "Email Address"
+msgstr ""
+
+#: template/account/login.html:8
+msgid "Sign in LuoYun System"
+msgstr ""
+
+#: template/account/login.html:34
+msgid "Forget My Password"
+msgstr ""
+
+#: template/account/permissions.html:7
+msgid "No permission!"
+msgstr ""
+
+#: template/account/permissions.html:11
+msgid "Single Permission List"
+msgstr ""
+
+#: template/account/permissions.html:14 template/admin/group/view.html:50
+#: template/admin/permission/view.html:20
+#: template/admin/permission/index.html:17
+msgid "Codename"
+msgstr ""
+
+#: template/account/permissions.html:29
+msgid "Group Permission List"
+msgstr ""
+
+#: template/account/permissions.html:33 template/admin/user/view.html:147
+msgid "Permissions"
+msgstr ""
+
+#: template/admin/wiki/topics.html:7 template/admin/wiki/add_catalog.html:8
+#: template/admin/wiki/index.html:7 template/admin/wiki/edit_catalog.html:7
+#: template/admin/job/index.html:9 template/admin/admin_base.html:20
+#: template/admin/appliance/catalog_edit.html:7
+#: template/admin/user/instances.html:7 template/admin/system/index.html:7
+#: template/admin/node/view.html:7 template/admin/node/instances.html:7
+#: template/admin/node/index.html:7 template/admin/wiki/index.ajax:3
+#: template/admin/job/index.ajax:6 template/admin/system/index.ajax:3
+msgid "Admin"
+msgstr ""
+
+#: template/admin/wiki/add_catalog.html:10
+msgid "Add Catalog"
+msgstr ""
+
+#: template/admin/wiki/index.html:13 template/admin/wiki/index.ajax:9
+msgid "Create New Catalog"
+msgstr ""
+
+#: template/admin/wiki/index.html:14 template/admin/wiki/index.ajax:10
+msgid "All topics"
+msgstr ""
+
+#: template/admin/wiki/edit_catalog.html:9
+#: template/admin/appliance/catalog_edit.html:9
+msgid "Edit catalog"
+msgstr ""
+
+#: template/admin/job/index.html:10 template/admin/job/index.ajax:7
+msgid "Jobs"
+msgstr ""
+
+#: template/admin/job/index.html:23 template/admin/job/index.ajax:20
+msgid "Target Type"
+msgstr ""
+
+#: template/admin/job/index.html:24 template/admin/job/index.ajax:21
+msgid "Target ID"
+msgstr ""
+
+#: template/admin/job/index.html:26
+#: template/admin/user/reset_password_history.html:24
+#: template/admin/job/index.ajax:23
+msgid "Completed"
+msgstr ""
+
+#: template/admin/admin_base.html:31
+msgid "Account"
+msgstr ""
+
+#: template/admin/admin_base.html:35 template/admin/permission/view.html:4
+#: template/admin/permission/index.html:4
+msgid "Permission"
+msgstr ""
+
+#: template/admin/admin_base.html:36
+msgid "Reset Password History"
+msgstr ""
+
+#: template/admin/admin_base.html:53 template/admin/system/index.html:8
+#: template/admin/system/index.ajax:4
+msgid "System"
+msgstr ""
+
+#: template/admin/admin_base.html:56
+msgid "DB"
+msgstr ""
+
+#: template/admin/admin_base.html:57
+msgid "Control Server"
+msgstr ""
+
+#: template/admin/admin_base.html:59
+msgid "IP Address Pool"
+msgstr ""
+
+#: template/admin/admin_base.html:61
+msgid "Nginx"
+msgstr ""
+
+#: template/admin/admin_base.html:62
+#: template/home/registration_protocol.html:11
+msgid "Registration Policy"
+msgstr ""
+
+#: template/admin/admin_base.html:63
+msgid "Welcome New User"
+msgstr ""
+
+#: template/admin/admin_base.html:64
+msgid "Job"
+msgstr ""
+
+#: template/admin/admin_base.html:65 template/admin/instance/index.html:36
+msgid "Node"
+msgstr ""
+
+#: template/admin/appliance/view.html:10
+msgid "Appliance View"
+msgstr ""
+
+#: template/admin/appliance/view.html:67
+msgid "No description yet !"
+msgstr ""
+
+#: template/admin/appliance/view.html:71
+#: template/admin/appliance/index.html:40
+msgid "Management"
+msgstr ""
+
+#: template/admin/appliance/catalog_new.html:4
+msgid "Appliance Catalog"
+msgstr ""
+
+#: template/admin/appliance/catalog_new.html:5
+#: template/admin/appliance/catalog.html:12
+msgid "New Catalog"
+msgstr ""
+
+#: template/admin/appliance/catalog_new.html:10
+msgid "Create Appliance Catalog"
+msgstr ""
+
+#: template/admin/appliance/catalog.html:10
+msgid "Appliance Catalog Management"
+msgstr ""
+
+#: template/admin/appliance/index.html:9
+msgid "Appliance Management"
+msgstr ""
+
+#: template/admin/appliance/index.html:24
+msgid "Total Appliance :"
+msgstr ""
+
+#: template/admin/appliance/index.html:27
+msgid "Filter by user: "
+msgstr ""
+
+#: template/admin/group/view.html:10
+msgid "Group View"
+msgstr ""
+
+#: template/admin/group/view.html:24
+msgid "Islocked"
+msgstr ""
+
+#: template/admin/group/view.html:28
+msgid "description"
+msgstr ""
+
+#: template/admin/group/view.html:36
+msgid "View all users"
+msgstr ""
+
+#: template/admin/group/view.html:38
+msgid "No users in this group !"
+msgstr ""
+
+#: template/admin/group/view.html:41
+msgid "Permission List"
+msgstr ""
+
+#: template/admin/group/view.html:68
+msgid "This group cantains no permissions !"
+msgstr ""
+
+#: template/admin/group/delete_failed.html:6
+msgid "Delete Group"
+msgstr ""
+
+#: template/admin/group/delete_failed.html:12
+msgid "Delete Group Failed"
+msgstr ""
+
+#: template/admin/group/delete_failed.html:15
+msgid ""
+"This group is locked for safely. If you want to delete it, please manuly "
+"modified the islocked flag of auth_group table in backend DB."
+msgstr ""
+
+#: template/admin/group/delete_failed.html:19
+msgid "There are users in group, please delete it first !"
+msgstr ""
+
+#: template/admin/group/add.html:5 template/admin/group/add.html:10
+#: template/admin/group/index.html:12
+msgid "Create New Group"
+msgstr ""
+
+#: template/admin/group/edit.html:6 template/admin/group/edit.html:11
+msgid "Edit Group"
+msgstr ""
+
+#: template/admin/group/index.html:9
+msgid "Group Management"
+msgstr ""
+
+#: template/admin/group/index.html:15
+msgid "Total Groups: "
+msgstr ""
+
+#: template/admin/group/index.html:22
+msgid "Users"
+msgstr ""
+
+#: template/admin/group/index.html:40
+msgid "locked"
+msgstr ""
+
+#: template/admin/user/view.html:25
+msgid "Username"
+msgstr ""
+
+#: template/admin/user/view.html:42
+msgid "Last Active"
+msgstr ""
+
+#: template/admin/user/view.html:52 template/admin/user/index.html:30
+msgid "Email"
+msgstr ""
+
+#: template/admin/user/view.html:56
+msgid "Locale"
+msgstr ""
+
+#: template/admin/user/view.html:62
+msgid "Locked"
+msgstr ""
+
+#: template/admin/user/view.html:66
+msgid "Unlock"
+msgstr ""
+
+#: template/admin/user/view.html:69
+msgid "Lock"
+msgstr ""
+
+#: template/admin/user/view.html:83
+msgid "Resources"
+msgstr ""
+
+#: template/admin/user/view.html:84
+msgid "Change User Resources"
+msgstr ""
+
+#: template/admin/user/view.html:92 template/home/index.html:31
+#: template/home/no_resource.html:32
+msgid "CPUs"
+msgstr ""
+
+#: template/admin/user/view.html:140
+msgid "Edit Groups"
+msgstr ""
+
+#: template/admin/user/view.html:146
+msgid "Group Name"
+msgstr ""
+
+#: template/admin/user/view.html:171
+msgid "User has no group!"
+msgstr ""
+
+#: template/admin/user/add.html:4 template/admin/user/add.html:9
+#: template/admin/user/index.html:12
+msgid "Create New User"
+msgstr ""
+
+#: template/admin/user/instances.html:35
+msgid " have not created any instance yet."
+msgstr ""
+
+#: template/admin/user/edit_resources.html:5
+msgid "Edit Resources"
+msgstr ""
+
+#: template/admin/user/edit_resources.html:10
+msgid "Edit User Resources"
+msgstr ""
+
+#: template/admin/user/edit_groups.html:5
+#: template/admin/user/edit_groups.html:22
+msgid "Edit User Groups"
+msgstr ""
+
+#: template/admin/user/index.html:9 template/admin/user/user_base.html:10
+msgid "User Management"
+msgstr ""
+
+#: template/admin/user/index.html:16
+msgid "Total Users in "
+msgstr ""
+
+#: template/admin/user/index.html:18
+msgid "Total Users: "
+msgstr ""
+
+#: template/admin/user/index.html:27
+msgid "Groups"
+msgstr ""
+
+#: template/admin/user/reset_password_history.html:5
+msgid "Reset Password Apply History"
+msgstr ""
+
+#: template/admin/user/reset_password_history.html:10
+msgid "User Reset Password History"
+msgstr ""
+
+#: template/admin/user/reset_password_history.html:12
+msgid "Total: "
+msgstr ""
+
+#: template/admin/user/reset_password_history.html:22
+#: template/admin/node/view.html:24
+msgid "Key"
+msgstr ""
+
+#: template/admin/system/index.html:13 template/admin/system/index.ajax:9
+msgid "Sync DB"
+msgstr ""
+
+#: template/admin/instance/index.html:9
+msgid "Instance Management"
+msgstr ""
+
+#: template/admin/instance/index.html:11
+msgid "Total instances: "
+msgstr ""
+
+#: template/admin/instance/index.html:13
+msgid "Sorted by"
+msgstr ""
+
+#: template/admin/instance/index.html:32
+msgid "Isprivate"
+msgstr ""
+
+#: template/admin/instance/index.html:79
+msgid "No instances yet !"
+msgstr ""
+
+#: template/admin/node/view.html:8 template/admin/node/instances.html:8
+#: template/admin/node/index.html:8
 msgid "Nodes"
 msgstr ""
 
-#: template/node/index.html:37
-msgid "Enable"
+#: template/admin/node/view.html:21 template/admin/node/index.html:19
+msgid "Hostname"
 msgstr ""
 
-#: template/node/index.html:39
-msgid "Disable"
+#: template/admin/node/view.html:31
+msgid "Arch"
 msgstr ""
 
-#: template/node/view.html:24
-msgid "All running instance list"
+#: template/admin/node/view.html:35
+msgid "CPU Model"
+msgstr ""
+
+#: template/admin/node/view.html:39
+msgid "CPU Mhz"
+msgstr ""
+
+#: template/admin/node/view.html:47
+msgid "Isenable"
+msgstr ""
+
+#: template/admin/node/view.html:55
+msgid "CPUS"
+msgstr ""
+
+#: template/admin/node/index.html:22
+msgid "Max Memory (KB)"
+msgstr ""
+
+#: template/admin/node/index.html:24
+msgid "Info"
+msgstr ""
+
+#: template/admin/index.html:5
+msgid "LuoYun Administration Console"
+msgstr ""
+
+#: template/admin/index.html:7
+msgid ""
+"Note: Any changes here will affect overall operation of LuoYunCloud "
+"platform. Please be careful!"
+msgstr ""
+
+#: template/admin/index.html:31 template/myun/index.html:29
+msgid "CPU"
+msgstr ""
+
+#: template/admin/index.html:33 template/admin/index.html:34
+#: template/myun/index.html:31 template/myun/index.html:32
+msgid "core"
+msgstr ""
+
+#: template/admin/permission/view.html:10
+msgid "Permission View"
+msgstr ""
+
+#: template/admin/permission/view.html:31
+msgid "Group List"
+msgstr ""
+
+#: template/admin/permission/view.html:58
+msgid "Have no groups contain this permission !"
+msgstr ""
+
+#: template/admin/permission/index.html:5
+msgid "View All Permissions"
+msgstr ""
+
+#: template/admin/permission/index.html:10
+msgid "Permission Management"
+msgstr ""
+
+#: template/home/registration_protocol.html:17
+msgid "No default registration protocol yet !"
+msgstr ""
+
+#: template/home/no_permission.html:9
+msgid "NO PERMISSIONS !"
+msgstr ""
+
+#: template/home/no_permission.html:10
+msgid "This action need permissions"
+msgstr ""
+
+#: template/home/no_permission.html:21 template/home/no_resource.html:52
+msgid ""
+"If you have any questions, you can contact the admin by following method:"
+msgstr ""
+
+#: template/home/no_permission.html:23 template/home/no_resource.html:54
+msgid "Send a message"
+msgstr ""
+
+#: template/home/no_permission.html:24 template/home/no_resource.html:55
+msgid "Send a email"
+msgstr ""
+
+#: template/home/welcome.html:11
+msgid "Welcome !"
+msgstr ""
+
+#: template/home/welcome.html:17
+msgid "Welcome to use LuoYun Cloud !"
+msgstr ""
+
+#: template/home/index.html:38
+msgid "Memory(MB)"
+msgstr ""
+
+#: template/home/index.html:54
+msgid "Welcome, guest !"
+msgstr ""
+
+#: template/home/index.html:62
+msgid "myself"
+msgstr ""
+
+#: template/home/index.html:63
+msgid "all"
+msgstr ""
+
+#: template/home/index.html:72 template/myun/instances.html:14
+msgid "No instance found!"
+msgstr ""
+
+#: template/home/index.html:98
+msgid "Instance "
+msgstr ""
+
+#: template/home/no_resource.html:20
+msgid "Resource Name"
+msgstr ""
+
+#: template/home/no_resource.html:21
+msgid "Total"
+msgstr ""
+
+#: template/myun/appliances.html:11 template/myun/index.html:6
+msgid "Upload Appliance"
+msgstr ""
+
+#: template/myun/appliances.html:14
+msgid "No appliances now !"
+msgstr ""
+
+#: template/myun/appliances.html:28 template/myun/instances.html:28
+msgid "Please give a summary for this instance."
+msgstr ""
+
+#: template/myun/appliances.html:46
+msgid "Useable"
+msgstr ""
+
+#: template/myun/appliances.html:58 template/myun/instances.html:56
+msgid "Private"
+msgstr ""
+
+#: template/system/baseinfo.ajax:23
+msgid "DB Edit"
+msgstr ""
+
+#: template/instance/domain_edit.ajax:10
+msgid "Subdomain"
+msgstr ""
+
+#: template/instance/delete.ajax:4
+msgid "Wait! All the instance data will be lost after instance is deleted."
+msgstr ""
+
+#: template/instance/delete.ajax:7
+msgid "Only owner can delete instance."
 msgstr ""

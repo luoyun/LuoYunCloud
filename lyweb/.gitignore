@@ -6,4 +6,5 @@
 *.bak
 *.db
 cscope.out
+luoyun.cfg
 *.log

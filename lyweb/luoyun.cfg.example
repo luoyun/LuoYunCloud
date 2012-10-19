@@ -1,0 +1,32 @@
+[base]
+appliance_top_dir = /opt/LuoYun/data/appliance/
+appliance_top_url = /dl/appliance/
+admin_email = contact@luoyun.co
+
+[clc]
+clc_ip = 127.0.0.1
+clc_port = 1369
+
+[db]
+db_host = 127.0.0.1
+db_type = postgresql+psycopg2
+db_name = luoyun
+db_user = luoyun
+db_password = luoyun
+
+[email]
+
+name = Admin
+from = admin@luoyun.co
+
+smtp_server = mail.luoyun.co
+smtp_port = 25
+username = admin@luoyun.co
+password = XXXXXX
+
+[site]
+
+#home = http://www.luoyuncloud.com
+
+[registration]
+user_default_group_id = 2

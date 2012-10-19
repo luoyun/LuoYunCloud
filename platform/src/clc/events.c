@@ -210,6 +210,11 @@ int ly_epoll_entity_recv(int ent_id)
         return __epoll_work_recv(ent_id);
 
     int fd = ly_entity_fd(ent_id);
+    if (fd < 0) {
+        logerror(_("fd for entity %d was closed. ignore event.\n"), ent_id);
+        return 1;
+    }
+
     LYPacketRecv *pkt = ly_entity_pkt(ent_id);
     if (pkt == NULL)
         return -255;
@@ -226,24 +231,28 @@ int ly_epoll_entity_recv(int ent_id)
     }
 
     int len = recv(fd, buf, size, 0);
-    if (len < 0) {
-        loginfo(_("socket %d recv returns %d, errno %d. close socket\n"),
-                   fd, len, errno);
+    if (len <= 0) {
+        loginfo(_("socket %d recv returns %d. close socket\n"), fd, len);
+        if (len < 0)
+            loginfo(_("socket %d recv, errno %d\n"), fd, errno);
+
+        int type = ly_entity_type(ent_id);
+        int db_id = ly_entity_db_id(ent_id);
+        if (type == LY_ENTITY_NODE) {
+            logdebug(_("update node %d status in db to offline\n"), db_id);
+            db_node_update_status(DB_NODE_FIND_BY_ID, &db_id, NODE_STATUS_OFFLINE);
+            return 1;
+        }
 
         if (ly_entity_type(ent_id) != LY_ENTITY_OSM)
             return 1;
 
-        int db_id = ly_entity_db_id(ent_id);
         logdebug(_("update instance %d status in db\n"), db_id);
         InstanceInfo ii;
         ii.ip = NULL;
         ii.status = DOMAIN_S_NEED_QUERY;
         db_instance_update_status(db_id, &ii, -1);
-        return 1;
-    }
-    else if (len == 0) {
-        /* Maybe the client have closed */
-        loginfo(_("socket %d recv 0 byte. close socket\n"), fd);
+        job_internal_query_instance(db_id);
         return 1;
     }
     logdebug(_("socket %d recv %d bytes\n"), fd, len);
@@ -389,7 +398,6 @@ int ly_epoll_work_start(int port)
         ly_entity_release(id);
         /* close(listener); closed in ly_entity_release */
         return -1;
-        goto out;
     }
     ly_entity_init(id, LY_ENTITY_CLC);
 

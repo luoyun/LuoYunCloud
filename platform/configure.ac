@@ -9,14 +9,14 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 AC_INIT([luoyun-cloud],
-        [0.2],
+        [0.5],
         [LuoYun Co. zengdongwu@hotmail.com])
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE([dist-bzip2])
 
 AC_PROG_CC([cc gcc])
-CFLAGS="-Wall -Werror"
+CFLAGS="-Wall -Werror -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 
@@ -67,6 +67,16 @@ AC_DEFINE_UNQUOTED([DEFAULT_LYNODE_LOG_PATH], ["${DEFAULT_LYNODE_LOG_PATH}"], [d
 AS_IF([test ["$prefix" == "NONE"] ], [DEFAULT_LYCLC_LOG_PATH="/var/log/lyclc.log"], [DEFAULT_LYCLC_LOG_PATH="${prefix%%/}/logs/lyclc.log"])
 AC_SUBST(DEFAULT_LYCLC_LOG_PATH)
 AC_DEFINE_UNQUOTED([DEFAULT_LYCLC_LOG_PATH], ["${DEFAULT_LYCLC_LOG_PATH}"], [default clc log file])
+
+# lynode pid file
+DEFAULT_LYNODE_PID_PATH=/var/run/lynode.pid
+AC_SUBST(DEFAULT_LYNODE_PID_PATH)
+AC_DEFINE_UNQUOTED([DEFAULT_LYNODE_PID_PATH], ["${DEFAULT_LYNODE_PID_PATH}"], [default lynode pid file])
+
+# lyclc pid file
+DEFAULT_LYCLC_PID_PATH=/var/run/lyclc.pid
+AC_SUBST(DEFAULT_LYCLC_PID_PATH)
+AC_DEFINE_UNQUOTED([DEFAULT_LYCLC_PID_PATH], ["${DEFAULT_LYCLC_PID_PATH}"], [default lyclc pid file])
 
 # luoyun config dir
 AS_IF([test ["$prefix" == "NONE"] ], [LYSYSCONFDIR=/etc/${PACKAGE_NAME}], [LYSYSCONFDIR=${prefix%%/}/etc/${PACKAGE_NAME}])
@@ -131,6 +141,11 @@ DEFAULT_CLC_DB_PASS=luoyun
 AC_SUBST(DEFAULT_CLC_DB_PASS)
 AC_DEFINE_UNQUOTED([DEFAULT_LYCLC_DB_PASS], ["${DEFAULT_CLC_DB_PASS}"], [default db user password])
 
+# default limits
+DEFAULT_NODE_STORAGE_LOW=50
+AC_SUBST(DEFAULT_NODE_STORAGE_LOW)
+AC_DEFINE_UNQUOTED([DEFAULT_NODE_STORAGE_LOW], [${DEFAULT_NODE_STORAGE_LOW}], [default node server storage low mark])
+
 # from ding-libs
 # Enable trace build
 AC_ARG_ENABLE([trace],
@@ -159,6 +174,7 @@ AC_CONFIG_FILES([
    doc/Makefile
    m4/Makefile
    lib/Makefile
+   lib/json-parser/Makefile
    conf/Makefile
    conf/lynode.conf
    conf/lyclc.conf

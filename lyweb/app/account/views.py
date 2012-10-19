@@ -1,6 +1,22 @@
 # coding: utf-8
 
+import os, json
+from datetime import datetime
 from lycustom import LyRequestHandler
+
+from sqlalchemy.sql.expression import asc, desc
+
+from app.account.models import User, ApplyUser, UserProfile, \
+    UserResetpass, Group
+from app.instance.models import Instance
+from app.session.models import Session
+
+from app.instance.models import Instance
+from app.appliance.models import Appliance
+from app.message.models import Message
+
+from app.account.forms import LoginForm, ResetPasswordForm, \
+    RegistrationForm, AvatarEditForm, ResetPasswordApplyForm
 
 import random, time, pickle, base64
 from hashlib import md5, sha512, sha1
@@ -8,54 +24,20 @@ from hashlib import md5, sha512, sha1
 import tornado
 from tornado.web import authenticated, asynchronous
 
+from app.account.utils import encrypt_password, check_password
+
+from lymail import send_email
+
+from lycustom import has_permission
 
 
-def encrypt_password(salt, raw_password):
-    hsh = sha512(salt + raw_password).hexdigest()
-    return hsh
-
-def check_password(raw_password, enc_password):
-    try:
-        salt, hsh = enc_password.split('$')
-    except:
-        return False
-    return hsh == encrypt_password(salt, raw_password)
-    
+import settings
+from app.system.models import LuoYunConfig
 
 
-class Login(LyRequestHandler):
 
-    def get(self):
+class AccountRequestHandler(LyRequestHandler):
 
-        self.render("account/login.html",
-                    next_url = self.get_argument('next', '/'))
-
-    def post(self):
-
-        username = self.get_argument('username', '')
-        password = self.get_argument('password', '')
-
-        user = self.db.get(
-            "SELECT * FROM auth_user WHERE username=%s;",
-            username )
-
-        d = { 'username': username, 'password': password,
-              'user': user, 'ERROR': [],
-              'next_url': self.get_argument('next', '/') }
-
-        if user:
-            if check_password(password, user.password):
-                # login success, save a session
-                self.save_session(user.id)
-                #self.write("Have not completed ! d = %s" % d)
-                print 'next_url = ', d['next_url']
-                self.redirect( d['next_url'] )
-            else:
-                d['ERROR'].append( _('Password is wrong.') )
-                self.render('account/login.html', **d)
-        else:
-            d['ERROR'].append( _('Have not found user.') )
-            self.render('account/login.html', **d)
 
     def save_session(self, user_id):
         self.require_setting("cookie_secret", "secure cookies")
@@ -69,17 +51,57 @@ class Login(LyRequestHandler):
         pickled_md5 = md5(pickled + sk).hexdigest()
         session_data = base64.encodestring(pickled + pickled_md5)
 
-        self.db.execute(
-            "INSERT INTO auth_session \
-(session_key, session_data, expire_date) \
-VALUES (%s, %s, now()::timestamp + '14 day');",
-            session_key, session_data )
+        session = Session(session_key, session_data)
+        self.db2.add(session)
+        self.db2.commit()
 
 
 
+    def delete_session(self, user_id):
+        session_key = self.get_secure_cookie('session_key')
+
+        session = self.db2.query(Session).filter_by(
+            session_key = session_key).first()
+        self.db2.delete(session)
+        self.db2.commit()
+
+        self.clear_all_cookies()
 
 
-class Logout(LyRequestHandler):
+
+class Login(AccountRequestHandler):
+
+
+    def get(self):
+        form = LoginForm()
+        self.render("account/login.html", form=form,
+                    next_url = self.get_argument('next', '/'))
+
+    def post(self):
+
+        form = LoginForm(self.request.arguments)
+        if form.validate():
+            user = self.db2.query(User).filter_by(username=form.username.data).first()
+            if user:
+                if user.islocked:
+                    form.password.errors.append( _('You have been lock by admin, can not login now. If you have any questions, contact admin first please !') )
+                    return self.render('account/login.html', form=form)
+
+                if check_password(form.password.data, user.password):
+                    self.save_session(user.id)
+                    user.last_login = datetime.utcnow()
+                    self.db2.commit()
+                    return self.redirect( self.get_argument('next', '/') )
+                else:
+                    form.password.errors.append( _('password is wrong !') )
+            else:
+                form.username.errors.append( _('No such user !') )
+
+        self.render('account/login.html', form=form)
+
+
+
+class Logout(AccountRequestHandler):
     @authenticated
     def get(self):
         if self.current_user:
@@ -89,260 +111,508 @@ class Logout(LyRequestHandler):
             d['username_error'] = 'Have not found user.'
             self.render('account/login.html', **d)
 
-    def delete_session(self, user_id):
-        session_key = self.get_secure_cookie('session_key')
-        self.db.execute(
-            'DELETE FROM auth_session WHERE session_key = %s;',
-            session_key )
-        self.clear_all_cookies()
 
 
 # TODO: No used now
-class Register(LyRequestHandler):
+class Register(AccountRequestHandler):
 
-    def get(self):
-        self.render('account/register.html')
+    ''' Complete a Registration '''
 
-    def post(self):
-
-        username = self.get_argument('username', '')
-        password = self.get_argument('password', '')
-
-        d = { 'username': username, 'ERROR': [] }
-
-        user = self.db.get(
-            'SELECT * from auth_user WHERE username=%s;',
-            username )
-
-        if user:
-            d['ERROR'].append( _('This username is taked.') )
-            return self.render('account/register.html', **d)
-
-        if len(password) < 6:
-            d['ERROR'].append( _('password must have more than 6 characters !') )
-            return self.render('account/register.html', **d)
-
-        salt = md5(str(random.random())).hexdigest()[:12]
-        hsh = encrypt_password(salt, password)
-        enc_password = "%s$%s" % (salt, hsh)
-        try:
-            # create user
-            self.db.execute(
-                "INSERT INTO auth_user (username, password, last_login, date_joined) VALUES (%s, %s, 'epoch', 'now');",
-                username, enc_password )
-
-            # query user
-            user = self.db.get(
-                'SELECT * from auth_user WHERE username=%s;',
-                username )
-
-            # create user profile
-            self.db.execute(
-                "INSERT INTO user_profile (user_id) VALUES (%s);",
-                user.id )
-            return self.redirect('/')
-
-        except Exception, emsg:
-            d['ERROR'].append( _('System error: %s') % emsg )
-            self.render('account/register.html', **d)
-
-
-
-class Create(LyRequestHandler):
-    ''' Create a new account, by admin '''
 
     def initialize(self):
 
-        self.t = 'account/create.html'
+        self.enable_apply = False
+        self.key = self.get_argument('key', None)
+        self.applyuser = None
 
-    @authenticated
-    def prepare(self):
-        if self.current_user.id not in [ 1 ]:
-            self.write('No permissions !')
-            return self.finish()
+        if hasattr(settings, 'REGISTRATION_APPLY'):
+            self.enable_apply = settings.REGISTRATION_APPLY
+
+        if self.key:
+            self.applyuser = self.db2.query(Applyuser).filter_by(
+                key = self.key).one()
 
 
     def get(self):
-        self.render(self.t)
+
+        if self.enable_apply:
+            if not self.key:
+                return self.write( _('No key found !') )
+            if not self.applyuser:
+                return self.write( _('No apply record found !') )
+
+        form = RegistrationForm()
+        if self.applyuser:
+            form.email.data = self.applyuser.email
+
+        self.render( 'account/register.html', form = form )
 
 
     def post(self):
 
-        username = self.get_argument('username', '')
-        password = self.get_argument('password', '')
+        form = RegistrationForm(self.request.arguments)
 
-        d = { 'username': username, 'ERROR': [] }
+        if form.validate():
 
-        user = self.db.get(
-            'SELECT * from auth_user WHERE username=%s;',
-            username )
+            user = self.db2.query(User).filter_by( username=form.username.data ).all()
 
-        if user:
-            d['ERROR'].append( _('This username is taked.') )
-            return self.render(self.t, **d)
+            if user:
+                form.username.errors.append( _('This username is occupied') )
+            else:
+                salt = md5(str(random.random())).hexdigest()[:12]
+                hsh = encrypt_password(salt, form.password.data)
+                enc_password = "%s$%s" % (salt, hsh)
 
-        if len(password) < 6:
-            d['ERROR'].append( _('password must have more than 6 characters !') )
-            return self.render(self.t, **d)
+                newuser = User( username = form.username.data,
+                                password = enc_password )
+                self.db2.add(newuser)
+                self.db2.commit()
+                # Create profile
+                profile = UserProfile(newuser, email = form.email.data)
+                # Add to default group
+                from settings import cf
+                if cf.has_option('registration', 'user_default_group_id'):
+                    try:
+                        DGID = int(cf.get('registration', 'user_default_group_id'))
+                        G = self.db2.query(Group).get(DGID)
+                        newuser.groups = [G]
+                        self.db2.commit()
+                    except:
+                        pass
 
-        salt = md5(str(random.random())).hexdigest()[:12]
-        hsh = encrypt_password(salt, password)
-        enc_password = "%s$%s" % (salt, hsh)
-        try:
-            # create user
-            r = self.db.query(
-                "INSERT INTO auth_user (username, \
-password, last_login, date_joined) VALUES (%s, %s, \
-'epoch', 'now') RETURNING id;",
-                username, enc_password )
+                self.db2.add(profile)
+                self.db2.commit()
 
-            uid = r[0].id
+                # send_message
+                self.send_message( newuser )
 
-            # create user profile
-            self.db.execute( "INSERT INTO user_profile \
-(user_id) VALUES (%s);", uid )
+                # send_mail()
 
-            return self.redirect( '/account/%s' % uid )
+                self.save_session(newuser.id)
 
-        except Exception, emsg:
-            d['ERROR'].append( _('System error: %s') % emsg )
-            self.render( self.t, **d )
+                return self.redirect( self.reverse_url('account:index') )
+
+        # Have a error
+        self.render( 'account/register.html', form = form )
 
 
+    def send_message(self, user):
+        admin = self.db2.query(User).filter_by(username='admin').first()
+        if admin:
 
-class User(LyRequestHandler):
+            welcome = self.db2.query(LuoYunConfig).filter_by(key='welcome_new_user').first()
+
+            if welcome:
+                wc = json.loads(welcome.value).get('text')
+
+                m = Message( sender = admin,  receiver = user,
+                             subject = _('Welcome to use LuoYun Cloud !'),
+                             content = wc )
+
+                self.db2.add(m)
+                self.db2.commit()
+
+                m.receiver.notify()
+                self.db2.commit()
+
+
+
+
+
+# TODO:
+class RegisterApply(AccountRequestHandler):
+
+
+    def get(self):
+
+        applyer = self.db2.query(Applyer).filter_by(key=key).one()
+
+        if applyer:
+
+            salt = md5(str(random.random())).hexdigest()[:12]
+            hsh = encrypt_password(salt, password)
+            enc_password = "%s$%s" % (salt, hsh)
+
+            user = User( username = applyer.username,
+                         password = enc_password )
+
+
+    def post(self):
+
+        applyer = ApplyUser( email = form.email.data,
+                             ip = self.request.remote_ip )
+        self.db2.add(applyuser)
+        self.db2.commit()
+
+
+
+class Index(LyRequestHandler):
 
     @authenticated
+    def get(self):
+
+        my = self.db2.query(User).get(self.current_user.id)
+        d = { 'title': _('My Account Center'),
+              'my': my }
+
+        self.render( 'account/index.html', **d)
+
+
+class MyPermission(LyRequestHandler):
+
+    @authenticated
+    def get(self):
+
+        my = self.db2.query(User).get(self.current_user.id)
+        d = { 'title': _('My Permissions'),
+              'my': my }
+
+        self.render( 'account/permissions.html', **d)
+
+
+
+class ViewUser(LyRequestHandler):
+    ''' Show home of specified user '''
     def get(self, id):
 
-        user = self.db.get(
-            'SELECT * from auth_user WHERE id=%s;', id )
+        user = self.db2.query(User).get(id)
 
         if not user:
             return self.write('Have not found user by id %s' % id)
 
-        user.prefs = self.db.get(
-            'SELECT * from user_profile WHERE user_id = %s;',
-            user.id )
+        by = self.get_argument('by', 'updated')
+        sort = self.get_argument('sort', 'desc')
 
-        INSTANCE_LIST = self.db.query(
-            'SELECT id, name FROM instance WHERE user_id=%s',
-            user.id )
-
-        self.render( 'account/view_user.html',
-                     title = 'View User', user = user,
-                     INSTANCE_LIST = INSTANCE_LIST )
-
-
-
-class Chat(LyRequestHandler):
-
-    def get(self):
-        d = { 'messages': [] }
-        self.render('account/chat.html', **d)
-
-
-class Online(LyRequestHandler):
-
-    @asynchronous
-    def post(self):
-
-        total = int(self.get_argument("total", 0))
-
-
-        self.is_total_changed(total, 0)
-
-    def is_total_changed(self, total, num):
-
-        num += 1;
-
-        if self.request.connection.stream.closed():
-            return
-
-        users = self.db.query("SELECT * from auth_user;")
-
-        print "[%s], total = %s, len(users) = %s" % (num, total, len(users))
-
-        if len(users) == total:
-            print "add_timeout"
-            tornado.ioloop.IOLoop.instance().add_timeout(
-                time.time() + 10, lambda: self.is_total_changed(total, num) )
+        if by == 'created':
+            by_obj = Instance.created
+        elif by == 'updated':
+            by_obj = Instance.updated
         else:
-            print "go finish"
-            self.write(str(len(users)))
-            self.finish()
+            by_obj = Instance.id
+
+        sort_by_obj = desc(by_obj) if sort == 'desc' else asc(by_obj)
+
+        instances = self.db2.query(Instance).filter_by(
+            user_id = id ).filter(
+            Instance.isprivate != True ).order_by( sort_by_obj )
+
+        total = instances.count()
+        instances = instances.slice(0, 20).all() # TODO: show only
+
+        d = { 'title': _('View User %s') % user.username,
+              'USER': user, 'INSTANCE_LIST': instances,
+              'TOTAL_INSTANCE': total }
+
+        self.render( 'account/view_user.html', **d )
 
 
-class UserList(LyRequestHandler):
 
-    def get(self):
+class ViewGroup(LyRequestHandler):
 
-        users = self.db.query('SELECT * from auth_user;')
+    @authenticated
+    def get(self, gid):
 
-        self.render( 'account/user_list.html',
-                     title = 'User List',
-                     users = users )
+        group = self.db2.query(Group).get(gid)
+
+        if not group:
+            return self.write(_('No such group: %s !') % gid)
+
+        users = self.db2.query(User).filter(
+            User.groups.contains(group) )
+
+        total = users.count()
+
+        users = users.slice(0, 20).all() # TODO: show only
+
+        d = { 'title': _('View Group %s') % group.name,
+              'GROUP': group, 'USER_LIST': users,
+              'TOTAL_USER': total }
+
+        self.render( 'account/view_group.html', **d )
+
 
 
 class ResetPassword(LyRequestHandler):
 
-    def initialize(self):
-        self.t = 'account/reset_password.html'
 
     @authenticated
+    def get(self):
+
+        form = ResetPasswordForm()
+
+        self.render( 'account/reset_password.html', title = _('Reset Password'),
+                     form = form )
+
+
+    @authenticated
+    def post(self):
+
+        form = ResetPasswordForm(self.request.arguments)
+
+        if form.validate():
+
+            salt = md5(str(random.random())).hexdigest()[:12]
+            hsh = encrypt_password(salt, form.password.data)
+            enc_password = "%s$%s" % (salt, hsh)
+
+            user = self.db2.query(User).get( self.current_user.id )
+            user.password = enc_password
+            self.db2.commit()
+
+            url = self.application.reverse_url('account:index')
+            return self.redirect( url )
+
+        self.render( 'account/reset_password.html', title = _('Reset Password'),
+                     form = form )
+
+
+class AvatarEdit(LyRequestHandler):
+
+    @authenticated
+    def get(self):
+        form = AvatarEditForm()
+        d = { 'title': _('Change my avatar'),
+              'form': form }
+
+        self.render( 'account/avatar_edit.html', **d )
+
+
+    @authenticated
+    def post(self):
+        # Save logo file
+        form = AvatarEditForm()
+
+        if self.request.files:
+            r = self.save_avatar()
+            if r:
+                form.avatar.errors = [ r ] # TODO: a tuple
+            else:
+                url = self.reverse_url('account:index')
+                return self.redirect( url )
+
+        d = { 'title': _('Change my avatar'),
+              'form': form }
+        self.render( 'account/avatar_edit.html', **d )
+
+
+    def save_avatar(self):
+        support_image = ['jpg', 'png', 'jpeg', 'gif', 'bmp', 'pjpeg']
+        for f in self.request.files['avatar']:
+
+            if len(f['body']) > 368640: # 360 K
+                return _('Avatar file must smaller than 360K !')
+
+            ftype = 'unknown'
+            x = f['content_type'].split('/')
+            if len(x) == 2:
+                ftype = x[-1]
+            else:
+                x = f['filename'].split('.')
+                if len(x) == 2:
+                    ftype = x[-1]
+
+            ftype = ftype.lower()
+
+            if ftype not in support_image:
+                return _('No support image, support is %s' % support_image )
+
+            fpath = os.path.join( settings.STATIC_PATH,
+                              'user/%s' % self.current_user.id )
+
+            try:
+                if not os.path.exists( fpath ):
+                    os.mkdir( fpath )
+
+                fpath = os.path.join( fpath, 'avatar' )
+
+                savef = file(fpath, 'w')
+                savef.write(f['body'])
+                savef.close()
+                break # Just one upload file
+
+            except Exception, emsg:
+                return emsg
+
+
+
+class ResetPasswordApply(LyRequestHandler):
+
+    ''' Apply to reset password '''
+
+    EMAIL_TEMPLATE = _('''
+Reset Password for Your LuoYun Cloud Account.
+
+Click the url to complete : %(URL)s
+
+If you can not click the link above, copy and paste it on your brower address.
+''')
+
+
+    def get(self):
+
+        d = { 'title': _('Forget My Password') ,
+              'form': ResetPasswordApplyForm() }
+
+        self.render( 'account/reset_password_apply.html', **d )
+
+
+    def post(self):
+
+        form = ResetPasswordApplyForm(self.request.arguments)
+
+        if form.validate():
+
+            profile = self.db2.query(UserProfile).filter(
+                UserProfile.email == form.email.data ).first()
+
+            if profile:
+
+                # check exist request
+                exist = self.db2.query(UserResetpass).filter_by(
+                    user_id = profile.user.id ).all()
+                exist = [ x for x in exist if not x.completed ]
+                if exist:
+                    RQ = exist[0]
+                else:
+                    RQ = UserResetpass( profile.user )
+                    self.db2.add( RQ )
+                    self.db2.commit()
+
+                # send email
+                from settings import cf
+                if cf.has_option('site', 'home'):
+                    SITE_HOME = cf.get('site', 'home').rstrip('/')
+                else:
+                    SITE_HOME = 'http://127.0.0.1'
+
+                url = self.reverse_url('reset_password_complete')
+                url = SITE_HOME + url + '?key=%s' % RQ.key
+
+                ret = send_email(form.email.data, _('[ LuoYun Cloud ] Reset Password'), self.EMAIL_TEMPLATE % { 'URL': url } )
+
+                if ret:
+                    return self.render( 'account/reset_password_apply_successed.html', APPLY = RQ )
+                else:
+                    return self.write( _('Send Email Failed !') )
+
+            else:
+                form.email.errors.append( _("No such email address: %s") % form.email.data )
+
+        d = { 'title': _('Reset Password'), 'form': form }
+
+        self.render( 'account/reset_password_apply.html', **d )
+
+
+
+class ResetPasswordComplete(AccountRequestHandler):
+
+    ''' Apply to reset password '''
+
+    def prepare(self):
+
+        key = self.get_argument('key', None)
+        if not key:
+            self.write('No Key !')
+            return self.finish()
+
+        print 'key = ', key
+        applys = self.db2.query(UserResetpass).filter(
+            UserResetpass.key == key ).all()
+
+        print 'applys = ', applys
+        d = { 'title': _('Forget My Password') , 'ERROR': None,
+              'USER': None }
+
+        if applys:
+
+            for A in applys:
+                # TODO
+                #d['ERROR'] = _('The validity period for a certificate has passed')
+                if not A.completed:
+                    d['USER'] = A.user
+                    break
+
+            if not d['USER']:
+
+                d['ERROR'] = _('You have completed reset password.')
+
+        else:
+            d['ERROR'] = _('No such key: %s !') % key
+
+        if d['ERROR']:
+            self.render( 'account/reset_password_complete.html', **d )
+            return self.finish()
+
+        self.d = d
+        self.key = key
+
+
+    def get(self):
+        self.d['form'] = ResetPasswordForm()
+        self.render( 'account/reset_password_complete.html', **self.d )
+
+    def post(self):
+        self.d['form'] = ResetPasswordForm( self.request.arguments )
+        if self.d['form'].validate():
+
+            salt = md5(str(random.random())).hexdigest()[:12]
+            hsh = encrypt_password(salt, self.d['form'].password.data)
+            enc_password = "%s$%s" % (salt, hsh)
+
+            self.d['USER'].password = enc_password
+            self.db2.commit()
+
+            # TODO: set reset password request completed
+            applys = self.db2.query(UserResetpass).filter(
+                UserResetpass.key == self.key ).all()
+            for A in applys:
+                A.completed = datetime.utcnow()
+            self.db2.commit()
+
+            self.save_session( self.d['USER'].id )
+
+            url = self.reverse_url('account:index')
+            return self.redirect( url )
+
+        self.render( 'account/reset_password_complete.html', **self.d )
+
+
+
+class Delete(LyRequestHandler):
+    ''' Delete User '''
+
+    @has_permission('admin')
     def get(self, id):
 
-        emsg = self.check_permission(id)
-        if emsg:
-            return self.write(emsg)
+        d = { 'title': _('Delete Account'), 'ERROR': [], 'USER': None }
 
-        self.render( 'account/reset_password.html',
-                     title = 'Reset Password',
-                     user = self.user )
+        user = self.db2.query(User).get(id)
 
-    @authenticated
-    def post(self, id):
+        if user:
+            d['USERNAME'] = user.username
+            if user.id == self.current_user.id:
+                d['ERROR'].append(_('You can not delete yourself!'))
+            if user.instances:
+                d['ERROR'].append(_('User "%s" have instances exist, please remove them first.') % user.username)
+            if user.appliances:
+                d['ERROR'].append(_('User "%s" have appliances exist, please remove them first.') % user.username)
+        else:
+            d['ERROR'].append(_('Have not found user by id %s') % id)
 
-        emsg = self.check_permission(id)
-        if emsg:
-            return self.write(emsg)
+        if not d['ERROR']:
 
-        d = { 'title': 'Reset Password', 'ERROR': [] }
+            # delete message
+            from sqlalchemy import or_
+            messages = self.db2.query(Message).filter(
+                or_(Message.receiver_id == user.id,
+                    Message.sender_id == user.id) )
+            for M in messages:
+                self.db2.delete(M)
 
-        password = self.get_argument('password', '')
-        password2 = self.get_argument('password2', '')
+            self.db2.delete( user )
+            self.db2.commit()
+        else:
+            if user:
+                d['USER'] = user
 
-        if len(password) < 6:
-            d['ERROR'].append( _('password must have more than 6 characters !') )
-            return self.render(self.t, **d)
-
-        if password != password2:
-            d['ERROR'].append( _('password now match') )
-            return self.render(self.t, **d)
-
-        salt = md5(str(random.random())).hexdigest()[:12]
-        hsh = encrypt_password(salt, password)
-        enc_password = "%s$%s" % (salt, hsh)
-
-        try:
-            self.db.execute( 'UPDATE auth_user \
-SET password=%s WHERE id=%s;', enc_password, id )
-        except Exception, emsg:
-            d['ERROR'].append( _('UPDATE failed: %s') % emsg )
-            return self.render('account/reset_password.html', **d)
-        self.redirect('/account/%s' % id)
-
-
-    def check_permission(self, id):
-        
-        if self.current_user.id not in [1, int(id)]:
-            return 'Don not do this !'
-
-        self.user = self.db.get(
-            'SELECT * from auth_user WHERE id=%s;', id)
-
-        if not self.user:
-            return _('Have not found user %s') % id
-        
-        return None
-
+        self.render( 'account/delete.html', **d )
