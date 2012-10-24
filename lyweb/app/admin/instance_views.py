@@ -57,10 +57,10 @@ class InstanceManagement(LyRequestHandler):
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'desc')
         status = self.get_argument('status', 'all')
-        page_size = int(self.get_argument('sepa', 30))
-        cur_page = int(self.get_argument('p', 1))
-        uid = int(self.get_argument('uid', 0)) # sort by user
-        aid = int(self.get_argument('aid', 0)) # sort by appliance
+        page_size = self.get_argument_int('sepa', 30)
+        cur_page = self.get_argument_int('p', 1)
+        uid = self.get_argument_int('uid', 0) # sort by user
+        aid = self.get_argument_int('aid', 0) # sort by appliance
 
         start = (cur_page - 1) * page_size
         stop = start + page_size

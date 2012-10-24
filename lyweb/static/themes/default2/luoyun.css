@@ -241,9 +241,12 @@ body {
     background-color: #CFE7F1;
     width:100%;
     height:26px;
+/*
     position: fixed;
     bottom: 0;
     left: 0;
+*/
+    padding: 5px 0;
     font-size: 0.9em;
 }
 #powered-by .text {
@@ -356,6 +359,26 @@ body {
 }
 .pagination .count {
     font: italic bold 30px/25px Georgia,Serif;
+}
+.pagination .endside, .pagination .page {
+    display: inline-block;
+/*    font: italic bold 30px/25px Georgia,Serif;*/
+    border: 1px solid #D9D9D9;
+    border-radius: 3px;
+    padding: 5px 10px;
+    margin: 3px;
+    background-color: #F4F9F6;
+}
+.pagination .page {
+/*    font: italic bold 30px/25px Georgia,Serif;*/
+}
+.pagination .page:hover {
+    color: #FFF;
+    background-color: #3B5998;
+}
+.pagination .current {
+    background-color: #3B5998;
+    color: #FFF;
 }
 /* End pagination */
 
@@ -1103,3 +1126,35 @@ img.ly-status-flag {
     background-color: #F4F8F3;
 }
 /* End Markdown */
+
+
+
+/* Go Top Link */
+
+#gotop {
+     font-family: Georgia;
+     font-size: 22px;
+     color: #000000;
+     background-color: #ffffff;
+     padding: 10px;
+     width:100px;
+     text-align: center;
+     border-width : thin thin thin thin;
+     border-color : #999 #999 #999 #999;
+     border-style : solid solid solid solid;
+     border-collapse : collapse;
+     -moz-border-radius: 10px;
+     border-radius: 3px;
+     position: fixed;
+     bottom: 60px;
+     right: 20px;
+     z-index: 200;
+}
+
+#gotop:hover {
+     color: #ffffff;
+     background-color: #999;
+     cursor: pointer;
+     cursor: hand;
+}
+

@@ -17,27 +17,36 @@
 }
 
 .catalog {
-    border: 1px solid #DEDEDE;
-    border-radius: 3px;
+/*    border: 1px solid #DEDEDE;
+    border-radius: 3px;*/
     padding: 20px 15px;
     margin: 15px 0;
 }
 .catalog h2 {
     font-size: 18px;
-    color: #2A3539;
+    color: #FFF;
+    background-color: #3B5998;
+    border-radius: 3px;
+    border: 1px solid #3B5998;
+    padding: 10px;
 }
 
 .item {
-    margin: 20px 0;
+    margin: 12px 0;
+    padding: 10px;
+    border-bottom: 1px dotted #DEDEDE;
 }
 .item .name {
-    margin: 10px 0;
+    float: left;
+    width: 65%;
 }
 .item a {
     text-decoration: none;
 }
 .item .description {
-    font-size: 15px;
+    font-size: 0.9em;
+    float: right;
+    width: 30%;
 }
 .item .datetime {
     font-size: 13px;

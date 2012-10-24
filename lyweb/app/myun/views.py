@@ -91,9 +91,9 @@ class MyunInstance(LyRequestHandler):
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'desc')
         status = self.get_argument('status', 'all')
-        page_size = int(self.get_argument(
-                'sepa', settings.MYUN_INSTANCE_LIST_PAGE_SIZE))
-        cur_page = int(self.get_argument('p', 1))
+        page_size = self.get_argument_int(
+                'sepa', settings.MYUN_INSTANCE_LIST_PAGE_SIZE)
+        cur_page = self.get_argument_int('p', 1)
 
         start = (cur_page - 1) * page_size
         stop = start + page_size
@@ -156,9 +156,9 @@ class MyunAppliance(LyRequestHandler):
 
     def page_view_my_appliances(self):
 
-        catalog_id = int( self.get_argument('c', 1) )
-        page_size = int( self.get_argument('sepa', 10) )
-        cur_page = int( self.get_argument('p', 1) )
+        catalog_id = self.get_argument_int('c', 1)
+        page_size = self.get_argument_int('sepa', 10)
+        cur_page = self.get_argument_int('p', 1)
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'ASC')
 

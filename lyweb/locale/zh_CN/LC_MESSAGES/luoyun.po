@@ -612,7 +612,7 @@ msgstr ""
 
 #: template/instance/webssh.html:8 template/instance/webssh.ajax:4
 msgid "WebSSH of the instance is enabled."
-msgstr "启动虚拟机WebSSH功能"
+msgstr "虚拟机WebSSH功能已启用"
 
 #: template/instance/webssh.html:12 template/admin/node/index.html:39
 #: template/instance/webssh.ajax:8

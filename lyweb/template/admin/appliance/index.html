@@ -53,7 +53,7 @@
 	    <span class="uid" style="display:none;">${ A.user.id }</span>
 	  </div>
 	</td>
-	<td>${ A.catalog.name }</td>
+	<td>${ A.catalog_name }</td>
 	<td>
 	  % if A.instances:
 	  <a href="${ reverse_url('admin:instance') }?aid=${ A.id }">${ len(A.instances) }</a>

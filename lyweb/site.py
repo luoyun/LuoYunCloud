@@ -72,7 +72,7 @@ def main():
 
     # Locale
     tornado.locale.load_gettext_translations(settings.I18N_PATH, "luoyun")
-    #tornado.locale.set_default_locale('zh_CN')
+    tornado.locale.set_default_locale('zh_CN')
 
     # options
     tornado.options.parse_command_line()

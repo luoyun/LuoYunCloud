@@ -528,6 +528,7 @@ class SendMail(LyRequestHandler):
 
         form = SendMailForm( self.request.arguments )
         self.d['form'] = form
+
         self.d['INVALID_EMAIL'] = []
 
         if form.validate():

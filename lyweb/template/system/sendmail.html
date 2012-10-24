@@ -100,4 +100,19 @@
   </form>
 </div>
 
+<script charset="utf-8" src="${ STATIC_URL }kindeditor/kindeditor.js"></script>
+<script charset="utf-8" src="${ STATIC_URL }kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript">
+  var editor;
+  KindEditor.ready(function(K) {
+  editor = K.create('#body', {
+      width: '780px',
+      height: '300px',
+      uploadJson : '/ly/upload/kindeditor',
+      fileManagerJson : '/ly/upload/kindeditor',
+      allowFileManager : true
+  });
+  });
+</script>
+
 </%block>

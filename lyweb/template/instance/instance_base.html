@@ -22,7 +22,7 @@
 <div class="island c" id="i-show-main">
 
   <div id="i-logo">
-    <a href="${ reverse_url('instance:view', instance.id) }"><img src="${ instance.logo_url }" alt="Instance Logo" /></a>
+    <a href="${ reverse_url('instance:view', instance.id) }"><img src="${ instance.logourl }" alt="Instance Logo" /></a>
 
     % if instance.status in [4, 5]:
     <div id="i-ip">

@@ -59,8 +59,8 @@ class ApplianceManagement(LyRequestHandler):
     def get_index(self):
 
         catalog_id = self.catalog.id if self.catalog else 0
-        page_size = int( self.get_argument('sepa', 10) )
-        cur_page = int( self.get_argument('p', 1) )
+        page_size = self.get_argument_int('sepa', 10)
+        cur_page = self.get_argument_int('p', 1)
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'ASC')
         uid = self.get_argument('uid', 0)
@@ -124,7 +124,7 @@ class CatalogManagement(LyRequestHandler):
 
         self.action = self.get_argument('action', 'index')
 
-        cid = int( self.get_argument('id', 0) )
+        cid = self.get_argument_int('id', 0)
         self.catalog = self.db2.query(ApplianceCatalog).get(cid)
 
         if self.action in ['edit'] and not self.catalog:

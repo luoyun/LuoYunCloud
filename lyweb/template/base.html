@@ -3,12 +3,10 @@
 
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="SHORTCUT ICON" href="${ STATIC_URL }favicon.ico" />
-    <link rel="stylesheet" href="${ THEME_URL }luoyun.css" />
-    <link rel="stylesheet" href="${ STATIC_URL }js/qtip/jquery.qtip.css" />
-    <script type="text/javascript" src="${ STATIC_URL }js/jquery-1.7.min.js"></script>
-    <script type="text/javascript" src="${ STATIC_URL }js/qtip/jquery.qtip.js"></script>
-    <script type="text/javascript" src="${ STATIC_URL }js/luoyun.js"></script>
+    <link rel="SHORTCUT ICON" href="${ static_url('favicon.ico') }" />
+    <link rel="stylesheet" href="${ theme_url('luoyun.css') }" />
+    <script type="text/javascript" src="${ static_url('js/jquery-1.7.min.js') }"></script>
+    <script type="text/javascript" src="${ static_url('js/luoyun.js') }"></script>
     <%block name="head"/>
     <title>${ _("LuoYun Cloud") }
 % if title:
@@ -24,7 +22,7 @@
       <div id="header">
         <div id="header-wrap">
           <div id="logo">
-            <a href="/"><img src="${ STATIC_URL }image/logo_white_42.png" /></a>
+            <a href="/"><img src="${ static_url('image/logo_white_42.png') }" /></a>
           </div>
           <div id="navigator">
             <ul>
@@ -54,7 +52,7 @@
 
             % if current_user:
 	    <div id="logout">
-	      <a href="${ reverse_url('logout') }" title="${ _('Logout') }"><img src="${ THEME_URL }img/logout.png" alt="${ _('Sign Out') }" /></a>
+	      <a href="${ reverse_url('logout') }" title="${ _('Logout') }"><img src="${ theme_url('img/logout.png') }" alt="${ _('Sign Out') }" /></a>
 	    </div>
 	    % endif
 	  </div>
@@ -75,10 +73,10 @@
 
           <span id="select-language">
             % if locale.code == 'en_US':
-            <img src="${ THEME_URL }img/zh_CN.png" />
+            <img src="${ theme_url('img/zh_CN.png') }" />
             <a href="/i18n/setlang?language=zh_CN&next=${ request.uri }">${ u"\u4e2d\u6587(\u7b80\u4f53)" }</a>
             % else:
-            <img src="${ THEME_URL }img/en_US.png" />
+            <img src="${ theme_url('img/en_US.png') }" />
             <a href="/i18n/setlang?language=en_US&next=${ request.uri }">English</a>
             % endif
           </span>
@@ -87,9 +85,12 @@
 
   </div>
 
+    <div id="gotop" style="display: none;">${ _("Go TOP") }</div>
+
   <script type="text/javascript">
     lySetCurrentNavigator();
-    $('a.qtiplink').qtip({ style: { classes: 'ui-tooltip-youtube' } })
+    setHeight();
+    BackTop('gotop');
   </script>
 
   </body>

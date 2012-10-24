@@ -1,15 +1,13 @@
 <%inherit file="/base.html"/>
 
 <%block name="head">
-<link rel="stylesheet" href="${ THEME_URL }admin.css" />
-<link rel="stylesheet" href="${ THEME_URL }button.css" />
-<link rel="stylesheet" href="${ THEME_URL }table.css" />
-<script type="text/javascript" src="${ STATIC_URL }js/admin.js"></script>
-
-<link rel="stylesheet" href="${ STATIC_URL }js/jquery.multiselect2side/css/jquery.multiselect2side.css" />
-<script type="text/javascript" src="${STATIC_URL}js/jquery.multiselect2side/js/jquery.multiselect2side.js"></script>
-
-<script type="text/javascript" src="${STATIC_URL}js/jquery.blockUI.js"></script>
+<link rel="stylesheet" href="${ theme_url('admin.css') }" />
+<link rel="stylesheet" href="${ theme_url('button.css') }" />
+<link rel="stylesheet" href="${ theme_url('table.css') }" />
+<script type="text/javascript" src="${ static_url('js/admin.js') }"></script>
+<link rel="stylesheet" href="${ static_url('js/jquery.multiselect2side/css/jquery.multiselect2side.css') }" />
+<script type="text/javascript" src="${ static_url('js/jquery.multiselect2side/js/jquery.multiselect2side.js') }"></script>
+<script type="text/javascript" src="${ static_url('js/jquery.blockUI.js') }"></script>
 <%block name="subhead" />
 </%block>
 
@@ -78,10 +76,8 @@
 </div>
 
 <script type="text/javascript">
-  lyAdminMenuInit();
-  lyAdminMenuHover();
-//  MenuClick();
-//  AdminSideMenuClick();
+//  lyAdminMenuInit();
+//  lyAdminMenuHover();
 </script>
 
 </%block>

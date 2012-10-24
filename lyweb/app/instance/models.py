@@ -1,4 +1,4 @@
-import os, json
+import os, json, logging
 
 from datetime import datetime
 from lyorm import ORMBase
@@ -12,6 +12,10 @@ import settings
 
 from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'tables'])
+
+
+import Image
+from yimage import watermark
 
 
 class Instance(ORMBase):
@@ -178,4 +182,67 @@ class Instance(ORMBase):
     @property
     def description_html(self):
         return YMK.convert( self.description )
+
+    @property
+    def logourl(self):
+
+        # TODO: hack !!!
+        if not os.path.exists(self.logopath):
+            import Image
+            #old = '/opt/LuoYun/web/static/instance_logo/%s' % self.logo
+            old = '/opt/LuoYun/data/appliance/%s' % self.appliance.logoname
+            if os.path.exists(old):
+                try:
+                    if not os.path.exists(self.logodir):
+                        os.makedirs(self.logodir)
+
+                    img = Image.open( old )
+                    img.save( self.logopath )
+                except Exception, msg:
+                    logging.error('resave instance %s logo failed: %s' % (self.id, msg))
+
+        if os.path.exists(self.logopath):
+            return os.path.join(settings.STATIC_URL, 'instance/%s/%s' % (self.id, settings.INSTANCE_LOGO_NAME))
+        else:
+            return settings.INSTANCE_LOGO_DEFAULT_URL
+
+
+    @property
+    def logodir(self):
+        return os.path.join(settings.STATIC_PATH, 'instance/%s' % self.id)
+
+    @property
+    def logopath(self):
+        return os.path.join( self.logodir, settings.INSTANCE_LOGO_NAME )
+
+    def save_logo(self):
+        ''' Create logo '''
+
+        if not os.path.exists(self.appliance.logothum):
+            return logging.warning('appliance %s has not logo.' % self.appliance_id)
+
+        # make sure dir is exist
+        if not os.path.exists(self.logodir):
+            try:
+                os.makedirs(self.logodir)
+            except Exception, e:
+                return logging.error('create instance logo dir "%s" failed: %s' % (self.logodir, e))
+
+
+        try:
+
+            I = Image.open(self.appliance.logothum)
+
+            if os.path.exists(settings.INSTANCE_LOGO_MARK):
+                M = Image.open(settings.INSTANCE_LOGO_MARK)
+                position = ( (I.size[0] - M.size[0]) / 2,
+                             I.size[1] - M.size[1] )
+                img = watermark(I, M, position, 0.3)
+                img.save( self.logopath )
+            else:
+                I.save( self.logopath )
+
+        except Exception, e:
+
+            logging.error('create instance logo failed: %s' % e)
 

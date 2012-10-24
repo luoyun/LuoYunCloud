@@ -37,7 +37,7 @@ except ImportError:
 
 class InstRequestHandler(LyRequestHandler):
 
-    def create_logo(self, app, inst_id):
+    def create_logo2(self, app, inst_id):
         ''' Create logo '''
 
         if not hasattr(app, 'logoname'):
@@ -91,7 +91,7 @@ class InstRequestHandler(LyRequestHandler):
 
     def done(self, msg):
 
-        ajax = int(self.get_argument('ajax', 0))
+        ajax = self.get_argument_int('ajax', 0)
 
         if ajax:
             self.write(msg)
@@ -247,9 +247,9 @@ class Index(InstRequestHandler):
         by = self.get_argument('by', 'updated')
         sort = self.get_argument('sort', 'desc')
         status = self.get_argument('status', 'running')
-        page_size = int(self.get_argument(
-                'sepa', settings.INSTANCE_HOME_PAGE_SIZE))
-        cur_page = int(self.get_argument('p', 1))
+        page_size = self.get_argument_int(
+                'sepa', settings.INSTANCE_HOME_PAGE_SIZE)
+        cur_page = self.get_argument_int('p', 1)
 
         start = (cur_page - 1) * page_size
         stop = start + page_size
@@ -482,7 +482,7 @@ class Delete(InstRequestHandler):
             return self.done( reason )
 
         inst.status = DELETED_S
-        inst.subdomain = ''
+        inst.subdomain = '_notexist_%s_' % inst.id
         self.db2.commit()
 
         ipassign_list = self.db2.query(IpAssign).filter_by(
@@ -581,6 +581,183 @@ class Run(InstRequestHandler):
             inst.updated = datetime.utcnow()
             if inst.ischanged:
                 inst.ischanged = False
+
+            self.db2.commit()
+
+        else:
+            json['desc'] = msg
+
+        self.write(json)
+
+
+    def have_resource(self, inst):
+        # Have resources ?
+        USED_INSTANCES = self.db2.query(Instance).filter(
+            Instance.user_id == self.current_user.id).all()
+        USED_CPUS = inst.cpus
+        USED_MEMORY = inst.memory
+        for I in USED_INSTANCES:
+            if I.is_running:
+                USED_CPUS += I.cpus
+                USED_MEMORY += I.memory
+
+        if ( USED_CPUS > self.current_user.profile.cpus or
+             USED_MEMORY > self.current_user.profile.memory ):
+
+            desc = _('No resources to run instance:')
+
+            if USED_CPUS > self.current_user.profile.cpus:
+                desc += _('the total number of CPUs you have is %s, %s used.') % (self.current_user.profile.cpus, USED_CPUS - inst.cpus)
+            if USED_MEMORY > self.current_user.profile.memory:
+                desc += _('the total amount of memory you have is %s MB, %s MB used.') % (self.current_user.profile.memory, USED_MEMORY - inst.memory)
+
+            ajax = self.get_argument('ajax', 0)
+
+            if ajax:
+                json = { 'jid': 0, 'desc': desc }
+                self.write(json)
+            else:
+                url = self.get_no_resource_url()
+                url += "?reason=Resource Limit"
+                self.redirect( url )
+
+            return False
+
+        return True
+
+
+    def set_nameservers(self, instance):
+        ''' TODO: This is a temp hack '''
+
+        NS = self.db2.query(LuoYunConfig).filter_by(
+            key='nameservers').first()
+
+        if NS and instance.config:
+            config = json.loads(instance.config)
+            config['nameservers'] = NS.value
+            instance.config = json.dumps(config)
+            self.db2.commit()
+                
+
+    # TODO: rebinding domain
+    def rebinding_domain(self, instance):
+        # Binding in nginx
+        from tool.domain import binding_domain_in_nginx
+        ret, reason = binding_domain_in_nginx(
+            self.db2, instance.id, domain = self.get_domain(instance) )
+        if not ret:
+            logging.warning(_('binding domain error: %s') % reason)
+        # TODO: update config about domain
+        self.binding_domain(instance)
+
+    def binding_domain(self, instance):
+
+        full_domain = self.get_domain( instance )
+
+        if not instance.config:
+            instance.init_config()
+
+        config = json.loads(instance.config)
+            
+        if 'domain' in config.keys():
+            domain = config['domain']
+        else:
+            domain = {}
+
+        domain['name'] = full_domain
+        domain['ip'] = instance.access_ip
+        config['domain'] = domain
+
+        instance.config = json.dumps( config )
+        instance.updated = datetime.utcnow()
+        self.db2.commit()
+
+
+class InstanceControl(InstRequestHandler):
+    ''' stop/run/reboot '''
+
+    @authenticated
+    def get(self, id):
+
+        self.inst = self.get_instance(id)
+        if not self.inst: return
+
+        action = self.get_argument('action', '').lower()
+
+        if action == 'run':
+            self.run()
+        elif action == 'stop':
+            self.stop()
+        elif action == 'reboot':
+            self.reboot()
+        else:
+            self.write( _('Just support run/stop/reboot action') )
+
+
+    def reboot(self):
+
+        json = { 'jid': -1, 'desc': _('Unknown error !') }
+
+        job, msg = self.run_job(self.inst.id, JOB_ACTION['REBOOT_INSTANCE'])
+        if job:
+            json['jid'] = job.id
+            json['desc'] = _("Reboot instance succeed")
+
+            self.inst.updated = datetime.utcnow()
+            if self.inst.ischanged:
+                self.inst.ischanged = False
+            self.db2.commit()
+
+        else:
+            json['desc'] =  msg
+
+        self.write(json)
+
+
+    def stop(self):
+
+        if not self.inst.is_running:
+            return self.write( _('Instance is not running!') )
+
+        json = { 'jid': -1, 'desc': _('Unknown error !') }
+
+        job, msg = self.run_job(self.inst.id, JOB_ACTION['STOP_INSTANCE'])
+        if job:
+            json['jid'] = job.id
+            json['desc'] = _("Stop instance succeed")
+
+            self.inst.updated = datetime.utcnow()
+            if self.inst.ischanged:
+                self.inst.ischanged = False
+            self.db2.commit()
+
+        else:
+            json['desc'] =  msg
+
+        self.write(json)
+
+
+    def run(self):
+
+        if not self.have_resource(self.inst): return
+
+        if self.inst.is_running:
+            return self.write( _('Instance is running already!') )
+
+        # TODO: a temp hack
+        self.set_nameservers(self.inst)
+        self.rebinding_domain(self.inst)
+
+        json = { 'jid': -1, 'desc': _('Unknown error !') }
+
+        job, msg = self.run_job(self.inst.id, JOB_ACTION['RUN_INSTANCE'])
+        if job:
+            json['jid'] = job.id
+            json['desc'] = _('Run instance %s succeed!') % id
+
+            self.inst.updated = datetime.utcnow()
+            if self.inst.ischanged:
+                self.inst.ischanged = False
 
             self.db2.commit()
 
@@ -809,12 +986,13 @@ class CreateInstance(InstRequestHandler):
 
             self.db2.add(instance)
             self.db2.commit()
-            instance.logo = self.create_logo(app, instance.id)
-            self.db2.commit()
 
             instance.mac = '92:1B:40:26:%02x:%02x' % (
                 instance.id / 256, instance.id % 256 )
             self.db2.commit()
+
+#            instance.logo = self.create_logo(app, instance.id)
+            instance.save_logo()
 
             # TODO
             self.set_ip( instance )

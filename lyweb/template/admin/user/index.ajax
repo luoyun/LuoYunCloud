@@ -1,0 +1,101 @@
+<p>
+  % if ONLINE:
+  ${ _('View Online User') }
+  % else:
+  ${ _('View') }
+  % endif
+
+  % if GID == 0:
+  "${ _('No Group User') }"
+  % elif GID > 0:
+  "${ GROUP.name }"
+  % else:
+  "${ _('ALL User') }"
+  % endif
+  (${ _('Total : ') }${ TOTAL_USER })
+</p>
+
+${ PAGE_HTML }
+
+<table>
+  <thead>
+    <tr>
+      <th>${ _("ID") }</th>
+      <th>${ _("Name") }</th>
+      <th>${ _("Groups") }</th>
+      <th>${ _("Appliance") }</th>
+      <th>${ _("Instance") }</th>
+      <th>${ _("Email") }</th>
+      <th>${ _("Last Login") }</th>
+    </tr>
+  </thead>
+  <tbody>
+    % for U in USER_LIST:
+    <tr>
+      <td>${ U.id }</td>
+      <td class="username">
+	<a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a>
+	% if U.islocked:
+	<img src="${ THEME_URL }img/user-lock.gif" alt="${ _('locked') }"/>
+	% endif
+	<div class="hidden" style="display: none;">
+	  <ul>
+	    <li>${ _("Date Joined") }: ${ fulltime(U.date_joined) }</li>
+	    <li>${ _("Last Login") }: ${ fulltime(U.last_login) }</li>
+	    <li>${ _("Last Activate") }: ${ lytime(U.last_active, '%Y-%m-%d %H:%M:%S') }</li>
+	    <li>${ _("Last Entry") }: ${ U.last_entry }</li>
+	  </ul>
+
+	  % if U.description:
+	  <h3>${ _("Description") }</h3>
+	  <div class="description">${ U.description }</div>
+	  % endif
+	</div>
+      </td>
+      <td>
+	% for G in U.groups:
+	<a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a>
+	% endfor
+      </td>
+
+      <td>
+	% if U.appliances:
+	<a href="${ reverse_url('admin:appliance') }?uid=${ U.id }">${ len(U.appliances) }</a>
+	% endif
+      </td>
+
+      <td>
+	% if U.instances:
+	<a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
+	% endif
+      </td>
+
+      <td>
+	% if U.profile and U.profile.email:
+	<a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" title="${ _('Send a email to ') } ${ U.username } ( ${ U.profile.email } )" target="_blank">${ U.profile.email }</a>
+	% endif
+      </td>
+
+      <td>${ lytime(U.last_login, '%Y-%m-%d %H:%M') }</td>
+    </tr>
+    % endfor
+  </tbody>
+</table>
+
+${ PAGE_HTML }
+
+<script type="text/javascript">
+  $(".pagination a").click(function(){
+  var URL = $(this).attr('href');
+
+  $.ajax({
+    url: URL,
+    type: 'GET',
+    success: function(data) {
+      $("#userlist").html(data);
+    }
+   });
+
+    return false;
+  });
+</script>

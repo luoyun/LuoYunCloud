@@ -34,14 +34,11 @@ to_zone = tz.gettz('CST')    # China Zone
 def lytime(t, f='%m-%d %H:%M', UTC=False):
 
     if t:
-
-        if UTC:
-            local = t
-        else:
+        if from_zone and to_zone and not UTC:
             utc = t.replace(tzinfo=from_zone)
-            local = utc.astimezone(to_zone)
+            t = utc.astimezone(to_zone)
 
-        return datetime.datetime.strftime(local, f)
+        return datetime.datetime.strftime(t, f)
 
     else:
         return ''
@@ -50,16 +47,17 @@ def lytime(t, f='%m-%d %H:%M', UTC=False):
 def fulltime(t, UTC=False):
 
     if t:
-        if UTC:
-            local = t
-        else:
+        if from_zone and to_zone and not UTC:
             utc = t.replace(tzinfo=from_zone)
-            local = utc.astimezone(to_zone)
+            t = utc.astimezone(to_zone)
 
-        return datetime.datetime.strftime(local, '%Y-%m-%d %H:%M:%S')
+        return datetime.datetime.strftime(t, '%Y-%m-%d %H:%M:%S')
+
     else:
         return ''
 
+
+from ytime import ytime_human
 
 class LyRequestHandler(RequestHandler):
 
@@ -91,9 +89,12 @@ class LyRequestHandler(RequestHandler):
             LANGUAGES=self.settings['LANGUAGES'],
             STATIC_URL=self.settings['STATIC_URL'],
             THEME_URL=self.settings['THEME_URL'],
+            THEME=self.settings['THEME'],
+            theme_url=self.theme_url,
 
             #method
             fulltime = fulltime,
+            ytime_human = ytime_human,
             lytime = lytime,
             has_permission = self.has_permission,
             AJAX = ajax,
@@ -259,6 +260,21 @@ class LyRequestHandler(RequestHandler):
         self.require_setting("no_resource_url")
         return self.application.settings["no_resource_url"]
 
+    def theme_url(self, f):
+        return self.static_url('themes/%s/%s' % (self.settings['THEME'], f))
+
+    def get_int(self, value, default=0):
+        try:
+            return int(value)
+        except:
+            return default
+
+    def get_argument_int(self, key, default=0):
+        value = self.get_argument(key, default)
+        try:
+            return int(value)
+        except:
+            return default
 
 
 import functools, urlparse, urllib
@@ -332,7 +348,9 @@ class Pagination:
 <div class="pagination">
 
   % if cur_page > 1:
-  <a href="${ page_url(cur_page -1) }">${ prev_str }</a>
+  <a href="${ page_url(cur_page -1) }"><span class="endside">${ prev_str }<span></a>
+  % else:
+  <span class="endside">${ prev_str }</span>
   % endif
 
   % for p in plist:
@@ -346,7 +364,9 @@ class Pagination:
   % endfor
 
   % if cur_page < page_sum:
-  <a href="${ page_url(cur_page + 1) }">${ next_str }</a>
+  <a href="${ page_url(cur_page + 1) }"><span class="endside">${ next_str }</span></a>
+  % else:
+  <span class="endside">${ next_str }</span>
   % endif
 
 </div>
@@ -378,8 +398,8 @@ class Pagination:
             return ''
 
         d = { 'plist': self._page_list(),
-              'prev_str': 'Prev',
-              'next_str': 'Next',
+              'prev_str': _('Prev'),
+              'next_str': _('Next'),
               'cur_page': self.cur,
               'page_sum': self.sum,
               'page_url': page_url,
@@ -519,3 +539,4 @@ class LyProxyHandler(LyRequestHandler):
                 body = self.replace_url(response.body)
                 self.write(body)
             self.finish()
+

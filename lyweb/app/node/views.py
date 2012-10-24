@@ -19,7 +19,7 @@ class Action(LyRequestHandler):
     @authenticated
     def get(self, id):
 
-        action = int(self.get_argument("action", 0))
+        action = self.get_argument_int("action", 0)
 
         node = self.db2.query(Node).get(id)
         if not node:

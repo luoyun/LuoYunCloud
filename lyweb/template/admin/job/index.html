@@ -32,7 +32,7 @@
       <tr>
         <td><input type="checkbox" value="a" name="test"/></td>
         <td>${ j.id }</td>
-        <td><a href="${ reverse_url('account:view', j.user.id) }">${ j.user.username }</a></td>
+        <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
         <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png" alt="${ j.status_string }"/></td>
         <td>${ j.target_name }</td>
         <td><a href="${ j.target_url }">${ j.target_id }</a></td>

@@ -128,3 +128,65 @@ function true_false_toggle ( obj, URL ) {
     });
 
 };
+
+
+function setHeight() {
+    var header = $('#header').height();
+    var main = $('#main').height();
+    var footer = $('#footer').height();
+
+    $('#main').height($(window).height() - header - footer);
+}
+
+function lyurl_update_arg(url, key, value)
+{
+    var x = url.split("?");
+    var href = x[0];
+    var allargs = x[1];
+
+    if ( !value )
+	return href;
+
+    if ( !allargs )
+        return href + "?" + key + "=" + value;
+
+    var found = 0
+    var newsearch = "?"
+
+    var args = allargs.split("&");
+    for(var i=0; i<args.length; i++)
+    {
+        if ( newsearch != "?" )
+            newsearch += "&"
+
+        var arg = args[i].split("=");
+        if ( arg[0] == key ) {
+            newsearch = newsearch + arg[0] + "=" + value
+            found = 1
+        } else {
+            newsearch = newsearch + args[i]
+        }
+    }
+
+    if ( found == 0 ) {
+        newsearch = newsearch + "&" + key + "=" + value
+    }
+
+    return href + newsearch;
+} 
+
+
+BackTop=function(btnId){
+	var btn=document.getElementById(btnId);
+	var d=document.documentElement;
+	window.onscroll=set;
+	btn.onclick=function (){
+		btn.style.display="none";
+		window.onscroll=null;
+		this.timer=setInterval(function(){
+			d.scrollTop-=Math.ceil(d.scrollTop*0.1);
+			if(d.scrollTop==0) clearInterval(btn.timer,window.onscroll=set);
+		},10);
+	};
+	function set(){btn.style.display=d.scrollTop?'block':"none"}
+};

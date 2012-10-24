@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import os, json
+import os, json, Image, tempfile
 from datetime import datetime
 from lycustom import LyRequestHandler
 
@@ -29,6 +29,8 @@ from app.account.utils import encrypt_password, check_password
 from lymail import send_email
 
 from lycustom import has_permission
+
+from lytool.filesize import size as human_size
 
 
 import settings
@@ -392,46 +394,45 @@ class AvatarEdit(LyRequestHandler):
 
         d = { 'title': _('Change my avatar'),
               'form': form }
+
         self.render( 'account/avatar_edit.html', **d )
 
 
     def save_avatar(self):
-        support_image = ['jpg', 'png', 'jpeg', 'gif', 'bmp', 'pjpeg']
+
+        homedir = self.current_user.homedir
+        if not os.path.exists(homedir):
+            try:
+                os.makedirs(homedir)
+            except Exception, e:
+                return _('Create user home dir "%s" failed: %s') % (homedir, e)
+
+        max_size = settings.USER_AVATAR_MAXSIZE
+        avatar_name = settings.USER_AVATAR_NAME
+
         for f in self.request.files['avatar']:
 
-            if len(f['body']) > 368640: # 360 K
-                return _('Avatar file must smaller than 360K !')
+            if len(f['body']) > max_size:
+                return _('Avatar file must smaller than %s !') % human_size(max_size)
 
-            ftype = 'unknown'
-            x = f['content_type'].split('/')
-            if len(x) == 2:
-                ftype = x[-1]
-            else:
-                x = f['filename'].split('.')
-                if len(x) == 2:
-                    ftype = x[-1]
-
-            ftype = ftype.lower()
-
-            if ftype not in support_image:
-                return _('No support image, support is %s' % support_image )
-
-            fpath = os.path.join( settings.STATIC_PATH,
-                              'user/%s' % self.current_user.id )
+            tf = tempfile.NamedTemporaryFile()
+            tf.write(f['body'])
+            tf.seek(0)
 
             try:
-                if not os.path.exists( fpath ):
-                    os.mkdir( fpath )
+                img = Image.open( tf.name )
 
-                fpath = os.path.join( fpath, 'avatar' )
+            except Exception, e:
+                return _('Open %s failed: %s , is it a picture ?') % (f.get('filename'), e)
 
-                savef = file(fpath, 'w')
-                savef.write(f['body'])
-                savef.close()
-                break # Just one upload file
+            try:
+                img.save(self.current_user.avatar_orig_path)
+                img.thumbnail(settings.USER_AVATAR_THUM_SIZE, resample=1)
+                img.save(self.current_user.avatar_path)
+                tf.close()
 
-            except Exception, emsg:
-                return emsg
+            except Exception, e:
+                return _('Save %s failed: %s') % (f.get('filename'), e)
 
 
 

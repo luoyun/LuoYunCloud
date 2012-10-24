@@ -63,7 +63,7 @@
           <td>${ fulltime(I.updated) }</td>
           <td>
             % if I.node and I.is_running:
-            <a href="${ reverse_url('admin:node') }?id=${ I.node_id }&action=view">${ I.node.ip } (${ I.node.hostname })</a>
+            <a href="${ reverse_url('admin:node') }?id=${ I.node_id }&action=view">${ I.node.ip }</a>
             % else:
             ${ _("None") }
             % endif
@@ -73,11 +73,11 @@
       </tbody>
     </table>
 
-  ${ PAGE_HTML }
+    ${ PAGE_HTML }
 
-  % else:
-  <p>${ _("No instances yet !") }</p>
-  % endif
+    % else:
+    <p>${ _("No instances yet !") }</p>
+    % endif
 
   </div>
 

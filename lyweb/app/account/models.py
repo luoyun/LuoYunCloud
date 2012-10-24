@@ -121,14 +121,39 @@ class User(ORMBase):
             self.profile.notification -= 1
 
     @property
+    def homedir(self):
+        return os.path.join(settings.STATIC_PATH, 'user/%s' % self.id)
+
+    @property
     def avatar_url(self):
 
-        avatar = os.path.join( settings.STATIC_PATH,
-                               'user/%s/avatar' % self.id )
-        if os.path.exists(avatar):
-            return '%suser/%s/avatar' % (settings.STATIC_URL, self.id)
+        print "HERE1"
+        # TODO: hack !!!
+        if not os.path.exists(self.avatar_path):
+            avatar = os.path.join( settings.STATIC_PATH, 'user/%s/avatar' % self.id )
+            if os.path.exists(avatar):
+                import Image
+                try:
+                    img = Image.open(avatar)
+                    img.save(self.avatar_orig_path)
+                    img.thumbnail(settings.USER_AVATAR_THUM_SIZE, resample=1)
+                    img.save(self.avatar_path)
+                except Exception, msg:
+                    logging.error('resave user %s avatar failed: %s' % (self.id, msg))
 
-        return os.path.join(settings.THEME_URL, 'img/user.png')
+
+        if os.path.exists(self.avatar_path):
+            return os.path.join(settings.STATIC_URL, 'user/%s/%s' % (self.id, settings.USER_AVATAR_NAME))
+        else:
+            return settings.USER_AVATAR_DEFAULT
+
+    @property
+    def avatar_path(self):
+        return os.path.join(self.homedir, 'thum_' + settings.USER_AVATAR_NAME)
+
+    @property
+    def avatar_orig_path(self):
+        return os.path.join(self.homedir, settings.USER_AVATAR_NAME)
 
         
 

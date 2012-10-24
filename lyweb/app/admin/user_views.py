@@ -17,6 +17,7 @@ from hashlib import md5, sha512, sha1
 from app.account.utils import encrypt_password, check_password
 
 from sqlalchemy.sql.expression import asc, desc
+from sqlalchemy import and_, or_
 
 from lycustom import has_permission
 
@@ -102,12 +103,13 @@ class UserManagement(LyRequestHandler):
 
     def get_index(self):
 
-        page_size = int( self.get_argument('sepa', USER_PS) )
-        cur_page = int( self.get_argument('p', 1) )
+        page_size = self.get_argument_int('sepa', USER_PS)
+        cur_page = self.get_argument_int('p', 1)
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'DESC')
-        gid = int(self.get_argument('gid', -1))
-        online = self.get_argument('online', False)
+        gid = self.get_argument_int('gid', -1)
+        online = self.get_argument_int('online')
+        search = self.get_argument('search', False)
 
         if by == 'date_joined':
             by = User.date_joined
@@ -125,12 +127,17 @@ class UserManagement(LyRequestHandler):
 
         if online:
             # TODO
-            try:
-                online = int(online)
-            except:
-                online = settings.USER_ACTIVE_MIN
+            online = online * 60 # minutes
             deadline = datetime.datetime.utcnow() - datetime.timedelta(seconds = online)
             UL = UL.filter( User.last_active > deadline )
+
+        if search:
+            search = '%' + search + '%'
+            PL = self.db2.query(UserProfile).filter(
+                UserProfile.email.like(search))
+            user_ids = [ x.user_id for x in PL ]
+            UL = UL.filter( or_(User.username.like(search),
+                                User.id.in_( user_ids ) ) )
 
         GROUP = None
         if gid == 0:
@@ -151,13 +158,15 @@ class UserManagement(LyRequestHandler):
 
         page_html = pagination.html( self.get_page_url )
             
-
         d = { 'title': _('Admin User Management'),
               'USER_LIST': UL, 'PAGE_HTML': page_html,
               'TOTAL_USER': total,
               'GROUP': GROUP, 'GID': gid, 'ONLINE': online }
 
-        self.render( 'admin/user/index.html', **d )
+        if self.get_argument('ajax', None):
+            self.render( 'admin/user/index.ajax', **d )
+        else:
+            self.render( 'admin/user/index.html', **d )
 
 
     def get_view(self):

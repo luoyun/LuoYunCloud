@@ -101,7 +101,7 @@ class OutMsgView(MessageRequestHandler):
 
         if not message.read:
             #message.read = True
-            message.receiver.decrease_notification()
+            #message.receiver.decrease_notification()
             self.db2.commit()
         
         self.render('message/view_out_message.html', **d)

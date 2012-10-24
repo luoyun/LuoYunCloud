@@ -150,6 +150,7 @@ JOB_ACTION = {
     # instance action
     'RUN_INSTANCE': 201,    # LY_A_NODE_RUN_INSTANCE = 201,
     'STOP_INSTANCE': 202,   # LY_A_NODE_STOP_INSTANCE = 202,
+    'REBOOT_INSTANCE': 205, # LY_A_NODE_REBOOT_INSTANCE = 205,
     'DESTROY_INSTANCE': 206,# LY_A_NODE_DESTROY_INSTANCE = 206,
     'QUERY_INSTANCE': 207,  # LY_A_NODE_QUERY_INSTANCE = 207
 }
@@ -265,3 +266,21 @@ def restart_luoyun_web():
     os.execl(python, python, *CMD_ARGV)
 
 
+USER_AVATAR_MAXSIZE = 2 * 1024 * 1024 # 2M
+USER_AVATAR_NAME = 'uavatar.png'
+USER_AVATAR_THUM_SIZE = (120, 120)
+USER_AVATAR_DEFAULT = os.path.join(STATIC_URL, 'image/user2.png')
+
+APPLIANCE_LOGO_MAXSIZE = 2 * 1024 * 1024 # 2M
+APPLIANCE_LOGO_DEFAULT = os.path.join(STATIC_PATH, 'image/appliance.png')
+APPLIANCE_LOGO_DEFAULT_URL = os.path.join(STATIC_URL, 'image/appliance.png')
+
+APPLIANCE_LOGO_NAME = 'alogo.png'
+APPLIANCE_LOGO_THUM_NAME = 'thum_alogo.png'
+
+APPLIANCE_LOGO_THUM_SIZE = (120, 120)
+
+
+INSTANCE_LOGO_DEFAULT_URL = os.path.join(STATIC_URL, 'image/instance.png')
+INSTANCE_LOGO_NAME = 'ilogo.png'
+INSTANCE_LOGO_MARK = os.path.join(STATIC_PATH, 'image/instance-watermark.png' )

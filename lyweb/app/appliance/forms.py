@@ -9,7 +9,7 @@ from wtforms.validators import ValidationError
 
 class EditApplianceForm(Form):
 
-    name = TextField( _('Name') )
+    name = TextField( _('Name'), [validators.Length(min=2, max=64)] )
     summary = TextField( _('Summary') )
     catalog = SelectField( _('Catalog') )
     logo = FileField( _('Logo') )

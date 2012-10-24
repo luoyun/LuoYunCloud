@@ -58,8 +58,8 @@ class JobManagement(LyRequestHandler):
         else:
             order_func = asc( by )
 
-        page_size = int(self.get_argument('sepa', 50))
-        cur_page = int(self.get_argument('p', 1))
+        page_size = self.get_argument_int('sepa', 50)
+        cur_page = self.get_argument_int('p', 1)
 
         start = (cur_page - 1) * page_size
         stop = start + page_size

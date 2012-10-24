@@ -31,7 +31,7 @@
     % for I in INSTANCE_LIST:
 
     <ul class="i">
-      <li class="i-logo"><a href="${ reverse_url('instance:view', I.id) }"><img src="${ I.logo_url }" /></a></li>
+      <li class="i-logo"><a href="${ reverse_url('instance:view', I.id) }"><img src="${ I.logourl }" /></a></li>
       <div class="c"></div>
       <li class="i_name c"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></li>
       <li class="i_user"><span class="t">${ _("Owner") }</span><a href="${ reverse_url('account:view', I.user_id) }">${ I.user.username }</a></li>

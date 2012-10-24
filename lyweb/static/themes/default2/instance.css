@@ -60,15 +60,17 @@
     float: left;
     margin: 2px 12px 30px;
 }
+/*
 .i-logo {
     background: none repeat scroll 0 0 #FFFFFF;
     border-radius: 3px;
     border: 1px solid #D9D9D9;
-}
+}*/
 .i-logo img {
     width: 120px;
     height: 120px;
-    border-radius: 5px;
+    border-radius: 3px;
+    border: 1px solid #D9D9D9;
 }
 .i_name {
     font-size: 0.9em;
@@ -170,6 +172,7 @@ li.i_id:hover {
     float: right;
     font-size: 0.9em;
     margin: 35px 10px;
+    width: 280px;
 }
 #i-logo img {
     width: 120px;

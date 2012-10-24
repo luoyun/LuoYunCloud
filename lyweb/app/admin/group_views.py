@@ -143,11 +143,13 @@ class GroupManagement(LyRequestHandler):
 
             self.group.name = form.name.data
             self.group.description = form.description.data
+            bak = self.group.permissions
+            self.group.permissions = []
             for codename in form.perms.data:
                 P = self.db2.query(Permission).filter_by(
                     codename = codename ).first()
                 self.group.permissions.append(P)
-            print 'self.group.permissions = ', self.group.permissions
+            #print 'self.group.permissions = ', self.group.permissions
 
             self.db2.commit()
 

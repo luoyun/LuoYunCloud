@@ -15,14 +15,13 @@ from lycustom import has_permission
 
 from sqlalchemy.sql.expression import asc, desc
 
+from lytool.filesize import size as human_size
+
+
 class Index(LyRequestHandler):
 
     @has_permission('admin')
-    #@authenticated
     def get(self):
-
-#        if self.current_user.id not in [ 1 ]:
-#            return self.write( _('No permission!') )
 
         # TODO:
         TOTAL_INSTANCE = self.db2.query(Instance.id).count()
@@ -54,6 +53,7 @@ class Index(LyRequestHandler):
             desc(Job.id) ).limit(10)
 
         d = { 'title': _('Admin Console'),
+              'human_size': human_size,
               'TOTAL_APPLIANCE': TOTAL_APPLIANCE,
               'TOTAL_INSTANCE': TOTAL_INSTANCE,
               'TOTAL_CPU': TOTAL_CPU * 16, # TODO: a temp hack
@@ -65,5 +65,4 @@ class Index(LyRequestHandler):
               'NEW_JOB_LIST': new_jobs }
 
         self.render('admin/index.html', **d)
-
 
