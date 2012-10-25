@@ -144,15 +144,6 @@ li.i_id:hover {
     float: right;
     padding: 18px 5px;
 }
-#i-show-main, #i-main {
-    width: 100%;
-}
-#i-show-main {
-    position: relative;
-}
-#i-main {
-    margin-top: 10px;
-}
 #admin-center {
     padding: 0 30px;
     width: 800px;
@@ -164,15 +155,6 @@ li.i_id:hover {
 }
 #admin-center p {
     margin: 10px;
-}
-#i-logo, #i-center-status {
-    float: left;
-}
-#i-baseinfo {
-    float: right;
-    font-size: 0.9em;
-    margin: 35px 10px;
-    width: 280px;
 }
 #i-logo img {
     width: 120px;
@@ -195,24 +177,6 @@ li.i_id:hover {
     padding-bottom: 3px;
 }
 
-#i-center-status {
-    margin-left: 30px;
-    width: 490px;
-}
-#i-center-status-left, #i-status {
-    float: left;
-}
-#i-center-status-left {
-    text-align: center;
-    margin-top: 55px;
-}
-#i-action {
-    margin: 2px 0 2px 12px;
-}
-#i-action img {
-    width: 36px;
-    height: 36px;
-}
 
 #i-status {
     margin: 50px 10px 10px;
@@ -246,19 +210,6 @@ li.i_id:hover {
     color: #D2CD9F;
 }
 
-#i-baseinfo td {
-    padding: 1px;
-}
-#i-baseinfo td.c1 {
-    /*text-align: right;*/
-    padding-right: 6px;
-    font-weight: 600;
-    color: #848627;
-    white-space: pre;
-}
-#i-baseinfo td.c2 {
-    white-space: nowrap;
-}
 
 #admin-menu ul, #admin-menu li {
     list-style:none;
@@ -456,3 +407,77 @@ div {
     font-weight: bold;
 }
 /* End Instance Logo Hover */
+
+#iview-ilogo, #iview-ilogo img {
+    width: 120px;
+    height: 120px;
+    border-radius: 3px 0 0 3px;
+}
+
+#instance-show-main {
+    width: 100%;
+    position: relative;
+}
+#instance-show-main li.c1 {
+    width: 120px;
+}
+#instance-show-main li.c2 {
+    width: 560px;
+    padding-top: 15px;
+}
+#instance-show-main li.c3 {
+    width: 300px;
+    padding-top: 10px;
+}
+#instance-show-main #iview-ip,
+#instance-show-main #iview-domain,
+#instance-show-main #iview-task-result {
+    margin: 5px 20px;
+    padding: 5px 0;
+    text-align: center;
+}
+#iview-task-result {
+    color: #137C47;
+}
+#iview-task-result.shade {
+    color: red;
+}
+#instance-show-main li.c3 td {
+    padding: 2px 5px;
+    font-size: 0.9em;
+    color: #32703D;
+}
+#instance-show-main li.c3 td:first-child {
+    font-weight: bold;
+    text-align: right;
+}
+#instance-show-main ul, #instance-status-show ul {
+    list-style: none outside none;
+}
+#instance-show-main li, #instance-status-show li {
+    float: left;
+}
+
+#instance-status-show {
+    margin: 2px -1px;
+}
+#instance-status-show table {
+    margin: 10px;
+}
+#instance-status-show td {
+    padding: 2px 6px;
+}
+#lyjob-status-img {
+    width: 16px;
+    height: 16px;
+}
+#iview-inst-control-btn {
+    width: 120px;
+    float: left;
+    text-align: center;
+}
+#iview-inst-control-btn img {
+    width: 36px;
+    height: 36px;
+    padding-top: 10px;
+}

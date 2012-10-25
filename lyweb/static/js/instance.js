@@ -1,3 +1,69 @@
+function InstanceStatusCheck ( URL, update_url ) {
+    var job_status = $('#lyjob-status-id').html();
+    var instance_status = $('#lyinst-status-id').html();
+
+    var newurl = URL + '?instance_status=' + instance_status + '&job_status=' + job_status;
+
+    $.ajax({
+	url: newurl,
+	type: "GET",
+
+	success: function (data) {
+
+	    $('#lyjob-id').html(data.job_id);
+	    $('#lyjob-status-id').html(data.jstatus);
+	    $('#lyjob-status-str').html(data.jstatus_str);
+	    $('#lyjob-status-img').attr('src', data.jstatus_imgurl);
+
+	    $('#lyinst-status-id').html(data.istatus);
+	    $('#lyinst-status-str').html(data.istatus_str);
+	    $('#lyinst-status-img').attr('src', data.istatus_imgurl);
+
+	    if (data.job_completed) {
+		$('#iview-task-result').html('');
+	    }
+
+	    if (data.ip) {
+		if (data.ip_link) {
+		    newip = '<a href="' + data.ip_link + '" target="_blank">' + data.ip + '</a>';
+		} else {
+		    newip = data.ip;
+		}
+		$('#iview-ip').html( newip );
+	    } else {
+		$('#iview-ip').html('');
+	    }
+
+	    if (data.domain) {
+		if (data.domain_link) {
+		    newdomain = '<a href="' + data.domain_link + '" target="_blank">' + data.domain + '</a>';
+		} else {
+		    newdomain = data.domain;
+		}
+		$('#iview-domain').html( newdomain );
+	    } else {
+		$('#iview-domain').html('');
+	    }
+
+	    $.get(update_url, function(result) {
+		$('#i-action').html(result);
+	    });
+
+
+            window.setTimeout(InstanceStatusCheck, 1200, URL, update_url);
+
+	    //alert( 'data.jstatus_str = ' + data.jstatus_str );
+	},
+
+        error: function (data) {
+            //alert(data + ', try again !');
+            window.setTimeout(InstanceStatusCheck, 6000, URL, update_url);
+        }
+    });
+
+
+}
+
 function InstanceDynamicStatus () {
 
     var jid = $('#job-id').html();
@@ -60,6 +126,40 @@ function InstanceDynamicStatus () {
 
 function InstanceControl() {
 
+    $('#iview-inst-control-btn a').click( function () {
+
+	var $obj = $(this);
+
+        URL = $(this).attr('href');
+
+	// set link is unaviable
+        $obj.attr('href', "javascript:void(0);");
+
+	// change img on clicked status
+	var imgp = $obj.children('img').attr('src');
+	imgp = imgp.replace(/(\w+).png/, '$1-clicked.png')
+	$obj.children('img').attr('src', imgp);
+
+	// add a clicked class
+        $obj.addClass('clicked');
+
+
+        $.ajax({
+            url: URL,
+            type: 'GET',
+            success: function (data) {
+		$('#iview-inst-control-btn').html(data);
+            }
+        });
+
+        return false;
+
+    });
+
+}
+
+function InstanceControlOld() {
+
     $('#i-action .run a, #i-action .stop a, #i-action .query a').click( function () {
 
         var $obj = $(this);
@@ -108,49 +208,6 @@ function InstanceControl() {
         return false;
 
     });
-
-}
-
-
-function InitInstanceStatus( ID ) {
-
-    $.ajax({
-        url: '/instance/' + ID + 'isrunning?ajax=1',
-        type: 'GET',
-        success: function (data) {
-            if (! data.jid) {
-                $('#job-status-desc').html( data.desc );
-                return
-            }
-
-	    // set link is unaviable
-            $obj.attr('href', "javascript:void(0);");
-
-	    // change img on clicked status
-	    var imgp = $obj.children('img').attr('src');
-	    imgp = imgp.replace(/(\w+).png/, '$1-clicked.png')
-	    $obj.children('img').attr('src', imgp);
-
-	    // add a clicked class
-            $obj.addClass('clicked');
-
-	    if ( data.jid == -1 ) {
-                $('#job-status-desc').html( data.desc );
-		return
-	    }
-
-            // set status img of instance
-            var imgp = $('#i-status-img').attr('src');
-            imgp = imgp.replace(/\d+\.png/, 'running.gif');
-            $('#i-status-img').attr('src', imgp);
-
-            $('#job-id').html(data.jid);
-            //alert(data.desc + data.jid);
-            // TODO: change action between run and stop
-            InstanceDynamicStatus();
-        }
-    });
-
 
 }
 

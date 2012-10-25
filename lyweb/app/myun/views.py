@@ -12,6 +12,8 @@ from tornado.web import authenticated, asynchronous
 
 from sqlalchemy.sql.expression import asc, desc
 
+from lytool.filesize import size as human_size
+
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
 
 import settings
@@ -23,7 +25,8 @@ class Index(LyRequestHandler):
     def get(self):
 
         my = self.db2.query(User).get(self.current_user.id)
-        d = { 'my': my }
+
+        d = { 'my': my, 'human_size': human_size }
 
         INSTANCE_LIST = self.db2.query(Instance).filter_by(
                 user_id = self.current_user.id).filter(

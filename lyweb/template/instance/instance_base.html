@@ -19,90 +19,100 @@
   </ol>
 </div>
 
-<div class="island c" id="i-show-main">
+<div class="island c" id="instance-show-main">
 
-  <div id="i-logo">
-    <a href="${ reverse_url('instance:view', instance.id) }"><img src="${ instance.logourl }" alt="Instance Logo" /></a>
+  <ul>
+    <li class="c1">
+      <div id="iview-ilogo">
+	<a href="${ reverse_url('instance:view', instance.id) }"><img src="${ instance.logourl }" /></a>
+      </div>
+    </li>
 
-    % if instance.status in [4, 5]:
-    <div id="i-ip">
-      <a href="${ instance.home_url(current_user) }" target="_blank">${ instance.ip }</a>
-    </div>
-    % endif
-
-  </div>
-
-  <div id="i-center-status">
-
-    <div id="i-center-status-left">
-      <img id="i-status-img" src="${ THEME_URL }icons/InstanceStatus/${ instance.status }.png"/>
-      <div id="i-action">
-	% if (current_user and current_user.id == instance.user_id) or has_permission('admin'):
-
-	% if instance.can_run:
-	<span class="run"><a href="/instance/${ instance.id }/run" title="${ _('Run') }"><img src="${ THEME_URL }img/run-instance.png"/></a></span>
-	% elif instance.status == 245:
-	<span class="query"><a href="/instance/${ instance.id }/query"><img src="${ THEME_URL }img/query-instance.png"/></a></span>
+    <li class="c2">
+      <div id="iview-domain">
+	% if instance.domain:
+	% if instance.is_running:
+	<a href="${ instance.home_url(current_user) }" target="_blank">${ instance.domain }</a>
 	% else:
-	<span class="stop"><a href="/instance/${ instance.id }/stop" title="${ _('Stop') }"><img src="${ THEME_URL }img/shutdown-instance.png"/></a></span>
+	${ instance.domain }
 	% endif
-
 	% endif
       </div>
-    </div>
-
-    <div id="i-status">
-      <span id="job-status">
-	<span id="job-id" style="display:none;"></span>
-	<span id="job-status-value"></span>
-	<span id="job-status-desc">${ instance.status_string }</span>
-	% if JOB_RESULT:
-	<span id="job-result">${ JOB_RESULT }</span>
+      <div id="iview-ip">
+	% if instance.work_ip:
+	<a href="${ instance.home_url(current_user) }" target="_blank"><span id="lyinst-ip">${ instance.work_ip }</span></a>
 	% endif
-      </span> 
-    </div>
-
-
-  </div>
-
-
-
-  <div id="i-baseinfo">
-    <table>
-      <tbody>
-	% if instance.domain:
-        <tr>
-          <td class="c1">${ _("Domain") }</td>
-          <td class="c2">
-	    % if instance.is_running:
-	    <a href="${ instance.home_url(current_user) }" target="_blank">${ instance.domain }</a>
-	    % else:
-	    ${ instance.domain }
-	    % endif
-	  </td>
-        </tr>
-	% endif
-        <tr>
-          <td class="c1">${ _("Owner") }</td>
-          <td class="c2"><a href="${ reverse_url('account:view', instance.user_id) }">${ instance.user.username }</a></td>
-        </tr>
-        <tr>
-          <td class="c1">${ _("Appliance") }</td>
-          <td class="c2"><a href="${ reverse_url('appliance:view', instance.appliance.id) }">${ instance.appliance.name }</a></td>
-        </tr>
-        <tr>
-          <td class="c1">${ _("Create Time") }</td>
-          <td class="c2">${ fulltime(instance.created) }</td>
-        </tr>
-        <tr>
-          <td class="c1">${ _("Update Time") }</td>
-          <td class="c2">${ fulltime(instance.updated) }</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
+      </div>
+      <div id="iview-task-result">
+      </div>
+    </li>
+    
+    <li class="c3">
+      <table>
+	<tbody>
+          <tr>
+            <td class="c1">${ _("Owner") }</td>
+            <td class="c2"><a href="${ reverse_url('account:view', instance.user_id) }">${ instance.user.username }</a></td>
+          </tr>
+          <tr>
+            <td class="c1">${ _("Appliance") }</td>
+            <td class="c2"><a href="${ reverse_url('appliance:view', instance.appliance.id) }">${ instance.appliance.name }</a></td>
+          </tr>
+          <tr>
+            <td class="c1">${ _("Create Time") }</td>
+            <td class="c2">${ fulltime(instance.created) }</td>
+          </tr>
+          <tr>
+            <td class="c1">${ _("Update Time") }</td>
+            <td class="c2">${ fulltime(instance.updated) }</td>
+          </tr>
+	  <tr>
+	    <td class="c1">${ _("Lastest Job") }</td>
+	    <td class="c2"><span id="lyjob-id">${ instance.lastjob_id }</span></td>
+	  </tr>
+	</tbody>
+      </table>
+    </li>
+  </ul>
 </div>
+
+<div class="c"></div>
+<div id="instance-status-show" class="ly-box c">
+  <ul>
+    <li id="iview-inst-control-btn">
+      % if (current_user and current_user.id == instance.user_id) or has_permission('admin'):
+      % if instance.can_run:
+      <a href="${ reverse_url('instance:control', instance.id) }?action=run" title="${ _('run instance') }"><img src="${ theme_url('img/run-instance.png') }"/></a>
+      % elif instance.need_query:
+      <a href="${ reverse_url('instance:control', instance.id) }?action=query" title="${ _('query instance status') }"><img src="${ theme_url('img/query-instance.png') }"/></a>
+      % else:
+      <a href="${ reverse_url('instance:control', instance.id) }?action=stop" title="${ _('stop instance') }"><img src="${ theme_url('img/shutdown-instance.png') }"/></a>
+      % endif
+      % endif
+    </li>
+    <li class="right">
+      <table>
+	<tbody>
+	  <tr>
+	    <td><img id="lyinst-status-img" src="${ theme_url('icons/InstanceStatus/%s.png' % instance.status) }"/></td>
+	    <td>
+	      <span id="lyinst-status-str">${ instance.status_string }</span><span style="display:none;" id="lyinst-status-id">${ instance.status }</span>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td><img id="lyjob-status-img" src="" /></td>
+	    <td>
+	      <span id="lyjob-status-str">${ instance.job_status_string }</span>
+	      <span id="lyjob-status-id">${ instance.lastjob_status_id }</span>
+
+	    </td>
+	  </tr>
+	</tbody>
+      </table>
+    </li>
+  </ul>
+</div>
+
 
 <div class="c"></div>
 
@@ -140,6 +150,7 @@
   InstanceControl();
   MenuClick();
   AdminMenuslide();
+  InstanceStatusCheck("${ reverse_url('instance:status', instance.id) }", "${ reverse_url('instance:control_button', instance.id) }");
 </script>
 
 </%block>

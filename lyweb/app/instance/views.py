@@ -1,10 +1,11 @@
 # coding: utf-8
 
-import logging, struct, socket, re, os, json
+import logging, struct, socket, re, os, json, time
 from datetime import datetime
 
 from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
+import tornado
 
 from sqlalchemy.sql.expression import asc, desc
 from sqlalchemy import and_
@@ -152,6 +153,12 @@ class InstRequestHandler(LyRequestHandler):
 
         self.db2.add(job)
         self.db2.commit()
+
+        inst = self.db2.query(Instance).get(id)
+        if inst:
+            inst.lastjob = job
+            self.db2.commit()
+
         try:
             self._job_notify( job.id )
         except Exception, e:
@@ -162,6 +169,36 @@ class InstRequestHandler(LyRequestHandler):
             return (None, _("Connect to control server error: %s") % e)
 
         return (job, "")
+
+
+    def run_job2(self, instance, action_id):
+
+        if instance.lastjob and (not instance.lastjob.completed):
+            if not ( action_id == JOB_ACTION['STOP_INSTANCE'] and
+                 instance.lastjob.canstop ):
+                return _("Previous task is not finished !")
+
+        # Create new job
+        job = Job( user = self.current_user,
+                   target_type = JOB_TARGET['INSTANCE'],
+                   target_id = instance.id,
+                   action = action_id )
+
+        self.db2.add(job)
+        self.db2.commit()
+        
+        instance.lastjob = job
+
+        try:
+            self._job_notify( job.id )
+        except Exception, e:
+            #[Errno 113] No route to host
+            # TODO: should be a config value
+            job.status = settings.JOB_S_FAILED
+            return _("Connect to control server failed: %s") % e
+
+        self.db2.commit()
+        return _('Tasks run successfully !')
 
 
     def update_ipassign(self, ip, instance):
@@ -673,14 +710,28 @@ class Run(InstRequestHandler):
         self.db2.commit()
 
 
+class InstanceControlArea(InstRequestHandler):
+    ''' Just get a control button '''
+
+    @authenticated
+    def get(self, id):
+
+        I = self.get_instance(id)
+        if not I: return
+
+        self.render('instance/crontrol_result.ajax', instance = I)
+
+
 class InstanceControl(InstRequestHandler):
-    ''' stop/run/reboot '''
+    ''' stop/run/reboot/query '''
 
     @authenticated
     def get(self, id):
 
         self.inst = self.get_instance(id)
         if not self.inst: return
+
+        self.d = { 'instance': self.inst, 'RESULT': _('unknown error') }
 
         action = self.get_argument('action', '').lower()
 
@@ -690,81 +741,52 @@ class InstanceControl(InstRequestHandler):
             self.stop()
         elif action == 'reboot':
             self.reboot()
+        elif action == 'query':
+            self.query()
         else:
-            self.write( _('Just support run/stop/reboot action') )
+            self.d['RESULT'] = _('Just support run/stop/reboot/query action')
 
+        self.inst.updated = datetime.utcnow()
+        if self.inst.ischanged:
+            self.inst.ischanged = False
+        self.db2.commit()
+
+        self.render('instance/crontrol_result.ajax', **self.d)
+                     
 
     def reboot(self):
+        self.d['RESULT'] = self.run_job2(self.inst, JOB_ACTION['REBOOT_INSTANCE'])
 
-        json = { 'jid': -1, 'desc': _('Unknown error !') }
 
-        job, msg = self.run_job(self.inst.id, JOB_ACTION['REBOOT_INSTANCE'])
-        if job:
-            json['jid'] = job.id
-            json['desc'] = _("Reboot instance succeed")
-
-            self.inst.updated = datetime.utcnow()
-            if self.inst.ischanged:
-                self.inst.ischanged = False
-            self.db2.commit()
-
+    def query(self):
+        if self.inst.need_query:
+            self.d['RESULT'] = self.run_job2(self.inst, JOB_ACTION['QUERY_INSTANCE'])
         else:
-            json['desc'] =  msg
-
-        self.write(json)
+            self.d['RESULT'] = _('Instance does not need query.')
 
 
     def stop(self):
-
-        if not self.inst.is_running:
-            return self.write( _('Instance is not running!') )
-
-        json = { 'jid': -1, 'desc': _('Unknown error !') }
-
-        job, msg = self.run_job(self.inst.id, JOB_ACTION['STOP_INSTANCE'])
-        if job:
-            json['jid'] = job.id
-            json['desc'] = _("Stop instance succeed")
-
-            self.inst.updated = datetime.utcnow()
-            if self.inst.ischanged:
-                self.inst.ischanged = False
-            self.db2.commit()
-
+        
+        if self.inst.is_running:
+            self.d['RESULT'] = self.run_job2(self.inst, JOB_ACTION['STOP_INSTANCE'])
         else:
-            json['desc'] =  msg
-
-        self.write(json)
-
+            self.d['RESULT'] = _('Instance is stopped now !')
 
     def run(self):
 
-        if not self.have_resource(self.inst): return
+        if not self.have_resource(self.inst):
+            self.d['RESULT'] = _('No enough resources to run instance !')
+            return
 
         if self.inst.is_running:
-            return self.write( _('Instance is running already!') )
+            self.d['RESULT'] = _('Instance is running now !')
+            return 
 
         # TODO: a temp hack
         self.set_nameservers(self.inst)
         self.rebinding_domain(self.inst)
 
-        json = { 'jid': -1, 'desc': _('Unknown error !') }
-
-        job, msg = self.run_job(self.inst.id, JOB_ACTION['RUN_INSTANCE'])
-        if job:
-            json['jid'] = job.id
-            json['desc'] = _('Run instance %s succeed!') % id
-
-            self.inst.updated = datetime.utcnow()
-            if self.inst.ischanged:
-                self.inst.ischanged = False
-
-            self.db2.commit()
-
-        else:
-            json['desc'] = msg
-
-        self.write(json)
+        self.d['RESULT'] = self.run_job2(self.inst, JOB_ACTION['RUN_INSTANCE'])
 
 
     def have_resource(self, inst):
@@ -848,35 +870,6 @@ class InstanceControl(InstRequestHandler):
         instance.config = json.dumps( config )
         instance.updated = datetime.utcnow()
         self.db2.commit()
-
-
-
-
-class Isrunning(InstRequestHandler):
-    ''' Does the instance is running ? '''
-
-    def get(self, id):
-
-        inst = self.get_instance(id)
-        if not inst: return
-
-        # TODO: Need query ?
-
-        json = { 'jid': -1, 'desc': _('Unknown error !') }
-
-        job = self.db2.query(Job).filter( and_(
-                Job.target_type == JOB_TARGET['INSTANCE'],
-                Job.target_id == id,
-                Job.ended == None ) ).order_by(desc('id')).first()
-
-        if job:
-            json['jid'] = job.id
-            json['desc'] = _('Have job running on instance %s.') % id
-        else:
-            json['desc'] = _('Have not job running on instance %s.') % id
-
-        self.write(json)
-
 
 
 class CreateInstance(InstRequestHandler):
@@ -1724,3 +1717,86 @@ class SetPrivate(InstRequestHandler):
         self.db2.commit()
 
         self.redirect( url )
+
+
+
+class Status(InstRequestHandler):
+
+    ''' return all status of instance by json data '''
+
+    @asynchronous
+    def get(self, ID):
+
+        inst = self.db2.query(Instance).get(ID)
+        if not inst:
+            return self.write( _('No such instance!') )
+
+        status = { 'job': self.get_argument_int('job_status', 0),
+                   'instance': self.get_argument_int('instance_status', 0) }
+
+        self.check_status(inst, status)
+
+
+    def check_status(self, instance, status):
+
+        job = instance.lastjob
+
+        if self.request.connection.stream.closed() or (not job):
+            return self.finish()
+
+        self.db2.commit()
+
+        if ( job.status == status.get('job', 0) and 
+             instance.status == status.get('instance', 0) ):
+
+            if job.completed and instance.is_running:
+                time_interval = settings.INSTANCE_S_UP_INTER_2
+            else:
+                time_interval = settings.INSTANCE_S_UP_INTER_1
+
+            #logging.info('time_interval = %s' % time_interval)
+            tornado.ioloop.IOLoop.instance().add_timeout(
+                time.time() + time_interval,
+                lambda: self.check_status(instance, status) )
+
+        else:
+
+            istatus_imgurl = self.theme_url('icons/InstanceStatus/%s.png' % instance.status)
+            if job.completed:
+                jstatus_imgurl = self.theme_url('icons/JobStatus/completed.png')
+            else:
+                jstatus_imgurl = self.theme_url('icons/JobStatus/running.gif')
+
+            ip, ip_link = '', ''
+            domain, domain_link = '', ''
+
+            if instance.work_ip:
+                ip_link = instance.home_url(self.current_user)
+                ip = instance.work_ip
+
+            if instance.domain and instance.is_running:
+                domain_link = instance.home_url(self.current_user)
+                domain = instance.domain
+                    
+
+            json = { 'job_id': job.id,
+
+                     'jstatus': job.status,
+                     'jstatus_str': job.status_string,
+                     'istatus_imgurl': istatus_imgurl,
+
+                     'istatus': instance.status,
+                     'istatus_str': instance.status_string,
+                     'jstatus_imgurl': jstatus_imgurl,
+
+                     'ip': ip, 'ip_link': ip_link,
+                     'domain': domain, 'domain_link': domain_link,
+
+                     'job_completed': 1 if job.completed else 0 }
+
+            
+            if job.status >= 300 and job.status <= 399:
+                json['status'] = 0
+
+            self.write(json)
+            self.finish()

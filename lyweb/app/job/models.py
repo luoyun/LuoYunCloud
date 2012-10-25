@@ -134,3 +134,16 @@ class Job(ORMBase):
     @property
     def status_string(self):
         return JOB_STATUS_STR.get( self.status, _('Unknown') )
+
+
+    @property
+    def completed(self):
+        return 300 <= self.status < 400
+
+    @property
+    def canstop(self):
+        return self.status >= 300
+
+    @property
+    def waiting(self):
+        return 400 <= self.status < 500

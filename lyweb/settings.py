@@ -284,3 +284,7 @@ APPLIANCE_LOGO_THUM_SIZE = (120, 120)
 INSTANCE_LOGO_DEFAULT_URL = os.path.join(STATIC_URL, 'image/instance.png')
 INSTANCE_LOGO_NAME = 'ilogo.png'
 INSTANCE_LOGO_MARK = os.path.join(STATIC_PATH, 'image/instance-watermark.png' )
+
+# Instance status check interval time
+INSTANCE_S_UP_INTER_1 = 3
+INSTANCE_S_UP_INTER_2 = 15

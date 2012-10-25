@@ -54,6 +54,9 @@ class Instance(ORMBase):
     created = Column( DateTime, default=datetime.utcnow )
     updated = Column( DateTime, default=datetime.utcnow )
 
+    lastjob_id = Column( ForeignKey('job.id') )
+    lastjob = relationship("Job")
+
     subdomain = Column( String(32), unique = True )
 
 
@@ -99,6 +102,21 @@ class Instance(ORMBase):
         return INSTANCE_STATUS_STR.get( self.status, _('Unknown Status') )
 
     @property
+    def job_status_string(self):
+        if self.lastjob:
+            return self.lastjob.status_string
+        else:
+            return ''
+
+    @property
+    def lastjob_status_id(self):
+        if self.lastjob:
+            return self.lastjob.id
+        else:
+            return ''
+        
+
+    @property
     def logo_url(self):
 
         logoname = self.logo
@@ -125,6 +143,10 @@ class Instance(ORMBase):
     @property
     def is_running(self):
         return self.status in [3, 4, 5]
+
+    @property
+    def need_query(self):
+        return self.status in [245, 255]
 
 
     def home_url(self, user=None):
@@ -167,6 +189,13 @@ class Instance(ORMBase):
                     ip = network['ip']
 
         return ip
+
+    @property
+    def work_ip(self):
+        if self.is_running and self.ip and self.ip != '0.0.0.0':
+            return self.ip
+        else:
+            return ''
 
 
     @property

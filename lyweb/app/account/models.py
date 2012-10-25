@@ -127,7 +127,6 @@ class User(ORMBase):
     @property
     def avatar_url(self):
 
-        print "HERE1"
         # TODO: hack !!!
         if not os.path.exists(self.avatar_path):
             avatar = os.path.join( settings.STATIC_PATH, 'user/%s/avatar' % self.id )

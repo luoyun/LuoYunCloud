@@ -26,7 +26,7 @@ handlers = [
     url(r'/instance/([0-9]+)/webssh_enable', instance.WebSSHEnable, name='instance:webssh:enable'),
     url(r'/instance/([0-9]+)/webssh_disable', instance.WebSSHDisable, name='instance:webssh:disable'),
 
-    (r'/instance/([0-9]+)/control', instance.InstanceControl),
+    url(r'/instance/([0-9]+)/control', instance.InstanceControl, name='instance:control'),
     (r'/instance/([0-9]+)/run', instance.Run),
     (r'/instance/([0-9]+)/stop', instance.Stop),
     (r'/instance/([0-9]+)/query', instance.Query),
@@ -36,6 +36,8 @@ handlers = [
     url(r'/instance/([0-9]+)/set_private',
         instance.SetPrivate, name='instance:set_private'),
 
-    url(r'/instance/([0-9]+)/isrunning', instance.Isrunning, name='instance:isrunning'),
+    url(r'/instance/([0-9]+)/status', instance.Status, name='instance:status'),
+
+    url(r'/instance/([0-9]+)/control_button', instance.InstanceControlArea, name='instance:control_button'),
 
 ]

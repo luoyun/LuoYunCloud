@@ -443,8 +443,8 @@ a.clicked {
 }
 */
 a.clicked {
-    /*cursor: crosshair;*/
-    cursor: wait;
+    cursor: crosshair;
+    /*cursor: wait;*/
 }
 /* End link button style */
 
@@ -1157,4 +1157,3 @@ img.ly-status-flag {
      cursor: pointer;
      cursor: hand;
 }
-
