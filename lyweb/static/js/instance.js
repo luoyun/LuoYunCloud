@@ -1,5 +1,11 @@
 function InstanceStatusCheck ( URL, update_url ) {
+
     var job_status = $('#lyjob-status-id').html();
+
+    if (! $('#lyjob-id').html()) {
+	job_status = 12345;
+    }
+
     var instance_status = $('#lyinst-status-id').html();
 
     var newurl = URL + '?instance_status=' + instance_status + '&job_status=' + job_status;
@@ -49,15 +55,11 @@ function InstanceStatusCheck ( URL, update_url ) {
 		$('#i-action').html(result);
 	    });
 
-
-            window.setTimeout(InstanceStatusCheck, 1200, URL, update_url);
-
-	    //alert( 'data.jstatus_str = ' + data.jstatus_str );
+            window.setTimeout(InstanceStatusCheck, 10000, URL, update_url);
 	},
 
         error: function (data) {
-            //alert(data + ', try again !');
-            window.setTimeout(InstanceStatusCheck, 6000, URL, update_url);
+            window.setTimeout(InstanceStatusCheck, 10000, URL, update_url);
         }
     });
 

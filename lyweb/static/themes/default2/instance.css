@@ -417,6 +417,7 @@ div {
 #instance-show-main {
     width: 100%;
     position: relative;
+    background-color: #F8FAFD;
 }
 #instance-show-main li.c1 {
     width: 120px;
@@ -459,7 +460,9 @@ div {
 }
 
 #instance-status-show {
-    margin: 2px -1px;
+    margin: 12px -1px;
+    width: 100%;
+    padding: 5px 0;
 }
 #instance-status-show table {
     margin: 10px;
@@ -481,3 +484,12 @@ div {
     height: 36px;
     padding-top: 10px;
 }
+
+/* start job list */
+#iview-job-list table th {
+    background-color: #E2EDBF;
+}
+#iview-job-list table td {
+    padding: 5px 10px;
+}
+/* end job list */

@@ -27,9 +27,6 @@ handlers = [
     url(r'/instance/([0-9]+)/webssh_disable', instance.WebSSHDisable, name='instance:webssh:disable'),
 
     url(r'/instance/([0-9]+)/control', instance.InstanceControl, name='instance:control'),
-    (r'/instance/([0-9]+)/run', instance.Run),
-    (r'/instance/([0-9]+)/stop', instance.Stop),
-    (r'/instance/([0-9]+)/query', instance.Query),
     
     (r'/instance/([0-9]+)/delete', instance.Delete),
 

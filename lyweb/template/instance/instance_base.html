@@ -19,7 +19,7 @@
   </ol>
 </div>
 
-<div class="island c" id="instance-show-main">
+<div class="ly-box c" id="instance-show-main">
 
   <ul>
     <li class="c1">
@@ -64,7 +64,7 @@
           </tr>
           <tr>
             <td class="c1">${ _("Update Time") }</td>
-            <td class="c2">${ fulltime(instance.updated) }</td>
+            <td class="c2">${ fulltime(instance.updated, UTC=True) }</td>
           </tr>
 	  <tr>
 	    <td class="c1">${ _("Lastest Job") }</td>
@@ -77,7 +77,7 @@
 </div>
 
 <div class="c"></div>
-<div id="instance-status-show" class="ly-box c">
+<div id="instance-status-show" class="island c">
   <ul>
     <li id="iview-inst-control-btn">
       % if (current_user and current_user.id == instance.user_id) or has_permission('admin'):
