@@ -138,7 +138,7 @@ class Job(ORMBase):
 
     @property
     def completed(self):
-        return 300 <= self.status < 400
+        return 300 <= self.status < 400 or self.status >= 600
 
     @property
     def canstop(self):

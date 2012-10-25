@@ -1,5 +1,5 @@
 % if JOB_LIST.count():
-<div class="ly-instance-job-list">
+<div id="iview-job-list" class="ly-instance-job-list">
   <h2>${ _("Recent Job History") }</h2>
   <table class="list">
     <tbody>
@@ -8,6 +8,7 @@
         <th>${ _("User") }</th>
         <th>${ _("Action") }</th>
         <th>${ _("Result") }</th>
+	<th>${ _("Created Time") }</th>
         <th>${ _("Start Time") }</th>
         <th>${ _("End Time") }</th>
       </tr>
@@ -17,8 +18,9 @@
         <td><a href="${ reverse_url('account:view', J.user.id) }">${ J.user.username }</a></td>
         <td>${ J.action_string }</td>
         <td>${ J.status_string }</td>
-        <td>${ fulltime(J.started) }</td>
-        <td>${ fulltime(J.ended) }</td>
+        <td>${ fulltime(J.created, UTC=True) }</td>
+        <td>${ fulltime(J.started, UTC=True) }</td>
+        <td>${ fulltime(J.ended, UTC=True) }</td>
       </tr>
       % endfor
     </tbody>
