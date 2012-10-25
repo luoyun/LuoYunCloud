@@ -40,8 +40,8 @@
     <div class="desc">
       <h3>${ _("Memory") }</h3>
       <div class="r-info">
-	<span class="total">${ current_user.profile.memory }M</span>
-	<span class="used">${ USED_MEMORY }M</span>
+	<span class="total">${ human_size(current_user.profile.memory*1024*1024) }</span>
+	<span class="used">${ human_size(USED_MEMORY*1024*1024) }</span>
       </div>
       <div class="myun-pie-item-hover"></div>
     </div>
