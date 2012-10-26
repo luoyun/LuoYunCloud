@@ -613,8 +613,9 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
             ci->ins_name = strdup(s);
         ci->ins_vcpu = atoi(PQgetvalue(res, 0, 1));
         ci->ins_mem = atoi(PQgetvalue(res, 0, 2));
-        if (ci->ins_mem < 2048)
-            ci->ins_mem = ci->ins_mem << 10;
+        if (ci->ins_mem > 131072)
+            ci->ins_mem = 131072; /* 128G max */
+        ci->ins_mem = ci->ins_mem << 10;
         s = PQgetvalue(res, 0, 3);
         if (s && strlen(s))
             ci->ins_ip = strdup(s);

@@ -19,6 +19,7 @@ except ImportError:
 import luoyuninfo
 import lylog
 
+PROGRAM_NAME = b'LYWEB'
 DEFAULT_OSM_CONF_PATH = b'/LuoYun/conf/luoyun.conf'
 DEFAULT_WEB_LOG_PATH = b'/LuoYun/log/lyweb.log'
 DEFAULT_WEB_PAGE_DIR = b'/LuoYun/custom/www'
