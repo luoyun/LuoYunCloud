@@ -428,23 +428,8 @@ a.button:active{
     -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.7) inset;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.7) inset;
 }
-/*
 a.clicked {
-    background-color: #52B235;
-    background: -webkit-gradient(linear, left top, left bottom, from(#52B235), to(#87D86E));
-    background-image: -moz-linear-gradient(center top,  #52B235,  #87D86E);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#52B235', endColorstr='#87D86E');
-
-    position: relative;
-    top: 2px;
-    -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.7) inset;
-    -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.7) inset;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.7) inset;
-}
-*/
-a.clicked {
-    cursor: crosshair;
-    /*cursor: wait;*/
+    cursor: wait;
 }
 /* End link button style */
 

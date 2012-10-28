@@ -67,7 +67,7 @@
             <td class="c2">${ fulltime(instance.updated, UTC=True) }</td>
           </tr>
 	  <tr>
-	    <td class="c1">${ _("Lastest Job") }</td>
+	    <td class="c1">${ _("Recent Action") }</td>
 	    <td class="c2"><span id="lyjob-id">${ instance.lastjob_id }</span></td>
 	  </tr>
 	</tbody>
@@ -82,11 +82,11 @@
     <li id="iview-inst-control-btn">
       % if (current_user and current_user.id == instance.user_id) or has_permission('admin'):
       % if instance.can_run:
-      <a href="${ reverse_url('instance:control', instance.id) }?action=run" title="${ _('run instance') }"><img src="${ theme_url('img/run-instance.png') }"/></a>
+      <a href="${ reverse_url('instance:control', instance.id) }?action=run"><img src="${ theme_url('img/run-instance.png') }"/></a>
       % elif instance.need_query:
-      <a href="${ reverse_url('instance:control', instance.id) }?action=query" title="${ _('query instance status') }"><img src="${ theme_url('img/query-instance.png') }"/></a>
+      <a href="${ reverse_url('instance:control', instance.id) }?action=query"><img src="${ theme_url('img/query-instance.png') }"/></a>
       % else:
-      <a href="${ reverse_url('instance:control', instance.id) }?action=stop" title="${ _('stop instance') }"><img src="${ theme_url('img/shutdown-instance.png') }"/></a>
+      <a href="${ reverse_url('instance:control', instance.id) }?action=stop"><img src="${ theme_url('img/stop-instance.png') }"/></a>
       % endif
       % endif
     </li>
@@ -147,10 +147,14 @@
 
 
 <script type="text/javascript">
+  $("html").data("iview_status_url", "${ reverse_url('instance:status', instance.id) }");
+  $("html").data("inst_control_url", "${ reverse_url('instance:control', instance.id) }");
+  $("html").data("inst_control_imgsrc", "${ theme_url('img/REPLACE-instance.png') }");
+
   InstanceControl();
   MenuClick();
   AdminMenuslide();
-  InstanceStatusCheck("${ reverse_url('instance:status', instance.id) }", "${ reverse_url('instance:control_button', instance.id) }");
+  InstanceStatusCheck();
 </script>
 
 </%block>

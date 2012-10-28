@@ -35,6 +35,4 @@ handlers = [
 
     url(r'/instance/([0-9]+)/status', instance.Status, name='instance:status'),
 
-    url(r'/instance/([0-9]+)/control_button', instance.InstanceControlArea, name='instance:control_button'),
-
 ]

@@ -158,7 +158,7 @@ class InstRequestHandler(LyRequestHandler):
             return _("Connect to control server failed: %s") % e
 
         self.db2.commit()
-        return _('Tasks run successfully !')
+        return _('Task starts successfully.')
 
 
     def update_ipassign(self, ip, instance):
@@ -493,19 +493,6 @@ class Delete(InstRequestHandler):
 
 
 
-class InstanceControlArea(InstRequestHandler):
-    ''' Just get a control button '''
-
-    @authenticated
-    def get(self, id):
-
-        I = self.get_instance(id)
-        if not I: return
-
-        self.render('instance/crontrol_result.ajax', instance = I)
-
-
-
 class InstanceControl(InstRequestHandler):
     ''' stop/run/reboot/query '''
 
@@ -535,7 +522,7 @@ class InstanceControl(InstRequestHandler):
             self.inst.ischanged = False
         self.db2.commit()
 
-        self.render('instance/crontrol_result.ajax', **self.d)
+        self.write(self.d['RESULT'])
                      
 
     def reboot(self):
@@ -1526,6 +1513,15 @@ class Status(InstRequestHandler):
 
         job = instance.lastjob
 
+        # TODO: a temp hack for old job action
+        if not job:
+            old = self.db2.query(Job).filter( and_(
+                    Job.target_type == JOB_TARGET['INSTANCE'],
+                    Job.target_id == instance.id) ).order_by(desc(Job.id)).first()
+            print 'old.id = ', old.id
+            instance.lastjob = old
+            job = old
+
         if self.request.connection.stream.closed() or not job:
             return self.finish()
 
@@ -1565,7 +1561,13 @@ class Status(InstRequestHandler):
             if instance.domain and instance.is_running:
                 domain_link = instance.home_url(self.current_user)
                 domain = instance.domain
-                    
+
+            if instance.can_run:
+                iaction = 'run'
+            elif instance.need_query:
+                iaction = 'query'
+            else:
+                iaction = 'stop'
 
             json = { 'job_id': job.id,
 
@@ -1580,7 +1582,8 @@ class Status(InstRequestHandler):
                      'ip': ip, 'ip_link': ip_link,
                      'domain': domain, 'domain_link': domain_link,
 
-                     'job_completed': 1 if job.completed else 0 }
+                     'job_completed': 1 if job.completed else 0,
+                     'iaction': iaction }
 
             
             if job.status >= 300 and job.status <= 399:

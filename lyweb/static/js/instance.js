@@ -1,4 +1,4 @@
-function InstanceStatusCheck ( URL, update_url ) {
+function InstanceStatusCheck () {
 
     var job_status = $('#lyjob-status-id').html();
 
@@ -8,7 +8,7 @@ function InstanceStatusCheck ( URL, update_url ) {
 
     var instance_status = $('#lyinst-status-id').html();
 
-    var newurl = URL + '?instance_status=' + instance_status + '&job_status=' + job_status;
+    var newurl = $('html').data('iview_status_url') + '?instance_status=' + instance_status + '&job_status=' + job_status;
 
     $.ajax({
 	url: newurl,
@@ -51,77 +51,37 @@ function InstanceStatusCheck ( URL, update_url ) {
 		$('#iview-domain').html('');
 	    }
 
-	    $.get(update_url, function(result) {
-		$('#i-action').html(result);
-	    });
+	    /* update control area */
+	    control_url = $('html').data('inst_control_url');
+	    img_url = $('html').data('inst_control_imgsrc');
 
-            window.setTimeout(InstanceStatusCheck, 10000, URL, update_url);
+	    if (data.iaction == 'run') {
+		href = control_url + '?action=run';
+		imgsrc = img_url.replace('REPLACE', 'run');
+	    } else if (data.iaction == 'query') {
+		href = control_url + '?action=query';
+		imgsrc = img_url.replace('REPLACE', 'query');
+	    } else if (data.iaction == 'stop') {
+		href = control_url + '?action=stop';
+		imgsrc = img_url.replace('REPLACE', 'stop');
+	    }
+	    control_html = '<a href="' + href + '"><img src="' + imgsrc + '"/></a>'
+	    $('#iview-inst-control-btn').html( control_html );
+	    InstanceControl();
+
+
+	    clearTimeout($('html').data('statusCheck'));
+            var tid = setTimeout(InstanceStatusCheck, 6000);
+	    $('html').data('statusCheck', tid);
 	},
 
         error: function (data) {
-            window.setTimeout(InstanceStatusCheck, 10000, URL, update_url);
+	    clearTimeout($('html').data('statusCheck'));
+            var tid = setTimeout(InstanceStatusCheck, 12000);
+	    $('html').data('statusCheck', tid);
         }
     });
 
-
-}
-
-function InstanceDynamicStatus () {
-
-    var jid = $('#job-id').html();
-    if (! jid)
-    {
-        $('#job-status-desc').html('No id found');
-        window.setTimeout(InstanceDynamicStatus, 1000);
-        return
-    } else if ( jid == -1 ) {
-	return
-    }
-
-
-    var previous = $('#job-status-value').html();
-
-    var URL = '/job/' + jid + '/status?previous=' + previous;
-
-    $.ajax({
-
-        url: URL,
-        type: "GET",
-
-        success: function (data) {
-            var status = $('#job-status-value').text();
-
-            if (data.job_status != status) {
-                $('#job-id').html(jid);
-                $('#job-status-value').html(data.job_status);
-                $('#job-status-desc').html(data.desc);
-                if (data.status == 1) {
-                    window.setTimeout(
-                        InstanceDynamicStatus, 500);
-                } else {
-                    // TODO: done
-                    if (data.job_status == 301)
-                        location.reload(true);
-		    else if (
-			(data.job_status >= 311 &&
-			 data.job_status <= 399) ||
-			    data.job_status == 600 ||
-			    (data.job_status >=700 &&
-			     data.job_status <=799)
-		    ) {
-			// 300-399, 600, 700-799
-			ly_url_set_parameter('job_result', data.desc);
-		    }
-                }
-            }
-        },
-
-        error: function (data) {
-            //alert(data + ', try again !');
-            window.setTimeout(InstanceDynamicStatus, 5000);
-        }
-
-    });
 
 }
 
@@ -145,65 +105,11 @@ function InstanceControl() {
 	// add a clicked class
         $obj.addClass('clicked');
 
-
         $.ajax({
             url: URL,
             type: 'GET',
             success: function (data) {
-		$('#iview-inst-control-btn').html(data);
-            }
-        });
-
-        return false;
-
-    });
-
-}
-
-function InstanceControlOld() {
-
-    $('#i-action .run a, #i-action .stop a, #i-action .query a').click( function () {
-
-        var $obj = $(this);
-
-	$('#job-result').html('');
-
-        URL = $obj.attr('href');
-
-        $.ajax({
-            url: URL + '?ajax=1',
-            type: 'GET',
-            success: function (data) {
-                if (! data.jid) {
-                    $('#job-status-desc').html( data.desc );
-                    return
-                }
-
-		// set link is unaviable
-                $obj.attr('href', "javascript:void(0);");
-
-		// change img on clicked status
-		var imgp = $obj.children('img').attr('src');
-		imgp = imgp.replace(/(\w+).png/, '$1-clicked.png')
-		$obj.children('img').attr('src', imgp);
-
-		// add a clicked class
-                $obj.addClass('clicked');
-
-		if ( data.jid == -1 ) {
-                    $('#job-status-desc').html( data.desc );
-		    return
-		}
-
-                // set status img of instance
-                var imgp = $('#i-status-img').attr('src');
-                imgp = imgp.replace(/\d+\.png/, 'running.gif');
-                $('#i-status-img').attr('src', imgp);
-
-                $('#job-id').html(data.jid);
-                //alert(data.desc + data.jid);
-                // TODO: change action between run and stop
-                InstanceDynamicStatus();
+		$('#iview-task-result').html(data);
             }
         });
 
