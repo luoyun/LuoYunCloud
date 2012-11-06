@@ -1100,7 +1100,7 @@ out:
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
     }
 
-    if (ret == LY_S_FINISHED_SUCCESS)
+    if (ci->req_action == LY_A_NODE_STOP_INSTANCE && ret == LY_S_FINISHED_SUCCESS)
         ly_node_send_report_resource();
     return ret;
 }
@@ -1120,7 +1120,7 @@ static int __domain_save(NodeCtrlInstance * ci)
     return -1;
 }
 
-static int __domain_reboot(NodeCtrlInstance * ci)
+static int __domain_acpireboot(NodeCtrlInstance * ci)
 {
     loginfo(_("%s is called\n"), __func__);
 
@@ -1157,6 +1157,15 @@ out:
     if (__file_lock_put(path_lock, idstr) < 0) {
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
     }
+    return ret;
+}
+
+static int __domain_fullreboot(NodeCtrlInstance * ci)
+{
+    loginfo(_("%s is called\n"), __func__);
+    int ret = __domain_stop(ci);
+    if (ret == LY_S_FINISHED_INSTANCE_NOT_RUNNING || ret == LY_S_FINISHED_SUCCESS)
+        ret = __domain_run(ci);
     return ret;
 }
 
@@ -1280,8 +1289,12 @@ void * __instance_control_func(void * arg)
         ret = __domain_save(ci);
         break;
 
-    case LY_A_NODE_REBOOT_INSTANCE:
-        ret = __domain_reboot(ci);
+    case LY_A_NODE_ACPIREBOOT_INSTANCE:
+        ret = __domain_acpireboot(ci);
+        break;
+
+    case LY_A_NODE_FULLREBOOT_INSTANCE:
+        ret = __domain_fullreboot(ci);
         break;
 
     case LY_A_NODE_DESTROY_INSTANCE:

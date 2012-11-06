@@ -67,9 +67,10 @@ typedef enum LYAction_t {
      LY_A_NODE_STOP_INSTANCE = 202,
      LY_A_NODE_SUSPEND_INSTANCE = 203,
      LY_A_NODE_SAVE_INSTANCE = 204,
-     LY_A_NODE_REBOOT_INSTANCE = 205,
+     LY_A_NODE_FULLREBOOT_INSTANCE = 205,
      LY_A_NODE_DESTROY_INSTANCE = 206,
      LY_A_NODE_QUERY_INSTANCE = 207,
+     LY_A_NODE_ACPIREBOOT_INSTANCE = 208,
 
      /*
      ** actions taken by node to control node

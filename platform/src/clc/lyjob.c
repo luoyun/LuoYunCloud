@@ -688,16 +688,21 @@ static int __job_run(LYJobInfo * job)
         __job_start_instance(job);
         break;
 
+    case LY_A_NODE_FULLREBOOT_INSTANCE:
+        logdebug(_("run job, instance reboot.\n"));
+        __job_start_instance(job);
+        break;
+
     case LY_A_NODE_STOP_INSTANCE:
     case LY_A_NODE_SUSPEND_INSTANCE:
-    case LY_A_NODE_REBOOT_INSTANCE:
+    case LY_A_NODE_ACPIREBOOT_INSTANCE:
     case LY_A_NODE_DESTROY_INSTANCE:
     case LY_A_NODE_QUERY_INSTANCE:
         logdebug(_("run job, instance %s.\n"),
                    job->j_action == LY_A_NODE_QUERY_INSTANCE? "query" :
                    job->j_action == LY_A_NODE_STOP_INSTANCE? "stop" :
                    job->j_action == LY_A_NODE_DESTROY_INSTANCE? "destroy" :
-                   job->j_action == LY_A_NODE_REBOOT_INSTANCE? "reboot" :
+                   job->j_action == LY_A_NODE_ACPIREBOOT_INSTANCE? "acpi-reboot" :
                    job->j_action == LY_A_NODE_SUSPEND_INSTANCE? "suspend" :
                    "unknown");
         __job_control_instance_simple(job);
