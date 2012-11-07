@@ -30,9 +30,6 @@
     </li>
 
     <li class="c2">
-      <div id="i-current-status">
-	<img id="i-is-img" src="${ theme_url('icons/InstanceStatus/%s.png' % instance.status) }"/><span id="i-is-str">${ instance.status_string }</span><span style="display:none;" id="i-is">${ instance.status }</span>
-      </div>
       <div id="i-domain">
 	% if instance.domain:
 	% if instance.is_running:
@@ -46,6 +43,9 @@
 	% if instance.work_ip:
 	<a href="${ instance.home_url(current_user) }" target="_blank"><span id="lyinst-ip">${ instance.work_ip }</span></a>
 	% endif
+      </div>
+      <div id="i-current-status">
+	<img id="i-is-img" src="${ theme_url('icons/InstanceStatus/%s.png' % instance.status) }"/><span id="i-is-str">${ instance.status_string }</span><span style="display:none;" id="i-is">${ instance.status }</span>
       </div>
     </li>
     

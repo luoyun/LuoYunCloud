@@ -54,17 +54,17 @@
     border-radius: 5px;
     margin: 15px 20px 8px;
 }
-#i-ip {
+#i-domain, #i-ip {
     text-align: center;
     margin: 2px 5px 10px;
 }
-#i-ip a {
+#i-domain a, #i-ip a {
     font-size: 0.9em;
     padding: 5px;
     margin: 5px 5px 10px;
     text-decoration: none;
 }
-#i-ip a:hover {
+#i-domain a:hover, #i-ip a:hover {
     border-bottom: 2px solid #D9D9D9;
     padding-bottom: 3px;
 }
@@ -230,6 +230,9 @@
 #instance-show-main #i-current-status {
     padding: 10px;
     text-align: center;
+}
+#i-current-status {
+    font-size: 0.9em;
 }
 #instance-show-main #i-is-img,
 #iview-inst-control-result #i-js-img {

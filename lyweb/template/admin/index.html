@@ -114,7 +114,7 @@ lyAdminShowPie("#admin-mem-pie", [
 	  ${ U.profile.email }
 	  % endif
 	</td>
-	<td>${ ytime_human(U.last_active) }</td>
+	<td>${ htime(U.last_active) }</td>
       </tr>
       % endfor
     </tbody>
@@ -147,7 +147,7 @@ lyAdminShowPie("#admin-mem-pie", [
         <td>${ j.target_name }</td>
         <td><a href="${ j.target_url }">${ j.target_id }</a></td>
         <td>${ j.action_string }</td>
-        <td>${ ftime(j.ended, '%m-%d %H:%M:%S') }</td>
+        <td>${ htime(j.ended) }</td>
       </tr>
       % endfor
     </tbody>

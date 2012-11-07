@@ -118,6 +118,10 @@ class UserManagement(LyRequestHandler):
         else:
             by = User.id
 
+        # sorted by last_active
+        if online:
+            by = User.last_active
+
         by_exp = desc(by) if sort == 'DESC' else asc(by)
 
         start = (cur_page - 1) * page_size

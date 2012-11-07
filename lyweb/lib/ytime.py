@@ -1,41 +1,41 @@
 #!/usr/bin/env python
 
 import time, datetime, logging
+from dateutil import relativedelta
 
-def ytime_human(dt):
 
-    '''return time string for human
-    '''
-    now = time.localtime()
-    dt = str(dt).split('.')[0]
-    dt = str(dt).split('+')[0]
+def htime( t ):
 
-    try:
-        old = time.strptime(dt, '%Y-%m-%d %H:%M:%S')
-    except:
-        return ''
+    ''' return a human ago aime '''
 
-    interval = (now.tm_year - old.tm_year) * 365 + (now.tm_yday - old.tm_yday)
+    if not isinstance(t, datetime.datetime):
+        return 'N/A'
 
-    if interval < 1:
-        if now.tm_hour > old.tm_hour:
-            if now.tm_min > old.tm_min:
-                humantime = _('%s hours') % (now.tm_hour - old.tm_hour)
-            else:
-                humantime = _('%s minutes') % (now.tm_min + 60 - old.tm_min)
-        else:
-            humantime = _('%s seconds') % (now.tm_sec - old.tm_sec)
-    elif interval == 1:
-        humantime = _('yestoday')
-    elif interval < 30:
-        humantime = _('%s days') % interval
-    elif interval < 365:
-        humantime = _('%s months') % (interval / 30)
+    ago = relativedelta.relativedelta(datetime.datetime.now(), t)
+
+    if ago.years > 0:
+        s = _('%s years ago') % ago.years
+
+    elif ago.months > 0:
+        s = _('%s months ago') % ago.months
+
+    elif ago.days > 0:
+        s = _('%s days ago') % ago.days
+
+    elif ago.hours > 0:
+        s = _('%s hours ago') % ago.hours
+
+    elif ago.minutes > 0:
+        s = _('%s minutes ago') % ago.minutes
+
+    elif ago.seconds > 0:
+        s = _('%s seconds ago') % ago.seconds
+
     else:
-        humantime = _('%s years') % (interval / 365)
+        #s = _('%s microseconds ago') % ago.microseconds
+        s = _('just now')
 
-    return humantime
-
+    return s
 
 
 def ftime(t, f='%Y-%m-%d %H:%M:%S'):
@@ -44,4 +44,4 @@ def ftime(t, f='%Y-%m-%d %H:%M:%S'):
         return datetime.datetime.strftime(t, f)
     except Exception, e:
         logging.error( 'format time "%s" failed: %s' % (t, e) )
-        return 'ET'
+        return 'N/A'

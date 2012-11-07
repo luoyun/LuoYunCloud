@@ -26,7 +26,7 @@ template_dir = os.path.join(
     os.path.dirname(__file__), 'template' )
 
 
-from ytime import ytime_human, ftime
+from ytime import htime, ftime
 
 class LyRequestHandler(RequestHandler):
 
@@ -62,8 +62,8 @@ class LyRequestHandler(RequestHandler):
             theme_url=self.theme_url,
 
             #method
+            htime = htime,
             ftime = ftime,
-            ytime_human = ytime_human,
             has_permission = self.has_permission,
             AJAX = ajax,
             show_error = show_error,
@@ -112,7 +112,7 @@ class LyRequestHandler(RequestHandler):
             return None
 
         # Does session expired ?
-        if session.expire_date < datetime.datetime.utcnow():
+        if session.expire_date < datetime.datetime.now():
             return None
 
         sk = self.settings["session_secret"]
@@ -133,7 +133,7 @@ class LyRequestHandler(RequestHandler):
         if user.islocked: return None
 
         if user:
-            user.last_active = datetime.datetime.utcnow()
+            user.last_active = datetime.datetime.now()
             user.last_entry = self.request.uri
             #self.db2.commit()
 
