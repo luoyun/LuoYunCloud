@@ -855,6 +855,7 @@ table.lrlist td.c2 {
 .large-tbform input[type="text"],
 .large-tbform input[type="password"] {
     height: 2em;
+    width: 65%;
 }
 .large-tbform label {
     display: block;
@@ -966,7 +967,7 @@ a.action img {
     text-align: center;
     color: red !important;
 }
-.ly-warning2 {
+.yerror, .ly-warning2 {
     color: red !important;
 }
 
@@ -1141,4 +1142,90 @@ img.ly-status-flag {
      background-color: #999;
      cursor: pointer;
      cursor: hand;
+}
+
+img.little-status-img {
+    width: 16px;
+    height: 16px;
+}
+
+/* Start tabs style */
+.tabs {
+    height: 2.6em;
+    margin-bottom: 1.2em;
+    overflow: hidden;
+    position: relative;
+}
+.tabs ul {
+    border-bottom: 1px solid #BBBBBB;
+    bottom: 0;
+    margin: 0;
+    padding-left: 0.5em;
+    position: absolute;
+    width: 2000px;
+}
+.tabs ul li {
+    background: none repeat scroll 0 0 #FFFFFF;
+    float: left;
+    list-style-type: none;
+    margin-bottom: -1px;
+    margin-right: 4px;
+    position: relative;
+    white-space: nowrap;
+}
+.tabs ul li a {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #F6F6F6;
+    border-color: #CCCCCC #CCCCCC #BBBBBB;
+    border-image: none;
+    border-style: solid;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-width: 1px;
+    color: #999999;
+    display: block;
+    font-size: 0.9em;
+    font-weight: bold;
+    line-height: 1.3em;
+    padding: 4px 6px;
+    text-decoration: none;
+}
+.tabs ul li a.selected {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #FFFFFF;
+    border-color: #BBBBBB #BBBBBB #FFFFFF;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px;
+    color: #444444;
+}
+/* End tabs style */
+
+
+/* Start kv (key-value) table */
+table.kv tr {
+    border-bottom: 1px solid #ECEDEF;
+}
+table.kv td {
+    padding: 6px 12px 12px;
+}
+table.kv td:first-child {
+    font-weight: bold;
+    text-align: right;
+}
+/* End kv (key-value) table */
+
+.ly-goto {
+    margin: 5px 15px;
+}
+
+.ywarn {
+    color: red;
+    line-height: 1.3em;
 }

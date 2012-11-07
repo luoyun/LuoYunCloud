@@ -1,0 +1,92 @@
+<%inherit file="/base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${ theme_url('myun.css') }" />
+<link rel="stylesheet" href="${ theme_url('button.css') }" />
+<link rel="stylesheet" href="${ theme_url('table.css') }" />
+<link rel="stylesheet" href="${ theme_url('myun-instance.css') }" />
+<link rel="stylesheet" href="${ theme_url('myun-instance-edit.css') }" />
+<script type="text/javascript" src="${ static_url('js/myun.js') }"></script>
+<script type="text/javascript" src="${ static_url('js/jquery-ui/development-bundle/ui/jquery.ui.dialog.js') }"></script>
+<%block name="exhead"/>
+</%block>
+
+<%block name="main">
+
+<div class="inner-nav">
+  <ol>
+    <li><a class="home" href="/">${ _("Home") }</a></li>
+    <li><a href="${ reverse_url('myun:index') }">${ _("My LuoYun") }</a></li>
+    <li><a href="${ reverse_url('myun:instance') }">${ _("Instances") }</a></li>
+    <li>${ I.id } <a href="${ reverse_url('myun:instance:view', I.id) }">${ I.name }</a></li>
+    <%block name="innav"/>
+  </ol>
+</div>
+
+<div id="instance-content">
+<div id="top-header" class="c">
+  <div class="c1">
+    <div id="i-logo">
+      <a href="${ reverse_url('myun:instance:view', I.id) }"><img src="${ I.logourl }" /></a>
+    </div>
+
+    <div id="i-status">
+      <img id="i-is-img" src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }"/>
+      <span style="display:none;" id="i-is-str">${ I.status_string }</span>
+      <span style="display:none;" id="i-is">${ I.status }</span>
+    </div>
+  </div>
+
+  <div class="c2">
+    <div id="i-control" class="c">
+      <div id="i-control-btn">
+	% if I.can_run:
+	<a href="${ reverse_url('instance:control', I.id) }?action=run"><img src="${ theme_url('img/run-instance.png') }"/></a>
+	% elif I.need_query:
+	<a href="${ reverse_url('instance:control', I.id) }?action=query"><img src="${ theme_url('img/query-instance.png') }"/></a>
+	% else:
+	<a href="${ reverse_url('instance:control', I.id) }?action=stop"><img src="${ theme_url('img/stop-instance.png') }"/></a>
+	<a id="i-control-reboot" href="${ reverse_url('instance:control', I.id) }?action=reboot"><img src="${ theme_url('img/reboot-instance.png') }"/></a>
+	% endif
+      </div>
+      <div id="i-control-result">
+	<span id="i-task-result"></span>
+	<span id="i-task-lastjob">
+	  <img class="little-status-img" id="i-js-img" src="${ theme_url('icons/JobStatus/%s' % I.lastjob_imgurl) }" />
+	  <span id="i-js-str">${ I.job_status_string }</span>
+	  <span id="i-js">${ I.lastjob_status_id }</span>
+	</span>
+	% if I.ischanged:
+	<span id="i-reboot-warning" class="ly-warning">${ _("Instance configuration has changed, please restart instance for new settings to be effective!") }</span>
+	% endif
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<%
+   def isselected(tab):
+       return 'selected' if tab == TAB else ''
+%>
+<div id="i-management" class="tabs">
+  <ul>
+    <li><a id="tab-general" class="${ isselected('general') }" href="${ reverse_url('myun:instance:view', I.id) }?tab=general">${ _("Baseinfo") }</a></li>
+    <li><a id="tab-resource" class="${ isselected('resource') }" href="${ reverse_url('myun:instance:view', I.id) }?tab=resource">${ _("Resource") }</a></li>
+    <li><a id="tab-network" class="${ isselected('network') }" href="${ reverse_url('myun:instance:view', I.id) }?tab=network">${ _("Network") }</a></li>
+    <li><a id="tab-storage" class="${ isselected('storage') }" href="${ reverse_url('myun:instance:view', I.id) }?tab=storage">${ _("Storage") }</a></li>
+    <li><a id="tab-secret" class="${ isselected('secret') }" href="${ reverse_url('myun:instance:view', I.id) }?tab=secret">${ _("Secret") }</a></li>
+    <li><a id="tab-domain" class="${ isselected('domain') }" href="${ reverse_url('myun:instance:view', I.id) }?tab=domain">${ _("Domain") }</a></li>
+    <li><a id="tab-webssh" class="${ isselected('webssh') }" href="${ reverse_url('myun:instance:view', I.id) }?tab=webssh">${ _("WebSSH") }</a></li>
+    <li><a id="tab-delete" class="${ isselected('delete') }" href="${ reverse_url('myun:instance:view', I.id) }?tab=delete">${ _("Delete") }</a></li>
+    <li><a id="tab-joblist" class="${ isselected('joblist') }" href="${ reverse_url('myun:instance:view', I.id) }?tab=joblist">${ _("History") }</a></li>
+  </ul>
+</div>
+
+<%block name="instance"/>
+
+<script type="text/javascript">
+  showTab();
+</script>
+</div>
+</%block>
