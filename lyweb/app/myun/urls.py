@@ -14,4 +14,10 @@ handlers = [
     url( r'/myun/appliance', myun.MyunAppliance,
          name='myun:appliance'),
 
+    url( r'/myun/instance/([0-9]+)', myun.InstanceView,
+         name='myun:instance:view'),
+
+    url( r'/myun/instance/([0-9]+)/edit', myun.InstanceEdit,
+         name='myun:instance:edit'),
+
 ]

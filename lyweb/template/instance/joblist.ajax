@@ -18,9 +18,9 @@
         <td><a href="${ reverse_url('account:view', J.user.id) }">${ J.user.username }</a></td>
         <td>${ J.action_string }</td>
         <td>${ J.status_string }</td>
-        <td>${ fulltime(J.created, UTC=True) }</td>
-        <td>${ fulltime(J.started, UTC=True) }</td>
-        <td>${ fulltime(J.ended, UTC=True) }</td>
+        <td>${ ftime(J.created) }</td>
+        <td>${ ftime(J.started) }</td>
+        <td>${ ftime(J.ended) }</td>
       </tr>
       % endfor
     </tbody>

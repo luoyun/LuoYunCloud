@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import time
+import time, datetime, logging
 
 def ytime_human(dt):
 
@@ -35,3 +35,13 @@ def ytime_human(dt):
         humantime = _('%s years') % (interval / 365)
 
     return humantime
+
+
+
+def ftime(t, f='%Y-%m-%d %H:%M:%S'):
+
+    try:
+        return datetime.datetime.strftime(t, f)
+    except Exception, e:
+        logging.error( 'format time "%s" failed: %s' % (t, e) )
+        return 'ET'

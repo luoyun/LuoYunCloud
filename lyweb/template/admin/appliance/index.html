@@ -37,6 +37,7 @@
 	<th>${ _("Owner") }</th>
 	<th>${ _("Catalog") }</th>
 	<th>${ _("Instances") }</th>
+	<th>${ _("Checksum") }</th>
 	<th>${ _("Updated") }</th>
 	<th>${ _("Management") }</th>
       </tr>
@@ -59,7 +60,8 @@
 	  <a href="${ reverse_url('admin:instance') }?aid=${ A.id }">${ len(A.instances) }</a>
 	  % endif
 	</td>
-	<td>${ lytime(A.updated) }</td>
+	<td>${ A.checksum }</td>
+	<td>${ ftime(A.updated) }</td>
 	<td><a class="ly-btn2 small blue" href="${ reverse_url('admin:appliance:delete', A.id) }">${ _("Delete") }</a></td>
       </tr>
       % endfor

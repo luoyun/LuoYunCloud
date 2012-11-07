@@ -59,9 +59,9 @@
 	  % endif
 	  <div class="hidden" style="display: none;">
 	    <ul>
-	      <li>${ _("Date Joined") }: ${ fulltime(U.date_joined) }</li>
-	      <li>${ _("Last Login") }: ${ fulltime(U.last_login) }</li>
-	      <li>${ _("Last Activate") }: ${ lytime(U.last_active, '%Y-%m-%d %H:%M:%S') }</li>
+	      <li>${ _("Date Joined") }: ${ ftime(U.date_joined) }</li>
+	      <li>${ _("Last Login") }: ${ ftime(U.last_login) }</li>
+	      <li>${ _("Last Activate") }: ${ ftime(U.last_active) }</li>
 	      <li>${ _("Last Entry") }: ${ U.last_entry }</li>
 	    </ul>
 

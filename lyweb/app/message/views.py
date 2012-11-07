@@ -2,7 +2,8 @@
 
 import logging, datetime, time, re
 import tornado
-from lycustom import LyRequestHandler,fulltime
+from lycustom import LyRequestHandler
+from ytime import ftime
 from tornado.web import authenticated, asynchronous
 
 from app.account.models import User
@@ -181,7 +182,7 @@ class Reply(MessageRequestHandler):
         # compose repily message content
         reply = "\n".join(map(lambda line:"> "+line, message.content.split("\n")))
 
-        content = _("On %s, %s wrote:\n%s") %(fulltime(message.created), message.sender.username, reply)
+        content = _("On %s, %s wrote:\n%s") %(ftime(message.created), message.sender.username, reply)
         form = ReplyMessageForm(subject="Re:"+message.subject, content=content)
         self.render( 'message/reply_message.html', tilte = _('Reply Message'), message = message, form = form)
 

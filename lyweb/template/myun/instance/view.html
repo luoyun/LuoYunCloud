@@ -72,11 +72,11 @@
 	</tr>
 	<tr>
 	  <td>${ _("Create Time") }</td>
-	  <td>${ fulltime(I.created) }</td>
+	  <td>${ ftime(I.created) }</td>
 	</tr>
 	<tr>
 	  <td>${ _("Update Time") }</td>
-	  <td>${ fulltime(I.updated) }</td>
+	  <td>${ ftime(I.updated) }</td>
 	</tr>
       </tbody>
     </table>
@@ -289,8 +289,8 @@
         <td><a href="${ reverse_url('account:view', J.user.id) }">${ J.user.username }</a></td>
         <td>${ J.action_string }</td>
         <td>${ J.status_string }</td>
-        <td>${ fulltime(J.started, UTC=True) }</td>
-        <td>${ fulltime(J.ended, UTC=True) }</td>
+        <td>${ ftime(J.started) }</td>
+        <td>${ ftime(J.ended) }</td>
       </tr>
       % endfor
     </tbody>

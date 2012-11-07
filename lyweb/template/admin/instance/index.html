@@ -60,7 +60,7 @@
 	    </div>
 	  </td>
           <td><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" title="${ I.status_string }"/></td>
-          <td>${ fulltime(I.updated) }</td>
+          <td>${ ftime(I.updated) }</td>
           <td>
             % if I.node and I.is_running:
             <a href="${ reverse_url('admin:node') }?id=${ I.node_id }&action=view">${ I.node.ip }</a>

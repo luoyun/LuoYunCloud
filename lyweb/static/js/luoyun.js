@@ -130,14 +130,6 @@ function true_false_toggle ( obj, URL ) {
 };
 
 
-function setHeight() {
-    var header = $('#header').height();
-    var main = $('#main').height();
-    var footer = $('#footer').height();
-
-    $('#main').height($(window).height() - header - footer);
-}
-
 function lyurl_update_arg(url, key, value)
 {
     var x = url.split("?");
@@ -209,3 +201,14 @@ function shake (ele, cls, times) {
 	}
     }, 200);
 };
+
+
+function lygoback()
+{
+    var domain=window.location.host;
+    var protocol=window.location.protocol;
+    var url = "$!{url}"||"-1";
+    history.go(url);
+}
+
+

@@ -45,11 +45,11 @@
 	</tr>
         <tr>
 	  <td class="c1">${ _("Create Time") }</td>
-          <td class="c2">${ fulltime(appliance.created) }</td>
+          <td class="c2">${ ftime(appliance.created) }</td>
 	</tr>
         <tr>
 	  <td class="c1">${ _("Update Time") }</td>
-          <td class="c2">${ fulltime(appliance.updated) }</td>
+          <td class="c2">${ ftime(appliance.updated) }</td>
 	</tr>
       </tbody>
     </table>
@@ -88,7 +88,7 @@
 	 % else:
 	 href="/instance/${I.id}" title="${ I.name }"
          % endif
-	 target="_blank"><img src="${ I.logo_url }" /></a>
+	 target="_blank"><img src="${ I.logourl }" /></a>
     </li>
     <div class="c"></div>
     <li class="i-name c"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></li>

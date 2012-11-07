@@ -26,7 +26,7 @@ class Message(ORMBase):
     content_html = Column ( Text )
 
     read = Column( Boolean, default = False)
-    created = Column(DateTime(), default=datetime.utcnow )
+    created = Column(DateTime(), default=datetime.now )
 
     def __init__(self, sender, receiver, subject='', content=''):
         self.sender_id = sender.id

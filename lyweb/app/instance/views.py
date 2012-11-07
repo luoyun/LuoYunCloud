@@ -131,23 +131,42 @@ class InstRequestHandler(LyRequestHandler):
         return inst
 
 
-    def run_job(self, instance, action_id):
+    def get_my_instance(self, ID, allow_admin=False):
+        ''' Just instance owner or admin can get instance '''
 
-        if instance.lastjob and (not instance.lastjob.completed):
+        inst = self.db2.query(Instance).get(ID)
+
+        if not inst:
+            return None, _('No such instance: %s !') % ID
+
+        if inst.status == DELETED_S:
+            return None, _('Instance %s is deleted !') % ID
+
+        if ( (not self.current_user) or (self.current_user.id != inst.user_id) ):
+            if not (allow_admin and self.has_permission('admin')):
+                return None, _('Instance %s is private !') % ID
+
+        return inst, ''
+
+
+    def run_job(self, I, action_id):
+
+        if I.lastjob and (not I.lastjob.completed):
             if not ( action_id == JOB_ACTION['STOP_INSTANCE'] and
-                 instance.lastjob.canstop ):
+                 I.lastjob.canstop ):
+                # TODO: status = 100, timeout > 60s
                 return _("Previous task is not finished !")
 
         # Create new job
         job = Job( user = self.current_user,
                    target_type = JOB_TARGET['INSTANCE'],
-                   target_id = instance.id,
+                   target_id = I.id,
                    action = action_id )
 
         self.db2.add(job)
         self.db2.commit()
         
-        instance.lastjob = job
+        I.lastjob = job
 
         try:
             self._job_notify( job.id )
@@ -168,7 +187,7 @@ class InstRequestHandler(LyRequestHandler):
         if ipassign:
             ipassign.user_id = self.current_user.id
             ipassign.instance_id = instance.id
-            updated = datetime.utcnow()
+            updated = datetime.now()
         else:
             c = IpAssign( ip = ip,
                           user = self.current_user,
@@ -464,136 +483,144 @@ class Delete(InstRequestHandler):
     @authenticated
     def get(self, id):
 
-        inst = self.db2.query(Instance).get(id)
-        if not inst:
-            return self.done( _('No instance %s!') % id )
+        I = self.db2.query(Instance).get(id)
+        d = {'I': I, 'E': []}
 
-        # TODO: no running delete !
-        if inst.is_running:
-            return self.done( _("Can not delete a running instance!") )
+        if I:
+            # TODO: no running delete !
+            if I.is_running:
+                d['E'].append( _("Can not delete a running instance!") )
 
-        # TODO: delete domain binding
-        ret, reason = self.domain_delete( inst )
-        if not ret:
-            return self.done( reason )
+            # TODO: delete domain binding
+            ret, reason = self.domain_delete( I )
+            if not ret:
+                d['E'].append( reason )
 
-        inst.status = DELETED_S
-        inst.subdomain = '_notexist_%s_' % inst.id
+        else:
+            d['E'].append( _('No instance %s!') % id )
+
+
+        if d['E']:
+            return self.render('instance/delete_return.html', **d)
+
+        I.status = DELETED_S
+        I.subdomain = '_notexist_%s_' % I.id
         self.db2.commit()
 
         ipassign_list = self.db2.query(IpAssign).filter_by(
-            instance_id = inst.id ).all()
+            instance_id = I.id ).all()
         for ipassign in ipassign_list:
             self.db2.delete( ipassign )
             self.db2.commit()
 
         # delete instance files
-        msg = self.run_job(inst, JOB_ACTION['DESTROY_INSTANCE'])
-        self.done( msg )
+        d['MSG'] = self.run_job(I, JOB_ACTION['DESTROY_INSTANCE'])
+        return self.render('instance/delete_return.html', **d)
 
 
 
 class InstanceControl(InstRequestHandler):
     ''' stop/run/reboot/query '''
 
-    @authenticated
-    def get(self, id):
+    #@authenticated
+    def get(self, ID):
 
-        self.inst = self.get_instance(id)
-        if not self.inst: return
+        # Important !!! IE use cache !
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
 
-        self.d = { 'instance': self.inst, 'RESULT': _('unknown error') }
+        if not self.current_user:
+            return self.write( {
+                    'return_code': 1,
+                    'msg': _('You have not login !') } )
+
+        inst, msg = self.get_my_instance(ID, allow_admin=True)
+        if not inst:
+            return self.write( {'return_code': 1, 'msg': msg } )
 
         action = self.get_argument('action', '').lower()
 
+        ret = 0
         if action == 'run':
-            self.run()
+            msg = self.run( inst )
         elif action == 'stop':
-            self.stop()
+            msg = self.stop( inst )
         elif action == 'reboot':
-            self.reboot()
+            msg = self.reboot( inst )
         elif action == 'query':
-            self.query()
+            msg = self.query( inst )
         else:
-            self.d['RESULT'] = _('Just support run/stop/reboot/query action')
+            msg = _('Just support run/stop/reboot/query action')
+            ret = 1
 
-        self.inst.updated = datetime.utcnow()
-        if self.inst.ischanged:
-            self.inst.ischanged = False
+        inst.updated = datetime.now()
+        if inst.ischanged:
+            inst.ischanged = False
         self.db2.commit()
 
-        self.write(self.d['RESULT'])
+        self.write( {'return_code': ret, 'msg': msg } )
                      
 
-    def reboot(self):
-        self.d['RESULT'] = self.run_job(self.inst, JOB_ACTION['REBOOT_INSTANCE'])
+    def reboot(self, instance):
+        return self.run_job(instance, JOB_ACTION['REBOOT_INSTANCE'])
 
 
-    def query(self):
-        if self.inst.need_query:
-            self.d['RESULT'] = self.run_job(self.inst, JOB_ACTION['QUERY_INSTANCE'])
+    def query(self, instance):
+        if instance.need_query:
+            return self.run_job(instance, JOB_ACTION['QUERY_INSTANCE'])
         else:
-            self.d['RESULT'] = _('Instance does not need query.')
+            return _('Instance does not need query.')
 
 
-    def stop(self):
+    def stop(self, instance):
         
-        if self.inst.is_running:
-            self.d['RESULT'] = self.run_job(self.inst, JOB_ACTION['STOP_INSTANCE'])
+        if instance.is_running:
+            return self.run_job(instance, JOB_ACTION['STOP_INSTANCE'])
         else:
-            self.d['RESULT'] = _('Instance is stopped now !')
+            return _('Instance is stopped now !')
 
-    def run(self):
+    def run(self, instance):
 
-        if not self.have_resource(self.inst):
-            self.d['RESULT'] = _('No enough resources to run instance !')
-            return
+        ret = self.have_resource(instance)
+        if ret: return ret
 
-        if self.inst.is_running:
-            self.d['RESULT'] = _('Instance is running now !')
-            return 
+        if instance.is_running:
+            return _('Instance is running now !')
 
         # TODO: a temp hack
-        self.set_nameservers(self.inst)
-        self.rebinding_domain(self.inst)
+        self.set_nameservers(instance)
+        self.rebinding_domain(instance)
 
-        self.d['RESULT'] = self.run_job(self.inst, JOB_ACTION['RUN_INSTANCE'])
-
+        return self.run_job(instance, JOB_ACTION['RUN_INSTANCE'])
 
     def have_resource(self, inst):
-        # Have resources ?
+
+        # TODO: owner or myself ?
+        #owner = self.current_user
+        owner = inst.user
+
         USED_INSTANCES = self.db2.query(Instance).filter(
-            Instance.user_id == self.current_user.id).all()
-        USED_CPUS = inst.cpus
-        USED_MEMORY = inst.memory
+            Instance.user_id == owner.id).all()
+        USED_CPUS = 0
+        USED_MEMORY = 0
         for I in USED_INSTANCES:
             if I.is_running:
                 USED_CPUS += I.cpus
                 USED_MEMORY += I.memory
 
-        if ( USED_CPUS > self.current_user.profile.cpus or
-             USED_MEMORY > self.current_user.profile.memory ):
+        TOTAL_CPU = owner.profile.cpus - USED_CPUS
+        TOTAL_MEM = owner.profile.memory - USED_MEMORY
 
-            desc = _('No resources to run instance:')
-
-            if USED_CPUS > self.current_user.profile.cpus:
-                desc += _('the total number of CPUs you have is %s, %s used.') % (self.current_user.profile.cpus, USED_CPUS - inst.cpus)
-            if USED_MEMORY > self.current_user.profile.memory:
-                desc += _('the total amount of memory you have is %s MB, %s MB used.') % (self.current_user.profile.memory, USED_MEMORY - inst.memory)
-
-            ajax = self.get_argument('ajax', 0)
-
-            if ajax:
-                json = { 'jid': 0, 'desc': desc }
-                self.write(json)
-            else:
-                url = self.get_no_resource_url()
-                url += "?reason=Resource Limit"
-                self.redirect( url )
-
-            return False
-
-        return True
+        desc = ''
+        if TOTAL_CPU < inst.cpus:
+            if TOTAL_CPU < 0: TOTAL_CPU = 0
+            desc = _('need %s CPU, but %s have.') % (inst.cpus, TOTAL_CPU)
+        if TOTAL_MEM < inst.memory:
+            if TOTAL_MEM < 0: TOTAL_MEM = 0
+            desc = _('need %sMB memory, but %sMB have.') % (inst.memory, TOTAL_MEM)
+        if desc:
+            return _('No resource: %s') % desc
 
 
     def set_nameservers(self, instance):
@@ -639,7 +666,7 @@ class InstanceControl(InstRequestHandler):
         config['domain'] = domain
 
         instance.config = json.dumps( config )
-        instance.updated = datetime.utcnow()
+        instance.updated = datetime.now()
         self.db2.commit()
 
 
@@ -835,7 +862,7 @@ class CreateInstance(InstRequestHandler):
         config['domain'] = domain
 
         instance.config = json.dumps( config )
-        instance.updated = datetime.utcnow()
+        instance.updated = datetime.now()
         self.db2.commit()
 
 
@@ -871,7 +898,7 @@ class BaseinfoEdit(InstRequestHandler):
             inst.name = form.name.data
             inst.summary = form.summary.data
             inst.description = form.description.data
-            inst.updated = datetime.utcnow()
+            inst.updated = datetime.now()
             self.db2.commit()
 
             url = self.reverse_url('instance:view', id)
@@ -1031,7 +1058,7 @@ class NetworkEdit(InstRequestHandler):
             if ipassign:
                 ipassign.user_id = self.current_user.id
                 ipassign.instance_id = id
-                updated = datetime.utcnow()
+                updated = datetime.now()
             else:
                 c = IpAssign( ip = network['ip'],
                               user = self.current_user,
@@ -1377,7 +1404,7 @@ class DomainEdit(InstRequestHandler):
 
         inst.config = json.dumps( config )
 
-        inst.updated = datetime.utcnow()
+        inst.updated = datetime.now()
         if inst.is_running:
             inst.ischanged = True
         self.db2.commit()
@@ -1518,7 +1545,6 @@ class Status(InstRequestHandler):
             old = self.db2.query(Job).filter( and_(
                     Job.target_type == JOB_TARGET['INSTANCE'],
                     Job.target_id == instance.id) ).order_by(desc(Job.id)).first()
-            print 'old.id = ', old.id
             instance.lastjob = old
             job = old
 
@@ -1591,3 +1617,232 @@ class Status(InstRequestHandler):
 
             self.write(json)
             self.finish()
+
+
+class CheckInstanceStatus(InstRequestHandler):
+
+    ''' check instance dynamic status '''
+
+    @asynchronous
+    def post(self):
+
+        WATCH = []
+
+        self.body = json.loads( self.request.body )
+
+        print '[DD] %s body = %s' % (datetime.now(), self.body)
+
+        idata = self.body.get('instance', [])
+        if idata and isinstance(idata, list):
+            for si in idata:
+                ID = self.get_int(si.get('id', 0))
+                if ID:
+                    i = self.db2.query(Instance).get(ID)
+                    if i:
+                        old_is = self.get_int(si.get('is', 0))
+                        old_js = self.get_int(si.get('js', 0))
+                        WATCH.append( (i, old_is, old_js) )
+
+            if WATCH:
+                return self.check_status(WATCH)
+
+        self.write( { 'return_code': 1, 'upload_data': self.body } )
+        return self.finish()
+
+
+    def check_status(self, WATCH):
+
+        if self.request.connection.stream.closed():
+            return self.finish()
+
+        self.db2.commit() # TODO: need sync now
+
+        CHS = []
+        show_job = self.get_int(self.body.get('show_job', 0))
+
+        for instance, old_is, old_js in WATCH:
+
+            print '[DD] id = %s, is = [%s, %s], js = [%s, %s]' % (instance.id, old_is, instance.status, old_js, instance.lastjob_status_id)
+
+            if old_is and old_is != instance.status:
+                CHS.append(instance)
+
+            if show_job and old_js and instance.lastjob:
+                if old_js != instance.lastjob.status:
+                    CHS.append(instance)
+
+        if CHS:
+            ret = self.get_json_data(CHS)
+            print '[DD] CHS = %s, ret = %s' % (CHS, ret)
+            self.write( ret )
+            self.finish()
+
+        else:
+            # Need sleep to wait change
+            if instance.lastjob and not instance.lastjob.completed:
+                time_interval = settings.INSTANCE_S_UP_INTER_1
+            else:
+                time_interval = settings.INSTANCE_S_UP_INTER_2
+            #print '[DD] %s SLEEP %s seconds' % (datetime.now(), time_interval)
+
+            tornado.ioloop.IOLoop.instance().add_timeout(
+                time.time() + time_interval,
+                lambda: self.check_status(WATCH) )
+
+
+    def get_json_data(self, CHS):
+
+        show_action = self.get_int(self.body.get('show_action', 0))
+        show_domain = self.get_int(self.body.get('show_domain', 0))
+        show_ip = self.get_int(self.body.get('show_ip', 0))
+        show_job = self.get_int(self.body.get('show_job', 0))
+
+        idata = []
+        for instance in CHS:
+
+            CS = { 'id': instance.id, 'is': instance.status,
+                   'js': instance.lastjob_status_id,
+                   'is_str': instance.status_string,
+                   'is_img': self.theme_url('icons/InstanceStatus/%s.png' % instance.status) }
+
+            # SHOW job status
+            if show_job:
+                CS['js_str'] = instance.job_status_string
+                job = instance.lastjob
+                if job and job.completed:
+                    if job.status >=600:
+                        CS['js_img'] = self.theme_url('icons/JobStatus/%s.png' % job.status)
+                    else:
+                        CS['js_img'] = self.theme_url('icons/JobStatus/completed.png')
+                else:
+                    CS['js_img'] = self.theme_url('icons/JobStatus/running.gif')
+
+            # SHOW ip status
+            if show_ip and instance.work_ip:
+                CS['ip_link'] = instance.home_url(self.current_user)
+                CS['ip'] = instance.work_ip
+
+            # SHOW domain status
+            if show_domain and instance.domain and instance.is_running:
+                CS['domain_link'] = instance.home_url(self.current_user)
+                CS['domain'] = instance.domain
+
+
+            # SHOW control action status
+            if show_action:
+                if instance.can_run:
+                    CS['iaction'] = 'run'
+                elif instance.need_query:
+                    CS['iaction'] = 'query'
+                else:
+                    CS['iaction'] = 'stop'
+
+            idata.append( CS )
+
+        return { 'return_code': 0, 'instance': idata }
+
+
+
+class SingleInstanceStatus(InstRequestHandler):
+
+    ''' check a instance status '''
+
+    @asynchronous
+    def post(self):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        data = json.loads( self.request.body )
+        #print '[DD] %s body = %s' % (datetime.now(), data)
+
+        ID = self.get_int( data.get('id', 0) )
+        i = self.db2.query(Instance).get(ID)
+        if i:
+            self.check_status( {
+                'instance': i,
+                'old_is': self.get_int(data.get('is', 0)),
+                'old_js': self.get_int(data.get('js', 0)) } )
+        else:
+            self.write( {'return_code': 1} )
+            self.finish()
+
+
+    def check_status(self, cs):
+
+        if self.request.connection.stream.closed():
+            return self.finish()
+
+        self.db2.commit() # TODO: need sync now
+
+        I = cs['instance']
+        old_is = cs['old_is']
+        old_js = cs['old_js']
+
+        #print '[DD] ID: %s, is: [%s, %s], js: [%s, %s]' % (I.id, old_is, I.status, old_js, I.lastjob_status_id)
+
+        if (
+            (old_is and old_is != I.status) or
+            (old_js and I.lastjob and old_js != I.lastjob.status) ):
+
+            self.write( self.get_json_data( I ) )
+            self.finish()
+
+        else:
+            # Need sleep to wait change
+            if I.lastjob and not I.lastjob.completed:
+                time_interval = settings.INSTANCE_S_UP_INTER_1
+            else:
+                time_interval = settings.INSTANCE_S_UP_INTER_2
+            #print '[DD] %s SLEEP %s seconds' % (datetime.now(), time_interval)
+
+            tornado.ioloop.IOLoop.instance().add_timeout(
+                time.time() + time_interval,
+                lambda: self.check_status(cs) )
+
+
+    def get_json_data(self, I):
+
+        CS = { 'return_code' : 0,
+               'id'          : I.id,
+
+               'is'          : I.status,
+               'is_str'      : I.status_string,
+
+               'js'          : I.lastjob_status_id,
+               'js_str'      : I.job_status_string,
+               'lastjob'     : I.lastjob_id if I.lastjob_id else 0,
+
+               'ip'          : '',
+               'ip_link'     : '',
+               'domain'      : '',
+               'domain_link' : '' }
+
+        CS['is_img'] = self.theme_url('icons/InstanceStatus/%s.png' % I.status)
+
+        job = I.lastjob
+        if job and job.completed:
+            if job.status >=600:
+                CS['js_img'] = self.theme_url('icons/JobStatus/%s.png' % job.status)
+            else:
+                CS['js_img'] = self.theme_url('icons/JobStatus/completed.png')
+        else:
+            CS['js_img'] = self.theme_url('icons/JobStatus/running.gif')
+
+        if I.work_ip:
+            CS['ip_link'] = I.home_url(self.current_user)
+            CS['ip'] = I.work_ip
+
+        if I.domain and I.is_running:
+            CS['domain_link'] = I.home_url(self.current_user)
+            CS['domain'] = I.domain
+
+        if I.can_run:
+            CS['iaction'] = 'run'
+        elif I.need_query:
+            CS['iaction'] = 'query'
+        else:
+            CS['iaction'] = 'stop'
+
+        return CS

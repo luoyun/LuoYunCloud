@@ -35,4 +35,8 @@ handlers = [
 
     url(r'/instance/([0-9]+)/status', instance.Status, name='instance:status'),
 
+    url(r'/instance/status', instance.CheckInstanceStatus, name='instance:status2'),
+
+    url(r'/instance/single_status', instance.SingleInstanceStatus, name='instance:single_status'),
+
 ]

@@ -91,7 +91,7 @@ class Login(AccountRequestHandler):
 
                 if check_password(form.password.data, user.password):
                     self.save_session(user.id)
-                    user.last_login = datetime.utcnow()
+                    user.last_login = datetime.now()
                     self.db2.commit()
                     return self.redirect( self.get_argument('next', '/') )
                 else:
@@ -567,7 +567,7 @@ class ResetPasswordComplete(AccountRequestHandler):
             applys = self.db2.query(UserResetpass).filter(
                 UserResetpass.key == self.key ).all()
             for A in applys:
-                A.completed = datetime.utcnow()
+                A.completed = datetime.now()
             self.db2.commit()
 
             self.save_session( self.d['USER'].id )

@@ -37,7 +37,7 @@
         <td>${ j.target_name }</td>
         <td><a href="${ j.target_url }">${ j.target_id }</a></td>
         <td>${ j.action_string }</td>
-        <td>${ fulltime(j.ended, UTC=True) }</td>
+        <td>${ ftime(j.ended) }</td>
       </tr>
       % endfor
     </tbody>

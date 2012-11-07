@@ -20,7 +20,7 @@
 
     <div class="i-other">
       <div class="i-name-summary">
-	<h3 class="i-name"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></h3>
+	<h3 class="i-name"><a href="${ reverse_url('myun:instance:view', I.id) }">${ I.name }</a></h3>
 	<div class="i-summary">
 	% if I.summary:
 	${ I.summary }
@@ -45,11 +45,11 @@
             </tr>
             <tr>
               <td class="c1">${ _("Create Time") }</td>
-              <td class="c2">${ fulltime(I.created) }</td>
+              <td class="c2">${ ftime(I.created) }</td>
             </tr>
             <tr>
               <td class="c1">${ _("Update Time") }</td>
-              <td class="c2">${ fulltime(I.updated) }</td>
+              <td class="c2">${ ftime(I.updated) }</td>
             </tr>
             <tr>
 	      <% URL = reverse_url('instance:set_private', I.id) %>

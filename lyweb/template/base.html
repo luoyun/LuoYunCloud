@@ -5,13 +5,17 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="SHORTCUT ICON" href="${ static_url('favicon.ico') }" />
     <link rel="stylesheet" href="${ theme_url('luoyun.css') }" />
+    <script type="text/javascript" src="${ static_url('js/json2.js') }"></script>
     <script type="text/javascript" src="${ static_url('js/jquery-1.7.min.js') }"></script>
+    <script type="text/javascript" src="${ static_url('js/jquery-ui/js/jquery-ui-1.9.1.custom.min.js') }"></script>
     <script type="text/javascript" src="${ static_url('js/luoyun.js') }"></script>
+    <link rel="stylesheet" href="${ static_url('js/jquery-ui/css/redmond/jquery-ui-1.9.1.custom.min.css') }" />
     <%block name="head"/>
-    <title>${ _("LuoYun Cloud") }
+    <title>
 % if title:
- - ${ title }
+${ title } -
 % endif
+${ _("LuoYun Cloud") }
 </title>
   </head>
 
@@ -89,7 +93,6 @@
 
   <script type="text/javascript">
     lySetCurrentNavigator();
-    setHeight();
     BackTop('gotop');
   </script>
 

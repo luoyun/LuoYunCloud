@@ -1,10 +1,11 @@
 <%inherit file="/base.html"/>
 
 <%block name="head">
-<link rel="stylesheet" href="${THEME_URL}instance.css" />
+<link rel="stylesheet" href="${THEME_URL}instance-view.css" />
 <link rel="stylesheet" href="${THEME_URL}button.css" />
-<script type="text/javascript" src="${STATIC_URL}js/url.js"></script>
-<script type="text/javascript" src="${STATIC_URL}js/instance.js"></script>
+<script type="text/javascript" src="${ static_url('js/url.js') }"></script>
+<script type="text/javascript" src="${ static_url('js/instance.js') }"></script>
+<script type="text/javascript" src="${ static_url('js/check-instance-status.js') }"></script>
 
 </%block>
 
@@ -29,7 +30,10 @@
     </li>
 
     <li class="c2">
-      <div id="iview-domain">
+      <div id="i-current-status">
+	<img id="i-is-img" src="${ theme_url('icons/InstanceStatus/%s.png' % instance.status) }"/><span id="i-is-str">${ instance.status_string }</span><span style="display:none;" id="i-is">${ instance.status }</span>
+      </div>
+      <div id="i-domain">
 	% if instance.domain:
 	% if instance.is_running:
 	<a href="${ instance.home_url(current_user) }" target="_blank">${ instance.domain }</a>
@@ -38,12 +42,10 @@
 	% endif
 	% endif
       </div>
-      <div id="iview-ip">
+      <div id="i-ip">
 	% if instance.work_ip:
 	<a href="${ instance.home_url(current_user) }" target="_blank"><span id="lyinst-ip">${ instance.work_ip }</span></a>
 	% endif
-      </div>
-      <div id="iview-task-result">
       </div>
     </li>
     
@@ -60,23 +62,18 @@
           </tr>
           <tr>
             <td class="c1">${ _("Create Time") }</td>
-            <td class="c2">${ fulltime(instance.created) }</td>
+            <td class="c2">${ ftime(instance.created) }</td>
           </tr>
           <tr>
             <td class="c1">${ _("Update Time") }</td>
-            <td class="c2">${ fulltime(instance.updated, UTC=True) }</td>
+            <td class="c2">${ ftime(instance.updated)}</td>
           </tr>
-	  <tr>
-	    <td class="c1">${ _("Recent Action") }</td>
-	    <td class="c2"><span id="lyjob-id">${ instance.lastjob_id }</span></td>
-	  </tr>
 	</tbody>
       </table>
     </li>
   </ul>
 </div>
 
-<div class="c"></div>
 <div id="instance-status-show" class="island c">
   <ul>
     <li id="iview-inst-control-btn">
@@ -90,25 +87,15 @@
       % endif
       % endif
     </li>
-    <li class="right">
-      <table>
-	<tbody>
-	  <tr>
-	    <td><img id="lyinst-status-img" src="${ theme_url('icons/InstanceStatus/%s.png' % instance.status) }"/></td>
-	    <td>
-	      <span id="lyinst-status-str">${ instance.status_string }</span><span style="display:none;" id="lyinst-status-id">${ instance.status }</span>
-	    </td>
-	  </tr>
-	  <tr>
-	    <td><img id="lyjob-status-img" src="" /></td>
-	    <td>
-	      <span id="lyjob-status-str">${ instance.job_status_string }</span>
-	      <span id="lyjob-status-id">${ instance.lastjob_status_id }</span>
-
-	    </td>
-	  </tr>
-	</tbody>
-      </table>
+    <li id="iview-inst-control-result" class="right">
+      <span id="iview-task-result"></span>
+      <span id="iview-task-lastjob">
+	##	  ${ _("Recent Action") }
+	##	  <span id="i-lastjob-id">${ instance.lastjob_id }</span> :
+	<img class="little-status-img" id="i-js-img" src="${ theme_url('icons/JobStatus/%s' % instance.lastjob_imgurl) }" />
+	<span id="i-js-str">${ instance.job_status_string }</span>
+	<span id="i-js">${ instance.lastjob_status_id }</span>
+      </span>
     </li>
   </ul>
 </div>
@@ -147,14 +134,17 @@
 
 
 <script type="text/javascript">
-  $("html").data("iview_status_url", "${ reverse_url('instance:status', instance.id) }");
   $("html").data("inst_control_url", "${ reverse_url('instance:control', instance.id) }");
   $("html").data("inst_control_imgsrc", "${ theme_url('img/REPLACE-instance.png') }");
 
   InstanceControl();
   MenuClick();
   AdminMenuslide();
-  InstanceStatusCheck();
+//  $("html").data("watch-instance-list", "[${ instance.id }]");
+//  CheckInstanceStatus();
+  $("html").data("job-running-img", "${ theme_url('icons/JobStatus/running.gif') }");
+  $("html").data("instance-id", "${ instance.id }");
+  SingleInstanceStatusUpdate();
 </script>
 
 </%block>

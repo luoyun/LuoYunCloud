@@ -28,8 +28,8 @@ class ApplianceCatalog(ORMBase):
 
     # TODO:  is self only ?! can used by myself !
 
-    created = Column( DateTime, default=datetime.utcnow )
-    updated = Column( DateTime, default=datetime.utcnow )
+    created = Column( DateTime, default=datetime.now )
+    updated = Column( DateTime, default=datetime.now )
 
 
     def __init__(self, name, summary='', description=''):
@@ -71,8 +71,8 @@ class Appliance(ORMBase):
     isprivate = Column( Boolean, default = True)
     popularity = Column( Integer, default = 0 )
 
-    created = Column( DateTime, default=datetime.utcnow )
-    updated = Column( DateTime, default=datetime.utcnow )
+    created = Column( DateTime, default=datetime.now )
+    updated = Column( DateTime, default=datetime.now )
 
 
     def __init__(self, name, user, filesize, checksum):

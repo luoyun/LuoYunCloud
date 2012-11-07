@@ -287,4 +287,4 @@ INSTANCE_LOGO_MARK = os.path.join(STATIC_PATH, 'image/instance-watermark.png' )
 
 # Instance status check interval time
 INSTANCE_S_UP_INTER_1 = 3  # seconds
-INSTANCE_S_UP_INTER_2 = 5  # seconds
+INSTANCE_S_UP_INTER_2 = 6  # seconds

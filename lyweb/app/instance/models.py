@@ -51,8 +51,8 @@ class Instance(ORMBase):
     isprivate = Column( Boolean, default = True )
     ischanged = Column( Boolean, default = False )
 
-    created = Column( DateTime, default=datetime.utcnow )
-    updated = Column( DateTime, default=datetime.utcnow )
+    created = Column( DateTime, default=datetime.now )
+    updated = Column( DateTime, default=datetime.now )
 
     lastjob_id = Column( ForeignKey('job.id') )
     lastjob = relationship("Job")
@@ -96,7 +96,7 @@ class Instance(ORMBase):
             9: _('instance is suspend'),
             settings.INSTANCE_DELETED_STATUS: _('instance is deleted'),
             245: _('instance needs queryed'),
-            255: _('instance is not exist'),
+            255: _('the instance disk does not exist'),
         }
 
         return INSTANCE_STATUS_STR.get( self.status, _('Unknown Status') )
@@ -111,9 +111,22 @@ class Instance(ORMBase):
     @property
     def lastjob_status_id(self):
         if self.lastjob:
-            return self.lastjob.id
+            return self.lastjob.status
         else:
             return ''
+
+    @property
+    def lastjob_imgurl(self):
+        if self.lastjob:
+            if self.lastjob.completed:
+                if self.lastjob.status >= 600:
+                    return '%s.png' % self.lastjob.id
+                else:
+                    return 'completed.png'
+            else:
+                return 'running.gif'
+        else:
+            return 'nojob.png'
         
 
     @property

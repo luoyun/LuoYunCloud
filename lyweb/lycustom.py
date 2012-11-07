@@ -26,38 +26,7 @@ template_dir = os.path.join(
     os.path.dirname(__file__), 'template' )
 
 
-from dateutil import tz
-
-from_zone = tz.gettz('UTC')  # UTC Zone
-to_zone = tz.gettz('CST')    # China Zone
-
-def lytime(t, f='%m-%d %H:%M', UTC=False):
-
-    if t:
-        if from_zone and to_zone and not UTC:
-            utc = t.replace(tzinfo=from_zone)
-            t = utc.astimezone(to_zone)
-
-        return datetime.datetime.strftime(t, f)
-
-    else:
-        return ''
-
-
-def fulltime(t, UTC=False):
-
-    if t:
-        if from_zone and to_zone and not UTC:
-            utc = t.replace(tzinfo=from_zone)
-            t = utc.astimezone(to_zone)
-
-        return datetime.datetime.strftime(t, '%Y-%m-%d %H:%M:%S')
-
-    else:
-        return ''
-
-
-from ytime import ytime_human
+from ytime import ytime_human, ftime
 
 class LyRequestHandler(RequestHandler):
 
@@ -93,11 +62,11 @@ class LyRequestHandler(RequestHandler):
             theme_url=self.theme_url,
 
             #method
-            fulltime = fulltime,
+            ftime = ftime,
             ytime_human = ytime_human,
-            lytime = lytime,
             has_permission = self.has_permission,
             AJAX = ajax,
+            show_error = show_error,
         )
 
         args.update(kwargs)
@@ -275,6 +244,14 @@ class LyRequestHandler(RequestHandler):
             return int(value)
         except:
             return default
+
+
+def show_error( E ):
+
+    ''' return the error msg in list E '''
+
+    return '<ul class="yerror">%s</ul>' % ''.join(['<li>%s</li>' % str(e) for e in E]) if E else ''
+
 
 
 import functools, urlparse, urllib

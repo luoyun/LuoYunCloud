@@ -128,7 +128,7 @@ class UserManagement(LyRequestHandler):
         if online:
             # TODO
             online = online * 60 # minutes
-            deadline = datetime.datetime.utcnow() - datetime.timedelta(seconds = online)
+            deadline = datetime.datetime.now() - datetime.timedelta(seconds = online)
             UL = UL.filter( User.last_active > deadline )
 
         if search:

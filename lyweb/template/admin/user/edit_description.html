@@ -25,7 +25,14 @@
   editor = K.create('#description', {
     uploadJson : '/ly/upload/kindeditor',
     fileManagerJson : '/ly/upload/kindeditor',
-    allowFileManager : true
+    allowFileManager : true,
+    items : [
+        'formatblock', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'removeformat', '|',
+        'undo', 'redo', '|', 'code', '|', 'justifyleft', 'justifycenter', 'justifyright',
+        'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', '|',
+        'image', 'insertfile', 'table', 'emoticons',
+        'anchor', 'link', 'unlink', '|', 'fullscreen', 'source', 'preview', 'about'
+    ],
   });
   });
 </script>
