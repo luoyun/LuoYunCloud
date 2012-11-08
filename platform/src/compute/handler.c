@@ -1341,15 +1341,27 @@ int ly_handler_instance_control(NodeCtrlInstance * ci)
     if (arg == NULL)
         return -1;
 
+#if 1
+    pthread_attr_t attr;
+    if (pthread_attr_init(&attr) != 0 || 
+        pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) != 0) {
+        logerror(_("threading state config failed\n"));
+        return -1;
+    }
+
     pthread_t instance_tid;
-    if (pthread_create(&instance_tid, NULL,
+    if (pthread_create(&instance_tid, &attr,
                        __instance_control_func, (void *)arg) != 0) {
         logerror(_("threading __instance_control_func failed\n"));
         return -1;
     }
-   
+
     logdebug(_("start __instance_control_func in thread %d\n"), instance_tid);
     __update_thread_num(1);
     logdebug(_("__instance_control_func thread num is %d\n"), g_handler_thread_num);
+#else
+    __instance_control_func((void *)arg);
+#endif
+
     return 0;
 }
