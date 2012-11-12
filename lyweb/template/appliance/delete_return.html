@@ -1,0 +1,12 @@
+<div class="lyaction-return">
+  % if E:
+  <table class="vertical-align">
+    <tr>
+      <td><img class="ywarn-img" src="${ theme_url('img/warning48.png') }"/></td>
+      <td>${ show_error(E) }</td>
+    </tr>
+  </table>
+  % else:
+  <p><a class="ly-btn2 medium blue" href="${ reverse_url('myun:appliance') }">${ _("Go to my appliance") }</a></p>
+  % endif
+</div>

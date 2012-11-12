@@ -1,42 +1,20 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/account.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
 <li><a href="${ reverse_url('admin:group') }?id=${ GROUP.id }">${ GROUP.name }</a></li>
-<li>${ _("Delete Group") }</li>
+<li>${ _("delete group failed") }</li>
 </%block>
 
-<%block name="sidemain">
+<%block name="content">
 
-<div class="warning">
-  <h3>${ _("Delete Group Failed") }</h3>
+% if GROUP.islocked:
+<p class="ywarn">${ _("This group is locked for safely. If you want to delete it, please manuly modified the islocked flag of auth_group table in backend DB.") }</p>
+% endif
 
-  % if GROUP.islocked:
-  <p>${ _("This group is locked for safely. If you want to delete it, please manuly modified the islocked flag of auth_group table in backend DB.") }</p>
-  % endif
-
-  % if GROUP.users:
-  <p>${ _("There are users in group, please delete it first !") }</p>
-  <div class="ly-table">
-    <table>
-      <thead>
-	<tr>
-	  <th>${ _("ID") }</th>
-	  <th>${ _("Name") }</th>
-	</tr>
-      </thead>
-      <tbody>
-	% for U in GROUP.users:
-	<tr>
-	  <td>${ U.id }</td>
-	  <td>${ U.username }</td>
-	</tr>
-	% endfor
-      </tbody>
-    </table>
-  </div>
-  % endif
-
-</div>
+% if GROUP.users:
+<p class="ywarn">${ _("There are users in group, please delete it first !") }</p>
+<p><a href="${ reverse_url('admin:user') }?gid=${ GROUP.id }" target="_blank">${ _("All users in the group.") }</p>
+% endif
 
 </%block>

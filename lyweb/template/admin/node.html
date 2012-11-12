@@ -1,0 +1,13 @@
+<%inherit file="admin_base.html"/>
+
+<%block name="submenu">
+<a href="${ reverse_url('admin:node') }">${ _("Node") }</a>
+<script type="text/javascript">
+  $("#admin-menu a").removeClass("current");
+  $("#admin-menu a.node-entry").addClass("current");
+</script>
+</%block>
+
+<%block name="innav">
+<li><a href="${ reverse_url('admin:node') }">${ _("Nodes") }</a></li>
+</%block>

@@ -1,27 +1,33 @@
-<%inherit file="/admin/admin_base.html" />
-<%block name="sidemain">
+<%inherit file="/admin/system.html" />
 
-<h2>${ _("Network pool of LuoYun") }</h2>
+<%block name="innav">
+<li><a href="${ reverse_url('admin:system') }">${ _("System") }</a></li>
+<li>${ _("Network pool of LuoYun") }</li>
+</%block>
+
+<%block name="content">
 
 <p><a href="${ reverse_url('system:networkpool:edit') }">${ _("Edit") }</a></p>
 
-<table>
-  <tbody>
-    <tr>
-      <th>${ _("Netmask") }</th>
-      <td>${ NETWORK_POOL['netmask'] }</td>
-    </tr>
-    <tr>
-      <th>${ _("Gateway") }</th>
-      <td>${ NETWORK_POOL['gateway'] }</td>
-    </tr>
-    <tr>
-      <th>${ _("Nameservers") }</th>
-      <td>${ NETWORK_POOL['nameservers'] }</td>
-    </tr>
-  </tbody>
-</table>
-
+<p class="subtitle">${ _("Current network pool configure") }</p>
+<div class="ly-table">
+  <table>
+    <tbody>
+      <tr>
+	<th>${ _("Netmask") }</th>
+	<td>${ NETWORK_POOL['netmask'] }</td>
+      </tr>
+      <tr>
+	<th>${ _("Gateway") }</th>
+	<td>${ NETWORK_POOL['gateway'] }</td>
+      </tr>
+      <tr>
+	<th>${ _("Nameservers") }</th>
+	<td>${ NETWORK_POOL['nameservers'] }</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 
 <%
@@ -29,26 +35,28 @@ NPOOL = []
 for ip in NETWORK_POOL['pool']:
     NPOOL.append( (ip, get_ipassign(ip)) )
 %>
-<table class="list">
-  <thead>
-    <tr>
-      <th>${ _("IP") }</th>
-      <th>${ _("User") }</th>
-      <th>${ _("Instance") }</th>
-      <th>${ _("Updated") }</th>
-    </tr>
-  </thead>
-  <tbody>
-    % for ip, ipassign in NPOOL:
-    <tr>
-      <td>
-      % if ipassign:
-        <span class="ip-assigned">${ ip }</span>
-      % else:
-        ${ ip }
-      % endif
-      </td>
-      % if ipassign:
+<p class="subtitle">${ _("Current network pool") }</p>
+<div class="ly-table">
+  <table>
+    <thead>
+      <tr>
+	<th>${ _("IP") }</th>
+	<th>${ _("User") }</th>
+	<th>${ _("Instance") }</th>
+	<th>${ _("Updated") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for ip, ipassign in NPOOL:
+      <tr>
+	<td>
+	  % if ipassign:
+          <span class="ip-assigned">${ ip }</span>
+	  % else:
+          ${ ip }
+	  % endif
+	</td>
+	% if ipassign:
 
         % if ipassign.user:
         <td><a href="${ reverse_url('account:view', ipassign.user.id) }">${ ipassign.user.username }</a></td>
@@ -61,15 +69,16 @@ for ip in NETWORK_POOL['pool']:
         % else:
         <td></td>
         % endif
-      <td>${ ftime(ipassign.updated) }</td>
-      % else:
-      <td></td>
-      <td></td>
-      <td></td>
-      % endif
-    </tr>
-    % endfor
-  </tbody>
-</table>
+	<td>${ ftime(ipassign.updated) }</td>
+	% else:
+	<td></td>
+	<td></td>
+	<td></td>
+	% endif
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+</div>
         
 </%block>

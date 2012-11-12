@@ -38,6 +38,7 @@ JOB_STATUS_STR = {
     311: _('failed'),
     321: _('node server not available'),
     322: _('node server busy'),
+    323: _('original node server is not enable'),
     331: _('appliance not available'),
     332: _('appliance error'),
     399: _('Last Finish Status'),

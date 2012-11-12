@@ -1,88 +1,65 @@
-<p>
-  % if ONLINE:
-  ${ _('View Online User') }
-  % else:
-  ${ _('View') }
-  % endif
+<div id="aul" class="ly-table">
+  <p>
+    ${ _('View') }
+    % if GID == 0:
+    "${ _('No Group User') }"
+    % elif GID > 0:
+    "${ GROUP.name }"
+    % else:
+    "${ _('ALL User') }"
+    % endif
+    (${ _('Total : ') }${ TOTAL_USER })
+  </p>
 
-  % if GID == 0:
-  "${ _('No Group User') }"
-  % elif GID > 0:
-  "${ GROUP.name }"
-  % else:
-  "${ _('ALL User') }"
-  % endif
-  (${ _('Total : ') }${ TOTAL_USER })
-</p>
+  ${ PAGE_HTML }
 
-${ PAGE_HTML }
-
-<table>
-  <thead>
-    <tr>
-      <th>${ _("ID") }</th>
-      <th>${ _("Name") }</th>
-      <th>${ _("Groups") }</th>
-      <th>${ _("Appliance") }</th>
-      <th>${ _("Instance") }</th>
-      <th>${ _("Email") }</th>
-      <th>${ _("Last Login") }</th>
-    </tr>
-  </thead>
-  <tbody>
-    % for U in USER_LIST:
-    <tr>
-      <td>${ U.id }</td>
-      <td class="username">
-	<a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a>
-	% if U.islocked:
-	<img src="${ THEME_URL }img/user-lock.gif" alt="${ _('locked') }"/>
-	% endif
-	<div class="hidden" style="display: none;">
-	  <ul>
-	    <li>${ _("Date Joined") }: ${ ftime(U.date_joined) }</li>
-	    <li>${ _("Last Login") }: ${ ftime(U.last_login) }</li>
-	    <li>${ _("Last Activate") }: ${ ftime(U.last_active) }</li>
-	    <li>${ _("Last Entry") }: ${ U.last_entry }</li>
-	  </ul>
-
-	  % if U.description:
-	  <h3>${ _("Description") }</h3>
-	  <div class="description">${ U.description }</div>
+  <table>
+    <thead>
+      <tr>
+        <th><a href="${ reverse_url('admin:user') }?by=ID&sort=ASC" title="${ _('sorted by user id.') }">${ _("ID") }</a></th>
+        <th>${ _("Name") }</th>
+	<th>${ _("Group") }</th>
+        <th>${ _("Appliance") }</th>
+        <th>${ _("Instance") }</th>
+	<th>${ _("Email") }</th>
+        <th>${ _("Date Joined") }</th>
+	<th><a href="${ reverse_url('admin:user') }?by=last_active" titil="${ _('sorted by last active time.') }">${ _("Last Active") }</a></th>
+      </tr>
+    </thead>
+    <tbody>
+      % for U in USER_LIST:
+      <tr>
+        <td>${ U.id }</td>
+        <td class="username">
+	  <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }"><img src="${ static_url( U.avatar_mini_url ) }" />${ U.username }</a>
+	  % if U.islocked:
+	  <img src="${ THEME_URL }img/user-lock.gif" alt="${ _('locked') }"/>
 	  % endif
-	</div>
-      </td>
-      <td>
-	% for G in U.groups:
-	<a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a>
-	% endfor
-      </td>
-
-      <td>
-	% if U.appliances:
-	<a href="${ reverse_url('admin:appliance') }?uid=${ U.id }">${ len(U.appliances) }</a>
-	% endif
-      </td>
-
-      <td>
-	% if U.instances:
-	<a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
-	% endif
-      </td>
-
-      <td>
-	% if U.profile and U.profile.email:
-	<a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" title="${ _('Send a email to ') } ${ U.username } ( ${ U.profile.email } )" target="_blank">${ U.profile.email }</a>
-	% endif
-      </td>
-
-      <td>${ ftime(U.last_login) }</td>
-    </tr>
-    % endfor
-  </tbody>
-</table>
-
-${ PAGE_HTML }
+	</td>
+	<td>
+	  % for G in U.groups:
+	  <a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a>
+	  % endfor
+	</td>
+	<td>
+	  % if U.appliances:
+	  <a href="${ reverse_url('admin:appliance') }?uid=${ U.id }">${ len(U.appliances) }</a>
+	  % endif
+	</td>
+	<td>
+	  % if U.instances:
+	  <a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
+	  % endif
+	</td>
+	<td><a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" target="_blank">${ U.email }</a></td>
+	<td class="time">${ ftime(U.date_joined) }</td>
+	<td class="time">${ htime(U.last_active) }</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  ${ PAGE_HTML }
+</div>
 
 <script type="text/javascript">
   $(".pagination a").click(function(){

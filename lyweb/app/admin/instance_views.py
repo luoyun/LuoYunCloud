@@ -1,12 +1,16 @@
 # coding: utf-8
 
-import logging, datetime, time, re
+import logging, datetime, time, re, json
 from lycustom import LyRequestHandler,  Pagination
 from tornado.web import authenticated, asynchronous
 
 from app.account.models import User, Group, Permission
 from app.instance.models import Instance
 from app.appliance.models import Appliance
+from app.job.models import Job
+from app.node.models import Node
+
+from settings import JOB_TARGET
 
 from lycustom import has_permission
 
@@ -26,7 +30,9 @@ class InstanceManagement(LyRequestHandler):
         instance_id = self.get_argument('id', 0)
         if instance_id:
             self.instance = self.db2.query(Instance).get( instance_id )
-            if not self.instance:
+            if self.instance:
+                self.action = 'view'
+            else:
                 self.write( _('No such instance : %s') % instance_id )
                 return self.finish()
 
@@ -35,6 +41,9 @@ class InstanceManagement(LyRequestHandler):
 
         if self.action == 'index':
             self.get_index()
+
+        elif self.action == 'view':
+            self.get_view()
 
         elif self.action in ['stop_all', 'start_all']:
             self.get_control_all(self.action)
@@ -61,6 +70,7 @@ class InstanceManagement(LyRequestHandler):
         cur_page = self.get_argument_int('p', 1)
         uid = self.get_argument_int('uid', 0) # sort by user
         aid = self.get_argument_int('aid', 0) # sort by appliance
+        nid = self.get_argument_int('node', 0) # sort by node
 
         start = (cur_page - 1) * page_size
         stop = start + page_size
@@ -82,13 +92,19 @@ class InstanceManagement(LyRequestHandler):
         if APPLIANCE:
             instances = instances.filter_by( appliance_id = aid )
 
+        if nid:
+            NODE = self.db2.query(Node).get( nid )
+            if NODE:
+                instances = instances.filter_by( node_id = nid )
+        else:
+            NODE = None
+
         if by == 'created':
             by_obj = Instance.created
         elif by == 'updated':
             by_obj = Instance.updated
         else:
             by_obj = Instance.id
-
 
         sort_by_obj = desc(by_obj) if sort == 'desc' else asc(by_obj)
 
@@ -110,9 +126,39 @@ class InstanceManagement(LyRequestHandler):
         d = { 'title': _('Instance Management'),
               'INSTANCE_LIST': instances, 'TOTAL_INSTANCE': total,
               'PAGE_HTML': page_html,
-              'SORT_USER': U, 'SORT_APPLIANCE': APPLIANCE }
+              'SORT_USER': U, 'SORT_APPLIANCE': APPLIANCE,
+              'SORT_NODE': NODE }
 
         self.render( 'admin/instance/index.html', **d )
+
+
+    def get_view(self):
+
+        I = self.instance
+
+        tab = self.get_argument('tab', 'general')
+
+        JOB_LIST = self.db2.query(Job).filter(
+            Job.target_id == I.id,
+            Job.target_type == JOB_TARGET['INSTANCE']
+            ).order_by( desc(Job.id) )
+        JOB_LIST = JOB_LIST.limit(10);
+
+        config = json.loads(I.config) if I.config else {}
+
+        network = config.get('network', [])
+
+        password = config.get('passwd_hash')
+
+        storage = config.get('storage', [])
+        webssh = config.get('webssh', None)
+
+        d = { 'title': _('View Instance "%s"') % I.name,
+              'I': I, 'JOB_LIST': JOB_LIST, 'NETWORK_LIST': network,
+              'STORAGE_LIST': storage,
+              'webssh': webssh, 'TAB': tab }
+
+        self.render( 'admin/instance/view.html', **d )
 
 
     def get_control_all(self, action):

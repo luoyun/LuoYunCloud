@@ -1,0 +1,25 @@
+#au-user-base {
+    margin: 20px 0;
+}
+#au-user-base > ul > li {
+    float: left;
+}
+#au-user-base img.userlogo {
+    border-radius: 3px;
+    border: 1px solid #DFE6ED;
+    width: 120px;
+    height: 120px;
+}
+#au-user-base .username {
+    text-align: center;
+    font-size: 16px;
+    margin: 10px auto;
+}
+#au-user-base .community {
+    text-align: center;
+    margin: 50px;
+}
+#au-user-base .community a {
+    display: inline-block;
+    margin: 0 5px;
+}

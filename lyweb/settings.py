@@ -27,6 +27,7 @@ DEFAULT_NGINX_CONF_PATH = '/etc/nginx/conf.d/'
 DEFAULT_NGINX_LOG_PATH = '/opt/LuoYun/logs/nginx/'
 DEFAULT_NGINX_BIN_PATH = '/usr/sbin/nginx'
 
+SITE_CONFIG = LUOYUN_CONFIG_PATH
 cf = ConfigParser.ConfigParser()
 cf.read( LUOYUN_CONFIG_PATH )
 
@@ -268,8 +269,11 @@ def restart_luoyun_web():
 
 USER_AVATAR_MAXSIZE = 2 * 1024 * 1024 # 2M
 USER_AVATAR_NAME = 'uavatar.png'
+USER_AVATAR_MINI_NAME = 'uavatar-mini.png'
 USER_AVATAR_THUM_SIZE = (120, 120)
+USER_AVATAR_MINI_THUM_SIZE = (36, 36)
 USER_AVATAR_DEFAULT = os.path.join(STATIC_URL, 'image/user2.png')
+USER_AVATAR_MINI_DEFAULT = 'image/user-mini.png'
 
 APPLIANCE_LOGO_MAXSIZE = 2 * 1024 * 1024 # 2M
 APPLIANCE_LOGO_DEFAULT = os.path.join(STATIC_PATH, 'image/appliance.png')

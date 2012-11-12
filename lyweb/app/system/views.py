@@ -16,6 +16,7 @@ from app.system.forms import BaseinfoForm, DBForm, \
 
 from app.account.models import User, Group
 
+from ytool.ini import ConfigINI
 
 from lycustom import has_permission
 from email.Utils import parseaddr, formataddr
@@ -40,11 +41,7 @@ class DBEdit(LyRequestHandler):
 
     @has_permission('admin')
     def prepare(self):
-
-        self.cf = ConfigParser.ConfigParser()
-        self.cf.read( settings.LUOYUN_CONFIG_PATH )
-        if not self.cf.has_section('db'):
-            self.cf.add_section('db')
+        self.cf = ConfigINI(settings.SITE_CONFIG, 'db')
 
     def get(self):
 
@@ -52,11 +49,11 @@ class DBEdit(LyRequestHandler):
 
         form = DBForm()
         try:
-            form.dbname.data = cf.get('db', 'db_name')
-            form.dbuser.data = cf.get('db', 'db_user')
-            form.dbpass.data = cf.get('db', 'db_password')
-            form.dbhost.data = cf.get('db', 'db_host')
-            form.dbtype.data = cf.get('db', 'db_type')
+            form.dbname.data = cf.get('db_name')
+            form.dbuser.data = cf.get('db_user')
+            form.dbpass.data = cf.get('db_password')
+            form.dbhost.data = cf.get('db_host')
+            form.dbtype.data = cf.get('db_type')
         except:
             pass
 
@@ -70,12 +67,12 @@ class DBEdit(LyRequestHandler):
 
         form = DBForm( self.request.arguments )
         if form.validate():
-            cf.set('db', 'db_host', form.dbhost.data)
-            cf.set('db', 'db_type', form.dbtype.data)
-            cf.set('db', 'db_name', form.dbname.data)
-            cf.set('db', 'db_user', form.dbuser.data)
-            cf.set('db', 'db_password', form.dbpass.data)
-            cf.write(open(settings.LUOYUN_CONFIG_PATH, 'w'))
+            cf.set('db_host', form.dbhost.data)
+            cf.set('db_type', form.dbtype.data)
+            cf.set('db_name', form.dbname.data)
+            cf.set('db_user', form.dbuser.data)
+            cf.set('db_password', form.dbpass.data)
+            cf.save()
             saved = True
             # TODO: Important ! db settings should check for connect !
 
@@ -87,11 +84,7 @@ class CLCEdit(LyRequestHandler):
 
     @has_permission('admin')
     def prepare(self):
-
-        self.cf = ConfigParser.ConfigParser()
-        self.cf.read( settings.LUOYUN_CONFIG_PATH )
-        if not self.cf.has_section('clc'):
-            self.cf.add_section('clc')
+        self.cf = ConfigINI(settings.SITE_CONFIG, 'clc')
 
     def get(self):
 
@@ -99,8 +92,8 @@ class CLCEdit(LyRequestHandler):
 
         form = CLCForm()
         try:
-            form.ip.data = cf.get('clc', 'clc_ip')
-            form.port.data = cf.get('clc', 'clc_port')
+            form.ip.data = cf.get('clc_ip')
+            form.port.data = cf.get('clc_port')
         except:
             pass
 
@@ -114,9 +107,9 @@ class CLCEdit(LyRequestHandler):
 
         form = CLCForm( self.request.arguments )
         if form.validate():
-            cf.set('clc', 'clc_ip', form.ip.data)
-            cf.set('clc', 'clc_port', form.port.data)
-            cf.write(open(settings.LUOYUN_CONFIG_PATH, 'w'))
+            cf.set('clc_ip', form.ip.data)
+            cf.set('clc_port', form.port.data)
+            cf.save()
             saved = True
 
         self.render('system/clc_edit.html', form=form, saved = saved)
@@ -128,20 +121,16 @@ class BaseinfoEdit(LyRequestHandler):
     @has_permission('admin')
     def prepare(self):
 
-        self.cf = ConfigParser.ConfigParser()
-        self.cf.read( settings.LUOYUN_CONFIG_PATH )
-        if not self.cf.has_section('base'):
-            self.cf.add_section('base')
-
+        self.cf = ConfigINI(settings.SITE_CONFIG, 'base')
 
     def get(self):
 
         cf = self.cf
 
         form = BaseinfoForm()
-        form.app_dir.data = settings.appliance_top_dir
-        form.app_url.data = settings.appliance_top_url
-        form.admin_email.data = settings.ADMIN_EMAIL
+        form.app_dir.data = cf.get('appliance_top_dir', settings.appliance_top_dir)
+        form.app_url.data = cf.get('appliance_top_url', settings.appliance_top_url)
+        form.admin_email.data = cf.get('admin_email', settings.ADMIN_EMAIL)
 
         self.render('system/baseinfo_edit.html', form=form)
 
@@ -154,10 +143,10 @@ class BaseinfoEdit(LyRequestHandler):
         form = BaseinfoForm( self.request.arguments )
         if form.validate():
 
-            cf.set('base', 'appliance_top_dir', form.app_dir.data)
-            cf.set('base', 'appliance_top_url', form.app_url.data)
-            cf.set('base', 'admin_email', form.admin_email.data)
-            cf.write(open(settings.LUOYUN_CONFIG_PATH, 'w'))
+            cf.set('appliance_top_dir', form.app_dir.data)
+            cf.set('appliance_top_url', form.app_url.data)
+            cf.set('admin_email', form.admin_email.data)
+            cf.save()
             saved = True
 
         self.render('system/baseinfo_edit.html', form=form, saved=saved)

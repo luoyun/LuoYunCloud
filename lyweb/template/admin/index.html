@@ -1,77 +1,57 @@
 <%inherit file="admin_base.html"/>
 
-<%block name="sidemain">
+<%block name="submenu">
+<span>${ _("Note: Any changes here will affect overall operation of LuoYunCloud platform. Please be careful!") }</span>
+</%block>
 
-<h2 class="title">${ _("LuoYun Administration Console") }</h2>
-<div class="global-description">
-<p>${ _("Note: Any changes here will affect overall operation of LuoYunCloud platform. Please be careful!") }</p>
-</div>
+<%block name="content">
 
-<div id="system-global-info">
-
-  <table class="kvlist">
+<div id="system-global-info" class="admin-index-item">
+  <table>
+    <thead>
+      <tr>
+        <th>${ _("Appliance") }</th>
+        <th>${ _("Instance") }</th>
+      </tr>
+    </thead>
     <tbody>
       <tr>
-        <td class="c1">${ _("Appliance") }</td>
-        <td class="c2"><a href="${ reverse_url('admin:appliance') }">${ TOTAL_APPLIANCE }</a></td>
-      </tr>
-      <tr>
-        <td class="c1">${ _("Instance") }</td>
-        <td class="c2"><a href="${ reverse_url('admin:instance') }">${ TOTAL_INSTANCE }</a></td>
+        <td><a href="${ reverse_url('admin:appliance') }">${ TOTAL_APPLIANCE }</a></td>
+        <td><a href="${ reverse_url('admin:instance') }">${ TOTAL_INSTANCE }</a></td>
       </tr>
     </tbody>
   </table>
-
 </div>
 
-<div id="admin-pie-show" class="c">
-
-  <div class="admin-pie-item">
-    <div class="desc">
-      <h3>${ _("CPU") }</h3>
-      <div class="r-info">
-	<span class="total">${ TOTAL_CPU }${ _("core") }</span>
-	<span class="used">${ USED_CPU }${ _("core") }</span>
-      </div>
-      <div class="admin-pie-item-hover"></div>
-    </div>
-    <div id="admin-cpu-pie"></div>
-  </div>
-
-  <div class="admin-pie-item">
-    <div class="desc">
-      <h3>${ _("Memory") }</h3>
-      <div class="r-info">
-	<span class="total">${ human_size(TOTAL_MEMORY*1024) }</span>
-	<span class="used">${ human_size(USED_MEMORY*1024) }</span>
-      </div>
-      <div class="admin-pie-item-hover"></div>
-    </div>
-    <div id="admin-mem-pie"></div>
-  </div>
-
+<div id="admin-pie-show" class="admin-index-item c">
+  <div class="pie" id="admin-cpu-pie"></div>
+  <div class="pie" id="admin-mem-pie"></div>
 </div>
 
-<%
-   PIE_CPU_USED_PER = (USED_CPU*100.0)/TOTAL_CPU if TOTAL_CPU else 0
-   PIE_MEM_USED_PER = (USED_MEMORY*100.0)/TOTAL_MEMORY if TOTAL_MEMORY else 0
-%>
-<script language="javascript" type="text/javascript" src="${ STATIC_URL }js/flot/jquery.flot.js"></script>
-<script language="javascript" type="text/javascript" src="${ STATIC_URL }js/flot/jquery.flot.pie.js"></script>
+<script language="JavaScript" src="${ static_url('FusionCharts/JSClass/FusionCharts.js') }"></script>
 <script type="text/javascript">
-lyAdminShowPie("#admin-cpu-pie", [
-    { label: "${ _('Used') }",  data: ${PIE_CPU_USED_PER} },
-    { label: "${ _('Unused') }",  data: ${100 - PIE_CPU_USED_PER} },
-]);
-lyAdminShowPie("#admin-mem-pie", [
-    { label: "${ _('Used') }",  data: ${PIE_MEM_USED_PER} },
-    { label: "${ _('Unused') }",  data: ${100 - PIE_MEM_USED_PER} },
-]);
+  var cpuData = "<graph caption=\"${ _('CPU USED INFO') }\" subCaption=\"${ _("TOTAL: ") }${ TOTAL_CPU }CPU\" showNames='1' bgColor='F4F8FC' decimalPrecision='0' formatNumberScale='0' baseFontSize='16' baseFontColor='444450' numberSuffix=\"${ _('core') }\">" +
+    "<set name=\"${ _('Used') }\" value='${ USED_CPU }' color='FC0101' />" +
+    "<set name=\"${ _('Unused') }\" value='${ TOTAL_CPU - USED_CPU }' color='AFD8F8' />" +
+    "</graph>";
+  var cpuChart = new FusionCharts("${ static_url('FusionCharts/Charts/FCF_Pie2D.swf') }", "cpuChartId", "420", "220");
+  cpuChart.setDataXML(cpuData);
+  cpuChart.render("admin-cpu-pie");
+
+  var memData = "<graph caption=\"${ _('MEMORY USED INFO') }\" subCaption=\"${ _("TOTAL: ") }${ human_size(TOTAL_MEMORY * 1024) }\" showNames='1' bgColor='F4F8FC' decimalPrecision='0' formatNumberScale='0' baseFontSize='16' numberSuffix='M'>" +
+    "<set name=\"${ _('Used') }\" value='${ USED_MEMORY/1024 }' color='FC0101' />" +
+    "<set name=\"${ _('Unused') }\" value='${ (TOTAL_MEMORY - USED_MEMORY)/1024 }' color='AFD8F8' />" +
+    "</graph>";
+  var memChart = new FusionCharts("${ static_url('FusionCharts/Charts/FCF_Pie3D.swf') }", "memChartId", "420", "220");
+  memChart.setDataXML(memData);
+  memChart.render("admin-mem-pie");
 </script>
+
 
 % if NEW_USER_LIST:
 <div id="admin-new-user" class="admin-user-list ly-table c">
-  <h3>${ _("Last 10 users") }</h3>
+  <h3 class="subtitle">${ _("Last 10 users") }</h3>
+  <p class="manage-content"><a href="${ reverse_url('admin:user') }">${ _("View All User") }</a></p>
   <table>
     <thead>
       <tr>
@@ -90,9 +70,6 @@ lyAdminShowPie("#admin-mem-pie", [
         <td>${ U.id }</td>
         <td>
 	  <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a>
-	  % if U.islocked:
-	  <img src="${ THEME_URL }img/user-lock.gif" alt="${ _('locked') }"/>
-	  % endif
 	</td>
 	<td>
 	  % for G in U.groups:
@@ -119,13 +96,13 @@ lyAdminShowPie("#admin-mem-pie", [
       % endfor
     </tbody>
   </table>
-  <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }">${ _("View All User") }</a></p>
 </div>
 % endif
 
 % if NEW_JOB_LIST:
 <div id="admin-new-job" class="ly-table c">
-  <h3>${ _("Last 10 jobs") }</h3>
+  <h3 class="subtitle">${ _("Last 10 jobs") }</h3>
+  <p class="manage-content"><a href="${ reverse_url('admin:job') }">${ _("View All Job") }</a></p>
   <table>
     <thead>
       <tr>
@@ -143,7 +120,7 @@ lyAdminShowPie("#admin-mem-pie", [
       <tr>
         <td>${ j.id }</td>
         <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
-        <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png" alt="${ j.status_string }"/></td>
+        <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png"/>${ j.status_string }</td>
         <td>${ j.target_name }</td>
         <td><a href="${ j.target_url }">${ j.target_id }</a></td>
         <td>${ j.action_string }</td>
@@ -152,9 +129,7 @@ lyAdminShowPie("#admin-mem-pie", [
       % endfor
     </tbody>
   </table>
-  <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:job') }">${ _("View All Job") }</a></p>
 </div>
 % endif
-
 
 </%block>

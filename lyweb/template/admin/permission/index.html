@@ -1,29 +1,38 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/account.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:permission') }">${ _("Permission") }</a></li>
-<li>${ _("View All Permissions") }</li>
 </%block>
 
-<%block name="sidemain">
+<%block name="content">
 
-<h2 class="title">${ _("Permission Management") }</h2>
+<h2 class="subtitle">${ _("Permission List") }</h2>
 
-<div class="c ly-table admin-permission-list">
+<div class="ly-table c">
   <table>
     <thead>
       <tr>
         <th>${ _("ID") }</th>
         <th>${ _("Codename") }</th>
         <th>${ _("Name") }</th>
+        <th>${ _("Group") }</th>
       </tr>
     </thead>
     <tbody>
       % for P in PERMISSION_LIST:
       <tr>
         <td>${ P.id }</td>
-        <td><a href="${ reverse_url('admin:permission') }?id=${ P.id }">${ P.codename }</a></td>
+        <td>${ P.codename }</td>
         <td>${ P.name }</td>
+	<td>
+	  % if P.groups:
+	  <ul>
+	    % for G in P.groups:
+	    <li><a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></li>
+	    % endfor
+	  </ul>
+	  % endif
+	</td>
       </tr>
       % endfor
     </tbody>

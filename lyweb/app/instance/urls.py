@@ -39,4 +39,10 @@ handlers = [
 
     url(r'/instance/single_status', instance.SingleInstanceStatus, name='instance:single_status'),
 
+    url(r'/instance/([0-9]+)/islocked', instance.islockedToggle,
+        name='instance:islocked'),
+
+    url(r'/instance/([0-9]+)/isprivate', instance.isprivateToggle,
+        name='instance:isprivate'),
+
 ]

@@ -67,6 +67,7 @@ class Appliance(ORMBase):
     filesize = Column( BigInteger )
     checksum = Column( String(32) ) # md5 value
 
+    islocked = Column( Boolean, default = False) # Used by admin
     isuseable = Column( Boolean, default = True)
     isprivate = Column( Boolean, default = True)
     popularity = Column( Integer, default = 0 )
@@ -163,3 +164,7 @@ class Appliance(ORMBase):
         else:
             return _('None')
 
+
+    @property
+    def download_url(self):
+        return os.path.join(settings.appliance_top_url, 'appliance_%s' % self.checksum)

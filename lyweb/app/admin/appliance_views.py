@@ -34,7 +34,6 @@ class ApplianceManagement(LyRequestHandler):
         self.catalog = self.db2.query(ApplianceCatalog).get(c_id)
 
 
-
     def get(self):
 
         if self.action == 'index':

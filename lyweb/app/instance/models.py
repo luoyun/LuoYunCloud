@@ -48,6 +48,7 @@ class Instance(ORMBase):
     status = Column( Integer, default=1 )
     config = Column( Text() ) # Other configure
 
+    islocked = Column( Boolean, default = False) # Used by admin
     isprivate = Column( Boolean, default = True )
     ischanged = Column( Boolean, default = False )
 

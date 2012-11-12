@@ -1,15 +1,13 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/appliance.html" />
 
 <%block name="innav">
-<li>${ _("Appliance") }</li>
+<li><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></li>
 <li><a href="${ reverse_url('admin:appliance:catalog') }">${ _("Catalog") }</a></li>
 </%block>
 
-<%block name="sidemain">
+<%block name="content">
 
-<h2 class="title">${ _("Appliance Catalog Management") }</h2>
-
-<p><a class="ly-btn2 small blue" href="${ reverse_url('admin:appliance:catalog') }?action=new">${ _("New Catalog") }</a></p>
+<p class="manage-content"><a href="${ reverse_url('admin:appliance:catalog') }?action=new">${ _("New Catalog") }</a></p>
 
 <div class="c ly-table">
   <table>
@@ -17,7 +15,12 @@
       <tr>
 	<th>${ _("ID") }</th>
 	<th>${ _("Name") }</th>
+	<th>${ _("Summary") }</th>
+	<th>${ _("Description") }</th>
+	<th>${ _("Created") }</th>
+	<th>${ _("Updated") }</th>
 	<th>${ _("Appliances") }</th>
+	<th>${ _("Position") }</th>
 	<th></th>
       </tr>
     </thead>
@@ -25,17 +28,21 @@
       % for C in CATALOG_LIST:
       <tr>
         <td>${ C.id }</td>
-        <td>
-	  % if C.appliances:
-	  <a href="${ reverse_url('admin:appliance') }?catalog=${ C.id }">${ C.name }</a>
-	  % else:
-	  ${ C.name }
-	  % endif
-	</td>
+        <td>${ C.name }</td>
+	<td>${ C.summary }</td>
+	<td>${ C.description }</td>
+	<td>${ ftime(C.created) }</td>
+	<td>${ ftime(C.updated) }</td>
 	<td>
 	  % if C.appliances:
-	  <a href="${ reverse_url('admin:appliance') }?catalog=${ C.id }">${ len(C.appliances) }</a>
+	  <a href="${ reverse_url('admin:appliance') }?catalog=${ C.id }" title="${ _("View all appliances in this catalog") }">${ len(C.appliances) }</a>
 	  % endif
+	</td>
+	<td><span class="number">${ C.position }</span>
+	  <span class="plus-minus">
+	    <a class="no-text-decoration plus" href="${ reverse_url('appliance:catalog:tune_position', C.id) }?value=1" onclick="ajaxTuneValue( this, '#catalog-tuneposition-notify', 1); return false;">+</a>
+	    /
+	    <a class="no-text-decoration minus" href="${ reverse_url('appliance:catalog:tune_position', C.id) }?value=-1" onclick="ajaxTuneValue( this, '#catalog-tuneposition-notify', -1); return false;">-</a></span>
 	</td>
 	<td>
 	  <a href="${ reverse_url('admin:appliance:catalog') }?id=${ C.id }&action=edit">${ _("Edit") }</a>
@@ -46,5 +53,16 @@
   </table>
 </div>
 
+<div id="catalog-tuneposition-notify" style="display:none">
+  <div id="basic-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <p>${ _("Toggle Instance isprivate status Success") }</p>
+  </div>
+  <div id="error-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <h1>${ _("Toggle Instance isprivate status Failed") }</h1>
+    <p>#{text}</p>
+  </div>
+</div>
 
 </%block>

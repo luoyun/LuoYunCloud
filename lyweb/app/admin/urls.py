@@ -10,12 +10,17 @@ import app.admin.node_views as node
 import app.admin.job_views as job
 import app.admin.wiki_views as wiki
 
-import app.appliance.views as appliance_orig
 
 handlers = [
 
     # Admin
     url(r'/admin', admin.Index, name='admin:index'),
+
+    url(r'/admin/account', admin.AccountIndex, name='admin:account'),
+    url(r'/admin/a', admin.ApplianceIndex, name='admin:a'),
+    url(r'/admin/v', admin.InstanceIndex, name='admin:v'),
+    url(r'/admin/n', admin.NodeIndex, name='admin:n'),
+    url(r'/admin/s', admin.SystemIndex, name='admin:s'),
 
     url(r'/admin/user', user.UserManagement, name='admin:user'),
     #url(r'/admin/user/([0-9])/sendmail', user.UserSendmail, name='admin:user:sendmail'),
@@ -28,9 +33,6 @@ handlers = [
 
     url(r'/admin/appliance', appliance.ApplianceManagement, name='admin:appliance'),
     url(r'/admin/appliance/catalog', appliance.CatalogManagement, name='admin:appliance:catalog'),
-
-    # TODO:
-    url(r'/admin/appliance/([0-9]+)/delete', appliance_orig.Delete, name='admin:appliance:delete'),
 
     url(r'/admin/instance', instance.InstanceManagement, name='admin:instance'),
     url(r'/admin/node', node.NodeManagement, name='admin:node'),

@@ -26,6 +26,8 @@ class NodeManagement(LyRequestHandler):
             if not self.node:
                 self.write( _('No such node') % node_id )
                 return self.finish()
+            else:
+                self.action = 'view'
 
 
     def get(self):
@@ -61,7 +63,8 @@ class NodeManagement(LyRequestHandler):
 
     def get_view(self):
 
-        self.render( 'admin/node/view.html', NODE=self.node )
+        d = { 'NODE': self.node }
+        self.render( 'admin/node/view.html', **d )
 
 
     def get_instances(self):

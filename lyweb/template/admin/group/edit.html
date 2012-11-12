@@ -1,4 +1,4 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/account.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
@@ -6,11 +6,9 @@
 <li>${ _("Edit Group") }</li>
 </%block>
 
-<%block name="sidemain">
+<%block name="content">
 
-<h2 class="title">${ _("Edit Group") }</h2>
-
-<div class="admin-group-form small-left-right-form c">
+<div class="small-left-right-form c">
   <form method="POST">
     ${ form.name.label } ${ form.name() }<br/>
     ${ form.html_errors(form.name.errors) }

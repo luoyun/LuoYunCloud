@@ -18,6 +18,7 @@ from sqlalchemy.sql.expression import asc, desc
 from lytool.filesize import size as human_size
 
 
+
 class Index(LyRequestHandler):
 
     @has_permission('admin')
@@ -65,4 +66,40 @@ class Index(LyRequestHandler):
               'NEW_JOB_LIST': new_jobs }
 
         self.render('admin/index.html', **d)
+
+
+
+
+
+class AccountIndex(LyRequestHandler):
+
+    @has_permission('admin')
+    def get(self):
+        self.render('admin/account.html')
+
+
+class ApplianceIndex(LyRequestHandler):
+
+    @has_permission('admin')
+    def get(self):
+        self.render('admin/appliance.html')
+
+class InstanceIndex(LyRequestHandler):
+
+    @has_permission('admin')
+    def get(self):
+        self.render('admin/instance.html')
+
+class NodeIndex(LyRequestHandler):
+
+    @has_permission('admin')
+    def get(self):
+        self.render('admin/node.html')
+
+
+class SystemIndex(LyRequestHandler):
+
+    @has_permission('admin')
+    def get(self):
+        self.render('admin/system.html')
 

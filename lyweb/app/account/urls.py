@@ -44,4 +44,7 @@ handlers = [
     url( r'/account/([0-9]+)/delete', account.Delete,
          name='account:delete'),
 
+    url( r'/account/([0-9]+)/islocked', account.islockedToggle,
+         name='account:islocked'),
+
 ]

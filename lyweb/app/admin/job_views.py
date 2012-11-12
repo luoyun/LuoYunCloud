@@ -51,6 +51,7 @@ class JobManagement(LyRequestHandler):
 
     def get_index(self):
 
+        user_id = self.get_argument_int('user', 0)
         by = self.get_argument('by', 'id')
         order = self.get_argument('order', 'DESC')
         if ( order == 'DESC' ):
@@ -64,18 +65,21 @@ class JobManagement(LyRequestHandler):
         start = (cur_page - 1) * page_size
         stop = start + page_size
 
-        JOB_LIST = self.db2.query(Job).order_by( order_func )
-        JOB_LIST = JOB_LIST.slice(start, stop)
+        JOB_LIST = self.db2.query(Job)
 
+        U = None
+        if user_id:
+            U = self.db2.query(User).get(user_id)
+            JOB_LIST = JOB_LIST.filter(Job.user_id == user_id)
+        JOB_LIST = JOB_LIST.order_by( order_func ).slice(start, stop)
 
         JOB_TOTAL = self.db2.query(Job.id).count()
-
 
         page_html = Pagination(
             total = JOB_TOTAL, page_size = page_size,
             cur_page = cur_page ).html(self.get_page_url)
 
-        d = { 'title': 'Jobs',
+        d = { 'title': 'Jobs', 'U': U,
               'JOB_TOTAL': JOB_TOTAL,
               'JOB_LIST': JOB_LIST,
               'page_html': page_html }

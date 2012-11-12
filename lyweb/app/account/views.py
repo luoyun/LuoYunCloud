@@ -429,6 +429,8 @@ class AvatarEdit(LyRequestHandler):
                 img.save(self.current_user.avatar_orig_path)
                 img.thumbnail(settings.USER_AVATAR_THUM_SIZE, resample=1)
                 img.save(self.current_user.avatar_path)
+                img.thumbnail(settings.USER_AVATAR_MINI_THUM_SIZE, resample=1)
+                img.save(self.current_user.avatar_path)
                 tf.close()
 
             except Exception, e:
@@ -617,3 +619,31 @@ class Delete(LyRequestHandler):
                 d['USER'] = user
 
         self.render( 'account/delete.html', **d )
+
+
+
+class islockedToggle(LyRequestHandler):
+    ''' Toggle islocked flag '''
+
+    @has_permission('admin')
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        ID = int(ID)
+
+        if self.current_user.id == ID:
+            return self.write( _('You can not lock yourself !') )
+
+        U = self.db2.query(User).get(ID)
+
+        if U:
+            U.islocked = not U.islocked
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( _('Can not found the user.') )
+

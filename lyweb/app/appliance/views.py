@@ -302,48 +302,50 @@ class Edit(LyRequestHandler):
 
 class Delete(AppRequestHandler):
 
-
     @authenticated
-    def get(self, id):
+    def get(self, ID):
 
-        app = self.db2.query(Appliance).get(id)
-        if not app:
-            msg = _('Have not found appliance %s !') % id
-            return self.done( msg )
+        A = self.db2.query(Appliance).get(ID)
+        d = {'A': A, 'E': []}
+
+        if not A:
+            d['E'].append( _('Can not find appliance %s.') % ID )
+            return self.end(d)
 
         # auth delete
-        if  not (self.current_user.id == app.user_id or self.has_permission('admin')):
-            msg = _('No permission to delete appliance !')
-            return self.done( msg )
+        if  not (self.current_user.id == A.user_id or self.has_permission('admin')):
+            d['E'].append( _('No permission !') )
+            return self.end(d)
 
         # TODO: have any instances exist ?
-        inst_list = self.db2.query(Instance).filter_by( appliance_id=app.id ).all()
-        if inst_list:
-            return self.render('appliance/delete_failed.html',
-                               ERROR = _('Have instances exist'),
-                               INSTANCE_LIST = inst_list )
-
+        IL = self.db2.query(Instance).filter_by(appliance_id=ID).all()
+        if IL:
+            d['E'].append( _('Have instances exist') )
+            return self.end(d)
 
         # Delete appliance file
         dpath = "%sappliance_%s" % (
-            self.settings["appliance_top_dir"], app.checksum )
+            self.settings["appliance_top_dir"], A.checksum )
 
         if os.path.exists(dpath):
             try:
                 os.unlink(dpath)
             except Exception, emsg:
-                msg = _('Delete %s failed: %s') % (
-                    dpath, emsg )
-                return self.done(msg)
+                d['E'].append( _('Delete %s failed: %s') % ( dpath, emsg ) )
+                return self.end(d)
         else:
             logging.warning("%s did not exist !" % dpath)
 
         # DELETE appliance row from DB
-        self.db2.delete(app)
+        self.db2.delete(A)
         self.db2.commit()
 
-        msg = 'Delete appliance %s success !' % id
-        return self.done(msg)
+        d['E'].append( 'Delete appliance %s success !' % ID )
+        self.render('appliance/delete_return.html', **d)
+
+
+    def end(self, d):
+        self.render('appliance/delete_return.html', **d)
 
 
 
@@ -470,3 +472,75 @@ class SetPrivate(AppRequestHandler):
         self.db2.commit()
 
         self.redirect( url )
+
+
+class islockedToggle(LyRequestHandler):
+    ''' Toggle islocked flag '''
+
+    @has_permission('admin')
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        A = self.db2.query(Appliance).get(ID)
+
+        if A:
+            A.islocked = not A.islocked
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( _('Can not find appliance %s.') % ID )
+
+
+class isuseableToggle(LyRequestHandler):
+    ''' Toggle isuseable flag '''
+
+    @authenticated
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        A = self.db2.query(Appliance).get(ID)
+
+        if A:
+            if not ( self.current_user.id == A.user_id or
+                     has_permission('admin') ):
+                return self.write( _('No permissions !') )
+
+            A.isuseable = not A.isuseable
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( _('Can not find appliance %s.') % ID )
+
+
+class tuneCatalogPosition(LyRequestHandler):
+    ''' change catalog position '''
+
+    @has_permission('admin')
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        C = self.db2.query(ApplianceCatalog).get(ID)
+
+        if C:
+            n = self.get_argument_int('value', 0)
+            if n:
+                C.position += n
+                self.db2.commit()
+                # no news is good news
+            else:
+                self.write( _('tune value must be a integer.') )
+
+        else:
+            self.write( _('Can not find appliance catalog %s') % ID )
+

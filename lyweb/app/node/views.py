@@ -12,6 +12,8 @@ from app.instance.models import Instance
 from app.node.models import Node
 from app.job.models import Job
 
+from lycustom import has_permission
+
 
 
 class Action(LyRequestHandler):
@@ -54,3 +56,39 @@ class Action(LyRequestHandler):
         self._job_notify( job.id )
 
         return self.write('Action success !')
+
+
+
+class isenableToggle(LyRequestHandler):
+
+    @has_permission('admin')
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        N = self.db2.query(Node).get(ID)
+        if not N:
+            return self.write( _('Can not find node %s.') % ID )
+
+        action_id = JOB_ACTION['DISABLE_NODE'] if N.isenable else JOB_ACTION['ENABLE_NODE']
+
+        job = Job( user = self.current_user,
+                   target_type = JOB_TARGET['NODE'],
+                   target_id = ID,
+                   action = action_id )
+
+        self.db2.add(job)
+        self.db2.commit()
+
+        try:
+            self._job_notify( job.id )
+
+            N.isenable = not N.isenable
+            self.db2.commit()
+            # no news is good news
+
+        except Exception, e:
+            self.write( _('Run job failed: %s') % e )
+

@@ -130,9 +130,9 @@ class LyRequestHandler(RequestHandler):
         user = self.db2.query(User).get(
             session_dict.get('user_id', 0) )
 
-        if user.islocked: return None
-
         if user:
+            if user.islocked: return None
+
             user.last_active = datetime.datetime.now()
             user.last_entry = self.request.uri
             #self.db2.commit()

@@ -28,26 +28,6 @@ class PermissionManagement(LyRequestHandler):
 
     def get(self):
 
-        if self.action == 'index':
-            if self.permission:
-                self.get_view()
-            else:
-                self.get_index()
-
-        else:
-            self.write( _('Wrong action value!') )
-
-
-    def get_index(self):
-
         PERMISSION_LIST = self.db2.query(Permission).all()
         self.render( 'admin/permission/index.html', title = _('Permission Management'),
                      PERMISSION_LIST = PERMISSION_LIST )
-
-
-    def get_view(self):
-
-        self.render( 'admin/permission/view.html',
-                     title = _("View Permission %s") % self.permission.name,
-                     PERMISSION = self.permission )
-                     

@@ -212,3 +212,47 @@ function lygoback()
 }
 
 
+
+function showTab() {
+    $('.tabs li a').click( function() {
+	var $obj = $(this);
+
+	var tab = $(this).attr('id').replace('tab-', '');
+	var $show = $('#tab-content-' + tab);
+
+	$('.tab-content').hide();
+	$('.tabs a').removeClass('selected');
+
+	if ($show.length > 0) {
+	    $show.show();
+	} else {
+	    window.location = $('#tab-' + tab).attr('href');
+	}
+
+	$('#tab-' + tab).addClass('selected');
+	return false;
+    });
+}
+
+
+
+function simpleToggleCheckbox ( obj, URL, container ) {
+
+    var check = obj.checked;
+
+    $C = $(container).notify()
+
+    $.ajax({
+        url: URL + "?t=" + Math.random(),
+        type: 'GET',
+        success: function (data) {
+	    if (data) {
+		$(obj).attr('checked', Boolean(check));
+		$C.notify("create", "error-template", { text: data }, { expires:false });
+	    } else {
+		$C.notify("create", "basic-template");
+	    }
+        }
+    });
+
+};

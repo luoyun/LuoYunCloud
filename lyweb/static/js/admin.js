@@ -214,3 +214,66 @@ function lyAdminSortByHover ( HOVER_TEMP, toptag, selecttag ) {
 	}
     );
 }
+
+
+function setCurrent() {
+    var cur = window.location.pathname;
+    $("#submenu a").removeClass('current');
+    $("#submenu a").each(function () {
+        var href = $(this).attr('href');
+        if (href == cur) {
+            $(this).addClass('current');
+        };
+    });
+}
+
+
+function showHide( tag ) {
+
+    var $hide = $(tag).find('.hide');
+
+    $(tag).hover(
+	function () {
+	    clearTimeout( $(this).data('hideID') );
+
+	    var ID = setTimeout( function() {
+		$hide.show();
+	    }, 100);
+
+	    $(this).data('showID', ID);
+	},
+	function () {
+	    clearTimeout( $(this).data('showID') );
+
+	    var ID = setTimeout( function() {
+		$hide.hide();
+	    }, 100);
+
+	    $(this).data('hideID', ID);
+	}
+    );
+}
+
+
+
+function ajaxTuneValue ( obj, container, value ) {
+
+    var $obj = $(obj);
+
+    $C = $(container).notify()
+
+    $.ajax({
+        url: $obj.attr("href") + "&t=" + Math.random(),
+        type: 'GET',
+        success: function (data) {
+	    if (data) {
+		$C.notify("create", "error-template", { text: data }, { expires:false });
+	    } else {
+		var $old = $obj.parent().parent().find('.number')
+		$old.text( Number($old.text()) + value );
+		$C.notify("create", "basic-template");
+	    }
+        }
+    });
+
+};

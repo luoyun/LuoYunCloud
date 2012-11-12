@@ -1,0 +1,14 @@
+<%inherit file="admin_base.html"/>
+
+<%block name="subhead">
+<link rel="stylesheet" href="${ theme_url('admin-appliance.css') }" />
+</%block>
+
+<%block name="submenu">
+<a href="${ reverse_url('admin:appliance') }">${ _("Appliances") }</a>
+<a href="${ reverse_url('admin:appliance:catalog') }">${ _("Catalog") }</a>
+<script type="text/javascript">
+  $("#admin-menu a").removeClass("current");
+  $("#admin-menu a.appliance-entry").addClass("current");
+</script>
+</%block>

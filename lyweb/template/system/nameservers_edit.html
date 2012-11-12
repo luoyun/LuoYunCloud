@@ -1,12 +1,15 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/system.html" />
 
-<%block name="sidemain">
+<%block name="innav">
+<li><a href="${ reverse_url('admin:system') }">${ _("System") }</a></li>
+<li>${ _("Edit Nameservers") }</li>
+</%block>
 
-<h2>${ _("Edit Nameservers") }</h2>
+<%block name="content">
 
-<div class="main-wrap small-left-right-form">
+<div class="small-left-right-form c">
   <form method="POST" action="${ reverse_url('system:nameservers:edit') }">
-    ${ form.nameservers.label } ${ form.nameservers() }<br/>
+    ${ form.nameservers() }
     ${ form.html_errors(form.nameservers.errors) }
 
     <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>

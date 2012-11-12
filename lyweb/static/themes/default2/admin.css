@@ -32,9 +32,6 @@ table th {
     margin: 10px 0 50px;
 }
 
-#ly-admin-sidebar, #ly-admin-sidemain {
-    float: left;
-}
 #ly-admin-sidebar {
     width: 135px;
     text-align: right;

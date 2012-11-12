@@ -255,18 +255,16 @@
   <h2>${ _("Delete instance") }</h2>
   <p class="ly-warning2">${ _("Wait! All the instance data will be lost after instance is deleted.") }</p>
   <div class="i-management-btn">
-    <a class="ly-btn2 small green confirm-action" onclick="deleteInstanceConfirm(); return false;" href="/instance/${ I.id }/delete">${ _("Delete") }</a>
+    <a class="ly-btn2 small green confirm-action" onclick="deleteInstanceConfirm( this ); return false;" href="/instance/${ I.id }/delete">${ _("Delete") }</a>
   </div>
 
-  <div id="i-delete-confirm" style="display:none;">
-    <div class="show">
-      <table class="vertical-align">
-	<tr>
-	  <td><img class="ywarn-img" src="${ theme_url('img/warning48.png') }"/></td>
-	  <td><span class="ywarn">${ _("Wait! All the instance data will be lost after instance is deleted.") }</span></td>
-	</tr>
-      </table>
-    </div>
+  <div id="i-delete-confirm-dialog" style="display:none;">
+    <table class="vertical-align">
+      <tr>
+	<td><img class="ywarn-img" src="${ theme_url('img/warning48.png') }"/></td>
+	<td><span class="ywarn">${ _("Wait! All the instance data will be lost after instance is deleted.") }</span></td>
+      </tr>
+    </table>
   </div>
 </div>
 
@@ -315,14 +313,11 @@
 </script>
 
 <script type="text/javascript">
-function deleteInstanceConfirm() {
+function deleteInstanceConfirm( obj ) {
 
-    var $show = $('#i-delete-confirm').find('.show');
+   var $obj = $(obj);
 
-    var content = '<div style="display: none;" id="i-delete-confirm-dialog-data">' + $show.html() + '</div>'
-    $('html').append( content );
-
-    $('#i-delete-confirm-dialog-data').dialog({
+    $('#i-delete-confirm-dialog').dialog({
 	title: "${ _('Are you sure ?') }",
 	resizable: false,
 	height: "auto",
@@ -334,7 +329,7 @@ function deleteInstanceConfirm() {
 	    },
 	    "${ _('Delete Instance') }": function() {
 		$.ajax({
-		    url: "/instance/${ I.id }/delete",
+		    url: $obj.attr("href"),
 		    type: 'GET',
 		    success: function(data) {
 			$(data).dialog({
@@ -347,9 +342,9 @@ function deleteInstanceConfirm() {
 		$( this ).dialog( "close" );
 	    }
 	},
-	open: function () {
-	    $('html').append( content );
-	}
+        close:function(){
+            $( this ).dialog("destroy");
+        }
     });
 
     return false;

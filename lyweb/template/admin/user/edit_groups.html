@@ -1,11 +1,11 @@
-<%inherit file="user_base.html" />
+<%inherit file="/admin/account.html" />
 
 <%block name="usernav">
 <li><a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a></li>
 <li>${ _("Edit User Groups") }</li>
 </%block>
 
-<%block name="sidemain">
+<%block name="content">
 
 <%
    SELECT_HEIGHT = '%spx' % (len(form.groups.choices) * 20 + 60)

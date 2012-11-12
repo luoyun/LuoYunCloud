@@ -7,6 +7,7 @@ from tornado.web import authenticated, asynchronous
 from app.account.models import User, Group, UserProfile, \
     UserResetpass
 from app.instance.models import Instance
+from app.job.models import Job
 
 from app.account.forms import ResetPasswordForm
 from app.admin.forms import CreateUserForm, UserResourceForm, \
@@ -108,19 +109,16 @@ class UserManagement(LyRequestHandler):
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'DESC')
         gid = self.get_argument_int('gid', -1)
-        online = self.get_argument_int('online')
         search = self.get_argument('search', False)
 
         if by == 'date_joined':
             by = User.date_joined
         elif by == 'last_login':
             by = User.last_login
+        elif by == 'last_active':
+            by = User.last_active
         else:
             by = User.id
-
-        # sorted by last_active
-        if online:
-            by = User.last_active
 
         by_exp = desc(by) if sort == 'DESC' else asc(by)
 
@@ -128,12 +126,6 @@ class UserManagement(LyRequestHandler):
         stop = start + page_size
 
         UL = self.db2.query(User)
-
-        if online:
-            # TODO
-            online = online * 60 # minutes
-            deadline = datetime.datetime.now() - datetime.timedelta(seconds = online)
-            UL = UL.filter( User.last_active > deadline )
 
         if search:
             search = '%' + search + '%'
@@ -165,7 +157,7 @@ class UserManagement(LyRequestHandler):
         d = { 'title': _('Admin User Management'),
               'USER_LIST': UL, 'PAGE_HTML': page_html,
               'TOTAL_USER': total,
-              'GROUP': GROUP, 'GID': gid, 'ONLINE': online }
+              'GROUP': GROUP, 'GID': gid, 'SORT': sort }
 
         if self.get_argument('ajax', None):
             self.render( 'admin/user/index.ajax', **d )
@@ -175,15 +167,23 @@ class UserManagement(LyRequestHandler):
 
     def get_view(self):
 
-        self.render( 'admin/user/view.html',
-                     title = 'View User', user = self.user )
+        TAB = self.get_argument('tab', 'general')
 
+        jobs = self.db2.query(Job).filter(
+            Job.user_id == self.user.id).order_by(
+            desc(Job.id) ).limit(10).all()
+
+        d = { 'title': _('View User'), 'TAB': TAB,
+              'U': self.user, 'JOB_LIST': jobs }
+
+        self.render( 'admin/user/view.html', **d)
 
 
     def get_reset_password(self):
 
-        self.render( 'admin/user/reset_password.html', title = _('Reset Password'),
-                     form = ResetPasswordForm(), USER = self.user )
+        d = { 'title': _('Reset Password For "%s"') % self.user.username,
+              'U': self.user, 'form': ResetPasswordForm() }
+        self.render( 'admin/user/reset_password.html', **d)
 
 
     def post_reset_password(self):
@@ -204,7 +204,7 @@ class UserManagement(LyRequestHandler):
             return self.redirect( url )
 
         self.render( 'admin/user/reset_password.html', title = _('Reset Password'),
-                     form = form, USER = self.user )
+                     form = form, U = self.user )
 
 
     # Add a new user manually
@@ -287,14 +287,18 @@ class UserManagement(LyRequestHandler):
 
     def get_set_lock_flag(self):
 
+        if self.current_user.id == self.user.id:
+            return self.write( _('You can not lock yourself !') )
+
         flag = self.get_argument('islocked', None)
         self.user.islocked = True if flag == 'true' else False
         self.db2.commit()
 
         url = self.reverse_url('admin:user')
-        url += '?id=%s&action=view' % self.user.id
+        url += '?id=%s&tab=other' % self.user.id
 
         self.redirect( url )
+
 
     def get_edit_groups(self):
 

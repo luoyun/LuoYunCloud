@@ -1,0 +1,17 @@
+<%inherit file="admin_base.html"/>
+
+<%block name="subhead">
+<link rel="stylesheet" href="${ theme_url('admin-account.css') }" />
+</%block>
+
+<%block name="submenu">
+<a href="${ reverse_url('admin:user') }">${ _("User") }</a>
+<a href="${ reverse_url('admin:group') }">${ _("Group") }</a>
+<a href="${ reverse_url('admin:permission') }">${ _("Permission") }</a>
+<a href="${ reverse_url('admin:user:resetpass') }">${ _("Reset Password History") }</a>
+<script type="text/javascript">
+  $("#admin-menu a").removeClass("current");
+  $("#admin-menu a.account-entry").addClass("current");
+</script>
+</%block>
+

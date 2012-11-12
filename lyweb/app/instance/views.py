@@ -1584,9 +1584,10 @@ class Status(InstRequestHandler):
                 ip_link = instance.home_url(self.current_user)
                 ip = instance.work_ip
 
-            if instance.domain and instance.is_running:
-                domain_link = instance.home_url(self.current_user)
+            if instance.domain:
                 domain = instance.domain
+                if instance.is_running:
+                    domain_link = instance.home_url(self.current_user)
 
             if instance.can_run:
                 iaction = 'run'
@@ -1846,3 +1847,50 @@ class SingleInstanceStatus(InstRequestHandler):
             CS['iaction'] = 'stop'
 
         return CS
+
+
+
+class islockedToggle(LyRequestHandler):
+    ''' Toggle islocked flag '''
+
+    @has_permission('admin')
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        I = self.db2.query(Instance).get(ID)
+
+        if I:
+            I.islocked = not I.islocked
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( _('Can not find instance %s.') % ID )
+
+
+class isprivateToggle(LyRequestHandler):
+    ''' Toggle isprivate flag '''
+
+    @authenticated
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        I = self.db2.query(Instance).get(ID)
+
+        if I:
+            if not ( self.current_user.id == I.user_id or
+                     has_permission('admin') ):
+                return self.write( _('No permissions !') )
+
+            I.isprivate = not I.isprivate
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( _('Can not find instance %s.') % ID )

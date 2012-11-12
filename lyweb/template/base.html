@@ -15,7 +15,7 @@
 % if title:
 ${ title } -
 % endif
-${ _("LuoYun Cloud") }
+${ _("LuoYunCloud") }
 </title>
   </head>
 
@@ -35,10 +35,10 @@ ${ _("LuoYun Cloud") }
               % if current_user:
 	      <li><a href="${ reverse_url('myun:index') }">${ _("My LuoYun") }</a></li>
 	      % endif
+              <li><a href="/wiki">${ _("FAQ") }</a></li>
               % if has_permission('admin'):
               <li><a href="/admin">${ _("Administration") }</a></li>
               % endif
-              <li><a href="/wiki">${ _("FAQ") }</a></li>
             </ul>
           </div>
 
@@ -46,7 +46,7 @@ ${ _("LuoYun Cloud") }
             <div id="login">
               %if current_user:
               <span id="my-profile-enter"><a href="${ reverse_url('account:index') }">${ current_user.username }</a></span>
-	      <span id="my-message-enter"><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }<span class="inbox-count">${ current_user.profile.notification }</span></a></span>
+	      <span id="my-message-enter"><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }<span class="inbox-count">${ current_user.notification }</span></a></span>
 
               %else:
               <span class="login"><a href="${ reverse_url('login') }">${ _("Sign In") }</a></span>
@@ -93,7 +93,7 @@ ${ _("LuoYun Cloud") }
 
   <script type="text/javascript">
     lySetCurrentNavigator();
-    BackTop('gotop');
+//    BackTop('gotop');
   </script>
 
   </body>
