@@ -8,6 +8,8 @@
 
 <%block name="content">
 
+<p class="manage-content"><a href="${ reverse_url('node:edit', NODE.id) }">${ _("Edit") }</a></p>
+
 <div>
   <table class="kv">
     <tbody>
@@ -55,7 +57,7 @@
       </tr>
       <tr>
         <td>${ _("VMemory") }</td>
-        <td>${ NODE.vmemory }</td>
+        <td>${ NODE.vmemory_human }</td>
       </tr>
       <tr>
         <td>${ _("VCPUS") }</td>

@@ -8,4 +8,6 @@ handlers = [
     url(r'/node/([0-9]+)/isenable', node.isenableToggle,
         name='node:isenable'),
 
+    url(r'/node/([0-9]+)/edit', node.NodeEdit, name='node:edit'),
+
 ]

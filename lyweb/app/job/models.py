@@ -69,7 +69,7 @@ JOB_STATUS_STR = {
 JOB_ACTION_STR = {
     102: _('enable node'),
     103: _('disable node'),
-
+    104: _('update node configure'),
     201: _('run'),
     202: _('stop'),
     206: _('destroy'),

@@ -147,6 +147,7 @@ JOB_ACTION = {
     # node action
     'ENABLE_NODE': 102,     # LY_A_CLC_ENABLE_NODE = 102
     'DISABLE_NODE': 103,    # LY_A_CLC_DISABLE_NODE = 103
+    'UPDATE_NODE': 104,    # LY_A_CLC_CONFIG_NODE = 104
 
     # instance action
     'RUN_INSTANCE': 201,    # LY_A_NODE_RUN_INSTANCE = 201,

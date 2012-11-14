@@ -12,6 +12,8 @@ from app.instance.models import Instance
 from app.node.models import Node
 from app.job.models import Job
 
+from app.node.forms import NodeEditForm
+
 from lycustom import has_permission
 
 
@@ -92,3 +94,55 @@ class isenableToggle(LyRequestHandler):
         except Exception, e:
             self.write( _('Run job failed: %s') % e )
 
+
+
+class NodeEdit(LyRequestHandler):
+
+    @has_permission('admin')
+    def get(self, ID):
+
+        N = self.db2.query(Node).get(ID)
+        if not N:
+            return self.write( _('Can not find node %s.') % ID )
+
+        form = NodeEditForm()
+        form.vmemory.data = (N.vmemory if N.vmemory else N.memory)  / (1024 * 1024)
+        form.vcpus.data = N.vcpus if N.vcpus else N.cpus
+
+        d = { 'title': _('Edit note configure'),
+              'form': form, 'N': N }
+        self.render('node/edit.html', **d)
+
+
+    @has_permission('admin')
+    def post(self, ID):
+
+        N = self.db2.query(Node).get(ID)
+        if not N:
+            return self.write( _('Can not find node %s.') % ID )
+
+        ERROR = []
+        form = NodeEditForm( self.request.arguments )
+        if form.validate():
+            # TODO: check the node ability !
+            N.vmemory = form.vmemory.data * 1024 * 1024 # KB
+            N.vcpus = form.vcpus.data
+
+            job = Job( user = self.current_user,
+                       target_type = JOB_TARGET['NODE'],
+                       target_id = ID,
+                       action = JOB_ACTION.get('UPDATE_NODE') )
+
+            self.db2.add(job)
+            self.db2.commit()
+
+            try:
+                self._job_notify( job.id )
+                url = self.reverse_url('admin:node')
+                return self.redirect(url)
+            except Exception, e:
+                ERROR.append( _('Run job failed: %s') % e )
+
+        d = { 'title': _('Edit note configure'),
+              'form': form, 'N': N, 'ERROR': ERROR }
+        self.render('node/edit.html', **d)

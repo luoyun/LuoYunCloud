@@ -8,6 +8,8 @@ from app.account.models import User, Group, Permission
 from app.node.models import Node
 from app.instance.models import Instance
 
+from sqlalchemy.sql.expression import asc, desc
+
 from lycustom import has_permission
 
 
@@ -56,7 +58,7 @@ class NodeManagement(LyRequestHandler):
 
     def get_index(self):
 
-        nodes = self.db2.query(Node).all()
+        nodes = self.db2.query(Node).order_by(asc(Node.id)).all()
         self.render( 'admin/node/index.html', title = _('Node Management'),
                      nodes = nodes )
 
