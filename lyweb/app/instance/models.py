@@ -79,8 +79,78 @@ class Instance(ORMBase):
                             'port': 8001 }
                 } )
 
-    def __str__(self):
-        return _("<Instance(%s)>") % self.name
+    def get_network_count(self):
+        config = json.loads( self.config )
+        network = config.get('network', [])
+        return len(network)
+
+    def get_network(self, index=1):
+        config = json.loads( self.config )
+        network = config.get('network', [])
+        count = len(network)
+        if index > count or index < 1:
+            return {}
+
+        return network[index-1]
+
+
+    def set_network(self, nic_config, index=1):
+        config = json.loads( self.config )
+        network = config.get('network', [])
+
+        if network:
+            count = len(network)
+            if index < 1:
+                return False
+            elif index <= count:
+                network[index-1] = nic_config
+            else:
+                network.append(nic_config)
+        else:
+            network = [nic_config]
+
+        config['network'] = network
+        self.config = json.dumps(config)
+
+        # TODO: set status change flag
+        if self.is_running:
+            self.ischanged = True
+
+        return True
+
+    def clean_network(self, index):
+        config = json.loads( self.config )
+        network = config.get('network', [])
+        count = len(network)
+        if index > count or index < 1:
+            return False
+
+        if index == 1:
+            ip = network[0].get('ip')
+            if ip:
+                for x in self.ips:
+                    if ip == x.ip:
+                        x.instance_id = None
+                        x.updated = datetime.now()
+                        break
+
+            network[0] = {'type': 'default', 'mac': self.mac}
+
+        else:
+            del network[index-1]
+
+        config['network'] = network
+        self.config = json.dumps(config)
+
+        # TODO: set status change flag
+        if self.is_running:
+            self.ischanged = True
+
+        return True
+
+
+    def __unicode__(self):
+        return self.name
 
 
     # TODO: have a lazy translation

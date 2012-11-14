@@ -1,8 +1,13 @@
 <%inherit file="/admin/system.html" />
 
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li>${ _("System Configure Center") }</li>
+</%block>
+
 <%block name="content">
 
-<h2>${ _("System settings of LuoYun") }</h2>
+<p>${ _("System settings of LuoYun") }</p>
 
 
 </%block>

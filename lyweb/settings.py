@@ -204,6 +204,7 @@ default_permission = [
     #('user', 'User'),  # default permission for all user
     ('appliance.upload', 'Can upload appliance'),
     ('instance.create', 'Can create instance'),
+    ('network.add', 'Can add another NIC configure'),
 ]
 
 default_group = [

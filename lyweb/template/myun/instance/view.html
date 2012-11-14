@@ -127,16 +127,26 @@
 </div>
 
 <div id="tab-content-network" class="tab-content" style="${ isshow('network') }">
+  <% NIC_TOTAL = len(NETWORK_LIST) %>
+
   % if NETWORK_LIST:
-  <h2>${ _("Configure Network") }</h2>
 
   % for N in NETWORK_LIST:
+  <% INDEX = NETWORK_LIST.index(N) + 1 %>
+  <h2>${ _("NIC") } ${ INDEX }</h2>
+  <p>
+    <a href="${ reverse_url('myun:instance:edit', I.id) }?item=network&index=${ INDEX }">${ _("Edit") }</a>
+    %if INDEX!=1:
+    <a href="${ reverse_url('myun:instance:edit', I.id) }?item=network_clean&index=${ INDEX }">${ _("Clean") }</a>
+    %endif
+  </p>
   <table class="kv">
     <tbody>
       <tr>
 	<td>${ _("Type") }</td>
 	<td>${ N.get('type') }</td>
       </tr>
+      %if N.get('type') != 'default':
       <tr>
 	<td>${ _("IP") }</td>
 	<td>${ N.get('ip') }</td>
@@ -149,6 +159,7 @@
 	<td>${ _("Netmask") }</td>
 	<td>${ N.get('netmask') }</td>
       </tr>
+      %endif
       <tr>
 	<td>${ _("MAC") }</td>
 	<td>${ N.get('mac') }</td>
@@ -157,15 +168,17 @@
   </table>
   % endfor
 
-  <div class="i-management-btn">
-    <a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=network">${ _("Edit") }</a>
-    <a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=network_delete">${ _("Reset") }</a>
-  </div>
-
   % else:
   <p class="c">${ _("Appliance Default Configuration") }</p>
-  <p><a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=network">${ _("Edit") }</a></p>
   % endif
+
+  %if has_permission("network.add"):
+  <div class="i-management-btn">
+    <a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=network&index=${ NIC_TOTAL + 1 }">${ _("Add a new NIC") }</a>
+  </div>
+  %endif
+
+
 </div>
 
 

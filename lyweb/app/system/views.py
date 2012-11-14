@@ -3,12 +3,12 @@
 import logging, struct, socket, re, os, json
 import ConfigParser
 
-from lycustom import LyRequestHandler
+from lycustom import LyRequestHandler, Pagination
 from tornado.web import authenticated, asynchronous
 
 from sqlalchemy.sql.expression import asc, desc
 
-from app.system.models import LuoYunConfig
+from app.system.models import LuoYunConfig, NetworkPool, IPPool
 from app.system.forms import BaseinfoForm, DBForm, \
     CLCForm, NameserversForm, NetworkPoolForm, DomainForm, \
     NginxForm, RegistrationProtocolForm, WelcomeNewUserForm, \
@@ -25,6 +25,7 @@ from lymail import LyMail, validate_email
 from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'tables'])
 
+from IPy import IP
 import settings
 
 
@@ -194,107 +195,271 @@ class NameserversEdit(LyRequestHandler):
                     form = form, saved = saved)
 
 
-
-class NetworkPool(LyRequestHandler):
+class IPPoolView(LyRequestHandler):
 
     @has_permission('admin')
     def get(self):
-        d = { 'title': _('Network pool of LuoYun'),
-              'NETWORK_POOL': settings.NETWORK_POOL[0], }
 
-        if not d['NETWORK_POOL']:
-            url = self.reverse_url('system:networkpool:edit')
-            if self.get_argument('ajax', None):
-                url += '?ajax=1'
-            return self.redirect( url )
+        page_size = self.get_argument_int('sepa', 50)
+        cur_page = self.get_argument_int('p', 1)
+        nid = self.get_argument_int('network', 0)
+        by = self.get_argument('by', 'id')
+        sort = self.get_argument('sort', 'ASC')
 
-        from app.system.models import IpAssign
-        def get_ipassign(ip):
-            return self.db2.query(IpAssign).filter_by( ip = ip ).first()
-            
-        d['get_ipassign'] = get_ipassign
+        if by == 'created':
+            by = IPPool.created
+        elif by == 'network':
+            by = IPPool.network_id
+        else:
+            by = IPPool.id
+
+        by_exp = desc(by) if sort == 'DESC' else asc(by)
+
+        start = (cur_page - 1) * page_size
+        stop = start + page_size
+
+        N = self.db2.query(NetworkPool).get(nid) if nid else None
+
+        TOTAL = self.db2.query(IPPool.id).count()
+
+        POOL = self.db2.query(IPPool)
+        if N:
+            POOL = POOL.filter( IPPool.network_id == nid )
+
+        POOL = POOL.order_by( by_exp )
+        POOL = POOL.slice(start, stop)
+
+        pagination = Pagination( total = TOTAL,
+                                 page_size = page_size,
+                                 cur_page = cur_page )
+
+        page_html = pagination.html( self.get_page_url )
+
+        d = { 'title': _('IP Pool'), 'TOTAL': TOTAL, 'NETWORK': N,
+              'IPPOOL': POOL.all(), 'PAGE_HTML': page_html }
+
+        self.render('system/ippool.html', **d)
+
+
+
+class NetworkHome(LyRequestHandler):
+
+    @has_permission('admin')
+    def get(self):
+        d = { 'title': _('Network Pool'),
+              'NETWORKPOOL': self.db2.query(NetworkPool).all() }
 
         self.render('system/networkpool.html', **d)
 
 
-
-class NetworkPoolEdit(LyRequestHandler):
+class NetworkView(LyRequestHandler):
 
     @has_permission('admin')
-    def prepare(self):
+    def get(self, ID):
+        
+        N = self.db2.query(NetworkPool).get(ID)
 
-        self.networkpool = self.db2.query(LuoYunConfig).filter_by( key = 'networkpool' ).first()
-        self.nameservers = self.db2.query(LuoYunConfig).filter_by( key = 'nameservers' ).first()
+        if N:
+            d = { 'title': _('Network Pool'), 'N': N }
+            self.render('system/networkpool_view.html', **d)
+        else:
+            self.write( _('Can not find networkpool %s') % ID )
 
 
+
+class NetworkHandler(LyRequestHandler):
+
+    def add_to_ippool(self, N):
+
+        start, end = IP( N.start ), IP( N.end )
+        exclude_ips = N.exclude_ips
+
+        NETWORK = '%s/%s' % (N.start, N.netmask)
+        for x in IP(NETWORK, make_net=True):
+            cur_ip = IP(x)
+            if cur_ip > end:
+                break
+
+            if start <= cur_ip:
+                ip_str = x.strNormal()
+                if not exclude_ips.count(ip_str):
+                    if self.db2.query(IPPool).filter_by(ip=ip_str).first():
+                        logging.warning('ADD_IPPOOL: IP %s is exists, ommit.' % ip_str)
+                    else:
+                        self.db2.add( IPPool(ip_str, N) )
+
+        self.db2.commit()
+
+
+
+class NetworkDelete(LyRequestHandler):
+
+    @has_permission('admin')
+    def get(self, ID):
+
+        N = self.db2.query(NetworkPool).get(ID)
+        if not N: return self.write( _('Can not find networkpool %s') % ID )
+
+        ERROR = []
+        OK = [] # TODO: use session rollback
+
+        for x in self.db2.query(IPPool).filter_by(network_id=N.id):
+            if x.instance:
+                ERROR.append( x )
+            else:
+                OK.append( x )
+
+        if ERROR:
+            d = { 'title': _('Delete Network Pool Failed'),
+                  'FAILED_LIST': ERROR, 'N': N }
+            self.render('system/networkpool_delete_failed.html', **d)
+
+        else:
+            for x in OK:
+                self.db2.delete(x)
+            self.db2.delete(N)
+            self.db2.commit()
+            self.redirect(self.reverse_url('system:networkpool'))
+
+
+
+class NetworkAdd(NetworkHandler):
+
+    @has_permission('admin')
     def get(self):
 
         form = NetworkPoolForm()
-        if self.networkpool:
-            networkpool = json.loads(self.networkpool.value)
-            if len(networkpool) > 0:
-                networkpool = networkpool[0]
-                form.start.data = networkpool['start']
-                form.end.data = networkpool['end']
-                form.netmask.data = networkpool['netmask']
-                form.gateway.data = networkpool['gateway']
-                if networkpool.has_key('nameservers'):
-                    form.nameservers.data = networkpool['nameservers']
-                else:
-                    nameservers = self.db2.query(LuoYunConfig).filter_by( key = 'nameservers' ).first()
-                    if nameservers:
-                        form.nameservers.data = nameservers
-                if networkpool.has_key('exclude_ips'):
-                    form.exclude_ips.data = networkpool['exclude_ips']
+        NS = self.db2.query(LuoYunConfig).filter_by( key = 'nameservers' ).first()
+        if NS: form.nameservers.data = NS.value
 
-        self.render('system/networkpool_edit.html',
-                    form = form)
+        d = { 'title': _('Add a new network pool'),  'form': form }
+        self.render('system/networkpool_add.html', **d)
 
 
-
+    @has_permission('admin')
     def post(self):
 
-        saved = None
         form = NetworkPoolForm( self.request.arguments )
         if form.validate():
 
-            networkpool = {
-                'start': form.start.data,
-                'end': form.end.data,
-                'netmask': form.netmask.data,
-                'gateway': form.gateway.data,
-                'nameservers': form.nameservers.data,
-                'exclude_ips': form.exclude_ips.data,
-                }
+            N = NetworkPool(
+                name = form.name.data,
+                description = form.description.data,
+                start = form.start.data,
+                end = form.end.data,
+                netmask = form.netmask.data,
+                gateway = form.gateway.data,
+                nameservers = form.nameservers.data,
+                exclude_ips = form.exclude_ips.data )
+
+            self.db2.add( N )
+            self.db2.commit()
+
+            self.add_to_ippool(N)
+
+            url = self.reverse_url('system:networkpool')
+            return self.redirect( url )
+
+        d = { 'title': _('Add a new network pool'),  'form': form }
+        self.render('system/networkpool_add.html', **d)
 
 
-            nameservers = form.nameservers.data
 
-            if self.nameservers:
-                #self.nameservers.value = nameservers
-                pass
-            else:
-                c = LuoYunConfig('nameservers', nameservers)
-                self.db2.add( c )
+class NetworkEdit(LyRequestHandler):
 
-            networkpool = json.dumps( [networkpool, ] )
-            if self.networkpool:
-                self.networkpool.value = networkpool
-            else:
-                c = LuoYunConfig('networkpool', networkpool)
-                self.db2.add(c)
+    @has_permission('admin')
+    def get(self, ID):
+
+        N = self.db2.query(NetworkPool).get(ID)
+        if not N: return self.write( _('Can not find networkpool %s') % ID )
+
+        form = NetworkPoolForm()
+        form.name.data = N.name
+        form.description.data = N.description
+        form.start.data = N.start
+        form.end.data = N.end
+        form.netmask.data = N.netmask
+        form.gateway.data = N.gateway
+        if N.nameservers:
+            form.nameservers.data = N.nameservers
+        else:
+            nameservers = self.db2.query(LuoYunConfig).filter_by( key = 'nameservers' ).first()
+            if nameservers:
+                form.nameservers.data = nameservers.value
+        if N.exclude_ips:
+            form.exclude_ips.data = N.exclude_ips
+
+        d = { 'title': _('Edit network pool'),  'form': form }
+        self.render('system/networkpool_edit.html', **d)
+
+
+    def post(self, ID):
+
+        N = self.db2.query(NetworkPool).get(ID)
+        if not N: return self.write( _('Can not find networkpool %s') % ID )
+
+        form = NetworkPoolForm( self.request.arguments )
+        if form.validate():
+
+            # TODO: a ugly algorithm
+            OLD, NEW = [], []
+            for x in self.db2.query(IPPool).filter_by(network_id=N.id):
+                OLD.append( x.ip )
+
+            start, end = IP( form.start.data ), IP( form.end.data )
+            exclude_ips = form.exclude_ips.data
+
+            NETWORK = '%s/%s' % (form.start.data, form.netmask.data)
+            for x in IP(NETWORK, make_net=True):
+                cur_ip = IP(x)
+                if cur_ip > end:
+                    break
+
+                if start <= cur_ip:
+                    ip_str = x.strNormal()
+                    if not exclude_ips.count(ip_str):
+                        NEW.append( ip_str )
+
+            OLD_SET, NEW_SET = set(OLD), set(NEW)
+            DROP = list(OLD_SET - NEW_SET)
+
+            ERROR, OK = [], []
+            for x in DROP:
+                find = self.db2.query(IPPool).filter_by(ip=x).first()
+                if find.instance_id:
+                    ERROR.append( find )
+                else:
+                    OK.append( find )
+
+            if ERROR:
+                d = { 'title': _('Edit network pool failed'),
+                      'UNABLE_DELETE_IP': ERROR, 'NETWORK': N,
+                      'form': form }
+                return self.render('system/networkpool_edit.html', **d)
+
+            ADD = list(NEW_SET - OLD_SET)
+
+            N.name = form.name.data
+            N.description = form.name.description
+            N.start = form.start.data
+            N.end = form.end.data
+            N.netmask = form.netmask.data
+            N.gateway = form.gateway.data
+            N.nameservers = form.nameservers.data
+            N.exclude_ips = form.exclude_ips.data
+
+            for x in OK:
+                self.db2.delete(x)
+            for x in ADD:
+                self.db2.add( IPPool(x, N) )
 
             self.db2.commit()
-            from tool.network import set_network_pool
-            # set settings.NETWORK_POOL
-            set_network_pool(self.db2)
-            saved = True
-            # TODO: redirect to ?
-            url = self.reverse_url('system:networkpool')
-            self.redirect( url )
 
-        self.render('system/networkpool_edit.html',
-                    form = form, saved = saved)
+            url = self.reverse_url('system:networkpool')
+            return self.redirect( url )
+
+        d = { 'title': _('Edit Network Pool'),  'form': form }
+        self.render('system/networkpool_edit.html', **d)
 
 
 

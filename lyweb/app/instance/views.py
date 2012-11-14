@@ -789,7 +789,7 @@ class Status(InstRequestHandler):
             job = old
 
         if self.request.connection.stream.closed() or not job:
-            return self.finish()
+            return
 
         self.db2.commit()
 
@@ -894,7 +894,7 @@ class CheckInstanceStatus(InstRequestHandler):
     def check_status(self, WATCH):
 
         if self.request.connection.stream.closed():
-            return self.finish()
+            return
 
         self.db2.commit() # TODO: need sync now
 
@@ -1013,7 +1013,7 @@ class SingleInstanceStatus(InstRequestHandler):
     def check_status(self, cs):
 
         if self.request.connection.stream.closed():
-            return self.finish()
+            return
 
         self.db2.commit() # TODO: need sync now
 

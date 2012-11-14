@@ -8,12 +8,13 @@ from app.account.models import User, ApplyUser, UserProfile
 from app.instance.models import Instance
 from app.appliance.models import Appliance, ApplianceCatalog
 from app.job.models import Job
-from app.system.models import IpAssign, LuoYunConfig
+from app.system.models import IpAssign, LuoYunConfig, IPPool
 
 from settings import JOB_TARGET
 
 from app.instance.forms import PublicKeyForm, BaseinfoForm, \
-     ResourceForm, NetworkForm, StorageForm, PasswordForm
+     ResourceForm, NetworkForm, StorageForm, PasswordForm, \
+     StaticNetworkForm
 
 import tornado
 from tornado.web import authenticated, asynchronous
@@ -294,12 +295,12 @@ class InstanceEdit(InstanceManagement):
             self.get_resource( I )
         elif item == 'network':
             self.get_network( I )
+        elif item == 'network_clean':
+            self.get_network_clean( I )
         elif item == 'storage':
             self.get_storage( I )
         elif item == 'storage_delete':
             self.get_storage_delete( I )
-        elif item == 'network_delete':
-            self.get_network_delete( I )
         elif item == 'password':
             self.get_password( I )
         elif item == 'public_key':
@@ -422,95 +423,116 @@ class InstanceEdit(InstanceManagement):
         self.render( 'myun/instance/edit_resource.html', **self.d)
 
 
-    def update_network_form(self, form):
-        NPOOL = []
-        TOTAL_POOL = settings.NETWORK_POOL[0]
+    def get_network_clean(self, I):
 
-        if not TOTAL_POOL:
-            form.ip.choices = []
-            return
+        index = self.get_argument_int('index', 1)
+        nic_config = I.get_network( index )
 
-        for ip in TOTAL_POOL['pool']:
-            if not self.db2.query(IpAssign).filter_by( ip = ip ).first():
-                NPOOL.append( (ip, ip) )
-
-        form.ip.choices = NPOOL
-        form.netmask.data = TOTAL_POOL['netmask']
-        form.gateway.data = TOTAL_POOL['gateway']
+        if nic_config:
+            I.clean_network(index)
+            self.db2.commit()
+            url = self.reverse_url('myun:instance:view', I.id)
+            url += '?tab=network'
+            self.redirect( url )
+        else:
+            self.write( _('Can not find NIC %s !') % index )
 
 
     def get_network(self, I):
 
-        form = NetworkForm()
-        self.update_network_form( form )
+        index = self.get_argument_int('index', 1)
+        nic_config = I.get_network( index )
 
-        if I.config:
-            config = json.loads(I.config)
-            network = config.get('network', [])
-            if len(network) > 0:
-                network = network[0]
-                form.type.data = network['type']
-                form.ip.data = network['ip']
-                form.netmask.data = network['netmask']
-                form.gateway.data = network['gateway']
+        if index == 1:
+            form = NetworkForm()
+            if nic_config:
+                form.type.data = nic_config.get('type')
+        else:
+            if self.has_permission('network.add'):
+                form = StaticNetworkForm()
+                if nic_config:
+                    form.ip.data = nic_config.get('ip')
+                    form.netmask.data = nic_config.get('netmask')
+                    form.gateway.data = nic_config.get('gateway')
+                    form.nameservers.data = nic_config.get('nameservers')
+            else:
+                return self.write( _('You have not allowed to add another network !') )
 
         self.d['form'] = form
-        self.render( 'myun/instance/edit_network.html', **self.d)
+        self.d['INDEX'] = index
+        self.render('myun/instance/edit_network.html', **self.d)
 
 
     def post_network(self, I):
 
-        form = NetworkForm( self.request.arguments )
-        self.update_network_form( form )
+        nic_total = I.get_network_count()
+        ERROR = []
 
-        if form.validate():
+        index = self.get_argument_int('index', 1)
+        if index == 1:
+            form = NetworkForm( self.request.arguments )
+            if form.validate():
+                old_network = I.get_network()
+                if form.type.data == old_network.get('type'):
+                    # TODO: same configure
+                    url = self.reverse_url('myun:instance:view', I.id)
+                    url += '?tab=network'
+                    return self.redirect( url )
 
-            network = {
-                'type': form.type.data,
-                'mac': I.mac, # TODO: use old mac
-                'ip': form.ip.data,
-                'netmask': form.netmask.data,
-                'gateway': form.gateway.data
-                }
-
-            if I.config:
-                config = json.loads(I.config)
+                nic_type = form.type.data
+                if nic_type == 'default':
+                    nic_ip, nic_netmask, nic_gateway = '', '', ''
+                elif nic_type == 'networkpool':
+                    ok_ip = self.db2.query(IPPool).filter_by(
+                        instance_id = None ).order_by(
+                        asc(IPPool.id)).first()
+                    if ok_ip:
+                        nic_ip = ok_ip.ip
+                        nic_netmask = ok_ip.network.netmask
+                        nic_gateway = ok_ip.network.gateway
+                        ok_ip.instance_id = I.id # binding
+                        ok_ip.updated = datetime.now()
+                    else:
+                        ERROR.append( _('Can not find a useable ip from system ip pool.') )
+                else:
+                    ERROR.append( _('No such network type.') )
+        else:
+            if self.has_permission('network.add'):
+                index = index if index <= nic_total + 1 else nic_total+1
+                # Static network configure
+                form = StaticNetworkForm( self.request.arguments )
+                if form.validate():
+                    nic_type = 'static'
+                    nic_ip = form.ip.data
+                    nic_netmask = form.netmask.data
+                    nic_gateway = form.gateway.data
             else:
-                config = {}
+                return self.write( _('You have not allowed to add another network !') )
 
-            config['network'] = [network]
-            I.config = json.dumps(config)
+
+        self.d['INDEX'] = index
+        self.d['form'] = form
+        self.d['ERROR'] = ERROR
+        if self.d['ERROR']:
+            return self.render( 'myun/instance/edit_network.html', **self.d)
+
+        nic_config = {
+            'type': nic_type,
+            'mac': I.mac, # TODO: use old mac
+            'ip': nic_ip,
+            'netmask': nic_netmask,
+            'gateway': nic_gateway }
+
+        try:
+            I.set_network( nic_config, index )
             self.db2.commit()
-
-            print '[DD] network["ip"] = "%s"' % (network['ip'])
-            ipassign = self.db2.query(IpAssign).filter_by( ip = network['ip'] ).first()
-            if ipassign:
-                ipassign.user_id = self.current_user.id
-                ipassign.instance_id = I.id
-                updated = datetime.now()
-            else:
-                c = IpAssign( ip = network['ip'],
-                              user = self.current_user,
-                              instance = I )
-                self.db2.add( c )
-
-            # TODO: delete old ipassign, just support 1 network now.
-            OLD_IP_L = self.db2.query(IpAssign).filter_by(instance_id = I.id )
-            for ip in OLD_IP_L:
-                if ip.ip != network['ip']:
-                    self.db2.delete(ip)
-
-            if I.is_running:
-                I.ischanged = True
-
-            self.db2.commit()
-
             url = self.reverse_url('myun:instance:view', I.id)
             url += '?tab=network'
             return self.redirect( url )
 
-        self.d['form'] = form
-        self.render( 'myun/instance/edit_network.html', **self.d)
+        except Exception, e:
+            self.d['ERROR'].append( _('save failed: %s') % e )
+            self.render( 'myun/instance/edit_network.html', **self.d)
 
 
     def get_storage(self, I):
@@ -596,28 +618,6 @@ class InstanceEdit(InstanceManagement):
 
         url = self.reverse_url('myun:instance:view', I.id)
         url += '?tab=storage'
-        self.redirect( url )
-
-
-    def get_network_delete(self, I):
-        if I.config:
-            config = json.loads(I.config)
-            if 'network' in config.keys():
-                ip = config['network'][0]['ip']
-                del config['network']
-                I.config = json.dumps(config)
-
-                # delete ip from IpAssign
-                ipassign = self.db2.query(IpAssign).filter_by( ip = ip ).first()
-                self.db2.delete( ipassign )
-                self.db2.commit()
-
-            if I.is_running:
-                I.ischanged = True
-            self.db2.commit()
-
-        url = self.reverse_url('myun:instance:view', I.id)
-        url += '?tab=network'
         self.redirect( url )
 
 

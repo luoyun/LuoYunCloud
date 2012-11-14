@@ -77,29 +77,3 @@ class AccountIndex(LyRequestHandler):
     def get(self):
         self.render('admin/account.html')
 
-
-class ApplianceIndex(LyRequestHandler):
-
-    @has_permission('admin')
-    def get(self):
-        self.render('admin/appliance.html')
-
-class InstanceIndex(LyRequestHandler):
-
-    @has_permission('admin')
-    def get(self):
-        self.render('admin/instance.html')
-
-class NodeIndex(LyRequestHandler):
-
-    @has_permission('admin')
-    def get(self):
-        self.render('admin/node.html')
-
-
-class SystemIndex(LyRequestHandler):
-
-    @has_permission('admin')
-    def get(self):
-        self.render('admin/system.html')
-
