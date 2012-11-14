@@ -1,6 +1,6 @@
 #/usr/bin/env python2.5
 
-import os, random
+import os, random, json
 from hashlib import sha1
 
 from datetime import datetime
@@ -230,6 +230,8 @@ class UserProfile(ORMBase):
     instances = Column( Integer, default=3 ) # 3 instances
     storage = Column( Integer, default=2 )   # 2 G
 
+    # Other configure
+    config = Column( Text() )
 
     def __init__(self, user, email=''):
         self.user_id = user.id
@@ -247,6 +249,32 @@ class UserProfile(ORMBase):
     def __repr__(self):
         return _("[UserProfile(%s)]") % (self.user_id)
 
+    def get_secret(self, key=None, value=None):
+        config = json.loads(self.config) if self.config else {}
+
+        if config:
+            secret = config.get('secret')
+            if isinstance(secret, dict):
+                if key:
+                    return secret.get(key, value)
+                else:
+                    return secret
+
+        return None
+
+    def set_secret(self, key, value):
+        config = json.loads(self.config) if self.config else {}
+
+        if config:
+            secret = config.get('secret')
+            if not isinstance(secret, dict):
+                secret = {}
+        else:
+            secret = {}
+
+        secret[key] = value
+        config['secret'] = secret
+        self.config = json.dumps(config)
 
 
 class Permission(ORMBase):

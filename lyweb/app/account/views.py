@@ -36,7 +36,8 @@ from lytool.filesize import size as human_size
 import settings
 from app.system.models import LuoYunConfig
 
-
+from ytool.password import check_login_passwd, enc_login_passwd, \
+    enc_shadow_passwd
 
 class AccountRequestHandler(LyRequestHandler):
 
@@ -161,16 +162,15 @@ class Register(AccountRequestHandler):
             if user:
                 form.username.errors.append( _('This username is occupied') )
             else:
-                salt = md5(str(random.random())).hexdigest()[:12]
-                hsh = encrypt_password(salt, form.password.data)
-                enc_password = "%s$%s" % (salt, hsh)
-
+                enc_password = enc_login_passwd(form.password.data)
                 newuser = User( username = form.username.data,
                                 password = enc_password )
                 self.db2.add(newuser)
                 self.db2.commit()
                 # Create profile
                 profile = UserProfile(newuser, email = form.email.data)
+                root_passwd = enc_shadow_passwd(form.password.data)
+                profile.set_secret('root_shadow_passwd', root_passwd)
                 # Add to default group
                 from settings import cf
                 if cf.has_option('registration', 'user_default_group_id'):
@@ -352,14 +352,16 @@ class ResetPassword(LyRequestHandler):
         form = ResetPasswordForm(self.request.arguments)
 
         if form.validate():
-
-            salt = md5(str(random.random())).hexdigest()[:12]
-            hsh = encrypt_password(salt, form.password.data)
-            enc_password = "%s$%s" % (salt, hsh)
-
-            user = self.db2.query(User).get( self.current_user.id )
+            user = self.current_user
+            enc_password = enc_login_passwd(form.password.data)
             user.password = enc_password
+
+            root_passwd = enc_shadow_passwd(form.password.data)
+            print 'root_passwd = ', root_passwd
+            user.profile.set_secret('root_shadow_passwd', root_passwd)
+
             self.db2.commit()
+            print 'secret = ', user.profile.get_secret()
 
             url = self.application.reverse_url('account:index')
             return self.redirect( url )
@@ -558,11 +560,13 @@ class ResetPasswordComplete(AccountRequestHandler):
         self.d['form'] = ResetPasswordForm( self.request.arguments )
         if self.d['form'].validate():
 
-            salt = md5(str(random.random())).hexdigest()[:12]
-            hsh = encrypt_password(salt, self.d['form'].password.data)
-            enc_password = "%s$%s" % (salt, hsh)
-
+            plaintext = self.d['form'].password.data
+            enc_password = enc_login_passwd(plaintext)
             self.d['USER'].password = enc_password
+
+            root_passwd = enc_shadow_passwd(plaintext)
+            self.d['USER'].profile.set_secret('root_shadow_passwd', root_passwd)
+
             self.db2.commit()
 
             # TODO: set reset password request completed
