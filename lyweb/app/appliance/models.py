@@ -45,6 +45,10 @@ class ApplianceCatalog(ORMBase):
         return YMK.convert( self.description )
 
 
+OSType = [
+    (1, _('GNU/Linux')),
+    (2, _('Microsoft Windows'))
+]
 
 class Appliance(ORMBase):
 
@@ -55,6 +59,8 @@ class Appliance(ORMBase):
     name = Column( String(128) )
     summary = Column( String(1024) )
     description = Column( Text() )
+
+    os = Column( Integer(), default = 1 ) # 1 is gnu/linux
 
     logoname = Column( String(64) )
 

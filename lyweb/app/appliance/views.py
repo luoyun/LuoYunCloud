@@ -216,12 +216,16 @@ class Edit(LyRequestHandler):
             return self.write( _('No permission!') )
 
         form = EditApplianceForm()
+        form.catalog.choices = self.choices
+        form.catalog.default = appliance.catalog_id
+
+        form.os.default = appliance.os
+
+        form.process()
+
         form.name.data = appliance.name
         form.summary.data = appliance.summary
         form.description.data = appliance.description
-
-        form.catalog.choices = self.choices
-        form.catalog.default = appliance.catalog_id
 
         return self.render( 'appliance/edit.html', title = _('Edit Appliance '), form = form, appliance = appliance )
 
@@ -237,6 +241,7 @@ class Edit(LyRequestHandler):
 
         if form.validate():
             appliance.name = form.name.data
+            appliance.os = self.get_int(form.os.data)
             appliance.summary = form.summary.data
             appliance.catalog_id = form.catalog.data
             appliance.description = form.description.data
