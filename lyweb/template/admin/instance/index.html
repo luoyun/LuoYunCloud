@@ -20,6 +20,10 @@
 <p>${ _("Sorted by") } <a href="${ reverse_url('admin:node') }?id=${ SORT_NODE.id }">${ SORT_NODE.hostname } ( ${ SORT_NODE.ip } )</a></p>
 % endif
 
+%if STATUS:
+<p>${ _("View status") } ${ STATUS }</p>
+%endif
+
 
 <div class="admin-instance c">
 
@@ -96,5 +100,9 @@
     <p>#{text}</p>
   </div>
 </div>
+
+%if STATUS:
+<p><a class="orange-submit" href="${ reverse_url('admin:instance') }?status=delete">${ _("View Deleted Instance") }</a></p>
+%endif
 
 </%block>

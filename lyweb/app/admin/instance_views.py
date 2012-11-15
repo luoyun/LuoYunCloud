@@ -17,6 +17,9 @@ from lycustom import has_permission
 from sqlalchemy.sql.expression import asc, desc
 from sqlalchemy import and_
 
+import settings
+from settings import INSTANCE_DELETED_STATUS as DELETED_S
+
 
 class InstanceManagement(LyRequestHandler):
 
@@ -77,7 +80,10 @@ class InstanceManagement(LyRequestHandler):
 
         instances = self.db2.query(Instance)
 
-        if status != 'all':
+        if status == 'delete':
+            instances = instances.filter(
+                Instance.status == DELETED_S )
+        elif status != 'all':
             if status == 'stoped':
                 slist = settings.INSTANCE_SLIST_STOPED
             else: # show running
@@ -113,7 +119,7 @@ class InstanceManagement(LyRequestHandler):
         # TODO: may have a more highly active count ( use id )
         total = instances.count()
 
-        instances = instances.slice(start, stop)
+        instances = instances.slice(start, stop).all()
 
         if total > page_size:
             page_html = Pagination(
@@ -127,7 +133,7 @@ class InstanceManagement(LyRequestHandler):
               'INSTANCE_LIST': instances, 'TOTAL_INSTANCE': total,
               'PAGE_HTML': page_html,
               'SORT_USER': U, 'SORT_APPLIANCE': APPLIANCE,
-              'SORT_NODE': NODE }
+              'SORT_NODE': NODE, 'STATUS': status }
 
         self.render( 'admin/instance/index.html', **d )
 
