@@ -89,12 +89,58 @@
   </p>
 
   <p class="subtitle">${ _("Management") }</p>
-  <p>
-    <a class="ly-btn2 small blue" href="${ APPLIANCE.download_url }" target="_blank">${ _("Download") }</a>
-    <a class="ly-btn2 small blue" href="${ reverse_url('appliance:delete', APPLIANCE.id) }">${ _("Delete") }</a>
-  </p>
+
+  <p><a class="blue-submit" href="${ APPLIANCE.download_url }" target="_blank">${ _("Download") }</a></p>
+
+  <div>
+    <a class="red-submit" href="${ reverse_url('appliance:delete', APPLIANCE.id) }" onclick="deleteApplianceConfirm( this ); return false;">${ _("Delete") }</a>
+    <div class="show" style="display:none;">
+      <p class="ywarn">${ _("Would you want to delete appliance %s") % APPLIANCE.id }</p>
+    </div>
+  </div>
 
 </div>
+
+<script type="text/javascript">
+function deleteApplianceConfirm( obj ) {
+
+    var $obj = $(obj);
+
+    $obj.parent().find('.show').dialog({
+	title: "${ _('Are you sure ?') }",
+	resizable: false,
+	height: "auto",
+	minWidth: 420,
+	modal: true,
+	buttons: {
+	    "${ _('Cancel') }": function() {
+		$( this ).dialog( "close" );
+	    },
+	    "${ _('Delete Appliance !') }": function() {
+		$.ajax({
+		    url: $obj.attr("href"),
+		    type: "GET",
+		    success: function(data) {
+			$(data).dialog({
+			    show: "slow",
+			    minWidth: 520,
+			    modal: true
+			});
+                        $obj.parents('tr').remove();
+		    }
+		});
+		$( this ).dialog( "close" );
+	    }
+	},
+        close:function(){
+            $( this ).dialog("destroy");
+        }
+    });
+
+    return false;
+
+}
+</script>
 
 
 </%block>
