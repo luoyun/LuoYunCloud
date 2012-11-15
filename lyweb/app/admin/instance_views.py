@@ -33,9 +33,9 @@ class InstanceManagement(LyRequestHandler):
         instance_id = self.get_argument('id', 0)
         if instance_id:
             self.instance = self.db2.query(Instance).get( instance_id )
-            if self.instance:
+            if self.instance and self.action == 'index':
                 self.action = 'view'
-            else:
+            elif not self.instance:
                 self.write( _('No such instance : %s') % instance_id )
                 return self.finish()
 
@@ -48,6 +48,9 @@ class InstanceManagement(LyRequestHandler):
         elif self.action == 'view':
             self.get_view()
 
+        elif self.action == 'change_owner':
+            self.change_owner()
+
         elif self.action in ['stop_all', 'start_all']:
             self.get_control_all(self.action)
 
@@ -59,6 +62,9 @@ class InstanceManagement(LyRequestHandler):
 
         if not self.action:
             self.write( _('No action found !') )
+
+        elif self.action == 'change_owner':
+            self.change_owner()
 
         else:
             self.write( _('Wrong action value!') )
@@ -192,5 +198,37 @@ class InstanceManagement(LyRequestHandler):
         self.write( _('%s all instance success: %s') % ( action, JID_LIST ) )
 
 
+    def change_owner(self):
 
+        I = self.instance
 
+        d = { 'title': _('Change owner of instance'), 'I': I }
+        
+        E = []
+        U = None
+        
+        if self.request.method == 'POST':
+            user = self.get_argument('user', 0)
+            if user:
+                if user.isdigit():
+                    U = self.db2.query(User).get(user)
+                if not U:
+                    U = self.db2.query(User).filter_by(username=user).first()
+                if not U:
+                    E.append( _('Can not find user: %s') % user )
+            else:
+                E.append( _('No user input !') )
+
+            reason = self.get_argument('reason', '')
+
+            if E:
+                d['ERROR'] = E
+            else:
+                I.user = U
+                self.db2.commit()
+                # TODO: send reason to user
+                url = self.reverse_url('admin:instance')
+                url += '?id=%s' % I.id
+                return self.redirect( url )
+
+        self.render( 'admin/instance/change_owner.html', **d)

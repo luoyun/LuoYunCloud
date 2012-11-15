@@ -87,7 +87,10 @@
 	</tr>
 	<tr>
 	  <td>${ _("Owner") }</td>
-	  <td><a href="${ reverse_url('admin:user') }?id=${ I.user_id }" target="_blank">${ I.user.username }</a></td>
+	  <td>
+	    <a href="${ reverse_url('admin:user') }?id=${ I.user_id }" target="_blank">${ I.user.username }</a>
+	    <a class="blue-submit" href="${ reverse_url('admin:instance') }?id=${ I.id }&action=change_owner">${ _("Change Owner") }</a>
+	  </td>
 	</tr>
 	<tr>
 	  <td>${ _("Domain") }</td>
