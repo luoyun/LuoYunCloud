@@ -149,6 +149,24 @@ class Instance(ORMBase):
         return True
 
 
+    def get_config(self, key=None, value=None):
+        config = json.loads(self.config) if self.config else {}
+
+        if config:
+            return config.get(key, value)
+
+        return None
+
+    def set_config(self, key, value):
+        config = json.loads(self.config) if self.config else {}
+        config[key] = value
+        self.config = json.dumps(config)
+        self.update_config()
+
+    def update_config(self):
+        if self.is_running:
+            self.ischanged = True
+
     def __unicode__(self):
         return self.name
 

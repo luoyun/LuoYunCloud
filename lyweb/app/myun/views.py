@@ -227,13 +227,13 @@ class InstanceView(InstanceManagement):
         storage = config.get('storage', [])
         webssh = config.get('webssh', None)
 
-
         d = { 'I':I, 'JOB_LIST': JOB_LIST,
               'NETWORK_LIST': network,
               'secret_form': secret_form,
               'STORAGE_LIST': storage,
               'webssh': webssh,
-              'TAB': tab }
+              'TAB': tab,
+              'USE_GLOBAL_PASSWD': str(I.get_config('use_global_passwd')) != 'False' }
 
         d['title'] = _('View instance "%s" - My Yun') % I.name
 
@@ -648,6 +648,9 @@ class InstanceEdit(InstanceManagement):
 
             if I.is_running:
                 I.ischanged = True
+
+            I.set_config('use_global_passwd', False)
+
             self.db2.commit()
 
             url = self.reverse_url('myun:instance:view', I.id)

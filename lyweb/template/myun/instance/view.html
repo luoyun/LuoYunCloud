@@ -213,6 +213,11 @@
 
 <div id="tab-content-secret" class="tab-content" style="${ isshow('secret') }">
   <h2>${ _("Password") }</h2>
+  <p>${ _("Use Global Password") } <input type="checkbox"
+	    % if USE_GLOBAL_PASSWD:
+	    checked="checked"
+	    % endif
+	    onclick="simpleToggleCheckbox( this, '${ reverse_url('instance:toggle_flag', I.id) }?target=use_global_passwd', '#use-global-passwd-notify')" /></p>
   <p>
     <a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=password">${ _("Reset Root Password") }</a>
   </p>
@@ -307,6 +312,18 @@
     </tbody>
   </table>
   % endif
+</div>
+
+<div id="use-global-passwd-notify" style="display:none">
+  <div id="basic-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <p>${ _("Toggle Instance use_global_passwd flag Success") }</p>
+  </div>
+  <div id="error-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <h1>${ _("Toggle Instance use_global_passwd flag Failed") }</h1>
+    <p>#{text}</p>
+  </div>
 </div>
 
 <script type="text/javascript">

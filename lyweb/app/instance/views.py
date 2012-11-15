@@ -242,6 +242,10 @@ class InstRequestHandler(LyRequestHandler):
         L = self.get_domain(I).split('.')
         return (L[0], '.'.join(L[1:])) if L else (None, None)
 
+    def set_root_passwd(self, I):
+        x = I.user.profile.get_secret('root_shadow_passwd')
+        I.set_config('passwd_hash', x)
+
 
 
 class Index(InstRequestHandler):
@@ -457,6 +461,8 @@ class InstanceControl(InstRequestHandler):
         # TODO: a temp hack
         self.set_nameservers(instance)
         self.rebinding_domain(instance)
+        if instance.get_config('use_global_passwd', True):
+            self.set_root_passwd(instance)
 
         return self.run_job(instance, JOB_ACTION['RUN_INSTANCE'])
 
@@ -654,6 +660,7 @@ class CreateInstance(InstRequestHandler):
             # TODO
             self.set_ip( instance )
             self.binding_domain( instance )
+            self.set_root_passwd( instance )
 
             url = self.reverse_url('instance:view', instance.id)
             return self.redirect(url)
@@ -730,6 +737,7 @@ class CreateInstance(InstRequestHandler):
         instance.config = json.dumps( config )
         instance.updated = datetime.now()
         self.db2.commit()
+
 
 
 class SetPrivate(InstRequestHandler):
@@ -1134,3 +1142,43 @@ class isprivateToggle(LyRequestHandler):
 
         else:
             self.write( _('Can not find instance %s.') % ID )
+
+
+class ToggleFlag(LyRequestHandler):
+    ''' Toggle the true/false flag for instance attr'''
+
+    @authenticated
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        I = self.db2.query(Instance).get(ID)
+
+        if I:
+            if not ( self.current_user.id == I.user_id or
+                     has_permission('admin') ):
+                return self.write( _('No permissions !') )
+
+            msg = None
+            target = self.get_argument('target', None)
+            if not target:
+                msg = _('No target found !')
+            elif target == 'use_global_passwd':
+                msg = self.toggle_use_global_passwd(I)
+            else:
+                msg = _('Not support target: %s') % target
+
+            if msg: return self.write( msg )
+
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( _('Can not find instance %s.') % ID )
+
+
+    def toggle_use_global_passwd(self, I):
+        s = str(I.get_config('use_global_passwd')) != 'False'
+        I.set_config('use_global_passwd', not s)

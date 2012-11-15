@@ -29,4 +29,6 @@ handlers = [
     url(r'/instance/([0-9]+)/isprivate', instance.isprivateToggle,
         name='instance:isprivate'),
 
+    url(r'/instance/([0-9]+)/toggle_flag', instance.ToggleFlag, name='instance:toggle_flag'),
+
 ]

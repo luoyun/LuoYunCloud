@@ -242,8 +242,13 @@ function simpleToggleCheckbox ( obj, URL, container ) {
 
     $C = $(container).notify()
 
+    if (URL.split('?').length > 1)
+	URL = URL + "&t=" + Math.random()
+    else
+	URL = URL + "?t=" + Math.random()
+
     $.ajax({
-        url: URL + "?t=" + Math.random(),
+        url: URL,
         type: 'GET',
         success: function (data) {
 	    if (data) {
