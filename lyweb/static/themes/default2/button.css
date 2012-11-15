@@ -175,4 +175,137 @@
 }
 
 
+/* take from stackoverflow.com */
 
+.orange-submit, .submit.orange {
+    background: -moz-linear-gradient(center top , #FAA51A, #F47A20) repeat scroll 0 0 transparent;
+    border: 1px solid #E96601;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    float: none;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 16px;
+    padding: 3px 13px;
+    position: relative;
+    text-decoration: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+.orange-submit:hover, .submit.orange:hover, .orange-submit:focus, .submit.orange:focus {
+    background: -moz-linear-gradient(center top , #F69500, #F06400) repeat scroll 0 0 transparent;
+    text-decoration: none;
+}
+.orange-submit:active, .submit.orange:active {
+    background: -moz-linear-gradient(center top , #F47A20, #FAA51A) repeat scroll 0 0 transparent;
+    color: #DDDDDD;
+    top: 1px;
+}
+.orange-submit[disabled], .submit.orange[disabled], .orange-submit.disabled, .submit.orange.disabled {
+    background: none repeat scroll 0 0 #BBBBBB;
+    border: 1px solid #AAAAAA;
+    color: #EEEEEE;
+    cursor: default;
+    top: 0;
+}
+.blue-submit, .submit.blue {
+    background: -moz-linear-gradient(center top , #5E9BE1, #236CC0) repeat scroll 0 0 transparent;
+    border: 1px solid #005FA3;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    float: none;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 16px;
+    padding: 3px 13px;
+    position: relative;
+    text-decoration: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+.blue-submit:hover, .submit.blue:hover, .blue-submit:focus, .submit.blue:focus {
+    background: -moz-linear-gradient(center top , #3789E6, #155CAC) repeat scroll 0 0 transparent;
+    text-decoration: none;
+}
+.blue-submit:active, .submit.blue:active {
+    background: -moz-linear-gradient(center top , #236CC0, #5E9BE1) repeat scroll 0 0 transparent;
+    color: #DDDDDD;
+    top: 1px;
+}
+.blue-submit[disabled], .submit.blue[disabled], .blue-submit.disabled, .submit.blue.disabled {
+    background: none repeat scroll 0 0 #BBBBBB;
+    border: 1px solid #AAAAAA;
+    color: #EEEEEE;
+    cursor: default;
+    top: 0;
+}
+.green-submit, .submit.green {
+    background: -moz-linear-gradient(center top , #55B52F, #3A8C1A) repeat scroll 0 0 transparent;
+    border: 1px solid #3A891A;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    float: none;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 16px;
+    padding: 3px 13px;
+    position: relative;
+    text-decoration: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+.green-submit:hover, .submit.green:hover, .green-submit:focus, .submit.green:focus {
+    background: -moz-linear-gradient(center top , #44A31F, #2C760F) repeat scroll 0 0 transparent;
+    text-decoration: none;
+}
+.green-submit:active, .submit.green:active {
+    background: -moz-linear-gradient(center top , #3A8C1A, #55B52F) repeat scroll 0 0 transparent;
+    color: #DDDDDD;
+    top: 1px;
+}
+.green-submit[disabled], .submit.green[disabled], .green-submit.disabled, .submit.green.disabled {
+    background: none repeat scroll 0 0 #BBBBBB;
+    border: 1px solid #AAAAAA;
+    color: #EEEEEE;
+    cursor: default;
+    top: 0;
+}
+.red-submit, .submit.red {
+    background: -moz-linear-gradient(center top , #D34343, #BC2323) repeat scroll 0 0 transparent;
+    border: 1px solid #9B1C1C;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    float: none;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 16px;
+    padding: 3px 13px;
+    position: relative;
+    text-decoration: none;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+.red-submit:hover, .submit.red:hover, .red-submit:focus, .submit.red:focus {
+    background: -moz-linear-gradient(center top , #D12323, #A81515) repeat scroll 0 0 transparent;
+    text-decoration: none;
+}
+.red-submit:active, .submit.red:active {
+    background: -moz-linear-gradient(center top , #BC2323, #D34343) repeat scroll 0 0 transparent;
+    color: #DDDDDD;
+    top: 1px;
+}
+.red-submit[disabled], .submit.red[disabled], .red-submit.disabled, .submit.red.disabled {
+    background: none repeat scroll 0 0 #BBBBBB;
+    border: 1px solid #AAAAAA;
+    color: #EEEEEE;
+    cursor: default;
+    top: 0;
+}
