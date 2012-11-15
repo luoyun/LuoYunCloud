@@ -523,6 +523,14 @@ class InstanceEdit(InstanceManagement):
             'netmask': nic_netmask,
             'gateway': nic_gateway }
 
+        # A temp hack for second network
+        if index > 1:
+            if index == 2:
+                MAC_TEMP = '52:54:00:26:%02x:%02x'
+            else:
+                MAC_TEMP = '52:54:00:8%s' % (index % 10) + ':%02x:%02x'
+            nic_config['mac'] = MAC_TEMP % (I.id / 256, I.id % 256)
+
         try:
             I.set_network( nic_config, index )
             self.db2.commit()
