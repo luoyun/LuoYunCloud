@@ -45,6 +45,9 @@ class ApplianceManagement(LyRequestHandler):
         elif self.action == 'change_owner':
             self.change_owner()
 
+        elif self.action == 'change_catalog':
+            self.change_catalog()
+
         else:
             self.write( _('Wrong action value!') )
 
@@ -56,6 +59,9 @@ class ApplianceManagement(LyRequestHandler):
 
         elif self.action == 'change_owner':
             self.change_owner()
+
+        elif self.action == 'change_catalog':
+            self.change_catalog()
 
         else:
             self.write( _('Wrong action value!') )
@@ -151,6 +157,38 @@ class ApplianceManagement(LyRequestHandler):
                 return self.redirect( url )
 
         self.render( 'admin/appliance/change_owner.html', **d)
+
+
+    def change_catalog(self):
+
+        CATALOG_LIST = self.db2.query(ApplianceCatalog).all()
+
+        d = { 'title': _('Change catalog of appliance'),
+              'A': self.appliance, 'CATALOG_LIST': CATALOG_LIST }
+
+        E = []
+        U = None
+        
+        if self.request.method == 'POST':
+            cid = self.get_argument('catalog', 0)
+            if cid:
+                C = self.db2.query(ApplianceCatalog).get(cid)
+                if not C:
+                    E.append( _('Can not find catalog %s') % cid )
+            else:
+                E.append( _('No catalog input !') )
+
+            if E:
+                d['ERROR'] = E
+            else:
+                self.appliance.catalog = C
+                self.db2.commit()
+
+                url = self.reverse_url('admin:appliance')
+                url += '?id=%s' % self.appliance.id
+                return self.redirect( url )
+
+        self.render( 'admin/appliance/change_catalog.html', **d)
 
 
 

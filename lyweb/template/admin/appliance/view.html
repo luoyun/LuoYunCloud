@@ -43,7 +43,10 @@
 	</tr>
 	<tr>
 	  <td>${ _("Catalog") }</td>
-	  <td><a href="${ reverse_url('admin:appliance') }?catalog=${ APPLIANCE.catalog_id }" title="${ _("View all appliances in this catalog.") }" target="_blank">${ APPLIANCE.catalog_name }</a></td>
+	  <td>
+	    <a href="${ reverse_url('admin:appliance') }?catalog=${ APPLIANCE.catalog_id }" title="${ _("View all appliances in this catalog.") }" target="_blank">${ APPLIANCE.catalog_name }</a>
+	    <a class="blue-submit" href="${ reverse_url('admin:appliance') }?id=${ APPLIANCE.id }&action=change_catalog">${ _("Change Catalog") }</a>
+	  </td>
 	</tr>
 	<tr>
 	  <td>${ _("Instance") }</td>
