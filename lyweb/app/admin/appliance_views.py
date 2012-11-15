@@ -42,6 +42,9 @@ class ApplianceManagement(LyRequestHandler):
             else:
                 self.get_index()
 
+        elif self.action == 'change_owner':
+            self.change_owner()
+
         else:
             self.write( _('Wrong action value!') )
 
@@ -50,6 +53,9 @@ class ApplianceManagement(LyRequestHandler):
 
         if not self.action:
             self.write( _('No action found !') )
+
+        elif self.action == 'change_owner':
+            self.change_owner()
 
         else:
             self.write( _('Wrong action value!') )
@@ -112,6 +118,39 @@ class ApplianceManagement(LyRequestHandler):
                      CATALOG_LIST = catalogs,
                      APPLIANCE = self.appliance,
                      human_size = human_size )
+
+    def change_owner(self):
+        d = { 'title': _('Change owner of appliance'),
+              'A': self.appliance }
+        
+        E = []
+        U = None
+        
+        if self.request.method == 'POST':
+            user = self.get_argument('user', 0)
+            if user:
+                if user.isdigit():
+                    U = self.db2.query(User).get(user)
+                if not U:
+                    U = self.db2.query(User).filter_by(username=user).first()
+                if not U:
+                    E.append( _('Can not find user: %s') % user )
+            else:
+                E.append( _('No user input !') )
+
+            reason = self.get_argument('reason', '')
+
+            if E:
+                d['ERROR'] = E
+            else:
+                self.appliance.user = U
+                self.db2.commit()
+                # TODO: send reason to user
+                url = self.reverse_url('admin:appliance')
+                url += '?id=%s' % self.appliance.id
+                return self.redirect( url )
+
+        self.render( 'admin/appliance/change_owner.html', **d)
 
 
 

@@ -36,7 +36,10 @@
 	</tr>
 	<tr>
 	  <td>${ _("Owner") }</td>
-	  <td><a href="${ reverse_url('admin:user') }?id=${ APPLIANCE.user.id }">${ APPLIANCE.user.username }</a></td>
+	  <td>
+	    <a href="${ reverse_url('admin:user') }?id=${ APPLIANCE.user.id }">${ APPLIANCE.user.username }</a>
+	    <a class="blue-submit" href="${ reverse_url('admin:appliance') }?id=${ APPLIANCE.id }&action=change_owner">${ _("Change Owner") }</a>
+	  </td>
 	</tr>
 	<tr>
 	  <td>${ _("Catalog") }</td>

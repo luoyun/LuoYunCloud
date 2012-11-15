@@ -343,12 +343,11 @@ function simpleClickConfirm( tag, data ) {
 	    buttons: [{
 		text: data.cancel,
 		"id": "btnCancel",
-		click: data.cancel_func,
+		click: data.cancel_func
 	    }, {
 		text: data.ok,
 		"id": "btnOk",
-		click: data.ok_func,
-		
+		click: data.ok_func
 	    }],
 	    open: function () {
 	

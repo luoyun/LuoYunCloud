@@ -335,3 +335,54 @@ img.medium {
 a.no-text-decoration {
     text-decoration: none;
 }
+
+/* Start small-left-right-form */
+.small-tbform {
+    margin: 10px;
+    padding: 30px 35px;
+    border: 1px solid #BABBBC;
+    border-radius: 3px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    width: 320px;
+    background-color: #FFF;
+}
+.small-tbform form > p > input[type="text"],
+.small-trform form > p > input[type="password"] {
+    height: 2em;
+    width: 300px;
+}
+.small-tbform form > p > label {
+    display: block;
+    color: #777777;
+    font-weight: bold;
+    width: 300px;
+    padding: 4px 5px;
+}
+.small-tbform form > p > input,
+.small-tbform form > p > select {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #DCDCDC;
+    box-shadow: 0 1px 1px #DEDEDE inset;
+    font-size: 14px;
+    padding: 4px 5px;
+    margin: 5px 0 10px;
+}
+.small-tbform form > p > textarea {
+    width: 300px;
+    height: 150px;
+    padding: 4px 5px;
+    margin: 5px 0 10px;
+}
+.small-tbform form > input {
+    margin-left: 240px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+.small-tbform .tips {
+    font-size: 0.9em;
+    color: #BBB9B9;
+    display: inline-block;
+    padding: 4px 10px;
+    font-weight: normal;
+}
+/* End small-left-right-form */
