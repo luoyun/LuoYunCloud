@@ -375,6 +375,7 @@ class Delete(InstRequestHandler):
 
         I.status = DELETED_S
         I.subdomain = '_notexist_%s_' % I.id
+        I.name = '_notexist_%s_' % I.id
         self.db2.commit()
 
         ipassign_list = self.db2.query(IpAssign).filter_by(
