@@ -23,7 +23,7 @@ from lycustom import has_permission
 
 import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
-from settings import JOB_ACTION, JOB_TARGET
+from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
 
 from lycustom import LyRequestHandler, Pagination
 
@@ -425,10 +425,17 @@ class InstanceControl(InstRequestHandler):
             msg = _('Just support run/stop/reboot/query action')
             ret = 1
 
+        T = self.lytrace(
+            ttype = LY_TARGET['INSTANCE'], tid = inst.id,
+            do = _('%s instance') % action )
+        if ret:
+            T.isok = False
+
         inst.updated = datetime.now()
         if inst.ischanged:
             inst.ischanged = False
         self.db2.commit()
+
 
         self.write( {'return_code': ret, 'msg': msg } )
                      

@@ -18,6 +18,7 @@ from tornado.web import RequestHandler
 
 from app.account.models import User
 from app.session.models import Session
+from app.system.models import LyTrace
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
@@ -244,6 +245,24 @@ class LyRequestHandler(RequestHandler):
             return int(value)
         except:
             return default
+
+    def lytrace(self, ttype, tid, do, isok=True, result=None):
+        ip = self.request.remote_ip
+        agent = self.request.headers.get('User-Agent')
+        visit = self.request.uri
+
+        T = LyTrace(self.current_user, ip, agent, visit)
+
+        T.target_type = ttype,
+        T.target_id = tid,
+        T.do = do
+        T.isok = isok
+        T.result = result
+
+        self.db2.add(T)
+        self.db2.commit()
+
+        return T
 
 
 def show_error( E ):

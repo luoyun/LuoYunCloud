@@ -46,4 +46,6 @@ handlers = [
     url( r'/admin/system/sendmail', system.SendMail,
          name='system:sendmail' ),
 
+    url( r'/system/trace', system.LyTraceManage, name='system:trace' ),
+
 ]

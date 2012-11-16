@@ -13,6 +13,7 @@ from app.admin.forms import CatalogForm
 from lycustom import has_permission
 from lytool.filesize import size as human_size
 
+from settings import LY_TARGET
 
 class ApplianceManagement(LyRequestHandler):
 
@@ -149,8 +150,15 @@ class ApplianceManagement(LyRequestHandler):
             if E:
                 d['ERROR'] = E
             else:
+                T = self.lytrace(
+                    ttype = LY_TARGET['APPLIANCE'],
+                    tid = self.appliance.id,
+                    do = _('change appliance owner %s to %s') % (
+                        self.appliance.user.username, U.username) )
+
                 self.appliance.user = U
                 self.db2.commit()
+
                 # TODO: send reason to user
                 url = self.reverse_url('admin:appliance')
                 url += '?id=%s' % self.appliance.id

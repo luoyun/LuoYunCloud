@@ -8,7 +8,8 @@ from tornado.web import authenticated, asynchronous
 
 from sqlalchemy.sql.expression import asc, desc
 
-from app.system.models import LuoYunConfig, NetworkPool, IPPool
+from app.system.models import LuoYunConfig, NetworkPool, IPPool, \
+    LyTrace
 from app.system.forms import BaseinfoForm, DBForm, \
     CLCForm, NameserversForm, NetworkPoolForm, DomainForm, \
     NginxForm, RegistrationProtocolForm, WelcomeNewUserForm, \
@@ -771,4 +772,89 @@ class SendMail(LyRequestHandler):
             if g:
                 L.append(g)
         return L
+
+
+
+class LyTraceManage(LyRequestHandler):
+
+
+    @has_permission('admin')
+    def prepare(self):
+
+        trace_id = self.get_argument('id', 0)
+        if trace_id:
+            T = self.db2.query(LyTrace).get( trace_id )
+
+            if T:
+                self.get_view(T)
+            else:
+                self.write( _('Can not find trace %s') % trace_id )
+
+
+        else: # GET index
+            self.get_index()
+
+        # The End
+        #return self.finish()
+
+
+    def get_index(self):
+
+        page_size = self.get_argument_int('sepa', 10)
+        cur_page = self.get_argument_int('p', 1)
+        by = self.get_argument('by', 'id')
+        sort = self.get_argument('sort', 'DESC')
+        user_id = self.get_argument_int('user', 0)
+        target_type = self.get_argument_int('target_type', None)
+        target_id = self.get_argument_int('target_id', 0)
+        comefrom = self.get_argument('comefrom', None)
+        result = self.get_argument('result', False)
+
+        if by in ['id', 'who_id', 'when', 'comefrom', 'target_type', 'isok']:
+            by_exp = desc(by) if sort == 'DESC' else asc(by)
+        else:
+            return self.write( _('Wrong sort by value: %s') % by )
+
+        start = (cur_page - 1) * page_size
+        stop = start + page_size
+
+
+        # TODO: target sort
+
+        traces = self.db2.query(LyTrace)
+
+        if user_id:
+            user = self.db2.query(User).get(user_id)
+            if user:
+                traces = traces.filter_by(who_id=user_id)
+            else:
+                return self.write( _('Can not find user by id %s') % user_id )
+        else: user = None
+
+        traces = traces.order_by(by_exp).slice(start, stop)
+
+        total = self.db2.query(LyTrace.id).count()
+            
+        pagination = Pagination(
+            total = total,
+            page_size = page_size, cur_page = cur_page )
+
+        page_html = pagination.html( self.get_page_url )
+
+
+        d = { 'title': _('Trace system action'),
+              'TRACE_LIST': traces, 'PAGE_HTML': page_html,
+              'USER': user, 'TOTAL_TRACE': total }
+
+        self.render( 'system/traces.html', **d )
+
+
+
+    def get_view(self):
+        catalogs = self.db2.query(ApplianceCatalog).all()
+        self.render( 'admin/appliance/view.html',
+                     title = _('View Appliance %s') % self.appliance.name,
+                     CATALOG_LIST = catalogs,
+                     APPLIANCE = self.appliance,
+                     human_size = human_size )
 

@@ -19,6 +19,7 @@ from sqlalchemy import and_
 
 import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
+from settings import LY_TARGET
 
 
 class InstanceManagement(LyRequestHandler):
@@ -224,6 +225,11 @@ class InstanceManagement(LyRequestHandler):
             if E:
                 d['ERROR'] = E
             else:
+                T = self.lytrace(
+                    ttype = LY_TARGET['INSTANCE'], tid = I.id,
+                    do = _('change instance owner %s to %s') % (
+                        I.user.username, U.username) )
+
                 I.user = U
                 self.db2.commit()
                 # TODO: send reason to user
