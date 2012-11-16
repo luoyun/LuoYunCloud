@@ -154,16 +154,16 @@ class User(ORMBase):
     def avatar_mini_url(self):
 
         # TODO: hack !!!
-        print 'self.id = ', self.id
-        print 'self.avatar_mini_path = ', self.avatar_mini_path
+        #print 'self.id = ', self.id
+        #print 'self.avatar_mini_path = ', self.avatar_mini_path
         if not os.path.exists(self.avatar_mini_path):
             if os.path.exists(self.avatar_path):
                 p = self.avatar_path
             else:
                 p = 'user/%s/avatar' % self.id
-            print 'p = ', p
+            #print 'p = ', p
             avatar = os.path.join( settings.STATIC_PATH, p )
-            print 'avatar = ', avatar
+            #print 'avatar = ', avatar
             if os.path.exists(avatar):
                 import Image
                 try:
@@ -180,7 +180,7 @@ class User(ORMBase):
         else:
             url = settings.USER_AVATAR_MINI_DEFAULT
 
-        print 'url = ', url
+        #print 'url = ', url
         return url
 
     @property
