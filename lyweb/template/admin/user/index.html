@@ -43,13 +43,8 @@
       <tr>
         <td>${ U.id }</td>
         <td class="username">
-	  <span title="<ul><li>${ _('Last Active') }: ${ U.last_entry }</li>
-% if U.description:
-<li>${ U.description }</li>
-% endif
-</ul>">
-	    <img src="${ static_url( U.avatar_mini_url ) }" /><a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a>
-	  </span>
+	  <img src="${ static_url( U.avatar_mini_url ) }" />
+	  <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a>
 	</td>
 	<td><input type="checkbox"
 		   % if U.islocked:

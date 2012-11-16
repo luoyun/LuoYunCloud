@@ -105,6 +105,7 @@ body {
 
 #header {
     background-color: #3B5998; /*#3C9EDF;*/
+    border-bottom: 1px solid #DCDCDC;
 /*
     position:fixed;
     top:0;

@@ -4,11 +4,8 @@
 <link rel="stylesheet" href="${ theme_url('admin-appliance.css') }" />
 </%block>
 
-<%block name="submenu">
-<a href="${ reverse_url('admin:appliance') }">${ _("Appliances") }</a>
-<a href="${ reverse_url('admin:appliance:catalog') }">${ _("Catalog") }</a>
-<script type="text/javascript">
-  $("#admin-menu a").removeClass("current");
-  $("#admin-menu a.appliance-entry").addClass("current");
-</script>
+<%block name="submenujs">
+$("#admin-menu #appliance-item").addClass("current");
+$("#submenu .item").hide();
+$("#appliance-item-submenu").show();
 </%block>

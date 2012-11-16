@@ -5,10 +5,8 @@
 <script type="text/javascript" src="${ static_url('js/admin-instance.js') }"></script>
 </%block>
 
-<%block name="submenu">
-<a href="${ reverse_url('admin:instance') }">${ _("Instances") }</a>
-<script type="text/javascript">
-  $("#admin-menu a").removeClass("current");
-  $("#admin-menu a.instance-entry").addClass("current");
-</script>
+<%block name="submenujs">
+$("#admin-menu #instance-item").addClass("current");
+$("#submenu .item").hide();
+$("#instance-item-submenu").show();
 </%block>

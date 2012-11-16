@@ -338,3 +338,36 @@ function simpleClickConfirm( tag, data ) {
 
     });
 }
+
+
+function topMenuHover() {
+    $("#admin-menu a").hover(
+	function () {
+	    clearTimeout( $(this).data('hideID') );
+
+	    var tag = '#' + $(this).attr("id") + "-submenu";
+
+	    var ID = setTimeout( function() {
+		$("#submenu .item").hide();
+		$(tag).show();
+		$(this).addClass('hover');
+	    }, 250);
+
+	    $(this).data('showID', ID);
+	},
+	function () {
+	}
+    );
+
+    $("#submenu").hover(
+	function(){
+	},
+	function(){
+	    var tag = $('#admin-menu').find('.current').attr('id');
+	    tag = '#' + tag + '-submenu';
+	    $('#submenu .item').hide();
+	    $(tag).show();
+	}
+    );
+
+}

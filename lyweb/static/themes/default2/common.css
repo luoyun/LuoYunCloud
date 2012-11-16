@@ -448,4 +448,5 @@ a.no-text-decoration {
 #ly-account-menu .add-menu a {
     display: inline-block;
     padding: 6px 10px;
+    text-decoration: none;
 }

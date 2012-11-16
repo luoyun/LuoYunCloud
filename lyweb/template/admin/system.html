@@ -1,20 +1,7 @@
 <%inherit file="admin_base.html"/>
 
-<%block name="submenu">
-<a href="${ reverse_url('system:baseinfo:edit') }">${ _("Baseinfo") }</a>
-<a href="${ reverse_url('system:db:edit') }">${ _("DB") }</a>
-<a href="${ reverse_url('system:clc:edit') }">${ _("Control Server") }</a>
-<a href="${ reverse_url('system:nameservers:edit') }">${ _("Nameservers") }</a>
-<a href="${ reverse_url('system:networkpool') }">${ _("IP Address Pool") }</a>
-<a href="${ reverse_url('system:domain:edit') }">${ _("Domain") }</a>
-<a href="${ reverse_url('system:nginx:edit') }">${ _("Nginx") }</a>
-<a href="${ reverse_url('system:protocol:edit') }">${ _("Registration Policy") }</a>
-<a href="${ reverse_url('system:welcome:edit') }">${ _("Welcome New User") }</a>
-<a href="${ reverse_url('system:sendmail') }">${ _("Send Mail") }</a>
-<a href="${ reverse_url('admin:job') }">${ _("Job") }</a>
-<a href="${ reverse_url('system:trace') }">${ _("Action History") }</a>
-<script type="text/javascript">
-  $("#admin-menu a").removeClass("current");
-  $("#admin-menu a.system-entry").addClass("current");
-</script>
+<%block name="submenujs">
+$("#admin-menu #system-item").addClass("current");
+$("#submenu .item").hide();
+$("#system-item-submenu").show();
 </%block>

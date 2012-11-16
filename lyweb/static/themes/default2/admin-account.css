@@ -23,3 +23,19 @@
     display: inline-block;
     margin: 0 5px;
 }
+
+#aul .username img, #aul .username a {
+    display: inline-block;
+    float: left;
+}
+#aul .username img {
+    border: 1px solid #DCDCDC;
+    border-radius: 100px;
+    background-color: #FFF;
+}
+#aul .username a {
+    padding: 7px 3px;
+}
+#aul a {
+    text-decoration: none;
+}
