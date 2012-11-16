@@ -386,3 +386,66 @@ a.no-text-decoration {
     font-weight: normal;
 }
 /* End small-left-right-form */
+
+
+#ly-account-menu {
+    float: right;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+#ly-account-menu .hover {
+    background-color: #FFF;
+    border-left: 1px solid #DCDCDC;
+    border-right: 1px solid #DCDCDC;
+    height: 42px;
+}
+#ly-account-menu .show {
+    padding: 0;
+    cursor: pointer;
+    width: 130px;
+}
+#ly-account-menu .text {
+    float: right;
+    display: inline-block;
+    padding: 8px 2px 5px;
+    margin: 5px;
+    color: #FFF;
+    font-weight: bold;
+}
+#ly-account-menu .hover .text {
+    color: #3B5998;
+}
+#ly-account-menu .user-avatar {
+    float: right;
+    width: 32px;
+    height: 32px;
+    margin: 3px;
+    border-radius: 100px;
+    border: 1px solid #FFF;
+    box-shadow:1px 1px 10px #06C;
+    background-color: #FFF;
+}
+#ly-account-menu img.r_i {
+    margin:12px 5px;
+}
+#ly-account-menu .add-menu {
+    padding: 12px 6px;
+    background: #FFF;
+    border-left: 1px solid #DCDCDC;
+    border-right: 1px solid #DCDCDC;
+    border-bottom: 1px solid #DCDCDC;
+    border-radius: 0 0 3px 3px;
+/*
+    box-shadow:1px 2px 5px rgba(73, 100, 172, .5);
+    width: 117px;
+*/
+    position: absolute;
+    top: 42px;
+    right: 0px;
+    z-index: 3px;
+}
+#ly-account-menu .add-menu a {
+    display: inline-block;
+    padding: 6px 10px;
+}

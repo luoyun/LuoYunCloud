@@ -228,33 +228,6 @@ function setCurrent() {
 }
 
 
-function showHide( tag ) {
-
-    var $hide = $(tag).find('.hide');
-
-    $(tag).hover(
-	function () {
-	    clearTimeout( $(this).data('hideID') );
-
-	    var ID = setTimeout( function() {
-		$hide.show();
-	    }, 100);
-
-	    $(this).data('showID', ID);
-	},
-	function () {
-	    clearTimeout( $(this).data('showID') );
-
-	    var ID = setTimeout( function() {
-		$hide.hide();
-	    }, 100);
-
-	    $(this).data('hideID', ID);
-	}
-    );
-}
-
-
 
 function ajaxTuneValue ( obj, container, value ) {
 

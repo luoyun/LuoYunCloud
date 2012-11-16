@@ -17,6 +17,7 @@ p {
 #header {
     background-color: #578BB8; /*#54060D; #35383B;*/
     height: 42px;
+    padding: 0px 10px;
 }
 #logo {
     float: left;
@@ -88,15 +89,6 @@ p {
 
 #right-menu {
     float: right;
-}
-.inbox-count {
-    font-weight: 900;
-    color: #B5F99E !important;
-    border-left: 2px solid #DFE6ED;
-    border-right: 2px solid #DFE6ED;
-    border-radius: 10px;
-    padding: 0px 8px;
-    margin-left: 10px;
 }
 /* End Header */
 

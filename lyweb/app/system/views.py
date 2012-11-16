@@ -831,7 +831,7 @@ class LyTraceManage(LyRequestHandler):
                 return self.write( _('Can not find user by id %s') % user_id )
         else: user = None
 
-        traces = traces.order_by(by_exp).slice(start, stop)
+        traces = traces.order_by(by_exp).slice(start, stop).all()
 
         total = self.db2.query(LyTrace.id).count()
             
