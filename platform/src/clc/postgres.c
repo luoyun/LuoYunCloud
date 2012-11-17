@@ -186,11 +186,11 @@ int db_node_find(int type, void * data, DBNodeRegInfo * db_nf)
     char sql[LINE_MAX];
     if (type == DB_NODE_FIND_BY_IP)
         ret = snprintf(sql, LINE_MAX,
-                       "SELECT id, status, ip, key, isenable from node "
+                       "SELECT id, status, ip, key, vcpus, vmemory, isenable from node "
                        "where ip = '%s' order by key DESC;", (char *)data);
     else if (type == DB_NODE_FIND_BY_ID)
         ret = snprintf(sql, LINE_MAX,
-                       "SELECT id, status, ip, key, isenable from node "
+                       "SELECT id, status, ip, key, vcpus, vmemory, isenable from node "
                        "where id = %d order by key DESC;", *(int *)data);
     else {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
@@ -216,7 +216,9 @@ int db_node_find(int type, void * data, DBNodeRegInfo * db_nf)
         s = PQgetvalue(res, 0, 3);
         if (s && strlen(s))
             db_nf->secret = strdup(s);
-        s = PQgetvalue(res, 0, 4);
+        db_nf->cpu_vlimit = atoi(PQgetvalue(res, 0, 4));
+        db_nf->mem_vlimit = atoi(PQgetvalue(res, 0, 5));
+        s = PQgetvalue(res, 0, 6);
         db_nf->enabled = s[0] == 't' ? 1 : 0;
     }
     if (ret > 1) {
@@ -335,12 +337,15 @@ int db_node_insert(NodeInfo * nf)
     if (snprintf(sql, LINE_MAX,
                  "INSERT INTO node (id, hostname, ip, arch, memory, "
                  "status, cpus, cpu_model, "
+                 "vcpus, vmemory, "
                  "cpu_mhz, created, updated) "
                  "VALUES (nextval('node_id_seq'), '%s', '%s', %d, %d, "
                  "%d, %d, '%s', "
+                 "%d, %d, "
                  "%d, 'now', 'now');",
                  nf->host_name, nf->host_ip, nf->cpu_arch, nf->mem_max,
                  nf->status, nf->cpu_max, nf->cpu_model,
+                 nf->cpu_vlimit, nf->mem_vlimit,
                  nf->cpu_mhz) >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);        
         return -1;

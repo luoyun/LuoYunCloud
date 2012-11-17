@@ -58,6 +58,7 @@ typedef enum LYAction_t {
      LY_A_CLC_SCAN_NODE = 101,
      LY_A_CLC_ENABLE_NODE = 102,
      LY_A_CLC_DISABLE_NODE = 103,
+     LY_A_CLC_CONFIG_NODE = 104,
      LY_A_CLC_REGISTER_NODE = 111,
 
      /* 
@@ -110,7 +111,7 @@ typedef enum LYActionStatus_t {
      LY_S_FINISHED_FAILURE_NODE_NOT_ENABLED = 323,
      LY_S_FINISHED_FAILURE_NODE_NOT_ONLINE = 324,
      LY_S_FINISHED_FAILURE_NODE_NOT_REGISTERED = 325,
-     LY_S_FINISHED_FAILURE_APP_NOT_AVAIL = 331,
+     LY_S_FINISHED_FAILURE_APP_DOWNLOAD = 331,
      LY_S_FINISHED_FAILURE_APP_ERROR = 332,
      LY_S_FINISHED_LAST_STATUS = 399,
      LY_S_WAITING = 400,
@@ -360,9 +361,11 @@ typedef struct NodeInfo_t {
     unsigned int storage_total;
     unsigned int storage_free;
     unsigned int mem_max;
+    unsigned int mem_vlimit;
     unsigned int mem_free;
     unsigned int mem_commit;
     unsigned int cpu_max;
+    unsigned int cpu_vlimit;
     unsigned int cpu_commit;
     unsigned int cpu_mhz;
     unsigned int cpu_arch;          /* cpu arch */

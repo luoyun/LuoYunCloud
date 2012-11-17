@@ -1,6 +1,11 @@
 # Configuration file for LuoYun cloud controller
 
 #
+# LYWeb config file
+#
+LYWEB_CONF_PATH = /opt/LuoYun/web/luoyun.cfg
+
+#
 # Multicast IP/Port CLC uses to request node registration
 #
 LYCLC_MCAST_IP = @DEFAULT_CLC_MCAST_IP@
@@ -50,6 +55,12 @@ LYCLC_LOG_PATH = @DEFAULT_LYCLC_LOG_PATH@
 LYCLC_PID_PATH = @DEFAULT_LYCLC_PID_PATH@
 
 # 
+# Job Timeouts
+#
+LYCLC_JOB_TIMEOUT_INSTANCE = @DEFAULT_JOB_TIMOUT_INSTANCE@
+LYCLC_JOB_TIMEOUT_NODE = @DEFAULT_JOB_TIMOUT_NODE@
+
+# 
 # CPU/Memory factors for calculating node resource limit
 #
 LYCLC_NODE_CPU_FACTOR = 4
@@ -61,7 +72,7 @@ LYCLC_NODE_MEM_FACTOR = 2
 # if the available space under LYNODE_DATA_DIR is below this setting,
 # new instance won't be allowed to be created on this node
 #
-LYCLC_NODE_STORAGE_LOW = 50
+LYCLC_NODE_STORAGE_LOW = @DEFAULT_NODE_STORAGE_LOW@
 
 #
 # Virtual Machine name prefix, must be less than 10 characters long

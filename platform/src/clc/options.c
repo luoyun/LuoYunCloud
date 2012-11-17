@@ -53,6 +53,7 @@ static struct option const long_opts[] = {
     {"debug", no_argument, NULL, 'd'},
     {"daemon", no_argument, NULL, 'D'},
     {"config", required_argument, NULL, 'c'},
+    {"web", required_argument, NULL, 'w'},
     {"log", required_argument, NULL, 'l'},
     {GETOPT_HELP_OPTION_DECL},
     {GETOPT_VERSION_OPTION_DECL},
@@ -74,7 +75,7 @@ static struct option const long_opts[] = {
 static int __parse_opt(int argc, char *argv[], CLCConfig * c)
 {
     int ret = 0, opt = 0;
-    const char *const short_options = "c:hdDl:V";
+    const char *const short_options = "c:hdDl:Vw:";
 
     while (1) {
         // getopt_long stores the option index here.
@@ -94,6 +95,12 @@ static int __parse_opt(int argc, char *argv[], CLCConfig * c)
         case 'c':
             c->conf_path = strdup(optarg);
             if (c->conf_path == NULL)
+                return CLC_CONFIG_RET_ERR_NOMEM;
+            break;
+
+        case 'w':
+            c->web_conf_path = strdup(optarg);
+            if (c->web_conf_path == NULL)
                 return CLC_CONFIG_RET_ERR_NOMEM;
             break;
 
@@ -153,13 +160,14 @@ static int __parse_opt(int argc, char *argv[], CLCConfig * c)
 #include <ini_config.h>
 
 /* *v == NULL require space to be allocated */
-static int __parse_oneitem_str(const char *k, char **v, int vlen,
-                               struct collection_item *ini)
+static int __parse_oneitem_str_section(const char *k, char **v, int vlen,
+                                       struct collection_item *ini,
+                                       const char *section)
 {
     struct collection_item *item;
     int error;
 
-    if (get_config_item(NULL, k, ini, &item)) {
+    if (get_config_item(section, k, ini, &item)) {
         logsimple(_("error reading value for %s\n"), k);
         return CLC_CONFIG_RET_ERR_CONF;
     }
@@ -189,13 +197,20 @@ static int __parse_oneitem_str(const char *k, char **v, int vlen,
     return 0;
 }
 
-static int __parse_oneitem_int(const char *k, int *v,
+static int __parse_oneitem_str(const char *k, char **v, int vlen,
                                struct collection_item *ini)
+{
+    return __parse_oneitem_str_section(k, v, vlen, ini, NULL);
+}
+
+static int __parse_oneitem_int_section(const char *k, int *v,
+                                       struct collection_item *ini,
+                                       const char *section)
 {
     struct collection_item *item;
     int error;
 
-    if (get_config_item(NULL, k, ini, &item)) {
+    if (get_config_item(section, k, ini, &item)) {
         logsimple(_("error reading value for %s\n"), k);
         return CLC_CONFIG_RET_ERR_CONF;
     }
@@ -213,6 +228,12 @@ static int __parse_oneitem_int(const char *k, int *v,
     }
 
     return 0;
+}
+
+static int __parse_oneitem_int(const char *k, int *v,
+                               struct collection_item *ini)
+{
+    return __parse_oneitem_int_section(k, v, ini, NULL);
 }
 
 static int __parse_config(CLCConfig * c)
@@ -236,10 +257,6 @@ static int __parse_config(CLCConfig * c)
                             0, ini_config) ||
         __parse_oneitem_int("LYCLC_MCAST_PORT", &c->clc_mcast_port,
                             ini_config) ||
-        __parse_oneitem_str("LYCLC_IP", &c->clc_ip,
-                            0, ini_config) ||
-        __parse_oneitem_int("LYCLC_PORT", &c->clc_port,
-                            ini_config) ||
         __parse_oneitem_str("LYCLC_DATA_DIR", &c->clc_data_dir,
                             0, ini_config) ||
         __parse_oneitem_str("LYCLC_PID_PATH", &c->pid_path,
@@ -254,12 +271,17 @@ static int __parse_config(CLCConfig * c)
                             ini_config) ||
         __parse_oneitem_int("LYCLC_NODE_SELECT", &c->node_select,
                             ini_config) ||
-        __parse_oneitem_str("LYCLC_DB_NAME", &c->db_name,
-                            0, ini_config) ||
-        __parse_oneitem_str("LYCLC_DB_USERNAME", &c->db_user,
-                            0, ini_config) ||
-        __parse_oneitem_str("LYCLC_DB_PASSWORD", &c->db_pass,
-                            0, ini_config))
+        __parse_oneitem_int("LYCLC_JOB_TIMEOUT_INSTANCE", &c->job_timeout_instance,
+                            ini_config) ||
+        __parse_oneitem_int("LYCLC_JOB_TIMEOUT_NODE", &c->job_timeout_node,
+                            ini_config))
+        return CLC_CONFIG_RET_ERR_CONF;
+
+    if ((c->clc_ip == NULL && __parse_oneitem_str("LYCLC_IP", &c->clc_ip, 0, ini_config)) ||
+        (c->clc_port == 0 && __parse_oneitem_int("LYCLC_PORT", &c->clc_port, ini_config)) ||
+        (c->db_name == NULL && __parse_oneitem_str("LYCLC_DB_NAME", &c->db_name, 0, ini_config)) ||
+        (c->db_user == NULL && __parse_oneitem_str("LYCLC_DB_USERNAME", &c->db_user, 0, ini_config)) ||
+        (c->db_pass == NULL && __parse_oneitem_str("LYCLC_DB_PASSWORD", &c->db_pass, 0, ini_config)))
         return CLC_CONFIG_RET_ERR_CONF;
 
     if (c->daemon == UNDEFINED_CFG_INT) {
@@ -275,6 +297,11 @@ static int __parse_config(CLCConfig * c)
             ("LYCLC_LOG_PATH", &c->log_path, 0, ini_config))
             return CLC_CONFIG_RET_ERR_CONF;
     }
+    if (c->web_conf_path == NULL) {
+        if (__parse_oneitem_str
+            ("LYWEB_CONF_PATH", &c->web_conf_path, 0, ini_config))
+            return CLC_CONFIG_RET_ERR_CONF;
+    }
 
     if (ini_config)
         free_ini_config(ini_config);
@@ -284,6 +311,42 @@ static int __parse_config(CLCConfig * c)
 
     return 0;
 }
+
+static int __parse_web_config(CLCConfig * c)
+{
+    if (c == NULL)
+        return CLC_CONFIG_RET_ERR_UNKNOWN;
+
+    struct collection_item *ini_config = NULL;
+    struct collection_item *error_set = NULL;
+
+    if (config_from_file(PROGRAM_NAME, c->web_conf_path,
+                         &ini_config, INI_STOP_ON_NONE, &error_set)) {
+        logsimple(_("error while reading %s\n"), c->web_conf_path);
+        return CLC_CONFIG_RET_ERR_WEBCONF;
+    }
+
+    if ((c->clc_ip == NULL &&
+          __parse_oneitem_str_section("clc_ip", &c->clc_ip, 0, ini_config, "clc")) ||
+        (c->clc_port == 0 &&
+          __parse_oneitem_int_section("clc_port", &c->clc_port, ini_config, "clc")) ||
+        (c->db_name == NULL &&
+          __parse_oneitem_str_section("db_name", &c->db_name, 0, ini_config, "db")) ||
+        (c->db_user == NULL &&
+          __parse_oneitem_str_section("db_user", &c->db_user, 0, ini_config, "db")) ||
+        (c->db_pass == NULL &&
+          __parse_oneitem_str_section("db_password", &c->db_pass, 0, ini_config, "db")))
+         return CLC_CONFIG_RET_ERR_WEBCONF;
+
+    if (ini_config)
+        free_ini_config(ini_config);
+
+    if (error_set)
+        free_ini_config_errors(error_set);
+
+    return 0;
+}
+
 
 #include <arpa/inet.h>
 static int __is_IP_valid(char *ip, int mcast)
@@ -320,6 +383,8 @@ Usage : %s [OPTION]\n\n\
 
     printf(_("  -c, --config    Specify the config file\n"
              "                  default is " DEFAULT_LYCLC_CONF_PATH " \n"
+             "  -w, --web       web config file, must be full path\n"
+             "                  default is empty\n"
              "  -l, --log       log file, must be full path\n"
              "                  default is " DEFAULT_LYCLC_LOG_PATH " \n"
              "  -D, --daemon    run as a daemon\n"
@@ -343,6 +408,7 @@ int clc_config(int argc, char *argv[], CLCConfig * c)
     c->daemon = UNDEFINED_CFG_INT;
     c->debug = UNDEFINED_CFG_INT;
     c->conf_path = NULL;
+    c->web_conf_path = NULL;
     c->log_path = NULL;
     c->pid_path = NULL;
     c->db_name = NULL;
@@ -362,6 +428,17 @@ int clc_config(int argc, char *argv[], CLCConfig * c)
     }
     //else if (file_not_exist(c->conf_path))
     //    return CLC_CONFIG_RET_ERR_ERRCONF;
+
+    /* read web config file first */
+    if (c->web_conf_path && access(c->web_conf_path, R_OK) == 0) {
+        ret = __parse_web_config(c);
+        if (ret && ret != CLC_CONFIG_RET_ERR_NOCONF)
+            return ret; /* to exit programe */
+        if (strcmp(c->clc_ip, "127.0.0.1") == 0) {
+            free(c->clc_ip);
+            c->clc_ip = NULL;
+        }
+    }
 
     /* parse config file */
     if (access(c->conf_path, R_OK) == 0) {
@@ -421,6 +498,12 @@ int clc_config(int argc, char *argv[], CLCConfig * c)
     if (c->node_select < NODE_SELECT_ANY || 
         c->node_select > NODE_SELECT_LAST_ONLY)
         c->node_select = NODE_SELECT_LAST_ONLY;
+    if (c->job_timeout_instance  == 0)
+        c->job_timeout_instance = DEFAULT_JOB_TIMOUT_INSTANCE;
+    if (c->job_timeout_node == 0)
+        c->job_timeout_node = DEFAULT_JOB_TIMOUT_NODE;
+    if (c->job_timeout_other == 0)
+        c->job_timeout_other = DEFAULT_JOB_TIMOUT_OTHER;
  
     /* simple configuration validity checking */
     if (c->vm_name_prefix && strlen(c->vm_name_prefix) > 10) {

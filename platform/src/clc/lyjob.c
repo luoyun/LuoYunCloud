@@ -630,6 +630,46 @@ int __job_node_disable(LYJobInfo * job)
     return 0;
 }
 
+/* node config */
+int __job_node_config(LYJobInfo * job)
+{
+    int ent_id= ly_entity_find_by_db(LY_ENTITY_NODE, job->j_target_id);
+    logdebug(_("config node %d on entity %d\n"), job->j_target_id, ent_id);
+
+    /* node has to be online first */
+    if (!ly_entity_is_online(ent_id))
+        goto done;
+
+    NodeInfo *nf = ly_entity_data(ent_id);
+    if (nf == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        goto fail;
+    }
+
+    DBNodeRegInfo db_nf;
+    bzero(&db_nf, sizeof(DBNodeRegInfo));
+    int db_id = ly_entity_db_id(ent_id);
+
+    if (db_node_find(DB_NODE_FIND_BY_ID, &db_id, &db_nf) == 1) {
+        nf->cpu_vlimit = db_nf.cpu_vlimit;
+        nf->mem_vlimit = db_nf.mem_vlimit;
+        loginfo(_("node config: %d %d\n"), nf->cpu_vlimit, nf->mem_vlimit);
+        goto done;
+    }
+    else {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        goto fail;
+   }
+
+done:
+    job_update_status(job, JOB_S_FINISHED);
+    return 0;
+fail:
+    job_update_status(job, JOB_S_FAILED);
+    return -1;
+}
+
+
 /* query osm */
 static int __job_query_osm(LYJobInfo * job)
 {
@@ -681,6 +721,11 @@ static int __job_run(LYJobInfo * job)
     case LY_A_CLC_DISABLE_NODE:
         logdebug(_("run job, node disable.\n"));
         __job_node_disable(job);
+        break;
+
+    case LY_A_CLC_CONFIG_NODE:
+        logdebug(_("run job, node config.\n"));
+        __job_node_config(job);
         break;
 
     case LY_A_NODE_RUN_INSTANCE:
@@ -744,11 +789,11 @@ int job_dispatch(void)
                  JOB_IS_WAITING(job->j_status) ||
                  JOB_IS_PENDING(job->j_status)) {
             if (job->j_target_type == JOB_TARGET_INSTANCE)
-                timeout = INSTANCE_JOB_TIMEOUT;
+                timeout = g_c->job_timeout_instance;
             else if (job->j_target_type == JOB_TARGET_NODE)
-                timeout = NODE_JOB_TIMEOUT;
+                timeout = g_c->job_timeout_node;
             else
-                timeout = DEFAULT_JOB_TIMEOUT;
+                timeout = g_c->job_timeout_other;
             if ((now - job->j_started) > timeout) {
                 logwarn(_("job %d timed out\n"), job->j_id);
                 job_update_status(job, JOB_S_TIMEOUT);

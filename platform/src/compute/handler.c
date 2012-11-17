@@ -380,12 +380,6 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
                         logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "net type");
                         goto out;
                     }
-                    if (strcmp(net_type->u.string.ptr, "nat") == 0) 
-                        type = NULL;
-                    else if (strcmp(net_type->u.string.ptr, "bridge") && strcmp(net_type->u.string.ptr, "default")) {
-                        logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, error);
-                        goto out;
-                    }
                 }
                 if (type == NULL || strcmp(type, "default") == 0 || strncmp(type, "virbr", 5) == 0) {
                     if (g_c->config.vm_xml_net_nat)
@@ -801,16 +795,39 @@ static int __domain_run(NodeCtrlInstance * ci)
         }
         /* download appliance */
         if (new_app) {
+            ret = LY_S_FINISHED_FAILURE_APP_DOWNLOAD;
             loginfo(_("downloading %s from %s ...\n"), ci->app_name, ci->app_uri);
             __send_response(g_c->wfd, ci, LY_S_RUNNING_DOWNLOADING_APP);
             if (lyutil_download(ci->app_uri, path)) {
-                logwarn(_("downloading %s from %s failed.\n"), 
-                           ci->app_name, ci->app_uri);
+                logwarn(_("downloading %s from %s failed, %s.\n"), 
+                           ci->app_name, ci->app_uri, "file not downloaded");
                 unlink(path);
                 __file_lock_put(g_c->config.app_data_dir, app_idstr);
                 goto out_unlock;
             }
-            loginfo(_("checking checksum ...\n"));
+            if (access(path, F_OK)) {
+                logerror(_("downloading %s from %s failed, %s.\n"),
+                           ci->app_name, ci->app_uri, "file not exist");
+                unlink(path);
+                __file_lock_put(g_c->config.app_data_dir, app_idstr);
+                goto out_unlock;
+            }
+            struct stat statbuf;
+            if (stat(path, &statbuf)) {
+                logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
+                            strerror(errno), errno);
+                unlink(path);
+                __file_lock_put(g_c->config.app_data_dir, app_idstr);
+                goto out_unlock;
+            }
+            if (statbuf.st_size < 1000000) {
+                logerror(_("downloading %s from %s failed, %s.\n"),
+                           ci->app_name, ci->app_uri, "file too small");
+                unlink(path);
+                __file_lock_put(g_c->config.app_data_dir, app_idstr);
+                goto out_unlock;
+            }
+            loginfo(_("verifying checksum...\n"));
             __send_response(g_c->wfd, ci, LY_S_RUNNING_CHECKING_APP);
             if (lyutil_checksum(path, ci->app_checksum)) {
                 logwarn(_("%s checksum(%s) failed.\n"), ci->app_name, ci->app_checksum);
@@ -818,6 +835,7 @@ static int __domain_run(NodeCtrlInstance * ci)
                 __file_lock_put(g_c->config.app_data_dir, app_idstr);
                 goto out_unlock;
             }
+            ret = -1;
         }
         /* done with appliance, release lock */
         if (__file_lock_put(g_c->config.app_data_dir, app_idstr) < 0) {
@@ -852,6 +870,7 @@ static int __domain_run(NodeCtrlInstance * ci)
     snprintf(path_ins, PATH_MAX, "%s/%d/%s", g_c->config.ins_data_dir,
                                   ci->ins_id, LUOYUN_INSTANCE_DISK_FILE);
     if (access(path_ins, F_OK)) {
+        ret = LY_S_FINISHED_FAILURE_APP_ERROR;
         ins_create_new = 1;
         snprintf(path, PATH_MAX, "%s/%d/%s", g_c->config.app_data_dir,
                                   ci->app_id, LUOYUN_APPLIANCE_FILE);
@@ -873,6 +892,7 @@ static int __domain_run(NodeCtrlInstance * ci)
             logerror(_("instance disk file(%s) not exist\n"), path_ins);
             goto out_insclean;
         }
+        ret = -1;
     }
 
     /* use disk offset to determine using xen or kvm */

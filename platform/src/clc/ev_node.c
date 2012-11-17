@@ -38,6 +38,9 @@
 #include "entity.h"
 #include "postgres.h"
 
+#define NODE_SCHEDULE_CPU_LIMIT(n) (n*g_c->node_cpu_factor)
+#define NODE_SCHEDULE_MEM_LIMIT(m) (m*g_c->node_mem_factor)
+
 /* node register and authtication */
 static int __node_register_auth(NodeInfo * nf, int ent_id)
 {
@@ -63,6 +66,8 @@ static int __node_register_auth(NodeInfo * nf, int ent_id)
             logwarn(_("tagged node ip changed from %s to %s\n"),
                        db_nf.ip, nf->host_ip);
 
+        nf->cpu_vlimit = db_nf.cpu_vlimit;
+        nf->mem_vlimit = db_nf.mem_vlimit;
         ly_entity_enable(ent_id, db_nf.id, db_nf.enabled);
         ret = LY_S_REGISTERING_DONE_SUCCESS;
     }
@@ -157,6 +162,7 @@ static int __node_xml_register(xmlDoc * doc, xmlNode * node, int ent_id)
     if (str == NULL)
         goto xml_err;
     nf->cpu_max = atoi(str);
+    nf->cpu_vlimit = NODE_SCHEDULE_CPU_LIMIT(nf->cpu_max);
     free(str);
     str = xml_xpath_text_from_ctx(xpathCtx,
                          "/" LYXML_ROOT "/request/parameters/cpu/commit");
@@ -169,6 +175,7 @@ static int __node_xml_register(xmlDoc * doc, xmlNode * node, int ent_id)
     if (str == NULL)
         goto xml_err;
     nf->mem_max = atoi(str);
+    nf->mem_vlimit = NODE_SCHEDULE_MEM_LIMIT(nf->mem_max);
     free(str);
     str = xml_xpath_text_from_ctx(xpathCtx,
                          "/" LYXML_ROOT "/request/parameters/memory/free");

@@ -52,15 +52,12 @@ int node_schedule()
         if (ni->storage_free <= g_c->node_storage_low)
             continue;
         logdebug("%s:%d %d %d %d\n", __func__,
-                  ni->cpu_commit,
-                  NODE_SCHEDULE_CPU_LIMIT(ni->cpu_max),
-                  ni->mem_commit,
-                  NODE_SCHEDULE_MEM_LIMIT(ni->mem_max));
-        if (ni->cpu_commit >= NODE_SCHEDULE_CPU_LIMIT(ni->cpu_max) ||
-            ni->mem_commit >= NODE_SCHEDULE_MEM_LIMIT(ni->mem_max)) {
+                  ni->cpu_commit, ni->cpu_vlimit,
+                  ni->mem_commit, ni->mem_vlimit);
+        if (ni->cpu_commit >= ni->cpu_vlimit || ni->mem_commit >= ni->mem_vlimit) {
             continue;
         }
-        int cpu_avail = NODE_SCHEDULE_CPU_LIMIT(ni->cpu_max) - ni->cpu_commit;
+        int cpu_avail = ni->cpu_vlimit - ni->cpu_commit;
         if (cpu_avail > cpu_avail_max) {
             cpu_avail_max = cpu_avail;
             ent_id = ent_curr;
