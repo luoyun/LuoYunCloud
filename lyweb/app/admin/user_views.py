@@ -7,6 +7,7 @@ from tornado.web import authenticated, asynchronous
 from app.account.models import User, Group, UserProfile, \
     UserResetpass
 from app.instance.models import Instance
+from app.job.models import Job
 
 from app.account.forms import ResetPasswordForm
 from app.admin.forms import CreateUserForm, UserResourceForm, \
@@ -17,6 +18,7 @@ from hashlib import md5, sha512, sha1
 from app.account.utils import encrypt_password, check_password
 
 from sqlalchemy.sql.expression import asc, desc
+from sqlalchemy import and_, or_
 
 from lycustom import has_permission
 
@@ -102,17 +104,19 @@ class UserManagement(LyRequestHandler):
 
     def get_index(self):
 
-        page_size = int( self.get_argument('sepa', USER_PS) )
-        cur_page = int( self.get_argument('p', 1) )
+        page_size = self.get_argument_int('sepa', USER_PS)
+        cur_page = self.get_argument_int('p', 1)
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'DESC')
-        gid = int(self.get_argument('gid', -1))
-        online = self.get_argument('online', False)
+        gid = self.get_argument_int('gid', -1)
+        search = self.get_argument('search', False)
 
         if by == 'date_joined':
             by = User.date_joined
         elif by == 'last_login':
             by = User.last_login
+        elif by == 'last_active':
+            by = User.last_active
         else:
             by = User.id
 
@@ -123,14 +127,13 @@ class UserManagement(LyRequestHandler):
 
         UL = self.db2.query(User)
 
-        if online:
-            # TODO
-            try:
-                online = int(online)
-            except:
-                online = settings.USER_ACTIVE_MIN
-            deadline = datetime.datetime.utcnow() - datetime.timedelta(seconds = online)
-            UL = UL.filter( User.last_active > deadline )
+        if search:
+            search = '%' + search + '%'
+            PL = self.db2.query(UserProfile).filter(
+                UserProfile.email.like(search))
+            user_ids = [ x.user_id for x in PL ]
+            UL = UL.filter( or_(User.username.like(search),
+                                User.id.in_( user_ids ) ) )
 
         GROUP = None
         if gid == 0:
@@ -151,26 +154,36 @@ class UserManagement(LyRequestHandler):
 
         page_html = pagination.html( self.get_page_url )
             
-
         d = { 'title': _('Admin User Management'),
               'USER_LIST': UL, 'PAGE_HTML': page_html,
               'TOTAL_USER': total,
-              'GROUP': GROUP, 'GID': gid, 'ONLINE': online }
+              'GROUP': GROUP, 'GID': gid, 'SORT': sort }
 
-        self.render( 'admin/user/index.html', **d )
+        if self.get_argument('ajax', None):
+            self.render( 'admin/user/index.ajax', **d )
+        else:
+            self.render( 'admin/user/index.html', **d )
 
 
     def get_view(self):
 
-        self.render( 'admin/user/view.html',
-                     title = 'View User', user = self.user )
+        TAB = self.get_argument('tab', 'general')
 
+        jobs = self.db2.query(Job).filter(
+            Job.user_id == self.user.id).order_by(
+            desc(Job.id) ).limit(10).all()
+
+        d = { 'title': _('View User'), 'TAB': TAB,
+              'U': self.user, 'JOB_LIST': jobs }
+
+        self.render( 'admin/user/view.html', **d)
 
 
     def get_reset_password(self):
 
-        self.render( 'admin/user/reset_password.html', title = _('Reset Password'),
-                     form = ResetPasswordForm(), USER = self.user )
+        d = { 'title': _('Reset Password For "%s"') % self.user.username,
+              'U': self.user, 'form': ResetPasswordForm() }
+        self.render( 'admin/user/reset_password.html', **d)
 
 
     def post_reset_password(self):
@@ -191,7 +204,7 @@ class UserManagement(LyRequestHandler):
             return self.redirect( url )
 
         self.render( 'admin/user/reset_password.html', title = _('Reset Password'),
-                     form = form, USER = self.user )
+                     form = form, U = self.user )
 
 
     # Add a new user manually
@@ -274,14 +287,18 @@ class UserManagement(LyRequestHandler):
 
     def get_set_lock_flag(self):
 
+        if self.current_user.id == self.user.id:
+            return self.write( _('You can not lock yourself !') )
+
         flag = self.get_argument('islocked', None)
         self.user.islocked = True if flag == 'true' else False
         self.db2.commit()
 
         url = self.reverse_url('admin:user')
-        url += '?id=%s&action=view' % self.user.id
+        url += '?id=%s&tab=other' % self.user.id
 
         self.redirect( url )
+
 
     def get_edit_groups(self):
 

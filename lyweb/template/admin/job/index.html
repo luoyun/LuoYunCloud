@@ -1,55 +1,51 @@
-<%inherit file="/admin/admin_base.html"/>
+<%inherit file="/admin/system.html"/>
 
 <%block name="innav">
-<li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
+<li><a href="${ reverse_url('admin:job') }">${ _("Job") }</a></li>
 </%block>
 
-<%block name="sidemain">
+<%block name="content">
 
-<h2 class="title">${ _("Job List") }</h2>
-
-<script type="text/javascript" src="${ STATIC_URL }js/checkbox.js"></script>
-<script type="text/javascript" src="${ STATIC_URL }js/url.js"></script>
-
+% if U:
+<p class="subtitle">${ _("All jobs excute by ") } "${ U.username }"</p>
+% endif
+<script type="text/javascript" src="${ static_url('js/url.js') }"></script>
 
 % if JOB_LIST.count():
 <div class="ly-table">
-  <table class="checklist">
+  ${ page_html }
+  <table class="ly-table">
     <thead>
       <tr>
-        <th><input onclick="if(this.checked==true) { ly_checkbox_checkall('test'); } else { ly_checkbox_clearall('test'); }" type="checkbox" value="" name="test" title="${ _('Check All/Cleare All') }"/></th>
         <th onclick="ly_url_orderby('id')">${ _("ID") }</th>
         <th onclick="ly_url_orderby('user')">${ _("User") }</th>
         <th>${ _("Status") }</th>
         <th>${ _("Target Type") }</th>
         <th>${ _("Target ID") }</th>
         <th>${ _("Action") }</th>
+        <th>${ _("Created") }</th>
+        <th>${ _("Started") }</th>
         <th onclick="ly_url_orderby('created')">${ _("Completed") }</th>
       </tr>
     </thead>
     <tbody>
       % for j in JOB_LIST:
       <tr>
-        <td><input type="checkbox" value="a" name="test"/></td>
         <td>${ j.id }</td>
-        <td><a href="${ reverse_url('account:view', j.user.id) }">${ j.user.username }</a></td>
-        <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png" alt="${ j.status_string }"/></td>
+        <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
+        <td class="job-status"><img src="${ theme_url('icons/JobStatus/%s.png' % j.status) }"/>${ j.status_string }</td>
         <td>${ j.target_name }</td>
         <td><a href="${ j.target_url }">${ j.target_id }</a></td>
         <td>${ j.action_string }</td>
-        <td>${ fulltime(j.ended, UTC=True) }</td>
+        <td class="time">${ ftime(j.created) }</td>
+        <td class="time">${ ftime(j.started, '%H:%M:%S') }</td>
+        <td class="time">${ ftime(j.ended, '%H:%M:%S') } ( ${ htime(j.ended) } )</td>
       </tr>
       % endfor
     </tbody>
-    <tfoot>
-      <tr>
-        <td><input onclick="if(this.checked==true) { ly_checkbox_checkall('test'); } else { ly_checkbox_clearall('test'); }" type="checkbox" value="" name="test" title="${ _('Check All/Cleare All') }"/></td>
-        <td colspan="8">
-          ${ page_html }
-        </td>
-      </tr>
-    </tfoot>
   </table>
+
+  ${ page_html }
 </div>
 % else:
 <div class="first-warning">

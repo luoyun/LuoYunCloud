@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import os, json
+import os, json, Image, tempfile
 from datetime import datetime
 from lycustom import LyRequestHandler
 
@@ -30,11 +30,14 @@ from lymail import send_email
 
 from lycustom import has_permission
 
+from lytool.filesize import size as human_size
+
 
 import settings
 from app.system.models import LuoYunConfig
 
-
+from ytool.password import check_login_passwd, enc_login_passwd, \
+    enc_shadow_passwd
 
 class AccountRequestHandler(LyRequestHandler):
 
@@ -89,7 +92,7 @@ class Login(AccountRequestHandler):
 
                 if check_password(form.password.data, user.password):
                     self.save_session(user.id)
-                    user.last_login = datetime.utcnow()
+                    user.last_login = datetime.now()
                     self.db2.commit()
                     return self.redirect( self.get_argument('next', '/') )
                 else:
@@ -159,16 +162,15 @@ class Register(AccountRequestHandler):
             if user:
                 form.username.errors.append( _('This username is occupied') )
             else:
-                salt = md5(str(random.random())).hexdigest()[:12]
-                hsh = encrypt_password(salt, form.password.data)
-                enc_password = "%s$%s" % (salt, hsh)
-
+                enc_password = enc_login_passwd(form.password.data)
                 newuser = User( username = form.username.data,
                                 password = enc_password )
                 self.db2.add(newuser)
                 self.db2.commit()
                 # Create profile
                 profile = UserProfile(newuser, email = form.email.data)
+                root_passwd = enc_shadow_passwd(form.password.data)
+                profile.set_secret('root_shadow_passwd', root_passwd)
                 # Add to default group
                 from settings import cf
                 if cf.has_option('registration', 'user_default_group_id'):
@@ -350,14 +352,16 @@ class ResetPassword(LyRequestHandler):
         form = ResetPasswordForm(self.request.arguments)
 
         if form.validate():
-
-            salt = md5(str(random.random())).hexdigest()[:12]
-            hsh = encrypt_password(salt, form.password.data)
-            enc_password = "%s$%s" % (salt, hsh)
-
-            user = self.db2.query(User).get( self.current_user.id )
+            user = self.current_user
+            enc_password = enc_login_passwd(form.password.data)
             user.password = enc_password
+
+            root_passwd = enc_shadow_passwd(form.password.data)
+            print 'root_passwd = ', root_passwd
+            user.profile.set_secret('root_shadow_passwd', root_passwd)
+
             self.db2.commit()
+            print 'secret = ', user.profile.get_secret()
 
             url = self.application.reverse_url('account:index')
             return self.redirect( url )
@@ -392,46 +396,47 @@ class AvatarEdit(LyRequestHandler):
 
         d = { 'title': _('Change my avatar'),
               'form': form }
+
         self.render( 'account/avatar_edit.html', **d )
 
 
     def save_avatar(self):
-        support_image = ['jpg', 'png', 'jpeg', 'gif', 'bmp', 'pjpeg']
+
+        homedir = self.current_user.homedir
+        if not os.path.exists(homedir):
+            try:
+                os.makedirs(homedir)
+            except Exception, e:
+                return _('Create user home dir "%s" failed: %s') % (homedir, e)
+
+        max_size = settings.USER_AVATAR_MAXSIZE
+        avatar_name = settings.USER_AVATAR_NAME
+
         for f in self.request.files['avatar']:
 
-            if len(f['body']) > 368640: # 360 K
-                return _('Avatar file must smaller than 360K !')
+            if len(f['body']) > max_size:
+                return _('Avatar file must smaller than %s !') % human_size(max_size)
 
-            ftype = 'unknown'
-            x = f['content_type'].split('/')
-            if len(x) == 2:
-                ftype = x[-1]
-            else:
-                x = f['filename'].split('.')
-                if len(x) == 2:
-                    ftype = x[-1]
-
-            ftype = ftype.lower()
-
-            if ftype not in support_image:
-                return _('No support image, support is %s' % support_image )
-
-            fpath = os.path.join( settings.STATIC_PATH,
-                              'user/%s' % self.current_user.id )
+            tf = tempfile.NamedTemporaryFile()
+            tf.write(f['body'])
+            tf.seek(0)
 
             try:
-                if not os.path.exists( fpath ):
-                    os.mkdir( fpath )
+                img = Image.open( tf.name )
 
-                fpath = os.path.join( fpath, 'avatar' )
+            except Exception, e:
+                return _('Open %s failed: %s , is it a picture ?') % (f.get('filename'), e)
 
-                savef = file(fpath, 'w')
-                savef.write(f['body'])
-                savef.close()
-                break # Just one upload file
+            try:
+                img.save(self.current_user.avatar_orig_path)
+                img.thumbnail(settings.USER_AVATAR_THUM_SIZE, resample=1)
+                img.save(self.current_user.avatar_path)
+                img.thumbnail(settings.USER_AVATAR_MINI_THUM_SIZE, resample=1)
+                img.save(self.current_user.avatar_path)
+                tf.close()
 
-            except Exception, emsg:
-                return emsg
+            except Exception, e:
+                return _('Save %s failed: %s') % (f.get('filename'), e)
 
 
 
@@ -555,18 +560,20 @@ class ResetPasswordComplete(AccountRequestHandler):
         self.d['form'] = ResetPasswordForm( self.request.arguments )
         if self.d['form'].validate():
 
-            salt = md5(str(random.random())).hexdigest()[:12]
-            hsh = encrypt_password(salt, self.d['form'].password.data)
-            enc_password = "%s$%s" % (salt, hsh)
-
+            plaintext = self.d['form'].password.data
+            enc_password = enc_login_passwd(plaintext)
             self.d['USER'].password = enc_password
+
+            root_passwd = enc_shadow_passwd(plaintext)
+            self.d['USER'].profile.set_secret('root_shadow_passwd', root_passwd)
+
             self.db2.commit()
 
             # TODO: set reset password request completed
             applys = self.db2.query(UserResetpass).filter(
                 UserResetpass.key == self.key ).all()
             for A in applys:
-                A.completed = datetime.utcnow()
+                A.completed = datetime.now()
             self.db2.commit()
 
             self.save_session( self.d['USER'].id )
@@ -616,3 +623,31 @@ class Delete(LyRequestHandler):
                 d['USER'] = user
 
         self.render( 'account/delete.html', **d )
+
+
+
+class islockedToggle(LyRequestHandler):
+    ''' Toggle islocked flag '''
+
+    @has_permission('admin')
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        ID = int(ID)
+
+        if self.current_user.id == ID:
+            return self.write( _('You can not lock yourself !') )
+
+        U = self.db2.query(User).get(ID)
+
+        if U:
+            U.islocked = not U.islocked
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( _('Can not found the user.') )
+

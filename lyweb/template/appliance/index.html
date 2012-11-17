@@ -49,7 +49,7 @@
       <div class="appliance">
 	<div class="${USEABLE}">
           <div class="logo">
-            <a href="${ reverse_url('appliance:view', app.id) }"><img src="${ app.logo_url }" alt="Appliance Picture" /></a>
+            <a href="${ reverse_url('appliance:view', app.id) }"><img src="${ app.logourl }" alt="Appliance Picture" /></a>
           </div>
 	</div>
 	<div class="a-desc">
@@ -71,10 +71,5 @@
 
   </div>
 </div>
-
-<script type="text/javascript">
-  ApplianceHover();
-</script>
-
 
 </%block>

@@ -1,10 +1,13 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/system.html" />
 
-<%block name="sidemain">
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li>${ _("Baseinfo of luoyun system") }</li>
+</%block>
 
-<h2>${ _("Baseinfo of luoyun system") }</h2>
+<%block name="content">
 
-<h3>${ _("Control server") }</h3>
+<p title="subtitle">${ _("Control server") }</p>
 <table>
   <tbody>
     <tr>
@@ -19,7 +22,7 @@
   </tbody>
 </table>
 
-<h3>${ _("Admin email") }</h3>
+<p title="subtitle">${ _("Admin email") }</p>
 <p>${ ADMIN_EMAIL }</p>
 
 <p><a href="${ reverse_url('system:baseinfo:edit') }">${ _("Edit") }</a></p>

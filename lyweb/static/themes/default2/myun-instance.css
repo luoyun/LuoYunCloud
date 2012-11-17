@@ -1,0 +1,130 @@
+#top-header .c1, #top-header .c2 {
+    float: left;
+}
+#top-header .c1 {
+    position: relative;
+    padding: 20px;
+}
+#top-header .c2 {
+    padding: 50px 0 0 50px;
+}
+
+#i-logo {
+    border-radius: 100px;
+}
+#i-logo img {
+    width: 98px;
+    height: 98px;
+    border-radius: 3px;
+    border: 1px solid #ECEDEF;
+}
+
+#i-is-img {
+    margin-right: 10px;
+    position: absolute;
+    top: 13px;
+    left: 13px;
+}
+
+#i-control-btn , #i-control-result {
+    float: left;
+}
+#i-control-result {
+    width: 500px;
+}
+#i-control-result {
+    padding: 10px 0 10px 15px;
+}
+#i-js-img {
+    margin-right: 10px;
+}
+#i-control-btn img {
+    width: 36px;
+    height: 36px;
+}
+#i-control-reboot img {
+    width: 22px;
+    height: 22px;
+    margin: 6px 12px;
+}
+
+#i-baseinfo {
+    font-size: 0.9em;
+    border: 1px solid #ECEDEF;
+    border-radius: 3px;
+    padding: 10px 25px;
+    margin: 6px 0 20px;
+    background-color: #F4F6F9;
+}
+#i-baseinfo table {
+    float: left;
+    padding: 10px 35px;
+    width: 40%;
+    display: inline-block;
+}
+#i-baseinfo table td {
+    padding: 4px 7px;
+}
+#i-baseinfo table td:first-child {
+    padding-right: 10px;
+    font-weight: bold;
+    text-align: right;
+    color: #27375D;
+}
+#i-baseinfo td input {
+    vertical-align:middle;
+    cursor:pointer;
+    color:#ffffff;
+    -moz-border-radius: 10px; -webkit-border-radius: 10px;
+}
+
+.tabs {
+    margin-bottom: 0;
+}
+.tabs ul {
+    padding-left: 15px;
+}
+
+.tab-content {
+    height:auto !important;
+    height:380px;
+    min-height:380px;
+    padding: 20px 15px 50px;
+}
+.tab-content h2 {
+    margin: 20px 0 12px;
+    color: #143340;
+    font-size: 16px;
+}
+.tab-content p {
+    margin: 10px;
+}
+
+.tab-content .i-management-btn {
+    margin-top: 20px;
+}
+
+.tab-content .ly-table {
+    font-size: 0.9em;
+    border: 1px solid #ECEDEF;
+    border-radius: 6px;
+}
+
+table.kv {
+    margin: 30px 0 35px;
+}
+
+#i-delete-confirm-dialog-data {
+    padding: 25px 35px;
+}
+.vertical-align td {
+    vertical-align: bottom;
+    padding: 10px;
+}
+
+.lyaction-return {
+    margin: 20px 30px;
+}
+.lyaction-return p {
+    margin: 15px;
+}

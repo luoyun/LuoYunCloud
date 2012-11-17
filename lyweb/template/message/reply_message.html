@@ -4,7 +4,7 @@
 
 <div class="edit-message reply-message">
   <p class="title">
-    <span class="datetime">${ fulltime(message.created) }</span>
+    <span class="datetime">${ ftime(message.created) }</span>
     <a class="username" href="${ reverse_url('account:view', message.sender_id) }">${ message.sender.username }</a>
     <span>${ _("Write :") }</span>
   </p>

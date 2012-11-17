@@ -13,6 +13,7 @@ from app.admin.forms import CatalogForm
 from lycustom import has_permission
 from lytool.filesize import size as human_size
 
+from settings import LY_TARGET
 
 class ApplianceManagement(LyRequestHandler):
 
@@ -34,7 +35,6 @@ class ApplianceManagement(LyRequestHandler):
         self.catalog = self.db2.query(ApplianceCatalog).get(c_id)
 
 
-
     def get(self):
 
         if self.action == 'index':
@@ -42,6 +42,12 @@ class ApplianceManagement(LyRequestHandler):
                 self.get_view()
             else:
                 self.get_index()
+
+        elif self.action == 'change_owner':
+            self.change_owner()
+
+        elif self.action == 'change_catalog':
+            self.change_catalog()
 
         else:
             self.write( _('Wrong action value!') )
@@ -52,6 +58,12 @@ class ApplianceManagement(LyRequestHandler):
         if not self.action:
             self.write( _('No action found !') )
 
+        elif self.action == 'change_owner':
+            self.change_owner()
+
+        elif self.action == 'change_catalog':
+            self.change_catalog()
+
         else:
             self.write( _('Wrong action value!') )
 
@@ -59,8 +71,8 @@ class ApplianceManagement(LyRequestHandler):
     def get_index(self):
 
         catalog_id = self.catalog.id if self.catalog else 0
-        page_size = int( self.get_argument('sepa', 10) )
-        cur_page = int( self.get_argument('p', 1) )
+        page_size = self.get_argument_int('sepa', 10)
+        cur_page = self.get_argument_int('p', 1)
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'ASC')
         uid = self.get_argument('uid', 0)
@@ -114,6 +126,78 @@ class ApplianceManagement(LyRequestHandler):
                      APPLIANCE = self.appliance,
                      human_size = human_size )
 
+    def change_owner(self):
+        d = { 'title': _('Change owner of appliance'),
+              'A': self.appliance }
+        
+        E = []
+        U = None
+        
+        if self.request.method == 'POST':
+            user = self.get_argument('user', 0)
+            if user:
+                if user.isdigit():
+                    U = self.db2.query(User).get(user)
+                if not U:
+                    U = self.db2.query(User).filter_by(username=user).first()
+                if not U:
+                    E.append( _('Can not find user: %s') % user )
+            else:
+                E.append( _('No user input !') )
+
+            reason = self.get_argument('reason', '')
+
+            if E:
+                d['ERROR'] = E
+            else:
+                T = self.lytrace(
+                    ttype = LY_TARGET['APPLIANCE'],
+                    tid = self.appliance.id,
+                    do = _('change appliance owner %s to %s') % (
+                        self.appliance.user.username, U.username) )
+
+                self.appliance.user = U
+                self.db2.commit()
+
+                # TODO: send reason to user
+                url = self.reverse_url('admin:appliance')
+                url += '?id=%s' % self.appliance.id
+                return self.redirect( url )
+
+        self.render( 'admin/appliance/change_owner.html', **d)
+
+
+    def change_catalog(self):
+
+        CATALOG_LIST = self.db2.query(ApplianceCatalog).all()
+
+        d = { 'title': _('Change catalog of appliance'),
+              'A': self.appliance, 'CATALOG_LIST': CATALOG_LIST }
+
+        E = []
+        U = None
+        
+        if self.request.method == 'POST':
+            cid = self.get_argument('catalog', 0)
+            if cid:
+                C = self.db2.query(ApplianceCatalog).get(cid)
+                if not C:
+                    E.append( _('Can not find catalog %s') % cid )
+            else:
+                E.append( _('No catalog input !') )
+
+            if E:
+                d['ERROR'] = E
+            else:
+                self.appliance.catalog = C
+                self.db2.commit()
+
+                url = self.reverse_url('admin:appliance')
+                url += '?id=%s' % self.appliance.id
+                return self.redirect( url )
+
+        self.render( 'admin/appliance/change_catalog.html', **d)
+
 
 
 
@@ -124,7 +208,7 @@ class CatalogManagement(LyRequestHandler):
 
         self.action = self.get_argument('action', 'index')
 
-        cid = int( self.get_argument('id', 0) )
+        cid = self.get_argument_int('id', 0)
         self.catalog = self.db2.query(ApplianceCatalog).get(cid)
 
         if self.action in ['edit'] and not self.catalog:

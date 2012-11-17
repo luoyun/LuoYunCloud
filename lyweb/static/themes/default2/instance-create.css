@@ -1,0 +1,93 @@
+/* Start create instance form */
+#ly-create-instance-form {
+    width: 580px;
+    margin: 50px auto;
+    padding-top: 36px;
+    padding-bottom: 60px;
+    border: 1px solid #D9D9D9;
+    border-radius: 3px;
+    background-color: white;
+}
+#ly-create-instance-form .item {
+    margin: 20px 0;
+    clear: both;
+}
+#ly-create-instance-form .submit {
+    text-align: center;
+}
+#ly-create-instance-form .c1,
+#ly-create-instance-form .c2 {
+    float: left;
+    /*padding: 10px;*/
+    margin: 15px 0;
+}
+#ly-create-instance-form .c1 {
+    width: 180px;
+    text-align: right;
+    font-weight: bold;
+    color: #143340;
+    margin-right: 10px;
+}
+#ly-create-instance-form .c2 {
+    width: 300px;
+}
+#ly-create-instance-form .c1 label,
+#ly-create-instance-form .c2 input,
+#ly-create-instance-form .c2 select {
+    padding: 4px 5px;
+    margin: 10px 5px;
+}
+#ly-create-instance-form .c1 label {
+    float: right;
+}
+#ly-create-instance-form .c2 input {
+    height: 1.8em;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #DCDCDC;
+    box-shadow: 0 1px 1px #DEDEDE inset;
+    font-size: 14px;
+    border-radius: 3px;
+}
+#ly-create-instance-form .title {
+    text-align: center;
+    font-size: 22px;
+    color: #143340;
+    padding-bottom: 25px;
+    margin-bottom: 30px;
+    border-bottom: 2px dotted #D9D9D9;
+}
+#ly-create-instance-form .c1 img {
+    width: 85px;
+    height: 85px;
+    border-radius: 5px;
+    margin-right: 10px;
+    float: right;
+}
+#ly-create-instance-form .errors {
+    color: red;
+}
+#ly-create-instance-form h3 {
+    font-size: 16px;
+    color: #848627;
+    margin: 10px 0;
+}
+#ly-create-instance-form .c2 p.desc {
+    color: #484848;
+    margin: 15px 0;
+}
+#ly-create-instance-form .hidden {
+    position: absolute;
+    top: 58px;
+    left: 15px;
+    width: 300px;
+    border-radius: 3px;
+    border: 1px solid #DCDCDC;
+    background: #EFF7F2;
+    color: #575758;
+    padding: 10px;
+    z-index: 3;
+}
+#ly-create-instance-form .submit {
+    padding-top: 28px;
+}
+/* End create instance form */

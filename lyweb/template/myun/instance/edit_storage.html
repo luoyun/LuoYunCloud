@@ -1,0 +1,23 @@
+<%inherit file="/myun/instance_base.html" />
+
+<%block name="innav">
+<li>${ _("Edit Storage") }</li>
+</%block>
+
+<%block name="instance">
+<div class="iedit-content">
+
+  <h2 class="title">${ _("Configure Storage") }</h2>
+  <div class="main-wrap small-left-right-form">
+    <form method="POST" action="${ reverse_url('myun:instance:edit', I.id) }?item=storage">
+      ${ form.type.label } ${ form.type() }<br/>
+      ${ form.html_errors(form.type.errors) }
+
+      ${ form.size.label } ${ form.size() }<br/>
+      ${ form.html_errors(form.size.errors) }
+      <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
+    </form>
+  </div>
+
+</div>
+</%block>

@@ -21,7 +21,7 @@ class JobStatus(LyRequestHandler):
             return self.write(u'No job %s !' % id)
 
         try:
-            previous = int( self.get_argument('previous', 0) )
+            previous = self.get_argument_int('previous', 0)
         except:
             previous = 0
 

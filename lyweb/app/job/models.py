@@ -38,6 +38,7 @@ JOB_STATUS_STR = {
     311: _('failed'),
     321: _('node server not available'),
     322: _('node server busy'),
+    323: _('original node server is not enable'),
     331: _('appliance not available'),
     332: _('appliance error'),
     399: _('Last Finish Status'),
@@ -68,7 +69,7 @@ JOB_STATUS_STR = {
 JOB_ACTION_STR = {
     102: _('enable node'),
     103: _('disable node'),
-
+    104: _('update node configure'),
     201: _('run'),
     202: _('stop'),
     206: _('destroy'),
@@ -95,7 +96,7 @@ class Job(ORMBase):
 
     started = Column( DateTime() )
     ended = Column( DateTime() )
-    created = Column(DateTime(), default=datetime.utcnow)
+    created = Column(DateTime(), default=datetime.now)
 
 
     def __init__(self, user, target_type, target_id, action):
@@ -134,3 +135,16 @@ class Job(ORMBase):
     @property
     def status_string(self):
         return JOB_STATUS_STR.get( self.status, _('Unknown') )
+
+
+    @property
+    def completed(self):
+        return 300 <= self.status < 400 or self.status >= 600
+
+    @property
+    def canstop(self):
+        return self.status >= 300
+
+    @property
+    def waiting(self):
+        return 400 <= self.status < 500

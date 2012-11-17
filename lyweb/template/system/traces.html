@@ -1,0 +1,50 @@
+<%inherit file="/admin/system.html"/>
+
+<%block name="innav">
+<li><a href="${ reverse_url('system:trace') }">${ _("System Action") }</a></li>
+</%block>
+
+<%block name="content">
+
+% if USER:
+<p class="subtitle">${ _("All action excute by ") } "${ USER.username }"</p>
+% endif
+
+% if TRACE_LIST:
+<div class="ly-table">
+  <table>
+    <thead>
+      <tr>
+        <th>${ _("ID") }</th>
+        <th>${ _("Who") }</th>
+        <th>${ _("Come From") }</th>
+        <th>${ _("Do What ?") }</th>
+        <th>${ _("Target Type") }</th>
+        <th>${ _("Target ID") }</th>
+        <th>${ _("When") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for T in TRACE_LIST:
+      <tr>
+        <td>${ T.id }</td>
+        <td><a href="${ reverse_url('admin:user') }?id=${ T.who_id }">${ T.who.username }</a></td>
+        <td>${ T.comefrom }</td>
+        <td>${ T.do }</td>
+        <td>${ T.target_type }</td>
+        <td>${ T.target_id }</td>
+        <td>${ htime(T.when) }</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+
+  ${ page_html }
+</div>
+% else:
+<div class="ywarn">
+  <p>Have not found any actions.</p>
+</div>
+% endif
+
+</%block>

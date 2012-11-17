@@ -16,5 +16,7 @@ sqlalchemy
 SQLAlchemy*
 Mako*
 IPy-0.75
+dateutil
+python-dateutil-2.1
 tornadotools
 truemped-tornadotools-bd47622/

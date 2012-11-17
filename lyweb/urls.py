@@ -41,6 +41,7 @@ tornado_settings = {
     'control_server_ip': settings.control_server_ip,
     'control_server_port': settings.control_server_port,
 
+    'THEME': settings.THEME,
     'THEME_URL': settings.THEME_URL,
     'STATIC_URL': settings.STATIC_URL,
     'LANGUAGES': settings.LANGUAGES,

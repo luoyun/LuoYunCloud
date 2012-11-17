@@ -21,6 +21,11 @@ gettext.install( 'app', settings.I18N_PATH, unicode=False )
 
 def default_value(dbsession):
 
+    from app.account.models import Group
+    if dbsession.query(Group).count() > 0:
+        print '[W] db is init already, do not init now.'
+        return
+
     # LuoYunConfig
     from app.system.models import LuoYunConfig
     for k, v in settings.luoyun_system_config:
@@ -164,6 +169,12 @@ def i18n():
 
 
 if __name__ == '__main__':
+    import sys
+
+    if len(sys.argv) == 2:
+        if sys.argv[1] == '--i18n':
+            i18n()
+            sys.exit(0)
 
     syncdb()
     i18n()

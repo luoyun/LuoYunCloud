@@ -1,8 +1,11 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/system.html" />
 
-<%block name="sidemain">
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li>${ _("Send Mail") }</li>
+</%block>
 
-<h2>${ _("Send Mail") }</h2>
+<%block name="content">
 
 <div id="ly-sendmail-form" class="c">
   <form method="POST">
@@ -99,5 +102,20 @@
     </table>
   </form>
 </div>
+
+<script charset="utf-8" src="${ STATIC_URL }kindeditor/kindeditor.js"></script>
+<script charset="utf-8" src="${ STATIC_URL }kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript">
+  var editor;
+  KindEditor.ready(function(K) {
+  editor = K.create('#body', {
+      width: '780px',
+      height: '300px',
+      uploadJson : '/ly/upload/kindeditor',
+      fileManagerJson : '/ly/upload/kindeditor',
+      allowFileManager : true
+  });
+  });
+</script>
 
 </%block>

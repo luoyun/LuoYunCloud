@@ -1,0 +1,97 @@
+<%inherit file="/base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${ theme_url('instance-view.css') }" />
+<link rel="stylesheet" href="${ theme_url('button.css') }" />
+<script type="text/javascript" src="${ static_url('js/url.js') }"></script>
+<script type="text/javascript" src="${ static_url('js/instance.js') }"></script>
+</%block>
+
+
+<%block name="main">
+
+<div class="inner-nav c">
+  <ol>
+    <li><a class="home" href="/">${ _("Home") }</a></li>
+    <li><a href="/instance">${ _("Public Instances") }</a></li>
+    <li><a href="${ reverse_url('instance:view', instance.id) }">${ instance.name }</a></li>
+  </ol>
+</div>
+
+<div class="ly-box c" id="instance-show-main">
+  <ul>
+    <li class="c1">
+      <div id="iview-ilogo">
+	<a href="${ reverse_url('instance:view', instance.id) }"><img src="${ instance.logourl }" /></a>
+      </div>
+    </li>
+
+    <li class="c2">
+      <div id="i-domain">
+	% if instance.domain:
+	% if instance.is_running:
+	<a href="${ instance.home_url(current_user) }" target="_blank">${ instance.domain }</a>
+	% else:
+	${ instance.domain }
+	% endif
+	% endif
+      </div>
+      <div id="i-ip">
+	% if instance.work_ip:
+	<a href="${ instance.home_url(current_user) }" target="_blank"><span id="lyinst-ip">${ instance.work_ip }</span></a>
+	% endif
+      </div>
+      <div id="i-current-status">
+	<img id="i-is-img" src="${ theme_url('icons/InstanceStatus/%s.png' % instance.status) }"/><span id="i-is-str">${ instance.status_string }</span><span style="display:none;" id="i-is">${ instance.status }</span>
+      </div>
+    </li>
+    
+    <li class="c3">
+      <table>
+	<tbody>
+          <tr>
+            <td class="c1">${ _("Owner") }</td>
+            <td class="c2"><a href="${ reverse_url('account:view', instance.user_id) }">${ instance.user.username }</a></td>
+          </tr>
+          <tr>
+            <td class="c1">${ _("Appliance") }</td>
+            <td class="c2"><a href="${ reverse_url('appliance:view', instance.appliance.id) }">${ instance.appliance.name }</a></td>
+          </tr>
+          <tr>
+            <td class="c1">${ _("Create Time") }</td>
+            <td class="c2">${ ftime(instance.created) }</td>
+          </tr>
+          <tr>
+            <td class="c1">${ _("Update Time") }</td>
+            <td class="c2">${ ftime(instance.updated)}</td>
+          </tr>
+	</tbody>
+      </table>
+    </li>
+  </ul>
+</div>
+
+<div id="i-main" class="ly-box c">
+  <div id="admin-center" class="min-height-300">
+    <h2>${ instance.name }</h2>
+
+    <p class="summary">
+      % if instance.summary:
+      ${ instance.summary }
+      % else:
+      ${ _("This is an instance of LuoYun Cloud platform.") }
+      % endif
+    </p>
+
+    <h2>${ _("Description") }</h2>
+    <div id="instance-baseinfo-description" class="markdown">
+      % if instance.description:
+      ${ instance.description_html }
+      % else:
+      ${ _("No description.") }
+      % endif
+    </div>
+  </div>
+</div>
+
+</%block>

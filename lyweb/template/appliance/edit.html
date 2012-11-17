@@ -20,6 +20,13 @@
 	  </td>
 	</tr>
 	<tr>
+	  <td>${ form.os.label }</td>
+	  <td>
+	    ${ form.os() }
+	    ${ form.html_errors( form.os.errors ) }
+	  </td>
+	</tr>
+	<tr>
 	  <td>${ form.summary.label }</td>
 	  <td>
 	    ${ form.summary() }
@@ -34,7 +41,7 @@
 	  </td>
 	</tr>
 	<tr>
-	  <td><span class="logo"><a href="${ reverse_url('appliance:view', appliance.id) } "><img class="appliance-logo" src="${ appliance.logo_url }" alt="Image Picture" /></a></span></td>
+	  <td><span class="logo"><a href="${ reverse_url('appliance:view', appliance.id) } "><img class="appliance-logo" src="${ appliance.logourl }" alt="Image Picture" /></a></span></td>
 	  <td class="select-new-logo">
 	    <h3>${ _("Select a new logo") }</h3>
 	    ${ form.logo() }
@@ -67,7 +74,14 @@
       height: '300px',
       uploadJson : '/ly/upload/kindeditor',
       fileManagerJson : '/ly/upload/kindeditor',
-      allowFileManager : true
+      allowFileManager : true,
+      items : [
+          'formatblock', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'removeformat', '|',
+          'undo', 'redo', '|', 'code', '|', 'justifyleft', 'justifycenter', 'justifyright',
+          'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', '|',
+          'image', 'insertfile', 'table', 'emoticons',
+          'anchor', 'link', 'unlink', '|', 'fullscreen', 'source', 'preview', 'about'
+      ],
   });
   });
 </script>

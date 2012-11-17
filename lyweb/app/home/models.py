@@ -32,7 +32,7 @@ class Attachment(ORMBase):
 
     dtimes = Column( Integer, default=0 )
 
-    created = Column( DateTime(), default=datetime.utcnow )
+    created = Column( DateTime(), default=datetime.now )
     updated = Column( DateTime() )
 
 

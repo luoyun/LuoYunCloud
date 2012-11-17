@@ -62,15 +62,8 @@ table.kvlist td.c1 {
     *border-collapse: collapse; /* IE7 and lower */
     border-spacing: 0;
     /*width: 100%;*/
-}
-.ly-table table {
-    border: solid #ccc 1px;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
+    border: 1px solid #CEDBE1;
     border-radius: 6px;
-    -webkit-box-shadow: 0 1px 1px #ccc;
-    -moz-box-shadow: 0 1px 1px #ccc;
-    box-shadow: 0 1px 1px #ccc;
 }
 .ly-table tr {
     -o-transition: all 0.1s ease-in-out;
@@ -79,12 +72,13 @@ table.kvlist td.c1 {
     -ms-transition: all 0.1s ease-in-out;
     transition: all 0.1s ease-in-out;		
 }
-.ly-table th,
-.ly-table td {
-    border-left: 1px solid #ccc;
-    border-top: 1px solid #ccc;
+.ly-table th, .ly-table td {
     padding: 10px;
     text-align: left;
+}
+.ly-table td {
+    border-left: 1px solid #ECF1F4;
+    border-top: 1px solid #CDD8DC;
 }
 .ly-table th {
     background-color: #dce9f9;

@@ -10,6 +10,8 @@ from app.wiki.forms import TopicForm, NewTopicForm
 
 from lycustom import has_permission
 
+from sqlalchemy.sql.expression import asc, desc
+
 from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'tables'])
 
@@ -18,7 +20,8 @@ class Index(LyRequestHandler):
 
     def get(self):
 
-        catalogs = self.db2.query(WikiCatalog).all()
+        catalogs = self.db2.query(WikiCatalog).order_by(
+            asc(WikiCatalog.position)).all()
 
         self.render( 'wiki/index.html', title = _('Servers Home'), catalogs = catalogs )
 

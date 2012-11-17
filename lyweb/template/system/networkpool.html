@@ -1,75 +1,47 @@
-<%inherit file="/admin/admin_base.html" />
-<%block name="sidemain">
+<%inherit file="/admin/system.html" />
 
-<h2>${ _("Network pool of LuoYun") }</h2>
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li><a href="${ reverse_url('system:networkpool') }">${ _("Network pool") }</a></li>
+</%block>
 
-<p><a href="${ reverse_url('system:networkpool:edit') }">${ _("Edit") }</a></p>
+<%block name="content">
 
-<table>
-  <tbody>
-    <tr>
-      <th>${ _("Netmask") }</th>
-      <td>${ NETWORK_POOL['netmask'] }</td>
-    </tr>
-    <tr>
-      <th>${ _("Gateway") }</th>
-      <td>${ NETWORK_POOL['gateway'] }</td>
-    </tr>
-    <tr>
-      <th>${ _("Nameservers") }</th>
-      <td>${ NETWORK_POOL['nameservers'] }</td>
-    </tr>
-  </tbody>
-</table>
+<p><a href="${ reverse_url('system:networkpool:add') }">${ _("Add New Network") }</a></p>
 
-
-
-<%
-NPOOL = []
-for ip in NETWORK_POOL['pool']:
-    NPOOL.append( (ip, get_ipassign(ip)) )
-%>
-<table class="list">
-  <thead>
-    <tr>
-      <th>${ _("IP") }</th>
-      <th>${ _("User") }</th>
-      <th>${ _("Instance") }</th>
-      <th>${ _("Updated") }</th>
-    </tr>
-  </thead>
-  <tbody>
-    % for ip, ipassign in NPOOL:
-    <tr>
-      <td>
-      % if ipassign:
-        <span class="ip-assigned">${ ip }</span>
-      % else:
-        ${ ip }
-      % endif
-      </td>
-      % if ipassign:
-
-        % if ipassign.user:
-        <td><a href="${ reverse_url('account:view', ipassign.user.id) }">${ ipassign.user.username }</a></td>
-        % else:
-        <td></td>
-        %endif
-
-        % if ipassign.instance:
-        <td><a href="${ reverse_url('instance:view', ipassign.instance.id) }">${ ipassign.instance.name }</a></td>
-        % else:
-        <td></td>
-        % endif
-      <td>${ lytime(ipassign.updated) }</td>
-      % else:
-      <td></td>
-      <td></td>
-      <td></td>
-      % endif
-    </tr>
-    % endfor
-  </tbody>
-</table>
+%if NETWORKPOOL:
+<div class="ly-table">
+  <table>
+    <thead>
+      <tr>
+	<th>${ _("ID") }</th>
+	<th>${ _("Name") }</th>
+	<th>${ _("Start") }</th>
+	<th>${ _("End") }</th>
+	<th>${ _("Netmask") }</th>
+	<th>${ _("Gateway") }</th>
+	<th>${ _("Nameservers") }</th>
+	<th>${ _("IP") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      %for N in NETWORKPOOL:
+      <tr>
+	<td>${ N.id }</td>
+	<td><a href="${ reverse_url('system:networkpool:view', N.id) }">${ N.name }</a></td>
+	<td>${ N.start }</td>
+	<td>${ N.end }</td>
+	<td>${ N.netmask }</td>
+	<td>${ N.gateway }</td>
+	<td>${ N.nameservers }</td>
+	<td><a href="${ reverse_url('system:ippool') }?network=${ N.id }">${ len(N.ips) }</a></td>
+      </tr>
+      %endfor
+    </tbody>
+  </table>
+</div>
+%else:
+<p>${ _("You have not configure the network pool yet.") }</p>
+%endif
         
 </%block>

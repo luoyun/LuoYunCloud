@@ -27,6 +27,7 @@ DEFAULT_NGINX_CONF_PATH = '/etc/nginx/conf.d/'
 DEFAULT_NGINX_LOG_PATH = '/opt/LuoYun/logs/nginx/'
 DEFAULT_NGINX_BIN_PATH = '/usr/sbin/nginx'
 
+SITE_CONFIG = LUOYUN_CONFIG_PATH
 cf = ConfigParser.ConfigParser()
 cf.read( LUOYUN_CONFIG_PATH )
 
@@ -136,20 +137,25 @@ PKT_TYPE_WEB_NEW_JOB_REQUEST = 10001
 JOB_S_INITIATED = 100
 JOB_S_FAILED = 311
 
-JOB_TARGET = {
+LY_TARGET = {
     'NODE': 3,             # JOB_TARGET_NODE
     'INSTANCE': 4,         # JOB_TARGET_INSTANCE
+    'APPLIANCE': 5,
 }
+JOB_TARGET = LY_TARGET     # TODO: drop this name
+
 
 JOB_ACTION = {
 
     # node action
     'ENABLE_NODE': 102,     # LY_A_CLC_ENABLE_NODE = 102
     'DISABLE_NODE': 103,    # LY_A_CLC_DISABLE_NODE = 103
+    'UPDATE_NODE': 104,    # LY_A_CLC_CONFIG_NODE = 104
 
     # instance action
     'RUN_INSTANCE': 201,    # LY_A_NODE_RUN_INSTANCE = 201,
     'STOP_INSTANCE': 202,   # LY_A_NODE_STOP_INSTANCE = 202,
+    'REBOOT_INSTANCE': 205, # LY_A_NODE_REBOOT_INSTANCE = 205,
     'DESTROY_INSTANCE': 206,# LY_A_NODE_DESTROY_INSTANCE = 206,
     'QUERY_INSTANCE': 207,  # LY_A_NODE_QUERY_INSTANCE = 207
 }
@@ -202,6 +208,7 @@ default_permission = [
     #('user', 'User'),  # default permission for all user
     ('appliance.upload', 'Can upload appliance'),
     ('instance.create', 'Can create instance'),
+    ('network.add', 'Can add another NIC configure'),
 ]
 
 default_group = [
@@ -265,3 +272,28 @@ def restart_luoyun_web():
     os.execl(python, python, *CMD_ARGV)
 
 
+USER_AVATAR_MAXSIZE = 2 * 1024 * 1024 # 2M
+USER_AVATAR_NAME = 'uavatar.png'
+USER_AVATAR_MINI_NAME = 'uavatar-mini.png'
+USER_AVATAR_THUM_SIZE = (120, 120)
+USER_AVATAR_MINI_THUM_SIZE = (36, 36)
+USER_AVATAR_DEFAULT = os.path.join(STATIC_URL, 'image/user2.png')
+USER_AVATAR_MINI_DEFAULT = 'image/user-mini.png'
+
+APPLIANCE_LOGO_MAXSIZE = 2 * 1024 * 1024 # 2M
+APPLIANCE_LOGO_DEFAULT = os.path.join(STATIC_PATH, 'image/appliance.png')
+APPLIANCE_LOGO_DEFAULT_URL = os.path.join(STATIC_URL, 'image/appliance.png')
+
+APPLIANCE_LOGO_NAME = 'alogo.png'
+APPLIANCE_LOGO_THUM_NAME = 'thum_alogo.png'
+
+APPLIANCE_LOGO_THUM_SIZE = (120, 120)
+
+
+INSTANCE_LOGO_DEFAULT_URL = os.path.join(STATIC_URL, 'image/instance.png')
+INSTANCE_LOGO_NAME = 'ilogo.png'
+INSTANCE_LOGO_MARK = os.path.join(STATIC_PATH, 'image/instance-watermark.png' )
+
+# Instance status check interval time
+INSTANCE_S_UP_INTER_1 = 3  # seconds
+INSTANCE_S_UP_INTER_2 = 6  # seconds

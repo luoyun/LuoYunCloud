@@ -18,6 +18,7 @@ from tornado.web import RequestHandler
 
 from app.account.models import User
 from app.session.models import Session
+from app.system.models import LyTrace
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
@@ -26,40 +27,7 @@ template_dir = os.path.join(
     os.path.dirname(__file__), 'template' )
 
 
-from dateutil import tz
-
-from_zone = tz.gettz('UTC')  # UTC Zone
-to_zone = tz.gettz('CST')    # China Zone
-
-def lytime(t, f='%m-%d %H:%M', UTC=False):
-
-    if t:
-
-        if UTC:
-            local = t
-        else:
-            utc = t.replace(tzinfo=from_zone)
-            local = utc.astimezone(to_zone)
-
-        return datetime.datetime.strftime(local, f)
-
-    else:
-        return ''
-
-
-def fulltime(t, UTC=False):
-
-    if t:
-        if UTC:
-            local = t
-        else:
-            utc = t.replace(tzinfo=from_zone)
-            local = utc.astimezone(to_zone)
-
-        return datetime.datetime.strftime(local, '%Y-%m-%d %H:%M:%S')
-    else:
-        return ''
-
+from ytime import htime, ftime
 
 class LyRequestHandler(RequestHandler):
 
@@ -91,12 +59,15 @@ class LyRequestHandler(RequestHandler):
             LANGUAGES=self.settings['LANGUAGES'],
             STATIC_URL=self.settings['STATIC_URL'],
             THEME_URL=self.settings['THEME_URL'],
+            THEME=self.settings['THEME'],
+            theme_url=self.theme_url,
 
             #method
-            fulltime = fulltime,
-            lytime = lytime,
+            htime = htime,
+            ftime = ftime,
             has_permission = self.has_permission,
             AJAX = ajax,
+            show_error = show_error,
         )
 
         args.update(kwargs)
@@ -142,7 +113,7 @@ class LyRequestHandler(RequestHandler):
             return None
 
         # Does session expired ?
-        if session.expire_date < datetime.datetime.utcnow():
+        if session.expire_date < datetime.datetime.now():
             return None
 
         sk = self.settings["session_secret"]
@@ -160,10 +131,10 @@ class LyRequestHandler(RequestHandler):
         user = self.db2.query(User).get(
             session_dict.get('user_id', 0) )
 
-        if user.islocked: return None
-
         if user:
-            user.last_active = datetime.datetime.utcnow()
+            if user.islocked: return None
+
+            user.last_active = datetime.datetime.now()
             user.last_entry = self.request.uri
             #self.db2.commit()
 
@@ -259,6 +230,47 @@ class LyRequestHandler(RequestHandler):
         self.require_setting("no_resource_url")
         return self.application.settings["no_resource_url"]
 
+    def theme_url(self, f):
+        return self.static_url('themes/%s/%s' % (self.settings['THEME'], f))
+
+    def get_int(self, value, default=0):
+        try:
+            return int(value)
+        except:
+            return default
+
+    def get_argument_int(self, key, default=0):
+        value = self.get_argument(key, default)
+        try:
+            return int(value)
+        except:
+            return default
+
+    def lytrace(self, ttype, tid, do, isok=True, result=None):
+        ip = self.request.remote_ip
+        agent = self.request.headers.get('User-Agent')
+        visit = self.request.uri
+
+        T = LyTrace(self.current_user, ip, agent, visit)
+
+        T.target_type = ttype,
+        T.target_id = tid,
+        T.do = do
+        T.isok = isok
+        T.result = result
+
+        self.db2.add(T)
+        self.db2.commit()
+
+        return T
+
+
+def show_error( E ):
+
+    ''' return the error msg in list E '''
+
+    return '<ul class="yerror">%s</ul>' % ''.join(['<li>%s</li>' % str(e) for e in E]) if E else ''
+
 
 
 import functools, urlparse, urllib
@@ -332,7 +344,9 @@ class Pagination:
 <div class="pagination">
 
   % if cur_page > 1:
-  <a href="${ page_url(cur_page -1) }">${ prev_str }</a>
+  <a href="${ page_url(cur_page -1) }"><span class="endside">${ prev_str }<span></a>
+  % else:
+  <span class="endside">${ prev_str }</span>
   % endif
 
   % for p in plist:
@@ -346,7 +360,9 @@ class Pagination:
   % endfor
 
   % if cur_page < page_sum:
-  <a href="${ page_url(cur_page + 1) }">${ next_str }</a>
+  <a href="${ page_url(cur_page + 1) }"><span class="endside">${ next_str }</span></a>
+  % else:
+  <span class="endside">${ next_str }</span>
   % endif
 
 </div>
@@ -378,8 +394,8 @@ class Pagination:
             return ''
 
         d = { 'plist': self._page_list(),
-              'prev_str': 'Prev',
-              'next_str': 'Next',
+              'prev_str': _('Prev'),
+              'next_str': _('Next'),
               'cur_page': self.cur,
               'page_sum': self.sum,
               'page_url': page_url,
@@ -519,3 +535,4 @@ class LyProxyHandler(LyRequestHandler):
                 body = self.replace_url(response.body)
                 self.write(body)
             self.finish()
+

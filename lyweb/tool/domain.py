@@ -193,3 +193,21 @@ def unbinding_domain_from_nginx(db, id):
     # He laughs best who laughs last. ;-)
     return True, _("OK")
 
+
+
+def get_default_domain(db, ID):
+
+    domain = db.query(LuoYunConfig).filter_by(key='domain').first()
+
+    if not domain:
+        return None, None
+
+    domain =  json.loads(domain.value)
+
+    topdomain = domain['topdomain'].strip('.')
+    prefix = domain['prefix']
+    suffix = domain['suffix']
+
+    subdomain = '%s%s%s' % (prefix, ID, suffix)
+
+    return subdomain, topdomain

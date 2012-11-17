@@ -15,4 +15,13 @@ handlers = [
     url(r'/appliance/([0-9]+)/set_private', appliance.SetPrivate,
         name='appliance:set_private'),
 
+    url(r'/appliance/([0-9]+)/islocked', appliance.islockedToggle,
+        name='appliance:islocked'),
+
+    url(r'/appliance/([0-9]+)/isuseable', appliance.isuseableToggle,
+        name='appliance:isuseable'),
+
+    url(r'/appliance/catalog/([0-9]+)/tune_position', appliance.tuneCatalogPosition,
+        name='appliance:catalog:tune_position'),
+
 ]

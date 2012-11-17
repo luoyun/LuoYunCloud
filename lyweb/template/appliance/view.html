@@ -6,14 +6,14 @@
   <ol>
     <li><a class="home" href="/">${ _("Home") }</a></li>
     <li><a href="/appliance">${ _("Appliances") }</a></li>
-    <li><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog.name }</a></li>
+    <li><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog_name }</a></li>
     <li>${ _("View") } ${ appliance.name }</li>
   </ol>
 </div>
 
 <div id="app-baseinfo" class="c">
   <div class="section island c">
-    <img class="app-logo" src="${ appliance.logo_url }" alt="Logo" />
+    <img class="app-logo" src="${ appliance.logourl }" alt="Logo" />
     <div class="app-desc">
       <h1 class="app-name">${ appliance.name }</h1>
       <h4 class="app-user">${ _("Owner") }<a href="${ reverse_url('account:view', appliance.user_id) }">${ appliance.user.username }</a></h4>
@@ -37,7 +37,7 @@
       <tbody>
 	<tr>
 	  <td class="c1">${ _("Catalog") }</td>
-	  <td class="c2"><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog.name }</a></td>
+	  <td class="c2"><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog_name }</a></td>
 	</tr>
 	<tr>
 	  <td class="c1">${ _("Used") }</td>
@@ -45,11 +45,11 @@
 	</tr>
         <tr>
 	  <td class="c1">${ _("Create Time") }</td>
-          <td class="c2">${ fulltime(appliance.created) }</td>
+          <td class="c2">${ ftime(appliance.created) }</td>
 	</tr>
         <tr>
 	  <td class="c1">${ _("Update Time") }</td>
-          <td class="c2">${ fulltime(appliance.updated) }</td>
+          <td class="c2">${ ftime(appliance.updated) }</td>
 	</tr>
       </tbody>
     </table>
@@ -88,7 +88,7 @@
 	 % else:
 	 href="/instance/${I.id}" title="${ I.name }"
          % endif
-	 target="_blank"><img src="${ I.logo_url }" /></a>
+	 target="_blank"><img src="${ I.logourl }" /></a>
     </li>
     <div class="c"></div>
     <li class="i-name c"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></li>

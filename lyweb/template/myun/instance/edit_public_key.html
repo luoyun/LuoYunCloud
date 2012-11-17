@@ -1,0 +1,21 @@
+<%inherit file="/myun/instance_base.html" />
+
+<%block name="innav">
+<li>${ _("Edit Password") }</li>
+</%block>
+
+<%block name="instance">
+<div class="iedit-content">
+
+  <h2>${ _("Edit SSH Public Key") }</h2>
+  <div class="small-left-right-form c">
+    <form method="POST">
+      ##  ${ form.key.label } 
+      ${ form.key() }<br/>
+      ${ form.html_errors(form.key.errors) }
+      <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
+    </form>
+  </div>
+
+</div>
+</%block>

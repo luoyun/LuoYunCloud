@@ -1,3 +1,9 @@
+#header-wrap, #main, #footer-wrap {
+    margin: 0 auto;
+    width: 98%;
+}
+/* -- overite about */
+
 /* Start Common Style */
 table th {
     color: #2A3539;
@@ -25,16 +31,14 @@ table th {
 #ly-admin {
     margin: 10px 0 50px;
 }
-#ly-admin-sidebar, #ly-admin-sidemain {
-    float: left;
-}
+
 #ly-admin-sidebar {
     width: 135px;
     text-align: right;
 }
 /* Start Admin Sidemain */
 #ly-admin-sidemain {
-    width: 790px;
+/*    width: 790px;*/
     padding: 15px 25px 50px;
 }
 #ly-admin-sidemain h2 {

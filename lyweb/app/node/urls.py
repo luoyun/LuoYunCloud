@@ -5,5 +5,9 @@ handlers = [
 
     # Job
     url(r'/node/([0-9]+)', node.Action, name='node:action'),
+    url(r'/node/([0-9]+)/isenable', node.isenableToggle,
+        name='node:isenable'),
+
+    url(r'/node/([0-9]+)/edit', node.NodeEdit, name='node:edit'),
 
 ]

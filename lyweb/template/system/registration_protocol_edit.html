@@ -1,12 +1,15 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/system.html" />
 
-<%block name="sidemain">
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li>${ _("Registration Policy Edit") }</li>
+</%block>
 
-<h2>${ _("Registration Policy Edit") }</h2>
+<%block name="content">
 
 <p><a href="${ reverse_url('registration_protocol') }" target="_blank">${ _("Read Registration Policy") }</a></p>
 
-<div id="registration-policy-eform" class="small-left-right-form c">
+<div class="small-left-right-form c">
   <form method="POST" action="${ reverse_url('system:protocol:edit') }">
     ${ form.text() }<br/>
     ${ form.html_errors(form.text.errors) }
@@ -17,5 +20,28 @@
 
   </form>
 </div>
+
+<script charset="utf-8" src="${ static_url('kindeditor/kindeditor.js') }"></script>
+<script charset="utf-8" src="${ static_url('kindeditor/lang/zh_CN.js') }"></script>
+
+<script type="text/javascript">
+    var editor;
+    KindEditor.ready(function(K) {
+	editor = K.create("#text", {
+	    width: '100%',
+	    height: '300px',
+	    uploadJson : '/ly/upload/kindeditor',
+	    fileManagerJson : '/ly/upload/kindeditor',
+	    allowFileManager : true,
+            items : [
+                'formatblock', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'removeformat', '|',
+                'undo', 'redo', '|', 'code', '|', 'justifyleft', 'justifycenter', 'justifyright',
+                'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', '|',
+                'image', 'insertfile', 'table', 'emoticons',
+                'anchor', 'link', 'unlink', '|', 'fullscreen', 'source', 'preview', 'about'
+            ],
+	});
+    });
+</script>
 
 </%block>

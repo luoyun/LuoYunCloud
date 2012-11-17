@@ -24,7 +24,7 @@
 	  </td>
           <td>
 	    <div class="subject"><a href="${ reverse_url('message:inbox:view', M.id) }">${ M.subject }</a></div>
-            <div class="datetime">${ fulltime(M.created) }</div>
+            <div class="datetime">${ ftime(M.created) }</div>
             <div class="action">
 	      <a href="${ reverse_url('message:inbox:reply', M.id) }" title="${ _('Reply') }"><img src="${ THEME_URL }img/reply.gif" alt="${ _('Reply') }" /></a>
 	      <a href="${ reverse_url('message:delete', M.id) }" title="${ _('Delete') }"><img src="${ THEME_URL }img/delete.png" alt="${ _('Delete') }" /></a>

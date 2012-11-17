@@ -1,10 +1,11 @@
 # coding: utf-8
 
-import logging, struct, socket, re, os, json
+import logging, struct, socket, re, os, json, time
 from datetime import datetime
 
 from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
+import tornado
 
 from sqlalchemy.sql.expression import asc, desc
 from sqlalchemy import and_
@@ -22,7 +23,7 @@ from lycustom import has_permission
 
 import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
-from settings import JOB_ACTION, JOB_TARGET
+from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
 
 from lycustom import LyRequestHandler, Pagination
 
@@ -37,7 +38,7 @@ except ImportError:
 
 class InstRequestHandler(LyRequestHandler):
 
-    def create_logo(self, app, inst_id):
+    def create_logo2(self, app, inst_id):
         ''' Create logo '''
 
         if not hasattr(app, 'logoname'):
@@ -91,7 +92,7 @@ class InstRequestHandler(LyRequestHandler):
 
     def done(self, msg):
 
-        ajax = int(self.get_argument('ajax', 0))
+        ajax = self.get_argument_int('ajax', 0)
 
         if ajax:
             self.write(msg)
@@ -130,38 +131,53 @@ class InstRequestHandler(LyRequestHandler):
         return inst
 
 
-    def run_job(self, id, action_id):
+    def get_my_instance(self, ID, allow_admin=False):
+        ''' Just instance owner or admin can get instance '''
 
-        # To prevent duplication
-        old = self.db2.query(Job).filter( and_(
-                Job.user_id == self.current_user.id,
-                Job.target_type == JOB_TARGET['INSTANCE'],
-                Job.target_id == id,
-                Job.action == action_id,
-                Job.status == settings.JOB_S_INITIATED ) ).all()
+        inst = self.db2.query(Instance).get(ID)
 
-        if old: return (None,  _("Can not run duplication job!"))
+        if not inst:
+            return None, _('No such instance: %s !') % ID
 
-        # TODO: when a job is running, can not rerun also !
+        if inst.status == DELETED_S:
+            return None, _('Instance %s is deleted !') % ID
+
+        if ( (not self.current_user) or (self.current_user.id != inst.user_id) ):
+            if not (allow_admin and self.has_permission('admin')):
+                return None, _('Instance %s is private !') % ID
+
+        return inst, ''
+
+
+    def run_job(self, I, action_id):
+
+        if I.lastjob and (not I.lastjob.completed):
+            if not ( action_id == JOB_ACTION['STOP_INSTANCE'] and
+                 I.lastjob.canstop ):
+                # TODO: status = 100, timeout > 60s
+                return _("Previous task is not finished !")
 
         # Create new job
         job = Job( user = self.current_user,
                    target_type = JOB_TARGET['INSTANCE'],
-                   target_id = id,
+                   target_id = I.id,
                    action = action_id )
 
         self.db2.add(job)
         self.db2.commit()
+        
+        I.lastjob = job
+
         try:
             self._job_notify( job.id )
         except Exception, e:
             #[Errno 113] No route to host
             # TODO: should be a config value
             job.status = settings.JOB_S_FAILED
-            self.db2.commit()
-            return (None, _("Connect to control server error: %s") % e)
+            return _("Connect to control server failed: %s") % e
 
-        return (job, "")
+        self.db2.commit()
+        return _('Task starts successfully.')
 
 
     def update_ipassign(self, ip, instance):
@@ -171,7 +187,7 @@ class InstRequestHandler(LyRequestHandler):
         if ipassign:
             ipassign.user_id = self.current_user.id
             ipassign.instance_id = instance.id
-            updated = datetime.utcnow()
+            updated = datetime.now()
         else:
             c = IpAssign( ip = ip,
                           user = self.current_user,
@@ -187,8 +203,9 @@ class InstRequestHandler(LyRequestHandler):
             inst.init_config()
 
         config = json.loads(inst.config)
-        if 'domain' in config.keys():
-            del config['domain']
+        domain = config.get('domain', {})
+        if not (domain and domain.get('name')):
+            return True, _('No domain needed unbinding!')
 
         # TODO: delete nginx binding
         from tool.domain import unbinding_domain_from_nginx
@@ -196,6 +213,7 @@ class InstRequestHandler(LyRequestHandler):
         if not ret:
             return  False, _('unbinding domain error: %s') % reason
 
+        del config['domain']
         inst.config = json.dumps( config )
         self.db2.commit()
 
@@ -224,6 +242,10 @@ class InstRequestHandler(LyRequestHandler):
         L = self.get_domain(I).split('.')
         return (L[0], '.'.join(L[1:])) if L else (None, None)
 
+    def set_root_passwd(self, I):
+        x = I.user.profile.get_secret('root_shadow_passwd')
+        I.set_config('passwd_hash', x)
+
 
 
 class Index(InstRequestHandler):
@@ -231,7 +253,6 @@ class Index(InstRequestHandler):
 
     def initialize(self, title = _('LuoYun Public Instance')):
         self.title = title
-
 
     def get(self):
 
@@ -247,9 +268,9 @@ class Index(InstRequestHandler):
         by = self.get_argument('by', 'updated')
         sort = self.get_argument('sort', 'desc')
         status = self.get_argument('status', 'running')
-        page_size = int(self.get_argument(
-                'sepa', settings.INSTANCE_HOME_PAGE_SIZE))
-        cur_page = int(self.get_argument('p', 1))
+        page_size = self.get_argument_int(
+                'sepa', settings.INSTANCE_HOME_PAGE_SIZE)
+        cur_page = self.get_argument_int('p', 1)
 
         start = (cur_page - 1) * page_size
         stop = start + page_size
@@ -269,7 +290,6 @@ class Index(InstRequestHandler):
             instances = instances.filter_by(
                 user_id = self.current_user.id )
 
-        #by_obj = Instance.created if by == 'created' else Instance.updated
         if by == 'created':
             by_obj = Instance.created
         # TODO: sorted by username
@@ -319,144 +339,12 @@ class View(InstRequestHandler):
         self.inst = self.get_instance(id)
         if not self.inst: return
 
-        obj = self.get_argument('view', 'baseinfo')
-        if obj == 'network':
-            self.get_network()
-        elif obj == 'resource':
-            self.get_resource()
-        elif obj == 'storage':
-            self.get_storage()
-        elif obj == 'secret':
-            self.get_secret()
-        elif obj == 'delete':
-            self.get_delete()
-        elif obj == 'joblist':
-            self.get_joblist()
-        elif obj == 'domain':
-            self.get_domain()
-        elif obj == 'webssh':
-            self.get_webssh()
-        else:
-            # other obj is baseinfo
-            self.get_baseinfo()
-
-
-    def get_baseinfo(self):
-
         d = { 'title': _('Baseinfo of instance %s') % self.inst.id,
               'instance': self.inst,
               'JOB_RESULT': self.get_argument('job_result', None)}
 
-        self.render('instance/baseinfo.html', **d)
+        self.render('instance/view.html', **d)
 
-
-
-    def get_resource(self):
-        d = { 'title': _('Resource of instance %s') % self.inst.id,
-              'instance': self.inst }
-        self.render('instance/resource.html', **d)
-
-
-    def get_network(self):
-
-        inst = self.inst
-        network = []
-
-        if inst.config:
-            config = json.loads(inst.config)
-            if 'network' in config.keys():
-                network = config['network']
-
-        d = { 'title': _('Network configuration of instance %s') % self.inst.id,
-              'instance': inst, 'NETWORK_LIST': network }
-
-        self.render('instance/network.html', **d)
-
-
-    def get_storage(self):
-
-        inst = self.inst
-        storage = []
-
-        if inst.config:
-            config = json.loads(inst.config)
-            if 'storage' in config.keys():
-                storage = config['storage']
-
-        d = { 'title': _('Storage configuration of instance %s') % self.inst.id,
-              'instance': inst, 'STORAGE_LIST': storage }
-
-        self.render('instance/storage.html', **d)
-
-
-    def get_secret(self):
-
-        inst = self.inst
-        password = ''
-        publickey = ''
-
-        form = PublicKeyForm()
-
-        if inst.config:
-            config = json.loads(inst.config)
-            if 'passwd_hash' in config.keys():
-                password = config['passwd_hash']
-            if 'public_key' in config.keys():
-                form.key.data = config['public_key']
-
-        d = { 'title': _('Configure Password'),
-              'instance': inst, 'password': password,
-              'form': form,
-              'saved': self.get_argument('saved', None) }
-
-        self.render('instance/secret.html', **d)
-
-
-
-    def get_delete(self):
-
-        d = { 'title': _('Delete Instance'),
-              'instance': self.inst }
-
-        self.render('instance/delete.html', **d)
-
-
-    def get_joblist(self):
-
-        JOB_LIST = self.db2.query(Job).filter(
-            Job.target_id == self.inst.id,
-            Job.target_type == JOB_TARGET['INSTANCE'] )
-        JOB_LIST.order_by( desc('created') )
-        JOB_LIST = JOB_LIST.limit(10)
-
-        d = { 'title': _('Job History'),
-              'instance': self.inst,
-              'JOB_LIST': JOB_LIST }
-
-        self.render('instance/joblist.html', **d)
-
-
-    def get_domain(self):
-        d = { 'title': _('Domain Binding'),
-              'instance': self.inst }
-
-        self.render('instance/domain.html', **d)
-
-
-    def get_webssh(self):
-        if not self.inst.config:
-            self.inst.init_config()
-
-        config = json.loads(self.inst.config)
-        if 'webssh' in config.keys():
-            webssh = config['webssh']
-        else:
-            webssh = None
-
-        d = { 'title': _('Configure WebSSH'),
-              'instance': self.inst, 'webssh': webssh }
-
-        self.render('instance/webssh.html', **d)
 
 
 
@@ -465,165 +353,154 @@ class Delete(InstRequestHandler):
     @authenticated
     def get(self, id):
 
-        inst = self.db2.query(Instance).get(id)
-        if not inst:
-            return self.done( _('No instance %s!') % id )
+        I = self.db2.query(Instance).get(id)
+        d = {'I': I, 'E': []}
 
-        if self.current_user.id not in [inst.user_id, 1]:
-            return self.done( _('No permission!') )
+        if I:
+            # TODO: no running delete !
+            if I.is_running:
+                d['E'].append( _("Can not delete a running instance!") )
 
-        # TODO: no running delete !
-        if inst.is_running:
-            return self.done( _("Can not delete a running instance!") )
+            # TODO: delete domain binding
+            ret, reason = self.domain_delete( I )
+            if not ret:
+                d['E'].append( reason )
 
-        # TODO: delete domain binding
-        ret, reason = self.domain_delete( inst )
-        if not ret:
-            return self.done( reason )
+        else:
+            d['E'].append( _('No instance %s!') % id )
 
-        inst.status = DELETED_S
-        inst.subdomain = ''
+
+        if d['E']:
+            return self.render('instance/delete_return.html', **d)
+
+        I.status = DELETED_S
+        I.subdomain = '_notexist_%s_' % I.id
+        I.name = '_notexist_%s_' % I.id
         self.db2.commit()
 
         ipassign_list = self.db2.query(IpAssign).filter_by(
-            instance_id = inst.id ).all()
+            instance_id = I.id ).all()
         for ipassign in ipassign_list:
             self.db2.delete( ipassign )
             self.db2.commit()
 
         # delete instance files
-        job, msg = self.run_job(id, JOB_ACTION['DESTROY_INSTANCE'])
-        if job:
-            self.done( _('Instance %s is deleted!' % id) )
+        d['MSG'] = self.run_job(I, JOB_ACTION['DESTROY_INSTANCE'])
+        return self.render('instance/delete_return.html', **d)
+
+
+
+class InstanceControl(InstRequestHandler):
+    ''' stop/run/reboot/query '''
+
+    #@authenticated
+    def get(self, ID):
+
+        # Important !!! IE use cache !
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        if not self.current_user:
+            return self.write( {
+                    'return_code': 1,
+                    'msg': _('You have not login !') } )
+
+        inst, msg = self.get_my_instance(ID, allow_admin=True)
+        if not inst:
+            return self.write( {'return_code': 1, 'msg': msg } )
+
+        action = self.get_argument('action', '').lower()
+
+        ret = 0
+        if action == 'run':
+            msg = self.run( inst )
+        elif action == 'stop':
+            msg = self.stop( inst )
+        elif action == 'reboot':
+            msg = self.reboot( inst )
+        elif action == 'query':
+            msg = self.query( inst )
         else:
-            self.done( msg )
+            msg = _('Just support run/stop/reboot/query action')
+            ret = 1
+
+        T = self.lytrace(
+            ttype = LY_TARGET['INSTANCE'], tid = inst.id,
+            do = _('%s instance') % action )
+        if ret:
+            T.isok = False
+
+        inst.updated = datetime.now()
+        if inst.ischanged:
+            inst.ischanged = False
+        self.db2.commit()
 
 
+        self.write( {'return_code': ret, 'msg': msg } )
+                     
 
-class Stop(InstRequestHandler):
+    def reboot(self, instance):
+        return self.run_job(instance, JOB_ACTION['REBOOT_INSTANCE'])
 
-    @authenticated
-    def get(self, id):
 
-        inst = self.get_instance(id)
-        if not inst: return
-
-        if not inst.is_running:
-            return self.write( _('Instance is not running!') )
-
-        json = { 'jid': -1, 'desc': _('Unknown error !') }
-
-        job, msg = self.run_job(id, JOB_ACTION['STOP_INSTANCE'])
-        if job:
-            json['jid'] = job.id
-            json['desc'] = _("Stop instance succeed")
-
-            inst.updated = datetime.utcnow()
-            if inst.ischanged:
-                inst.ischanged = False
-            self.db2.commit()
-
+    def query(self, instance):
+        if instance.need_query:
+            return self.run_job(instance, JOB_ACTION['QUERY_INSTANCE'])
         else:
-            json['desc'] =  msg
-
-        self.write(json)
+            return _('Instance does not need query.')
 
 
-
-class Query(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-
-        inst = self.get_instance(id)
-        if not inst: return
-
-        # TODO: Need query ?
-
-        json = { 'jid': -1, 'desc': _('Unknown error !') }
-
-        job, msg = self.run_job(id, JOB_ACTION['QUERY_INSTANCE'])
-        if job:
-            json['jid'] = job.id
-            json['desc'] = _('Query instance %s succeed!') % id
+    def stop(self, instance):
+        
+        if instance.is_running:
+            return self.run_job(instance, JOB_ACTION['STOP_INSTANCE'])
         else:
-            json['desc'] = msg
+            return _('Instance is stopped now !')
 
-        self.write(json)
+    def run(self, instance):
 
+        ret = self.have_resource(instance)
+        if ret: return ret
 
-
-class Run(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-
-        inst = self.get_instance(id)
-        if not inst: return
-
-        if not self.have_resource(inst): return
-
-        if inst.is_running:
-            return self.write(
-                _('Instance is running already!') )
+        if instance.is_running:
+            return _('Instance is running now !')
 
         # TODO: a temp hack
-        self.set_nameservers(inst)
-        self.rebinding_domain(inst)
+        self.set_nameservers(instance)
+        self.rebinding_domain(instance)
+        if instance.get_config('use_global_passwd', True):
+            self.set_root_passwd(instance)
 
-        json = { 'jid': -1, 'desc': _('Unknown error !') }
-
-        job, msg = self.run_job(id, JOB_ACTION['RUN_INSTANCE'])
-        if job:
-            json['jid'] = job.id
-            json['desc'] = _('Run instance %s succeed!') % id
-
-            inst.updated = datetime.utcnow()
-            if inst.ischanged:
-                inst.ischanged = False
-
-            self.db2.commit()
-
-        else:
-            json['desc'] = msg
-
-        self.write(json)
-
+        return self.run_job(instance, JOB_ACTION['RUN_INSTANCE'])
 
     def have_resource(self, inst):
-        # Have resources ?
+
+        # TODO: owner or myself ?
+        #owner = self.current_user
+        owner = inst.user
+
         USED_INSTANCES = self.db2.query(Instance).filter(
-            Instance.user_id == self.current_user.id).all()
-        USED_CPUS = inst.cpus
-        USED_MEMORY = inst.memory
+            Instance.user_id == owner.id).all()
+        USED_CPUS = 0
+        USED_MEMORY = 0
         for I in USED_INSTANCES:
             if I.is_running:
                 USED_CPUS += I.cpus
                 USED_MEMORY += I.memory
 
-        if ( USED_CPUS > self.current_user.profile.cpus or
-             USED_MEMORY > self.current_user.profile.memory ):
+        TOTAL_CPU = owner.profile.cpus - USED_CPUS
+        TOTAL_MEM = owner.profile.memory - USED_MEMORY
 
-            desc = _('No resources to run instance:')
-
-            if USED_CPUS > self.current_user.profile.cpus:
-                desc += _('the total number of CPUs you have is %s, %s used.') % (self.current_user.profile.cpus, USED_CPUS - inst.cpus)
-            if USED_MEMORY > self.current_user.profile.memory:
-                desc += _('the total amount of memory you have is %s MB, %s MB used.') % (self.current_user.profile.memory, USED_MEMORY - inst.memory)
-
-            ajax = self.get_argument('ajax', 0)
-
-            if ajax:
-                json = { 'jid': 0, 'desc': desc }
-                self.write(json)
-            else:
-                url = self.get_no_resource_url()
-                url += "?reason=Resource Limit"
-                self.redirect( url )
-
-            return False
-
-        return True
+        desc = ''
+        if TOTAL_CPU < inst.cpus:
+            if TOTAL_CPU < 0: TOTAL_CPU = 0
+            desc = _('need %s CPU, but %s have.') % (inst.cpus, TOTAL_CPU)
+        if TOTAL_MEM < inst.memory:
+            if TOTAL_MEM < 0: TOTAL_MEM = 0
+            desc = _('need %sMB memory, but %sMB have.') % (inst.memory, TOTAL_MEM)
+        if desc:
+            return _('No resource: %s') % desc
 
 
     def set_nameservers(self, instance):
@@ -669,37 +546,8 @@ class Run(InstRequestHandler):
         config['domain'] = domain
 
         instance.config = json.dumps( config )
-        instance.updated = datetime.utcnow()
+        instance.updated = datetime.now()
         self.db2.commit()
-
-
-
-
-class Isrunning(InstRequestHandler):
-    ''' Does the instance is running ? '''
-
-    def get(self, id):
-
-        inst = self.get_instance(id)
-        if not inst: return
-
-        # TODO: Need query ?
-
-        json = { 'jid': -1, 'desc': _('Unknown error !') }
-
-        job = self.db2.query(Job).filter( and_(
-                Job.target_type == JOB_TARGET['INSTANCE'],
-                Job.target_id == id,
-                Job.ended == None ) ).order_by(desc('id')).first()
-
-        if job:
-            json['jid'] = job.id
-            json['desc'] = _('Have job running on instance %s.') % id
-        else:
-            json['desc'] = _('Have not job running on instance %s.') % id
-
-        self.write(json)
-
 
 
 class CreateInstance(InstRequestHandler):
@@ -809,16 +657,18 @@ class CreateInstance(InstRequestHandler):
 
             self.db2.add(instance)
             self.db2.commit()
-            instance.logo = self.create_logo(app, instance.id)
-            self.db2.commit()
 
             instance.mac = '92:1B:40:26:%02x:%02x' % (
                 instance.id / 256, instance.id % 256 )
             self.db2.commit()
 
+#            instance.logo = self.create_logo(app, instance.id)
+            instance.save_logo()
+
             # TODO
             self.set_ip( instance )
             self.binding_domain( instance )
+            self.set_root_passwd( instance )
 
             url = self.reverse_url('instance:view', instance.id)
             return self.redirect(url)
@@ -893,634 +743,9 @@ class CreateInstance(InstRequestHandler):
         config['domain'] = domain
 
         instance.config = json.dumps( config )
-        instance.updated = datetime.utcnow()
+        instance.updated = datetime.now()
         self.db2.commit()
 
-
-
-class BaseinfoEdit(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        form = BaseinfoForm()
-        form.name.data = inst.name
-        form.summary.data = inst.summary
-        form.description.data = inst.description
-
-
-        d = { 'title': _('Edit Baseinfo'),
-              'instance': inst, 'form': form }
-
-        self.render('instance/baseinfo_edit.html', **d)
-
-
-    @authenticated
-    def post(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        form = BaseinfoForm( self.request.arguments )
-        if form.validate():
-            inst.name = form.name.data
-            inst.summary = form.summary.data
-            inst.description = form.description.data
-            inst.updated = datetime.utcnow()
-            self.db2.commit()
-
-            url = self.reverse_url('instance:view', id)
-            url += '?view=baseinfo'
-            return self.redirect( url )
-
-        # Get error
-        d = { 'title': _('Edit Baseinfo'),
-              'instance': inst, 'form': form }
-        self.render('instance/baseinfo_edit.html', **d)
-
-
-
-class ResourceEdit(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        form = ResourceForm()
-        form.cpus.data = inst.cpus
-        form.memory.data = inst.memory
-
-        d = { 'title': _('Edit Resource'),
-              'instance': inst, 'form': form }
-
-        self.render('instance/resource_edit.html', **d)
-
-
-    @authenticated
-    def post(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        form = ResourceForm( self.request.arguments )
-        if form.validate():
-
-            # TODO: resource limit
-            RUNNING_INST_LIST = self.db2.query(Instance).filter( and_(
-                    Instance.status.in_( settings.INSTANCE_SLIST_RUNING ),
-                    Instance.user_id == inst.user_id ) )
-
-            USED_CPUS, USED_MEMORY = 0, 0
-            for I in RUNNING_INST_LIST:
-                if I.is_running:
-                    USED_CPUS += I.cpus
-                    USED_MEMORY += I.memory
-
-            profile = inst.user.profile
-            if (form.cpus.data + USED_CPUS) > profile.cpus:
-                form.cpus.errors.append( _('cpus can not greater than %s') % (profile.cpus - USED_CPUS) )
-            if (form.memory.data + USED_MEMORY) > profile.memory:
-                form.memory.errors.append( _('memory can not greater than %s') % (profile.memory - USED_MEMORY) )
-            if form.cpus.errors or form.memory.errors:
-                d = { 'title': _('Edit Resource'),
-                      'instance': inst, 'form': form }
-                self.render('instance/resource_edit.html', **d)
-                
-
-            inst.cpus = form.cpus.data
-            inst.memory = form.memory.data
-            if inst.is_running:
-                inst.ischanged = True
-            self.db2.commit()
-
-            url = self.reverse_url('instance:view', id)
-            url += '?view=resource'
-            return self.redirect( url )
-
-        # Get error
-        d = { 'title': _('Edit Resource'),
-              'instance': inst, 'form': form }
-        self.render('instance/resource_edit.html', **d)
-
-
-
-class NetworkEdit(InstRequestHandler):
-
-    def update_form(self, form):
-        NPOOL = []
-        TOTAL_POOL = settings.NETWORK_POOL[0]
-
-        if not TOTAL_POOL:
-            form.ip.choices = []
-            return
-
-        for ip in TOTAL_POOL['pool']:
-            if not self.db2.query(IpAssign).filter_by( ip = ip ).first():
-                NPOOL.append( (ip, ip) )
-
-        form.ip.choices = NPOOL
-        form.netmask.data = TOTAL_POOL['netmask']
-        form.gateway.data = TOTAL_POOL['gateway']
-
-    @authenticated
-    def get(self, id):
-        # if not inst.config.network, just add
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        form = NetworkForm()
-        self.update_form( form )
-
-        if inst.config:
-            config = json.loads(inst.config)
-            if 'network' in config.keys():
-                network = config['network']
-                if len(network) > 0:
-                    network = network[0]
-                    form.type.data = network['type']
-                    form.ip.data = network['ip']
-                    form.netmask.data = network['netmask']
-                    form.gateway.data = network['gateway']
-
-
-        d = { 'title': _('Edit Network'),
-              'instance': inst, 'form': form }
-
-        self.render('instance/network_edit.html', **d)
-
-
-    @authenticated
-    def post(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        form = NetworkForm( self.request.arguments )
-        self.update_form( form )
-
-        if form.validate():
-
-            network = {
-                'type': form.type.data,
-                'mac': inst.mac, # TODO: use old mac
-                'ip': form.ip.data,
-                'netmask': form.netmask.data,
-                'gateway': form.gateway.data
-                }
-
-            if inst.config:
-                config = json.loads(inst.config)
-            else:
-                config = {}
-
-            config['network'] = [network]
-            inst.config = json.dumps(config)
-            #print 'config = ', inst.config
-            self.db2.commit()
-
-            # Update IpAssign table
-            ipassign = self.db2.query(IpAssign).filter_by( ip = network['ip'] ).first()
-            if ipassign:
-                ipassign.user_id = self.current_user.id
-                ipassign.instance_id = id
-                updated = datetime.utcnow()
-            else:
-                c = IpAssign( ip = network['ip'],
-                              user = self.current_user,
-                              instance = inst )
-                self.db2.add( c )
-
-            if inst.is_running:
-                inst.ischanged = True
-            self.db2.commit()
-
-            url = self.reverse_url('instance:view', id)
-            url += '?view=network'
-            return self.redirect( url )
-
-        # Get error
-        d = { 'title': _('Edit Network'),
-              'instance': inst, 'form': form }
-        self.render('instance/network_edit.html', **d)
-
-
-
-class NetworkDelete(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-        # delete inst.config.network
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        if inst.config:
-            config = json.loads(inst.config)
-            if 'network' in config.keys():
-                ip = config['network'][0]['ip']
-                del config['network']
-                inst.config = json.dumps(config)
-
-                # delete ip from IpAssign
-                ipassign = self.db2.query(IpAssign).filter_by( ip = ip ).first()
-                self.db2.delete( ipassign )
-                self.db2.commit()
-
-            if inst.is_running:
-                inst.ischanged = True
-
-        url = self.reverse_url('instance:view', id)
-        url += '?view=network'
-        return self.redirect( url )
-
-
-class StorageEdit(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-        # if not inst.config.storage, just add
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        form = StorageForm()
-        if inst.config:
-            config = json.loads(inst.config)
-            if 'storage' in config.keys():
-                storage = config['storage']
-                if len(storage) > 0:
-                    storage = storage[0]
-                    form.type.data = storage['type']
-                    form.size.data = storage['size']
-
-        d = { 'title': _('Edit Storage'),
-              'instance': inst, 'form': form }
-
-        self.render('instance/storage_edit.html', **d)
-
-
-    @authenticated
-    def post(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        form = StorageForm( self.request.arguments )
-        if form.validate():
-
-            # Is there have storage resource ?
-            used_storage = self.get_used_storage_size()
-#            print '''inst.user.profile.storage = %s,
-#used_storage = %s,
-#inst.storage = %s''' % (inst.user.profile.storage,
-#                        used_storage, inst.storage)
-            if ( inst.user.profile.storage
-                 + inst.storage # Add this instance's storage
-                 - used_storage
-                 ) < form.size.data:
-                url = self.get_no_resource_url()
-                url += "?reason=Storage LIMIT&total=%s&used=%s" % ( inst.user.profile.storage, used_storage )
-                return self.redirect( url )
-
-            storage = {
-                'type': form.type.data,
-                'size': form.size.data,
-                }
-
-            if inst.config:
-                config = json.loads(inst.config)
-            else:
-                config = {}
-
-            config['storage'] = [ storage ]
-            inst.config = json.dumps(config)
-
-            if inst.is_running:
-                inst.ischanged = True
-            self.db2.commit()
-
-            url = self.reverse_url('instance:view', id)
-            url += '?view=storage'
-            return self.redirect( url )
-
-        # Get error
-        d = { 'title': _('Edit Storage'),
-              'instance': inst, 'form': form }
-        self.render('instance/storage_edit.html', **d)
-
-
-    def get_used_storage_size(self):
-
-        from settings import INSTANCE_DELETED_STATUS as DS
-
-        INSTANCE_LIST = self.db2.query(Instance).filter_by(
-            user_id = self.current_user.id).filter(
-            Instance.status != DS )
-
-        USED = 0
-        for I in INSTANCE_LIST:
-            USED += I.storage
-
-        return USED
-
-
-
-class StorageDelete(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-        # delete inst.config.storage
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        if inst.config:
-            config = json.loads(inst.config)
-            if 'storage' in config.keys():
-                del config['storage']
-                inst.config = json.dumps(config)
-                self.db2.commit()
-
-            if inst.is_running:
-                inst.ischanged = True
-
-        url = self.reverse_url('instance:view', id)
-        url += '?view=storage'
-        return self.redirect( url )
-
-
-
-class PasswordEdit(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        form = PasswordForm()
-
-        d = { 'title': _('Edit Root Password for Instance'),
-              'instance': inst, 'form': form }
-
-        self.render('instance/password_edit.html', **d)
-
-
-    @authenticated
-    def post(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        form = PasswordForm( self.request.arguments )
-        if form.validate():
-            # get shadow passwd
-            import crypt, random, time
-            salt = crypt.crypt(str(random.random()), str(time.time()))[:8]
-            s = '$'.join(['','6', salt,''])
-            password = crypt.crypt(form.password.data,s)
-            if inst.config:
-                config = json.loads(inst.config)
-            else:
-                config = {}            
-            config['passwd_hash'] = password
-            inst.config = json.dumps(config)
-
-            if inst.is_running:
-                inst.ischanged = True
-            self.db2.commit()
-
-            url = self.reverse_url('instance:view', id)
-            url += '?view=secret'
-            return self.redirect( url )
-
-        # Get error
-        d = { 'title': _('Edit Root Password for Instance'),
-              'instance': inst, 'form': form }
-        self.render('instance/password_edit.html', **d)
-
-
-
-class PublicKeyEdit(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        form = PublicKeyForm()
-        if inst.config:
-            config = json.loads(inst.config)
-            if 'public_key' in config.keys():
-                form.key.data = config['public_key']
-
-        d = { 'title': _('Edit SSH Public Key'),
-              'instance': inst, 'form': form }
-
-        self.render('instance/publickey_edit.html', **d)
-
-
-    @authenticated
-    def post(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        form = PublicKeyForm( self.request.arguments )
-        if form.validate():
-            if inst.config:
-                config = json.loads(inst.config)
-            else:
-                config = {}
-
-            config['public_key'] = form.key.data
-            inst.config = json.dumps(config)
-            if inst.is_running:
-                inst.ischanged = True
-            self.db2.commit()
-
-            url = self.reverse_url('instance:view', id)
-            url += '?view=secret&saved=True'
-            return self.redirect( url )
-
-        # Get error
-        d = { 'title': _('Edit SSH Public Key'),
-              'instance': inst, 'form': form }
-        self.render('instance/publickey_edit.html', **d)
-
-
-
-class DomainEdit(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        d = { 'title': _('Configure Domain'),
-              'instance': inst, 'ERROR': [] }
-
-        d['subdomain'], d['topdomain'] = self.get_domain2( inst )
-        if not d['subdomain']:
-            d['ERROR'].append( _('can not get domain, domain may not have been configured in Administration Console.') )
-
-        if not inst.access_ip:
-            d['ERROR'].append( _('Can not get access_ip, please configure instance network or run instance') )
-
-        self.render('instance/domain_edit.html', **d)
-
-
-    @authenticated
-    def post(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        d = { 'title': _('Configure Domain'),
-              'instance': inst, 'ERROR': [] }
-
-        oldsub, d['topdomain'] = self.get_domain2( inst )
-
-        subdomain = self.get_argument('subdomain', None)
-        if not subdomain:
-            d['ERROR'].append( _('Domain is not configured!') )
-
-        if subdomain != oldsub:
-            d['subdomain'] = subdomain
-            if subdomain.isalpha():
-                exist_domain = self.db2.query(Instance.id).filter_by(
-                    subdomain = subdomain ).first()
-                if exist_domain:
-                    d['ERROR'].append( _('Domain name is taken!') )
-                if len(subdomain) > 16:
-                    d['ERROR'].append( _("Domain name is too long.") )
-            else:
-                d['ERROR'].append( _('Please use alpha characters in domain name!') )
-
-        if d['ERROR']:
-            return self.render('instance/domain_edit.html', **d)
-
-        # Updated instance subdomain value
-        inst.subdomain = subdomain
-        self.db2.commit()
-
-        # Binding in nginx
-        from tool.domain import binding_domain_in_nginx
-        ret, reason = binding_domain_in_nginx(
-            self.db2, inst.id, domain = self.get_domain(inst) )
-        if not ret:
-            d['ERROR'] = _('binding domain error: %s') % reason
-
-        if not inst.config:
-            inst.init_config()
-
-        config = json.loads(inst.config)
-            
-        if 'domain' in config.keys():
-            domain = config['domain']
-        else:
-            domain = {}
-
-        domain['name'] = self.get_domain( inst )
-        domain['ip'] = inst.access_ip
-        config['domain'] = domain
-
-        inst.config = json.dumps( config )
-
-        inst.updated = datetime.utcnow()
-        if inst.is_running:
-            inst.ischanged = True
-        self.db2.commit()
-
-        url = self.reverse_url('instance:view', inst.id)
-        url += '?view=domain'
-        return self.redirect(url)
-
-
-
-class DomainDelete(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        ret, reason = self.domain_delete( inst )
-        if not ret:
-            return self.done( reason )
-
-        url = self.reverse_url('instance:view', inst.id)
-        url += '?view=domain'
-        return self.redirect(url)
-
-
-
-class WebSSHEnable(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        if not inst.config:
-            inst.init_config()
-
-        config = json.loads(inst.config)
-            
-        if 'webssh' in config.keys():
-            webssh = config['webssh']
-        else:
-            webssh = {}
-
-        webssh['status'] = 'enable'
-        webssh['port'] = 8001
-
-        config['webssh'] = webssh
-
-        inst.config = json.dumps( config )
-        if inst.is_running:
-            inst.ischanged = True
-        self.db2.commit()
-
-        url = self.reverse_url('instance:view', inst.id)
-        url += '?view=webssh'
-        return self.redirect(url)
-
-
-
-class WebSSHDisable(InstRequestHandler):
-
-    @authenticated
-    def get(self, id):
-
-        inst = self.get_instance(id, isowner=True)
-        if not inst: return
-
-        if not inst.config:
-            inst.init_config()
-
-        config = json.loads(inst.config)
-        if 'webssh' in config.keys():
-            del config['webssh']
-
-        inst.config = json.dumps( config )
-        if inst.is_running:
-            inst.ischanged = True
-        self.db2.commit()
-
-        url = self.reverse_url('instance:view', inst.id)
-        url += '?view=webssh'
-        return self.redirect(url)
 
 
 class SetPrivate(InstRequestHandler):
@@ -1546,3 +771,422 @@ class SetPrivate(InstRequestHandler):
         self.db2.commit()
 
         self.redirect( url )
+
+
+
+class Status(InstRequestHandler):
+
+    ''' return all status of instance by json data '''
+
+    @asynchronous
+    def get(self, ID):
+
+        inst = self.db2.query(Instance).get(ID)
+        if not inst:
+            self.write( _('No such instance!') )
+            return self.finish()
+
+        status = { 'job': self.get_argument_int('job_status', 0),
+                   'instance': self.get_argument_int('instance_status', 0) }
+
+        self.check_status(inst, status)
+
+
+    def check_status(self, instance, status):
+
+        job = instance.lastjob
+
+        # TODO: a temp hack for old job action
+        if not job:
+            old = self.db2.query(Job).filter( and_(
+                    Job.target_type == JOB_TARGET['INSTANCE'],
+                    Job.target_id == instance.id) ).order_by(desc(Job.id)).first()
+            instance.lastjob = old
+            job = old
+
+        if self.request.connection.stream.closed() or not job:
+            return
+
+        self.db2.commit()
+
+
+        if ( job.status == status.get('job', 0) and 
+               instance.status == status.get('instance', 0) ):
+
+            if job and job.completed and instance.is_running:
+                time_interval = settings.INSTANCE_S_UP_INTER_2
+            else:
+                time_interval = settings.INSTANCE_S_UP_INTER_1
+
+            tornado.ioloop.IOLoop.instance().add_timeout(
+                time.time() + time_interval,
+                lambda: self.check_status(instance, status) )
+
+        else:
+
+            istatus_imgurl = self.theme_url('icons/InstanceStatus/%s.png' % instance.status)
+            if job.completed:
+                if job.status >=600:
+                    jstatus_imgurl = self.theme_url('icons/JobStatus/%s.png' % job.status)
+                else:
+                    jstatus_imgurl = self.theme_url('icons/JobStatus/completed.png')
+            else:
+                jstatus_imgurl = self.theme_url('icons/JobStatus/running.gif')
+
+            ip, ip_link = '', ''
+            domain, domain_link = '', ''
+
+            if instance.work_ip:
+                ip_link = instance.home_url(self.current_user)
+                ip = instance.work_ip
+
+            if instance.domain:
+                domain = instance.domain
+                if instance.is_running:
+                    domain_link = instance.home_url(self.current_user)
+
+            if instance.can_run:
+                iaction = 'run'
+            elif instance.need_query:
+                iaction = 'query'
+            else:
+                iaction = 'stop'
+
+            json = { 'job_id': job.id,
+
+                     'jstatus': job.status,
+                     'jstatus_str': job.status_string,
+                     'istatus_imgurl': istatus_imgurl,
+
+                     'istatus': instance.status,
+                     'istatus_str': instance.status_string,
+                     'jstatus_imgurl': jstatus_imgurl,
+
+                     'ip': ip, 'ip_link': ip_link,
+                     'domain': domain, 'domain_link': domain_link,
+
+                     'job_completed': 1 if job.completed else 0,
+                     'iaction': iaction }
+
+            
+            if job.status >= 300 and job.status <= 399:
+                json['status'] = 0
+
+            self.write(json)
+            self.finish()
+
+
+class CheckInstanceStatus(InstRequestHandler):
+
+    ''' check instance dynamic status '''
+
+    @asynchronous
+    def post(self):
+
+        WATCH = []
+
+        self.body = json.loads( self.request.body )
+
+        print '[DD] %s body = %s' % (datetime.now(), self.body)
+
+        idata = self.body.get('instance', [])
+        if idata and isinstance(idata, list):
+            for si in idata:
+                ID = self.get_int(si.get('id', 0))
+                if ID:
+                    i = self.db2.query(Instance).get(ID)
+                    if i:
+                        old_is = self.get_int(si.get('is', 0))
+                        old_js = self.get_int(si.get('js', 0))
+                        WATCH.append( (i, old_is, old_js) )
+
+            if WATCH:
+                return self.check_status(WATCH)
+
+        self.write( { 'return_code': 1, 'upload_data': self.body } )
+        return self.finish()
+
+
+    def check_status(self, WATCH):
+
+        if self.request.connection.stream.closed():
+            return
+
+        self.db2.commit() # TODO: need sync now
+
+        CHS = []
+        show_job = self.get_int(self.body.get('show_job', 0))
+
+        for instance, old_is, old_js in WATCH:
+
+            print '[DD] id = %s, is = [%s, %s], js = [%s, %s]' % (instance.id, old_is, instance.status, old_js, instance.lastjob_status_id)
+
+            if old_is and old_is != instance.status:
+                CHS.append(instance)
+
+            if show_job and old_js and instance.lastjob:
+                if old_js != instance.lastjob.status:
+                    CHS.append(instance)
+
+        if CHS:
+            ret = self.get_json_data(CHS)
+            print '[DD] CHS = %s, ret = %s' % (CHS, ret)
+            self.write( ret )
+            self.finish()
+
+        else:
+            # Need sleep to wait change
+            if instance.lastjob and not instance.lastjob.completed:
+                time_interval = settings.INSTANCE_S_UP_INTER_1
+            else:
+                time_interval = settings.INSTANCE_S_UP_INTER_2
+            #print '[DD] %s SLEEP %s seconds' % (datetime.now(), time_interval)
+
+            tornado.ioloop.IOLoop.instance().add_timeout(
+                time.time() + time_interval,
+                lambda: self.check_status(WATCH) )
+
+
+    def get_json_data(self, CHS):
+
+        show_action = self.get_int(self.body.get('show_action', 0))
+        show_domain = self.get_int(self.body.get('show_domain', 0))
+        show_ip = self.get_int(self.body.get('show_ip', 0))
+        show_job = self.get_int(self.body.get('show_job', 0))
+
+        idata = []
+        for instance in CHS:
+
+            CS = { 'id': instance.id, 'is': instance.status,
+                   'js': instance.lastjob_status_id,
+                   'is_str': instance.status_string,
+                   'is_img': self.theme_url('icons/InstanceStatus/%s.png' % instance.status) }
+
+            # SHOW job status
+            if show_job:
+                CS['js_str'] = instance.job_status_string
+                job = instance.lastjob
+                if job and job.completed:
+                    if job.status >=600:
+                        CS['js_img'] = self.theme_url('icons/JobStatus/%s.png' % job.status)
+                    else:
+                        CS['js_img'] = self.theme_url('icons/JobStatus/completed.png')
+                else:
+                    CS['js_img'] = self.theme_url('icons/JobStatus/running.gif')
+
+            # SHOW ip status
+            if show_ip and instance.work_ip:
+                CS['ip_link'] = instance.home_url(self.current_user)
+                CS['ip'] = instance.work_ip
+
+            # SHOW domain status
+            if show_domain and instance.domain and instance.is_running:
+                CS['domain_link'] = instance.home_url(self.current_user)
+                CS['domain'] = instance.domain
+
+
+            # SHOW control action status
+            if show_action:
+                if instance.can_run:
+                    CS['iaction'] = 'run'
+                elif instance.need_query:
+                    CS['iaction'] = 'query'
+                else:
+                    CS['iaction'] = 'stop'
+
+            idata.append( CS )
+
+        return { 'return_code': 0, 'instance': idata }
+
+
+
+class SingleInstanceStatus(InstRequestHandler):
+
+    ''' check a instance status '''
+
+    @asynchronous
+    def post(self):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        data = json.loads( self.request.body )
+        #print '[DD] %s body = %s' % (datetime.now(), data)
+
+        ID = self.get_int( data.get('id', 0) )
+        i = self.db2.query(Instance).get(ID)
+        if i:
+            self.check_status( {
+                'instance': i,
+                'old_is': self.get_int(data.get('is', 0)),
+                'old_js': self.get_int(data.get('js', 0)) } )
+        else:
+            self.write( {'return_code': 1} )
+            self.finish()
+
+
+    def check_status(self, cs):
+
+        if self.request.connection.stream.closed():
+            return
+
+        self.db2.commit() # TODO: need sync now
+
+        I = cs['instance']
+        old_is = cs['old_is']
+        old_js = cs['old_js']
+
+        #print '[DD] ID: %s, is: [%s, %s], js: [%s, %s]' % (I.id, old_is, I.status, old_js, I.lastjob_status_id)
+
+        if (
+            (old_is and old_is != I.status) or
+            (old_js and I.lastjob and old_js != I.lastjob.status) ):
+
+            self.write( self.get_json_data( I ) )
+            self.finish()
+
+        else:
+            # Need sleep to wait change
+            if I.lastjob and not I.lastjob.completed:
+                time_interval = settings.INSTANCE_S_UP_INTER_1
+            else:
+                time_interval = settings.INSTANCE_S_UP_INTER_2
+            #print '[DD] %s SLEEP %s seconds' % (datetime.now(), time_interval)
+
+            tornado.ioloop.IOLoop.instance().add_timeout(
+                time.time() + time_interval,
+                lambda: self.check_status(cs) )
+
+
+    def get_json_data(self, I):
+
+        CS = { 'return_code' : 0,
+               'id'          : I.id,
+
+               'is'          : I.status,
+               'is_str'      : I.status_string,
+
+               'js'          : I.lastjob_status_id,
+               'js_str'      : I.job_status_string,
+               'lastjob'     : I.lastjob_id if I.lastjob_id else 0,
+
+               'ip'          : '',
+               'ip_link'     : '',
+               'domain'      : '',
+               'domain_link' : '' }
+
+        CS['is_img'] = self.theme_url('icons/InstanceStatus/%s.png' % I.status)
+
+        job = I.lastjob
+        if job and job.completed:
+            if job.status >=600:
+                CS['js_img'] = self.theme_url('icons/JobStatus/%s.png' % job.status)
+            else:
+                CS['js_img'] = self.theme_url('icons/JobStatus/completed.png')
+        else:
+            CS['js_img'] = self.theme_url('icons/JobStatus/running.gif')
+
+        if I.work_ip:
+            CS['ip_link'] = I.home_url(self.current_user)
+            CS['ip'] = I.work_ip
+
+        if I.domain and I.is_running:
+            CS['domain_link'] = I.home_url(self.current_user)
+            CS['domain'] = I.domain
+
+        if I.can_run:
+            CS['iaction'] = 'run'
+        elif I.need_query:
+            CS['iaction'] = 'query'
+        else:
+            CS['iaction'] = 'stop'
+
+        return CS
+
+
+
+class islockedToggle(LyRequestHandler):
+    ''' Toggle islocked flag '''
+
+    @has_permission('admin')
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        I = self.db2.query(Instance).get(ID)
+
+        if I:
+            I.islocked = not I.islocked
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( _('Can not find instance %s.') % ID )
+
+
+class isprivateToggle(LyRequestHandler):
+    ''' Toggle isprivate flag '''
+
+    @authenticated
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        I = self.db2.query(Instance).get(ID)
+
+        if I:
+            if not ( self.current_user.id == I.user_id or
+                     has_permission('admin') ):
+                return self.write( _('No permissions !') )
+
+            I.isprivate = not I.isprivate
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( _('Can not find instance %s.') % ID )
+
+
+class ToggleFlag(LyRequestHandler):
+    ''' Toggle the true/false flag for instance attr'''
+
+    @authenticated
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        I = self.db2.query(Instance).get(ID)
+
+        if I:
+            if not ( self.current_user.id == I.user_id or
+                     has_permission('admin') ):
+                return self.write( _('No permissions !') )
+
+            msg = None
+            target = self.get_argument('target', None)
+            if not target:
+                msg = _('No target found !')
+            elif target == 'use_global_passwd':
+                msg = self.toggle_use_global_passwd(I)
+            else:
+                msg = _('Not support target: %s') % target
+
+            if msg: return self.write( msg )
+
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( _('Can not find instance %s.') % ID )
+
+
+    def toggle_use_global_passwd(self, I):
+        s = str(I.get_config('use_global_passwd')) != 'False'
+        I.set_config('use_global_passwd', not s)

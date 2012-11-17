@@ -1,49 +1,41 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/account.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:user') }">${ _("User") }</a></li>
 </%block>
 
-<%block name="sidemain">
+<%block name="content">
 
-<h2 class="title">${ _("User Management") }</h2>
+<div class="m-item"><span class="k">${ _("Search") }</span><span id="search"><input type="text" title="${ _('Input text to search matched user.') }"/></span></div>
 
-<div class="manage-action c">
-  <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a></p>
-  <p><a href="${ reverse_url('admin:user') }?online=180">${ _("Last activate in 3 minutes ") }</a></p>
-  <p><a href="${ reverse_url('admin:user') }?online=900">${ _("Last activate in 15 minutes") }</a></p>
-  <p><a href="${ reverse_url('admin:user') }?online=3600">${ _("Last activate in 1 hour") }</a></p>
-</div>
+<div id="aul" class="ly-table">
 
-<h3>
-  % if ONLINE:
-  ${ _('View Online User') }
-  % else:
-  ${ _('View') }
-  % endif
+  <p class="desc-title">
+    ${ _('View') }
+    % if GID == 0:
+    "${ _('No Group User') }"
+    % elif GID > 0:
+    "${ GROUP.name }"
+    % else:
+    "${ _('ALL User') }"
+    % endif
+    (${ _('Total : ') }${ TOTAL_USER })
+  </p>
 
-  % if GID == 0:
-  "${ _('No Group User') }"
-  % elif GID > 0:
-  "${ GROUP.name }"
-  % else:
-  "${ _('ALL User') }"
-  % endif
-  (${ _('Total : ') }${ TOTAL_USER })
-</h3>
+  ${ PAGE_HTML }
 
-<script charset="utf-8" src="${ STATIC_URL }js/instance.js"></script>
-<div class="admin-user-list ly-table">
   <table>
     <thead>
       <tr>
-        <th>${ _("ID") }</th>
+        <th><a href="${ reverse_url('admin:user') }?by=ID&sort=ASC" title="${ _('sorted by user id.') }">${ _("ID") }</a></th>
         <th>${ _("Name") }</th>
-	<th>${ _("Groups") }</th>
-	<th>${ _("Appliance") }</th>
-	<th>${ _("Instance") }</th>
+        <th>${ _("Islocked") }</th>
+	<th>${ _("Group") }</th>
+        <th>${ _("Appliance") }</th>
+        <th>${ _("Instance") }</th>
 	<th>${ _("Email") }</th>
-##	<th>${ _("Last Login") }</th>
+        <th>${ _("Date Joined") }</th>
+	<th><a href="${ reverse_url('admin:user') }?by=last_active" title="${ _('sorted by last active time.') }">${ _("Last Active") }</a></th>
       </tr>
     </thead>
     <tbody>
@@ -51,60 +43,78 @@
       <tr>
         <td>${ U.id }</td>
         <td class="username">
+	  <img src="${ static_url( U.avatar_mini_url ) }" />
 	  <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a>
-	  <a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" title="${ _('Send a email to ') } ${ U.username }" target="_blank"><img src="${ THEME_URL }img/email.gif" alt="Email"/></a>
-	  % if U.islocked:
-	  <img src="${ THEME_URL }img/user-lock.gif" alt="${ _('locked') }"/>
-	  % endif
-	  <div class="hidden" style="display: none;">
-	    <ul>
-	      <li>${ _("Date Joined") }: ${ fulltime(U.date_joined) }</li>
-	      <li>${ _("Last Login") }: ${ fulltime(U.last_login) }</li>
-	      <li>${ _("Last Activate") }: ${ lytime(U.last_active, '%Y-%m-%d %H:%M:%S') }</li>
-	      <li>${ _("Last Entry") }: ${ U.last_entry }</li>
-	    </ul>
-
-	    % if U.description:
-	    <h3>${ _("Description") }</h3>
-	    <div class="description">${ U.description }</div>
-	    % endif
-	  </div>
+	</td>
+	<td><input type="checkbox"
+		   % if U.islocked:
+		   checked="checked"
+		   % endif
+		   onclick="simpleToggleCheckbox( this, '${ reverse_url('account:islocked', U.id) }', '#islocked-notify')" />
 	</td>
 	<td>
 	  % for G in U.groups:
-	  <p><a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></p>
+	  <a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a>
 	  % endfor
 	</td>
-
 	<td>
 	  % if U.appliances:
 	  <a href="${ reverse_url('admin:appliance') }?uid=${ U.id }">${ len(U.appliances) }</a>
 	  % endif
 	</td>
-
 	<td>
 	  % if U.instances:
 	  <a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
 	  % endif
 	</td>
-
-	<td>
-	  % if U.profile and U.profile.email:
-	  ${ U.profile.email }
-	  % endif
-	</td>
-
-##	<td>${ lytime(U.last_login, '%Y-%m-%d %H:%M') }</td>
+	<td><a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" target="_blank">${ U.email }</a></td>
+	<td class="time">${ ftime(U.date_joined) }</td>
+	<td class="time">${ htime(U.last_active) }</td>
       </tr>
       % endfor
     </tbody>
   </table>
+  ${ PAGE_HTML }
+
 </div>
 
-${ PAGE_HTML }
+<div class="manage-content">
+  <a class="ly-btn2 blue small" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a>
+</div>
+
+<script charset="utf-8" src="${ STATIC_URL }js/instance.js"></script>
 
 <script type="text/javascript">
-  lyItemHover( ".username" );
+  // usersearch
+  $("#search input").keyup(function(){
+    txt=$("#search input").val();
+
+    var url = lyurl_update_arg(location.href, 'search', txt);
+    url = lyurl_update_arg(url, 'ajax', 'True');
+    url = lyurl_update_arg(url, 'p', '1');
+
+    clearTimeout($(this).data('timeId'));
+
+    var timeoutId = setTimeout(function() {
+      $.get(url,function(result){
+        $("#aul").html(result);
+      }); }, 300);
+
+    $(this).data('timeId', timeoutId);
+  });
 </script>
+
+
+<div id="islocked-notify" style="display:none">
+  <div id="basic-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <p>${ _("Toggle Account islocked status Success") }</p>
+  </div>
+  <div id="error-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <h1>${ _("Toggle Account islocked status Failed") }</h1>
+    <p>#{text}</p>
+  </div>
+</div>
 
 </%block>

@@ -18,7 +18,7 @@
       <h2>${ topic.name }</h2>
     </div>
     <div class="info">
-      <span>${ fulltime(topic.updated) } updated by ${ topic.user.username }</span>
+      <span>${ ftime(topic.updated) } updated by ${ topic.user.username }</span>
       % if current_user:
       % if current_user.id == topic.user_id or has_permission('admin'):
       <span><a href="/wiki/topic/${ topic.id }/edit">${ _("Edit") }</a></span>

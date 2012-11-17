@@ -1,10 +1,9 @@
 <%inherit file="/base.html"/>
 
 <%block name="head">
-<link rel="stylesheet" href="${ THEME_URL }instance.css" />
+<link rel="stylesheet" href="${ THEME_URL }instance-index.css" />
 <link rel="stylesheet" href="${ THEME_URL }button.css" />
 <link rel="stylesheet" href="${ THEME_URL }table.css" />
-##<script type="text/javascript" src="${STATIC_URL}js/home.js"></script>
 <script type="text/javascript" src="${STATIC_URL}js/instance.js"></script>
 </%block>
 
@@ -31,13 +30,15 @@
     % for I in INSTANCE_LIST:
 
     <ul class="i">
-      <li class="i-logo"><a href="${ reverse_url('instance:view', I.id) }"><img src="${ I.logo_url }" /></a></li>
+      <li class="i-logo"><a href="${ reverse_url('instance:view', I.id) }"><img src="${ I.logourl }" /></a></li>
       <div class="c"></div>
       <li class="i_name c"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></li>
       <li class="i_user"><span class="t">${ _("Owner") }</span><a href="${ reverse_url('account:view', I.user_id) }">${ I.user.username }</a></li>
-##      <li class="i_user"><span class="t">${ _("Update") }</span>${ lytime(I.updated) }</li>
-##      <li class="i_status"><span class="t">${ _("Status") }</span><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ I.status_string }"/></li>
-      <li class="i_status"><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ I.status_string }"/></li>
+      <li class="i_status"><img id="i${ I.id }-is-img" src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ I.status_string }"/></li>
+      <li style="display:none;">
+	<span id="i${ I.id }-is">${ I.status }</span>
+	<span id="i${ I.id }-js">${ I.lastjob_status_id }</span>
+      </li>
 
       <div class="i-logo-hover" style="display:none;">
 	<div class="arrowBox">
@@ -147,6 +148,9 @@
 
 </div>
 
+<%
+   IDS = "[ %s ]" % ', '.join( [str(I.id) for I in INSTANCE_LIST] )
+%>
 
 <script type="text/javascript">
   lyInstanceSort( 'view', '.single-choice input:checkbox', 'all' );

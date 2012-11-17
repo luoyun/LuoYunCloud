@@ -6,6 +6,9 @@ from sqlalchemy import Column, Integer, String, \
 
 from sqlalchemy.orm import backref,relationship
 
+from lytool.filesize import size as human_size
+
+
 
 class Node(ORMBase):
 
@@ -27,9 +30,11 @@ class Node(ORMBase):
     isenable = Column( Boolean ) # TODO: really needed ?
                                  # merge with status ?
 
-    memory = Column( Integer ) # TODO: can selected ?
+    memory = Column( Integer )
     cpus = Column( Integer )
 
+    vmemory = Column( Integer )
+    vcpus = Column( Integer )
     
     created = Column( DateTime )
     updated = Column( DateTime )
@@ -42,3 +47,16 @@ class Node(ORMBase):
     def __str__(self):
         return _("<Node(%s:%s)>") % (self.hostname, self.ip)
 
+    @property
+    def memory_human(self):
+        try:
+            return human_size(self.memory*1024)
+        except:
+            return ''
+
+    @property
+    def vmemory_human(self):
+        try:
+            return human_size(self.vmemory*1024)
+        except:
+            return ''
