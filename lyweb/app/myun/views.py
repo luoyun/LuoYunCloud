@@ -585,7 +585,7 @@ class InstanceEdit(InstanceManagement):
                  - used_storage
                  ) < form.size.data:
                 form.size.errors.append("Storage LIMIT: total=%s, used=%s" % ( I.user.profile.storage, used_storage ))
-                return self.render( 'myun/instance/edit_storage.html', **d)
+                return self.render( 'myun/instance/edit_storage.html', **self.d)
 
             storage = {
                 'type': form.type.data,
@@ -711,7 +711,7 @@ class InstanceEdit(InstanceManagement):
         sub, top = get_default_domain(self.db2, I.id)
 
         if top:
-            subdomain = I.subdomain if I.subdomain else sub
+            sub = I.subdomain if I.subdomain else sub
 
             if not I.access_ip:
                 self.d['ERROR'].append( _('Can not get access_ip, please configure instance network or run instance') )
@@ -719,7 +719,7 @@ class InstanceEdit(InstanceManagement):
         else:
             self.d['ERROR'].append( _('can not get domain, domain may not have been configured in Administration Console.') )
 
-        self.d['subdomain'] = subdomain
+        self.d['subdomain'] = sub
         self.d['topdomain'] = top
 
         self.render('myun/instance/edit_domain.html', **self.d)
@@ -810,10 +810,6 @@ class InstanceEdit(InstanceManagement):
 
     def get_webssh_toggle(self, I):
 
-        status = self.get_argument('status', None)
-        if status not in ['enable', 'disable']:
-            return self.write( _('Attention to safety') )
-
         if not I.config:
             I.init_config()
 
@@ -824,11 +820,11 @@ class InstanceEdit(InstanceManagement):
         else:
             webssh = {}
 
-        if status == 'enable':
+        if webssh.get('status') != 'enable':
             webssh['status'] = 'enable'
             webssh['port'] = 8001
             config['webssh'] = webssh
-        elif status == 'disable':
+        else:
             if 'webssh' in config.keys():
                 del config['webssh']
 
@@ -836,8 +832,8 @@ class InstanceEdit(InstanceManagement):
         if I.is_running:
             I.ischanged = True
         self.db2.commit()
+        # no news is good news
 
-        self.write( _('Change status ok') )
 
 
 class MyunAppliance(LyRequestHandler):

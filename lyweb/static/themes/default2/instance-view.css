@@ -9,38 +9,9 @@
     margin: 36px 0 26px;;
 }
 
-#admin-center p {
-    font-size: 0.8em;
-    color: #727479;
+#instance-general-info {
+    padding: 10px;
 }
-#admin-center table {
-    margin: 20px 0;
-    font-size: 0.9em;
-}
-#admin-center table td {
-    padding: 2px 15px 2px 0;
-}
-#admin-center .action {
-    margin: 10px 0 25px;
-}
-#admin-center textarea {
-    width: 580px;
-    height: 160px;
-}
-
-#admin-center {
-    padding: 0 30px;
-    width: 800px;
-}
-#admin-center h2 {
-    margin: 20px 0 12px;
-    color: #143340;
-    font-size: 16px;
-}
-#admin-center p {
-    margin: 10px;
-}
-
 #i-logo img {
     width: 120px;
     height: 120px;
@@ -138,7 +109,6 @@
 #instance-show-main {
     width: 100%;
     position: relative;
-    background-color: #F8FAFD;
 }
 #instance-show-main li.c1 {
     width: 120px;

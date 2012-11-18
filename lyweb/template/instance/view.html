@@ -71,9 +71,10 @@
 </div>
 
 <div id="i-main" class="ly-box c">
-  <div id="admin-center" class="min-height-300">
-    <h2>${ instance.name }</h2>
+  <div id="instance-general-info" class="min-height-300 description">
+    <h2 class="title">${ instance.name }</h2>
 
+    <h3 class="section-title">${ _("Summary") }</h3>
     <p class="summary">
       % if instance.summary:
       ${ instance.summary }
@@ -82,8 +83,8 @@
       % endif
     </p>
 
-    <h2>${ _("Description") }</h2>
-    <div id="instance-baseinfo-description" class="markdown">
+    <h3 class="section-title">${ _("Description") }</h3>
+    <div id="instance-description">
       % if instance.description:
       ${ instance.description_html }
       % else:
