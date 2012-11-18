@@ -1,5 +1,9 @@
 <%inherit file="admin_base.html"/>
 
+<%block name="subhead">
+<link rel="stylesheet" href="${ theme_url('admin-message.css') }" />
+</%block>
+
 <%block name="submenujs">
 $("#admin-menu #system-item").addClass("current");
 $("#submenu .item").hide();

@@ -115,8 +115,6 @@ class Logout(AccountRequestHandler):
             self.render('account/login.html', **d)
 
 
-
-# TODO: No used now
 class Register(AccountRequestHandler):
 
     ''' Complete a Registration '''
@@ -216,8 +214,6 @@ class Register(AccountRequestHandler):
 
                 m.receiver.notify()
                 self.db2.commit()
-
-
 
 
 

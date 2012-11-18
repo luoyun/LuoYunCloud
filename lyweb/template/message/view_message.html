@@ -2,25 +2,82 @@
 
 <%block name="sidemain">
 
-<div class="view-message">
+<div class="ly-view-message">
+  %if M:
+  <p class="management">
+    <a class="green-submit" href="${ reverse_url('message:reply', M.id) }">${ _("Reply") }</a>
+    <a class="delete-message red-submit" href="${ reverse_url('message:delete', M.id) }">${ _("Delete") }</a>
+  </p>
 
-  <h1>${ message.subject }</h1>
+  %if M.readtime:
+  <p>${ _("You have read this message already, at") } <span class="readtime">${ ftime(M.readtime) } (${ htime(M.readtime) })</span></p>
+  %endif
 
-  <div class="c">
-    <div class="left body markdown">${ message.content_html }</div>
-    <div class="right">
-      <div class="user">
-	<a class="user-avatar" href="${ reverse_url('account:view', message.sender_id) }" target="_blank"><img src="${ message.sender.avatar_url }" alt="${ message.sender.username }" /></a>
-	<a class="username" href="${ reverse_url('account:view', message.sender_id) }" target="_blank">${ message.sender.username }</a>
-      </div>
-      <p class="action">
-	<a class="ly-btn2 small blue" href="${ reverse_url('message:inbox:reply', message.id) }">${ _("Reply") }</a>
-	<a class="ly-btn2 small blue" href="${ reverse_url('message:delete', message.id) }">${ _("Delete") }</a>
-      </p>
-    </div>
-  </div>
+  <table class="baseinfo">
+    <tbody>
+      <tr>
+	<td>${ _("Sender") }</td>
+	<td class="sender"><a href="${ reverse_url('account:view', M.sender_id) }" target="_blank">${ M.sender.username }</a></td>
+      </tr>
+      <tr>
+	<td>${ _("Send time") }</td>
+	<td class="sendtime">${ ftime(M.text.sendtime) } (${ htime(M.text.sendtime) })</td>
+      </tr>
+      <tr>
+	<td>${ _("Subject") }</td>
+	<td class="subject">${ M.text.subject }</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="body">${ M.text.body }</div>
 
+  <script type="text/javascript">
+    $(document).ready( function() {
+      $("#message-home-sidemenu a").removeClass("current");
+      %if ININBOX:
+      $("#my-inbox-item").addClass("current");
+      %else:
+      $("#my-outbox-item").addClass("current");
+      %endif
+    });
+  </script>
+
+  %else:
+  <p class="ywarn">${ _("Can not find message !") }</p>
+  %endif
 </div>
 
+%if M.reply_id:
+<h3 class="subtitle">${ _("Original message") }</h3>
+<div class="ly-view-message ly-view-original-message">
+  <table class="baseinfo">
+    <tbody>
+      <tr>
+	<td>${ _("Sender") }</td>
+	<td class="sender"><a href="${ reverse_url('account:view', M.reply.sender_id) }" target="_blank">${ M.reply.sender.username }</a></td>
+      </tr>
+      <tr>
+	<td>${ _("Send time") }</td>
+	<td class="sendtime">${ ftime(M.reply.text.sendtime) } (${ htime(M.reply.text.sendtime) })</td>
+      </tr>
+      <tr>
+	<td>${ _("Subject") }</td>
+	<td class="subject">${ M.reply.text.subject }</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="body">${ M.reply.text.body }</div>
+</div>
+%endif
+
+
+<script type="text/javascript">
+  aClickConfirm(".delete-message", {
+    title: "${ _("Delete Message") }",
+    text: "${ _("Wail ! the message will lost !") }",
+    ok: "${ _("I'm sure !") }",
+    cancel: "${ _("Cancel") }",
+  });
+</script>
 
 </%block>

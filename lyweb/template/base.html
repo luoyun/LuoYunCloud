@@ -6,6 +6,7 @@
     <link rel="SHORTCUT ICON" href="${ static_url('favicon.ico') }" />
     <link rel="stylesheet" href="${ theme_url('common.css') }" />
     <link rel="stylesheet" href="${ theme_url('luoyun.css') }" />
+    <link rel="stylesheet" href="${ theme_url('button.css') }" />
     <script type="text/javascript" src="${ static_url('js/json2.js') }"></script>
     <script type="text/javascript" src="${ static_url('js/jquery-1.7.min.js') }"></script>
     <script type="text/javascript" src="${ static_url('js/jquery-ui/js/jquery-ui-1.9.1.custom.min.js') }"></script>
@@ -48,16 +49,16 @@ ${ _("LuoYunCloud") }
 	    <div class="c show">
 	      <img class="user-avatar" src="${ static_url( current_user.avatar_mini_url ) }" />
 	      <span class="text">${ current_user.username }
-		%if current_user.profile.notification:
-		(${ current_user.profile.notification })
+		%if current_user.notification:
+		(${ current_user.notification })
 		%endif
 	      </span>
 	    </div>
 	    <ul class="add-menu hide" style="display:none;">
 	      <li><a href="${ reverse_url('account:index') }">${ _("My Account") }</a></li>
 	      <li><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }
-		  %if current_user.profile.notification:
-		  (${ current_user.profile.notification })
+		  %if current_user.notification:
+		  (${ current_user.notification })
 		  %endif
 	      </a></li>
               % if has_permission('admin'):
@@ -66,8 +67,10 @@ ${ _("LuoYunCloud") }
 	      <li><a href="${ reverse_url('logout') }" title="${ _('Logout') }">${ _("Logout") }</a></li>
 	    </ul>
             %else:
-            <span><a href="${ reverse_url('login') }">${ _("Sign In") }</a></span>
-            <span><a href="${ reverse_url('register') }">${ _("Register") }</a></span>
+	    <div class="unlogin">
+              <a class="green-submit" href="${ reverse_url('login') }">${ _("Sign In") }</a>
+              <a class="orange-submit" href="${ reverse_url('register') }">${ _("Register") }</a>
+	    </div>
             %endif
           </div>
 	</div>

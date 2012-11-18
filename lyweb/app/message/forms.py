@@ -23,3 +23,9 @@ class ReplyMessageForm(Form):
     subject = TextField( _('Subject'), [validators.Length(min=2, max=120) ] )
     content = TextAreaField( _('Content'), [validators.Length(min=6, max=20480) ] )
 
+
+class MessageForm(Form):
+
+    to = TextField( _('To') )
+    subject = TextField( _('Subject'), [validators.Length(min=2, max=256) ] )
+    text = TextAreaField( _('Text'), [validators.Length(min=6, max=10240) ] )

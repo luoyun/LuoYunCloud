@@ -1,8 +1,7 @@
 <%inherit file="/base.html" />
 
 <%block name="head">
-<link rel="stylesheet" href="${ THEME_URL }view-user.css" />
-<link rel="stylesheet" href="${ THEME_URL }button.css" />
+<link rel="stylesheet" href="${ theme_url('view-user.css') }" />
 </%block>
 
 <%block name="main">
@@ -18,7 +17,7 @@
       <div class="username"><a href="${ reverse_url('account:view', USER.id) }">${ USER.username }</a></div>
     </div>
 
-    <p class="action"><a class="ly-btn2 small blue" href="${ reverse_url('message:new') }?userid=${ USER.id}">${ _("Leave a message") }</a></p>
+    <p class="action"><a class="ly-btn2 small blue" href="${ reverse_url('message:new') }?user=${ USER.id}">${ _("Leave a message") }</a></p>
 
   </div>
 

@@ -89,6 +89,8 @@ class User(ORMBase):
     permissions = relationship( "Permission", secondary=user_permissions,
                            backref="users" )
 
+    notification = Column( Integer, default=0 )
+
     profile = relationship("UserProfile", uselist=False, backref="user")
     #TODO: a flag, can not delete when the flag is set !!!
 
@@ -107,18 +109,10 @@ class User(ORMBase):
         return _("[User(%s)]") % self.username
 
 
-    # TODO
-    def notify(self):
-        ''' Add a notification to user '''
-
-        self.profile.notification += 1
-        
-
-    def decrease_notification(self):
-
-        # TODO: to avoid a negative number !
-        if self.profile.notification > 0:
-            self.profile.notification -= 1
+    def notify(self, value=1):
+        self.notification += value
+        if self.notification < 0:
+            self.notification = 0
 
     @property
     def homedir(self):
@@ -199,13 +193,6 @@ class User(ORMBase):
         else:
             return ''
 
-    @property
-    def notification(self):
-        if self.profile and self.profile.notification:
-            return self.profile.notification
-        else:
-            return 0
-
 
 class UserProfile(ORMBase):
 
@@ -220,9 +207,6 @@ class UserProfile(ORMBase):
 
     locale = Column( String(16), default='zh_CN' ) # TODO: select list
     email = Column( String(64) )
-
-    # All notification of LuoYun System
-    notification = Column( Integer, default=0 )
 
     # resource limit
     memory = Column( Integer, default=256 )  # 256 M

@@ -1,0 +1,45 @@
+<%inherit file="/admin/system.html"/>
+
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li><a href="${ reverse_url('message:notice') }">${ _("All Notice") }</a></li>
+</%block>
+
+
+<%block name="content">
+
+<p><a class="red-submit" href="${ reverse_url('message:send_notice') }">${ _("Send a notice") }</a></p>
+
+% if TOTAL:
+<div id="ly-outbox-list" class="ly-message-list">
+  <p class="global-info">${ _("There are %s system notice.") % TOTAL } </p>
+  <table>
+    <thead>
+      <tr>
+        <th>${ _("Sender") }</th>
+        <th>${ _("Subject") }</th>
+	<th>${ _("Send Time") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for M in MESSAGE_LIST:
+      <tr>
+        <td class="sender user">
+	  <img src="${ M.sender.avatar_url }" />
+	  <a href="${ reverse_url('account:view', M.sender_id) }">${ M.sender.username }</a>
+	</td>
+        <td class="subject">
+	  <a href="${ reverse_url('message:notice') }?message=${ M.id }">${ M.text.subject }</a>
+	</td>
+	<td>${ htime(M.text.sendtime) }</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  ${ PAGE_HTML }
+  % else:
+  <p class="ywarn">${ _("Have not sent any notice before !") }</p>
+  % endif
+</div>
+
+</%block>

@@ -1,14 +1,13 @@
 <%inherit file="/base.html"/>
 
 <%block name="head">
-<link rel="stylesheet" href="${ THEME_URL }instance-index.css" />
-<link rel="stylesheet" href="${ THEME_URL }button.css" />
-<link rel="stylesheet" href="${ THEME_URL }table.css" />
-<script type="text/javascript" src="${STATIC_URL}js/instance.js"></script>
+<link rel="stylesheet" href="${ theme_url('instance-index.css') }" />
+<link rel="stylesheet" href="${ theme_url('table.css') }" />
+<script type="text/javascript" src="${ static_url('js/instance.js') }"></script>
 </%block>
 
 <%block name="main">
-<script type="text/javascript" src="${ STATIC_URL }js/url.js"></script>
+<script type="text/javascript" src="${ static_url('js/url.js') }"></script>
 
 <div class="ly-description">
   <p>${ _("Public Instances") }

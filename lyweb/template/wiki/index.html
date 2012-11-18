@@ -5,7 +5,7 @@
 <div id="wiki-main">
   % if has_permission('admin'):
   <div class="action clearfix">
-    <a id="add-topic" class="ly-btn2 small blue" href="${ reverse_url('wiki:new') }" title="${ _('Post a new topic') }" target="_blank">${ _("New Topic") }</a>
+    <a id="add-topic" class="blue-submit" href="${ reverse_url('wiki:new') }" title="${ _('Post a new topic') }" target="_blank">${ _("New Topic") }</a>
   </div>
   % endif
 
