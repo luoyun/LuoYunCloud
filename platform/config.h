@@ -4,6 +4,15 @@
 /* Max length of the data block allowed in the collection value. */
 #define COL_MAX_DATA 65535
 
+/* default instance job timeout */
+#define DEFAULT_JOB_TIMOUT_INSTANCE 900
+
+/* default node job timeout */
+#define DEFAULT_JOB_TIMOUT_NODE 60
+
+/* default job timeout */
+#define DEFAULT_JOB_TIMOUT_OTHER 600
+
 /* default lyclc.conf location */
 #define DEFAULT_LYCLC_CONF_PATH "/opt/LuoYun/platform/etc/luoyun-cloud/lyclc.conf"
 
@@ -65,7 +74,7 @@
 #define DEFAULT_LYOSM_KEY_PATH "/LuoYun/conf/luoyun.key"
 
 /* default node server storage low mark */
-#define DEFAULT_NODE_STORAGE_LOW 50
+#define DEFAULT_NODE_STORAGE_LOW 10
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1

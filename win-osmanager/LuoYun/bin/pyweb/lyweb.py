@@ -1,7 +1,11 @@
 #!/usr/bin/python
+# -*- coding: utf—8 -*-
+
+#Http Server的实现
 
 import sys
 import os
+import socket
 import getopt
 from string import Template
 import Cookie
@@ -16,13 +20,12 @@ try:
 except ImportError:
     import simplejson as json
 
-import luoyuninfo
 import lylog
 
 PROGRAM_NAME = b'LYWEB'
-DEFAULT_OSM_CONF_PATH = b'/LuoYun/conf/luoyun.conf'
-DEFAULT_WEB_LOG_PATH = b'/LuoYun/log/lyweb.log'
-DEFAULT_WEB_PAGE_DIR = b'/LuoYun/custom/www'
+DEFAULT_OSM_CONF_PATH = b'A:\luoyun.ini'
+DEFAULT_WEB_LOG_PATH = b'C:\LuoYun\log\lyweb.log'
+DEFAULT_WEB_PAGE_DIR = b'C:\LuoYun\custom\www'
 DEFAULT_WEB_PORT = 8080
 luoyun_cookie = b''
 luoyun_domain = None
@@ -31,16 +34,12 @@ LOG = lylog.logger()
 class LuoYunHttpRequestHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         """Serve a GET request."""
-        # if "Cookie" in self.headers:
-        #    c = Cookie.SimpleCookie(self.headers["Cookie"])
-        #    print c
         f = self.send_head()
         if f:
-            s = Template(f.read())
-            d = luoyuninfo.get_sysinfo(luoyun_domain)
-            # print d
-            self.wfile.write(s.safe_substitute(d))
+	    s=f.read()
+	    self.wfile.write(s)
             f.close()
+            
 
     def translate_path(self, path):
         """Translate a /-separated PATH to the local filename syntax.
@@ -52,25 +51,25 @@ class LuoYunHttpRequestHandler(SimpleHTTPRequestHandler):
         depending on the query string given on the URL, the path is
         prefix-ed with /withcookie and /nocookie
         """
-
         # check cookie
         u = urlparse.urlparse(path)
         e = urlparse.parse_qs(u[4])
         if luoyun_cookie and e and e.has_key('cookie') and e['cookie'][0] == luoyun_cookie:
-            path = "/withcookie%s" % u[2]
+            path = "\\withcookie\%s" % u[2].split('/')[1] #得到path值
         else:
-            path = "/nocookie%s" % u[2]
+            path = "\\nocookie\%s" % u[2].split('/')[1]
         print path
 
         path = posixpath.normpath(urllib.unquote(path))
-        words = path.split('/')
+        words = path.split('\\')
         words = filter(None, words)
-        path = os.getcwd()
+        path = os.getcwd()#获得当前的路径
         for word in words:
             drive, word = os.path.splitdrive(word)
             head, word = os.path.split(word)
             if word in (os.curdir, os.pardir): continue
             path = os.path.join(path, word)
+        print path
         return path
 
 
@@ -94,7 +93,8 @@ def usage():
   print '                  default is %s' % DEFAULT_WEB_PORT
   print '  -h, --help      '
 
-if __name__ == '__main__':
+
+if __name__=="__main__":
     confpath = DEFAULT_OSM_CONF_PATH
     logpath = DEFAULT_WEB_LOG_PATH
     webdir = DEFAULT_WEB_PAGE_DIR
@@ -121,7 +121,9 @@ if __name__ == '__main__':
             print 'Wrong command options'
             sys.exit(1)
 
-    lylog.setup(logpath)
+    if os.path.exists(logpath):
+      os.remove(logpath)
+    lylog.setup(path = logpath)
 
     jsonstr = ""
     try:

@@ -220,8 +220,10 @@ char *xml_xpath_text_from_ctx(xmlXPathContextPtr xpathCtx,
         return NULL;
 
     if (xpathObj->nodesetval == NULL ||
-        xpathObj->nodesetval->nodeTab == NULL)
+        xpathObj->nodesetval->nodeTab == NULL) {
+        xmlXPathFreeObject(xpathObj);
         return NULL;
+    }
 
     xmlNodePtr n = xpathObj->nodesetval->nodeTab[0]->children;
     if (xmlNodeIsText(n)) {
@@ -240,19 +242,22 @@ char *xml_xpath_text_from_ctx(xmlXPathContextPtr xpathCtx,
 char *xml_xpath_prop_from_ctx(xmlXPathContextPtr xpathCtx,
                               const char * xpathExpr, const char * prop)
 {
+    char * str = NULL;
     if (xpathCtx == NULL || xpathExpr == NULL || prop == NULL)
         return NULL;
 
     xmlXPathObjectPtr xpathObj =
         xmlXPathEvalExpression((const xmlChar *)xpathExpr, xpathCtx);
-    if (xpathObj == NULL ||
-        xpathObj->nodesetval == NULL ||
-        xpathObj->nodesetval->nodeTab == NULL)
+    if (xpathObj == NULL)
         return NULL;
+    if (xpathObj->nodesetval == NULL ||
+        xpathObj->nodesetval->nodeTab == NULL)
+        goto out;
 
-    char * str = (char *)xmlGetProp(xpathObj->nodesetval->nodeTab[0],
-                                   (const xmlChar *)prop);
+    str = (char *)xmlGetProp(xpathObj->nodesetval->nodeTab[0],
+                             (const xmlChar *)prop);
 
+out:
     xmlXPathFreeObject(xpathObj);
     return str;
 }

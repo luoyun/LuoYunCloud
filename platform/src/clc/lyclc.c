@@ -61,6 +61,7 @@ static int __print_config(CLCConfig * c)
              "  DB info = %s,%s,%s\n"
              "  factor = %d,%d\n"
              "  vm_name_prefix = %s\n"
+             "  timeout = %d,%d,%d\n"
              "  verbose = %d\n" "  debug = %d\n" "  daemon = %d\n",
              c->clc_ip, c->clc_port,
              c->clc_mcast_ip, c->clc_mcast_port,
@@ -68,6 +69,7 @@ static int __print_config(CLCConfig * c)
              c->db_name, c->db_user, c->db_pass,
              c->node_cpu_factor, c->node_mem_factor,
              c->vm_name_prefix,
+             c->job_timeout_instance, c->job_timeout_node, c->job_timeout_other,
              c->verbose, c->debug, c->daemon);
 
     return 0;
@@ -87,6 +89,8 @@ static void __main_clean(int keeppid)
         lyutil_remove_pid_file(g_c->pid_path, PROGRAM_NAME);
     if (g_c->conf_path)
         free(g_c->conf_path);
+    if (g_c->web_conf_path)
+        free(g_c->web_conf_path);
     if (g_c->log_path)
         free(g_c->log_path);
     if (g_c->db_name)
@@ -155,6 +159,8 @@ int main(int argc, char *argv[])
         printf(_("can not find %s.\n"), c->conf_path);
     else if (ret == CLC_CONFIG_RET_ERR_CONF)
         printf(_("reading config file %s returned error\n"), c->conf_path);
+    else if (ret == CLC_CONFIG_RET_ERR_WEBCONF)
+        printf(_("reading web config file %s returned error\n"), c->web_conf_path);
     else if (ret == CLC_CONFIG_RET_ERR_UNKNOWN)
         printf(_("internal error\n"));
 

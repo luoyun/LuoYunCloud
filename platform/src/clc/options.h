@@ -20,6 +20,7 @@ typedef struct CLCConfig_t {
     char *db_user;           /* db user name */
     char *db_pass;           /* db user password */
     char *conf_path;         /* config file path */
+    char *web_conf_path;     /* LYWeb config file path */
     char *log_path;          /* log file path */
     char *pid_path;          /* pid file path */
     char *vm_name_prefix;    /* VM name prefix */
@@ -29,6 +30,7 @@ typedef struct CLCConfig_t {
     int   debug;
     int   daemon;
     int   node_cpu_factor, node_mem_factor;
+    int   job_timeout_instance, job_timeout_node, job_timeout_other;
 } CLCConfig;
 
 #define NODE_SELECT_ANY		0 
@@ -40,7 +42,8 @@ typedef struct CLCConfig_t {
 #define CLC_CONFIG_RET_ERR_ERRCONF	-2
 #define CLC_CONFIG_RET_ERR_NOCONF	-3
 #define CLC_CONFIG_RET_ERR_CONF		-4
-#define CLC_CONFIG_RET_ERR_NOMEM	-5
+#define CLC_CONFIG_RET_ERR_WEBCONF	-5
+#define CLC_CONFIG_RET_ERR_NOMEM	-6
 #define CLC_CONFIG_RET_ERR_UNKNOWN	-255
 int clc_config(int argc, char *argv[], CLCConfig * c);
 void usage(void);
