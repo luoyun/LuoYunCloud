@@ -670,7 +670,7 @@ class CreateInstance(InstRequestHandler):
             self.binding_domain( instance )
             self.set_root_passwd( instance )
 
-            url = self.reverse_url('instance:view', instance.id)
+            url = self.reverse_url('myun:instance:view', instance.id)
             return self.redirect(url)
 
         # Something is wrong
