@@ -13,7 +13,7 @@ from app.session.models import Session
 
 from app.instance.models import Instance
 from app.appliance.models import Appliance
-from app.message.models import Message
+from app.message.models import Message, MessageText
 
 from app.account.forms import LoginForm, ResetPasswordForm, \
     RegistrationForm, AvatarEditForm, ResetPasswordApplyForm
@@ -205,14 +205,18 @@ class Register(AccountRequestHandler):
             if welcome:
                 wc = json.loads(welcome.value).get('text')
 
-                m = Message( sender = admin,  receiver = user,
-                             subject = _('Welcome to use LuoYun Cloud !'),
-                             content = wc )
-
-                self.db2.add(m)
+                T = MessageText(
+                    subject = _('Welcome to use LuoYun Cloud !'),
+                    body = wc )
+                self.db2.add(T)
                 self.db2.commit()
 
-                m.receiver.notify()
+                M = Message( sender_id = admin.id,
+                             receiver_id = user.id, text_id = T.id )
+
+                self.db2.add(M)
+
+                user.notify()
                 self.db2.commit()
 
 

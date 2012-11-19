@@ -719,11 +719,7 @@ td.username img {
 #system-global-info table td {
     padding: 25px;
 }
-#admin-new-user {
-    width: 780px;
-}
 #admin-new-job {
-    width: 600px;
     margin-top: 30px;
     margin-bottom: 80px;
 }

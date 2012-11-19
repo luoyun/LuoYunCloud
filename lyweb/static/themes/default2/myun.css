@@ -116,59 +116,12 @@
     width: 759px;
     padding-left: 28px;
 }
-#u-home-cpu-pie, #u-home-mem-pie, #u-home-instance-pie, #u-home-storage-pie {
-    /*position: absolute;*/
-    width: 160px;
-    height: 160px;
+#myun-pie-show .pie {
     float: left;
-    margin: 0;
-    border: 1px dashed gainsboro;
+    margin: 5px;
+    border-radius: 3px;
+    border: 1px solid #DCDCDC;
 }
-.myun-pie-item {
-    float: left;
-    padding-top: 15px;
-    margin: 5px 10px;
-}
-.myun-pie-item .desc {
-    margin: 0;
-    padding-top: 15px;
-    border-top: 1px dashed gainsboro;
-    border-left: 1px dashed gainsboro;
-    border-right: 1px dashed gainsboro;
-}
-.myun-pie-item-hover {
-    height: 16px;
-    padding: 5px;
-    font-size: 13px;
-    text-align: center;
-}
-.myun-pie-item-current {
-    background-color: #F7FAF8;
-}
-.myun-pie-item h3 {
-    font-size: 16px;
-    color: #E2A105;
-    text-align: center;
-    margin: 0 5px 10px;
-}
-.myun-pie-item .r-info {
-    text-align: center;
-    font-size: 13px;
-    color: #606030;
-}
-.myun-pie-item .r-info .total {
-    padding-right: 5px;
-}
-.myun-pie-item .r-info .used {
-    border-left: 1px solid #DEDEDE;
-    padding-left: 5px;
-    color: red;
-}
-.myun-pie-item table {
-    margin: 5px auto;
-    width: 100px;
-}
-
 
 .myun-user-action {
     text-align: center;

@@ -37,7 +37,7 @@
       </div>
       <div id="i-ip">
 	% if instance.work_ip:
-	<a href="${ instance.home_url(current_user) }" target="_blank"><span id="lyinst-ip">${ instance.work_ip }</span></a>
+	<a href="${ instance.home_url(current_user, useip=True) }" target="_blank"><span id="lyinst-ip">${ instance.work_ip }</span></a>
 	% endif
       </div>
       <div id="i-current-status">

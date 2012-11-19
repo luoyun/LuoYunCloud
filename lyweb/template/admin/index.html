@@ -34,7 +34,7 @@ $("#admin-menu #index-item").addClass("current");
     "<set name=\"${ _('Used') }\" value='${ USED_CPU }' color='FC0101' />" +
     "<set name=\"${ _('Unused') }\" value='${ TOTAL_CPU - USED_CPU }' color='AFD8F8' />" +
     "</graph>";
-  var cpuChart = new FusionCharts("${ static_url('FusionCharts/Charts/FCF_Pie2D.swf') }", "cpuChartId", "420", "220");
+  var cpuChart = new FusionCharts("${ static_url('FusionCharts/Charts/FCF_Pie3D.swf') }", "cpuChartId", "420", "220");
   cpuChart.setDataXML(cpuData);
   cpuChart.render("admin-cpu-pie");
 

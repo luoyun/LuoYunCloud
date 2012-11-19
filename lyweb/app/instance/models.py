@@ -251,9 +251,12 @@ class Instance(ORMBase):
         return self.status in [245, 255]
 
 
-    def home_url(self, user=None):
+    def home_url(self, user=None, useip=None):
 
-        host = self.domain if self.domain else self.ip
+        if useip:
+            host = self.ip
+        else:
+            host = self.domain if self.domain else self.ip
 
         if user and user.id == self.user_id and self.config:
             cookie = json.loads(self.config).get('cookie')

@@ -136,7 +136,7 @@ body {
 #navigator ul {
     list-style: none outside none;
     /*overflow:auto; zoom:1;*/
-    margin-top: 12px;
+    margin-top: 10px;
     margin-left: 20px;
 }
 
@@ -161,6 +161,8 @@ body {
     color: #FFF;
 /*    width: 100px;*/
     text-align: center;
+    font-weight: bold;
+    font-size: 16px;
 }
 
 #navigator a:hover, #navigator a:active {
@@ -1229,4 +1231,13 @@ table.kv td:first-child {
 .ywarn {
     color: red;
     line-height: 1.3em;
+}
+
+#lyversion {
+    float: left;
+    display: inline-block;
+    color: yellow;
+    font-weight: bold;
+    font-size: 12px;
+    margin: 15px 5px;
 }

@@ -441,6 +441,13 @@ class InstanceControl(InstRequestHandler):
                      
 
     def reboot(self, instance):
+
+        # TODO: a temp hack
+        self.set_nameservers(instance)
+        self.rebinding_domain(instance)
+        if instance.get_config('use_global_passwd', True):
+            self.set_root_passwd(instance)
+
         return self.run_job(instance, JOB_ACTION['REBOOT_INSTANCE'])
 
 
@@ -837,7 +844,7 @@ class Status(InstRequestHandler):
             domain, domain_link = '', ''
 
             if instance.work_ip:
-                ip_link = instance.home_url(self.current_user)
+                ip_link = instance.home_url(self.current_user, useip=True)
                 ip = instance.work_ip
 
             if instance.domain:
@@ -976,7 +983,7 @@ class CheckInstanceStatus(InstRequestHandler):
 
             # SHOW ip status
             if show_ip and instance.work_ip:
-                CS['ip_link'] = instance.home_url(self.current_user)
+                CS['ip_link'] = instance.home_url(self.current_user, useip=True)
                 CS['ip'] = instance.work_ip
 
             # SHOW domain status
