@@ -135,3 +135,55 @@ function aClickConfirm( tag, data ) {
     });
 }
 
+
+
+function checkboxClickNotify ( obj, URL, success_text ) {
+
+    var check = obj.checked;
+    var $obj = $(obj);
+
+    var notifyTag = $obj.data('notifyTag');
+    if ( notifyTag === undefined ) {
+	notifyTag = 'lynotify' + Math.round(1000000*Math.random())
+	$obj.data('notifyTag', notifyTag);
+    }
+
+    var HTML = '' +
+'<div id="' + notifyTag + '" style="display:none">' +
+'  <div id="basic-template">' +
+'    <a class="ui-notify-cross ui-notify-close" href="#">x</a>' +
+'    <p>' + success_text + '</p>' +
+'  </div>' +
+'  <div id="error-template">' +
+'    <a class="ui-notify-cross ui-notify-close" href="#">x</a>' +
+'    <p>#{text}</p>' +
+'  </div>' +
+'</div>';
+
+    if ( $('#' + notifyTag).length < 1 ) {
+	$('body').append( HTML );
+    }
+
+    $C = $('#' + notifyTag).notify();
+
+    if (URL.split('?').length > 1)
+	URL = URL + "&t=" + Math.random()
+    else
+	URL = URL + "?t=" + Math.random()
+
+    $.ajax({
+        url: URL,
+        type: 'GET',
+        success: function (data) {
+	    if (data) {
+		$(obj).attr('checked', Boolean(check));
+		$C.notify("create", "error-template", { text: data }, { expires:false });
+	    } else {
+		$C.notify("create", "basic-template");
+	    }
+        }
+    });
+
+};
+
+

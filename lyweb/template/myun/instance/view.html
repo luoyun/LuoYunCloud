@@ -217,7 +217,7 @@
 	    % if USE_GLOBAL_PASSWD:
 	    checked="checked"
 	    % endif
-	    onclick="simpleToggleCheckbox( this, '${ reverse_url('instance:toggle_flag', I.id) }?target=use_global_passwd', '#use-global-passwd-notify')" /></p>
+	    onclick="checkboxClickNotify( this, '${ reverse_url('instance:toggle_flag', I.id) }?target=use_global_passwd', '${ _("Toggle Instance use_global_passwd flag Success") }')" /></p>
   <p>
     <a class="blue-submit" href="${ reverse_url('myun:instance:edit', I.id) }?item=password">${ _("Reset Root Password") }</a>
   </p>
@@ -261,7 +261,7 @@
 		   % if webssh and webssh.get('status') == 'enable':
 		   checked="checked"
 		   % endif
-		   onclick="simpleToggleCheckbox( this, '${ reverse_url('myun:instance:edit', I.id) }?item=webssh_toggle', '#toggle-webssh-notify')" />
+		   onclick="checkboxClickNotify( this, '${ reverse_url('myun:instance:edit', I.id) }?item=webssh_toggle', '${ _("Toggle webssh status success") }')" />
 	</td>
       </tr>
     </tbody>
@@ -313,17 +313,6 @@
   % endif
 </div>
 
-<div id="use-global-passwd-notify" style="display:none">
-  <div id="basic-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <p>${ _("Toggle Instance use_global_passwd flag Success") }</p>
-  </div>
-  <div id="error-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <h1>${ _("Toggle Instance use_global_passwd flag Failed") }</h1>
-    <p>#{text}</p>
-  </div>
-</div>
 
 <script type="text/javascript">
   $("html").data("inst_control_url", "${ reverse_url('instance:control', I.id) }");
@@ -380,18 +369,5 @@ function deleteInstanceConfirm( obj ) {
 
 }
 </script>
-
-
-<div id="toggle-webssh-notify" style="display:none">
-  <div id="basic-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <p>${ _("Toggle webssh status success") }</p>
-  </div>
-  <div id="error-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <h1>${ _("Toggle webssh status failed") }</h1>
-    <p>#{text}</p>
-  </div>
-</div>
 
 </%block>
