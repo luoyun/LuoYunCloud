@@ -33,8 +33,8 @@ class Index(LyRequestHandler):
         TOTAL_CPU = 0
         TOTAL_MEMORY = 0
         for n in nodes:
-            TOTAL_CPU += n.cpus
-            TOTAL_MEMORY += n.memory
+            TOTAL_CPU += self.get_int(n.vcpus, 0)
+            TOTAL_MEMORY += self.get_int(n.vmemory, 0)
 
         insts = self.db2.query(Instance).filter(
             Instance.status == 4 or Instance.status == 5
@@ -57,7 +57,7 @@ class Index(LyRequestHandler):
               'human_size': human_size,
               'TOTAL_APPLIANCE': TOTAL_APPLIANCE,
               'TOTAL_INSTANCE': TOTAL_INSTANCE,
-              'TOTAL_CPU': TOTAL_CPU * 16, # TODO: a temp hack
+              'TOTAL_CPU': TOTAL_CPU,
               'TOTAL_MEMORY': TOTAL_MEMORY,
               'USED_CPU': USED_CPU,
               'USED_MEMORY': USED_MEMORY,

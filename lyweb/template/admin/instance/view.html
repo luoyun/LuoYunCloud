@@ -111,7 +111,7 @@
 	  <td>
 	    <span id="i-ip">
 	      % if I.work_ip:
-	      <a href="${ I.home_url(current_user) }" target="_blank"><span id="lyinst-ip">${ I.work_ip }</span></a>
+	      <a href="${ I.home_url(current_user, useip=True) }" target="_blank"><span id="lyinst-ip">${ I.work_ip }</span></a>
 	      % endif
 	    </span>
 	  </td>

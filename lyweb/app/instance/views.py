@@ -1095,7 +1095,7 @@ class SingleInstanceStatus(InstRequestHandler):
             CS['js_img'] = self.theme_url('icons/JobStatus/running.gif')
 
         if I.work_ip:
-            CS['ip_link'] = I.home_url(self.current_user)
+            CS['ip_link'] = I.home_url(self.current_user, useip=True)
             CS['ip'] = I.work_ip
 
         if I.domain and I.is_running:
