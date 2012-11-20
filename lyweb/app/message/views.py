@@ -160,8 +160,6 @@ class Delete(MessageRequestHandler):
         if M:
             x = self.db2.query(Message.id).filter_by(
                 text_id = M.text_id).count()
-            if x == 1: # Delete text
-                self.db2.delete( M.text )
 
             if not M.isread:
                 M.receiver.notify(-1)
@@ -174,13 +172,17 @@ class Delete(MessageRequestHandler):
                     q.reply_id = None
 
             self.db2.delete( M )
+
+            if x == 1: # Delete text
+                self.db2.delete( M.text )
+
             self.db2.commit()
 
             if not self.get_argument('ajax', None):
                 self.redirect(self.reverse_url("message:inbox"))
 
         else:
-            self.write( _('This is not a notice !') )
+            self.write( _('This is not your message !') )
 
 
 

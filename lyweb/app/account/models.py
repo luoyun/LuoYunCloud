@@ -115,6 +115,10 @@ class User(ORMBase):
         except:
             value = 0
 
+        #TODO: a hack for update 0.4 to 0.5
+        if not self.notification:
+            self.notification = 0
+
         self.notification += value
         if self.notification < 0:
             self.notification = 0
