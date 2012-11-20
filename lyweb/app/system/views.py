@@ -734,10 +734,12 @@ class SendMail(LyRequestHandler):
         for line in text.split('\n'):
             line = line.strip().strip(',')
             for toaddr in line.split(','):
-                if validate_email(toaddr):
-                    VALID.append(toaddr)
-                else:
-                    INVALID.append(toaddr)
+                toaddr = toaddr.strip()
+                if toaddr:
+                    if validate_email(toaddr):
+                        VALID.append(toaddr)
+                    else:
+                        INVALID.append(toaddr)
 
         return VALID, INVALID
 

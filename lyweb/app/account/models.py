@@ -110,6 +110,11 @@ class User(ORMBase):
 
 
     def notify(self, value=1):
+        try:
+            value = int(value)
+        except:
+            value = 0
+
         self.notification += value
         if self.notification < 0:
             self.notification = 0

@@ -6,6 +6,10 @@
 
 <%block name="content">
 
+<div class="manage-content">
+  <a class="blue-submit" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a>
+</div>
+
 <div class="m-item"><span class="k">${ _("Search") }</span><span id="search"><input type="text" title="${ _('Input text to search matched user.') }"/></span></div>
 
 <div id="aul" class="ly-table">
@@ -21,8 +25,6 @@
     % endif
     (${ _('Total : ') }${ TOTAL_USER })
   </p>
-
-  ${ PAGE_HTML }
 
   <table>
     <thead>
@@ -76,10 +78,6 @@
   </table>
   ${ PAGE_HTML }
 
-</div>
-
-<div class="manage-content">
-  <a class="ly-btn2 blue small" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a>
 </div>
 
 <script charset="utf-8" src="${ STATIC_URL }js/instance.js"></script>
