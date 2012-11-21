@@ -21,6 +21,8 @@ import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import LY_TARGET
 
+from app.instance.models import INSTANCE_STATUS_SHORT_STR
+
 
 class InstanceManagement(LyRequestHandler):
 
@@ -74,8 +76,8 @@ class InstanceManagement(LyRequestHandler):
 
         view = self.get_argument('view', 'all')
         by = self.get_argument('by', 'id')
-        sort = self.get_argument('sort', 'desc')
-        status = self.get_argument('status', 'all')
+        order = self.get_argument_int('order', 0)
+        status = self.get_argument_int('status', -1)
         page_size = self.get_argument_int('sepa', 30)
         cur_page = self.get_argument_int('p', 1)
         uid = self.get_argument_int('uid', 0) # sort by user
@@ -87,15 +89,14 @@ class InstanceManagement(LyRequestHandler):
 
         instances = self.db2.query(Instance)
 
-        if status == 'delete':
+        if status not in [k for k,v in INSTANCE_STATUS_SHORT_STR]:
+            status = -1
+
+        if status == -1:
             instances = instances.filter(
-                Instance.status == DELETED_S )
-        elif status != 'all':
-            if status == 'stoped':
-                slist = settings.INSTANCE_SLIST_STOPED
-            else: # show running
-                slist = settings.INSTANCE_SLIST_RUNING
-            instances = instances.filter(Instance.status.in_( slist))
+                Instance.status != DELETED_S )
+        else:
+            instances = instances.filter(Instance.status==status)
 
         U = self.db2.query(User).get( uid )
         if U:
@@ -116,10 +117,21 @@ class InstanceManagement(LyRequestHandler):
             by_obj = Instance.created
         elif by == 'updated':
             by_obj = Instance.updated
+        elif by == 'node':
+            by_obj = Instance.node_id
+        elif by == 'user':
+            by_obj = Instance.user_id
+        elif by == 'appliance':
+            by_obj = Instance.appliance_id
+        elif by == 'status':
+            by_obj = Instance.status
+        elif by == 'name':
+            by_obj = Instance.name
         else:
             by_obj = Instance.id
 
-        sort_by_obj = desc(by_obj) if sort == 'desc' else asc(by_obj)
+
+        sort_by_obj = desc(by_obj) if order else asc(by_obj)
 
         instances = instances.order_by( sort_by_obj )
 
@@ -137,10 +149,13 @@ class InstanceManagement(LyRequestHandler):
             page_html = ""
 
         d = { 'title': _('Instance Management'),
+              'urlupdate': self.urlupdate,
               'INSTANCE_LIST': instances, 'TOTAL_INSTANCE': total,
               'PAGE_HTML': page_html,
+              'ORDER': 1 if order == 0 else 0,
               'SORT_USER': U, 'SORT_APPLIANCE': APPLIANCE,
-              'SORT_NODE': NODE, 'STATUS': status }
+              'SORT_NODE': NODE, 'STATUS': status,
+              'INSTANCE_STATUS': INSTANCE_STATUS_SHORT_STR }
 
         self.render( 'admin/instance/index.html', **d )
 

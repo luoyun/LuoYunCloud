@@ -94,6 +94,10 @@ class Login(AccountRequestHandler):
                     self.save_session(user.id)
                     user.last_login = datetime.now()
                     self.db2.commit()
+                    root_passwd = enc_shadow_passwd(form.password.data)
+                    user.profile.set_secret('root_shadow_passwd', root_passwd)
+                    self.db2.commit()
+
                     return self.redirect( self.get_argument('next', '/') )
                 else:
                     form.password.errors.append( _('password is wrong !') )
@@ -357,11 +361,8 @@ class ResetPassword(LyRequestHandler):
             user.password = enc_password
 
             root_passwd = enc_shadow_passwd(form.password.data)
-            print 'root_passwd = ', root_passwd
             user.profile.set_secret('root_shadow_passwd', root_passwd)
-
             self.db2.commit()
-            print 'secret = ', user.profile.get_secret()
 
             url = self.application.reverse_url('account:index')
             return self.redirect( url )

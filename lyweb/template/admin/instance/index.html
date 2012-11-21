@@ -20,9 +20,14 @@
 <p>${ _("Sorted by") } <a href="${ reverse_url('admin:node') }?id=${ SORT_NODE.id }">${ SORT_NODE.hostname } ( ${ SORT_NODE.ip } )</a></p>
 % endif
 
-%if STATUS:
-<p>${ _("View status") } ${ STATUS }</p>
-%endif
+<ul class="hmenu instance-status-select c">
+  <% current = 'current' if STATUS == -1 else '' %>
+  <li><a class="${ current }" href="${ reverse_url('admin:instance') }?status=-1">${ _("All") }</a></li>
+  %for s, v in INSTANCE_STATUS:
+  <% current = 'current' if STATUS == s else '' %>
+  <li><a class="${ current }" href="${ urlupdate({'status': s}) }">${ v }</a></li>
+  %endfor
+</ul>
 
 
 <div class="admin-instance c">
@@ -33,17 +38,18 @@
       <thead>
 	<tr>
 	  <th></th>
-          <th>${ _("ID") }</th>
-          <th>${ _("Name") }</th>
-          <th>${ _("Status") }</th>
+          <th><a href="${ urlupdate({'by': 'id', 'order': ORDER}) }">${ _("ID") }</a></th>
+          <th><a href="${ urlupdate({'by': 'name', 'order': ORDER}) }">${ _("Name") }</a></th>
+          <th><a href="${ urlupdate({'by': 'status', 'order': ORDER}) }">${ _("Status") }</a></th>
           <th>${ _("IP") }</th>
 	  % if not SORT_NODE:
-          <th>${ _("Node") }</th>
+          <th><a href="${ urlupdate({'by': 'node', 'order': ORDER}) }">${ _("Node") }</a></th>
 	  % endif
-          <th>${ _("Owner") }</th>
-	  <th>${ _("Appliance") }</th>
+          <th><a href="${ urlupdate({'by': 'user', 'order': ORDER}) }">${ _("Owner") }</a></th>
+	  <th><a href="${ urlupdate({'by': 'appliance', 'order': ORDER}) }">${ _("Appliance") }</a></th>
           <th>${ _("Islocked") }</th>
-          <th>${ _("Updated") }</th>
+          <th><a href="${ urlupdate({'by': 'created', 'order': ORDER}) }">${ _("Created") }</a></th>
+          <th><a href="${ urlupdate({'by': 'updated', 'order': ORDER}) }">${ _("Updated") }</a></th>
 	</tr>
       </thead>
       <tbody>
@@ -67,7 +73,13 @@
             % endif
           </td>
 	  % endif
-          <td><a href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a></td>
+          <td>
+	    %if I.user:
+	    <a href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a>
+	    %else:
+	    ${ _("User is deleted") }
+	    %endif
+	  </td>
 	  <td><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></td>
 	  <td><input type="checkbox"
 		     % if I.islocked:
@@ -75,6 +87,7 @@
 		     % endif
 		     onclick="simpleToggleCheckbox( this, '${ reverse_url('instance:islocked', I.id) }', '#islocked-notify')" />
 	  </td>
+          <td>${ ftime(I.created) }</td>
           <td>${ htime(I.updated) }</td>
 	</tr>
 	% endfor
@@ -102,9 +115,5 @@
     <p>#{text}</p>
   </div>
 </div>
-
-%if STATUS:
-<p><a class="orange-submit" href="${ reverse_url('admin:instance') }?status=delete">${ _("View Deleted Instance") }</a></p>
-%endif
 
 </%block>

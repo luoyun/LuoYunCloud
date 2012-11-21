@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os, base64, pickle, logging, struct, socket, re, datetime
+import urllib, urlparse
 import gettext
 from hashlib import md5, sha512, sha1
 import settings
@@ -276,6 +277,30 @@ class LyRequestHandler(RequestHandler):
         T = self.lytrace( ttype = LY_TARGET['IP'], tid = ippool.id,
                           do = do )
         return T
+
+
+    # params is a dict: { 'key': value }
+    def urlupdate(self, params):
+
+        new = []
+
+        if '?' in self.request.uri:
+            path, oldparams = self.request.uri.split('?')
+            update_keys = params.keys()
+
+            for k, v in urlparse.parse_qsl( oldparams ):
+                if k in update_keys:
+                    v = params[k]
+                    del params[k]
+                new.append( (k, v) )
+        else:
+            path = self.request.uri
+
+        if params:
+            for k in params.keys():
+                new.append( (k, params[k]) )
+
+        return '?'.join([path, urllib.urlencode( new )])
 
 
 

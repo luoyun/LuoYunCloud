@@ -125,3 +125,21 @@ td.i-logo {
     border: 1px solid #ECEDEF;
     border-radius: 6px;
 }
+
+
+.instance-status-select {
+    margin: 15px 0;
+}
+.instance-status-select a {
+    float: left:
+    display: inline-block;
+    padding: 2px 3px;
+    margin: 2px;
+    border-radius: 3px;
+    border: 1px solid #DCDCDC;
+}
+
+.instance-status-select a.current {
+    color: #FFF;
+    background-color: #467AA7;
+}
