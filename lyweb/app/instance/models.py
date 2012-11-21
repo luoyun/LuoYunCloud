@@ -247,6 +247,10 @@ class Instance(ORMBase):
         return self.status in [3, 4, 5]
 
     @property
+    def is_delete(self):
+        return self.status == settings.INSTANCE_DELETED_STATUS
+
+    @property
     def need_query(self):
         return self.status in [245, 255]
 

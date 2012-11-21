@@ -222,7 +222,7 @@
 		<span class="uid" style="display:none;">${ I.user.id }</span>
 	      </div>
 	    </td>
-            <td><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></td>
+            <td><a href="${ reverse_url('admin:instance') }?id=${ I.id }">${ I.name }</a></td>
 	    <td><input type="checkbox"
 		     % if I.isprivate:
 		     checked="checked"

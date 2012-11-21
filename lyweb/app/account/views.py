@@ -599,7 +599,7 @@ class Delete(LyRequestHandler):
             d['USERNAME'] = user.username
             if user.id == self.current_user.id:
                 d['ERROR'].append(_('You can not delete yourself!'))
-            if user.instances:
+            if [ x for x in user.instances if not x.is_delete ]:
                 d['ERROR'].append(_('User "%s" have instances exist, please remove them first.') % user.username)
             if user.appliances:
                 d['ERROR'].append(_('User "%s" have appliances exist, please remove them first.') % user.username)
