@@ -107,7 +107,7 @@ class UserManagement(LyRequestHandler):
         page_size = self.get_argument_int('sepa', USER_PS)
         cur_page = self.get_argument_int('p', 1)
         by = self.get_argument('by', 'id')
-        sort = self.get_argument('sort', 'DESC')
+        order = self.get_argument_int('order', 1)
         gid = self.get_argument_int('gid', -1)
         search = self.get_argument('search', False)
 
@@ -117,10 +117,14 @@ class UserManagement(LyRequestHandler):
             by = User.last_login
         elif by == 'last_active':
             by = User.last_active
+        elif by == 'username':
+            by = User.username
+        elif by == 'islocked':
+            by = User.islocked
         else:
             by = User.id
 
-        by_exp = desc(by) if sort == 'DESC' else asc(by)
+        by_exp = desc(by) if order else asc(by)
 
         start = (cur_page - 1) * page_size
         stop = start + page_size
@@ -153,11 +157,16 @@ class UserManagement(LyRequestHandler):
             cur_page = cur_page )
 
         page_html = pagination.html( self.get_page_url )
+
+        def sort_by(by):
+            return self.urlupdate(
+                { 'by': by, 'order': 1 if order == 0 else 0 })
             
         d = { 'title': _('Admin User Management'),
+              'sort_by': sort_by,
               'USER_LIST': UL, 'PAGE_HTML': page_html,
               'TOTAL_USER': total,
-              'GROUP': GROUP, 'GID': gid, 'SORT': sort }
+              'GROUP': GROUP, 'GID': gid }
 
         if self.get_argument('ajax', None):
             self.render( 'admin/user/index.ajax', **d )

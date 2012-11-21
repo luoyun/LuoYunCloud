@@ -38,18 +38,18 @@
       <thead>
 	<tr>
 	  <th></th>
-          <th><a href="${ urlupdate({'by': 'id', 'order': ORDER}) }">${ _("ID") }</a></th>
-          <th><a href="${ urlupdate({'by': 'name', 'order': ORDER}) }">${ _("Name") }</a></th>
-          <th><a href="${ urlupdate({'by': 'status', 'order': ORDER}) }">${ _("Status") }</a></th>
+          <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>
+          <th><a href="${ sort_by('name') }">${ _("Name") }</a></th>
+          <th><a href="${ sort_by('status') }">${ _("Status") }</a></th>
           <th>${ _("IP") }</th>
 	  % if not SORT_NODE:
-          <th><a href="${ urlupdate({'by': 'node', 'order': ORDER}) }">${ _("Node") }</a></th>
+          <th><a href="${ sort_by('node') }">${ _("Node") }</a></th>
 	  % endif
-          <th><a href="${ urlupdate({'by': 'user', 'order': ORDER}) }">${ _("Owner") }</a></th>
-	  <th><a href="${ urlupdate({'by': 'appliance', 'order': ORDER}) }">${ _("Appliance") }</a></th>
+          <th><a href="${ sort_by('user') }">${ _("Owner") }</a></th>
+	  <th><a href="${ sort_by('appliance') }">${ _("Appliance") }</a></th>
           <th>${ _("Islocked") }</th>
-          <th><a href="${ urlupdate({'by': 'created', 'order': ORDER}) }">${ _("Created") }</a></th>
-          <th><a href="${ urlupdate({'by': 'updated', 'order': ORDER}) }">${ _("Updated") }</a></th>
+          <th><a href="${ sort_by('created') }">${ _("Created") }</a></th>
+          <th><a href="${ sort_by('updated') }">${ _("Updated") }</a></th>
 	</tr>
       </thead>
       <tbody>

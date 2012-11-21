@@ -148,11 +148,15 @@ class InstanceManagement(LyRequestHandler):
         else:
             page_html = ""
 
+        def sort_by(by):
+            return self.urlupdate(
+                { 'by': by, 'order': 1 if order == 0 else 0 })
+
         d = { 'title': _('Instance Management'),
               'urlupdate': self.urlupdate,
+              'sort_by': sort_by,
               'INSTANCE_LIST': instances, 'TOTAL_INSTANCE': total,
               'PAGE_HTML': page_html,
-              'ORDER': 1 if order == 0 else 0,
               'SORT_USER': U, 'SORT_APPLIANCE': APPLIANCE,
               'SORT_NODE': NODE, 'STATUS': status,
               'INSTANCE_STATUS': INSTANCE_STATUS_SHORT_STR }
