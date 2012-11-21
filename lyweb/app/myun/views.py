@@ -482,6 +482,16 @@ class InstanceEdit(InstanceManagement):
                 nic_type = form.type.data
                 if nic_type == 'default':
                     nic_ip, nic_netmask, nic_gateway = '', '', ''
+
+                    old_ip = old_network.get('ip', None)
+                    if old_ip:
+                        IPL = self.db2.query(IPPool).filter_by(
+                            ip = old_ip).all()
+                        for x in IPL:
+                            x.instance_id = None # unbinding
+                            x.updated = datetime.now()
+                            self.lytrace_ippool(x, I, release=True)
+
                 elif nic_type == 'networkpool':
                     ok_ip = self.db2.query(IPPool).filter_by(
                         instance_id = None ).order_by(
@@ -492,6 +502,7 @@ class InstanceEdit(InstanceManagement):
                         nic_gateway = ok_ip.network.gateway
                         ok_ip.instance_id = I.id # binding
                         ok_ip.updated = datetime.now()
+                        self.lytrace_ippool(ok_ip, I)
                     else:
                         ERROR.append( _('Can not find a useable ip from system ip pool.') )
                 else:

@@ -36,6 +36,7 @@
           <th>${ _("ID") }</th>
           <th>${ _("Name") }</th>
           <th>${ _("Status") }</th>
+          <th>${ _("IP") }</th>
 	  % if not SORT_NODE:
           <th>${ _("Node") }</th>
 	  % endif
@@ -52,6 +53,7 @@
           <td>${ I.id }</td>
           <td><a href="${ reverse_url('admin:instance') }?id=${ I.id }">${ I.name }</a></td>
           <td><img src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }" alt="${ I.status_string }"/></td>
+	  <td>${ I.work_ip }</td>
 	  % if not SORT_NODE:
           <td>
             % if I.node:

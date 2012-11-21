@@ -141,6 +141,7 @@ LY_TARGET = {
     'NODE': 3,             # JOB_TARGET_NODE
     'INSTANCE': 4,         # JOB_TARGET_INSTANCE
     'APPLIANCE': 5,
+    'IP': 6,
 }
 JOB_TARGET = LY_TARGET     # TODO: drop this name
 

@@ -22,6 +22,8 @@ from app.system.models import LyTrace
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
+from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
+
 
 template_dir = os.path.join(
     os.path.dirname(__file__), 'template' )
@@ -263,6 +265,18 @@ class LyRequestHandler(RequestHandler):
         self.db2.commit()
 
         return T
+
+    def lytrace_ippool(self, ippool, I, release=False):
+        if release:
+            do = _('release ip %s from instance %s(%s)') % (
+                ippool.ip, I.id, I.name)
+        else:
+            do = _('get ip %s for instance %s(%s)') % (
+                ippool.ip, I.id, I.name)
+        T = self.lytrace( ttype = LY_TARGET['IP'], tid = ippool.id,
+                          do = do )
+        return T
+
 
 
 def show_error( E ):
