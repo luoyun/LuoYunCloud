@@ -87,11 +87,18 @@ def send_email(toaddr, subject, body, cc = [], bcc = []):
     toaddrs = [toaddr] + cc + bcc
 
     smtp = SMTP(smtp_server, smtp_port)
+
     #smtp.ehlo()
+
     if smtp_server.endswith('gmail.com'):
         smtp.starttls()
+
     #smtp.ehlo()
-    smtp.login(email_username, email_pass)
+
+    if not ( smtp_server.endswith('127.0.0.1') or
+             smtp_server.endswith('localhost') ):
+        smtp.login(email_username, email_pass)
+
     smtp.sendmail(fromaddr, toaddrs, msg.as_string())
     smtp.quit()
     return True
@@ -123,9 +130,14 @@ class LyMail:
         try:
 
             s = SMTP( self.host, self.port )
+
             if self.host.endswith('gmail.com'):
                 s.starttls()
-            s.login( self.username, self.password )
+
+            if not ( self.host.endswith('127.0.0.1') or
+                     self.host.endswith('localhost') ):
+                s.login( self.username, self.password )
+
             self.server = s
             return True
 

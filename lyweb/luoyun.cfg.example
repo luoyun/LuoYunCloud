@@ -16,13 +16,13 @@ db_password = luoyun
 
 [email]
 
-name = Admin
-from = admin@luoyun.co
+name = LuoYunCloud Admin
+from = luoyuncloud@example.com
 
-smtp_server = mail.luoyun.co
+smtp_server = localhost
 smtp_port = 25
-username = admin@luoyun.co
-password = XXXXXX
+#username = luoyuncloud@example.com
+#password = XXXXXX
 
 [site]
 
