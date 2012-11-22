@@ -71,7 +71,7 @@ class ApplianceManagement(LyRequestHandler):
     def get_index(self):
 
         catalog_id = self.catalog.id if self.catalog else 0
-        page_size = self.get_argument_int('sepa', 10)
+        page_size = self.get_argument_int('sepa', 20)
         cur_page = self.get_argument_int('p', 1)
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'ASC')
@@ -112,7 +112,9 @@ class ApplianceManagement(LyRequestHandler):
               'APPLIANCE_LIST': apps, 'PAGE_HTML': page_html,
               'CATALOG': catalog, 'USER': user,
               'TOTAL_APPLIANCE': total,
-              'human_size': human_size }
+              'human_size': human_size,
+              'urlupdate': self.urlupdate,
+              'PAGE_SIZE': page_size }
 
         self.render( 'admin/appliance/index.html', **d )
 

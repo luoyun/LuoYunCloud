@@ -76,7 +76,7 @@ class InstanceManagement(LyRequestHandler):
 
         view = self.get_argument('view', 'all')
         by = self.get_argument('by', 'id')
-        order = self.get_argument_int('order', 0)
+        order = self.get_argument_int('order', 1)
         status = self.get_argument_int('status', -1)
         page_size = self.get_argument_int('sepa', 30)
         cur_page = self.get_argument_int('p', 1)
@@ -150,7 +150,7 @@ class InstanceManagement(LyRequestHandler):
 
         def sort_by(by):
             return self.urlupdate(
-                { 'by': by, 'order': 1 if order == 0 else 0 })
+                {'by': by, 'order': 1 if order == 0 else 0, 'p': 1})
 
         d = { 'title': _('Instance Management'),
               'urlupdate': self.urlupdate,

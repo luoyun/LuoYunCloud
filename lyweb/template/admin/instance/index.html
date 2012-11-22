@@ -25,7 +25,7 @@
   <li><a class="${ current }" href="${ reverse_url('admin:instance') }?status=-1">${ _("All") }</a></li>
   %for s, v in INSTANCE_STATUS:
   <% current = 'current' if STATUS == s else '' %>
-  <li><a class="${ current }" href="${ urlupdate({'status': s}) }">${ v }</a></li>
+  <li><a class="${ current }" href="${ urlupdate({'status': s, 'p': 1}) }">${ v }</a></li>
   %endfor
 </ul>
 

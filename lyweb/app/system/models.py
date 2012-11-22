@@ -34,32 +34,6 @@ class LuoYunConfig(ORMBase):
 
 
 
-class IpAssign(ORMBase):
-
-    __tablename__ = 'ip_assign'
-
-    id = Column( Integer, Sequence('ip_assign_id_seq'), primary_key=True )
-
-    ip = Column( String(32) )
-
-    user_id = Column( ForeignKey('auth_user.id') )
-    user = relationship("User", backref=backref('static_ips',order_by=id) )
-
-    instance_id = Column( ForeignKey('instance.id') )
-    instance = relationship("Instance", backref=backref('static_ips', order_by=id))
-
-    created = Column( DateTime, default=datetime.now )
-    updated = Column( DateTime, default=datetime.now )
-
-
-    def __init__(self, ip, user, instance=None):
-        self.ip = ip
-        self.user_id = user.id
-        if instance:
-            self.instance_id = instance.id
-
-
-
 class NetworkPool(ORMBase):
 
     __tablename__ = 'networkpool'

@@ -756,3 +756,25 @@ td.username img {
     float: right;
     margin-left: 30px;
 }
+
+.pagesize-select {
+    margin: 15px 0;
+}
+.pagesize-select .head {
+    float: left;
+    margin: 6px 10px 5px 0;
+    display: inline-block;
+    font-weight: bold;
+}
+.pagesize-select a {
+    float: left:
+    display: inline-block;
+    padding: 2px 3px;
+    margin: 2px;
+    border-radius: 3px;
+    border: 1px solid #DCDCDC;
+}
+.pagesize-select a.current {
+    color: #FFF;
+    background-color: #467AA7;
+}

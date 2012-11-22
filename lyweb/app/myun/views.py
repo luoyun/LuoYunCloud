@@ -8,7 +8,7 @@ from app.account.models import User, ApplyUser, UserProfile
 from app.instance.models import Instance
 from app.appliance.models import Appliance, ApplianceCatalog
 from app.job.models import Job
-from app.system.models import IpAssign, LuoYunConfig, IPPool
+from app.system.models import LuoYunConfig, IPPool
 
 from settings import JOB_TARGET
 
