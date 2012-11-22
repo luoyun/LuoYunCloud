@@ -608,6 +608,15 @@ static int __process_node_xml_response(xmlDoc * doc, xmlNode * node,
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
             return -1;
         }
+        /* hack to release entity during instance shutting down */
+        if (((job->j_action == LY_A_NODE_STOP_INSTANCE) ||
+            (job->j_action == LY_A_NODE_FULLREBOOT_INSTANCE) ||
+            (job->j_action == LY_A_NODE_ACPIREBOOT_INSTANCE)) && 
+            status == LY_S_RUNNING_STOPPED) {
+                int ins_id = ly_entity_find_by_db(LY_ENTITY_OSM, job->j_target_id);
+                if (ins_id > 0)
+                    ly_entity_release(ins_id);
+            }
         if (status != LY_S_FINISHED_SUCCESS || data_type < 0)
             return 0;
     }

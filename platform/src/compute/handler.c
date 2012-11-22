@@ -97,6 +97,8 @@ static int __send_response(int socket, NodeCtrlInstance * ci, int status)
         r.msg = "waiting for resouces";
     else if (status == LY_S_RUNNING_STOPPING)
         r.msg = "instance shutting down";
+    else if (status == LY_S_RUNNING_STOPPED)
+        r.msg = "instance stopped";
     else
         r.msg = NULL;
 
@@ -1184,8 +1186,10 @@ static int __domain_fullreboot(NodeCtrlInstance * ci)
 {
     loginfo(_("%s is called\n"), __func__);
     int ret = __domain_stop(ci);
-    if (ret == LY_S_FINISHED_INSTANCE_NOT_RUNNING || ret == LY_S_FINISHED_SUCCESS)
+    if (ret == LY_S_FINISHED_INSTANCE_NOT_RUNNING || ret == LY_S_FINISHED_SUCCESS) {
+        __send_response(g_c->wfd, ci, LY_S_RUNNING_STOPPED);
         ret = __domain_run(ci);
+    }
     return ret;
 }
 
