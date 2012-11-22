@@ -253,7 +253,7 @@ class Instance(ORMBase):
 
     @property
     def can_run(self):
-        return self.status in [1, 2]
+        return self.status in [1, 2, 255]
 
     @property
     def is_running(self):
