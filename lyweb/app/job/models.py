@@ -26,6 +26,7 @@ JOB_STATUS_STR = {
     216: _('unmounting instance disk file'),
     221: _('starting instance virtual machine'),
     250: _('stopping instance virtual machine'),
+    259: _('virtual machine stopped'),
     299: _('Last Running Status'),
 
     # end of mid-state of LY_A_NODE_RUN_INSTANCE
@@ -39,7 +40,7 @@ JOB_STATUS_STR = {
     321: _('node server not available'),
     322: _('node server busy'),
     323: _('original node server is not enable'),
-    331: _('appliance not available'),
+    331: _('appliance download error'),
     332: _('appliance error'),
     399: _('Last Finish Status'),
 
