@@ -18,10 +18,13 @@ import settings
 
 from ytool.ini import ConfigINI
 cf = ConfigINI(settings.SITE_CONFIG, 'email')
-smtp_server = cf.get('smtp_server')
-smtp_port = int( cf.get('smtp_port') )
-admin_name = cf.get('name')
-email_from = cf.get('from')
+smtp_server = cf.get('smtp_server', 'localhost')
+try:
+    smtp_port = int( cf.get('smtp_port', 25) )
+except:
+    smtp_port = 25
+admin_name = cf.get('name', 'LuoYunCloud Admin')
+email_from = cf.get('from', 'noreply@localhost.localhost')
 email_username = cf.get('username')
 email_pass = cf.get('password')
 
