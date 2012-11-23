@@ -9,7 +9,6 @@
 % if U:
 <p class="subtitle">${ _("All jobs excute by ") } "${ U.username }"</p>
 % endif
-<script type="text/javascript" src="${ static_url('js/url.js') }"></script>
 
 % if JOB_LIST.count():
 <div class="ly-table">
@@ -17,15 +16,15 @@
   <table class="ly-table">
     <thead>
       <tr>
-        <th onclick="ly_url_orderby('id')">${ _("ID") }</th>
-        <th onclick="ly_url_orderby('user')">${ _("User") }</th>
+        <th>${ _("ID") }</th>
+        <th>${ _("User") }</th>
         <th>${ _("Status") }</th>
         <th>${ _("Target Type") }</th>
         <th>${ _("Target ID") }</th>
         <th>${ _("Action") }</th>
         <th>${ _("Created") }</th>
         <th>${ _("Started") }</th>
-        <th onclick="ly_url_orderby('created')">${ _("Completed") }</th>
+        <th>${ _("Completed") }</th>
       </tr>
     </thead>
     <tbody>
