@@ -314,12 +314,12 @@ class View(InstRequestHandler):
     ''' Show Instance's information '''
 
     #@authenticated
-    def get(self, id):
+    def get(self, ID):
 
         # TODO: a temp hack for status sync
         self.db2.commit()
 
-        self.inst = self.get_instance(id)
+        self.inst = self.get_instance(ID)
         if not self.inst: return
 
         d = { 'title': _('Baseinfo of instance %s') % self.inst.id,
