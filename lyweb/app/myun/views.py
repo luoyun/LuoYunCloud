@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import json
+import json, logging
 from datetime import datetime
 from lycustom import LyRequestHandler, Pagination
 
@@ -488,9 +488,13 @@ class InstanceEdit(InstanceManagement):
                         IPL = self.db2.query(IPPool).filter_by(
                             ip = old_ip).all()
                         for x in IPL:
-                            x.instance_id = None # unbinding
-                            x.updated = datetime.now()
-                            self.lytrace_ippool(x, I, release=True)
+                            # TODO: does this correct ?
+                            if I.id == x.instance_id:
+                                x.instance_id = None # unbinding
+                                x.updated = datetime.now()
+                                self.lytrace_ippool(x, I, release=True)
+                            else:
+                                logging.error("Release %s from instance %s failed, this is not it's ip" % (x.ip, I.id))
 
                 elif nic_type == 'networkpool':
                     ok_ip = self.db2.query(IPPool).filter_by(
