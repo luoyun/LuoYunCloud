@@ -20,7 +20,7 @@ function InstanceControl() {
 		    imgurl = $('html').data('job-running-img');
 		    $('#i-js-img').attr('src', imgurl);
 		    $('#i-js-str').text(data.msg);
-		    $('#i-js').text('');
+		    $('#i-js').text('1'); // TODO:
 		    $('#i-reboot-warning').html('');
 		} else {
 		    $('#i-task-result').html(data);
