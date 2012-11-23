@@ -10,6 +10,7 @@ import settings
 from lyorm import dbsession as db
 from app.node.models import Node
 from app.instance.models import Instance
+from app.account.models import User
 
 JOB_STATUS_STR = {
     0: _('unknown'),
@@ -162,3 +163,9 @@ class Job(ORMBase):
     @property
     def waiting(self):
         return 400 <= self.status < 500
+
+    @property
+    def user_link_module(self):
+        if (self.user_id and db.query(User).get(self.user_id)):
+            url = '/admin/user?id=%s' % self.user_id
+            return '<a href="%s" target="_blank">%s</a>' % (url, self.user.username)

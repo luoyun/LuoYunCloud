@@ -7,6 +7,8 @@ from sqlalchemy.orm import relationship, backref
 
 from ytime import htime, ftime
 
+from app.account.models import User
+from lyorm import dbsession as db
 
 class LuoYunConfig(ORMBase):
 
@@ -126,3 +128,9 @@ class LyTrace(ORMBase):
         return _('%s: %s come from %s do "%s" , %s') % (
             ftime(self.when), self.who.username, self.comefrom,
             self.do, self.isok)
+
+
+    @property
+    def whois(self):
+        if (self.who_id and db.query(User).get(self.who_id)):
+            return self.who.username

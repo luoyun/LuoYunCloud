@@ -37,7 +37,7 @@ class UserManagement(LyRequestHandler):
         self.user = None
         self.action = self.get_argument('action', 'index')
 
-        user_id = self.get_argument('id', 0)
+        user_id = self.get_argument_int('id', 0)
         if user_id:
             self.user = self.db2.query(User).get( user_id  )
             if not self.user:
