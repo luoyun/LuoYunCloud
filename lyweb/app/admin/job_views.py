@@ -53,11 +53,14 @@ class JobManagement(LyRequestHandler):
 
         user_id = self.get_argument_int('user', 0)
         by = self.get_argument('by', 'id')
-        order = self.get_argument('order', 'DESC')
-        if ( order == 'DESC' ):
-            order_func = desc( by )
-        else:
-            order_func = asc( by )
+        order = self.get_argument_int('order', 1)
+
+        if by not in [ 'id', 'user_id', 'status', 'target_type',
+                       'target_id', 'action', 'created', 'started',
+                       'ended' ]:
+            by = 'id'
+
+        order_func = desc( by ) if order else asc( by )
 
         page_size = self.get_argument_int('sepa', 50)
         cur_page = self.get_argument_int('p', 1)
@@ -79,7 +82,12 @@ class JobManagement(LyRequestHandler):
             total = JOB_TOTAL, page_size = page_size,
             cur_page = cur_page ).html(self.get_page_url)
 
+        def sort_by(by):
+            return self.urlupdate(
+                {'by': by, 'order': 1 if order == 0 else 0, 'p': 1})
+
         d = { 'title': 'Jobs', 'U': U,
+              'sort_by': sort_by,
               'JOB_TOTAL': JOB_TOTAL,
               'JOB_LIST': JOB_LIST,
               'page_html': page_html }
