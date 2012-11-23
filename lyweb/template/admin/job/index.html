@@ -35,7 +35,7 @@
         <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
         <td class="job-status"><img src="${ theme_url('icons/JobStatus/%s.png' % j.status) }"/>${ j.status_string }</td>
         <td>${ j.target_name }</td>
-        <td><a href="${ j.target_url }">${ j.target_id }</a></td>
+        <td>${ j.target_url }</td>
         <td>${ j.action_string }</td>
         <td class="time">${ ftime(j.created) }</td>
         <td class="time">${ ftime(j.started, '%H:%M:%S') }</td>

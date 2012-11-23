@@ -325,7 +325,7 @@
             <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
             <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png"/>${ j.status_string }</td>
             <td>${ j.target_name }</td>
-            <td><a href="${ j.target_url }">${ j.target_id }</a></td>
+            <td>${ j.target_url }</a></td>
             <td>${ j.action_string }</td>
             <td>${ htime(j.ended) }</td>
 	  </tr>

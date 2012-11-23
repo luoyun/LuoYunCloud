@@ -7,6 +7,9 @@ from sqlalchemy.orm import relationship, backref
 
 import settings
 
+from lyorm import dbsession as db
+from app.node.models import Node
+from app.instance.models import Instance
 
 JOB_STATUS_STR = {
     0: _('unknown'),
@@ -78,6 +81,11 @@ JOB_ACTION_STR = {
 }
 
 
+JOB_TARGET_NAME = {
+    3: _('NODE'),
+    4: _('INSTANCE'),
+}
+
 
 class Job(ORMBase):
 
@@ -112,22 +120,27 @@ class Job(ORMBase):
     @property
     def target_name(self):
         # TODO: merge with settings.JOB_TARGET
-        TARGET_NAME = {
-            3: _('NODE'),
-            4: _('INSTANCE'),
-            }
-        return TARGET_NAME.get(self.target_type, _('Unknown'))
+        return JOB_TARGET_NAME.get(self.target_type, _('Unknown'))
 
     @property
     def target_url(self):
         # TODO: use reverse_url
-        if self.target_type == 3:
-            return '/admin/node?id=%s&action=view' % self.target_id
-        elif self.target_type == 4:
-            return '/admin/instance?id=%s' % self.target_id
+        url = ''
+        try:
+            if ( self.target_type == 3 and
+                 db.query(Node).get(self.target_id) ):
+                url = '/admin/node?id=%s&action=view' % self.target_id
+            elif ( self.target_type == 4 and
+                   db.query(Instance).get(self.target_id) ):
+                url = '/admin/instance?id=%s' % self.target_id
+        except:
+            pass
 
+        if url:
+            return '<a href="%s" target="_blank">%s</a>' % (url, self.target_id)
         else:
-            return ''
+            return self.target_id
+
 
     @property
     def action_string(self):
