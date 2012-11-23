@@ -124,7 +124,7 @@ class Job(ORMBase):
         if self.target_type == 3:
             return '/admin/node?id=%s&action=view' % self.target_id
         elif self.target_type == 4:
-            return '/instance/%s' % self.target_id
+            return '/admin/instance?id=%s' % self.target_id
 
         else:
             return ''
