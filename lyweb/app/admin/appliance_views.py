@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import logging, datetime, time, re
-from lycustom import LyRequestHandler,  Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
 from sqlalchemy.sql.expression import asc, desc
@@ -12,6 +12,7 @@ from app.admin.forms import CatalogForm
 
 from lycustom import has_permission
 from lytool.filesize import size as human_size
+from ytool.pagination import pagination
 
 from settings import LY_TARGET
 
@@ -97,11 +98,8 @@ class ApplianceManagement(LyRequestHandler):
         total = apps.count()
         apps = apps.slice(start, stop)
             
-        pagination = Pagination(
-            total = total,
-            page_size = page_size, cur_page = cur_page )
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
 
-        page_html = pagination.html( self.get_page_url )
 
         catalogs = self.db2.query(ApplianceCatalog).all()
         for c in catalogs:

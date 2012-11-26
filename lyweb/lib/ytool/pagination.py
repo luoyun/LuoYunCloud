@@ -39,6 +39,11 @@ PAGE_TEMPLATE = '''<div class="pagination">
 def pagination( url, total, sepa, cur, list_size=5,
                 sepa_range=[10, 20, 50] ):
 
+    if total <= sepa:
+        return ''
+
+    sepa_range = [x for x in sepa_range if x < total]
+
     page_sum = total / sepa
     if ( total % sepa ): page_sum += 1
 
@@ -62,8 +67,9 @@ def pagination( url, total, sepa, cur, list_size=5,
     def _page_url(cur):
         return page_url(url, cur)
 
-    d = { 'plist': plist,  'sepa': sepa, 'cur_page': cur,
-          'page_sum': page_sum, 'notexist_page': notexist_p,
+    d = { 'total': total, 'plist': plist,  'sepa': sepa,
+          'cur_page': cur, 'page_sum': page_sum,
+          'notexist_page': notexist_p,
           'page_url': _page_url }
 
     if sepa_range:
@@ -83,10 +89,15 @@ def page_url(uri, cur):
 
     path, params = uri.split('?')
     new = []
+    find_p = False
     for k, v in urlparse.parse_qsl( params ):
         if k == 'p':
             v = cur
+            find_p = True
         new.append( (k, v) )
+
+    if not find_p:
+        new.append( ('p', cur) )
 
     return '?'.join([path, urllib.urlencode(new)])
 

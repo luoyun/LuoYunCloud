@@ -2,7 +2,7 @@
 
 import logging, datetime, time, re
 import tornado
-from lycustom import LyRequestHandler,  Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
 from app.instance.models import Instance

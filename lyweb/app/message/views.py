@@ -3,7 +3,7 @@
 
 import logging, datetime, time, re
 import tornado
-from lycustom import LyRequestHandler, Pagination, has_permission
+from lycustom import LyRequestHandler, has_permission
 from ytime import ftime
 from tornado.web import authenticated, asynchronous
 
@@ -12,6 +12,8 @@ from app.message.models import Message, MessageText
 from app.message.forms import MessageForm, NewMessageForm,ReplyMessageForm
 
 from sqlalchemy.sql.expression import asc, desc
+
+from ytool.pagination import pagination
 
 import re
 reply_regex = re.compile(r'(\s*Re:\s*|\s*回复：\s*|\s*Re：\s*|\s*回复:\s*)', re.IGNORECASE)
@@ -77,11 +79,7 @@ class MessageRequestHandler(LyRequestHandler):
 
         ml = ml.order_by( by_exp ).slice(start, stop).all()
 
-        pagination = Pagination(
-            total = total, page_size = page_size,
-            cur_page = cur_page )
-
-        page_html = pagination.html( self.get_page_url )
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
 
         return { 'MESSAGE_LIST': ml,
                  'PAGE_HTML': page_html,

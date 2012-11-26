@@ -3,7 +3,7 @@
 import os
 import tornado.web
 
-from lycustom import LyNotFoundHandler, LyProxyHandler
+from lycustom import LyNotFoundHandler
 
 from app.home.urls import handlers as home_urls
 from app.account.urls import handlers as account_urls
@@ -63,9 +63,6 @@ def get_home_hander():
 handlers =  message_urls + account_urls + admin_urls + appliance_urls + wiki_urls + instance_urls + job_urls + node_urls + system_urls + myun_urls + home_urls + [
 
     (r'/', get_home_hander(), dict(title=_("LuoYun Cloud Home"))),
-
-    # Utils
-    (r'/proxy', LyProxyHandler),
 
     (r'/(.*)', LyNotFoundHandler),
 ]

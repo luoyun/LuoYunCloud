@@ -25,7 +25,7 @@ import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
 
-from lycustom import LyRequestHandler, Pagination
+from ytool.pagination import pagination
 
 
 
@@ -290,13 +290,7 @@ class Index(InstRequestHandler):
 
         instances = instances.slice(start, stop)
 
-        if total > page_size:
-            page_html = Pagination(
-                total = total,
-                page_size = page_size,
-                cur_page = cur_page ).html(self.get_page_url)
-        else:
-            page_html = ""
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
 
         d = { 'title': self.title,
               'INSTANCE_LIST': instances,

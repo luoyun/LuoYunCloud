@@ -2,7 +2,7 @@
 
 import json, logging
 from datetime import datetime
-from lycustom import LyRequestHandler, Pagination
+from lycustom import LyRequestHandler
 
 from app.account.models import User, ApplyUser, UserProfile
 from app.instance.models import Instance
@@ -23,6 +23,7 @@ from sqlalchemy.sql.expression import asc, desc
 from sqlalchemy import and_
 
 from lytool.filesize import size as human_size
+from ytool.pagination import pagination
 
 from tool.domain import get_default_domain
 
@@ -144,13 +145,7 @@ class MyunInstance(LyRequestHandler):
         total = instances.count()
         instances = instances.slice(start, stop).all()
 
-        if total > page_size:
-            page_html = Pagination(
-                total = total,
-                page_size = page_size,
-                cur_page = cur_page ).html(self.get_page_url)
-        else:
-            page_html = ""
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
 
         return instances, page_html
 
@@ -882,13 +877,6 @@ class MyunAppliance(LyRequestHandler):
         total = apps.count()
         apps = apps.slice(start, stop)
             
-#        catalogs = self.db2.query(ApplianceCatalog).all()
-#        for c in catalogs:
-#            c.total = self.db2.query(Appliance.id).filter_by( catalog_id = c.id ).count()
-
-        pagination = Pagination(
-            total = total, page_size = page_size, cur_page = cur_page )
-
-        page_html = pagination.html( self.get_page_url )
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
 
         return apps, page_html

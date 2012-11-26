@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import logging, datetime, time, re
-from lycustom import LyRequestHandler,  Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
 from app.account.models import User, Group, UserProfile, \
@@ -24,6 +24,9 @@ from lycustom import has_permission
 
 from settings import ADMIN_USER_LIST_PAGE_SIZE as USER_PS
 import settings
+
+from ytool.pagination import pagination
+
 
 
 class UserManagement(LyRequestHandler):
@@ -157,11 +160,9 @@ class UserManagement(LyRequestHandler):
         total = UL.count()
         UL = UL.slice(start, stop)
 
-        pagination = Pagination(
-            total = total, page_size = page_size,
-            cur_page = cur_page )
-
-        page_html = pagination.html( self.get_page_url )
+        page_html = pagination(self.request.uri, total,
+                               page_size, cur_page,
+                               sepa_range = [20, 50, 100])
 
         def sort_by(by):
             return self.urlupdate(

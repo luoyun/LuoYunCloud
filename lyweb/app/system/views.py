@@ -3,7 +3,7 @@
 import logging, struct, socket, re, os, json
 import ConfigParser
 
-from lycustom import LyRequestHandler, Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
 from sqlalchemy.sql.expression import asc, desc
@@ -18,6 +18,7 @@ from app.system.forms import BaseinfoForm, DBForm, \
 from app.account.models import User, Group
 
 from ytool.ini import ConfigINI
+from ytool.pagination import pagination
 
 from lycustom import has_permission
 from email.Utils import parseaddr, formataddr
@@ -230,11 +231,8 @@ class IPPoolView(LyRequestHandler):
         POOL = POOL.order_by( by_exp )
         POOL = POOL.slice(start, stop)
 
-        pagination = Pagination( total = TOTAL,
-                                 page_size = page_size,
-                                 cur_page = cur_page )
+        page_html = pagination(self.request.uri, TOTAL, page_size, cur_page)
 
-        page_html = pagination.html( self.get_page_url )
 
         d = { 'title': _('IP Pool'), 'TOTAL': TOTAL, 'NETWORK': N,
               'IPPOOL': POOL.all(), 'PAGE_HTML': page_html }
@@ -840,11 +838,8 @@ class LyTraceManage(LyRequestHandler):
 
         total = self.db2.query(LyTrace.id).count()
             
-        pagination = Pagination(
-            total = total,
-            page_size = page_size, cur_page = cur_page )
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
 
-        page_html = pagination.html( self.get_page_url )
 
         def sort_by(by):
             return self.urlupdate(

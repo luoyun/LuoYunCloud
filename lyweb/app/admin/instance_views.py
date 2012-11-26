@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import logging, datetime, time, re, json
-from lycustom import LyRequestHandler,  Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
 from app.account.models import User, Group, Permission
@@ -13,6 +13,7 @@ from app.node.models import Node
 from settings import JOB_TARGET
 
 from lycustom import has_permission
+from ytool.pagination import pagination
 
 from sqlalchemy.sql.expression import asc, desc
 from sqlalchemy import and_
@@ -140,13 +141,7 @@ class InstanceManagement(LyRequestHandler):
 
         instances = instances.slice(start, stop).all()
 
-        if total > page_size:
-            page_html = Pagination(
-                total = total,
-                page_size = page_size,
-                cur_page = cur_page ).html(self.get_page_url)
-        else:
-            page_html = ""
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
 
         def sort_by(by):
             return self.urlupdate(

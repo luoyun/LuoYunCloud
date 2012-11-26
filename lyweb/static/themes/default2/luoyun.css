@@ -378,6 +378,11 @@ body {
     background-color: #3B5998;
     color: #FFF;
 }
+.pagination .psize-select a {
+    display: inline-block;
+    padding: 3px 6px;
+    text-decoration: none;
+}
 /* End pagination */
 
 

@@ -2,7 +2,7 @@
 
 import os, logging, json, time
 
-from lycustom import LyRequestHandler, Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated
 
 from sqlalchemy.sql.expression import asc, desc
