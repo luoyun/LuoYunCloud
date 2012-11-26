@@ -180,6 +180,12 @@ p {
 .pagination .current {
     background-color: #3B5998;
     color: #FFF;
+    border-radius: 2px;
+}
+.pagination .psize-select a {
+    display: inline-block;
+    padding: 3px 6px;
+    text-decoration: none;
 }
 /* End pagination */
 

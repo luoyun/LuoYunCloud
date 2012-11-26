@@ -11,6 +11,8 @@ from sqlalchemy.sql.expression import asc, desc
 
 from lycustom import has_permission
 
+from ytool.pagination import pagination
+
 
 class JobManagement(LyRequestHandler):
 
@@ -78,9 +80,9 @@ class JobManagement(LyRequestHandler):
 
         JOB_TOTAL = self.db2.query(Job.id).count()
 
-        page_html = Pagination(
-            total = JOB_TOTAL, page_size = page_size,
-            cur_page = cur_page ).html(self.get_page_url)
+        page_html = pagination(self.request.uri, JOB_TOTAL,
+                               page_size, cur_page,
+                               sepa_range = [20, 50, 100])
 
         def sort_by(by):
             return self.urlupdate(
