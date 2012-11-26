@@ -26,16 +26,6 @@ def default_value(dbsession):
         print '[W] db is init already, do not init now.'
         return
 
-    # LuoYunConfig
-    from app.system.models import LuoYunConfig
-    for k, v in settings.luoyun_system_config:
-        c = dbsession.query(LuoYunConfig).filter_by(key=k).first()
-        if c:
-            print '[W] config key exist: %s' % k
-        else:
-            nc = LuoYunConfig(key=k, value=v)
-            dbsession.add(nc)
-
     # Permission
     from app.account.models import Permission
     for codename, name in settings.default_permission:

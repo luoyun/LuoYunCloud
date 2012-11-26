@@ -6,25 +6,48 @@
 
 <%block name="content">
 
-<div class="manage-content">
-  <a class="blue-submit" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a>
-</div>
+<table class="sort-list-table">
+  <tbody>
+    <tr>
+      <td>${ _("Group") }</td>
+      <td>
+	<div id="user-group-list" class="c">
+	  <ul class="hmenu">
+	    <li><a class="current" href="${ reverse_url('admin:user') }">${ _("All") }</a></li>
+	    % for G in GROUP_LIST:
+	    <li><a id="user-group${ G.id }" href="${ urlupdate({'gid': G.id, 'p': 1 }) }">${ G.name }</a></li>
+	    % endfor
+	  </ul>
+	</div>
+      </td>
+    </tr>
+
+    <tr>
+      <td>${ _("Page Size") }</td>
+      <td>
+	<ul class="hmenu c">
+	  %for s in [30, 50, 100]:
+	  <% current = 'current' if PAGE_SIZE == s else '' %>
+	  <li><a class="${ current }" href="${ urlupdate({'sepa': s, 'p': 1}) }">${ s }</a></li>
+	  %endfor
+	</ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+% if GID > 0:
+<script type="text/javascript">
+  $("#user-group-list a").removeClass("current");
+  $("#user-group${ GID }").addClass("current");
+</script>
+% endif
+
+<p class="desc-title">${ _('Total : ') }${ TOTAL_USER }</p>
 
 <div class="m-item"><span class="k">${ _("Search") }</span><span id="search"><input type="text" title="${ _('Input text to search matched user.') }"/></span></div>
 
 <div id="aul" class="ly-table">
-
-  <p class="desc-title">
-    ${ _('View') }
-    % if GID == 0:
-    "${ _('No Group User') }"
-    % elif GID > 0:
-    "${ GROUP.name }"
-    % else:
-    "${ _('ALL User') }"
-    % endif
-    (${ _('Total : ') }${ TOTAL_USER })
-  </p>
 
   <table>
     <thead>
@@ -78,6 +101,11 @@
   </table>
   ${ PAGE_HTML }
 
+</div>
+
+<div class="manage-content">
+  <a class="blue-submit" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a>
+  <a class="red-submit" href="${ sort_by('description') }">${ _("Users Have Remark") }</a>
 </div>
 
 <script charset="utf-8" src="${ STATIC_URL }js/instance.js"></script>

@@ -6,8 +6,9 @@
 
 <%block name="content">
 
-<div class="manage-action sidebar">
-  <a class="ly-btn2 small blue" href="${ reverse_url('admin:group') }?action=add">${ _("Create New Group") }</a>
+<div class="manage-content">
+  <a class="blue-submit" href="${ reverse_url('admin:group') }?action=add">${ _("Create New Group") }</a>
+  <a class="red-submit" href="${ reverse_url('admin:user') }?gid=0">${ _("Users Have No Group") }</a>
 </div>
 
 <p class="subtitle">${ _("Total Groups: ") } ${ len(GROUP_LIST) }</p>
@@ -49,8 +50,6 @@
     </tbody>
   </table>
 </div>
-
-<p><a href="${ reverse_url('admin:user') }?gid=0">${ _("No Group User") }</a></p>
 
 
 </%block>

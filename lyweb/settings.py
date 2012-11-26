@@ -194,15 +194,6 @@ app = [
     ]
 
 
-luoyun_system_config = [
-    # ( 'key', 'value' )
-    #('network.pool.start', '192.168.1.100'),
-    #('network.pool.end', '192.168.1.254'),
-    #('network.netmask', '255.255.255.0'),
-    #('network.gateway', '192.168.1.1'),
-    #('network.nameserver', '8.8.8.8'),
-]
-
 default_permission = [
     # ( 'codename', 'name' )
     ('admin', 'Administrator'),

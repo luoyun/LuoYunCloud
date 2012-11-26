@@ -778,3 +778,23 @@ td.username img {
     color: #FFF;
     background-color: #467AA7;
 }
+
+.hmenu a {
+    border-radius: 2px;
+}
+.hmenu a.current {
+    color: #FFF;
+    background-color: #467AA7;
+}
+
+.sort-list-table {
+}
+.sort-list-table td {
+    vertical-align: middle;
+    padding: 10px;
+}
+.sort-list-table td:first-child {
+    font-weight: bold;
+    text-align: right;
+    padding: 10px 10px 10px 0;
+}

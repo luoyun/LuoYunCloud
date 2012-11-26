@@ -111,7 +111,11 @@ class UserManagement(LyRequestHandler):
         gid = self.get_argument_int('gid', -1)
         search = self.get_argument('search', False)
 
-        if by == 'date_joined':
+        UL = self.db2.query(User)
+
+        if by == 'id':
+            by = User.id
+        elif by == 'date_joined':
             by = User.date_joined
         elif by == 'last_login':
             by = User.last_login
@@ -121,6 +125,9 @@ class UserManagement(LyRequestHandler):
             by = User.username
         elif by == 'islocked':
             by = User.islocked
+        elif by == 'description':
+            by = User.id
+            UL = UL.filter( User.description != None )
         else:
             by = User.id
 
@@ -128,8 +135,6 @@ class UserManagement(LyRequestHandler):
 
         start = (cur_page - 1) * page_size
         stop = start + page_size
-
-        UL = self.db2.query(User)
 
         if search:
             search = '%' + search + '%'
@@ -164,9 +169,12 @@ class UserManagement(LyRequestHandler):
             
         d = { 'title': _('Admin User Management'),
               'sort_by': sort_by,
+              'urlupdate': self.urlupdate,
               'USER_LIST': UL, 'PAGE_HTML': page_html,
               'TOTAL_USER': total,
-              'GROUP': GROUP, 'GID': gid }
+              'PAGE_SIZE': page_size,
+              'GROUP': GROUP, 'GID': gid,
+              'GROUP_LIST': self.db2.query(Group).all()}
 
         if self.get_argument('ajax', None):
             self.render( 'admin/user/index.ajax', **d )
@@ -346,9 +354,9 @@ class UserManagement(LyRequestHandler):
         return self.redirect( url )
 
     def post_edit_description(self):
-        description = self.get_argument('description', '')
-        if description and self.user:
-            self.user.description = description
+        description = self.get_argument('description', '').strip()
+        if self.user:
+            self.user.description = description if description else None
             self.db2.commit()
 
         url = '%s?id=%s' % (self.reverse_url('admin:user'), self.user.id)
