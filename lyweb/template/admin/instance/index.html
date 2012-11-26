@@ -6,28 +6,37 @@
 
 <%block name="content">
 
+<table class="sortby-module">
+  <tbody>
+    <tr>
+      <td nowrap="nowrap">${ _("Instance Status") }</td>
+      <td>
+	<a class="${ b2s(STATUS < 0) }" href="${ reverse_url('admin:instance') }?status=-1">${ _("All") }</a>
+	%for s, v in INSTANCE_STATUS:
+	<a class="${ b2s(STATUS == s) }" href="${ urlupdate({'status': s, 'p': 1}) }">${ v }</a>
+	%endfor
+      </td>
+    </tr>
+    %if SORT_USER or SORT_APPLIANCE or SORT_NODE:
+    <tr>
+      <td>${ _("Sorted by") }</td>
+      <td>
+	% if SORT_USER:
+	<a href="${ reverse_url('admin:user') }?id=${ SORT_USER.id }">${ SORT_USER.username }</a>
+	% endif
+	% if SORT_APPLIANCE:
+	<a href="${ reverse_url('admin:appliance') }?id=${ SORT_APPLIANCE.id }">${ SORT_APPLIANCE.name }</a>
+	% endif
+	% if SORT_NODE:
+	<a href="${ reverse_url('admin:node') }?id=${ SORT_NODE.id }">${ SORT_NODE.hostname } ( ${ SORT_NODE.ip } )</a>
+	% endif
+      </td>
+    </tr>
+    %endif
+  </tbody>
+</table>
+
 <p class="subtitle">${ _("Total instances: ") } ${ TOTAL_INSTANCE }</p>
-
-
-% if SORT_USER:
-<p>${ _("Sorted by") } <a href="${ reverse_url('admin:user') }?id=${ SORT_USER.id }">${ SORT_USER.username }</a></p>
-% endif
-% if SORT_APPLIANCE:
-<p>${ _("Sorted by") } <a href="${ reverse_url('admin:appliance') }?id=${ SORT_APPLIANCE.id }">${ SORT_APPLIANCE.name }</a></p>
-% endif
-
-% if SORT_NODE:
-<p>${ _("Sorted by") } <a href="${ reverse_url('admin:node') }?id=${ SORT_NODE.id }">${ SORT_NODE.hostname } ( ${ SORT_NODE.ip } )</a></p>
-% endif
-
-<ul class="hmenu instance-status-select c">
-  <% current = 'current' if STATUS == -1 else '' %>
-  <li><a class="${ current }" href="${ reverse_url('admin:instance') }?status=-1">${ _("All") }</a></li>
-  %for s, v in INSTANCE_STATUS:
-  <% current = 'current' if STATUS == s else '' %>
-  <li><a class="${ current }" href="${ urlupdate({'status': s, 'p': 1}) }">${ v }</a></li>
-  %endfor
-</ul>
 
 
 <div class="admin-instance c">

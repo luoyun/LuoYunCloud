@@ -6,30 +6,19 @@
 
 <%block name="content">
 
-<div id="appliance-catalog-list" class="c">
-  <ul class="hmenu">
-    <li><a class="current" href="${ reverse_url('admin:appliance') }">${ _("All") }</a></li>
-    % for C in CATALOG_LIST:
-    <li><a id="app-catalog${ C.id }" href="${ urlupdate({'catalog': C.id, 'p': 1 }) }">${ C.name }</a></li>
-    % endfor
-  </ul>
-</div>
-
-% if CID:
-<script type="text/javascript">
-  $("#appliance-catalog-list a").removeClass("current");
-  $("#app-catalog${ CID }").addClass("current");
-</script>
-% endif
-
-<ul class="hmenu pagesize-select c">
-  <li class="head">${ _("Page Size") }</li>
-  %for s in [20, 30, 50, 100]:
-  <% current = 'current' if PAGE_SIZE == s else '' %>
-  <li><a class="${ current }" href="${ urlupdate({'sepa': s, 'p': 1}) }">${ s }</a></li>
-  %endfor
-</ul>
-
+<table class="sortby-module">
+  <tbody>
+    <tr>
+      <td nowrap="nowrap">${ _("Appliance Catalog") }</td>
+      <td>
+	<a class="${ b2s(CID <= 0) }" href="${ reverse_url('admin:appliance') }">${ _("All") }</a>
+	% for C in CATALOG_LIST:
+	<a class="${ b2s(CID == C.id) }" href="${ urlupdate({'catalog': C.id, 'p': 1 }) }">${ C.name }</a>
+	% endfor
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <p>${ _("Total Appliance :") } ${ TOTAL_APPLIANCE }</p>
 

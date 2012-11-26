@@ -6,42 +6,19 @@
 
 <%block name="content">
 
-<table class="sort-list-table">
+<table class="sortby-module">
   <tbody>
     <tr>
-      <td>${ _("Group") }</td>
+      <td nowrap="nowrap">${ _("Group") }</td>
       <td>
-	<div id="user-group-list" class="c">
-	  <ul class="hmenu">
-	    <li><a class="current" href="${ reverse_url('admin:user') }">${ _("All") }</a></li>
-	    % for G in GROUP_LIST:
-	    <li><a id="user-group${ G.id }" href="${ urlupdate({'gid': G.id, 'p': 1 }) }">${ G.name }</a></li>
-	    % endfor
-	  </ul>
-	</div>
-      </td>
-    </tr>
-
-    <tr>
-      <td>${ _("Page Size") }</td>
-      <td>
-	<ul class="hmenu c">
-	  %for s in [30, 50, 100]:
-	  <% current = 'current' if PAGE_SIZE == s else '' %>
-	  <li><a class="${ current }" href="${ urlupdate({'sepa': s, 'p': 1}) }">${ s }</a></li>
-	  %endfor
-	</ul>
+	<a class="${ b2s(GID <= 0) }" href="${ reverse_url('admin:user') }">${ _("All") }</a>
+	% for G in GROUP_LIST:
+	<a class="${ b2s(GID == G.id) }" href="${ urlupdate({'gid': G.id, 'p': 1 }) }">${ G.name }</a>
+	% endfor
       </td>
     </tr>
   </tbody>
 </table>
-
-% if GID > 0:
-<script type="text/javascript">
-  $("#user-group-list a").removeClass("current");
-  $("#user-group${ GID }").addClass("current");
-</script>
-% endif
 
 <p class="desc-title">${ _('Total : ') }${ TOTAL_USER }</p>
 

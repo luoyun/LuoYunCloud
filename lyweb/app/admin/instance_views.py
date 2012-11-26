@@ -79,7 +79,7 @@ class InstanceManagement(LyRequestHandler):
         by = self.get_argument('by', 'id')
         order = self.get_argument_int('order', 1)
         status = self.get_argument_int('status', -1)
-        page_size = self.get_argument_int('sepa', 30)
+        page_size = self.get_argument_int('sepa', 50)
         cur_page = self.get_argument_int('p', 1)
         uid = self.get_argument_int('uid', 0) # sort by user
         aid = self.get_argument_int('aid', 0) # sort by appliance
@@ -141,7 +141,7 @@ class InstanceManagement(LyRequestHandler):
 
         instances = instances.slice(start, stop).all()
 
-        page_html = pagination(self.request.uri, total, page_size, cur_page)
+        page_html = pagination(self.request.uri, total, page_size, cur_page, sepa_range=[20, 50, 100])
 
         def sort_by(by):
             return self.urlupdate(

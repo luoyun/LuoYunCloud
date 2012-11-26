@@ -31,6 +31,7 @@ template_dir = os.path.join(
 
 
 from ytime import htime, ftime
+from ytool.hstring import b2s
 
 class LyRequestHandler(RequestHandler):
 
@@ -71,6 +72,7 @@ class LyRequestHandler(RequestHandler):
             has_permission = self.has_permission,
             AJAX = ajax,
             show_error = show_error,
+            b2s = b2s,
         )
 
         args.update(kwargs)

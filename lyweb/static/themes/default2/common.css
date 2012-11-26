@@ -534,3 +534,29 @@ a.no-text-decoration {
 .ui-notify p {
     margin: 0 12px 0 5px;
 }
+
+
+.sortby-module {
+}
+.sortby-module td {
+    vertical-align: middle;
+    padding: 10px;
+}
+.sortby-module td:first-child {
+    font-weight: bold;
+    text-align: right;
+    padding: 10px 10px 10px 0;
+}
+.sortby-module a {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 2px;
+    text-decoration: none;
+}
+.sortby-module a.current {
+    color: #FFF;
+    background-color: #467AA7;
+}
+.sortby-module a:hover {
+    color: #DEB110;
+}
