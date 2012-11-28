@@ -43,5 +43,5 @@ def ftime(t, f='%Y-%m-%d %H:%M:%S'):
     try:
         return datetime.datetime.strftime(t, f)
     except Exception, e:
-        logging.error( 'format time "%s" failed: %s' % (t, e) )
+        #logging.error( 'format time "%s" failed: %s' % (t, e) )
         return 'N/A'

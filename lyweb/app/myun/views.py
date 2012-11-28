@@ -1,14 +1,14 @@
 # coding: utf-8
 
-import json
+import json, logging
 from datetime import datetime
-from lycustom import LyRequestHandler, Pagination
+from lycustom import LyRequestHandler
 
 from app.account.models import User, ApplyUser, UserProfile
 from app.instance.models import Instance
 from app.appliance.models import Appliance, ApplianceCatalog
 from app.job.models import Job
-from app.system.models import IpAssign, LuoYunConfig, IPPool
+from app.system.models import LuoYunConfig, IPPool
 
 from settings import JOB_TARGET
 
@@ -23,6 +23,7 @@ from sqlalchemy.sql.expression import asc, desc
 from sqlalchemy import and_
 
 from lytool.filesize import size as human_size
+from ytool.pagination import pagination
 
 from tool.domain import get_default_domain
 
@@ -144,13 +145,7 @@ class MyunInstance(LyRequestHandler):
         total = instances.count()
         instances = instances.slice(start, stop).all()
 
-        if total > page_size:
-            page_html = Pagination(
-                total = total,
-                page_size = page_size,
-                cur_page = cur_page ).html(self.get_page_url)
-        else:
-            page_html = ""
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
 
         return instances, page_html
 
@@ -482,6 +477,20 @@ class InstanceEdit(InstanceManagement):
                 nic_type = form.type.data
                 if nic_type == 'default':
                     nic_ip, nic_netmask, nic_gateway = '', '', ''
+
+                    old_ip = old_network.get('ip', None)
+                    if old_ip:
+                        IPL = self.db2.query(IPPool).filter_by(
+                            ip = old_ip).all()
+                        for x in IPL:
+                            # TODO: does this correct ?
+                            if I.id == x.instance_id:
+                                x.instance_id = None # unbinding
+                                x.updated = datetime.now()
+                                self.lytrace_ippool(x, I, release=True)
+                            else:
+                                logging.error("Release %s from instance %s failed, this is not it's ip" % (x.ip, I.id))
+
                 elif nic_type == 'networkpool':
                     ok_ip = self.db2.query(IPPool).filter_by(
                         instance_id = None ).order_by(
@@ -492,6 +501,7 @@ class InstanceEdit(InstanceManagement):
                         nic_gateway = ok_ip.network.gateway
                         ok_ip.instance_id = I.id # binding
                         ok_ip.updated = datetime.now()
+                        self.lytrace_ippool(ok_ip, I)
                     else:
                         ERROR.append( _('Can not find a useable ip from system ip pool.') )
                 else:
@@ -585,7 +595,7 @@ class InstanceEdit(InstanceManagement):
                  - used_storage
                  ) < form.size.data:
                 form.size.errors.append("Storage LIMIT: total=%s, used=%s" % ( I.user.profile.storage, used_storage ))
-                return self.render( 'myun/instance/edit_storage.html', **d)
+                return self.render( 'myun/instance/edit_storage.html', **self.d)
 
             storage = {
                 'type': form.type.data,
@@ -711,7 +721,7 @@ class InstanceEdit(InstanceManagement):
         sub, top = get_default_domain(self.db2, I.id)
 
         if top:
-            subdomain = I.subdomain if I.subdomain else sub
+            sub = I.subdomain if I.subdomain else sub
 
             if not I.access_ip:
                 self.d['ERROR'].append( _('Can not get access_ip, please configure instance network or run instance') )
@@ -719,7 +729,7 @@ class InstanceEdit(InstanceManagement):
         else:
             self.d['ERROR'].append( _('can not get domain, domain may not have been configured in Administration Console.') )
 
-        self.d['subdomain'] = subdomain
+        self.d['subdomain'] = sub
         self.d['topdomain'] = top
 
         self.render('myun/instance/edit_domain.html', **self.d)
@@ -810,10 +820,6 @@ class InstanceEdit(InstanceManagement):
 
     def get_webssh_toggle(self, I):
 
-        status = self.get_argument('status', None)
-        if status not in ['enable', 'disable']:
-            return self.write( _('Attention to safety') )
-
         if not I.config:
             I.init_config()
 
@@ -824,11 +830,11 @@ class InstanceEdit(InstanceManagement):
         else:
             webssh = {}
 
-        if status == 'enable':
+        if webssh.get('status') != 'enable':
             webssh['status'] = 'enable'
             webssh['port'] = 8001
             config['webssh'] = webssh
-        elif status == 'disable':
+        else:
             if 'webssh' in config.keys():
                 del config['webssh']
 
@@ -836,8 +842,8 @@ class InstanceEdit(InstanceManagement):
         if I.is_running:
             I.ischanged = True
         self.db2.commit()
+        # no news is good news
 
-        self.write( _('Change status ok') )
 
 
 class MyunAppliance(LyRequestHandler):
@@ -871,13 +877,6 @@ class MyunAppliance(LyRequestHandler):
         total = apps.count()
         apps = apps.slice(start, stop)
             
-#        catalogs = self.db2.query(ApplianceCatalog).all()
-#        for c in catalogs:
-#            c.total = self.db2.query(Appliance.id).filter_by( catalog_id = c.id ).count()
-
-        pagination = Pagination(
-            total = total, page_size = page_size, cur_page = cur_page )
-
-        page_html = pagination.html( self.get_page_url )
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
 
         return apps, page_html

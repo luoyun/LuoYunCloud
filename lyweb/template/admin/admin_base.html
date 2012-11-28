@@ -67,16 +67,16 @@ ${ _("LuoYunCloud Admin Console") }
 	  <div class="c show">
 	    <img class="user-avatar" src="${ static_url( current_user.avatar_mini_url ) }" />
 	    <span class="text">${ current_user.username }
-	      %if current_user.profile.notification:
-	      (${ current_user.profile.notification })
+	      %if current_user.notification:
+	      (${ current_user.notification })
 	      %endif
 	    </span>
 	  </div>
 	  <ul class="add-menu hide" style="display:none;">
 	    <li><a href="${ reverse_url('account:index') }">${ _("My Account") }</a></li>
 	    <li><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }
-		%if current_user.profile.notification:
-		(${ current_user.profile.notification })
+		%if current_user.notification:
+		(${ current_user.notification })
 		%endif
 	    </a></li>
 	    <li><a href="/admin">${ _("Admin") }</a></li>
@@ -118,6 +118,7 @@ ${ _("LuoYunCloud Admin Console") }
 	  <a href="${ reverse_url('system:sendmail') }">${ _("Send Mail") }</a>
 	  <a href="${ reverse_url('admin:job') }">${ _("Job") }</a>
 	  <a href="${ reverse_url('system:trace') }">${ _("Action History") }</a>
+	  <a href="${ reverse_url('message:notice') }">${ _("Notice") }</a>
 	</div>
 	<script type="text/javascript">
 	  $("#admin-menu a").removeClass("current");

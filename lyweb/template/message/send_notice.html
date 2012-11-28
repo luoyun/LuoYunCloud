@@ -1,0 +1,49 @@
+<%inherit file="/admin/system.html"/>
+
+<%block name="innav">
+<li><a id="system-item" href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li><a href="${ reverse_url('message:send_notice') }">${ _("Site Notice") }</a></li>
+</%block>
+
+
+<%block name="content">
+
+<div class="ly-send-message">
+
+  <div class="large-tbform">
+    <form method="POST" action="${ reverse_url('message:send_notice') }">
+      ${ form.subject.label }
+      ${ form.subject() }
+      ${ form.html_errors( form.subject.errors ) }
+
+      ${ form.text.label }
+      ${ form.text() }
+      ${ form.html_errors( form.text.errors ) }
+      <input class="blue-submit" type="submit" value="${ _('Submit') }" class="button" />
+    </form>
+  </div>
+
+</div>
+
+<script charset="utf-8" src="${ static_url('kindeditor/kindeditor.js') }"></script>
+<script charset="utf-8" src="${ static_url('kindeditor/lang/zh_CN.js') }"></script>
+<script>
+  var editor;
+  KindEditor.ready(function(K) {
+  editor = K.create('#text', {
+    uploadJson : '/ly/upload/kindeditor',
+    fileManagerJson : '/ly/upload/kindeditor',
+    allowFileManager : true,
+    items : [
+        'formatblock', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'removeformat', '|',
+        'undo', 'redo', '|', 'code', '|', 'justifyleft', 'justifycenter', 'justifyright',
+        'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', '|',
+        'image', 'insertfile', 'table', 'emoticons',
+        'anchor', 'link', 'unlink', '|', 'fullscreen', 'source', 'preview', 'about'
+    ],
+  });
+  });
+</script>
+
+
+</%block>

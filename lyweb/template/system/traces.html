@@ -15,20 +15,26 @@
   <table>
     <thead>
       <tr>
-        <th>${ _("ID") }</th>
-        <th>${ _("Who") }</th>
-        <th>${ _("Come From") }</th>
-        <th>${ _("Do What ?") }</th>
-        <th>${ _("Target Type") }</th>
-        <th>${ _("Target ID") }</th>
-        <th>${ _("When") }</th>
+        <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>
+        <th><a href="${ sort_by('who_id') }">${ _("Who") }</a></th>
+        <th><a href="${ sort_by('comefrom') }">${ _("Come From") }</a></th>
+        <th><a href="${ sort_by('do') }">${ _("Do What ?") }</a></th>
+        <th><a href="${ sort_by('target_type') }">${ _("Target Type") }</a></th>
+        <th><a href="${ sort_by('target_id') }">${ _("Target ID") }</a></th>
+        <th><a href="${ sort_by('when') }">${ _("When") }</a></th>
       </tr>
     </thead>
     <tbody>
       % for T in TRACE_LIST:
       <tr>
         <td>${ T.id }</td>
-        <td><a href="${ reverse_url('admin:user') }?id=${ T.who_id }">${ T.who.username }</a></td>
+        <td>
+	  %if T.whois:
+	  <a href="${ reverse_url('admin:user') }?id=${ T.who_id }">${ T.whois }</a>
+	  %else:
+	  ${ T.who_id }
+	  %endif
+	</td>
         <td>${ T.comefrom }</td>
         <td>${ T.do }</td>
         <td>${ T.target_type }</td>
@@ -39,7 +45,7 @@
     </tbody>
   </table>
 
-  ${ page_html }
+  ${ PAGE_HTML }
 </div>
 % else:
 <div class="ywarn">

@@ -3,7 +3,7 @@
 import logging, struct, socket, re, os, json
 import ConfigParser
 
-from lycustom import LyRequestHandler, Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
 from sqlalchemy.sql.expression import asc, desc
@@ -18,6 +18,7 @@ from app.system.forms import BaseinfoForm, DBForm, \
 from app.account.models import User, Group
 
 from ytool.ini import ConfigINI
+from ytool.pagination import pagination
 
 from lycustom import has_permission
 from email.Utils import parseaddr, formataddr
@@ -230,11 +231,8 @@ class IPPoolView(LyRequestHandler):
         POOL = POOL.order_by( by_exp )
         POOL = POOL.slice(start, stop)
 
-        pagination = Pagination( total = TOTAL,
-                                 page_size = page_size,
-                                 cur_page = cur_page )
+        page_html = pagination(self.request.uri, TOTAL, page_size, cur_page)
 
-        page_html = pagination.html( self.get_page_url )
 
         d = { 'title': _('IP Pool'), 'TOTAL': TOTAL, 'NETWORK': N,
               'IPPOOL': POOL.all(), 'PAGE_HTML': page_html }
@@ -734,10 +732,12 @@ class SendMail(LyRequestHandler):
         for line in text.split('\n'):
             line = line.strip().strip(',')
             for toaddr in line.split(','):
-                if validate_email(toaddr):
-                    VALID.append(toaddr)
-                else:
-                    INVALID.append(toaddr)
+                toaddr = toaddr.strip()
+                if toaddr:
+                    if validate_email(toaddr):
+                        VALID.append(toaddr)
+                    else:
+                        INVALID.append(toaddr)
 
         return VALID, INVALID
 
@@ -800,26 +800,29 @@ class LyTraceManage(LyRequestHandler):
 
     def get_index(self):
 
-        page_size = self.get_argument_int('sepa', 10)
+        page_size = self.get_argument_int('sepa', 50)
         cur_page = self.get_argument_int('p', 1)
         by = self.get_argument('by', 'id')
-        sort = self.get_argument('sort', 'DESC')
+        order = self.get_argument_int('order', 1)
         user_id = self.get_argument_int('user', 0)
         target_type = self.get_argument_int('target_type', None)
         target_id = self.get_argument_int('target_id', 0)
         comefrom = self.get_argument('comefrom', None)
         result = self.get_argument('result', False)
 
-        if by in ['id', 'who_id', 'when', 'comefrom', 'target_type', 'isok']:
-            by_exp = desc(by) if sort == 'DESC' else asc(by)
+        if by in ['id', 'who_id', 'comefrom', 'target_type', 'target_id', 'isok']:
+            by = by
+        elif by == 'when':
+            by = LyTrace.when
+        elif by == 'do':
+            by = LyTrace.do
         else:
             return self.write( _('Wrong sort by value: %s') % by )
 
+        by_exp = desc(by) if order else asc(by)
+
         start = (cur_page - 1) * page_size
         stop = start + page_size
-
-
-        # TODO: target sort
 
         traces = self.db2.query(LyTrace)
 
@@ -835,14 +838,15 @@ class LyTraceManage(LyRequestHandler):
 
         total = self.db2.query(LyTrace.id).count()
             
-        pagination = Pagination(
-            total = total,
-            page_size = page_size, cur_page = cur_page )
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
 
-        page_html = pagination.html( self.get_page_url )
 
+        def sort_by(by):
+            return self.urlupdate(
+                {'by': by, 'order': 1 if order == 0 else 0, 'p': 1})
 
         d = { 'title': _('Trace system action'),
+              'sort_by': sort_by,
               'TRACE_LIST': traces, 'PAGE_HTML': page_html,
               'USER': user, 'TOTAL_TRACE': total }
 

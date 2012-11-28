@@ -35,7 +35,7 @@
 	  <td>
 	    <span id="i-ip">
 	      % if I.work_ip:
-	      <a href="${ I.home_url(current_user) }" target="_blank"><span id="lyinst-ip">${ I.work_ip }</span></a>
+	      <a href="${ I.home_url(current_user, useip=True) }" target="_blank"><span id="lyinst-ip">${ I.work_ip }</span></a>
 	      % endif
 	    </span>
 	  </td>
@@ -93,7 +93,7 @@
   </p>
 
   <h2>${ _("Description") }</h2>
-  <div id="i-description">
+  <div id="i-description" class="description">
     % if I.description:
     ${ I.description_html }
     % else:
@@ -102,7 +102,7 @@
   </div>
 
   <div class="i-management-btn">
-    <a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=general">${ _("Edit") }</a>
+    <a class="blue-submit" href="${ reverse_url('myun:instance:edit', I.id) }?item=general">${ _("Edit") }</a>
   </div>
 </div>
 
@@ -122,7 +122,7 @@
   </table>
 
   <div class="i-management-btn">
-    <span class="edit"><a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=resource">${ _("Edit") }</a></span>
+    <span class="edit"><a class="blue-submit" href="${ reverse_url('myun:instance:edit', I.id) }?item=resource">${ _("Edit") }</a></span>
   </div>
 </div>
 
@@ -174,7 +174,7 @@
 
   %if has_permission("network.add"):
   <div class="i-management-btn">
-    <a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=network&index=${ NIC_TOTAL + 1 }">${ _("Add a new NIC") }</a>
+    <a class="blue-submit" href="${ reverse_url('myun:instance:edit', I.id) }?item=network&index=${ NIC_TOTAL + 1 }">${ _("Add a new NIC") }</a>
   </div>
   %endif
 
@@ -200,13 +200,13 @@
   % endfor
 
   <div class="i-management-btn">
-    <a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=storage">${ _("Edit") }</a>
-    <a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=storage_delete">${ _("Delete") }</a>
+    <a class="blue-submit" href="${ reverse_url('myun:instance:edit', I.id) }?item=storage">${ _("Edit") }</a>
+    <a class="red-submit" href="${ reverse_url('myun:instance:edit', I.id) }?item=storage_delete">${ _("Delete") }</a>
   </div>
 
   % else:
   <p>${ _("You can add a disk for the instance. ") }</p>
-  <p><a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=storage">${ _("Add") }</a></p>
+  <p><a class="blue-submit" href="${ reverse_url('myun:instance:edit', I.id) }?item=storage">${ _("Add") }</a></p>
   % endif
 </div>
 
@@ -217,14 +217,14 @@
 	    % if USE_GLOBAL_PASSWD:
 	    checked="checked"
 	    % endif
-	    onclick="simpleToggleCheckbox( this, '${ reverse_url('instance:toggle_flag', I.id) }?target=use_global_passwd', '#use-global-passwd-notify')" /></p>
+	    onclick="checkboxClickNotify( this, '${ reverse_url('instance:toggle_flag', I.id) }?target=use_global_passwd', '${ _("Toggle Instance use_global_passwd flag Success") }')" /></p>
   <p>
-    <a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=password">${ _("Reset Root Password") }</a>
+    <a class="blue-submit" href="${ reverse_url('myun:instance:edit', I.id) }?item=password">${ _("Reset Root Password") }</a>
   </p>
 
   <h2>${ _("SSH Public Key") }</h2>
   <p>
-    <a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=public_key">${ _("Config public key") }</a>
+    <a class="blue-submit" href="${ reverse_url('myun:instance:edit', I.id) }?item=public_key">${ _("Config public key") }</a>
   </p>
 </div>
 
@@ -242,13 +242,13 @@
     </span>
   </p>
   <div class="i-management-btn">
-    <a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=domain">${ _("Edit") }</a>
-    <a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=domain_delete">${ _("Delete") }</a>
+    <a class="blue-submit" href="${ reverse_url('myun:instance:edit', I.id) }?item=domain">${ _("Edit") }</a>
+    <a class="red-submit" href="${ reverse_url('myun:instance:edit', I.id) }?item=domain_delete">${ _("Delete") }</a>
   </div>
 
   % else:
   <p>${ _("Domain is not configured.") }</p>
-  <p><a class="ly-btn2 small green" href="${ reverse_url('myun:instance:edit', I.id) }?item=domain">${ _("Add") }</a></p>
+  <p><a class="blue-submit" href="${ reverse_url('myun:instance:edit', I.id) }?item=domain">${ _("Add") }</a></p>
   % endif
 </div>
 
@@ -257,12 +257,11 @@
     <tbody>
       <tr>
 	<td>${ _("WebSSH") }</td>
-	<td>
-	  % if webssh and webssh.get('status') == 'enable':
-	  <a class="toggle" href="${ reverse_url('myun:instance:edit', I.id) }?item=webssh_toggle&status=disable">${ _("Disable") }</a>
-	  % else:
-	  <a class="toggle" href="${ reverse_url('myun:instance:edit', I.id) }?item=webssh_toggle&status=enable">${ _("Enable") }</a>
-	  % endif
+	<td><input type="checkbox"
+		   % if webssh and webssh.get('status') == 'enable':
+		   checked="checked"
+		   % endif
+		   onclick="checkboxClickNotify( this, '${ reverse_url('myun:instance:edit', I.id) }?item=webssh_toggle', '${ _("Toggle webssh status success") }')" />
 	</td>
       </tr>
     </tbody>
@@ -314,17 +313,6 @@
   % endif
 </div>
 
-<div id="use-global-passwd-notify" style="display:none">
-  <div id="basic-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <p>${ _("Toggle Instance use_global_passwd flag Success") }</p>
-  </div>
-  <div id="error-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <h1>${ _("Toggle Instance use_global_passwd flag Failed") }</h1>
-    <p>#{text}</p>
-  </div>
-</div>
 
 <script type="text/javascript">
   $("html").data("inst_control_url", "${ reverse_url('instance:control', I.id) }");

@@ -13,7 +13,7 @@ from sqlalchemy import and_
 from app.appliance.models import Appliance
 from app.instance.models import Instance
 from app.job.models import Job
-from app.system.models import IpAssign, LuoYunConfig
+from app.system.models import LuoYunConfig, IPPool
 
 from app.instance.forms import CreateInstanceBaseForm, \
     CreateInstanceForm, BaseinfoForm, ResourceForm, \
@@ -25,7 +25,7 @@ import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
 
-from lycustom import LyRequestHandler, Pagination
+from ytool.pagination import pagination
 
 
 
@@ -180,23 +180,6 @@ class InstRequestHandler(LyRequestHandler):
         return _('Task starts successfully.')
 
 
-    def update_ipassign(self, ip, instance):
-        ''' Update IpAssign table '''
-
-        ipassign = self.db2.query(IpAssign).filter_by(ip=ip).first()
-        if ipassign:
-            ipassign.user_id = self.current_user.id
-            ipassign.instance_id = instance.id
-            updated = datetime.now()
-        else:
-            c = IpAssign( ip = ip,
-                          user = self.current_user,
-                          instance = instance )
-            self.db2.add( c )
-
-        self.db2.commit()
-
-
     def domain_delete(self, inst):
 
         if not inst.config:
@@ -307,13 +290,7 @@ class Index(InstRequestHandler):
 
         instances = instances.slice(start, stop)
 
-        if total > page_size:
-            page_html = Pagination(
-                total = total,
-                page_size = page_size,
-                cur_page = cur_page ).html(self.get_page_url)
-        else:
-            page_html = ""
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
 
         d = { 'title': self.title,
               'INSTANCE_LIST': instances,
@@ -331,12 +308,12 @@ class View(InstRequestHandler):
     ''' Show Instance's information '''
 
     #@authenticated
-    def get(self, id):
+    def get(self, ID):
 
         # TODO: a temp hack for status sync
         self.db2.commit()
 
-        self.inst = self.get_instance(id)
+        self.inst = self.get_instance(ID)
         if not self.inst: return
 
         d = { 'title': _('Baseinfo of instance %s') % self.inst.id,
@@ -373,17 +350,25 @@ class Delete(InstRequestHandler):
         if d['E']:
             return self.render('instance/delete_return.html', **d)
 
+        old_iname = I.name
         I.status = DELETED_S
         I.subdomain = '_notexist_%s_' % I.id
         I.name = '_notexist_%s_' % I.id
         self.db2.commit()
 
-        ipassign_list = self.db2.query(IpAssign).filter_by(
-            instance_id = I.id ).all()
-        for ipassign in ipassign_list:
-            self.db2.delete( ipassign )
-            self.db2.commit()
+        for x in I.ips:
+            x.instance_id = None
+            x.updated = datetime.now()
 
+            T = self.lytrace(
+                ttype = LY_TARGET['IP'], tid = x.id,
+                do = _('release ip %s from instance %s(%s)') % (
+                    x.ip, I.id, old_iname) )
+
+        self.db2.commit()
+
+
+        
         # delete instance files
         d['MSG'] = self.run_job(I, JOB_ACTION['DESTROY_INSTANCE'])
         return self.render('instance/delete_return.html', **d)
@@ -441,6 +426,13 @@ class InstanceControl(InstRequestHandler):
                      
 
     def reboot(self, instance):
+
+        # TODO: a temp hack
+        self.set_nameservers(instance)
+        self.rebinding_domain(instance)
+        if instance.get_config('use_global_passwd', True):
+            self.set_root_passwd(instance)
+
         return self.run_job(instance, JOB_ACTION['REBOOT_INSTANCE'])
 
 
@@ -670,14 +662,19 @@ class CreateInstance(InstRequestHandler):
             self.binding_domain( instance )
             self.set_root_passwd( instance )
 
-            url = self.reverse_url('instance:view', instance.id)
+            url = self.reverse_url('myun:instance:view', instance.id)
             return self.redirect(url)
 
         # Something is wrong
         self.render( 'instance/create.html', **self.d )
 
 
-    def set_ip(self, instance):
+    def set_ip(self, I):
+
+        ok_ip = self.db2.query(IPPool).filter_by(
+            instance_id = None ).order_by(asc(IPPool.id)).first()
+
+        if not ok_ip: return
 
         # TODO: ip assign should have a global switch flag
         NPOOL = []
@@ -685,29 +682,27 @@ class CreateInstance(InstRequestHandler):
 
         if not TOTAL_POOL: return
 
-        the_good_ip = None
-        for ip in TOTAL_POOL['pool']:
-            if not self.db2.query(IpAssign).filter_by( ip = ip ).first():
-                the_good_ip = ip
-                break
-
-        if not the_good_ip: return
-
-        network = {
-            'type': 'default',
-            'mac': instance.mac, # TODO: use old mac
-            'ip': the_good_ip,
-            'netmask': TOTAL_POOL['netmask'],
-            'gateway': TOTAL_POOL['gateway']
+        nic_config = {
+            'type': 'networkpool', # TODO: show use global flag
+            'mac': I.mac,
+            'ip': ok_ip.ip,
+            'netmask': ok_ip.network.netmask,
+            'gateway': ok_ip.network.gateway
             }
 
-        config = json.loads(instance.config) if instance.config else {}
-        config['network'] = [network]
+        try:
+            I.set_network( nic_config, 1 )
+            ok_ip.instance_id = I.id
+            ok_ip.updated = datetime.now()
 
-        instance.config = json.dumps(config)
-        self.db2.commit()
+            T = self.lytrace(
+                ttype = LY_TARGET['IP'], tid = ok_ip.id,
+                do = _('get ip %s for instance %s(%s)') % (
+                    ok_ip.ip, I.id, I.name) )
 
-        self.update_ipassign( ip, instance )
+            self.db2.commit()
+        except Exception, e:
+            logging.error('set_ip(): %s' % e)
 
 
     def binding_domain(self, instance):
@@ -837,7 +832,7 @@ class Status(InstRequestHandler):
             domain, domain_link = '', ''
 
             if instance.work_ip:
-                ip_link = instance.home_url(self.current_user)
+                ip_link = instance.home_url(self.current_user, useip=True)
                 ip = instance.work_ip
 
             if instance.domain:
@@ -976,7 +971,7 @@ class CheckInstanceStatus(InstRequestHandler):
 
             # SHOW ip status
             if show_ip and instance.work_ip:
-                CS['ip_link'] = instance.home_url(self.current_user)
+                CS['ip_link'] = instance.home_url(self.current_user, useip=True)
                 CS['ip'] = instance.work_ip
 
             # SHOW domain status
@@ -1088,7 +1083,7 @@ class SingleInstanceStatus(InstRequestHandler):
             CS['js_img'] = self.theme_url('icons/JobStatus/running.gif')
 
         if I.work_ip:
-            CS['ip_link'] = I.home_url(self.current_user)
+            CS['ip_link'] = I.home_url(self.current_user, useip=True)
             CS['ip'] = I.work_ip
 
         if I.domain and I.is_running:

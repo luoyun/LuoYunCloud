@@ -6,23 +6,37 @@
 
 <%block name="content">
 
+<table class="sortby-module">
+  <tbody>
+    <tr>
+      <td nowrap="nowrap">${ _("Instance Status") }</td>
+      <td>
+	<a class="${ b2s(STATUS < 0) }" href="${ reverse_url('admin:instance') }?status=-1">${ _("All") }</a>
+	%for s, v in INSTANCE_STATUS:
+	<a class="${ b2s(STATUS == s) }" href="${ urlupdate({'status': s, 'p': 1}) }">${ v }</a>
+	%endfor
+      </td>
+    </tr>
+    %if SORT_USER or SORT_APPLIANCE or SORT_NODE:
+    <tr>
+      <td>${ _("Sorted by") }</td>
+      <td>
+	% if SORT_USER:
+	<a href="${ reverse_url('admin:user') }?id=${ SORT_USER.id }">${ SORT_USER.username }</a>
+	% endif
+	% if SORT_APPLIANCE:
+	<a href="${ reverse_url('admin:appliance') }?id=${ SORT_APPLIANCE.id }">${ SORT_APPLIANCE.name }</a>
+	% endif
+	% if SORT_NODE:
+	<a href="${ reverse_url('admin:node') }?id=${ SORT_NODE.id }">${ SORT_NODE.hostname } ( ${ SORT_NODE.ip } )</a>
+	% endif
+      </td>
+    </tr>
+    %endif
+  </tbody>
+</table>
+
 <p class="subtitle">${ _("Total instances: ") } ${ TOTAL_INSTANCE }</p>
-
-
-% if SORT_USER:
-<p>${ _("Sorted by") } <a href="${ reverse_url('admin:user') }?id=${ SORT_USER.id }">${ SORT_USER.username }</a></p>
-% endif
-% if SORT_APPLIANCE:
-<p>${ _("Sorted by") } <a href="${ reverse_url('admin:appliance') }?id=${ SORT_APPLIANCE.id }">${ SORT_APPLIANCE.name }</a></p>
-% endif
-
-% if SORT_NODE:
-<p>${ _("Sorted by") } <a href="${ reverse_url('admin:node') }?id=${ SORT_NODE.id }">${ SORT_NODE.hostname } ( ${ SORT_NODE.ip } )</a></p>
-% endif
-
-%if STATUS:
-<p>${ _("View status") } ${ STATUS }</p>
-%endif
 
 
 <div class="admin-instance c">
@@ -33,16 +47,18 @@
       <thead>
 	<tr>
 	  <th></th>
-          <th>${ _("ID") }</th>
-          <th>${ _("Name") }</th>
-          <th>${ _("Status") }</th>
+          <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>
+          <th><a href="${ sort_by('name') }">${ _("Name") }</a></th>
+          <th><a href="${ sort_by('status') }">${ _("Status") }</a></th>
+          <th>${ _("IP") }</th>
 	  % if not SORT_NODE:
-          <th>${ _("Node") }</th>
+          <th><a href="${ sort_by('node') }">${ _("Node") }</a></th>
 	  % endif
-          <th>${ _("Owner") }</th>
-	  <th>${ _("Appliance") }</th>
+          <th><a href="${ sort_by('user') }">${ _("Owner") }</a></th>
+	  <th><a href="${ sort_by('appliance') }">${ _("Appliance") }</a></th>
           <th>${ _("Islocked") }</th>
-          <th>${ _("Updated") }</th>
+          <th><a href="${ sort_by('created') }">${ _("Created") }</a></th>
+          <th><a href="${ sort_by('updated') }">${ _("Updated") }</a></th>
 	</tr>
       </thead>
       <tbody>
@@ -52,6 +68,7 @@
           <td>${ I.id }</td>
           <td><a href="${ reverse_url('admin:instance') }?id=${ I.id }">${ I.name }</a></td>
           <td><img src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }" alt="${ I.status_string }"/></td>
+	  <td>${ I.work_ip }</td>
 	  % if not SORT_NODE:
           <td>
             % if I.node:
@@ -65,7 +82,13 @@
             % endif
           </td>
 	  % endif
-          <td><a href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a></td>
+          <td>
+	    %if I.user:
+	    <a href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a>
+	    %else:
+	    ${ _("User is deleted") }
+	    %endif
+	  </td>
 	  <td><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></td>
 	  <td><input type="checkbox"
 		     % if I.islocked:
@@ -73,6 +96,7 @@
 		     % endif
 		     onclick="simpleToggleCheckbox( this, '${ reverse_url('instance:islocked', I.id) }', '#islocked-notify')" />
 	  </td>
+          <td>${ ftime(I.created) }</td>
           <td>${ htime(I.updated) }</td>
 	</tr>
 	% endfor
@@ -100,9 +124,5 @@
     <p>#{text}</p>
   </div>
 </div>
-
-%if STATUS:
-<p><a class="orange-submit" href="${ reverse_url('admin:instance') }?status=delete">${ _("View Deleted Instance") }</a></p>
-%endif
 
 </%block>

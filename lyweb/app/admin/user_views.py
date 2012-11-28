@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import logging, datetime, time, re
-from lycustom import LyRequestHandler,  Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
 from app.account.models import User, Group, UserProfile, \
@@ -25,6 +25,9 @@ from lycustom import has_permission
 from settings import ADMIN_USER_LIST_PAGE_SIZE as USER_PS
 import settings
 
+from ytool.pagination import pagination
+
+
 
 class UserManagement(LyRequestHandler):
 
@@ -37,7 +40,7 @@ class UserManagement(LyRequestHandler):
         self.user = None
         self.action = self.get_argument('action', 'index')
 
-        user_id = self.get_argument('id', 0)
+        user_id = self.get_argument_int('id', 0)
         if user_id:
             self.user = self.db2.query(User).get( user_id  )
             if not self.user:
@@ -107,25 +110,34 @@ class UserManagement(LyRequestHandler):
         page_size = self.get_argument_int('sepa', USER_PS)
         cur_page = self.get_argument_int('p', 1)
         by = self.get_argument('by', 'id')
-        sort = self.get_argument('sort', 'DESC')
+        order = self.get_argument_int('order', 1)
         gid = self.get_argument_int('gid', -1)
         search = self.get_argument('search', False)
 
-        if by == 'date_joined':
+        UL = self.db2.query(User)
+
+        if by == 'id':
+            by = User.id
+        elif by == 'date_joined':
             by = User.date_joined
         elif by == 'last_login':
             by = User.last_login
         elif by == 'last_active':
             by = User.last_active
+        elif by == 'username':
+            by = User.username
+        elif by == 'islocked':
+            by = User.islocked
+        elif by == 'description':
+            by = User.id
+            UL = UL.filter( User.description != None )
         else:
             by = User.id
 
-        by_exp = desc(by) if sort == 'DESC' else asc(by)
+        by_exp = desc(by) if order else asc(by)
 
         start = (cur_page - 1) * page_size
         stop = start + page_size
-
-        UL = self.db2.query(User)
 
         if search:
             search = '%' + search + '%'
@@ -148,16 +160,22 @@ class UserManagement(LyRequestHandler):
         total = UL.count()
         UL = UL.slice(start, stop)
 
-        pagination = Pagination(
-            total = total, page_size = page_size,
-            cur_page = cur_page )
+        page_html = pagination(self.request.uri, total,
+                               page_size, cur_page,
+                               sepa_range = [20, 50, 100])
 
-        page_html = pagination.html( self.get_page_url )
+        def sort_by(by):
+            return self.urlupdate(
+                { 'by': by, 'order': 1 if order == 0 else 0 })
             
         d = { 'title': _('Admin User Management'),
+              'sort_by': sort_by,
+              'urlupdate': self.urlupdate,
               'USER_LIST': UL, 'PAGE_HTML': page_html,
               'TOTAL_USER': total,
-              'GROUP': GROUP, 'GID': gid, 'SORT': sort }
+              'PAGE_SIZE': page_size,
+              'GROUP': GROUP, 'GID': gid,
+              'GROUP_LIST': self.db2.query(Group).all()}
 
         if self.get_argument('ajax', None):
             self.render( 'admin/user/index.ajax', **d )
@@ -337,9 +355,9 @@ class UserManagement(LyRequestHandler):
         return self.redirect( url )
 
     def post_edit_description(self):
-        description = self.get_argument('description', '')
-        if description and self.user:
-            self.user.description = description
+        description = self.get_argument('description', '').strip()
+        if self.user:
+            self.user.description = description if description else None
             self.db2.commit()
 
         url = '%s?id=%s' % (self.reverse_url('admin:user'), self.user.id)

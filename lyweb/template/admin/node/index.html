@@ -41,8 +41,10 @@
 		   onclick="simpleToggleCheckbox( this, '${ reverse_url('node:isenable', n.id) }', '#isenable-notify')" />
         </td>
         <td>
-	  % if len(n.instances):
-	  <a href="${ reverse_url('admin:instance') }?node=${ n.id }" target="_blank">${ len(n.instances) }</a>
+	  % if n.instances_sum:
+	  <a href="${ reverse_url('admin:instance') }?node=${ n.id }" target="_blank">${ n.instances_sum }</a>
+	  /
+	  <a href="${ reverse_url('admin:instance') }?node=${ n.id }&status=running" target="_blank">${ n.instances_running_sum }</a>
 	  % endif
 	</td>
       </tr>

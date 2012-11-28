@@ -96,8 +96,8 @@
       </tbody>
     </table>
 
-    <h3 class="subtitle">${ _("Description") }</h3>
-    <p class="manage-content"><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?id=${ U.id }&action=edit_description">${ _("Edit Description") }</a></p>
+    <h3 class="subtitle">${ _("User Remark") }</h3>
+    <p class="manage-content"><a class="blue-submit" href="${ reverse_url('admin:user') }?id=${ U.id }&action=edit_description">${ _("Edit Description") }</a></p>
     <div class="description">
     % if U.description:
     ${ U.description }
@@ -131,7 +131,7 @@
     </table>
     % endif
 
-    <div class="manage-content"><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?id=${ U.id }&action=edit_resources">${ _("Change User Resources") }</a></div>
+    <div class="manage-content"><a class="blue-submit" href="${ reverse_url('admin:user') }?id=${ U.id }&action=edit_resources">${ _("Change User Resources") }</a></div>
 
   </div>
 
@@ -183,7 +183,7 @@
 		     onclick="simpleToggleCheckbox( this, '${ reverse_url('appliance:islocked', A.id) }', '#app-islocked-notify')" />
 	    </td>
 	    <td>${ ftime(A.updated) }</td>
-	    <td><a class="ly-btn2 small blue" href="${ reverse_url('appliance:delete', A.id) }">${ _("Delete") }</a></td>
+	    <td><a class="red-submit" href="${ reverse_url('appliance:delete', A.id) }">${ _("Delete") }</a></td>
 	  </tr>
 	  % endfor
 	</tbody>
@@ -222,7 +222,7 @@
 		<span class="uid" style="display:none;">${ I.user.id }</span>
 	      </div>
 	    </td>
-            <td><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></td>
+            <td><a href="${ reverse_url('admin:instance') }?id=${ I.id }">${ I.name }</a></td>
 	    <td><input type="checkbox"
 		     % if I.isprivate:
 		     checked="checked"
@@ -296,7 +296,7 @@
     % endif
 
     <div class="manage-content">
-      <a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?id=${ U.id }&action=edit_groups">${ _("Edit Groups") }</a>
+      <a class="blue-submit" href="${ reverse_url('admin:user') }?id=${ U.id }&action=edit_groups">${ _("Edit Groups") }</a>
     </div>
 
   </div>
@@ -325,7 +325,7 @@
             <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
             <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png"/>${ j.status_string }</td>
             <td>${ j.target_name }</td>
-            <td><a href="${ j.target_url }">${ j.target_id }</a></td>
+            <td>${ j.target_url }</a></td>
             <td>${ j.action_string }</td>
             <td>${ htime(j.ended) }</td>
 	  </tr>
@@ -350,8 +350,8 @@
     </table>
 
     <p class="manage-content">
-      <a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?id=${ U.id }&action=reset_password">${ _("Reset Password") }</a>
-      <a class="ly-btn2 small orange" href="${ reverse_url('account:delete', U.id) }" onclick="deleteAccountConfirm( this ); return false;" target="_blank">${ _("Delete Accout") }</a>
+      <a class="blue-submit" href="${ reverse_url('admin:user') }?id=${ U.id }&action=reset_password">${ _("Reset Password") }</a>
+      <a class="red-submit" href="${ reverse_url('account:delete', U.id) }" onclick="deleteAccountConfirm( this ); return false;" target="_blank">${ _("Delete Accout") }</a>
     </p>
 
     <div id="account-delete-confirm-dialog" style="display:none;">

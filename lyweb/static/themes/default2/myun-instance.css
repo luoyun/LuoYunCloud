@@ -98,6 +98,7 @@
 }
 .tab-content p {
     margin: 10px;
+    line-height: 1.5em;
 }
 
 .tab-content .i-management-btn {

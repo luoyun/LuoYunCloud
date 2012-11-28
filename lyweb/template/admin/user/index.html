@@ -6,36 +6,38 @@
 
 <%block name="content">
 
+<table class="sortby-module">
+  <tbody>
+    <tr>
+      <td nowrap="nowrap">${ _("Group") }</td>
+      <td>
+	<a class="${ b2s(GID <= 0) }" href="${ reverse_url('admin:user') }">${ _("All") }</a>
+	% for G in GROUP_LIST:
+	<a class="${ b2s(GID == G.id) }" href="${ urlupdate({'gid': G.id, 'p': 1 }) }">${ G.name }</a>
+	% endfor
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="desc-title">${ _('Total : ') }${ TOTAL_USER }</p>
+
 <div class="m-item"><span class="k">${ _("Search") }</span><span id="search"><input type="text" title="${ _('Input text to search matched user.') }"/></span></div>
 
 <div id="aul" class="ly-table">
 
-  <p class="desc-title">
-    ${ _('View') }
-    % if GID == 0:
-    "${ _('No Group User') }"
-    % elif GID > 0:
-    "${ GROUP.name }"
-    % else:
-    "${ _('ALL User') }"
-    % endif
-    (${ _('Total : ') }${ TOTAL_USER })
-  </p>
-
-  ${ PAGE_HTML }
-
   <table>
     <thead>
       <tr>
-        <th><a href="${ reverse_url('admin:user') }?by=ID&sort=ASC" title="${ _('sorted by user id.') }">${ _("ID") }</a></th>
-        <th>${ _("Name") }</th>
-        <th>${ _("Islocked") }</th>
+        <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>
+        <th><a href="${ sort_by('username') }">${ _("Name") }</a></th>
+        <th><a href="${ sort_by('islocked') }">${ _("Islocked") }</a></th>
 	<th>${ _("Group") }</th>
         <th>${ _("Appliance") }</th>
         <th>${ _("Instance") }</th>
 	<th>${ _("Email") }</th>
-        <th>${ _("Date Joined") }</th>
-	<th><a href="${ reverse_url('admin:user') }?by=last_active" title="${ _('sorted by last active time.') }">${ _("Last Active") }</a></th>
+        <th><a href="${ sort_by('date_joined') }">${ _("Date Joined") }</a></th>
+	<th><a href="${ sort_by('last_active') }">${ _("Last Active") }</a></th>
       </tr>
     </thead>
     <tbody>
@@ -79,7 +81,8 @@
 </div>
 
 <div class="manage-content">
-  <a class="ly-btn2 blue small" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a>
+  <a class="blue-submit" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a>
+  <a class="red-submit" href="${ sort_by('description') }">${ _("Users Have Remark") }</a>
 </div>
 
 <script charset="utf-8" src="${ STATIC_URL }js/instance.js"></script>

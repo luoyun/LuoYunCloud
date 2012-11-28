@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import logging, datetime, time, re, json
-from lycustom import LyRequestHandler,  Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
 from app.account.models import User, Group, Permission
@@ -13,6 +13,7 @@ from app.node.models import Node
 from settings import JOB_TARGET
 
 from lycustom import has_permission
+from ytool.pagination import pagination
 
 from sqlalchemy.sql.expression import asc, desc
 from sqlalchemy import and_
@@ -20,6 +21,8 @@ from sqlalchemy import and_
 import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import LY_TARGET
+
+from app.instance.models import INSTANCE_STATUS_SHORT_STR
 
 
 class InstanceManagement(LyRequestHandler):
@@ -74,9 +77,9 @@ class InstanceManagement(LyRequestHandler):
 
         view = self.get_argument('view', 'all')
         by = self.get_argument('by', 'id')
-        sort = self.get_argument('sort', 'desc')
-        status = self.get_argument('status', 'all')
-        page_size = self.get_argument_int('sepa', 30)
+        order = self.get_argument_int('order', 1)
+        status = self.get_argument_int('status', -1)
+        page_size = self.get_argument_int('sepa', 50)
         cur_page = self.get_argument_int('p', 1)
         uid = self.get_argument_int('uid', 0) # sort by user
         aid = self.get_argument_int('aid', 0) # sort by appliance
@@ -87,15 +90,14 @@ class InstanceManagement(LyRequestHandler):
 
         instances = self.db2.query(Instance)
 
-        if status == 'delete':
+        if status not in [k for k,v in INSTANCE_STATUS_SHORT_STR]:
+            status = -1
+
+        if status == -1:
             instances = instances.filter(
-                Instance.status == DELETED_S )
-        elif status != 'all':
-            if status == 'stoped':
-                slist = settings.INSTANCE_SLIST_STOPED
-            else: # show running
-                slist = settings.INSTANCE_SLIST_RUNING
-            instances = instances.filter(Instance.status.in_( slist))
+                Instance.status != DELETED_S )
+        else:
+            instances = instances.filter(Instance.status==status)
 
         U = self.db2.query(User).get( uid )
         if U:
@@ -116,10 +118,21 @@ class InstanceManagement(LyRequestHandler):
             by_obj = Instance.created
         elif by == 'updated':
             by_obj = Instance.updated
+        elif by == 'node':
+            by_obj = Instance.node_id
+        elif by == 'user':
+            by_obj = Instance.user_id
+        elif by == 'appliance':
+            by_obj = Instance.appliance_id
+        elif by == 'status':
+            by_obj = Instance.status
+        elif by == 'name':
+            by_obj = Instance.name
         else:
             by_obj = Instance.id
 
-        sort_by_obj = desc(by_obj) if sort == 'desc' else asc(by_obj)
+
+        sort_by_obj = desc(by_obj) if order else asc(by_obj)
 
         instances = instances.order_by( sort_by_obj )
 
@@ -128,19 +141,20 @@ class InstanceManagement(LyRequestHandler):
 
         instances = instances.slice(start, stop).all()
 
-        if total > page_size:
-            page_html = Pagination(
-                total = total,
-                page_size = page_size,
-                cur_page = cur_page ).html(self.get_page_url)
-        else:
-            page_html = ""
+        page_html = pagination(self.request.uri, total, page_size, cur_page, sepa_range=[20, 50, 100])
+
+        def sort_by(by):
+            return self.urlupdate(
+                {'by': by, 'order': 1 if order == 0 else 0, 'p': 1})
 
         d = { 'title': _('Instance Management'),
+              'urlupdate': self.urlupdate,
+              'sort_by': sort_by,
               'INSTANCE_LIST': instances, 'TOTAL_INSTANCE': total,
               'PAGE_HTML': page_html,
               'SORT_USER': U, 'SORT_APPLIANCE': APPLIANCE,
-              'SORT_NODE': NODE, 'STATUS': status }
+              'SORT_NODE': NODE, 'STATUS': status,
+              'INSTANCE_STATUS': INSTANCE_STATUS_SHORT_STR }
 
         self.render( 'admin/instance/index.html', **d )
 

@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import logging, datetime, time, re
-from lycustom import LyRequestHandler,  Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
 from sqlalchemy.sql.expression import asc, desc
@@ -12,6 +12,7 @@ from app.admin.forms import CatalogForm
 
 from lycustom import has_permission
 from lytool.filesize import size as human_size
+from ytool.pagination import pagination
 
 from settings import LY_TARGET
 
@@ -71,7 +72,7 @@ class ApplianceManagement(LyRequestHandler):
     def get_index(self):
 
         catalog_id = self.catalog.id if self.catalog else 0
-        page_size = self.get_argument_int('sepa', 10)
+        page_size = self.get_argument_int('sepa', 20)
         cur_page = self.get_argument_int('p', 1)
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'ASC')
@@ -97,11 +98,8 @@ class ApplianceManagement(LyRequestHandler):
         total = apps.count()
         apps = apps.slice(start, stop)
             
-        pagination = Pagination(
-            total = total,
-            page_size = page_size, cur_page = cur_page )
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
 
-        page_html = pagination.html( self.get_page_url )
 
         catalogs = self.db2.query(ApplianceCatalog).all()
         for c in catalogs:
@@ -112,7 +110,9 @@ class ApplianceManagement(LyRequestHandler):
               'APPLIANCE_LIST': apps, 'PAGE_HTML': page_html,
               'CATALOG': catalog, 'USER': user,
               'TOTAL_APPLIANCE': total,
-              'human_size': human_size }
+              'human_size': human_size,
+              'urlupdate': self.urlupdate,
+              'PAGE_SIZE': page_size }
 
         self.render( 'admin/appliance/index.html', **d )
 

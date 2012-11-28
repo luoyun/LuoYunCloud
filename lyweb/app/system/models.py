@@ -7,6 +7,8 @@ from sqlalchemy.orm import relationship, backref
 
 from ytime import htime, ftime
 
+from app.account.models import User
+from lyorm import dbsession as db
 
 class LuoYunConfig(ORMBase):
 
@@ -31,32 +33,6 @@ class LuoYunConfig(ORMBase):
     def __repr__(self):
         return _("[LuoYun(%s=%s)]") % (self.key, self.value)
 
-
-
-
-class IpAssign(ORMBase):
-
-    __tablename__ = 'ip_assign'
-
-    id = Column( Integer, Sequence('ip_assign_id_seq'), primary_key=True )
-
-    ip = Column( String(32) )
-
-    user_id = Column( ForeignKey('auth_user.id') )
-    user = relationship("User", backref=backref('static_ips',order_by=id) )
-
-    instance_id = Column( ForeignKey('instance.id') )
-    instance = relationship("Instance", backref=backref('static_ips', order_by=id))
-
-    created = Column( DateTime, default=datetime.now )
-    updated = Column( DateTime, default=datetime.now )
-
-
-    def __init__(self, ip, user, instance=None):
-        self.ip = ip
-        self.user_id = user.id
-        if instance:
-            self.instance_id = instance.id
 
 
 
@@ -152,3 +128,9 @@ class LyTrace(ORMBase):
         return _('%s: %s come from %s do "%s" , %s') % (
             ftime(self.when), self.who.username, self.comefrom,
             self.do, self.isok)
+
+
+    @property
+    def whois(self):
+        if (self.who_id and db.query(User).get(self.who_id)):
+            return self.who.username

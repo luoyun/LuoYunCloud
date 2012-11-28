@@ -34,7 +34,7 @@ $("#admin-menu #index-item").addClass("current");
     "<set name=\"${ _('Used') }\" value='${ USED_CPU }' color='FC0101' />" +
     "<set name=\"${ _('Unused') }\" value='${ TOTAL_CPU - USED_CPU }' color='AFD8F8' />" +
     "</graph>";
-  var cpuChart = new FusionCharts("${ static_url('FusionCharts/Charts/FCF_Pie2D.swf') }", "cpuChartId", "420", "220");
+  var cpuChart = new FusionCharts("${ static_url('FusionCharts/Charts/FCF_Pie3D.swf') }", "cpuChartId", "420", "220");
   cpuChart.setDataXML(cpuData);
   cpuChart.render("admin-cpu-pie");
 
@@ -122,7 +122,7 @@ $("#admin-menu #index-item").addClass("current");
         <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
         <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png"/>${ j.status_string }</td>
         <td>${ j.target_name }</td>
-        <td><a href="${ j.target_url }">${ j.target_id }</a></td>
+        <td>${ j.target_url }</a></td>
         <td>${ j.action_string }</td>
         <td>${ htime(j.ended) }</td>
       </tr>

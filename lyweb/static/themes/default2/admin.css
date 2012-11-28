@@ -417,38 +417,3 @@ table th {
     width: 720px;
     height: 280px;
 }
-
-/* Start Send Mail */
-#ly-sendmail-form {
-}
-#ly-sendmail-form td {
-    padding: 10px;
-}
-#ly-sendmail-form td:first-child {
-    text-align: right;
-    vertical-align: top;
-}
-#ly-sendmail-form .subject input {
-    line-height: 2em;
-}
-#ly-sendmail-form .body textarea {
-    width: 600px;
-    height: 300px;
-}
-#ly-sendmail-form .errors {
-    color: red;
-}
-/* End Send Mail */
-
-.admin-user-list .hidden {
-    position: absolute;
-    top: 58px;
-    left: 15px;
-    width: 280px;
-    border-radius: 3px;
-    border: 1px solid #DCDCDC;
-    background: #F9FAF9;
-    color: #575758;
-    padding: 12px;
-    z-index: 3;
-}

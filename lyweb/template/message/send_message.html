@@ -2,34 +2,28 @@
 
 <%block name="sidemain">
 
-
-<div class="ly-view-message">
-  <table class="baseinfo">
-    <tbody>
-      <tr>
-	<td>${ _("Sender") }</td>
-	<td class="sender"><a href="${ reverse_url('account:view', M.sender_id) }" target="_blank">${ M.sender.username }</a></td>
-      </tr>
-      <tr>
-	<td>${ _("Send time") }</td>
-	<td class="sendtime">${ ftime(M.text.sendtime) } (${ htime(M.text.sendtime) })</td>
-      </tr>
-      <tr>
-	<td>${ _("Subject") }</td>
-	<td class="subject">${ M.text.subject }</td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="body">${ M.text.body }</div>
-</div>
-
 <div class="ly-send-message">
 
   <div class="full-tbform">
-    <form method="POST" action="${ reverse_url('message:reply', M.id) }">
+    <form method="POST">
       <p>
-	<textarea name="text" id="text"></textarea>
+	${ form.to.label }
+	${ form.to() }
+	${ form.html_errors( form.to.errors ) }
       </p>
+
+      <p>
+	${ form.subject.label }
+	${ form.subject() }
+	${ form.html_errors( form.subject.errors ) }
+      </p>
+
+      <p>
+	${ form.text.label }
+	${ form.text() }
+	${ form.html_errors( form.text.errors ) }
+      </p>
+
       <input class="blue-submit" type="submit" value="${ _('Submit') }" class="button" />
     </form>
   </div>
@@ -48,7 +42,7 @@
     items : [
         'formatblock', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'removeformat', '|',
         'undo', 'redo', '|', 'code', '|', 
-        'insertorderedlist', 'insertunorderedlist',  '|',
+        'insertorderedlist', 'insertunorderedlist', '|',
         'image', 'insertfile', 'table', 'emoticons',
         'link', 'unlink', '|', 'fullscreen', 'source', 'preview', 'about'
     ],

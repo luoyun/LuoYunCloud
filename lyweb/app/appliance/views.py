@@ -3,7 +3,7 @@
 import os, logging, re, tempfile, Image
 import settings
 
-from lycustom import LyRequestHandler, Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, HTTPError
 
 from sqlalchemy.sql.expression import asc, desc
@@ -14,6 +14,7 @@ from app.appliance.forms import EditApplianceForm
 
 from lycustom import has_permission
 from lytool.filesize import size as human_size
+from ytool.pagination import pagination
 
 
 
@@ -88,11 +89,7 @@ class Index(AppRequestHandler):
                 catalog_id = c.id ).filter_by(
                 isprivate=False).count()
 
-        pagination = Pagination(
-            total = total,
-            page_size = page_size, cur_page = cur_page )
-
-        page_html = pagination.html( self.get_page_url )
+        page_html = pagination(self.request.uri, total,  page_size, cur_page)
 
         d = { 'title': self.title,
               'appliances': apps,
@@ -416,13 +413,7 @@ class View(AppRequestHandler):
         total = instances.count()
         instances = instances.slice(start, stop).all()
 
-        if total > page_size:
-            page_html = Pagination(
-                total = total,
-                page_size = page_size,
-                cur_page = cur_page ).html(self.get_page_url)
-        else:
-            page_html = ""
+        page_html = pagination(self.request.uri, total,  page_size, cur_page)
 
         return instances, page_html
         

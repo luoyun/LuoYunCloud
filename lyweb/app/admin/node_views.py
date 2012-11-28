@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import logging, datetime, time, re
-from lycustom import LyRequestHandler,  Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
 from app.account.models import User, Group, Permission
@@ -11,6 +11,7 @@ from app.instance.models import Instance
 from sqlalchemy.sql.expression import asc, desc
 
 from lycustom import has_permission
+import settings
 
 
 class NodeManagement(LyRequestHandler):
@@ -59,6 +60,14 @@ class NodeManagement(LyRequestHandler):
     def get_index(self):
 
         nodes = self.db2.query(Node).order_by(asc(Node.id)).all()
+        run_status = settings.INSTANCE_SLIST_RUNING
+        for N in nodes:
+            il = self.db2.query(Instance.id).filter(
+                Instance.node_id == N.id )
+            N.instances_sum = il.count()
+            N.instances_running_sum = il.filter(
+                Instance.status.in_( run_status ) ).count()
+
         self.render( 'admin/node/index.html', title = _('Node Management'),
                      nodes = nodes )
 

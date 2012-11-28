@@ -13,7 +13,7 @@ from app.session.models import Session
 
 from app.instance.models import Instance
 from app.appliance.models import Appliance
-from app.message.models import Message
+from app.message.models import Message, MessageText
 
 from app.account.forms import LoginForm, ResetPasswordForm, \
     RegistrationForm, AvatarEditForm, ResetPasswordApplyForm
@@ -94,6 +94,10 @@ class Login(AccountRequestHandler):
                     self.save_session(user.id)
                     user.last_login = datetime.now()
                     self.db2.commit()
+                    root_passwd = enc_shadow_passwd(form.password.data)
+                    user.profile.set_secret('root_shadow_passwd', root_passwd)
+                    self.db2.commit()
+
                     return self.redirect( self.get_argument('next', '/') )
                 else:
                     form.password.errors.append( _('password is wrong !') )
@@ -115,8 +119,6 @@ class Logout(AccountRequestHandler):
             self.render('account/login.html', **d)
 
 
-
-# TODO: No used now
 class Register(AccountRequestHandler):
 
     ''' Complete a Registration '''
@@ -207,17 +209,19 @@ class Register(AccountRequestHandler):
             if welcome:
                 wc = json.loads(welcome.value).get('text')
 
-                m = Message( sender = admin,  receiver = user,
-                             subject = _('Welcome to use LuoYun Cloud !'),
-                             content = wc )
-
-                self.db2.add(m)
+                T = MessageText(
+                    subject = _('Welcome to use LuoYun Cloud !'),
+                    body = wc )
+                self.db2.add(T)
                 self.db2.commit()
 
-                m.receiver.notify()
+                M = Message( sender_id = admin.id,
+                             receiver_id = user.id, text_id = T.id )
+
+                self.db2.add(M)
+
+                user.notify()
                 self.db2.commit()
-
-
 
 
 
@@ -357,11 +361,8 @@ class ResetPassword(LyRequestHandler):
             user.password = enc_password
 
             root_passwd = enc_shadow_passwd(form.password.data)
-            print 'root_passwd = ', root_passwd
             user.profile.set_secret('root_shadow_passwd', root_passwd)
-
             self.db2.commit()
-            print 'secret = ', user.profile.get_secret()
 
             url = self.application.reverse_url('account:index')
             return self.redirect( url )
@@ -599,7 +600,7 @@ class Delete(LyRequestHandler):
             d['USERNAME'] = user.username
             if user.id == self.current_user.id:
                 d['ERROR'].append(_('You can not delete yourself!'))
-            if user.instances:
+            if [ x for x in user.instances if not x.is_delete ]:
                 d['ERROR'].append(_('User "%s" have instances exist, please remove them first.') % user.username)
             if user.appliances:
                 d['ERROR'].append(_('User "%s" have appliances exist, please remove them first.') % user.username)

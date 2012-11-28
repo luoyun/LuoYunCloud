@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os, base64, pickle, logging, struct, socket, re, datetime
+import urllib, urlparse
 import gettext
 from hashlib import md5, sha512, sha1
 import settings
@@ -22,12 +23,15 @@ from app.system.models import LyTrace
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
+from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
+
 
 template_dir = os.path.join(
     os.path.dirname(__file__), 'template' )
 
 
 from ytime import htime, ftime
+from ytool.hstring import b2s
 
 class LyRequestHandler(RequestHandler):
 
@@ -68,6 +72,7 @@ class LyRequestHandler(RequestHandler):
             has_permission = self.has_permission,
             AJAX = ajax,
             show_error = show_error,
+            b2s = b2s,
         )
 
         args.update(kwargs)
@@ -264,6 +269,42 @@ class LyRequestHandler(RequestHandler):
 
         return T
 
+    def lytrace_ippool(self, ippool, I, release=False):
+        if release:
+            do = _('release ip %s from instance %s(%s)') % (
+                ippool.ip, I.id, I.name)
+        else:
+            do = _('get ip %s for instance %s(%s)') % (
+                ippool.ip, I.id, I.name)
+        T = self.lytrace( ttype = LY_TARGET['IP'], tid = ippool.id,
+                          do = do )
+        return T
+
+
+    # params is a dict: { 'key': value }
+    def urlupdate(self, params):
+
+        new = []
+
+        if '?' in self.request.uri:
+            path, oldparams = self.request.uri.split('?')
+            update_keys = params.keys()
+
+            for k, v in urlparse.parse_qsl( oldparams ):
+                if k in update_keys:
+                    v = params[k]
+                    del params[k]
+                new.append( (k, v) )
+        else:
+            path = self.request.uri
+
+        if params:
+            for k in params.keys():
+                new.append( (k, params[k]) )
+
+        return '?'.join([path, urllib.urlencode( new )])
+
+
 
 def show_error( E ):
 
@@ -322,217 +363,4 @@ class LyNotFoundHandler(LyRequestHandler):
             self.send_error(500)
 
 
-from mako.template import Template
-class Pagination:
-
-    ''' A pagination generator '''
-
-    def __init__( self, total, page_size, cur_page,
-                  list_size = 5 ):
-
-        self.size = page_size
-
-        self.sum = total / page_size
-        if ( total % page_size ): self.sum += 1
-
-        self.cur = cur_page
-        self.lsize = list_size
-
-        self.notexist_p = self.sum + 1
-
-        self.HTML = u'''
-<div class="pagination">
-
-  % if cur_page > 1:
-  <a href="${ page_url(cur_page -1) }"><span class="endside">${ prev_str }<span></a>
-  % else:
-  <span class="endside">${ prev_str }</span>
-  % endif
-
-  % for p in plist:
-  % if p == cur_page:
-  <span class="page current">${ p }</span>
-  % elif p == notexist_page:
-  <span>...</span>
-  % else:
-  <a href="${ page_url(p) }"><span class="page">${ p }</span></a>
-  % endif
-  % endfor
-
-  % if cur_page < page_sum:
-  <a href="${ page_url(cur_page + 1) }"><span class="endside">${ next_str }</span></a>
-  % else:
-  <span class="endside">${ next_str }</span>
-  % endif
-
-</div>
-'''
-
-
-    def _page_list(self):
-
-        last_p = self.sum
-
-        start = ( self.cur / (self.lsize + 1) ) * self.lsize + 1
-        end = start + self.lsize
-        if end > last_p: end = last_p
-
-        plist = range(start, end + 1)
-
-        if end < last_p:
-            plist.extend( [self.notexist_p, last_p] )
-        if self.cur > self.lsize:
-            plist.insert(0, self.notexist_p)
-            plist.insert(0, 1)
-
-        return plist
-
-
-    def html(self, page_url):
-
-        if self.sum <=1:
-            return ''
-
-        d = { 'plist': self._page_list(),
-              'prev_str': _('Prev'),
-              'next_str': _('Next'),
-              'cur_page': self.cur,
-              'page_sum': self.sum,
-              'page_url': page_url,
-              'notexist_page': self.notexist_p }
-
-        t = Template(self.HTML)
-        return t.render(**d)
-
-
-
-
-from tornado.web import asynchronous, HTTPError
-from tornado import httpclient
-from tornado.httpclient import AsyncHTTPClient, HTTPRequest
-class LyProxyHandler(LyRequestHandler):
-    ''' Web Proxy '''
-
-    def prepare(self):
-        self.host = self.get_argument('host', '')
-        self.port = int(self.get_argument('port', 80))
-        self.uri = self.get_argument('uri', '/')
-
-        if not self.host:
-            self.write('No host found')
-            self.finish()
-
-    @asynchronous
-    def get(self):
-
-        if self.port == 80:
-            url = 'http://%s%s' % (self.host, self.uri)
-        else:
-            url = 'http://%s:%s%s' % (self.host, self.port, self.uri)
-        try:
-            AsyncHTTPClient().fetch(url, self._on_proxy)
-        except tornado.httpclient.HTTPError, x:
-            if hasattr(x, "response") and x.response:
-                self._on_proxy(x.response)
-            else:
-                logging.error("Tornado signalled HTTPError %s", x)
- 
-    def _on_proxy(self, response):
-        #logging.info('response = %s' % response)
-        if response.error and not isinstance(response.error,
-                                             tornado.httpclient.HTTPError):
-            raise HTTPError(500)
-        else:
-            self.set_status(response.code)
-            for header in ("Date", "Cache-Control", "Server", "Content-Type", "Location"):
-                v = response.headers.get(header)
-                if v:
-                    self.set_header(header, v)
-            if response.body:
-                # replace url
-                body = self.replace_url(response.body)
-                self.write(body)
-            self.finish()
-
-    def replace_url(self, body):
-
-        # for link
-        sre = u'href="/([^"]*)'
-        if self.port == 80:
-            dre = u'href="/proxy?host=%s&uri=/\g<1>"' % self.host
-        else:
-            dre = u'href="/proxy?host=%s&port=%s&uri=/\g<1>"' % (self.host, self.port)
-
-        body = re.sub(sre, dre, body)
-
-        # for js, css
-        sre = u'src="/([^"]*)'
-        if self.port == 80:
-            dre = u'src="/proxy?host=%s&uri=/\g<1>"' % self.host
-        else:
-            dre = u'src="/proxy?host=%s&port=%s&uri=/\g<1>"' % (self.host, self.port)
-
-        body = re.sub(sre, dre, body)
-
-        # for url
-        sre = u'url\(/([^"]*)\)'
-        if self.port == 80:
-            dre = u'url(/proxy?host=%s&uri=/\g<1>)' % self.host
-        else:
-            dre = u'url(/proxy?host=%s&port=%s&uri=/\g<1>)' % (self.host, self.port)
-
-        body = re.sub(sre, dre, body)
-
-        return body
-
-
-    @asynchronous
-    def post(self):
-#        protocol = 'http'
-#        host = 'luoyun.ylinux.org'
-#        port = '80'
-# 
-#        # port suffix
-#        port = "" if port == "80" else ":%s" % port
-# 
-#        uri = self.request.uri
-#        url = "%s://%s%s%s" % (protocol, host, port, uri)
-
-        if self.port == 80:
-            url = 'http://%s%s' % (self.host, self.uri)
-        else:
-            url = 'http://%s:%s%s' % (self.host, self.port, self.uri)
- 
-        # update host to destination host
-        headers = dict(self.request.headers)
-        headers["Host"] = self.host
- 
-        try:
-            AsyncHTTPClient().fetch(
-                HTTPRequest(url=url,
-                            method="POST",
-                            body=self.request.body,
-                            headers=headers,
-                            follow_redirects=False),
-                self._on_proxy2)
-        except tornado.httpclient.HTTPError, x:
-            if hasattr(x, "response") and x.response:
-                self._on_proxy(x.response)
-            else:
-                logging.error("Tornado signalled HTTPError %s", x)
- 
-    def _on_proxy2(self, response):
-        if response.error and not isinstance(response.error,
-                                             tornado.httpclient.HTTPError):
-            raise HTTPError(500)
-        else:
-            self.set_status(response.code)
-            for header in ("Date", "Cache-Control", "Server", "Content-Type", "Location"):
-                v = response.headers.get(header)
-                if v:
-                    self.set_header(header, v)
-            if response.body:
-                body = self.replace_url(response.body)
-                self.write(body)
-            self.finish()
 

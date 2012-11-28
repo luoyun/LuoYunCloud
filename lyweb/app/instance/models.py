@@ -18,6 +18,19 @@ import Image
 from yimage import watermark
 
 
+INSTANCE_STATUS_SHORT_STR = [
+    ( 0, _('unknown') ),
+    ( 1, _("new") ),
+    ( 2, _('stop') ),
+    ( 3, _('started') ),
+    ( 4, _('osm connected') ),
+    ( 5, _('service running') ),
+    ( 9, _('suspend') ),
+    ( settings.INSTANCE_DELETED_STATUS, _('deleted') ),
+    ( 245, _('need query') ),
+    ( 255, _('disk not exist') ) ]
+
+
 class Instance(ORMBase):
 
     __tablename__ = 'instance'
@@ -240,20 +253,27 @@ class Instance(ORMBase):
 
     @property
     def can_run(self):
-        return self.status in [1, 2]
+        return self.status in [1, 2, 255]
 
     @property
     def is_running(self):
         return self.status in [3, 4, 5]
 
     @property
+    def is_delete(self):
+        return self.status == settings.INSTANCE_DELETED_STATUS
+
+    @property
     def need_query(self):
         return self.status in [245, 255]
 
 
-    def home_url(self, user=None):
+    def home_url(self, user=None, useip=None):
 
-        host = self.domain if self.domain else self.ip
+        if useip:
+            host = self.ip
+        else:
+            host = self.domain if self.domain else self.ip
 
         if user and user.id == self.user_id and self.config:
             cookie = json.loads(self.config).get('cookie')

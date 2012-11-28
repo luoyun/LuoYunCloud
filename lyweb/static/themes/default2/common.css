@@ -336,7 +336,7 @@ a.no-text-decoration {
     text-decoration: none;
 }
 
-/* Start small-left-right-form */
+/* Start small top bottom form */
 .small-tbform {
     margin: 10px;
     padding: 30px 35px;
@@ -385,7 +385,60 @@ a.no-text-decoration {
     padding: 4px 10px;
     font-weight: normal;
 }
-/* End small-left-right-form */
+/* End small top bottom form */
+
+
+/* Start full top bottom form */
+.full-tbform {
+    margin: 10px;
+    padding: 30px 35px;
+    border: 1px solid #BABBBC;
+    border-radius: 3px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    background-color: #FFF;
+}
+.full-tbform form > p > input[type="text"],
+.full-trform form > p > input[type="password"] {
+    height: 2em;
+    width: 300px;
+}
+.full-tbform form > p > label {
+    display: block;
+    color: #777777;
+    font-weight: bold;
+    width: 300px;
+    padding: 4px 5px;
+}
+.full-tbform form > p > input,
+.full-tbform form > p > select {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #DCDCDC;
+    box-shadow: 0 1px 1px #DEDEDE inset;
+    font-size: 14px;
+    padding: 4px 5px;
+    margin: 5px 0 10px;
+}
+.full-tbform form > p > textarea {
+    width: 100%;
+    height: 300px;
+    padding: 4px 5px;
+    margin: 5px 0 10px;
+}
+.full-tbform form > input {
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+.full-tbform .tips {
+    font-size: 0.9em;
+    color: #BBB9B9;
+    display: inline-block;
+    padding: 4px 10px;
+    font-weight: normal;
+}
+.full-tbform .errors {
+    color: red;
+}
+/* End full top bottom form */
 
 
 #ly-account-menu {
@@ -403,12 +456,11 @@ a.no-text-decoration {
 #ly-account-menu .show {
     padding: 0;
     cursor: pointer;
-    width: 130px;
 }
 #ly-account-menu .text {
     float: right;
     display: inline-block;
-    padding: 8px 2px 5px;
+    padding: 8px 10px 5px;
     margin: 5px;
     color: #FFF;
     font-weight: bold;
@@ -443,10 +495,68 @@ a.no-text-decoration {
     position: absolute;
     top: 42px;
     right: 0px;
-    z-index: 3px;
+    z-index: 9;
 }
 #ly-account-menu .add-menu a {
     display: inline-block;
     padding: 6px 10px;
     text-decoration: none;
+}
+
+#ly-account-menu .unlogin {
+    margin-top: 6px;
+}
+
+
+.title {
+    text-align: center;
+    margin: 25px 15px;
+}
+.section-title {
+    margin: 20px 0 12px;
+    color: #143340;
+    font-size: 16px;
+    font-weight: bold;
+}
+.description p {
+    margin: 10px;
+    line-height: 1.6em;
+    /*text-indent: 2em;*/
+}
+
+
+.ui-notify {
+
+}
+.ui-notify .ui-notify-message-style {
+    background: none repeat scroll 0 0 rgba(32, 127, 58, 0.8);
+}
+.ui-notify p {
+    margin: 0 12px 0 5px;
+}
+
+
+.sortby-module {
+}
+.sortby-module td {
+    vertical-align: middle;
+    padding: 10px;
+}
+.sortby-module td:first-child {
+    font-weight: bold;
+    text-align: right;
+    padding: 10px 10px 10px 0;
+}
+.sortby-module a {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 2px;
+    text-decoration: none;
+}
+.sortby-module a.current {
+    color: #FFF;
+    background-color: #467AA7;
+}
+.sortby-module a:hover {
+    color: #DEB110;
 }

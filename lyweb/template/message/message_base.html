@@ -1,8 +1,7 @@
 <%inherit file="/base.html"/>
 
 <%block name="head">
-<link rel="stylesheet" href="${ THEME_URL }message.css" />
-<link rel="stylesheet" href="${ THEME_URL }button.css" />
+<link rel="stylesheet" href="${ theme_url('message.css') }" />
 </%block>
 
 <%block name="main">
@@ -12,13 +11,12 @@
 
     <div id="message-home-sidemenu" class="action">
       <ul>
-        <li><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }</a></li>
-        <li><a href="${ reverse_url('message:outbox') }">${ _("Outbox") }</a></li>
+        <li><a id="my-inbox-item" href="${ reverse_url('message:inbox') }">${ _("Inbox") }</a></li>
+        <li><a id="my-outbox-item" href="${ reverse_url('message:outbox') }">${ _("Outbox") }</a></li>
       </ul>
     </div>
 
-    <div class="new c"><a class="ly-btn2 medium blue" href="${ reverse_url('message:new') }">${ _("New") }</a></div>
-
+    <div class="new c"><a class="blue-submit" href="${ reverse_url('message:new') }">${ _("New") }</a></div>
   </div>
 
   <div id="message-center-sidemain">

@@ -1,18 +1,4 @@
 <div id="aul" class="ly-table">
-  <p>
-    ${ _('View') }
-    % if GID == 0:
-    "${ _('No Group User') }"
-    % elif GID > 0:
-    "${ GROUP.name }"
-    % else:
-    "${ _('ALL User') }"
-    % endif
-    (${ _('Total : ') }${ TOTAL_USER })
-  </p>
-
-  ${ PAGE_HTML }
-
   <table>
     <thead>
       <tr>

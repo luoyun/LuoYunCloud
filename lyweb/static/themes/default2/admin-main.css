@@ -180,6 +180,12 @@ p {
 .pagination .current {
     background-color: #3B5998;
     color: #FFF;
+    border-radius: 2px;
+}
+.pagination .psize-select a {
+    display: inline-block;
+    padding: 3px 6px;
+    text-decoration: none;
 }
 /* End pagination */
 
@@ -719,11 +725,7 @@ td.username img {
 #system-global-info table td {
     padding: 25px;
 }
-#admin-new-user {
-    width: 780px;
-}
 #admin-new-job {
-    width: 600px;
     margin-top: 30px;
     margin-bottom: 80px;
 }
@@ -759,4 +761,24 @@ td.username img {
 .sidebar {
     float: right;
     margin-left: 30px;
+}
+
+.hmenu a {
+    border-radius: 2px;
+}
+.hmenu a.current {
+    color: #FFF;
+    background-color: #467AA7;
+}
+
+.sort-list-table {
+}
+.sort-list-table td {
+    vertical-align: middle;
+    padding: 10px;
+}
+.sort-list-table td:first-child {
+    font-weight: bold;
+    text-align: right;
+    padding: 10px 10px 10px 0;
 }

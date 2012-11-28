@@ -9,7 +9,6 @@
 % if U:
 <p class="subtitle">${ _("All jobs excute by ") } "${ U.username }"</p>
 % endif
-<script type="text/javascript" src="${ static_url('js/url.js') }"></script>
 
 % if JOB_LIST.count():
 <div class="ly-table">
@@ -17,25 +16,25 @@
   <table class="ly-table">
     <thead>
       <tr>
-        <th onclick="ly_url_orderby('id')">${ _("ID") }</th>
-        <th onclick="ly_url_orderby('user')">${ _("User") }</th>
-        <th>${ _("Status") }</th>
-        <th>${ _("Target Type") }</th>
-        <th>${ _("Target ID") }</th>
-        <th>${ _("Action") }</th>
-        <th>${ _("Created") }</th>
-        <th>${ _("Started") }</th>
-        <th onclick="ly_url_orderby('created')">${ _("Completed") }</th>
+        <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>
+        <th><a href="${ sort_by('user_id') }">${ _("User") }</a></th>
+        <th><a href="${ sort_by('status') }">${ _("Status") }</a></th>
+        <th><a href="${ sort_by('target_type') }">${ _("Target Type") }</a></th>
+        <th><a href="${ sort_by('target_id') }">${ _("Target ID") }</a></th>
+        <th><a href="${ sort_by('action') }">${ _("Action") }</a></th>
+        <th><a href="${ sort_by('created') }">${ _("Created") }</a></th>
+        <th><a href="${ sort_by('started') }">${ _("Started") }</a></th>
+        <th><a href="${ sort_by('ended') }">${ _("Completed") }</a></th>
       </tr>
     </thead>
     <tbody>
       % for j in JOB_LIST:
       <tr>
         <td>${ j.id }</td>
-        <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
+        <td>${ j.user_link_module }</td>
         <td class="job-status"><img src="${ theme_url('icons/JobStatus/%s.png' % j.status) }"/>${ j.status_string }</td>
         <td>${ j.target_name }</td>
-        <td><a href="${ j.target_url }">${ j.target_id }</a></td>
+        <td>${ j.target_url }</td>
         <td>${ j.action_string }</td>
         <td class="time">${ ftime(j.created) }</td>
         <td class="time">${ ftime(j.started, '%H:%M:%S') }</td>

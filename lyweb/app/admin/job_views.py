@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import logging, datetime, time, re
-from lycustom import LyRequestHandler,  Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
 from app.account.models import User, Group, Permission
@@ -10,6 +10,8 @@ from app.job.models import Job
 from sqlalchemy.sql.expression import asc, desc
 
 from lycustom import has_permission
+
+from ytool.pagination import pagination
 
 
 class JobManagement(LyRequestHandler):
@@ -53,11 +55,14 @@ class JobManagement(LyRequestHandler):
 
         user_id = self.get_argument_int('user', 0)
         by = self.get_argument('by', 'id')
-        order = self.get_argument('order', 'DESC')
-        if ( order == 'DESC' ):
-            order_func = desc( by )
-        else:
-            order_func = asc( by )
+        order = self.get_argument_int('order', 1)
+
+        if by not in [ 'id', 'user_id', 'status', 'target_type',
+                       'target_id', 'action', 'created', 'started',
+                       'ended' ]:
+            by = 'id'
+
+        order_func = desc( by ) if order else asc( by )
 
         page_size = self.get_argument_int('sepa', 50)
         cur_page = self.get_argument_int('p', 1)
@@ -75,11 +80,16 @@ class JobManagement(LyRequestHandler):
 
         JOB_TOTAL = self.db2.query(Job.id).count()
 
-        page_html = Pagination(
-            total = JOB_TOTAL, page_size = page_size,
-            cur_page = cur_page ).html(self.get_page_url)
+        page_html = pagination(self.request.uri, JOB_TOTAL,
+                               page_size, cur_page,
+                               sepa_range = [20, 50, 100])
+
+        def sort_by(by):
+            return self.urlupdate(
+                {'by': by, 'order': 1 if order == 0 else 0, 'p': 1})
 
         d = { 'title': 'Jobs', 'U': U,
+              'sort_by': sort_by,
               'JOB_TOTAL': JOB_TOTAL,
               'JOB_LIST': JOB_LIST,
               'page_html': page_html }
