@@ -552,11 +552,14 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
     else
         snprintf(s_ip, 100, "ip = '%s',", ii->ip);
 
+    int ii_status = DOMAIN_S_UNKNOWN;
     char s_status[20];
     if (ii == NULL || ii->status == DOMAIN_S_UNKNOWN)
         s_status[0] = '\0';
-    else
+    else {
+        ii_status = ii->status;
         snprintf(s_status, 20, "status = %d,", ii->status);
+    }
 
     char s_node_id[20];
     if (node_id > 0)
@@ -568,9 +571,10 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
 
     char sql[LINE_MAX];
     if (snprintf(sql, LINE_MAX, "UPDATE instance SET %s %s %s "
-                                "updated = 'now' WHERE id = %d;",
+                                "updated = 'now' "
+                                "WHERE status != %d and status != %d and id = %d;",
                                 s_ip, s_status, s_node_id,
-                                instance_id) >= LINE_MAX) {
+                                DOMAIN_S_DELETE, ii_status, instance_id) >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }

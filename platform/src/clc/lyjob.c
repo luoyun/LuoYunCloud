@@ -479,6 +479,12 @@ static int __job_control_instance_simple(LYJobInfo * job)
         //goto failed;
         luoyun_node_ctrl_instance_cleanup(&ci);
         job_update_status(job, JOB_S_FINISHED);
+        if (job->j_action == LY_A_NODE_QUERY_INSTANCE) {
+            InstanceInfo ii;
+            ii.ip = "0.0.0.0";
+            ii.status = DOMAIN_S_NOT_EXIST;
+            db_instance_update_status(job->j_target_id, &ii, node_id);
+        }
         return 0;
     }
     logdebug(_("send job to node %d\n"), node_id);
