@@ -16,6 +16,7 @@ mako.runtime.UNDEFINED = ''
 from mako.exceptions import TemplateLookupException
 
 from tornado.web import RequestHandler
+from tornado import escape
 
 from app.account.models import User
 from app.session.models import Session
@@ -51,6 +52,7 @@ class LyRequestHandler(RequestHandler):
             _=self.locale.translate,
             static_url=self.static_url,
             xsrf_form_html=self.xsrf_form_html,
+            xsrf_cookie=self.xsrf_cookie,
             reverse_url=self.application.reverse_url,
 
             LANGUAGES=self.settings['LANGUAGES'],
@@ -296,6 +298,19 @@ class LyRequestHandler(RequestHandler):
 
         return '?'.join([path, urllib.urlencode( new )])
 
+
+    def xsrf_isok(self):
+        token = (self.get_argument("_xsrf", None) or
+                 self.request.headers.get("X-Xsrftoken") or
+                 self.request.headers.get("X-Csrftoken"))
+        if not token:
+            return _("'_xsrf' argument missing")
+        if self.xsrf_token != token:
+            return _("XSRF cookie does not match")
+
+    @property
+    def xsrf_cookie(self):
+        return escape.xhtml_escape(self.xsrf_token)
 
 
 def show_error( E ):

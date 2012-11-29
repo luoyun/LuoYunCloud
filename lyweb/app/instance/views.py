@@ -331,6 +331,8 @@ class Delete(InstRequestHandler):
 
     @authenticated
     def get(self, id):
+        r = self.xsrf_isok()
+        if r: return self.write( r )
 
         I = self.db2.query(Instance).get(id)
         d = {'I': I, 'E': []}

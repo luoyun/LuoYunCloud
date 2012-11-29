@@ -104,7 +104,7 @@ function InstanceStatusUpdate () {
 
     $.ajax({
 
-	url: '/instance/single_status' + "?t=" + Math.random(),
+	url: '/instance/single_status' + "?t=" + Math.random() + '&_xsrf=' + $("#xsrf-cookie").text(),
 	type: 'POST',
 	contentType: "application/json",
 	data: JSON.stringify(curstatus),
