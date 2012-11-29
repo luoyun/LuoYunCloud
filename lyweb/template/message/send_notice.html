@@ -11,7 +11,7 @@
 <div class="ly-send-message">
 
   <div class="large-tbform">
-    <form method="POST" action="${ reverse_url('message:send_notice') }">
+    <form method="POST" action="${ reverse_url('message:send_notice') }">${ xsrf_form_html() }
       ${ form.subject.label }
       ${ form.subject() }
       ${ form.html_errors( form.subject.errors ) }

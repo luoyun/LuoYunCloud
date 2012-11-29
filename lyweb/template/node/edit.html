@@ -10,7 +10,7 @@
 
 <div class="small-left-right-form c">
   ${ show_error(ERROR) }
-  <form method="POST">
+  <form method="POST">${ xsrf_form_html() }
     ${ form.vcpus.label } ${ form.vcpus() }<br/>
     ${ form.html_errors(form.vcpus.errors) }
 

@@ -27,7 +27,7 @@ from settings import JOB_ACTION
 tornado_settings = {
     'cookie_secret': 'MTMyNTMwNDc3OC40MjA3NjgKCg==',
     'session_secret': 'gAJ9cQAoVQZsb2NhbGVxAVUFemhfQ05xAl',
-    'xsrf_cookies': 'XXienie999944in44seqqeemxhz4Sienqqalix',
+    'xsrf_cookies': 'fe6be6c70b236aa5049a66e1369e3473781c25ea',
     'login_url': '/login',
     'no_permission_url': '/no_permission',
     'no_resource_url': '/no_resource',

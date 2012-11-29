@@ -5,7 +5,7 @@
 <div class="ly-send-message">
 
   <div class="full-tbform">
-    <form method="POST">
+    <form method="POST">${ xsrf_form_html() }
       <p>
 	${ form.to.label }
 	${ form.to() }

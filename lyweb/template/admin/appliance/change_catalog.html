@@ -11,7 +11,7 @@
 <div class="a-view">
 
   <div class="small-tbform">
-    <form method="POST">
+    <form method="POST">${ xsrf_form_html() }
       <p>
 	<label for="id_catalog">${ _("Catalog") }<span class="tips">${ _("Select the catalog.") }</span></label>
 	<select id="id_catalog" name="catalog">

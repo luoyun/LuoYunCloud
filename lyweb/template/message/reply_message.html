@@ -26,7 +26,7 @@
 <div class="ly-send-message">
 
   <div class="full-tbform">
-    <form method="POST" action="${ reverse_url('message:reply', M.id) }">
+    <form method="POST" action="${ reverse_url('message:reply', M.id) }">${ xsrf_form_html() }
       <p>
 	<textarea name="text" id="text"></textarea>
       </p>

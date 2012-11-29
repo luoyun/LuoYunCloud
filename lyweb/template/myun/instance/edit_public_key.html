@@ -9,7 +9,7 @@
 
   <h2>${ _("Edit SSH Public Key") }</h2>
   <div class="small-left-right-form c">
-    <form method="POST">
+    <form method="POST">${ xsrf_form_html() }
       ##  ${ form.key.label } 
       ${ form.key() }<br/>
       ${ form.html_errors(form.key.errors) }

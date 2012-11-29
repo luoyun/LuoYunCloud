@@ -11,7 +11,7 @@
 
 <% DESC = USER.description if USER.description else '' %>
 <div class="large-tbform c">
-  <form method="POST">
+  <form method="POST">${ xsrf_form_html() }
     <textarea name="description" id="description">${ DESC }</textarea>
     <input type="submit" value="${ _('Save') }"/>
   </form>

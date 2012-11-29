@@ -8,7 +8,7 @@
 <%block name="content">
 
 <div class="small-left-right-form c">
-  <form method="POST" action="${ reverse_url('system:nameservers:edit') }">
+  <form method="POST" action="${ reverse_url('system:nameservers:edit') }">${ xsrf_form_html() }
     ${ form.nameservers() }
     ${ form.html_errors(form.nameservers.errors) }
 

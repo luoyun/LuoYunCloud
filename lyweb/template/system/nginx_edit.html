@@ -8,7 +8,7 @@
 <%block name="content">
 
 <div class="small-left-right-form c">
-  <form method="POST" action="${ reverse_url('system:nginx:edit') }">
+  <form method="POST" action="${ reverse_url('system:nginx:edit') }">${ xsrf_form_html() }
     ${ form.confdir.label } ${ form.confdir() }<br/>
     ${ form.html_errors(form.confdir.errors) }
 

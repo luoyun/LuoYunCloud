@@ -9,7 +9,7 @@
 <h2 class="title">${ _("Create New User") }</h2>
 
 <div class="small-left-right-form c">
-  <form method="POST">
+  <form method="POST">${ xsrf_form_html() }
     ${ form.username.label } ${ form.username() }<br/>
     ${ form.html_errors(form.username.errors) }
 

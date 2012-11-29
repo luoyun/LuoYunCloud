@@ -9,7 +9,7 @@
 
 <div id="ly-create-instance-form" class="c">
   <h2 class="title">${ _("Create My Instance") }</h2>
-  <form method="POST" enctype="multipart/form-data">
+  <form method="POST" enctype="multipart/form-data">${ xsrf_form_html() }
 
     <div class="item">
       % if APPLIANCE:

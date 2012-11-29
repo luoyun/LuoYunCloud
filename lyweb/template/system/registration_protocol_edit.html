@@ -10,7 +10,7 @@
 <p><a href="${ reverse_url('registration_protocol') }" target="_blank">${ _("Read Registration Policy") }</a></p>
 
 <div class="small-left-right-form c">
-  <form method="POST" action="${ reverse_url('system:protocol:edit') }">
+  <form method="POST" action="${ reverse_url('system:protocol:edit') }">${ xsrf_form_html() }
     ${ form.text() }<br/>
     ${ form.html_errors(form.text.errors) }
     <input type="submit" value="${ _('Save') }"/>

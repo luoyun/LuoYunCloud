@@ -10,7 +10,7 @@
 <p><a href="${ reverse_url('welcome_new_user') }" target="_blank">${ _("Read Welcome New User") }</a></p>
 
 <div id="welcome-new-user-eform" class="small-left-right-form c">
-  <form method="POST" action="${ reverse_url('system:welcome:edit') }">
+  <form method="POST" action="${ reverse_url('system:welcome:edit') }">${ xsrf_form_html() }
     ${ form.text() }<br/>
     ${ form.html_errors(form.text.errors) }
     <input type="submit" value="${ _('Save') }"/>

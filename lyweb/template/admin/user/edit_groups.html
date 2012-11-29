@@ -22,7 +22,7 @@
 <h2 class="title">${ _("Edit User Groups") }</h2>
 
 <div id="admin-user-edit-groups">
-  <form method="POST">
+  <form method="POST">${ xsrf_form_html() }
     ${ form.groups() }
     <input type="submit" value="${ _('Save') }"/>
   </form>

@@ -11,7 +11,7 @@
 
   ${ show_error(ERROR) }
   <div class="small-left-right-form c">
-    <form method="POST">
+    <form method="POST">${ xsrf_form_html() }
 
       <label for="subdomain">${ _("Subdomain") }</label>
       <input id="subdomain" name="subdomain" type="text" value="${ subdomain }">${ topdomain }<br/>

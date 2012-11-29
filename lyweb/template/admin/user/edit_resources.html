@@ -9,7 +9,7 @@
 <%block name="content">
 
 <div class="small-left-right-form c">
-  <form method="POST">
+  <form method="POST">${ xsrf_form_html() }
     ${ form.memory.label } ${ form.memory() }<br/>
     ${ form.html_errors(form.memory.errors) }
 

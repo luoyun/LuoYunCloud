@@ -14,7 +14,7 @@
 
   <h2 class="title">${ _("Edit Baseinfo") }</h2>
   <div class="full-tbform">
-    <form method="POST" action="${ reverse_url('myun:instance:edit', I.id) }?item=general">
+    <form method="POST" action="${ reverse_url('myun:instance:edit', I.id) }?item=general">${ xsrf_form_html() }
       <p>
 	${ form.name.label } ${ form.name() }
 	${ form.html_errors(form.name.errors) }

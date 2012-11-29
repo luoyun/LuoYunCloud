@@ -8,7 +8,7 @@
 
 <div class="upload-appliance">
 
-  <form id="upload" enctype="multipart/form-data" action="/upload" method="post">
+  <form id="upload" enctype="multipart/form-data" action="/upload" method="post">${ xsrf_form_html() }
     <input name="upfile" type="file"/>
     <input type="submit" value="${ _('Upload') }"/>
   </form>

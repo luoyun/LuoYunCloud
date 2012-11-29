@@ -9,7 +9,7 @@
 
   <h2 class="title">${ _("Configure Storage") }</h2>
   <div class="main-wrap small-left-right-form">
-    <form method="POST" action="${ reverse_url('myun:instance:edit', I.id) }?item=storage">
+    <form method="POST" action="${ reverse_url('myun:instance:edit', I.id) }?item=storage">${ xsrf_form_html() }
       ${ form.type.label } ${ form.type() }<br/>
       ${ form.html_errors(form.type.errors) }
 
