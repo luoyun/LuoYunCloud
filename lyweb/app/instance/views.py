@@ -249,7 +249,7 @@ class Index(InstRequestHandler):
 
         view = self.get_argument('view', 'all')
         by = self.get_argument('by', 'updated')
-        sort = self.get_argument('sort', 'desc')
+        order = self.get_argument_int('order', 1)
         status = self.get_argument('status', 'running')
         page_size = self.get_argument_int(
                 'sepa', settings.INSTANCE_HOME_PAGE_SIZE)
@@ -263,6 +263,7 @@ class Index(InstRequestHandler):
         elif status == 'stoped':
             slist = settings.INSTANCE_SLIST_STOPED
         else:
+            status == 'all'
             slist = settings.INSTANCE_SLIST_ALL
 
         instances = self.db2.query(Instance).filter(
@@ -275,13 +276,12 @@ class Index(InstRequestHandler):
 
         if by == 'created':
             by_obj = Instance.created
-        # TODO: sorted by username
-        #elif by == 'username':
-        #    by_obj = Instance.user.username
+        elif by == 'user':
+            by_obj = Instance.user_id
         else:
             by_obj = Instance.updated
 
-        sort_by_obj = desc(by_obj) if sort == 'desc' else asc(by_obj)
+        sort_by_obj = desc(by_obj) if order else asc(by_obj)
 
         instances = instances.order_by( sort_by_obj )
 
@@ -295,13 +295,15 @@ class Index(InstRequestHandler):
         d = { 'title': self.title,
               'INSTANCE_LIST': instances,
               'cur_page': cur_page,
+              'SORTBY': by, 'ORDER': "0" if order == 0 else "1",
+              'STATUS': status, 'VIEW': view,
+              'urlupdate': self.urlupdate,
               'page_html': page_html }
 
         # TODO: save user sort method
         self.set_secure_cookie('instance_sort', instance_sort)
 
         self.render("instance/index.html", **d)
-
 
 
 class View(InstRequestHandler):
@@ -675,12 +677,6 @@ class CreateInstance(InstRequestHandler):
             instance_id = None ).order_by(asc(IPPool.id)).first()
 
         if not ok_ip: return
-
-        # TODO: ip assign should have a global switch flag
-        NPOOL = []
-        TOTAL_POOL = settings.NETWORK_POOL[0]
-
-        if not TOTAL_POOL: return
 
         nic_config = {
             'type': 'networkpool', # TODO: show use global flag

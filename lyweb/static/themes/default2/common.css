@@ -560,3 +560,15 @@ a.no-text-decoration {
 .sortby-module a:hover {
     color: #DEB110;
 }
+
+
+.select-module {
+    margin: 10px 0;
+}
+.select-module li {
+    margin: 6px 0;
+}
+.select-module .t {
+    font-weight: bold;
+    color: #143340;
+}

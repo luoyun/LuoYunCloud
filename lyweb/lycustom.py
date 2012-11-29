@@ -41,13 +41,6 @@ class LyRequestHandler(RequestHandler):
     def render(self, template_name, **kwargs):
         """ Redefine the render """
 
-        # TODO: if url have ajax arg, use XXX.ajax for template
-        ajax = self.get_argument('ajax', False)
-        if ajax:
-            x, y = template_name.split('.')
-            #x += '_ajax'
-            template_name = '.'.join([x,'ajax'])
-
         t = self.lookup.get_template(template_name)
 
         args = dict(
@@ -70,7 +63,6 @@ class LyRequestHandler(RequestHandler):
             htime = htime,
             ftime = ftime,
             has_permission = self.has_permission,
-            AJAX = ajax,
             show_error = show_error,
             b2s = b2s,
         )
