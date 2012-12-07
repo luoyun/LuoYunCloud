@@ -41,6 +41,22 @@ def usage():
   print '  --version       display verion'
   print '  -h, --help      '
 
+
+def _makesure_dir_exist(dirs=[]):
+  ''' Make sure the given dir in dirs list exist.
+
+  if the dir is not exist, create it.
+  if the dir is not a dirname, get the dirname and check normally.
+  '''
+
+  for dir in dirs:
+    if os.path.exists(dir): continue
+    try:
+      os.makedirs(dir)
+    except Exception, e:
+      print 'Create "%s" failed: %s' % (dir, e)
+
+
 def main():
   conf_path = DEFAULT_OSM_CONF_PATH
   log_path = DEFAULT_OSM_LOG_PATH
@@ -71,6 +87,10 @@ def main():
     else:
       print 'Wrong command options'
       sys.exit(1)
+
+  _makesure_dir_exist([
+      os.path.dirname(log_path),
+      script_dir ])
 
   if debug:
     lylog.setup(debug = 1)
