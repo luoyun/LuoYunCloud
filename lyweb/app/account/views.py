@@ -433,7 +433,7 @@ class AvatarEdit(LyRequestHandler):
                 img.thumbnail(settings.USER_AVATAR_THUM_SIZE, resample=1)
                 img.save(self.current_user.avatar_path)
                 img.thumbnail(settings.USER_AVATAR_MINI_THUM_SIZE, resample=1)
-                img.save(self.current_user.avatar_path)
+                img.save(self.current_user.avatar_mini_path)
                 tf.close()
 
             except Exception, e:

@@ -64,7 +64,6 @@ style="width: 0%"
 % endif
 
 <div id="instance-list" class="clearfix">
-##  <h2>${ _("Instances List") }</h2>
 
   % if not INSTANCE_LIST.count():
   <p>${ _("No instance found!") }</p>
@@ -75,7 +74,7 @@ style="width: 0%"
 
     <div class="logo">
       <a href="/instance/${I.id}">
-        <img src="${ I.logo_url }" /></a>
+        <img src="${ I.logourl }" /></a>
       <span class="count instance-id">${ I.id }</span>
       <span class="instance-status">
         <img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png"  alt="Stauts Image"/>

@@ -231,20 +231,6 @@ class Instance(ORMBase):
             return 'nojob.png'
         
 
-    @property
-    def logo_url(self):
-
-        logoname = self.logo
-
-        p = os.path.join( settings.STATIC_PATH,
-                          'instance_logo/%s' % logoname )
-        if not os.path.exists(p):
-            logoname = 'default.png'
-
-        return '%s%s' % (
-            '/static/instance_logo/', logoname )
-
-
     # TODO: stop and run check should merge
     #       should check more ? 
     @property
@@ -336,21 +322,6 @@ class Instance(ORMBase):
 
     @property
     def logourl(self):
-
-        # TODO: hack !!!
-        if not os.path.exists(self.logopath):
-            import Image
-            #old = '/opt/LuoYun/web/static/instance_logo/%s' % self.logo
-            old = '/opt/LuoYun/data/appliance/%s' % self.appliance.logoname
-            if os.path.exists(old):
-                try:
-                    if not os.path.exists(self.logodir):
-                        os.makedirs(self.logodir)
-
-                    img = Image.open( old )
-                    img.save( self.logopath )
-                except Exception, msg:
-                    logging.error('resave instance %s logo failed: %s' % (self.id, msg))
 
         if os.path.exists(self.logopath):
             return os.path.join(settings.STATIC_URL, 'instance/%s/%s' % (self.id, settings.INSTANCE_LOGO_NAME))

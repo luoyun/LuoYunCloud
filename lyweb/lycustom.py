@@ -200,27 +200,6 @@ class LyRequestHandler(RequestHandler):
         sk.sendall(rqhead)
         sk.close()
 
-
-    def get_page_url(self, p, path=None):
-
-        ''' Generate page url from given p (cur_page)
-
-        For Pagination.
-        '''
-
-        if not path:
-            path = self.request.uri
-
-        the_p = 'p=%s' % p
-
-        if path.count('p='):
-            return re.sub('p=[0-9]+', the_p, path)
-        elif path.count('?'):
-            return path + '&%s' % the_p
-        else:
-            return path + '?%s' % the_p
-
-
     def get_no_permission_url(self):
         self.require_setting("no_permission_url", "@has_permission")
         return self.application.settings["no_permission_url"]

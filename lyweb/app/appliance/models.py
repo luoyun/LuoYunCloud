@@ -91,48 +91,12 @@ class Appliance(ORMBase):
     def __repr__(self):
         return _("[Appliance(%s)]") % self.name
 
-
-    @property
-    def logo_url(self):
-
-        if hasattr(self, 'logoname') and self.logoname:
-            return '%s%s' % (
-                settings.appliance_top_url,
-                self.logoname)
-        else:
-            return '%simg/appliance.png' % settings.THEME_URL
-
-    @property
-    def origlogourl(self):
-        p = os.path.join(self.logodir, settings.APPLIANCE_LOGO_NAME)
-        if os.path.exists(p):
-            return os.path.join(settings.STATIC_URL, 'appliance/%s/%s' % (self.id, settings.APPLIANCE_LOGO_NAME))
-        else:
-            return settings.APPLIANCE_LOGO_DEFAULT_URL
-
     @property
     def logourl(self):
-        # TODO: hack !!!
-        if not os.path.exists(self.logothum):
-            import Image
-            old = '/opt/LuoYun/data/appliance/%s' % self.logoname
-            if os.path.exists(old):
-                try:
-                    if not os.path.exists(self.logodir):
-                        os.makedirs(self.logodir)
-
-                    img = Image.open( old )
-                    img.save(self.logopath)
-                    img.thumbnail(settings.APPLIANCE_LOGO_THUM_NAME, resample=1)
-                    img.save(self.logothum)
-                except Exception, msg:
-                    logging.error('resave appliance %s logo failed: %s' % (self.id, msg))
-
         if os.path.exists(self.logothum):
             return os.path.join(settings.STATIC_URL, 'appliance/%s/%s' % (self.id, settings.APPLIANCE_LOGO_THUM_NAME))
         else:
             return settings.APPLIANCE_LOGO_DEFAULT_URL
-
 
     @property
     def logodir(self):
@@ -142,22 +106,9 @@ class Appliance(ORMBase):
     def logopath(self):
         return os.path.join(self.logodir, settings.APPLIANCE_LOGO_NAME)
 
-    def logopath2(self):
-        if os.path.exists(self.logopath):
-            return self.logopath
-        else:
-            return settings.APPLIANCE_LOGO_DEFAULT
-
     @property
     def logothum(self):
         return os.path.join(self.logodir, settings.APPLIANCE_LOGO_THUM_NAME)
-
-    @property
-    def logothum2(self):
-        if os.path.exists(self.logothum):
-            return self.logothum
-        else:
-            return settings.APPLIANCE_LOGO_DEFAULT
 
     @property
     def description_html(self):
@@ -169,7 +120,6 @@ class Appliance(ORMBase):
             return self.catalog.name
         else:
             return _('None')
-
 
     @property
     def download_url(self):

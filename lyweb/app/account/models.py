@@ -130,20 +130,6 @@ class User(ORMBase):
     @property
     def avatar_url(self):
 
-        # TODO: hack !!!
-        if not os.path.exists(self.avatar_path):
-            avatar = os.path.join( settings.STATIC_PATH, 'user/%s/avatar' % self.id )
-            if os.path.exists(avatar):
-                import Image
-                try:
-                    img = Image.open(avatar)
-                    img.save(self.avatar_orig_path)
-                    img.thumbnail(settings.USER_AVATAR_THUM_SIZE, resample=1)
-                    img.save(self.avatar_path)
-                except Exception, msg:
-                    logging.error('resave user %s avatar failed: %s' % (self.id, msg))
-
-
         if os.path.exists(self.avatar_path):
             return os.path.join(settings.STATIC_URL, 'user/%s/%s' % (self.id, settings.USER_AVATAR_NAME))
         else:
@@ -156,34 +142,11 @@ class User(ORMBase):
     @property
     def avatar_mini_url(self):
 
-        # TODO: hack !!!
-        #print 'self.id = ', self.id
-        #print 'self.avatar_mini_path = ', self.avatar_mini_path
-        if not os.path.exists(self.avatar_mini_path):
-            if os.path.exists(self.avatar_path):
-                p = self.avatar_path
-            else:
-                p = 'user/%s/avatar' % self.id
-            #print 'p = ', p
-            avatar = os.path.join( settings.STATIC_PATH, p )
-            #print 'avatar = ', avatar
-            if os.path.exists(avatar):
-                import Image
-                try:
-                    img = Image.open(avatar)
-                    img.save(self.avatar_orig_path)
-                    img.thumbnail(settings.USER_AVATAR_THUM_SIZE, resample=1)
-                    img.save(self.avatar_mini_path)
-                except Exception, msg:
-                    logging.error('resave user %s avatar failed: %s' % (self.id, msg))
-
-
         if os.path.exists(self.avatar_mini_path):
             url = 'user/%s/%s' % (self.id, settings.USER_AVATAR_MINI_NAME)
         else:
             url = settings.USER_AVATAR_MINI_DEFAULT
 
-        #print 'url = ', url
         return url
 
     @property

@@ -81,7 +81,7 @@ def main():
 
     # Start listen
     application = Application()
-    application.listen(options.port)
+    application.listen(options.port, xheaders=True)
     tornado.ioloop.IOLoop.instance().start()
 
     # wait for singal
