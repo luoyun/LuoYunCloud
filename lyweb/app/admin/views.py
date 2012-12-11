@@ -53,7 +53,7 @@ class Index(LyRequestHandler):
         new_jobs = self.db2.query(Job).order_by(
             desc(Job.id) ).limit(10)
 
-        d = { 'title': _('Admin Console'),
+        d = { 'title': self.trans(_('Admin Console')),
               'human_size': human_size,
               'TOTAL_APPLIANCE': TOTAL_APPLIANCE,
               'TOTAL_INSTANCE': TOTAL_INSTANCE,

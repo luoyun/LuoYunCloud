@@ -234,7 +234,7 @@ class IPPoolView(LyRequestHandler):
         page_html = pagination(self.request.uri, TOTAL, page_size, cur_page)
 
 
-        d = { 'title': _('IP Pool'), 'TOTAL': TOTAL, 'NETWORK': N,
+        d = { 'title': self.trans(_('IP Pool')), 'TOTAL': TOTAL, 'NETWORK': N,
               'IPPOOL': POOL.all(), 'PAGE_HTML': page_html }
 
         self.render('system/ippool.html', **d)
@@ -245,7 +245,7 @@ class NetworkHome(LyRequestHandler):
 
     @has_permission('admin')
     def get(self):
-        d = { 'title': _('Network Pool'),
+        d = { 'title': self.trans(_('Network Pool')),
               'NETWORKPOOL': self.db2.query(NetworkPool).all() }
 
         self.render('system/networkpool.html', **d)
@@ -259,10 +259,10 @@ class NetworkView(LyRequestHandler):
         N = self.db2.query(NetworkPool).get(ID)
 
         if N:
-            d = { 'title': _('Network Pool'), 'N': N }
+            d = { 'title': self.trans(_('Network Pool')), 'N': N }
             self.render('system/networkpool_view.html', **d)
         else:
-            self.write( _('Can not find networkpool %s') % ID )
+            self.write( self.trans(_('Can not find networkpool %s')) % ID )
 
 
 
@@ -297,7 +297,7 @@ class NetworkDelete(LyRequestHandler):
     def get(self, ID):
 
         N = self.db2.query(NetworkPool).get(ID)
-        if not N: return self.write( _('Can not find networkpool %s') % ID )
+        if not N: return self.write( self.trans(_('Can not find networkpool %s')) % ID )
 
         ERROR = []
         OK = [] # TODO: use session rollback
@@ -309,7 +309,7 @@ class NetworkDelete(LyRequestHandler):
                 OK.append( x )
 
         if ERROR:
-            d = { 'title': _('Delete Network Pool Failed'),
+            d = { 'title': self.trans(_('Delete Network Pool Failed')),
                   'FAILED_LIST': ERROR, 'N': N }
             self.render('system/networkpool_delete_failed.html', **d)
 
@@ -331,7 +331,7 @@ class NetworkAdd(NetworkHandler):
         NS = self.db2.query(LuoYunConfig).filter_by( key = 'nameservers' ).first()
         if NS: form.nameservers.data = NS.value
 
-        d = { 'title': _('Add a new network pool'),  'form': form }
+        d = { 'title': self.trans(_('Add a new network pool')),  'form': form }
         self.render('system/networkpool_add.html', **d)
 
 
@@ -359,7 +359,7 @@ class NetworkAdd(NetworkHandler):
             url = self.reverse_url('system:networkpool')
             return self.redirect( url )
 
-        d = { 'title': _('Add a new network pool'),  'form': form }
+        d = { 'title': self.trans(_('Add a new network pool')),  'form': form }
         self.render('system/networkpool_add.html', **d)
 
 
@@ -370,7 +370,7 @@ class NetworkEdit(LyRequestHandler):
     def get(self, ID):
 
         N = self.db2.query(NetworkPool).get(ID)
-        if not N: return self.write( _('Can not find networkpool %s') % ID )
+        if not N: return self.write( self.trans(_('Can not find networkpool %s')) % ID )
 
         form = NetworkPoolForm(self)
         form.name.data = N.name
@@ -388,14 +388,14 @@ class NetworkEdit(LyRequestHandler):
         if N.exclude_ips:
             form.exclude_ips.data = N.exclude_ips
 
-        d = { 'title': _('Edit network pool'),  'form': form }
+        d = { 'title': self.trans(_('Edit network pool')),  'form': form }
         self.render('system/networkpool_edit.html', **d)
 
 
     def post(self, ID):
 
         N = self.db2.query(NetworkPool).get(ID)
-        if not N: return self.write( _('Can not find networkpool %s') % ID )
+        if not N: return self.write( self.trans(_('Can not find networkpool %s')) % ID )
 
         form = NetworkPoolForm(self)
         if form.validate():
@@ -431,7 +431,7 @@ class NetworkEdit(LyRequestHandler):
                     OK.append( find )
 
             if ERROR:
-                d = { 'title': _('Edit network pool failed'),
+                d = { 'title': self.trans(_('Edit network pool failed')),
                       'UNABLE_DELETE_IP': ERROR, 'NETWORK': N,
                       'form': form }
                 return self.render('system/networkpool_edit.html', **d)
@@ -457,7 +457,7 @@ class NetworkEdit(LyRequestHandler):
             url = self.reverse_url('system:networkpool')
             return self.redirect( url )
 
-        d = { 'title': _('Edit Network Pool'),  'form': form }
+        d = { 'title': self.trans(_('Edit Network Pool')),  'form': form }
         self.render('system/networkpool_edit.html', **d)
 
 
@@ -656,13 +656,13 @@ class SendMail(LyRequestHandler):
         elif totype == 'all':
             UL = self.db2.query(User)
         #else:
-        #    return self.write( _('No totype specified !') )
+        #    return self.write( self.trans(_('No totype specified !')) )
 
         self.UL = UL
         self.GL = GL
         self.totype = totype
 
-        self.d = { 'title': _('LuoYun Send Mail'),
+        self.d = { 'title': self.trans(_('LuoYun Send Mail')),
                    'FROM': settings.MAIL_FROM,
                    'TOTYPE': self.totype,
                    'USER_LIST': self.UL,
@@ -788,7 +788,7 @@ class LyTraceManage(LyRequestHandler):
             if T:
                 self.get_view(T)
             else:
-                self.write( _('Can not find trace %s') % trace_id )
+                self.write( self.trans(_('Can not find trace %s')) % trace_id )
 
 
         else: # GET index
@@ -817,7 +817,7 @@ class LyTraceManage(LyRequestHandler):
         elif by == 'do':
             by = LyTrace.do
         else:
-            return self.write( _('Wrong sort by value: %s') % by )
+            return self.write( self.trans(_('Wrong sort by value: %s')) % by )
 
         by_exp = desc(by) if order else asc(by)
 
@@ -831,7 +831,7 @@ class LyTraceManage(LyRequestHandler):
             if user:
                 traces = traces.filter_by(who_id=user_id)
             else:
-                return self.write( _('Can not find user by id %s') % user_id )
+                return self.write( self.trans(_('Can not find user by id %s')) % user_id )
         else: user = None
 
         traces = traces.order_by(by_exp).slice(start, stop).all()
@@ -845,7 +845,7 @@ class LyTraceManage(LyRequestHandler):
             return self.urlupdate(
                 {'by': by, 'order': 1 if order == 0 else 0, 'p': 1})
 
-        d = { 'title': _('Trace system action'),
+        d = { 'title': self.trans(_('Trace system action')),
               'sort_by': sort_by,
               'TRACE_LIST': traces, 'PAGE_HTML': page_html,
               'USER': user, 'TOTAL_TRACE': total }
@@ -857,7 +857,7 @@ class LyTraceManage(LyRequestHandler):
     def get_view(self):
         catalogs = self.db2.query(ApplianceCatalog).all()
         self.render( 'admin/appliance/view.html',
-                     title = _('View Appliance %s') % self.appliance.name,
+                     title = self.trans(_('View Appliance %s')) % self.appliance.name,
                      CATALOG_LIST = catalogs,
                      APPLIANCE = self.appliance,
                      human_size = human_size )

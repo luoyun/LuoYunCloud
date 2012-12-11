@@ -29,7 +29,7 @@ class ApplianceManagement(LyRequestHandler):
         if appliance_id:
             self.appliance = self.db2.query(Appliance).get( appliance_id )
             if not self.appliance:
-                self.write( _('No such appliance : %s') % appliance_id )
+                self.write( self.trans(_('No such appliance : %s')) % appliance_id )
                 return self.finish()
 
         c_id = self.get_argument('catalog', 0)
@@ -51,13 +51,13 @@ class ApplianceManagement(LyRequestHandler):
             self.change_catalog()
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def post(self):
 
         if not self.action:
-            self.write( _('No action found !') )
+            self.write( self.trans(_('No action found !')) )
 
         elif self.action == 'change_owner':
             self.change_owner()
@@ -66,7 +66,7 @@ class ApplianceManagement(LyRequestHandler):
             self.change_catalog()
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def get_index(self):
@@ -105,7 +105,7 @@ class ApplianceManagement(LyRequestHandler):
         for c in catalogs:
             c.total = self.db2.query(Appliance.id).filter_by( catalog_id = c.id ).count()
 
-        d = { 'title': _('LuoYun Appliance Management'),
+        d = { 'title': self.trans(_('LuoYun Appliance Management')),
               'CATALOG_LIST': catalogs, 'CID': catalog_id,
               'APPLIANCE_LIST': apps, 'PAGE_HTML': page_html,
               'CATALOG': catalog, 'USER': user,
@@ -121,13 +121,13 @@ class ApplianceManagement(LyRequestHandler):
     def get_view(self):
         catalogs = self.db2.query(ApplianceCatalog).all()
         self.render( 'admin/appliance/view.html',
-                     title = _('View Appliance %s') % self.appliance.name,
+                     title = self.trans(_('View Appliance %s')) % self.appliance.name,
                      CATALOG_LIST = catalogs,
                      APPLIANCE = self.appliance,
                      human_size = human_size )
 
     def change_owner(self):
-        d = { 'title': _('Change owner of appliance'),
+        d = { 'title': self.trans(_('Change owner of appliance')),
               'A': self.appliance }
         
         E = []
@@ -141,9 +141,9 @@ class ApplianceManagement(LyRequestHandler):
                 if not U:
                     U = self.db2.query(User).filter_by(username=user).first()
                 if not U:
-                    E.append( _('Can not find user: %s') % user )
+                    E.append( self.trans(_('Can not find user: %s')) % user )
             else:
-                E.append( _('No user input !') )
+                E.append( self.trans(_('No user input !')) )
 
             reason = self.get_argument('reason', '')
 
@@ -153,7 +153,7 @@ class ApplianceManagement(LyRequestHandler):
                 T = self.lytrace(
                     ttype = LY_TARGET['APPLIANCE'],
                     tid = self.appliance.id,
-                    do = _('change appliance owner %s to %s') % (
+                    do = self.trans(_('change appliance owner %s to %s')) % (
                         self.appliance.user.username, U.username) )
 
                 self.appliance.user = U
@@ -171,7 +171,7 @@ class ApplianceManagement(LyRequestHandler):
 
         CATALOG_LIST = self.db2.query(ApplianceCatalog).all()
 
-        d = { 'title': _('Change catalog of appliance'),
+        d = { 'title': self.trans(_('Change catalog of appliance')),
               'A': self.appliance, 'CATALOG_LIST': CATALOG_LIST }
 
         E = []
@@ -182,9 +182,9 @@ class ApplianceManagement(LyRequestHandler):
             if cid:
                 C = self.db2.query(ApplianceCatalog).get(cid)
                 if not C:
-                    E.append( _('Can not find catalog %s') % cid )
+                    E.append( self.trans(_('Can not find catalog %s')) % cid )
             else:
-                E.append( _('No catalog input !') )
+                E.append( self.trans(_('No catalog input !')) )
 
             if E:
                 d['ERROR'] = E
@@ -212,7 +212,7 @@ class CatalogManagement(LyRequestHandler):
         self.catalog = self.db2.query(ApplianceCatalog).get(cid)
 
         if self.action in ['edit'] and not self.catalog:
-            self.write( _('No catalog specified !') )
+            self.write( self.trans(_('No catalog specified !')) )
             return self.finish()
 
 
@@ -228,7 +228,7 @@ class CatalogManagement(LyRequestHandler):
             self.get_edit()
 
         else:
-            self.write( _('Wrong action: %s') % self.action )
+            self.write( self.trans(_('Wrong action: %s')) % self.action )
 
 
     def post(self):
@@ -240,14 +240,14 @@ class CatalogManagement(LyRequestHandler):
             self.post_edit()
 
         else:
-            self.write( _('Wrong action: %s') % self.action )
+            self.write( self.trans(_('Wrong action: %s')) % self.action )
 
 
     def get_index(self):
 
         CL = self.db2.query(ApplianceCatalog).order_by('id').all()
 
-        d = { 'title': _('Appliance Catalog'),
+        d = { 'title': self.trans(_('Appliance Catalog')),
               'CATALOG_LIST': CL }
 
         self.render( 'admin/appliance/catalog.html', **d )
@@ -255,7 +255,7 @@ class CatalogManagement(LyRequestHandler):
 
     def get_new(self):
         self.render( 'admin/appliance/catalog_new.html',
-                     title = _('Add Appliance Catalog'),
+                     title = self.trans(_('Add Appliance Catalog')),
                      form = CatalogForm(self) )
 
     def post_new(self):
@@ -273,7 +273,7 @@ class CatalogManagement(LyRequestHandler):
             return self.redirect( url )
 
         self.render( 'admin/appliance/catalog_new.html',
-                     title = _('Add Appliance Catalog'),
+                     title = self.trans(_('Add Appliance Catalog')),
                      form = form )
 
 
@@ -285,7 +285,7 @@ class CatalogManagement(LyRequestHandler):
         form.description.data = self.catalog.description
 
         self.render( 'admin/appliance/catalog_edit.html',
-                     title = _('Edit Appliance Catalog: %s') % self.catalog.name,
+                     title = self.trans(_('Edit Appliance Catalog: %s')) % self.catalog.name,
                      form = form )
 
 
@@ -302,6 +302,6 @@ class CatalogManagement(LyRequestHandler):
             return self.redirect( url )
 
         self.render( 'admin/appliance/catalog_edit.html',
-                     title = _('Edit Appliance Catalog: %s') % self.catalog.name,
+                     title = self.trans(_('Edit Appliance Catalog: %s')) % self.catalog.name,
                      form = form )
 

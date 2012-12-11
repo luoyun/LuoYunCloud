@@ -27,7 +27,7 @@ class GroupManagement(LyRequestHandler):
         if group_id:
             self.group = self.db2.query(Group).get( group_id  )
             if not self.group:
-                self.write( _('No such group : %s') % group_id )
+                self.write( self.trans(_('No such group : %s')) % group_id )
                 return self.finish()
 
 
@@ -36,7 +36,7 @@ class GroupManagement(LyRequestHandler):
         if self.action == 'index':
             if self.group:
                 self.render( 'admin/group/view.html',
-                             title = _('View Group %s') % self.group.name,
+                             title = self.trans(_('View Group %s')) % self.group.name,
                              GROUP = self.group )
             else:
                 self.get_index()
@@ -51,13 +51,13 @@ class GroupManagement(LyRequestHandler):
             self.get_delete()
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def post(self):
 
         if not self.action:
-            self.write( _('No action found !') )
+            self.write( self.trans(_('No action found !')) )
 
         elif self.action == 'add':
             self.post_add()
@@ -66,19 +66,19 @@ class GroupManagement(LyRequestHandler):
             self.post_edit()
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def get_index(self):
 
         GROUP_LIST = self.db2.query(Group).order_by('id').all()
         self.render( 'admin/group/index.html',
-                     title = _('Group Management'),
+                     title = self.trans(_('Group Management')),
                      GROUP_LIST = GROUP_LIST )
 
     # Create a new group
     def get_add(self):
-        self.render( 'admin/group/add.html', title = _('Create New Group'),
+        self.render( 'admin/group/add.html', title = self.trans(_('Create New Group')),
                      form = GroupForm(self) )
 
     def post_add(self):
@@ -89,7 +89,7 @@ class GroupManagement(LyRequestHandler):
 
             group = self.db2.query(Group).filter_by( name=form.name.data ).all()
             if group:
-                form.name.errors.append( _('This name is occupied') )
+                form.name.errors.append( self.trans(_('This name is occupied')) )
 
             else:
                 newgroup = Group(
@@ -126,7 +126,7 @@ class GroupManagement(LyRequestHandler):
 
 
         self.render( 'admin/group/edit.html',
-                     title = _('Edit Group %s') % self.group.name,
+                     title = self.trans(_('Edit Group %s')) % self.group.name,
                      GROUP = self.group, form = form )
 
 

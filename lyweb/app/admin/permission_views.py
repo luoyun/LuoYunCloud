@@ -22,12 +22,12 @@ class PermissionManagement(LyRequestHandler):
         if permission_id:
             self.permission = self.db2.query(Permission).get( permission_id  )
             if not self.permission:
-                self.write( _('No such permission : %s') % permission_id )
+                self.write( self.trans(_('No such permission : %s')) % permission_id )
                 return self.finish()
 
 
     def get(self):
 
         PERMISSION_LIST = self.db2.query(Permission).all()
-        self.render( 'admin/permission/index.html', title = _('Permission Management'),
+        self.render( 'admin/permission/index.html', title = self.trans(_('Permission Management')),
                      PERMISSION_LIST = PERMISSION_LIST )

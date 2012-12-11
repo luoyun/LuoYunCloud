@@ -74,7 +74,7 @@ class Index(LyRequestHandler):
                 USED_MEMORY += i.memory
                 USED_STORAGE += i.storage
 
-        d['title'] = _('My LuoYun')
+        d['title'] = self.trans(_('My LuoYun'))
         d.update({'TOTAL_CPU': TOTAL_CPU,
                   'TOTAL_MEMORY': TOTAL_MEMORY,
                   'USED_CPU': USED_CPU,
@@ -95,7 +95,7 @@ class MyunInstance(LyRequestHandler):
 
         instances, page_html = self.page_view_my_instances()
 
-        d = { 'title': _('My Instances'),
+        d = { 'title': self.trans(_('My Instances')),
               'INSTANCE_LIST': instances, 'page_html': page_html }
 
         self.render( 'myun/instances.html', **d)
@@ -158,13 +158,13 @@ class InstanceManagement(LyRequestHandler):
         inst = self.db2.query(Instance).get(ID)
 
         if not inst:
-            return None, _('No such instance: %s !') % ID
+            return None, self.trans(_('No such instance: %s !')) % ID
 
         if inst.status == DELETED_S:
-            return None, _('Instance %s was deleted !') % ID
+            return None, self.trans(_('Instance %s was deleted !')) % ID
 
         if ( self.current_user.id != inst.user_id ):
-            return None, _("No your instance !")
+            return None, self.trans(_("No your instance !"))
 
         return inst, ''
 
@@ -177,19 +177,19 @@ class InstanceManagement(LyRequestHandler):
         config = json.loads(I.config)
         domain = config.get('domain', {})
         if not (domain and domain.get('name')):
-            return True, _('No domain needed unbinding!')
+            return True, self.trans(_('No domain needed unbinding!'))
 
         # TODO: delete nginx binding
         from tool.domain import unbinding_domain_from_nginx
         ret, reason = unbinding_domain_from_nginx(self.db2, I.id)
         if not ret:
-            return  False, _('unbinding domain error: %s') % reason
+            return  False, self.trans(_('unbinding domain error: %s')) % reason
 
         del config['domain']
         I.config = json.dumps( config )
         self.db2.commit()
 
-        return True, _('Success!')
+        return True, self.trans(_('Success!'))
 
 
 
@@ -230,7 +230,7 @@ class InstanceView(InstanceManagement):
               'TAB': tab,
               'USE_GLOBAL_PASSWD': str(I.get_config('use_global_passwd')) != 'False' }
 
-        d['title'] = _('View instance "%s" - My Yun') % I.name
+        d['title'] = self.trans(_('View instance "%s" - My Yun')) % I.name
 
         self.render( 'myun/instance/view.html', **d)
 
@@ -244,30 +244,30 @@ class InstanceEdit(InstanceManagement):
         title = None
 
         if item == 'general':
-            title = _('Configure general info for instance')
+            title = self.trans(_('Configure general info for instance'))
 
         elif item == 'resource':
-            title = _('Configure resource for instance')
+            title = self.trans(_('Configure resource for instance'))
 
         elif item == 'network':
-            title = _('Configure network for instance')
+            title = self.trans(_('Configure network for instance'))
 
         elif item == 'storage':
-            title = _('Configure storage for instance')
+            title = self.trans(_('Configure storage for instance'))
 
         elif item == 'password':
             self.d['TAB'] = 'secret'
-            title = _('Configure password for instance')
+            title = self.trans(_('Configure password for instance'))
 
         elif item == 'public_key':
             self.d['TAB'] = 'secret'
-            title = _('Configure public key for instance')
+            title = self.trans(_('Configure public key for instance'))
 
         elif item == 'domain':
-            title = _('Configure domain for instance')
+            title = self.trans(_('Configure domain for instance'))
 
         if title:
-            title += _(' - My Yun')
+            title += self.trans(_(' - My Yun'))
 
         self.d['title'] = title
 
@@ -307,7 +307,7 @@ class InstanceEdit(InstanceManagement):
         elif item == 'webssh_toggle':
             self.get_webssh_toggle( I )
         else:
-            self.write( _('Not support edit action !') )
+            self.write( self.trans(_('Not support edit action !')) )
 
 
     @authenticated
@@ -337,7 +337,7 @@ class InstanceEdit(InstanceManagement):
         elif item == 'domain':
             self.post_domain( I )
         else:
-            self.write( _('Not support edit action !') )
+            self.write( self.trans(_('Not support edit action !')) )
 
 
     def get_general(self, I):
@@ -398,9 +398,9 @@ class InstanceEdit(InstanceManagement):
 
             profile = I.user.profile
             if (form.cpus.data + USED_CPUS) > profile.cpus:
-                form.cpus.errors.append( _('cpus can not greater than %s') % (profile.cpus - USED_CPUS) )
+                form.cpus.errors.append( self.trans(_('cpus can not greater than %s')) % (profile.cpus - USED_CPUS) )
             if (form.memory.data + USED_MEMORY) > profile.memory:
-                form.memory.errors.append( _('memory can not greater than %s') % (profile.memory - USED_MEMORY) )
+                form.memory.errors.append( self.trans(_('memory can not greater than %s')) % (profile.memory - USED_MEMORY) )
             if not (form.cpus.errors or form.memory.errors):
 
                 I.cpus = form.cpus.data
@@ -430,7 +430,7 @@ class InstanceEdit(InstanceManagement):
             url += '?tab=network'
             self.redirect( url )
         else:
-            self.write( _('Can not find NIC %s !') % index )
+            self.write( self.trans(_('Can not find NIC %s !')) % index )
 
 
     def get_network(self, I):
@@ -451,7 +451,7 @@ class InstanceEdit(InstanceManagement):
                     form.gateway.data = nic_config.get('gateway')
                     form.nameservers.data = nic_config.get('nameservers')
             else:
-                return self.write( _('You have not allowed to add another network !') )
+                return self.write( self.trans(_('You have not allowed to add another network !')) )
 
         self.d['form'] = form
         self.d['INDEX'] = index
@@ -503,9 +503,9 @@ class InstanceEdit(InstanceManagement):
                         ok_ip.updated = datetime.now()
                         self.lytrace_ippool(ok_ip, I)
                     else:
-                        ERROR.append( _('Can not find a useable ip from system ip pool.') )
+                        ERROR.append( self.trans(_('Can not find a useable ip from system ip pool.')) )
                 else:
-                    ERROR.append( _('No such network type.') )
+                    ERROR.append( self.trans(_('No such network type.')) )
         else:
             if self.has_permission('network.add'):
                 index = index if index <= nic_total + 1 else nic_total+1
@@ -517,7 +517,7 @@ class InstanceEdit(InstanceManagement):
                     nic_netmask = form.netmask.data
                     nic_gateway = form.gateway.data
             else:
-                return self.write( _('You have not allowed to add another network !') )
+                return self.write( self.trans(_('You have not allowed to add another network !')) )
 
 
         self.d['INDEX'] = index
@@ -549,7 +549,7 @@ class InstanceEdit(InstanceManagement):
             return self.redirect( url )
 
         except Exception, e:
-            self.d['ERROR'].append( _('save failed: %s') % e )
+            self.d['ERROR'].append( self.trans(_('save failed: %s')) % e )
             self.render( 'myun/instance/edit_network.html', **self.d)
 
 
@@ -724,10 +724,10 @@ class InstanceEdit(InstanceManagement):
             sub = I.subdomain if I.subdomain else sub
 
             if not I.access_ip:
-                self.d['ERROR'].append( _('Can not get access_ip, please configure instance network or run instance') )
+                self.d['ERROR'].append( self.trans(_('Can not get access_ip, please configure instance network or run instance')) )
 
         else:
-            self.d['ERROR'].append( _('can not get domain, domain may not have been configured in Administration Console.') )
+            self.d['ERROR'].append( self.trans(_('can not get domain, domain may not have been configured in Administration Console.')) )
 
         self.d['subdomain'] = sub
         self.d['topdomain'] = top
@@ -747,7 +747,7 @@ class InstanceEdit(InstanceManagement):
 
         subdomain = self.get_argument('subdomain', None)
         if not subdomain:
-            d['ERROR'].append( _('Domain is not configured!') )
+            d['ERROR'].append( self.trans(_('Domain is not configured!')) )
 
         if subdomain != oldsub:
             d['subdomain'] = subdomain
@@ -755,11 +755,11 @@ class InstanceEdit(InstanceManagement):
                 exist_domain = self.db2.query(Instance.id).filter_by(
                     subdomain = subdomain ).first()
                 if exist_domain:
-                    d['ERROR'].append( _('Domain name is taken!') )
+                    d['ERROR'].append( self.trans(_('Domain name is taken!')) )
                 if len(subdomain) > 16:
-                    d['ERROR'].append( _("Domain name is too long.") )
+                    d['ERROR'].append( self.trans(_("Domain name is too long.")) )
             else:
-                d['ERROR'].append( _('Please use alpha characters in domain name!') )
+                d['ERROR'].append( self.trans(_('Please use alpha characters in domain name!')) )
 
         if d['ERROR']:
             return self.render('myun/instance/edit_domain.html', **d)
@@ -815,7 +815,7 @@ class InstanceEdit(InstanceManagement):
             url += '?tab=domain'
             self.redirect( url )
         else:
-            self.write( _('Delete domain failed: %s') % reason )
+            self.write( self.trans(_('Delete domain failed: %s')) % reason )
 
 
     def get_webssh_toggle(self, I):
@@ -853,7 +853,7 @@ class MyunAppliance(LyRequestHandler):
 
         apps, page_html = self.page_view_my_appliances()
 
-        d = { 'title': _('My Appliances'),
+        d = { 'title': self.trans(_('My Appliances')),
               'APPLIANCE_LIST': apps, 'page_html': page_html }
 
         self.render( 'myun/appliances.html', **d)

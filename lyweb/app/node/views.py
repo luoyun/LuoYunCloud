@@ -30,7 +30,7 @@ class Action(LyRequestHandler):
             return self.write('No such node!')
 
         if not action:
-            return self.write( _("No action specified") )
+            return self.write( self.trans(_("No action specified")) )
 
         elif action == 1:
             if node.isenable:
@@ -72,7 +72,7 @@ class isenableToggle(LyRequestHandler):
 
         N = self.db2.query(Node).get(ID)
         if not N:
-            return self.write( _('Can not find node %s.') % ID )
+            return self.write( self.trans(_('Can not find node %s.')) % ID )
 
         action_id = JOB_ACTION['DISABLE_NODE'] if N.isenable else JOB_ACTION['ENABLE_NODE']
 
@@ -92,7 +92,7 @@ class isenableToggle(LyRequestHandler):
             # no news is good news
 
         except Exception, e:
-            self.write( _('Run job failed: %s') % e )
+            self.write( self.trans(_('Run job failed: %s')) % e )
 
 
 
@@ -103,13 +103,13 @@ class NodeEdit(LyRequestHandler):
 
         N = self.db2.query(Node).get(ID)
         if not N:
-            return self.write( _('Can not find node %s.') % ID )
+            return self.write( self.trans(_('Can not find node %s.')) % ID )
 
         form = NodeEditForm(self)
         form.vmemory.data = (N.vmemory if N.vmemory else N.memory)  / (1024 * 1024)
         form.vcpus.data = N.vcpus if N.vcpus else N.cpus
 
-        d = { 'title': _('Edit note configure'),
+        d = { 'title': self.trans(_('Edit note configure')),
               'form': form, 'N': N }
         self.render('node/edit.html', **d)
 
@@ -119,7 +119,7 @@ class NodeEdit(LyRequestHandler):
 
         N = self.db2.query(Node).get(ID)
         if not N:
-            return self.write( _('Can not find node %s.') % ID )
+            return self.write( self.trans(_('Can not find node %s.')) % ID )
 
         ERROR = []
         form = NodeEditForm(self)
@@ -141,8 +141,8 @@ class NodeEdit(LyRequestHandler):
                 url = self.reverse_url('admin:node')
                 return self.redirect(url)
             except Exception, e:
-                ERROR.append( _('Run job failed: %s') % e )
+                ERROR.append( self.trans(_('Run job failed: %s')) % e )
 
-        d = { 'title': _('Edit note configure'),
+        d = { 'title': self.trans(_('Edit note configure')),
               'form': form, 'N': N, 'ERROR': ERROR }
         self.render('node/edit.html', **d)

@@ -107,7 +107,7 @@ class InstRequestHandler(LyRequestHandler):
         inst = self.db2.query(Instance).get(id)
 
         if not inst:
-            self.done( _('No such instance: %s !') % id )
+            self.done( self.trans(_('No such instance: %s !')) % id )
             return None
 
         if inst.isprivate:
@@ -115,17 +115,17 @@ class InstRequestHandler(LyRequestHandler):
                     (self.current_user.id != inst.user_id) and
                     (not self.has_permission('admin')) )
                  ):
-                self.done( _('Instance %s is private !') % id )
+                self.done( self.trans(_('Instance %s is private !')) % id )
                 return None
 
         if inst.status == DELETED_S:
-            self.done( _('Instance %s is deleted !') % id )
+            self.done( self.trans(_('Instance %s is deleted !')) % id )
             return None
 
         # Just user can do
         if isowner:
             if inst.user_id != self.current_user.id:
-                self.done( _('Only owner can do this!') )
+                self.done( self.trans(_('Only owner can do this!')) )
                 return None
 
         return inst
@@ -137,14 +137,14 @@ class InstRequestHandler(LyRequestHandler):
         inst = self.db2.query(Instance).get(ID)
 
         if not inst:
-            return None, _('No such instance: %s !') % ID
+            return None, self.trans(_('No such instance: %s !')) % ID
 
         if inst.status == DELETED_S:
-            return None, _('Instance %s is deleted !') % ID
+            return None, self.trans(_('Instance %s is deleted !')) % ID
 
         if ( (not self.current_user) or (self.current_user.id != inst.user_id) ):
             if not (allow_admin and self.has_permission('admin')):
-                return None, _('Instance %s is private !') % ID
+                return None, self.trans(_('Instance %s is private !')) % ID
 
         return inst, ''
 
@@ -155,7 +155,7 @@ class InstRequestHandler(LyRequestHandler):
             if not ( action_id == JOB_ACTION['STOP_INSTANCE'] and
                  I.lastjob.canstop ):
                 # TODO: status = 100, timeout > 60s
-                return _("Previous task is not finished !")
+                return self.trans(_("Previous task is not finished !"))
 
         # Create new job
         job = Job( user = self.current_user,
@@ -174,10 +174,10 @@ class InstRequestHandler(LyRequestHandler):
             #[Errno 113] No route to host
             # TODO: should be a config value
             job.status = settings.JOB_S_FAILED
-            return _("Connect to control server failed: %s") % e
+            return self.trans(_("Connect to control server failed: %s")) % e
 
         self.db2.commit()
-        return _('Task starts successfully.')
+        return self.trans(_('Task starts successfully.'))
 
 
     def domain_delete(self, inst):
@@ -188,19 +188,19 @@ class InstRequestHandler(LyRequestHandler):
         config = json.loads(inst.config)
         domain = config.get('domain', {})
         if not (domain and domain.get('name')):
-            return True, _('No domain needed unbinding!')
+            return True, self.trans(_('No domain needed unbinding!'))
 
         # TODO: delete nginx binding
         from tool.domain import unbinding_domain_from_nginx
         ret, reason = unbinding_domain_from_nginx(self.db2, inst.id)
         if not ret:
-            return  False, _('unbinding domain error: %s') % reason
+            return  False, self.trans(_('unbinding domain error: %s')) % reason
 
         del config['domain']
         inst.config = json.dumps( config )
         self.db2.commit()
 
-        return True, _('Success!')
+        return True, self.trans(_('Success!'))
 
 
     def get_domain(self, I): # I is a instance obj
@@ -234,8 +234,8 @@ class InstRequestHandler(LyRequestHandler):
 class Index(InstRequestHandler):
     ''' Index home '''
 
-    def initialize(self, title = _('LuoYun Public Instance')):
-        self.title = title
+    def initialize(self, title = None):
+        self.title = self.trans(_('LuoYun Public Instance'))
 
     def get(self):
 
@@ -318,7 +318,7 @@ class View(InstRequestHandler):
         self.inst = self.get_instance(ID)
         if not self.inst: return
 
-        d = { 'title': _('Baseinfo of instance %s') % self.inst.id,
+        d = { 'title': self.trans(_('Baseinfo of instance %s')) % self.inst.id,
               'instance': self.inst,
               'JOB_RESULT': self.get_argument('job_result', None)}
 
@@ -340,7 +340,7 @@ class Delete(InstRequestHandler):
         if I:
             # TODO: no running delete !
             if I.is_running:
-                d['E'].append( _("Can not delete a running instance!") )
+                d['E'].append( self.trans(_("Can not delete a running instance!")) )
 
             # TODO: delete domain binding
             ret, reason = self.domain_delete( I )
@@ -348,7 +348,7 @@ class Delete(InstRequestHandler):
                 d['E'].append( reason )
 
         else:
-            d['E'].append( _('No instance %s!') % id )
+            d['E'].append( self.trans(_('No instance %s!')) % id )
 
 
         if d['E']:
@@ -393,7 +393,7 @@ class InstanceControl(InstRequestHandler):
         if not self.current_user:
             return self.write( {
                     'return_code': 1,
-                    'msg': _('You have not login !') } )
+                    'msg': self.trans(_('You have not login !')) } )
 
         inst, msg = self.get_my_instance(ID, allow_admin=True)
         if not inst:
@@ -411,12 +411,12 @@ class InstanceControl(InstRequestHandler):
         elif action == 'query':
             msg = self.query( inst )
         else:
-            msg = _('Just support run/stop/reboot/query action')
+            msg = self.trans(_('Just support run/stop/reboot/query action'))
             ret = 1
 
         T = self.lytrace(
             ttype = LY_TARGET['INSTANCE'], tid = inst.id,
-            do = _('%s instance') % action )
+            do = self.trans(_('%s instance')) % action )
         if ret:
             T.isok = False
 
@@ -444,7 +444,7 @@ class InstanceControl(InstRequestHandler):
         if instance.need_query:
             return self.run_job(instance, JOB_ACTION['QUERY_INSTANCE'])
         else:
-            return _('Instance does not need query.')
+            return self.trans(_('Instance does not need query.'))
 
 
     def stop(self, instance):
@@ -452,7 +452,7 @@ class InstanceControl(InstRequestHandler):
         if instance.is_running:
             return self.run_job(instance, JOB_ACTION['STOP_INSTANCE'])
         else:
-            return _('Instance is stopped now !')
+            return self.trans(_('Instance is stopped now !'))
 
     def run(self, instance):
 
@@ -460,7 +460,7 @@ class InstanceControl(InstRequestHandler):
         if ret: return ret
 
         if instance.is_running:
-            return _('Instance is running now !')
+            return self.trans(_('Instance is running now !'))
 
         # TODO: a temp hack
         self.set_nameservers(instance)
@@ -491,12 +491,12 @@ class InstanceControl(InstRequestHandler):
         desc = ''
         if TOTAL_CPU < inst.cpus:
             if TOTAL_CPU < 0: TOTAL_CPU = 0
-            desc = _('need %s CPU, but %s have.') % (inst.cpus, TOTAL_CPU)
+            desc = self.trans(_('need %s CPU, but %s have.')) % (inst.cpus, TOTAL_CPU)
         if TOTAL_MEM < inst.memory:
             if TOTAL_MEM < 0: TOTAL_MEM = 0
-            desc = _('need %sMB memory, but %sMB have.') % (inst.memory, TOTAL_MEM)
+            desc = self.trans(_('need %sMB memory, but %sMB have.')) % (inst.memory, TOTAL_MEM)
         if desc:
-            return _('No resource: %s') % desc
+            return self.trans(_('No resource: %s')) % desc
 
 
     def set_nameservers(self, instance):
@@ -556,11 +556,11 @@ class CreateInstance(InstRequestHandler):
 
         if ( self.appliance and self.appliance.isprivate and
              self.current_user.id != self.appliance.user_id ):
-            self.write( _('Appliance is private: %s') % _id )
+            self.write( self.trans(_('Appliance is private: %s')) % _id )
             return self.finish()
 
         if self.appliance and not self.appliance.isuseable:
-            self.write( _('Appliance is locked: %s') % _id )
+            self.write( self.trans(_('Appliance is locked: %s')) % _id )
             return self.finish()
 
         # Have resources ?
@@ -586,7 +586,7 @@ class CreateInstance(InstRequestHandler):
 
         self.USED_CPUS = USED_CPUS
         self.USED_MEMORY = USED_MEMORY
-        self.d = { 'title': _('Create Instance'),
+        self.d = { 'title': self.trans(_('Create Instance')),
                    'USED_CPUS': USED_CPUS,
                    'USED_MEMORY': USED_MEMORY }
 
@@ -599,7 +599,7 @@ class CreateInstance(InstRequestHandler):
                 isprivate = False).filter_by(
                 isuseable = True)
             if not apps.count():
-                return self.write( _("No appliance found, please upload appliance first!") )
+                return self.write( self.trans(_("No appliance found, please upload appliance first!")) )
             form.appliance.query = apps.all()
         else:
             form = CreateInstanceBaseForm(self)
@@ -630,14 +630,14 @@ class CreateInstance(InstRequestHandler):
                 name = form.name.data).filter_by(
                 user_id = self.current_user.id).first()
             if exist_inst:
-                form.name.errors.append( _('You have used the name for a instance !') )
+                form.name.errors.append( self.trans(_('You have used the name for a instance !')) )
 
             # TODO: resource limit
             profile = self.current_user.profile
             if (form.cpus.data + self.USED_CPUS) > profile.cpus:
-                form.cpus.errors.append( _('cpus can not greater than %s') % (profile.cpus - self.USED_CPUS) )
+                form.cpus.errors.append( self.trans(_('cpus can not greater than %s')) % (profile.cpus - self.USED_CPUS) )
             if (form.memory.data + self.USED_MEMORY) > profile.memory:
-                form.memory.errors.append( _('memory can not greater than %s') % (profile.memory - self.USED_MEMORY) )
+                form.memory.errors.append( self.trans(_('memory can not greater than %s')) % (profile.memory - self.USED_MEMORY) )
 
             if ( form.name.errors or form.cpus.errors
                  or form.memory.errors ):
@@ -753,11 +753,11 @@ class SetPrivate(InstRequestHandler):
 
         inst = self.db2.query(Instance).get(id)
         if not inst:
-            return self.write( _('No such instance!') )
+            return self.write( self.trans(_('No such instance!')) )
 
         if not ( inst.user_id == self.current_user.id or
                  self.has_permission('admin') ):
-            return self.write( _('No permission!') )
+            return self.write( self.trans(_('No permission!')) )
 
         flag = self.get_argument('flag', None)
         inst.isprivate = True if flag == 'true' else False
@@ -776,7 +776,7 @@ class Status(InstRequestHandler):
 
         inst = self.db2.query(Instance).get(ID)
         if not inst:
-            self.write( _('No such instance!') )
+            self.write( self.trans(_('No such instance!')) )
             return self.finish()
 
         status = { 'job': self.get_argument_int('job_status', 0),
@@ -1117,7 +1117,7 @@ class islockedToggle(LyRequestHandler):
             # no news is good news
 
         else:
-            self.write( _('Can not find instance %s.') % ID )
+            self.write( self.trans(_('Can not find instance %s.')) % ID )
 
 
 class isprivateToggle(LyRequestHandler):
@@ -1135,14 +1135,14 @@ class isprivateToggle(LyRequestHandler):
         if I:
             if not ( self.current_user.id == I.user_id or
                      has_permission('admin') ):
-                return self.write( _('No permissions !') )
+                return self.write( self.trans(_('No permissions !')) )
 
             I.isprivate = not I.isprivate
             self.db2.commit()
             # no news is good news
 
         else:
-            self.write( _('Can not find instance %s.') % ID )
+            self.write( self.trans(_('Can not find instance %s.')) % ID )
 
 
 class ToggleFlag(LyRequestHandler):
@@ -1160,16 +1160,16 @@ class ToggleFlag(LyRequestHandler):
         if I:
             if not ( self.current_user.id == I.user_id or
                      has_permission('admin') ):
-                return self.write( _('No permissions !') )
+                return self.write( self.trans(_('No permissions !')) )
 
             msg = None
             target = self.get_argument('target', None)
             if not target:
-                msg = _('No target found !')
+                msg = self.trans(_('No target found !'))
             elif target == 'use_global_passwd':
                 msg = self.toggle_use_global_passwd(I)
             else:
-                msg = _('Not support target: %s') % target
+                msg = self.trans(_('Not support target: %s')) % target
 
             if msg: return self.write( msg )
 
@@ -1177,7 +1177,7 @@ class ToggleFlag(LyRequestHandler):
             # no news is good news
 
         else:
-            self.write( _('Can not find instance %s.') % ID )
+            self.write( self.trans(_('Can not find instance %s.')) % ID )
 
 
     def toggle_use_global_passwd(self, I):

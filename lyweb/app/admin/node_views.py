@@ -27,7 +27,7 @@ class NodeManagement(LyRequestHandler):
         if node_id:
             self.node = self.db2.query(Node).get( node_id )
             if not self.node:
-                self.write( _('No such node') % node_id )
+                self.write( self.trans(_('No such node')) % node_id )
                 return self.finish()
             else:
                 self.action = 'view'
@@ -45,16 +45,16 @@ class NodeManagement(LyRequestHandler):
             self.get_instances()
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def post(self):
 
         if not self.action:
-            self.write( _('No action found !') )
+            self.write( self.trans(_('No action found !')) )
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def get_index(self):
@@ -68,7 +68,7 @@ class NodeManagement(LyRequestHandler):
             N.instances_running_sum = il.filter(
                 Instance.status.in_( run_status ) ).count()
 
-        self.render( 'admin/node/index.html', title = _('Node Management'),
+        self.render( 'admin/node/index.html', title = self.trans(_('Node Management')),
                      nodes = nodes )
 
 

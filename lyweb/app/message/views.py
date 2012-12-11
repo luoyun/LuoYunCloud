@@ -26,7 +26,7 @@ class MessageRequestHandler(LyRequestHandler):
         M = self.db2.query(Message).get( ID )
 
         if not M:
-            self.write( _('Can not find message %s') % ID )
+            self.write( self.trans(_('Can not find message %s')) % ID )
             return None
 
         UID = self.current_user.id
@@ -34,7 +34,7 @@ class MessageRequestHandler(LyRequestHandler):
             return M
 
 
-        self.write( _("You have no permissions to read this message!") )
+        self.write( self.trans(_("You have no permissions to read this message!")) )
         return None
 
 
@@ -91,7 +91,7 @@ class Index(MessageRequestHandler):
 
     @authenticated
     def get(self):
-        self.render( 'message/index.html', title = _('Message Home') )
+        self.render( 'message/index.html', title = self.trans(_('Message Home')) )
 
 
 class Inbox(MessageRequestHandler):
@@ -102,7 +102,7 @@ class Inbox(MessageRequestHandler):
         unread = self.db2.query(Message.id).filter_by(
             receiver_id=self.current_user.id, isread=False).count()
 
-        d = { 'title': _('My inbox'), 'unread': unread }
+        d = { 'title': self.trans(_('My inbox')), 'unread': unread }
         d.update( self.my_box_list() )
 
         self.render( 'message/inbox.html', **d )
@@ -114,7 +114,7 @@ class Outbox(MessageRequestHandler):
     @authenticated
     def get(self):
 
-        d = { 'title': _('My outbox') }
+        d = { 'title': self.trans(_('My outbox')) }
         d.update( self.my_box_list(show="outbox") )
 
         self.render( 'message/outbox.html', **d )
@@ -126,7 +126,7 @@ class View(MessageRequestHandler):
     def get(self, ID):
 
         M = self.my_message( ID )
-        d = { 'title': _('View message %s') % ID, 'M': M,
+        d = { 'title': self.trans(_('View message %s')) % ID, 'M': M,
               'ININBOX': None }
         if M:
             if M.receiver_id == self.current_user.id:
@@ -180,7 +180,7 @@ class Delete(MessageRequestHandler):
                 self.redirect(self.reverse_url("message:inbox"))
 
         else:
-            self.write( _('This is not your message !') )
+            self.write( self.trans(_('This is not your message !')) )
 
 
 
@@ -206,11 +206,11 @@ class New(MessageRequestHandler):
             if M:
                 form.to.data = M.sender.username
                 subject = reply_regex.sub('', M.text.subject)
-                form.subject.data = _('Re: %s') % subject
+                form.subject.data = self.trans(_('Re: %s')) % subject
                 form.text.data = '<pre>%s</pre>' % M.text.body
 
 
-        d = { 'title': _('Send message'),
+        d = { 'title': self.trans(_('Send message')),
               'form': form, 'RECEIVER': receiver }
         self.render( 'message/send_message.html', **d)
 
@@ -248,10 +248,10 @@ class New(MessageRequestHandler):
                 return self.redirect(url)
 
             else:
-                form.to.errors.append( _('Can not find user %s') % form.to.data )
+                form.to.errors.append( self.trans(_('Can not find user %s')) % form.to.data )
             # end if
 
-        d = { 'title': _('Send message'),
+        d = { 'title': self.trans(_('Send message')),
               'form': form, 'RECEIVER': receiver }
 
         self.render( 'message/send_message.html', **d )
@@ -265,11 +265,11 @@ class Reply(MessageRequestHandler):
 
         M = self.my_message( ID )
         if M:
-            d = { 'title': _('Reply message %s') % ID, 'M': M }
+            d = { 'title': self.trans(_('Reply message %s')) % ID, 'M': M }
             self.render( 'message/reply_message.html', **d)
 
         else:
-            self.render( _('Can not find message %s') % ID )
+            self.render( self.trans(_('Can not find message %s')) % ID )
 
 
     @authenticated
@@ -277,14 +277,14 @@ class Reply(MessageRequestHandler):
 
         M = self.my_message( ID )
         if not M:
-            return self.write( _('Can not find message %s') % ID )
+            return self.write( self.trans(_('Can not find message %s')) % ID )
 
         body = self.get_argument('text', '')
         if not body:
-            return self.write( _('No content write !') )
+            return self.write( self.trans(_('No content write !')) )
 
         subject = reply_regex.sub('', M.text.subject)
-        subject = _('Re: %s') % subject
+        subject = self.trans(_('Re: %s')) % subject
         T = MessageText( subject = subject, body = body )
         self.db2.add(T)
         self.db2.commit()
@@ -319,7 +319,7 @@ class SendNotice(MessageRequestHandler):
 
         form = MessageForm(self)
 
-        d = { 'title': _('Send a notice to all user'),
+        d = { 'title': self.trans(_('Send a notice to all user')),
               'form': form }
         self.render( 'message/send_notice.html', **d)
 
@@ -329,7 +329,7 @@ class SendNotice(MessageRequestHandler):
 
         form = MessageForm(self)
 
-        d = { 'title': _('Send a notice to all user'),
+        d = { 'title': self.trans(_('Send a notice to all user')),
               'form': form }
 
         if form.validate():
@@ -374,11 +374,11 @@ class NoticeHome(MessageRequestHandler):
         MSG_ID = self.get_argument_int('message', 0)
         if MSG_ID:
             M = self.db2.query(Message).get( MSG_ID )
-            d = { 'title': _('View notice %s') % MSG_ID, 'M': M }
+            d = { 'title': self.trans(_('View notice %s')) % MSG_ID, 'M': M }
             self.render( 'message/notice_view.html', **d)
 
         else:
-            d = { 'title': _('Send a notice to all user') }
+            d = { 'title': self.trans(_('Send a notice to all user')) }
             d.update( self.my_box_list(show="notice") )
             self.render( 'message/notice.html', **d)
 
@@ -391,7 +391,7 @@ class NoticeDelete(MessageRequestHandler):
 
         M = self.db2.query(Message).get( ID )
         if M.receiver_id:
-            self.write( _('This is not a notice !') )
+            self.write( self.trans(_('This is not a notice !')) )
         else:
             if not self.db2.query(Message.id).filter_by(
                 text_id = M.text_id).count():

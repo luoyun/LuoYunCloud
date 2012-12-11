@@ -87,7 +87,7 @@ class Login(AccountRequestHandler):
             user = self.db2.query(User).filter_by(username=form.username.data).first()
             if user:
                 if user.islocked:
-                    form.password.errors.append( _('You have been lock by admin, can not login now. If you have any questions, contact admin first please !') )
+                    form.password.errors.append( self.trans(_('You have been lock by admin, can not login now. If you have any questions, contact admin first please !')) )
                     return self.render('account/login.html', form=form)
 
                 if check_password(form.password.data, user.password):
@@ -100,9 +100,9 @@ class Login(AccountRequestHandler):
 
                     return self.redirect( self.get_argument('next', '/') )
                 else:
-                    form.password.errors.append( _('password is wrong !') )
+                    form.password.errors.append( self.trans(_('password is wrong !')) )
             else:
-                form.username.errors.append( _('No such user !') )
+                form.username.errors.append( self.trans(_('No such user !')) )
 
         self.render('account/login.html', form=form)
 
@@ -142,9 +142,9 @@ class Register(AccountRequestHandler):
 
         if self.enable_apply:
             if not self.key:
-                return self.write( _('No key found !') )
+                return self.write( self.trans(_('No key found !')) )
             if not self.applyuser:
-                return self.write( _('No apply record found !') )
+                return self.write( self.trans(_('No apply record found !')) )
 
         form = RegistrationForm(self)
         if self.applyuser:
@@ -162,7 +162,7 @@ class Register(AccountRequestHandler):
             user = self.db2.query(User).filter_by( username=form.username.data ).all()
 
             if user:
-                form.username.errors.append( _('This username is occupied') )
+                form.username.errors.append( self.trans(_('This username is occupied')) )
             else:
                 enc_password = enc_login_passwd(form.password.data)
                 newuser = User( username = form.username.data,
@@ -210,7 +210,7 @@ class Register(AccountRequestHandler):
                 wc = json.loads(welcome.value).get('text')
 
                 T = MessageText(
-                    subject = _('Welcome to use LuoYun Cloud !'),
+                    subject = self.trans(_('Welcome to use LuoYun Cloud !')),
                     body = wc )
                 self.db2.add(T)
                 self.db2.commit()
@@ -258,7 +258,7 @@ class Index(LyRequestHandler):
     def get(self):
 
         my = self.db2.query(User).get(self.current_user.id)
-        d = { 'title': _('My Account Center'),
+        d = { 'title': self.trans(_('My Account Center')),
               'my': my }
 
         self.render( 'account/index.html', **d)
@@ -270,7 +270,7 @@ class MyPermission(LyRequestHandler):
     def get(self):
 
         my = self.db2.query(User).get(self.current_user.id)
-        d = { 'title': _('My Permissions'),
+        d = { 'title': self.trans(_('My Permissions')),
               'my': my }
 
         self.render( 'account/permissions.html', **d)
@@ -305,7 +305,7 @@ class ViewUser(LyRequestHandler):
         total = instances.count()
         instances = instances.slice(0, 20).all() # TODO: show only
 
-        d = { 'title': _('View User %s') % user.username,
+        d = { 'title': self.trans(_('View User %s')) % user.username,
               'USER': user, 'INSTANCE_LIST': instances,
               'TOTAL_INSTANCE': total }
 
@@ -330,7 +330,7 @@ class ViewGroup(LyRequestHandler):
 
         users = users.slice(0, 20).all() # TODO: show only
 
-        d = { 'title': _('View Group %s') % group.name,
+        d = { 'title': self.trans(_('View Group %s')) % group.name,
               'GROUP': group, 'USER_LIST': users,
               'TOTAL_USER': total }
 
@@ -346,7 +346,7 @@ class ResetPassword(LyRequestHandler):
 
         form = ResetPasswordForm(self)
 
-        self.render( 'account/reset_password.html', title = _('Reset Password'),
+        self.render( 'account/reset_password.html', title = self.trans(_('Reset Password')),
                      form = form )
 
 
@@ -367,7 +367,7 @@ class ResetPassword(LyRequestHandler):
             url = self.application.reverse_url('account:index')
             return self.redirect( url )
 
-        self.render( 'account/reset_password.html', title = _('Reset Password'),
+        self.render( 'account/reset_password.html', title = self.trans(_('Reset Password')),
                      form = form )
 
 
@@ -376,7 +376,7 @@ class AvatarEdit(LyRequestHandler):
     @authenticated
     def get(self):
         form = AvatarEditForm(self)
-        d = { 'title': _('Change my avatar'),
+        d = { 'title': self.trans(_('Change my avatar')),
               'form': form }
 
         self.render( 'account/avatar_edit.html', **d )
@@ -395,7 +395,7 @@ class AvatarEdit(LyRequestHandler):
                 url = self.reverse_url('account:index')
                 return self.redirect( url )
 
-        d = { 'title': _('Change my avatar'),
+        d = { 'title': self.trans(_('Change my avatar')),
               'form': form }
 
         self.render( 'account/avatar_edit.html', **d )
@@ -408,7 +408,7 @@ class AvatarEdit(LyRequestHandler):
             try:
                 os.makedirs(homedir)
             except Exception, e:
-                return _('Create user home dir "%s" failed: %s') % (homedir, e)
+                return self.trans(_('Create user home dir "%s" failed: %s')) % (homedir, e)
 
         max_size = settings.USER_AVATAR_MAXSIZE
         avatar_name = settings.USER_AVATAR_NAME
@@ -416,7 +416,7 @@ class AvatarEdit(LyRequestHandler):
         for f in self.request.files['avatar']:
 
             if len(f['body']) > max_size:
-                return _('Avatar file must smaller than %s !') % human_size(max_size)
+                return self.trans(_('Avatar file must smaller than %s !')) % human_size(max_size)
 
             tf = tempfile.NamedTemporaryFile()
             tf.write(f['body'])
@@ -426,7 +426,7 @@ class AvatarEdit(LyRequestHandler):
                 img = Image.open( tf.name )
 
             except Exception, e:
-                return _('Open %s failed: %s , is it a picture ?') % (f.get('filename'), e)
+                return self.trans(_('Open %s failed: %s , is it a picture ?')) % (f.get('filename'), e)
 
             try:
                 img.save(self.current_user.avatar_orig_path)
@@ -437,7 +437,7 @@ class AvatarEdit(LyRequestHandler):
                 tf.close()
 
             except Exception, e:
-                return _('Save %s failed: %s') % (f.get('filename'), e)
+                return self.trans(_('Save %s failed: %s')) % (f.get('filename'), e)
 
 
 
@@ -456,7 +456,7 @@ If you can not click the link above, copy and paste it on your brower address.
 
     def get(self):
 
-        d = { 'title': _('Forget My Password') ,
+        d = { 'title': self.trans(_('Forget My Password')) ,
               'form': ResetPasswordApplyForm(self) }
 
         self.render( 'account/reset_password_apply.html', **d )
@@ -494,17 +494,17 @@ If you can not click the link above, copy and paste it on your brower address.
                 url = self.reverse_url('reset_password_complete')
                 url = SITE_HOME + url + '?key=%s' % RQ.key
 
-                ret = send_email(form.email.data, _('[ LuoYun Cloud ] Reset Password'), self.EMAIL_TEMPLATE % { 'URL': url } )
+                ret = send_email(form.email.data, self.trans(_('[ LuoYun Cloud ] Reset Password')), self.EMAIL_TEMPLATE % { 'URL': url } )
 
                 if ret:
                     return self.render( 'account/reset_password_apply_successed.html', APPLY = RQ )
                 else:
-                    return self.write( _('Send Email Failed !') )
+                    return self.write( self.trans(_('Send Email Failed !')) )
 
             else:
-                form.email.errors.append( _("No such email address: %s") % form.email.data )
+                form.email.errors.append( self.trans(_("No such email address: %s")) % form.email.data )
 
-        d = { 'title': _('Reset Password'), 'form': form }
+        d = { 'title': self.trans(_('Reset Password')), 'form': form }
 
         self.render( 'account/reset_password_apply.html', **d )
 
@@ -526,24 +526,24 @@ class ResetPasswordComplete(AccountRequestHandler):
             UserResetpass.key == key ).all()
 
         print 'applys = ', applys
-        d = { 'title': _('Forget My Password') , 'ERROR': None,
+        d = { 'title': self.trans(_('Forget My Password')) , 'ERROR': None,
               'USER': None }
 
         if applys:
 
             for A in applys:
                 # TODO
-                #d['ERROR'] = _('The validity period for a certificate has passed')
+                #d['ERROR'] = self.trans(_('The validity period for a certificate has passed'))
                 if not A.completed:
                     d['USER'] = A.user
                     break
 
             if not d['USER']:
 
-                d['ERROR'] = _('You have completed reset password.')
+                d['ERROR'] = self.trans(_('You have completed reset password.'))
 
         else:
-            d['ERROR'] = _('No such key: %s !') % key
+            d['ERROR'] = self.trans(_('No such key: %s !')) % key
 
         if d['ERROR']:
             self.render( 'account/reset_password_complete.html', **d )
@@ -592,7 +592,7 @@ class Delete(LyRequestHandler):
     @has_permission('admin')
     def get(self, id):
 
-        d = { 'title': _('Delete Account'), 'ERROR': [], 'USER': None }
+        d = { 'title': self.trans(_('Delete Account')), 'ERROR': [], 'USER': None }
 
         user = self.db2.query(User).get(id)
 
@@ -640,7 +640,7 @@ class islockedToggle(LyRequestHandler):
         ID = int(ID)
 
         if self.current_user.id == ID:
-            return self.write( _('You can not lock yourself !') )
+            return self.write( self.trans(_('You can not lock yourself !')) )
 
         U = self.db2.query(User).get(ID)
 
@@ -650,5 +650,5 @@ class islockedToggle(LyRequestHandler):
             # no news is good news
 
         else:
-            self.write( _('Can not found the user.') )
+            self.write( self.trans(_('Can not found the user.')) )
 

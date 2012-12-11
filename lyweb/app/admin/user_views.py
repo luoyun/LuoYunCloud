@@ -44,7 +44,7 @@ class UserManagement(LyRequestHandler):
         if user_id:
             self.user = self.db2.query(User).get( user_id  )
             if not self.user:
-                self.write( _('No such user : %s') % user_id )
+                self.write( self.trans(_('No such user : %s')) % user_id )
                 return self.finish()
 
 
@@ -78,13 +78,13 @@ class UserManagement(LyRequestHandler):
             return self.render( 'admin/user/edit_description.html', USER = self.user )
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def post(self):
 
         if not self.action:
-            self.write( _('No action found !') )
+            self.write( self.trans(_('No action found !')) )
 
         elif self.action == 'reset_password':
             self.post_reset_password()
@@ -102,7 +102,7 @@ class UserManagement(LyRequestHandler):
             self.post_edit_description()
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def get_index(self):
@@ -168,7 +168,7 @@ class UserManagement(LyRequestHandler):
             return self.urlupdate(
                 { 'by': by, 'order': 1 if order == 0 else 0 })
             
-        d = { 'title': _('Admin User Management'),
+        d = { 'title': self.trans(_('Admin User Management')),
               'sort_by': sort_by,
               'urlupdate': self.urlupdate,
               'USER_LIST': UL, 'PAGE_HTML': page_html,
@@ -191,7 +191,7 @@ class UserManagement(LyRequestHandler):
             Job.user_id == self.user.id).order_by(
             desc(Job.id) ).limit(10).all()
 
-        d = { 'title': _('View User'), 'TAB': TAB,
+        d = { 'title': self.trans(_('View User')), 'TAB': TAB,
               'U': self.user, 'JOB_LIST': jobs }
 
         self.render( 'admin/user/view.html', **d)
@@ -199,7 +199,7 @@ class UserManagement(LyRequestHandler):
 
     def get_reset_password(self):
 
-        d = { 'title': _('Reset Password For "%s"') % self.user.username,
+        d = { 'title': self.trans(_('Reset Password For "%s"')) % self.user.username,
               'U': self.user, 'form': ResetPasswordForm(self) }
         self.render( 'admin/user/reset_password.html', **d)
 
@@ -221,14 +221,14 @@ class UserManagement(LyRequestHandler):
             url += '?id=%s&action=view' % self.user.id
             return self.redirect( url )
 
-        self.render( 'admin/user/reset_password.html', title = _('Reset Password'),
+        self.render( 'admin/user/reset_password.html', title = self.trans(_('Reset Password')),
                      form = form, U = self.user )
 
 
     # Add a new user manually
     def get_add(self):
 
-        self.render( 'admin/user/add.html', title = _('Creat New User'),
+        self.render( 'admin/user/add.html', title = self.trans(_('Creat New User')),
                      form = CreateUserForm(self) )
     
 
@@ -240,7 +240,7 @@ class UserManagement(LyRequestHandler):
 
             user = self.db2.query(User).filter_by( username=form.username.data ).all()
             if user:
-                form.username.errors.append( _('This username is occupied') )
+                form.username.errors.append( self.trans(_('This username is occupied')) )
             else:
                 salt = md5(str(random.random())).hexdigest()[:12]
                 hsh = encrypt_password(salt, form.password.data)
@@ -279,7 +279,7 @@ class UserManagement(LyRequestHandler):
         form.storage.data = self.user.profile.storage
 
         self.render( 'admin/user/edit_resources.html',
-                     title = _('Edit User %s') % self.user.username,
+                     title = self.trans(_('Edit User %s')) % self.user.username,
                      form = form, USER = self.user )
     
 
@@ -306,7 +306,7 @@ class UserManagement(LyRequestHandler):
     def get_set_lock_flag(self):
 
         if self.current_user.id == self.user.id:
-            return self.write( _('You can not lock yourself !') )
+            return self.write( self.trans(_('You can not lock yourself !')) )
 
         flag = self.get_argument('islocked', None)
         self.user.islocked = True if flag == 'true' else False

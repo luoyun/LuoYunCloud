@@ -49,6 +49,7 @@ Then, in the `RequestHandler`::
         self.render('template.html', form=form)
 """
 from wtforms import Form
+import tornado
 
 
 class Form(Form):
@@ -108,12 +109,9 @@ class TornadoLocaleWrapper(object):
 
     def __init__(self, locale):
         self.locale = locale
-        print 'self.locale.code = ', self.locale.code
 
     def gettext(self, message):
-        print 'gettext = ', self.locale.translate(message)
         return self.locale.translate(message)
 
     def ngettext(self, message, plural_message, count):
-        print 'ngettext = ', self.locale.translate(message, plural_message, count)
         return self.locale.translate(message, plural_message, count)

@@ -291,6 +291,9 @@ class LyRequestHandler(RequestHandler):
     def xsrf_cookie(self):
         return escape.xhtml_escape(self.xsrf_token)
 
+    def trans(self, s):
+        return self.locale.translate(s)
+
 
 def show_error( E ):
 

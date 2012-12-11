@@ -26,7 +26,7 @@ class JobManagement(LyRequestHandler):
         if job_id:
             self.job = self.db2.query(Job).get( job_id )
             if not self.job:
-                self.write( _('No such node') % job_id )
+                self.write( self.trans(_('No such node')) % job_id )
                 return self.finish()
 
 
@@ -39,16 +39,16 @@ class JobManagement(LyRequestHandler):
             self.get_view()
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def post(self):
 
         if not self.action:
-            self.write( _('No action found !') )
+            self.write( self.trans(_('No action found !')) )
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def get_index(self):

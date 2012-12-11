@@ -40,7 +40,7 @@ class InstanceManagement(LyRequestHandler):
             if self.instance and self.action == 'index':
                 self.action = 'view'
             elif not self.instance:
-                self.write( _('No such instance : %s') % instance_id )
+                self.write( self.trans(_('No such instance : %s')) % instance_id )
                 return self.finish()
 
 
@@ -59,19 +59,19 @@ class InstanceManagement(LyRequestHandler):
             self.get_control_all(self.action)
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def post(self):
 
         if not self.action:
-            self.write( _('No action found !') )
+            self.write( self.trans(_('No action found !')) )
 
         elif self.action == 'change_owner':
             self.change_owner()
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
     def get_index(self):
 
@@ -147,7 +147,7 @@ class InstanceManagement(LyRequestHandler):
             return self.urlupdate(
                 {'by': by, 'order': 1 if order == 0 else 0, 'p': 1})
 
-        d = { 'title': _('Instance Management'),
+        d = { 'title': self.trans(_('Instance Management')),
               'urlupdate': self.urlupdate,
               'sort_by': sort_by,
               'INSTANCE_LIST': instances, 'TOTAL_INSTANCE': total,
@@ -180,7 +180,7 @@ class InstanceManagement(LyRequestHandler):
         storage = config.get('storage', [])
         webssh = config.get('webssh', None)
 
-        d = { 'title': _('View Instance "%s"') % I.name,
+        d = { 'title': self.trans(_('View Instance "%s"')) % I.name,
               'I': I, 'JOB_LIST': JOB_LIST, 'NETWORK_LIST': network,
               'STORAGE_LIST': storage,
               'webssh': webssh, 'TAB': tab }
@@ -199,7 +199,7 @@ class InstanceManagement(LyRequestHandler):
             INSTANCE_LIST = self.db2.query(Instance).filter_by( status = 2 )
 
         else:
-            return self.write( _('Unknown action "%s" !') % action )
+            return self.write( self.trans(_('Unknown action "%s" !')) % action )
 
         LYJOB_ACTION = self.settings['LYJOB_ACTION']
         action_id = LYJOB_ACTION.get(action, 0)
@@ -210,14 +210,14 @@ class InstanceManagement(LyRequestHandler):
             jid = self.new_job(JOB_TARGET['INSTANCE'], I.id, action_id)
             JID_LIST.append(jid)
 
-        self.write( _('%s all instance success: %s') % ( action, JID_LIST ) )
+        self.write( self.trans(_('%s all instance success: %s')) % ( action, JID_LIST ) )
 
 
     def change_owner(self):
 
         I = self.instance
 
-        d = { 'title': _('Change owner of instance'), 'I': I }
+        d = { 'title': self.trans(_('Change owner of instance')), 'I': I }
         
         E = []
         U = None
@@ -230,9 +230,9 @@ class InstanceManagement(LyRequestHandler):
                 if not U:
                     U = self.db2.query(User).filter_by(username=user).first()
                 if not U:
-                    E.append( _('Can not find user: %s') % user )
+                    E.append( self.trans(_('Can not find user: %s')) % user )
             else:
-                E.append( _('No user input !') )
+                E.append( self.trans(_('No user input !')) )
 
             reason = self.get_argument('reason', '')
 
@@ -241,7 +241,7 @@ class InstanceManagement(LyRequestHandler):
             else:
                 T = self.lytrace(
                     ttype = LY_TARGET['INSTANCE'], tid = I.id,
-                    do = _('change instance owner %s to %s') % (
+                    do = self.trans(_('change instance owner %s to %s')) % (
                         I.user.username, U.username) )
 
                 I.user = U

@@ -37,7 +37,7 @@ class AppRequestHandler(LyRequestHandler):
         app = self.db2.query(Appliance).get(id)
 
         if not app:
-            self.done( _('No such appliance: %s !') % id )
+            self.done( self.trans(_('No such appliance: %s !')) % id )
             return None
 
         if app.isprivate:
@@ -45,13 +45,13 @@ class AppRequestHandler(LyRequestHandler):
                     (self.current_user.id != app.user_id) and
                     (not self.has_permission('admin')) )
                  ):
-                self.done( _('Appliance %s is private !') % id )
+                self.done( self.trans(_('Appliance %s is private !')) % id )
                 return None
 
         # Just user can do
         if isowner:
             if app.user_id != self.current_user.id:
-                self.done( _('Only owner can do this!') )
+                self.done( self.trans(_('Only owner can do this!')) )
                 return None
 
         return app
@@ -61,8 +61,8 @@ class AppRequestHandler(LyRequestHandler):
 
 class Index(AppRequestHandler):
 
-    def initialize(self, title = _('Appliance Home')):
-        self.title = title
+    def initialize(self, title = None):
+        self.title = self.trans(_('Appliance Home'))
 
     def get(self):
 
@@ -106,7 +106,7 @@ class Upload(AppRequestHandler):
     @has_permission('appliance.upload')
     def get(self):
 
-        d = { 'title': _("Upload Appliance") }
+        d = { 'title': self.trans(_("Upload Appliance")) }
         self.render("appliance/upload_appliance.html", **d)
 
 
@@ -134,7 +134,7 @@ class Upload(AppRequestHandler):
             d['error'] = msg
             self.set_status(400)
             return self.done(
-                _('Save %s failed: %s') % (fname, msg) )
+                self.trans(_('Save %s failed: %s')) % (fname, msg) )
 
         newapp = Appliance( name=fname.replace('.', ' '),
                             user=self.current_user,
@@ -210,7 +210,7 @@ class Edit(LyRequestHandler):
 
         appliance = self.get_app(ID)
         if not appliance:
-            return self.write( _('No permission!') )
+            return self.write( self.trans(_('No permission!')) )
 
         form = EditApplianceForm(self)
         form.catalog.choices = self.choices
@@ -224,14 +224,14 @@ class Edit(LyRequestHandler):
         form.summary.data = appliance.summary
         form.description.data = appliance.description
 
-        return self.render( 'appliance/edit.html', title = _('Edit Appliance '), form = form, appliance = appliance )
+        return self.render( 'appliance/edit.html', title = self.trans(_('Edit Appliance ')), form = form, appliance = appliance )
 
 
     def post(self, ID):
 
         appliance = self.get_app(ID)
         if not appliance:
-            return self.write( _('No permission!') )
+            return self.write( self.trans(_('No permission!')) )
 
         form = EditApplianceForm(self)
         form.catalog.choices = self.choices
@@ -256,9 +256,9 @@ class Edit(LyRequestHandler):
                     return self.redirect( url )
 
             except Exception, emsg:
-                form.description.errors.append( _('Save appliance info to DB failed: %s' % emsg ) )
+                form.description.errors.append( self.trans(_('Save appliance info to DB failed: %s' % emsg )) )
 
-        d = { 'title': _('Edit Appliance "%s"') % appliance.name,
+        d = { 'title': self.trans(_('Edit Appliance "%s"')) % appliance.name,
               'form': form, 'appliance': appliance }
         self.render( 'appliance/edit.html', **d )
 
@@ -269,7 +269,7 @@ class Edit(LyRequestHandler):
             try:
                 os.makedirs(appliance.logodir)
             except Exception, e:
-                return _('create appliance logo dir "%s" failed: %s') % (appliance.logodir, e)
+                return self.trans(_('create appliance logo dir "%s" failed: %s')) % (appliance.logodir, e)
 
         max_size = settings.APPLIANCE_LOGO_MAXSIZE
         logoname = settings.APPLIANCE_LOGO_NAME
@@ -277,7 +277,7 @@ class Edit(LyRequestHandler):
         for f in self.request.files['logo']:
 
             if len(f['body']) > max_size:
-                return _('Picture must smaller than %s !') % human_size(max_size)
+                return self.trans(_('Picture must smaller than %s !')) % human_size(max_size)
 
             tf = tempfile.NamedTemporaryFile()
             tf.write(f['body'])
@@ -286,7 +286,7 @@ class Edit(LyRequestHandler):
             try:
                 img = Image.open(tf.name)
             except Exception, emsg:
-                return _('Open %s failed: %s , is it a picture ?') % (f.get('filename'), emsg)
+                return self.trans(_('Open %s failed: %s , is it a picture ?')) % (f.get('filename'), emsg)
 
             try:
                 # can convert image type
@@ -298,7 +298,7 @@ class Edit(LyRequestHandler):
                 tf.close()
 
             except Exception, emsg:
-                return _('Save %s failed: %s') % (f.get('filename'), emsg)
+                return self.trans(_('Save %s failed: %s')) % (f.get('filename'), emsg)
 
 
 
@@ -311,18 +311,18 @@ class Delete(AppRequestHandler):
         d = {'A': A, 'E': []}
 
         if not A:
-            d['E'].append( _('Can not find appliance %s.') % ID )
+            d['E'].append( self.trans(_('Can not find appliance %s.')) % ID )
             return self.end(d)
 
         # auth delete
         if  not (self.current_user.id == A.user_id or self.has_permission('admin')):
-            d['E'].append( _('No permission !') )
+            d['E'].append( self.trans(_('No permission !')) )
             return self.end(d)
 
         # TODO: have any instances exist ?
         IL = self.db2.query(Instance).filter_by(appliance_id=ID).all()
         if IL:
-            d['E'].append( _('Have instances exist') )
+            d['E'].append( self.trans(_('Have instances exist')) )
             return self.end(d)
 
         # Delete appliance file
@@ -333,7 +333,7 @@ class Delete(AppRequestHandler):
             try:
                 os.unlink(dpath)
             except Exception, emsg:
-                d['E'].append( _('Delete %s failed: %s') % ( dpath, emsg ) )
+                d['E'].append( self.trans(_('Delete %s failed: %s')) % ( dpath, emsg ) )
                 return self.end(d)
         else:
             logging.warning("%s did not exist !" % dpath)
@@ -364,7 +364,7 @@ class View(AppRequestHandler):
 
         instances, page_html = self.page_view_instances(app)
 
-        d = { 'title': _("View Appliance"), 'appliance': app,
+        d = { 'title': self.trans(_("View Appliance")), 'appliance': app,
               'instances': instances, 'page_html': page_html }
 
         self.render('appliance/view.html', **d)
@@ -431,11 +431,11 @@ class SetUseable(AppRequestHandler):
 
         app = self.db2.query(Appliance).get(id)
         if not app:
-            return self.write( _('No such appliance!') )
+            return self.write( self.trans(_('No such appliance!')) )
 
         if not ( app.user_id == self.current_user.id or
                  self.has_permission('admin') ):
-            return self.write( _('No permission!') )
+            return self.write( self.trans(_('No permission!')) )
 
         flag = self.get_argument('flag', None)
         app.isuseable = True if flag == 'true' else False
@@ -457,11 +457,11 @@ class SetPrivate(AppRequestHandler):
 
         app = self.db2.query(Appliance).get(id)
         if not app:
-            return self.write( _('No such appliance !') )
+            return self.write( self.trans(_('No such appliance !')) )
 
         if not ( app.user_id == self.current_user.id or
                  self.has_permission('admin') ):
-            return self.write( _('No permission!') )
+            return self.write( self.trans(_('No permission!')) )
 
         flag = self.get_argument('flag', None)
         app.isprivate = True if flag == 'true' else False
@@ -488,7 +488,7 @@ class islockedToggle(LyRequestHandler):
             # no news is good news
 
         else:
-            self.write( _('Can not find appliance %s.') % ID )
+            self.write( self.trans(_('Can not find appliance %s.')) % ID )
 
 
 class isuseableToggle(LyRequestHandler):
@@ -506,14 +506,14 @@ class isuseableToggle(LyRequestHandler):
         if A:
             if not ( self.current_user.id == A.user_id or
                      has_permission('admin') ):
-                return self.write( _('No permissions !') )
+                return self.write( self.trans(_('No permissions !')) )
 
             A.isuseable = not A.isuseable
             self.db2.commit()
             # no news is good news
 
         else:
-            self.write( _('Can not find appliance %s.') % ID )
+            self.write( self.trans(_('Can not find appliance %s.')) % ID )
 
 
 class tuneCatalogPosition(LyRequestHandler):
@@ -535,8 +535,8 @@ class tuneCatalogPosition(LyRequestHandler):
                 self.db2.commit()
                 # no news is good news
             else:
-                self.write( _('tune value must be a integer.') )
+                self.write( self.trans(_('tune value must be a integer.')) )
 
         else:
-            self.write( _('Can not find appliance catalog %s') % ID )
+            self.write( self.trans(_('Can not find appliance catalog %s')) % ID )
 
