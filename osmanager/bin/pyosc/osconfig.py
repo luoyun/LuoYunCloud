@@ -172,6 +172,14 @@ def main():
                 j["network"][1].get("ip"),
                 j["network"][1].get("netmask"),
                 j["network"][1].get("gateway"))
+  else:
+    f = os.popen("/sbin/ifup eth0 2>&1")
+    l = "".join([ l for l in f.readlines() ])
+    if l:
+      print l
+    if f.close():
+      print "%s Error: failed bringing up eth0" % PROGRAM_NAME
+
   if j.get("public_key"):
     sshkeyconfig(j["public_key"])
   else:

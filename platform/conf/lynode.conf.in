@@ -33,10 +33,10 @@ LYNODE_SYSCONF_PATH = @DEFAULT_LYNODE_SYSCONF_PATH@
 #           LYNODE_SYSCONF_PATH is ignored. The setting of LYCLC_HOST
 #           in this file is used instead.
 #
-# Default value is ALWAYS
+# Default value is DISABLE
 #
-LYCLC_AUTO_CONNECT = ALWAYS
-LYCLC_HOST =
+LYCLC_AUTO_CONNECT = DISABLE
+LYCLC_HOST = 192.168.122.1
 LYCLC_PORT = @DEFAULT_CLC_PORT@
 
 #
@@ -98,7 +98,7 @@ LYNODE_PID_PATH = @DEFAULT_LYNODE_PID_PATH@
 # supported, bridge and nat. all bridge networks start with "br" and the
 # nat network only supports the "default" network defined by libvirt
 #
-LYNODE_NET_PRIMARY = br0
+LYNODE_NET_PRIMARY = virbr0
 LYNODE_NET_SERCONDARY = 
 
 #
