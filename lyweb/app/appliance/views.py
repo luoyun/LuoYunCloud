@@ -212,7 +212,7 @@ class Edit(LyRequestHandler):
         if not appliance:
             return self.write( _('No permission!') )
 
-        form = EditApplianceForm()
+        form = EditApplianceForm(self)
         form.catalog.choices = self.choices
         form.catalog.default = appliance.catalog_id
 
@@ -233,7 +233,7 @@ class Edit(LyRequestHandler):
         if not appliance:
             return self.write( _('No permission!') )
 
-        form = EditApplianceForm( self.request.arguments )
+        form = EditApplianceForm(self)
         form.catalog.choices = self.choices
 
         if form.validate():

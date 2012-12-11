@@ -200,13 +200,13 @@ class UserManagement(LyRequestHandler):
     def get_reset_password(self):
 
         d = { 'title': _('Reset Password For "%s"') % self.user.username,
-              'U': self.user, 'form': ResetPasswordForm() }
+              'U': self.user, 'form': ResetPasswordForm(self) }
         self.render( 'admin/user/reset_password.html', **d)
 
 
     def post_reset_password(self):
 
-        form = ResetPasswordForm(self.request.arguments)
+        form = ResetPasswordForm(self)
 
         if form.validate():
 
@@ -229,12 +229,12 @@ class UserManagement(LyRequestHandler):
     def get_add(self):
 
         self.render( 'admin/user/add.html', title = _('Creat New User'),
-                     form = CreateUserForm() )
+                     form = CreateUserForm(self) )
     
 
     def post_add(self):
 
-        form = CreateUserForm(self.request.arguments)
+        form = CreateUserForm(self)
 
         if form.validate():
 
@@ -265,7 +265,7 @@ class UserManagement(LyRequestHandler):
 
     def get_edit_resources(self):
 
-        form = UserResourceForm()
+        form = UserResourceForm(self)
         # TODO: a temp hack
         if not self.user.profile:
             # Create profile
@@ -285,7 +285,7 @@ class UserManagement(LyRequestHandler):
 
     def post_edit_resources(self):
 
-        form = UserResourceForm(self.request.arguments)
+        form = UserResourceForm(self)
 
         if form.validate():
 
@@ -329,7 +329,7 @@ class UserManagement(LyRequestHandler):
             if G in self.user.groups:
                 default.append( G.name )
 
-        form = UserGroupEditForm()
+        form = UserGroupEditForm(self)
         form.groups.choices = choices
         form.groups.default = default
         form.process()

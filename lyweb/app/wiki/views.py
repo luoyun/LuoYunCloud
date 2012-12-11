@@ -67,7 +67,7 @@ class NewTopic(LyRequestHandler):
 
         # TODO: permission check for this catalog
 
-        form = NewTopicForm()
+        form = NewTopicForm(self)
         form.catalog.data = catalog_id
 
         self.render( 'wiki/new_topic.html', title = _('New Topic'), form = form )
@@ -76,7 +76,7 @@ class NewTopic(LyRequestHandler):
     @has_permission('admin')
     def post(self):
 
-        form = NewTopicForm( self.request.arguments )
+        form = NewTopicForm(self)
         if form.validate():
             topic = Topic( name = form.name.data,
                            body = form.body.data,
@@ -112,7 +112,7 @@ class EditTopic(LyRequestHandler):
 
     def get(self, id):
 
-        form = TopicForm()
+        form = TopicForm(self)
         form.name.data = self.topic.name
         form.catalog.data = self.topic.catalog
         form.body.data = self.topic.body
@@ -123,7 +123,7 @@ class EditTopic(LyRequestHandler):
 
     def post(self, id):
 
-        form = TopicForm( self.request.arguments )
+        form = TopicForm(self)
         if form.validate():
             self.topic.name = form.name.data
             self.topic.body = form.body.data

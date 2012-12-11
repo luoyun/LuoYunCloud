@@ -76,13 +76,13 @@ class Login(AccountRequestHandler):
 
 
     def get(self):
-        form = LoginForm()
+        form = LoginForm(self)
         self.render("account/login.html", form=form,
                     next_url = self.get_argument('next', '/'))
 
     def post(self):
 
-        form = LoginForm(self.request.arguments)
+        form = LoginForm(self)
         if form.validate():
             user = self.db2.query(User).filter_by(username=form.username.data).first()
             if user:
@@ -146,7 +146,7 @@ class Register(AccountRequestHandler):
             if not self.applyuser:
                 return self.write( _('No apply record found !') )
 
-        form = RegistrationForm()
+        form = RegistrationForm(self)
         if self.applyuser:
             form.email.data = self.applyuser.email
 
@@ -155,7 +155,7 @@ class Register(AccountRequestHandler):
 
     def post(self):
 
-        form = RegistrationForm(self.request.arguments)
+        form = RegistrationForm(self)
 
         if form.validate():
 
@@ -344,7 +344,7 @@ class ResetPassword(LyRequestHandler):
     @authenticated
     def get(self):
 
-        form = ResetPasswordForm()
+        form = ResetPasswordForm(self)
 
         self.render( 'account/reset_password.html', title = _('Reset Password'),
                      form = form )
@@ -353,7 +353,7 @@ class ResetPassword(LyRequestHandler):
     @authenticated
     def post(self):
 
-        form = ResetPasswordForm(self.request.arguments)
+        form = ResetPasswordForm(self)
 
         if form.validate():
             user = self.current_user
@@ -375,7 +375,7 @@ class AvatarEdit(LyRequestHandler):
 
     @authenticated
     def get(self):
-        form = AvatarEditForm()
+        form = AvatarEditForm(self)
         d = { 'title': _('Change my avatar'),
               'form': form }
 
@@ -385,7 +385,7 @@ class AvatarEdit(LyRequestHandler):
     @authenticated
     def post(self):
         # Save logo file
-        form = AvatarEditForm()
+        form = AvatarEditForm(self)
 
         if self.request.files:
             r = self.save_avatar()
@@ -457,14 +457,14 @@ If you can not click the link above, copy and paste it on your brower address.
     def get(self):
 
         d = { 'title': _('Forget My Password') ,
-              'form': ResetPasswordApplyForm() }
+              'form': ResetPasswordApplyForm(self) }
 
         self.render( 'account/reset_password_apply.html', **d )
 
 
     def post(self):
 
-        form = ResetPasswordApplyForm(self.request.arguments)
+        form = ResetPasswordApplyForm(self)
 
         if form.validate():
 
@@ -554,11 +554,11 @@ class ResetPasswordComplete(AccountRequestHandler):
 
 
     def get(self):
-        self.d['form'] = ResetPasswordForm()
+        self.d['form'] = ResetPasswordForm(self)
         self.render( 'account/reset_password_complete.html', **self.d )
 
     def post(self):
-        self.d['form'] = ResetPasswordForm( self.request.arguments )
+        self.d['form'] = ResetPasswordForm(self)
         if self.d['form'].validate():
 
             plaintext = self.d['form'].password.data

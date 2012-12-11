@@ -214,7 +214,7 @@ class InstanceView(InstanceManagement):
 
         network = config.get('network', [])
 
-        secret_form = PublicKeyForm()
+        secret_form = PublicKeyForm(self)
         secret_form.key.data = config.get('public_key')
 
         password = config.get('passwd_hash')
@@ -342,7 +342,7 @@ class InstanceEdit(InstanceManagement):
 
     def get_general(self, I):
 
-        form = BaseinfoForm()
+        form = BaseinfoForm(self)
         form.name.data = I.name
         form.summary.data = I.summary
         form.description.data = I.description
@@ -354,7 +354,7 @@ class InstanceEdit(InstanceManagement):
 
     def post_general(self, I):
 
-        form = BaseinfoForm( self.request.arguments )
+        form = BaseinfoForm(self)
         if form.validate():
             I.name = form.name.data
             I.summary = form.summary.data
@@ -372,7 +372,7 @@ class InstanceEdit(InstanceManagement):
 
     def get_resource(self, I):
 
-        form = ResourceForm()
+        form = ResourceForm(self)
         form.cpus.data = I.cpus
         form.memory.data = I.memory
 
@@ -382,7 +382,7 @@ class InstanceEdit(InstanceManagement):
 
 
     def post_resource(self, I):
-        form = ResourceForm( self.request.arguments )
+        form = ResourceForm(self)
         if form.validate():
 
             # TODO: resource limit
@@ -439,12 +439,12 @@ class InstanceEdit(InstanceManagement):
         nic_config = I.get_network( index )
 
         if index == 1:
-            form = NetworkForm()
+            form = NetworkForm(self)
             if nic_config:
                 form.type.data = nic_config.get('type')
         else:
             if self.has_permission('network.add'):
-                form = StaticNetworkForm()
+                form = StaticNetworkForm(self)
                 if nic_config:
                     form.ip.data = nic_config.get('ip')
                     form.netmask.data = nic_config.get('netmask')
@@ -465,7 +465,7 @@ class InstanceEdit(InstanceManagement):
 
         index = self.get_argument_int('index', 1)
         if index == 1:
-            form = NetworkForm( self.request.arguments )
+            form = NetworkForm(self)
             if form.validate():
                 old_network = I.get_network()
                 if form.type.data == old_network.get('type'):
@@ -510,7 +510,7 @@ class InstanceEdit(InstanceManagement):
             if self.has_permission('network.add'):
                 index = index if index <= nic_total + 1 else nic_total+1
                 # Static network configure
-                form = StaticNetworkForm( self.request.arguments )
+                form = StaticNetworkForm(self)
                 if form.validate():
                     nic_type = 'static'
                     nic_ip = form.ip.data
@@ -555,7 +555,7 @@ class InstanceEdit(InstanceManagement):
 
     def get_storage(self, I):
 
-        form = StorageForm()
+        form = StorageForm(self)
         if I.config:
             config = json.loads(I.config)
             storage = config.get('storage', [])
@@ -584,7 +584,7 @@ class InstanceEdit(InstanceManagement):
 
     def post_storage(self, I):
 
-        form = StorageForm( self.request.arguments )
+        form = StorageForm(self)
         self.d['form'] = form
 
         if form.validate():
@@ -641,7 +641,7 @@ class InstanceEdit(InstanceManagement):
 
     def get_password(self, I):
 
-        form = PasswordForm()
+        form = PasswordForm(self)
 
         self.d['form'] = form
         self.render('myun/instance/edit_password.html', **self.d)
@@ -649,7 +649,7 @@ class InstanceEdit(InstanceManagement):
 
     def post_password(self, I):
 
-        form = PasswordForm( self.request.arguments )
+        form = PasswordForm(self)
         if form.validate():
             # get shadow passwd
             import crypt, random, time
@@ -681,7 +681,7 @@ class InstanceEdit(InstanceManagement):
 
     def get_public_key(self, I):
 
-        form = PublicKeyForm()
+        form = PublicKeyForm(self)
 
         if I.config:
             config = json.loads(I.config)
@@ -693,7 +693,7 @@ class InstanceEdit(InstanceManagement):
 
 
     def post_public_key(self, I):
-        form = PublicKeyForm( self.request.arguments )
+        form = PublicKeyForm(self)
         if form.validate():
             if I.config:
                 config = json.loads(I.config)

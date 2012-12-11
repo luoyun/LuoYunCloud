@@ -6,8 +6,8 @@ import sys, logging, json
 import settings
 
 # TODO: i18n is too ugly yet
-import gettext
-gettext.install( 'app', settings.I18N_PATH, unicode=False )
+import __builtin__
+__builtin__.__dict__['_'] = lambda s: s
 
 import tornado.ioloop
 import tornado.web

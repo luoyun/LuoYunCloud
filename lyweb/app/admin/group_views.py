@@ -79,11 +79,11 @@ class GroupManagement(LyRequestHandler):
     # Create a new group
     def get_add(self):
         self.render( 'admin/group/add.html', title = _('Create New Group'),
-                     form = GroupForm() )
+                     form = GroupForm(self) )
 
     def post_add(self):
 
-        form = GroupForm(self.request.arguments)
+        form = GroupForm(self)
 
         if form.validate():
 
@@ -117,7 +117,7 @@ class GroupManagement(LyRequestHandler):
             if P in self.group.permissions:
                 perm_default.append( P.codename )
 
-        form = GroupForm()
+        form = GroupForm(self)
         form.perms.choices = perm_choices
         form.perms.default = perm_default
         form.process()
@@ -136,7 +136,7 @@ class GroupManagement(LyRequestHandler):
         for P in self.db2.query(Permission).all():
             perm_choices.append( (P.codename, P.name) )
 
-        form = GroupForm( self.request.arguments )
+        form = GroupForm(self)
         form.perms.choices = perm_choices
 
         if form.validate():

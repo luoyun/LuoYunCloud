@@ -594,7 +594,7 @@ class CreateInstance(InstRequestHandler):
     def get(self):
  
         if not self.appliance:
-            form = CreateInstanceForm()
+            form = CreateInstanceForm(self)
             apps = self.db2.query(Appliance).filter_by(
                 isprivate = False).filter_by(
                 isuseable = True)
@@ -602,7 +602,7 @@ class CreateInstance(InstRequestHandler):
                 return self.write( _("No appliance found, please upload appliance first!") )
             form.appliance.query = apps.all()
         else:
-            form = CreateInstanceBaseForm()
+            form = CreateInstanceBaseForm(self)
             form.name.data = self.appliance.name
 
         self.d['APPLIANCE'] = self.appliance
@@ -613,10 +613,10 @@ class CreateInstance(InstRequestHandler):
     def post(self):
 
         if  self.appliance:
-            form = CreateInstanceBaseForm( self.request.arguments )
+            form = CreateInstanceBaseForm(self)
             app = self.appliance 
         else:
-            form = CreateInstanceForm( self.request.arguments )
+            form = CreateInstanceForm(self)
             form.appliance.query = self.db2.query(Appliance).filter_by(
                 isprivate = False).filter_by(isuseable = True).all()
             app = form.appliance.data

@@ -89,7 +89,7 @@ class WikiManagement(LyRequestHandler):
 
     def get_add_catalog(self):
 
-        form = CatalogForm()
+        form = CatalogForm(self)
 
         self.render( 'admin/wiki/add_catalog.html',
                      title = _('Add Wiki Catalog'),
@@ -98,7 +98,7 @@ class WikiManagement(LyRequestHandler):
 
     def post_add_catalog(self):
 
-        form = CatalogForm( self.request.arguments )
+        form = CatalogForm(self)
         if form.validate():
             c = WikiCatalog( name = form.name.data,
                              summary = form.summary.data,
@@ -119,7 +119,7 @@ class WikiManagement(LyRequestHandler):
         if not self.catalog:
             return self.write( _('No catalog found') )
         
-        form = CatalogForm()
+        form = CatalogForm(self)
         form.name.data = self.catalog.name
         form.summary.data = self.catalog.summary
         form.description.data = self.catalog.description
@@ -134,7 +134,7 @@ class WikiManagement(LyRequestHandler):
         if not self.catalog:
             return self.write( _('No catalog found') )
 
-        form = CatalogForm( self.request.arguments )
+        form = CatalogForm(self)
         if form.validate():
             self.catalog.name = form.name.data
             self.catalog.summary = form.summary.data

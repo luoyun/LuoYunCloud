@@ -192,7 +192,7 @@ class New(MessageRequestHandler):
         UID = self.get_argument('user', 0)
         ORIG_MSG_ID = self.get_argument('origmsg', 0)
 
-        form = MessageForm()
+        form = MessageForm(self)
 
         if UID:
             receiver = self.db2.query(User).get( UID )
@@ -220,7 +220,7 @@ class New(MessageRequestHandler):
 
         receiver = None
 
-        form = MessageForm( self.request.arguments )
+        form = MessageForm(self)
         if form.validate():
             receiver = self.db2.query(User).filter_by(username=form.to.data).first()
             if receiver:
@@ -317,7 +317,7 @@ class SendNotice(MessageRequestHandler):
     @has_permission('admin')
     def get(self):
 
-        form = MessageForm()
+        form = MessageForm(self)
 
         d = { 'title': _('Send a notice to all user'),
               'form': form }
@@ -327,7 +327,7 @@ class SendNotice(MessageRequestHandler):
     @has_permission('admin')
     def post(self):
 
-        form = MessageForm( self.request.arguments )
+        form = MessageForm(self)
 
         d = { 'title': _('Send a notice to all user'),
               'form': form }

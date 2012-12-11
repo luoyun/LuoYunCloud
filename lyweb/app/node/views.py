@@ -105,7 +105,7 @@ class NodeEdit(LyRequestHandler):
         if not N:
             return self.write( _('Can not find node %s.') % ID )
 
-        form = NodeEditForm()
+        form = NodeEditForm(self)
         form.vmemory.data = (N.vmemory if N.vmemory else N.memory)  / (1024 * 1024)
         form.vcpus.data = N.vcpus if N.vcpus else N.cpus
 
@@ -122,7 +122,7 @@ class NodeEdit(LyRequestHandler):
             return self.write( _('Can not find node %s.') % ID )
 
         ERROR = []
-        form = NodeEditForm( self.request.arguments )
+        form = NodeEditForm(self)
         if form.validate():
             # TODO: check the node ability !
             N.vmemory = form.vmemory.data * 1024 * 1024 # KB

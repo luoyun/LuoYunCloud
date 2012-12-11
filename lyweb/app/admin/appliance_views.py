@@ -256,11 +256,11 @@ class CatalogManagement(LyRequestHandler):
     def get_new(self):
         self.render( 'admin/appliance/catalog_new.html',
                      title = _('Add Appliance Catalog'),
-                     form = CatalogForm() )
+                     form = CatalogForm(self) )
 
     def post_new(self):
 
-        form = CatalogForm( self.request.arguments )
+        form = CatalogForm(self)
         if form.validate():
             c = ApplianceCatalog(
                 name = form.name.data,
@@ -279,7 +279,7 @@ class CatalogManagement(LyRequestHandler):
 
     def get_edit(self):
 
-        form = CatalogForm()
+        form = CatalogForm(self)
         form.name.data = self.catalog.name
         form.summary.data = self.catalog.summary
         form.description.data = self.catalog.description
@@ -291,7 +291,7 @@ class CatalogManagement(LyRequestHandler):
 
     def post_edit(self):
 
-        form = CatalogForm( self.request.arguments )
+        form = CatalogForm(self)
         if form.validate():
             self.catalog.name = form.name.data
             self.catalog.summary = form.summary.data

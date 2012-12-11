@@ -50,7 +50,7 @@ class DBEdit(LyRequestHandler):
 
         cf = self.cf
 
-        form = DBForm()
+        form = DBForm(self)
         try:
             form.dbname.data = cf.get('db_name')
             form.dbuser.data = cf.get('db_user')
@@ -68,7 +68,7 @@ class DBEdit(LyRequestHandler):
         cf = self.cf
         saved = None
 
-        form = DBForm( self.request.arguments )
+        form = DBForm(self)
         if form.validate():
             cf.set('db_host', form.dbhost.data)
             cf.set('db_type', form.dbtype.data)
@@ -93,7 +93,7 @@ class CLCEdit(LyRequestHandler):
 
         cf = self.cf
 
-        form = CLCForm()
+        form = CLCForm(self)
         try:
             form.ip.data = cf.get('clc_ip')
             form.port.data = cf.get('clc_port')
@@ -108,7 +108,7 @@ class CLCEdit(LyRequestHandler):
         cf = self.cf
         saved = None
 
-        form = CLCForm( self.request.arguments )
+        form = CLCForm(self)
         if form.validate():
             cf.set('clc_ip', form.ip.data)
             cf.set('clc_port', form.port.data)
@@ -130,7 +130,7 @@ class BaseinfoEdit(LyRequestHandler):
 
         cf = self.cf
 
-        form = BaseinfoForm()
+        form = BaseinfoForm(self)
         form.app_dir.data = cf.get('appliance_top_dir', settings.appliance_top_dir)
         form.app_url.data = cf.get('appliance_top_url', settings.appliance_top_url)
         form.admin_email.data = cf.get('admin_email', settings.ADMIN_EMAIL)
@@ -143,7 +143,7 @@ class BaseinfoEdit(LyRequestHandler):
         cf = self.cf
         saved = None
 
-        form = BaseinfoForm( self.request.arguments )
+        form = BaseinfoForm(self)
         if form.validate():
 
             cf.set('appliance_top_dir', form.app_dir.data)
@@ -167,7 +167,7 @@ class NameserversEdit(LyRequestHandler):
 
     def get(self):
 
-        form = NameserversForm()
+        form = NameserversForm(self)
         if self.nameservers:
             form.nameservers.data = self.nameservers.value
 
@@ -179,7 +179,7 @@ class NameserversEdit(LyRequestHandler):
     def post(self):
 
         saved = None
-        form = NameserversForm( self.request.arguments )
+        form = NameserversForm(self)
         if form.validate():
 
             nameservers = form.nameservers.data
@@ -327,7 +327,7 @@ class NetworkAdd(NetworkHandler):
     @has_permission('admin')
     def get(self):
 
-        form = NetworkPoolForm()
+        form = NetworkPoolForm(self)
         NS = self.db2.query(LuoYunConfig).filter_by( key = 'nameservers' ).first()
         if NS: form.nameservers.data = NS.value
 
@@ -338,7 +338,7 @@ class NetworkAdd(NetworkHandler):
     @has_permission('admin')
     def post(self):
 
-        form = NetworkPoolForm( self.request.arguments )
+        form = NetworkPoolForm(self)
         if form.validate():
 
             N = NetworkPool(
@@ -372,7 +372,7 @@ class NetworkEdit(LyRequestHandler):
         N = self.db2.query(NetworkPool).get(ID)
         if not N: return self.write( _('Can not find networkpool %s') % ID )
 
-        form = NetworkPoolForm()
+        form = NetworkPoolForm(self)
         form.name.data = N.name
         form.description.data = N.description
         form.start.data = N.start
@@ -397,7 +397,7 @@ class NetworkEdit(LyRequestHandler):
         N = self.db2.query(NetworkPool).get(ID)
         if not N: return self.write( _('Can not find networkpool %s') % ID )
 
-        form = NetworkPoolForm( self.request.arguments )
+        form = NetworkPoolForm(self)
         if form.validate():
 
             # TODO: a ugly algorithm
@@ -471,7 +471,7 @@ class DomainEdit(LyRequestHandler):
 
     def get(self):
 
-        form = DomainForm()
+        form = DomainForm(self)
         if self.domain:
             domain = json.loads(self.domain.value)
             if domain > 0:
@@ -485,7 +485,7 @@ class DomainEdit(LyRequestHandler):
     def post(self):
 
         saved = None
-        form = DomainForm( self.request.arguments )
+        form = DomainForm(self)
         if form.validate():
 
             domain = json.dumps( {
@@ -515,7 +515,7 @@ class NginxEdit(LyRequestHandler):
 
     def get(self):
 
-        form = NginxForm()
+        form = NginxForm(self)
         if self.nginx:
             nginx = json.loads(self.nginx.value)
         else:
@@ -534,7 +534,7 @@ class NginxEdit(LyRequestHandler):
     def post(self):
 
         saved = None
-        form = NginxForm( self.request.arguments )
+        form = NginxForm(self)
         if form.validate():
 
             nginx = json.dumps( {
@@ -566,7 +566,7 @@ class RegistrationProtocolEdit(LyRequestHandler):
 
     def get(self):
 
-        form = RegistrationProtocolForm()
+        form = RegistrationProtocolForm(self)
 
         # TODO: needed give a default protocol ?
         if self.protocol:
@@ -579,7 +579,7 @@ class RegistrationProtocolEdit(LyRequestHandler):
     def post(self):
 
         saved = None
-        form = RegistrationProtocolForm( self.request.arguments )
+        form = RegistrationProtocolForm(self)
         if form.validate():
 
             protocol = json.dumps({
@@ -608,7 +608,7 @@ class WelcomeNewUserEdit(LyRequestHandler):
 
     def get(self):
 
-        form = WelcomeNewUserForm()
+        form = WelcomeNewUserForm(self)
 
         # TODO: needed give a default welcome info ?
         if self.welcome:
@@ -621,7 +621,7 @@ class WelcomeNewUserEdit(LyRequestHandler):
     def post(self):
 
         saved = None
-        form = WelcomeNewUserForm( self.request.arguments )
+        form = WelcomeNewUserForm(self)
         if form.validate():
 
             welcome = json.dumps({
@@ -671,7 +671,7 @@ class SendMail(LyRequestHandler):
 
     def get(self):
 
-        form = SendMailForm()
+        form = SendMailForm(self)
 
         self.d['form'] = form
         self.render('system/sendmail.html', **self.d)
@@ -679,7 +679,7 @@ class SendMail(LyRequestHandler):
 
     def post(self):
 
-        form = SendMailForm( self.request.arguments )
+        form = SendMailForm(self)
         self.d['form'] = form
 
         self.d['INVALID_EMAIL'] = []
