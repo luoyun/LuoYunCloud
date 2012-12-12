@@ -93,7 +93,7 @@
     <div class="c"></div>
     <li class="i-name c"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></li>
     <li class="i-user"><span class="t">${ _("Owner") }</span><a href="${ reverse_url('account:view', I.user_id) }">${ I.user.username }</a></li>
-    <li class="i-status"><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ I.status_string }"/></li>
+    <li class="i-status"><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ locale.translate(I.status_string) }"/></li>
   </ul>
 
   % if count % 5 == 4:

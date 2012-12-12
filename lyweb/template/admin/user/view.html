@@ -241,7 +241,7 @@
 		<span class="id" style="display:none;">${ I.appliance_id }</span>
 	      </div>
 	    </td>
-            <td><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" title="${ I.status_string }"/></td>
+            <td><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" title="${ locale.translate(I.status_string) }"/></td>
             <td>${ ftime(I.updated) }</td>
             <td>
               % if I.node and I.is_running:
@@ -323,7 +323,7 @@
 	  <tr>
             <td>${ j.id }</td>
             <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
-            <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png"/>${ j.status_string }</td>
+            <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png"/>${ locale.translate(j.status_string) }</td>
             <td>${ j.target_name }</td>
             <td>${ j.target_url }</a></td>
             <td>${ j.action_string }</td>

@@ -9,8 +9,8 @@
 <%block name="content">
 
 <p>
-  <a href="${ reverse_url('system:networkpool:edit', N.id) }">${ _("Edit") }</a>
-  <a id="delete-network" href="${ reverse_url('system:networkpool:delete', N.id) }">${ _("Delete") }</a>
+  <a class="blue-submit" href="${ reverse_url('system:networkpool:edit', N.id) }">${ _("Edit") }</a>
+  <a class="red-submit" id="delete-network" href="${ reverse_url('system:networkpool:delete', N.id) }">${ _("Delete") }</a>
 </p>
 
 <p>${ N.description }</p>

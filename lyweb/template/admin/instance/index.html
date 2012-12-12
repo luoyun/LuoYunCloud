@@ -67,7 +67,7 @@
 	  <td class="i-logo"><img src="${ I.logourl }" /></td>
           <td>${ I.id }</td>
           <td><a href="${ reverse_url('admin:instance') }?id=${ I.id }">${ I.name }</a></td>
-          <td><img src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }" alt="${ I.status_string }"/></td>
+          <td><img src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }" alt="${ locale.translate(I.status_string) }"/></td>
 	  <td>${ I.work_ip }</td>
 	  % if not SORT_NODE:
           <td>

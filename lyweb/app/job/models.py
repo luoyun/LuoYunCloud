@@ -116,7 +116,7 @@ class Job(ORMBase):
         self.action = action
 
     def __repr__(self):
-        return _("[Job(%s)]") % self.id
+        return "<Job(%s)>" % self.id
 
     @property
     def target_name(self):

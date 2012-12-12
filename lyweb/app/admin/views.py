@@ -98,7 +98,7 @@ class Index(LyRequestHandler):
             number_suffix = self.trans(_("core"))
         elif what == 'memory':
             caption = self.trans(_("MOMORY USED INFO"))
-            total = human_size(ud['TOTAL_MEMORY']*1024*1024)
+            total = human_size(ud['TOTAL_MEMORY']*1024)
             value1 = ud['USED_MEMORY']
             value2 = ud['TOTAL_MEMORY'] - ud['USED_MEMORY']
             number_suffix = "M"

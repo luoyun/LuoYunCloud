@@ -32,7 +32,7 @@
       <tr>
         <td>${ j.id }</td>
         <td>${ j.user_link_module }</td>
-        <td class="job-status"><img src="${ theme_url('icons/JobStatus/%s.png' % j.status) }"/>${ j.status_string }</td>
+        <td class="job-status"><img src="${ theme_url('icons/JobStatus/%s.png' % j.status) }"/>${ locale.translate(j.status_string) }</td>
         <td>${ j.target_name }</td>
         <td>${ j.target_url }</td>
         <td>${ j.action_string }</td>

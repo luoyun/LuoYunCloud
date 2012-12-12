@@ -2,6 +2,7 @@
 
 import logging, struct, socket, re, os, json, time
 from datetime import datetime
+from dateutil import relativedelta
 
 from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
@@ -155,7 +156,10 @@ class InstRequestHandler(LyRequestHandler):
             if not ( action_id == JOB_ACTION['STOP_INSTANCE'] and
                  I.lastjob.canstop ):
                 # TODO: status = 100, timeout > 60s
-                return self.trans(_("Previous task is not finished !"))
+                timeout = I.lastjob.created + relativedelta.relativedelta(seconds=+60)
+                if timeout > datetime.now():
+                    return self.trans(_("Previous task is not finished !"))
+
 
         # Create new job
         job = Job( user = self.current_user,
@@ -1060,10 +1064,10 @@ class SingleInstanceStatus(InstRequestHandler):
                'id'          : I.id,
 
                'is'          : I.status,
-               'is_str'      : I.status_string,
+               'is_str'      : self.trans(I.status_string),
 
                'js'          : I.lastjob_status_id,
-               'js_str'      : I.job_status_string,
+               'js_str'      : self.trans(I.job_status_string),
                'lastjob'     : I.lastjob_id if I.lastjob_id else 0,
 
                'ip'          : '',

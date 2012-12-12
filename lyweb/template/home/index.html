@@ -78,7 +78,7 @@ style="width: 0%"
       <span class="count instance-id">${ I.id }</span>
       <span class="instance-status">
         <img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png"  alt="Stauts Image"/>
-        <span class="status-string" style="display: none;">${ I.status_string }</span>
+        <span class="status-string" style="display: none;">${ locale.translate(I.status_string) }</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@ style="width: 0%"
           </tr>
           <tr>
             <td>${ _("Status") }</td>
-            <td>${ I.status_string }</td>
+            <td>${ locale.translate(I.status_string) }</td>
           </tr>
           <tr>
             <td>${ _("IP") }</td>

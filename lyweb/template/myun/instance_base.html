@@ -31,7 +31,7 @@
 
     <div id="i-status">
       <img id="i-is-img" src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }"/>
-      <span style="display:none;" id="i-is-str">${ I.status_string }</span>
+      <span style="display:none;" id="i-is-str">${ locale.translate(I.status_string) }</span>
       <span style="display:none;" id="i-is">${ I.status }</span>
     </div>
   </div>
@@ -52,7 +52,7 @@
 	<span id="i-task-result"></span>
 	<span id="i-task-lastjob">
 	  <img class="little-status-img" id="i-js-img" src="${ theme_url('icons/JobStatus/%s' % I.lastjob_imgurl) }" />
-	  <span id="i-js-str">${ I.job_status_string }</span>
+	  <span id="i-js-str">${ locale.translate(I.job_status_string) }</span>
 	  <span id="i-js">${ I.lastjob_status_id }</span>
 	</span>
 	% if I.ischanged:

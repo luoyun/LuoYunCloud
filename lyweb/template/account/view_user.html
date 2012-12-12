@@ -90,7 +90,7 @@
 	  </div>
 	  % endif
 	</li>
-	<li class="i-status"><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ I.status_string }"/></li>
+	<li class="i-status"><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ locale.translate(I.status_string) }"/></li>
       </ul>
 
       % if count % 5 == 4:
