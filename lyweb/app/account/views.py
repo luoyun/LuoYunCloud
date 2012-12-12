@@ -408,7 +408,8 @@ class AvatarEdit(LyRequestHandler):
             try:
                 os.makedirs(homedir)
             except Exception, e:
-                return self.trans(_('Create user home dir "%s" failed: %s')) % (homedir, e)
+                return self.trans(_('Create user home dir "%(dir)s" failed: %(emsg)s')) % {
+                    'dir': homedir, 'emsg': e }
 
         max_size = settings.USER_AVATAR_MAXSIZE
         avatar_name = settings.USER_AVATAR_NAME
@@ -426,7 +427,8 @@ class AvatarEdit(LyRequestHandler):
                 img = Image.open( tf.name )
 
             except Exception, e:
-                return self.trans(_('Open %s failed: %s , is it a picture ?')) % (f.get('filename'), e)
+                return self.trans(_('Open %(filename)s failed: %(emsg)s , is it a picture ?')) % {
+                    'filename': f.get('filename'), 'emsg': e }
 
             try:
                 img.save(self.current_user.avatar_orig_path)
@@ -437,7 +439,8 @@ class AvatarEdit(LyRequestHandler):
                 tf.close()
 
             except Exception, e:
-                return self.trans(_('Save %s failed: %s')) % (f.get('filename'), e)
+                return self.trans(_('Save %(filename)s failed: %(emsg)s')) % {
+                    'filename': f.get('filename'), 'emsg': e }
 
 
 

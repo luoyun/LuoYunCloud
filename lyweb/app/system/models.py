@@ -31,7 +31,7 @@ class LuoYunConfig(ORMBase):
 
 
     def __repr__(self):
-        return _("[LuoYun(%s=%s)]") % (self.key, self.value)
+        return "[LuoYun(%s=%s)]" % (self.key, self.value)
 
 
 
@@ -125,7 +125,7 @@ class LyTrace(ORMBase):
         self.visit = visit
 
     def __unicode__(self):
-        return _('%s: %s come from %s do "%s" , %s') % (
+        return '%s: %s come from %s do "%s" , %s' % (
             ftime(self.when), self.who.username, self.comefrom,
             self.do, self.isok)
 

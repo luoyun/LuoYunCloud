@@ -81,7 +81,7 @@ class WikiManagement(LyRequestHandler):
             topics = topics.filter_by(catalog_id=self.catalog.id)
 
         self.render( 'admin/wiki/topics.html',
-                     title = self.trans(_('List appliances')),
+                     title = self.trans(_('List topics')),
                      TOPIC_LIST = topics,
                      catalog = self.catalog )
 

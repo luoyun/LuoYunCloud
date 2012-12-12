@@ -11,11 +11,17 @@
 
   % if catalogs:
 
+  <% total_catalog = len(catalogs) %>
+
   % for c in catalogs:
   <div class="catalog c">
 
+    % if total_catalog > 1:
     <h2>${ c.name }</h2>
+    % endif
 
+    <% total_topic = len(c.topics) %>
+    % if total_topic:
     % for t in c.topics:
     <div class="item c">
       <div class="name">
@@ -29,6 +35,9 @@
       </div>
     </div>
     % endfor
+    % else:
+    <p class="ywarn">${ _("No topics yet.") }<p>
+    % endif
 
   </div>
   % endfor

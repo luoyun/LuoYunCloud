@@ -210,7 +210,8 @@ class InstanceManagement(LyRequestHandler):
             jid = self.new_job(JOB_TARGET['INSTANCE'], I.id, action_id)
             JID_LIST.append(jid)
 
-        self.write( self.trans(_('%s all instance success: %s')) % ( action, JID_LIST ) )
+        self.write( self.trans(_('%(action)s all instance success: %(jid_list)s')) % {
+                'action': action, 'jid_list': JID_LIST } )
 
 
     def change_owner(self):
@@ -241,8 +242,8 @@ class InstanceManagement(LyRequestHandler):
             else:
                 T = self.lytrace(
                     ttype = LY_TARGET['INSTANCE'], tid = I.id,
-                    do = self.trans(_('change instance owner %s to %s')) % (
-                        I.user.username, U.username) )
+                    do = self.trans(_('change instance owner %(old_owner)s to %(new_owner)s')) % {
+                        'old_owner': I.user.username, 'new_owner': U.username } )
 
                 I.user = U
                 self.db2.commit()

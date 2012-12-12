@@ -134,7 +134,8 @@ class Upload(AppRequestHandler):
             d['error'] = msg
             self.set_status(400)
             return self.done(
-                self.trans(_('Save %s failed: %s')) % (fname, msg) )
+                self.trans(_('Save %(filename)s failed: %(emsg)s')) % {
+                    'filename': fname, 'emsg': msg } )
 
         newapp = Appliance( name=fname.replace('.', ' '),
                             user=self.current_user,
@@ -269,7 +270,8 @@ class Edit(LyRequestHandler):
             try:
                 os.makedirs(appliance.logodir)
             except Exception, e:
-                return self.trans(_('create appliance logo dir "%s" failed: %s')) % (appliance.logodir, e)
+                return self.trans(_('create appliance logo dir "%(dir)s" failed: %(emsg)s')) % {
+                    'dir': appliance.logodir, 'emsg': e }
 
         max_size = settings.APPLIANCE_LOGO_MAXSIZE
         logoname = settings.APPLIANCE_LOGO_NAME
@@ -286,7 +288,8 @@ class Edit(LyRequestHandler):
             try:
                 img = Image.open(tf.name)
             except Exception, emsg:
-                return self.trans(_('Open %s failed: %s , is it a picture ?')) % (f.get('filename'), emsg)
+                return self.trans(_('Open %(filename)s failed: %(emsg)s , is it a picture ?')) % {
+                    'filename': f.get('filename'), 'emsg': emsg }
 
             try:
                 # can convert image type
@@ -298,7 +301,8 @@ class Edit(LyRequestHandler):
                 tf.close()
 
             except Exception, emsg:
-                return self.trans(_('Save %s failed: %s')) % (f.get('filename'), emsg)
+                return self.trans(_('Save %(filename)s failed: %(emsg)s')) % {
+                    'filename': f.get('filename'), 'emsg': emsg }
 
 
 
@@ -333,7 +337,8 @@ class Delete(AppRequestHandler):
             try:
                 os.unlink(dpath)
             except Exception, emsg:
-                d['E'].append( self.trans(_('Delete %s failed: %s')) % ( dpath, emsg ) )
+                d['E'].append( self.trans(_('Delete %(filename)s failed: %(emsg)s')) % {
+                        'filename': dpath, 'emsg': emsg } )
                 return self.end(d)
         else:
             logging.warning("%s did not exist !" % dpath)

@@ -242,18 +242,6 @@ class LyRequestHandler(RequestHandler):
 
         return T
 
-    def lytrace_ippool(self, ippool, I, release=False):
-        if release:
-            do = _('release ip %s from instance %s(%s)') % (
-                ippool.ip, I.id, I.name)
-        else:
-            do = _('get ip %s for instance %s(%s)') % (
-                ippool.ip, I.id, I.name)
-        T = self.lytrace( ttype = LY_TARGET['IP'], tid = ippool.id,
-                          do = do )
-        return T
-
-
     # params is a dict: { 'key': value }
     def urlupdate(self, params):
 

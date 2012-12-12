@@ -91,10 +91,6 @@ def main():
 
 if __name__ == "__main__":
 
-    # save the global argv of program
-    settings.CMD_ARGV = sys.argv
-    print 'settings.CMD_ARGV = ', settings.CMD_ARGV
-
     try:
         main()
     finally:

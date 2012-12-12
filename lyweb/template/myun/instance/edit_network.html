@@ -19,7 +19,7 @@
     </form>
 
     %else:
-    <h2>${ _("Static network configure for the second NIC.") }</h2>
+    <h2>${ _("Static network configure for the another NIC.") }</h2>
     <form method="POST" action="${ reverse_url('myun:instance:edit', I.id) }?item=network&index=${ INDEX }">${ xsrf_form_html() }${ xsrf_form_html() }
       ${ form.ip.label } ${ form.ip() }<br/>
       ${ form.html_errors(form.ip.errors) }

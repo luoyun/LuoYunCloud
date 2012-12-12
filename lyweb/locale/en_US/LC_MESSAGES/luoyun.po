@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-06 18:18+0800\n"
+"POT-Creation-Date: 2012-12-11 18:08+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,383 +17,1707 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: template/404.html:10
-msgid "404 Error"
+#: lycustom.py:274
+msgid "'_xsrf' argument missing"
 msgstr ""
 
-#: template/404.html:11
-msgid "No such page: "
+#: lycustom.py:276
+msgid "XSRF cookie does not match"
 msgstr ""
 
-#: template/wiki/view_catalog.html:7 template/wiki/view_topic.html:7
-#: template/appliance/view.html:7 template/appliance/edit.html:6
-#: template/instance/edit.html:6 template/instance/instance_base.html:16
-#: template/account/account_base.html:13
-#: template/admin/wiki/add_catalog.html:7 template/admin/admin_base.html:19
-#: template/myun/myun_base.html:13
-msgid "Home"
+#: urls.py:66
+msgid "LuoYun Cloud Home"
 msgstr ""
 
-#: template/wiki/view_catalog.html:8 template/wiki/view_topic.html:8
-#: template/admin/wiki/topics.html:8 template/admin/wiki/index.html:8
-#: template/admin/wiki/edit_catalog.html:8 template/admin/wiki/index.ajax:4
-msgid "Wiki"
+#: app/install/forms.py:15 app/system/forms.py:51
+msgid "server"
 msgstr ""
 
-#: template/wiki/view_catalog.html:9 template/wiki/view_topic.html:11
-#: template/appliance/view.html:10 template/instance/index.html:104
-#: template/admin/group/view.html:5 template/admin/permission/view.html:5
-#: template/home/index.html:61
-msgid "View"
+#: app/install/forms.py:16 app/system/forms.py:52
+msgid "engine"
 msgstr ""
 
-#: template/wiki/view_catalog.html:19 template/wiki/index.html:10
-msgid "New Topic"
+#: app/install/forms.py:17 app/system/forms.py:53
+msgid "username"
 msgstr ""
 
-#: template/wiki/view_catalog.html:33 template/wiki/index.html:27
-msgid "by"
+#: app/install/forms.py:18 app/system/forms.py:54
+msgid "password"
 msgstr ""
 
-#: template/wiki/view_catalog.html:35 template/wiki/index.html:29
-msgid "update"
+#: app/install/forms.py:19 app/system/forms.py:55
+msgid "db name"
 msgstr ""
 
-#: template/wiki/view_topic.html:24 template/appliance/view.html:59
-#: template/appliance/edit.html:8 template/system/networkpool.html:6
-#: template/system/baseinfo.html:25 template/instance/storage.html:23
-#: template/instance/domain.html:11 template/instance/baseinfo.html:18
-#: template/instance/resource.html:16 template/instance/network.html:35
-#: template/instance/network.html:42 template/admin/appliance/catalog.html:41
-#: template/admin/group/index.html:38 template/system/baseinfo.ajax:21
-#: template/system/networkpool.ajax:3 template/instance/domain.ajax:7
-#: template/instance/resource.ajax:12 template/instance/network.ajax:31
-#: template/instance/network.ajax:38 template/instance/baseinfo.ajax:14
-#: template/instance/storage.ajax:19
-msgid "Edit"
-msgstr ""
-
-#: template/wiki/view_topic.html:25 template/appliance/view.html:60
-#: template/message/view_message.html:18 template/instance/delete.html:9
-#: template/instance/storage.html:24 template/instance/domain.html:12
-#: template/instance/instance_base.html:122
-#: template/admin/appliance/view.html:73
-#: template/admin/appliance/index.html:61 template/admin/group/index.html:42
-#: template/instance/domain.ajax:8 template/instance/storage.ajax:20
-#: template/instance/delete.ajax:5
-msgid "Delete"
-msgstr ""
-
-#: template/wiki/view_topic.html:28
-msgid "Source"
-msgstr ""
-
-#: template/appliance/view.html:8 template/appliance/edit.html:7
-#: template/base.html:31 template/admin/wiki/add_catalog.html:9
-#: template/admin/admin_base.html:42 template/admin/appliance/catalog.html:20
-#: template/admin/user/view.html:112 template/myun/myun_base.html:38
-#: template/myun/appliances.html:4
-msgid "Appliances"
-msgstr ""
-
-#: template/appliance/view.html:19 template/appliance/view.html:95
-#: template/instance/index.html:37 template/instance/index.html:47
-#: template/instance/instance_base.html:86
-#: template/admin/appliance/view.html:32
-#: template/admin/appliance/index.html:36
-#: template/admin/instance/index.html:30 template/home/index.html:107
-msgid "Owner"
-msgstr ""
-
-#: template/appliance/view.html:24
-msgid ""
-"This is a appliance of LuoYun platform, you can create a instance from it."
-msgstr ""
-
-#: template/appliance/view.html:28
-msgid "Create Instance"
-msgstr ""
-
-#: template/appliance/view.html:30
-msgid "This appliance is locked, you can not use it."
-msgstr ""
-
-#: template/appliance/view.html:39 template/appliance/edit.html:71
-#: template/appliance/index.html:18 template/admin/admin_base.html:43
-#: template/admin/appliance/view.html:36
-#: template/admin/appliance/catalog.html:5
-#: template/admin/appliance/index.html:37
-msgid "Catalog"
-msgstr ""
-
-#: template/appliance/view.html:43 template/home/no_resource.html:22
-msgid "Used"
-msgstr ""
-
-#: template/appliance/view.html:44
-msgid "times"
-msgstr ""
-
-#: template/appliance/view.html:47 template/instance/instance_base.html:94
-#: template/myun/appliances.html:37 template/myun/instances.html:47
-msgid "Create Time"
-msgstr ""
-
-#: template/appliance/view.html:51 template/instance/instance_base.html:98
-#: template/myun/appliances.html:41 template/myun/instances.html:51
-msgid "Update Time"
-msgstr ""
-
-#: template/appliance/view.html:70
-msgid "About The Appliance"
-msgstr ""
-
-#: template/appliance/view.html:79 template/appliance/delete_failed.html:15
-#: template/admin/node/view.html:72 template/admin/node/instances.html:16
-msgid "Instance List"
-msgstr ""
-
-#: template/appliance/delete_failed.html:9
-msgid "Delete Appliance Failed"
-msgstr ""
-
-#: template/appliance/edit.html:40
-msgid "Edit appliance"
-msgstr ""
-
-#: template/appliance/edit.html:53 template/account/view_group.html:33
-#: template/account/permissions.html:15 template/admin/appliance/view.html:28
-#: template/admin/appliance/catalog.html:19
-#: template/admin/appliance/index.html:35 template/admin/group/view.html:20
-#: template/admin/group/view.html:51
-#: template/admin/group/delete_failed.html:25
-#: template/admin/group/index.html:21 template/admin/user/instances.html:19
-#: template/admin/user/index.html:26 template/admin/instance/index.html:31
-#: template/admin/node/view.html:76 template/admin/node/instances.html:20
-#: template/admin/permission/view.html:24
-#: template/admin/permission/view.html:40
-#: template/admin/permission/index.html:18 template/home/index.html:103
-msgid "Name"
-msgstr ""
-
-#: template/appliance/edit.html:62 template/admin/appliance/view.html:52
-msgid "Summary"
-msgstr ""
-
-#: template/appliance/edit.html:88
-msgid "Logo Image"
-msgstr ""
-
-#: template/appliance/edit.html:97
-msgid "Description:"
-msgstr ""
-
-#: template/appliance/index.html:6
-msgid "Public Appliances"
-msgstr ""
-
-#: template/appliance/index.html:8
-msgid "(My Appliances)"
-msgstr ""
-
-#: template/appliance/index.html:43
-msgid "Have not any appliances yet !"
-msgstr ""
-
-#: template/message/view_message.html:17
-msgid "Reply"
-msgstr ""
-
-#: template/message/outbox.html:11 template/message/view_out_message.html:14
+#: app/message/forms.py:17 template/message/outbox.html:11
+#: template/message/view_out_message.html:14
 msgid "Send To"
 msgstr ""
 
-#: template/message/outbox.html:12 template/message/view_out_message.html:10
-#: template/message/inbox.html:12
+#: app/message/forms.py:18 app/message/forms.py:23 app/message/forms.py:30
+#: app/system/forms.py:113 template/message/inbox.html:12
+#: template/message/reply_message.html:18
+#: template/message/view_message.html:27 template/message/view_message.html:64
+#: template/message/outbox.html:12 template/message/notice_view.html:29
+#: template/message/view_out_message.html:10 template/message/notice.html:20
+#: template/system/sendmail_success.html:60
 msgid "Subject"
 msgstr ""
 
-#: template/message/outbox.html:33
-msgid "You have not sent any message before !"
+#: app/message/forms.py:19 app/message/forms.py:24
+msgid "Content"
 msgstr ""
 
-#: template/message/message_base.html:15 template/base.html:46
-msgid "Inbox"
+#: app/message/forms.py:29 app/system/forms.py:110
+#: template/system/sendmail_success.html:24 template/system/sendmail.html:27
+msgid "To"
 msgstr ""
 
-#: template/message/message_base.html:16
-msgid "Outbox"
+#: app/message/forms.py:31
+msgid "Text"
 msgstr ""
 
-#: template/message/message_base.html:20
-msgid "New"
+#: app/message/views.py:29 app/message/views.py:272 app/message/views.py:280
+#, python-format
+msgid "Can not find message %s"
 msgstr ""
 
-#: template/message/reply_message.html:9
-msgid "Write :"
+#: app/message/views.py:37
+msgid "You have no permissions to read this message!"
 msgstr ""
 
-#: template/message/reply_message.html:17
-msgid "Reply Message"
+#: app/message/views.py:94
+msgid "Message Home"
 msgstr ""
 
-#: template/message/new_message.html:7
-msgid "New Message"
+#: app/message/views.py:105
+msgid "My inbox"
 msgstr ""
 
-#: template/message/view_out_message.html:21
-msgid "Body"
+#: app/message/views.py:117
+msgid "My outbox"
 msgstr ""
 
-#: template/message/inbox.html:11
-msgid "From"
+#: app/message/views.py:129
+#, python-format
+msgid "View message %s"
 msgstr ""
 
-#: template/message/inbox.html:39
-msgid "You have not receiverd any message yet !"
+#: app/message/views.py:183
+msgid "This is not your message !"
 msgstr ""
 
-#: template/message/index.html:5
-msgid "Here is your message boxes"
+#: app/message/views.py:209 app/message/views.py:287
+#, python-format
+msgid "Re: %s"
 msgstr ""
 
-#: template/system/nameservers_edit.html:5
-#: template/system/nameservers_edit.ajax:1
-msgid "Edit Nameservers"
+#: app/message/views.py:213 app/message/views.py:254
+msgid "Send message"
 msgstr ""
 
-#: template/system/nameservers_edit.html:14 template/system/nginx_edit.html:20
-#: template/system/clc_edit.html:17 template/system/db_edit.html:26
-#: template/system/welcome_new_user_edit.html:15
-#: template/system/registration_protocol_edit.html:15
-#: template/system/baseinfo_edit.html:20
-#: template/system/networkpool_edit.html:29
-#: template/system/domain_edit.html:20 template/instance/secret.html:20
-#: template/system/registration_protocol_edit.ajax:9
-#: template/system/clc_edit.ajax:13 template/system/baseinfo_edit.ajax:16
-#: template/system/domain_edit.ajax:16
-#: template/system/networkpool_edit.ajax:25 template/system/db_edit.ajax:22
-#: template/system/nameservers_edit.ajax:10 template/system/nginx_edit.ajax:16
-#: template/instance/secret.ajax:16
-msgid "saved success"
+#: app/message/views.py:251
+#, python-format
+msgid "Can not find user %s"
 msgstr ""
 
-#: template/system/networkpool.html:4 template/system/networkpool.ajax:1
-msgid "Network pool of LuoYun"
+#: app/message/views.py:268
+#, python-format
+msgid "Reply message %s"
 msgstr ""
 
-#: template/system/networkpool.html:11 template/instance/network.html:23
-#: template/system/networkpool.ajax:8 template/instance/network.ajax:19
-msgid "Netmask"
+#: app/message/views.py:284
+msgid "No content write !"
 msgstr ""
 
-#: template/system/networkpool.html:15 template/instance/network.html:27
-#: template/system/networkpool.ajax:12 template/instance/network.ajax:23
-msgid "Gateway"
+#: app/message/views.py:322 app/message/views.py:332 app/message/views.py:381
+msgid "Send a notice to all user"
 msgstr ""
 
-#: template/system/networkpool.html:19 template/admin/admin_base.html:58
-#: template/system/networkpool.ajax:16
-msgid "Nameservers"
+#: app/message/views.py:377
+#, python-format
+msgid "View notice %s"
 msgstr ""
 
-#: template/system/networkpool.html:35 template/system/baseinfo.html:11
-#: template/instance/network.html:19 template/instance/index.html:63
-#: template/admin/user/instances.html:21 template/admin/node/view.html:27
-#: template/admin/node/view.html:78 template/admin/node/instances.html:22
-#: template/admin/node/index.html:20 template/home/index.html:115
-#: template/system/baseinfo.ajax:7 template/system/networkpool.ajax:32
-#: template/instance/network.ajax:15
-msgid "IP"
+#: app/message/views.py:394
+msgid "This is not a notice !"
 msgstr ""
 
-#: template/system/networkpool.html:36 template/instance/view_job.html:12
-#: template/instance/joblist.html:12 template/admin/job/index.html:21
-#: template/admin/admin_base.html:33 template/admin/user/instances.html:8
-#: template/admin/user/index.html:4
-#: template/admin/user/reset_password_history.html:4
-#: template/admin/user/reset_password_history.html:20
-#: template/admin/user/user_base.html:4 template/system/networkpool.ajax:33
-#: template/instance/joblist.ajax:8 template/admin/job/index.ajax:18
-msgid "User"
+#: app/session/models.py:27
+#, python-format
+msgid "[Session(%s)]"
 msgstr ""
 
-#: template/system/networkpool.html:37 template/admin/admin_base.html:47
-#: template/admin/user/index.html:29 template/admin/instance/index.html:4
-#: template/admin/index.html:19 template/home/index.html:24
-#: template/myun/index.html:17 template/system/networkpool.ajax:34
-msgid "Instance"
+#: app/myun/views.py:44 template/myun/instance_base.html:18
+#: template/myun/myun_base.html:14 template/admin/admin_base.html:51
+#: template/base.html:42
+msgid "My LuoYun"
 msgstr ""
 
-#: template/system/networkpool.html:38 template/instance/index.html:114
-#: template/admin/appliance/view.html:44
-#: template/admin/appliance/index.html:39
-#: template/admin/instance/index.html:35 template/admin/node/view.html:63
-#: template/system/networkpool.ajax:35
-msgid "Updated"
+#: app/myun/views.py:108 app/admin/views.py:88
+msgid "TOTAL: "
 msgstr ""
 
-#: template/system/nginx_edit.html:5 template/system/nginx_edit.ajax:1
-msgid "Edit Nginx"
+#: app/myun/views.py:109 app/admin/views.py:89 template/appliance/view.html:43
+#: template/home/no_resource.html:22
+msgid "Used"
 msgstr ""
 
-#: template/system/clc_edit.html:5 template/system/clc_edit.ajax:1
-msgid "Edit Control Server's Configure"
+#: app/myun/views.py:110 app/admin/views.py:90
+msgid "Unused"
 msgstr ""
 
-#: template/system/baseinfo.html:5 template/system/baseinfo.ajax:1
-msgid "Baseinfo of luoyun system"
+#: app/myun/views.py:114 app/admin/views.py:94
+msgid "CPU USED INFO"
 msgstr ""
 
-#: template/system/baseinfo.html:7 template/system/baseinfo.ajax:3
-msgid "Control server"
+#: app/myun/views.py:118 app/admin/views.py:98
+msgid "core"
 msgstr ""
 
-#: template/system/baseinfo.html:16 template/system/baseinfo.ajax:12
-msgid "Port"
+#: app/myun/views.py:120 app/admin/views.py:100
+msgid "MOMORY USED INFO"
 msgstr ""
 
-#: template/system/baseinfo.html:22 template/system/baseinfo.ajax:18
+#: app/myun/views.py:126
+msgid "INSTANCE USED INFO"
+msgstr ""
+
+#: app/myun/views.py:131
+msgid "STORAGE USED INFO"
+msgstr ""
+
+#: app/myun/views.py:161
+msgid "My Instances"
+msgstr ""
+
+#: app/myun/views.py:224 app/instance/views.py:110 app/instance/views.py:140
+#, python-format
+msgid "No such instance: %s !"
+msgstr ""
+
+#: app/myun/views.py:227
+#, python-format
+msgid "Instance %s was deleted !"
+msgstr ""
+
+#: app/myun/views.py:230
+msgid "No your instance !"
+msgstr ""
+
+#: app/myun/views.py:243 app/instance/views.py:191
+msgid "No domain needed unbinding!"
+msgstr ""
+
+#: app/myun/views.py:249 app/instance/views.py:197
+#, python-format
+msgid "unbinding domain error: %s"
+msgstr ""
+
+#: app/myun/views.py:255 app/instance/views.py:203
+msgid "Success!"
+msgstr ""
+
+#: app/myun/views.py:261 app/instance/views.py:369
+#, python-format
+msgid "release ip %(ip)s from instance %(instance_id)s(%(instance_name)s)"
+msgstr ""
+
+#: app/myun/views.py:263 app/instance/views.py:700
+#, python-format
+msgid "get ip %(ip)s for instance %(instance_id)s(%(instance_name)s)"
+msgstr ""
+
+#: app/myun/views.py:305
+#, python-format
+msgid "View instance \"%s\" - My Yun"
+msgstr ""
+
+#: app/myun/views.py:319
+msgid "Configure general info for instance"
+msgstr ""
+
+#: app/myun/views.py:322
+msgid "Configure resource for instance"
+msgstr ""
+
+#: app/myun/views.py:325
+msgid "Configure network for instance"
+msgstr ""
+
+#: app/myun/views.py:328
+msgid "Configure storage for instance"
+msgstr ""
+
+#: app/myun/views.py:332
+msgid "Configure password for instance"
+msgstr ""
+
+#: app/myun/views.py:336
+msgid "Configure public key for instance"
+msgstr ""
+
+#: app/myun/views.py:339
+msgid "Configure domain for instance"
+msgstr ""
+
+#: app/myun/views.py:342
+msgid " - My Yun"
+msgstr ""
+
+#: app/myun/views.py:382 app/myun/views.py:412
+msgid "Not support edit action !"
+msgstr ""
+
+#: app/myun/views.py:473 app/instance/views.py:640
+#, python-format
+msgid "cpus can not greater than %s"
+msgstr ""
+
+#: app/myun/views.py:475 app/instance/views.py:642
+#, python-format
+msgid "memory can not greater than %s"
+msgstr ""
+
+#: app/myun/views.py:505
+#, python-format
+msgid "Can not find NIC %s !"
+msgstr ""
+
+#: app/myun/views.py:526 app/myun/views.py:592
+msgid "You have not allowed to add another network !"
+msgstr ""
+
+#: app/myun/views.py:578
+msgid "Can not find a useable ip from system ip pool."
+msgstr ""
+
+#: app/myun/views.py:580
+msgid "No such network type."
+msgstr ""
+
+#: app/myun/views.py:624
+#, python-format
+msgid "save failed: %s"
+msgstr ""
+
+#: app/myun/views.py:799
+msgid ""
+"Can not get access_ip, please configure instance network or run instance"
+msgstr ""
+
+#: app/myun/views.py:802
+msgid ""
+"can not get domain, domain may not have been configured in Administration "
+"Console."
+msgstr ""
+
+#: app/myun/views.py:822
+msgid "Domain is not configured!"
+msgstr ""
+
+#: app/myun/views.py:830
+msgid "Domain name is taken!"
+msgstr ""
+
+#: app/myun/views.py:832
+msgid "Domain name is too long."
+msgstr ""
+
+#: app/myun/views.py:834
+msgid "Please use alpha characters in domain name!"
+msgstr ""
+
+#: app/myun/views.py:850 app/instance/views.py:524
+#, python-format
+msgid "binding domain error: %s"
+msgstr ""
+
+#: app/myun/views.py:890
+#, python-format
+msgid "Delete domain failed: %s"
+msgstr ""
+
+#: app/myun/views.py:928
+msgid "My Appliances"
+msgstr ""
+
+#: app/system/forms.py:32
+#, python-format
+msgid "Error IP: %s"
+msgstr ""
+
+#: app/system/forms.py:38
+msgid "Save directory"
+msgstr ""
+
+#: app/system/forms.py:39
+msgid "Download url prefix"
+msgstr ""
+
+#: app/system/forms.py:40 template/system/baseinfo.html:25
 msgid "Admin email"
 msgstr ""
 
-#: template/system/db_edit.html:5 template/system/db_edit.ajax:1
-msgid "Edit DB configure"
+#: app/system/forms.py:45 app/instance/forms.py:63
+#: template/myun/instance/view.html:34 template/myun/instance/view.html:151
+#: template/system/networkpool.html:24
+#: template/system/networkpool_delete_failed.html:19
+#: template/system/baseinfo.html:14 template/system/ippool.html:23
+#: template/system/networkpool_view.html:49
+#: template/system/networkpool_edit.html:48 template/admin/node/index.html:16
+#: template/admin/node/instances.html:22 template/admin/node/view.html:27
+#: template/admin/instance/index.html:53 template/admin/instance/view.html:110
+#: template/admin/instance/view.html:211 template/admin/user/instances.html:21
+#: template/home/index.html:112 template/instance/index.html:62
+msgid "IP"
 msgstr ""
 
-#: template/system/welcome_new_user_edit.html:5
-msgid "Welcome New User Edit"
+#: app/system/forms.py:46 template/system/baseinfo.html:19
+msgid "Port"
 msgstr ""
 
-#: template/system/welcome_new_user_edit.html:7
-msgid "Read Welcome New User"
+#: app/system/forms.py:60 app/system/forms.py:72 app/instance/forms.py:66
+#: template/system/networkpool.html:23
+#: template/system/networkpool_view.html:45 template/admin/admin_base.html:112
+msgid "Nameservers"
 msgstr ""
 
-#: template/system/registration_protocol_edit.html:5
-#: template/system/registration_protocol_edit.ajax:1
-msgid "Registration Policy Edit"
+#: app/system/forms.py:65 app/admin/forms.py:29 app/admin/forms.py:37
+#: app/appliance/forms.py:15 app/wiki/forms.py:19 app/wiki/forms.py:26
+#: app/instance/forms.py:17 app/instance/forms.py:30
+#: template/myun/instance/view.html:16 template/system/networkpool.html:18
+#: template/system/networkpool_view.html:25 template/admin/index.html:57
+#: template/admin/group/index.html:21 template/admin/group/view.html:17
+#: template/admin/group/view.html:48 template/admin/appliance/index.html:34
+#: template/admin/appliance/catalog.html:17
+#: template/admin/appliance/view.html:26
+#: template/admin/permission/index.html:17
+#: template/admin/node/instances.html:20 template/admin/instance/index.html:51
+#: template/admin/instance/view.html:81 template/admin/user/index.html:33
+#: template/admin/user/instances.html:19 template/admin/user/view.html:146
+#: template/admin/user/view.html:206 template/home/index.html:100
+#: template/account/permissions.html:15 template/account/view_group.html:32
+msgid "Name"
 msgstr ""
 
-#: template/system/registration_protocol_edit.html:7
-#: template/account/register.html:25
-msgid "Read Registration Policy"
+#: app/system/forms.py:66 app/admin/forms.py:30 app/admin/forms.py:39
+#: app/appliance/forms.py:20 app/instance/forms.py:32
+#: template/myun/instance/view.html:95
+#: template/admin/appliance/catalog.html:19
+#: template/admin/appliance/view.html:82 template/admin/instance/view.html:171
+#: template/instance/view.html:85 template/account/view_group.html:36
+msgid "Description"
 msgstr ""
 
-#: template/system/index.html:5 template/system/index.ajax:1
-msgid "System settings of LuoYun"
+#: app/system/forms.py:68
+msgid "Start IP"
 msgstr ""
 
-#: template/system/baseinfo_edit.html:5 template/system/baseinfo_edit.ajax:1
-msgid "Edit baseinfo of luoyun system"
+#: app/system/forms.py:69
+msgid "End IP"
 msgstr ""
 
-#: template/system/networkpool_edit.html:5
-#: template/system/networkpool_edit.ajax:1
-msgid "Edit IP Address Pool"
+#: app/system/forms.py:70 app/instance/forms.py:64
+#: template/myun/instance/view.html:159 template/system/networkpool.html:21
+#: template/system/networkpool_view.html:37
+#: template/admin/instance/view.html:219
+msgid "Netmask"
 msgstr ""
 
-#: template/system/domain_edit.html:5 template/system/domain_edit.ajax:1
-msgid "Edit Domain"
+#: app/system/forms.py:71 app/instance/forms.py:65
+#: template/myun/instance/view.html:155 template/system/networkpool.html:22
+#: template/system/networkpool_view.html:41
+#: template/admin/instance/view.html:215
+msgid "Gateway"
+msgstr ""
+
+#: app/system/forms.py:73
+msgid "Exclude ip list"
+msgstr ""
+
+#: app/system/forms.py:80
+msgid "Top domain"
+msgstr ""
+
+#: app/system/forms.py:81
+msgid "Name prefix"
+msgstr ""
+
+#: app/system/forms.py:82
+msgid "Name suffix"
+msgstr ""
+
+#: app/system/forms.py:88
+msgid "Config dir"
+msgstr ""
+
+#: app/system/forms.py:89
+msgid "Log dir"
+msgstr ""
+
+#: app/system/forms.py:90
+msgid "Nginx program"
+msgstr ""
+
+#: app/system/forms.py:95
+msgid "Registration Protocol"
+msgstr ""
+
+#: app/system/forms.py:101 template/admin/admin_base.html:117
+msgid "Welcome New User"
+msgstr ""
+
+#: app/system/forms.py:111 template/system/sendmail_success.html:47
+msgid "CC"
+msgstr ""
+
+#: app/system/forms.py:112 template/system/sendmail_success.html:54
+msgid "BCC"
+msgstr ""
+
+#: app/system/forms.py:114 app/wiki/forms.py:20 app/wiki/forms.py:27
+#: template/message/view_out_message.html:21
+#: template/system/sendmail_success.html:65
+msgid "Body"
+msgstr ""
+
+#: app/system/views.py:237 template/system/ippool.html:9
+msgid "IP Pool"
+msgstr ""
+
+#: app/system/views.py:248 app/system/views.py:262
+#: template/system/ippool.html:6
+msgid "Network Pool"
+msgstr ""
+
+#: app/system/views.py:265 app/system/views.py:300 app/system/views.py:373
+#: app/system/views.py:398
+#, python-format
+msgid "Can not find networkpool %s"
+msgstr ""
+
+#: app/system/views.py:312
+msgid "Delete Network Pool Failed"
+msgstr ""
+
+#: app/system/views.py:334 app/system/views.py:362
+#: template/system/networkpool_add.html:6
+msgid "Add a new network pool"
+msgstr ""
+
+#: app/system/views.py:391
+msgid "Edit network pool"
+msgstr ""
+
+#: app/system/views.py:434
+msgid "Edit network pool failed"
+msgstr ""
+
+#: app/system/views.py:460 template/system/networkpool_edit.html:6
+msgid "Edit Network Pool"
+msgstr ""
+
+#: app/system/views.py:665
+msgid "LuoYun Send Mail"
+msgstr ""
+
+#: app/system/views.py:791
+#, python-format
+msgid "Can not find trace %s"
+msgstr ""
+
+#: app/system/views.py:820
+#, python-format
+msgid "Wrong sort by value: %s"
+msgstr ""
+
+#: app/system/views.py:834
+#, python-format
+msgid "Can not find user by id %s"
+msgstr ""
+
+#: app/system/views.py:848
+msgid "Trace system action"
+msgstr ""
+
+#: app/system/views.py:860 app/admin/appliance_views.py:124
+#, python-format
+msgid "View Appliance %s"
+msgstr ""
+
+#: app/admin/permission_views.py:25
+#, python-format
+msgid "No such permission : %s"
+msgstr ""
+
+#: app/admin/permission_views.py:32
+msgid "Permission Management"
+msgstr ""
+
+#: app/admin/group_views.py:30
+#, python-format
+msgid "No such group : %s"
+msgstr ""
+
+#: app/admin/group_views.py:39 app/account/views.py:333
+#, python-format
+msgid "View Group %s"
+msgstr ""
+
+#: app/admin/group_views.py:54 app/admin/group_views.py:69
+#: app/admin/wiki_views.py:51 app/admin/wiki_views.py:66
+#: app/admin/job_views.py:42 app/admin/job_views.py:51
+#: app/admin/appliance_views.py:54 app/admin/appliance_views.py:69
+#: app/admin/instance_views.py:62 app/admin/instance_views.py:74
+#: app/admin/user_views.py:81 app/admin/user_views.py:105
+#: app/admin/node_views.py:48 app/admin/node_views.py:57
+msgid "Wrong action value!"
+msgstr ""
+
+#: app/admin/group_views.py:60 app/admin/wiki_views.py:57
+#: app/admin/job_views.py:48 app/admin/appliance_views.py:60
+#: app/admin/instance_views.py:68 app/admin/user_views.py:87
+#: app/admin/node_views.py:54
+msgid "No action found !"
+msgstr ""
+
+#: app/admin/group_views.py:76
+msgid "Group Management"
+msgstr ""
+
+#: app/admin/group_views.py:81 template/admin/group/index.html:10
+#: template/admin/group/add.html:5
+msgid "Create New Group"
+msgstr ""
+
+#: app/admin/group_views.py:92
+msgid "This name is occupied"
+msgstr ""
+
+#: app/admin/group_views.py:129
+#, python-format
+msgid "Edit Group %s"
+msgstr ""
+
+#: app/admin/wiki_views.py:28
+#, python-format
+msgid "No such topic : %s"
+msgstr ""
+
+#: app/admin/wiki_views.py:72
+msgid "Wiki Management"
+msgstr ""
+
+#: app/admin/wiki_views.py:84
+msgid "List appliances"
+msgstr ""
+
+#: app/admin/wiki_views.py:95 app/admin/wiki_views.py:113
+msgid "Add Wiki Catalog"
+msgstr ""
+
+#: app/admin/wiki_views.py:120 app/admin/wiki_views.py:135
+msgid "No catalog found"
+msgstr ""
+
+#: app/admin/wiki_views.py:128
+#, python-format
+msgid "Edit catalog: %s"
+msgstr ""
+
+#: app/admin/wiki_views.py:148
+msgid "Edit Catalog"
+msgstr ""
+
+#: app/admin/job_views.py:29 app/admin/node_views.py:30
+msgid "No such node"
+msgstr ""
+
+#: app/admin/forms.py:15 app/account/forms.py:16 app/account/forms.py:31
+#: template/admin/user/view.html:57
+msgid "Username"
+msgstr ""
+
+#: app/admin/forms.py:16 app/account/forms.py:27 app/account/forms.py:32
+#: template/account/reset_password_apply.html:12
+msgid "Email Address"
+msgstr ""
+
+#: app/admin/forms.py:17 app/instance/forms.py:85 app/account/forms.py:17
+#: app/account/forms.py:22 template/myun/instance/view.html:215
+msgid "Password"
+msgstr ""
+
+#: app/admin/forms.py:19 app/account/forms.py:23
+msgid "Confirm Password"
+msgstr ""
+
+#: app/admin/forms.py:22 app/instance/forms.py:19 app/instance/forms.py:38
+msgid "Memory(M)"
+msgstr ""
+
+#: app/admin/forms.py:23 template/admin/user/view.html:119
+#: template/home/index.html:29 template/home/no_resource.html:32
+msgid "CPUs"
+msgstr ""
+
+#: app/admin/forms.py:24 template/myun/instances.html:4
+#: template/myun/instance_base.html:19 template/myun/myun_base.html:37
+#: template/admin/appliance/index.html:37 template/admin/node/index.html:23
+#: template/admin/node/instances.html:10 template/admin/node/view.html:75
+#: template/admin/admin_base.html:103 template/admin/user/instances.html:10
+#: template/admin/user/view.html:123 template/admin/user/view.html:149
+#: template/home/no_resource.html:37 template/base.html:40
+msgid "Instances"
+msgstr ""
+
+#: app/admin/forms.py:25
+msgid "Storage(G)"
+msgstr ""
+
+#: app/admin/forms.py:31 template/admin/user/view.html:271
+#: template/account/permissions.html:33
+msgid "Permissions"
+msgstr ""
+
+#: app/admin/forms.py:38 app/appliance/forms.py:17 app/instance/forms.py:31
+#: template/myun/instance/view.html:86
+#: template/admin/appliance/catalog.html:18
+#: template/admin/appliance/view.html:72 template/admin/instance/view.html:162
+#: template/instance/view.html:76
+msgid "Summary"
+msgstr ""
+
+#: app/admin/forms.py:43 template/admin/index.html:58
+msgid "Groups"
+msgstr ""
+
+#: app/admin/appliance_views.py:32
+#, python-format
+msgid "No such appliance : %s"
+msgstr ""
+
+#: app/admin/appliance_views.py:108
+msgid "LuoYun Appliance Management"
+msgstr ""
+
+#: app/admin/appliance_views.py:130
+msgid "Change owner of appliance"
+msgstr ""
+
+#: app/admin/appliance_views.py:144 app/admin/instance_views.py:234
+#, python-format
+msgid "Can not find user: %s"
+msgstr ""
+
+#: app/admin/appliance_views.py:146 app/admin/instance_views.py:236
+msgid "No user input !"
+msgstr ""
+
+#: app/admin/appliance_views.py:156
+#, python-format
+msgid "change appliance owner %(old_owner)s to %(new_owner)s"
+msgstr ""
+
+#: app/admin/appliance_views.py:174
+msgid "Change catalog of appliance"
+msgstr ""
+
+#: app/admin/appliance_views.py:185
+#, python-format
+msgid "Can not find catalog %s"
+msgstr ""
+
+#: app/admin/appliance_views.py:187
+msgid "No catalog input !"
+msgstr ""
+
+#: app/admin/appliance_views.py:215
+msgid "No catalog specified !"
+msgstr ""
+
+#: app/admin/appliance_views.py:231 app/admin/appliance_views.py:243
+#, python-format
+msgid "Wrong action: %s"
+msgstr ""
+
+#: app/admin/appliance_views.py:250 template/admin/appliance/index.html:12
+#: template/admin/appliance/catalog_new.html:5
+msgid "Appliance Catalog"
+msgstr ""
+
+#: app/admin/appliance_views.py:258 app/admin/appliance_views.py:276
+msgid "Add Appliance Catalog"
+msgstr ""
+
+#: app/admin/appliance_views.py:288 app/admin/appliance_views.py:305
+#, python-format
+msgid "Edit Appliance Catalog: %s"
+msgstr ""
+
+#: app/admin/instance_views.py:43
+#, python-format
+msgid "No such instance : %s"
+msgstr ""
+
+#: app/admin/instance_views.py:150
+msgid "Instance Management"
+msgstr ""
+
+#: app/admin/instance_views.py:183
+#, python-format
+msgid "View Instance \"%s\""
+msgstr ""
+
+#: app/admin/instance_views.py:202
+#, python-format
+msgid "Unknown action \"%s\" !"
+msgstr ""
+
+#: app/admin/instance_views.py:213
+#, python-format
+msgid "%(action)s all instance success: %(jid_list)s"
+msgstr ""
+
+#: app/admin/instance_views.py:221
+msgid "Change owner of instance"
+msgstr ""
+
+#: app/admin/instance_views.py:245
+#, python-format
+msgid "change instance owner %(old_owner)s to %(new_owner)s"
+msgstr ""
+
+#: app/admin/user_views.py:47
+#, python-format
+msgid "No such user : %s"
+msgstr ""
+
+#: app/admin/user_views.py:171
+msgid "Admin User Management"
+msgstr ""
+
+#: app/admin/user_views.py:194
+msgid "View User"
+msgstr ""
+
+#: app/admin/user_views.py:202
+#, python-format
+msgid "Reset Password For \"%s\""
+msgstr ""
+
+#: app/admin/user_views.py:224 app/account/views.py:349
+#: app/account/views.py:370 app/account/views.py:510
+#: template/myun/instance/edit_password.html:10
+#: template/admin/user/view.html:353 template/admin/user/reset_password.html:6
+#: template/account/account_base.html:38
+#: template/account/reset_password.html:4
+msgid "Reset Password"
+msgstr ""
+
+#: app/admin/user_views.py:231
+msgid "Creat New User"
+msgstr ""
+
+#: app/admin/user_views.py:243 app/account/views.py:165
+msgid "This username is occupied"
+msgstr ""
+
+#: app/admin/user_views.py:282
+#, python-format
+msgid "Edit User %s"
+msgstr ""
+
+#: app/admin/user_views.py:309 app/account/views.py:646
+msgid "You can not lock yourself !"
+msgstr ""
+
+#: app/admin/views.py:36
+msgid "Admin Console"
+msgstr ""
+
+#: app/admin/node_views.py:71
+msgid "Node Management"
+msgstr ""
+
+#: app/appliance/models.py:41
+#, python-format
+msgid "[Catalog(%s)]"
+msgstr ""
+
+#: app/appliance/models.py:49
+msgid "GNU/Linux"
+msgstr ""
+
+#: app/appliance/models.py:50
+msgid "Microsoft Windows"
+msgstr ""
+
+#: app/appliance/models.py:92
+#, python-format
+msgid "[Appliance(%s)]"
+msgstr ""
+
+#: app/appliance/models.py:122 template/admin/instance/index.html:81
+#: template/admin/user/view.html:193 template/admin/user/view.html:250
+#: template/admin/user/view.html:259 template/instance/index.html:67
+msgid "None"
+msgstr ""
+
+#: app/appliance/forms.py:16
+msgid "OS"
+msgstr ""
+
+#: app/appliance/forms.py:18 app/wiki/forms.py:21 app/wiki/forms.py:28
+#: template/admin/appliance/catalog.html:5
+#: template/admin/appliance/view.html:45
+#: template/admin/appliance/catalog_edit.html:5
+#: template/admin/appliance/change_catalog.html:16
+#: template/admin/admin_base.html:100 template/admin/user/view.html:148
+#: template/appliance/index.html:18 template/appliance/view.html:39
+msgid "Catalog"
+msgstr ""
+
+#: app/appliance/forms.py:19 app/account/forms.py:48
+msgid "Logo"
+msgstr ""
+
+#: app/appliance/views.py:40
+#, python-format
+msgid "No such appliance: %s !"
+msgstr ""
+
+#: app/appliance/views.py:48
+#, python-format
+msgid "Appliance %s is private !"
+msgstr ""
+
+#: app/appliance/views.py:54 app/instance/views.py:128
+msgid "Only owner can do this!"
+msgstr ""
+
+#: app/appliance/views.py:65
+msgid "Appliance Home"
+msgstr ""
+
+#: app/appliance/views.py:109 template/myun/index.html:6
+#: template/myun/appliances.html:11 template/admin/appliance/index.html:76
+msgid "Upload Appliance"
+msgstr ""
+
+#: app/appliance/views.py:137 app/appliance/views.py:304
+#: app/account/views.py:442
+#, python-format
+msgid "Save %(filename)s failed: %(emsg)s"
+msgstr ""
+
+#: app/appliance/views.py:214 app/appliance/views.py:235
+#: app/appliance/views.py:443 app/appliance/views.py:469
+#: app/instance/views.py:762 template/account/permissions.html:7
+msgid "No permission!"
+msgstr ""
+
+#: app/appliance/views.py:228
+msgid "Edit Appliance "
+msgstr ""
+
+#: app/appliance/views.py:260
+#, python-format
+msgid "Save appliance info to DB failed: %s"
+msgstr ""
+
+#: app/appliance/views.py:262
+#, python-format
+msgid "Edit Appliance \"%s\""
+msgstr ""
+
+#: app/appliance/views.py:273
+#, python-format
+msgid "create appliance logo dir \"%(dir)s\" failed: %(emsg)s"
+msgstr ""
+
+#: app/appliance/views.py:282
+#, python-format
+msgid "Picture must smaller than %s !"
+msgstr ""
+
+#: app/appliance/views.py:291 app/account/views.py:430
+#, python-format
+msgid "Open %(filename)s failed: %(emsg)s , is it a picture ?"
+msgstr ""
+
+#: app/appliance/views.py:318 app/appliance/views.py:496
+#: app/appliance/views.py:521
+#, python-format
+msgid "Can not find appliance %s."
+msgstr ""
+
+#: app/appliance/views.py:323
+msgid "No permission !"
+msgstr ""
+
+#: app/appliance/views.py:329
+msgid "Have instances exist"
+msgstr ""
+
+#: app/appliance/views.py:340
+#, python-format
+msgid "Delete %(filename)s failed: %(emsg)s"
+msgstr ""
+
+#: app/appliance/views.py:372 template/admin/appliance/view.html:5
+msgid "View Appliance"
+msgstr ""
+
+#: app/appliance/views.py:439
+msgid "No such appliance!"
+msgstr ""
+
+#: app/appliance/views.py:465
+msgid "No such appliance !"
+msgstr ""
+
+#: app/appliance/views.py:514 app/instance/views.py:1140
+#: app/instance/views.py:1165
+msgid "No permissions !"
+msgstr ""
+
+#: app/appliance/views.py:543
+msgid "tune value must be a integer."
+msgstr ""
+
+#: app/appliance/views.py:546
+#, python-format
+msgid "Can not find appliance catalog %s"
+msgstr ""
+
+#: app/job/models.py:16 app/instance/models.py:22 app/instance/models.py:192
+msgid "unknown"
+msgstr ""
+
+#: app/job/models.py:17
+msgid "action initialized"
+msgstr ""
+
+#: app/job/models.py:21
+msgid "running"
+msgstr ""
+
+#: app/job/models.py:22
+msgid "searching for node server"
+msgstr ""
+
+#: app/job/models.py:23
+msgid "sending request to node server"
+msgstr ""
+
+#: app/job/models.py:24
+msgid "waiting for resource available on node server"
+msgstr ""
+
+#: app/job/models.py:25
+msgid "downloading appliance image"
+msgstr ""
+
+#: app/job/models.py:26
+msgid "checking appliance image"
+msgstr ""
+
+#: app/job/models.py:27
+msgid "creating instance disk file"
+msgstr ""
+
+#: app/job/models.py:28
+msgid "mounting instance disk file"
+msgstr ""
+
+#: app/job/models.py:29
+msgid "configuring instance"
+msgstr ""
+
+#: app/job/models.py:30
+msgid "unmounting instance disk file"
+msgstr ""
+
+#: app/job/models.py:31
+msgid "starting instance virtual machine"
+msgstr ""
+
+#: app/job/models.py:32
+msgid "stopping instance virtual machine"
+msgstr ""
+
+#: app/job/models.py:33
+msgid "virtual machine stopped"
+msgstr ""
+
+#: app/job/models.py:34
+msgid "Last Running Status"
+msgstr ""
+
+#: app/job/models.py:38
+msgid "finished"
+msgstr ""
+
+#: app/job/models.py:39
+msgid "finished successfully"
+msgstr ""
+
+#: app/job/models.py:40
+msgid "instance running already"
+msgstr ""
+
+#: app/job/models.py:41
+msgid "instance not running"
+msgstr ""
+
+#: app/job/models.py:42
+msgid "instance not exist"
+msgstr ""
+
+#: app/job/models.py:43
+msgid "failed"
+msgstr ""
+
+#: app/job/models.py:44
+msgid "node server not available"
+msgstr ""
+
+#: app/job/models.py:45
+msgid "node server busy"
+msgstr ""
+
+#: app/job/models.py:46
+msgid "original node server is not enable"
+msgstr ""
+
+#: app/job/models.py:47
+msgid "appliance download error"
+msgstr ""
+
+#: app/job/models.py:48
+msgid "appliance error"
+msgstr ""
+
+#: app/job/models.py:49
+msgid "Last Finish Status"
+msgstr ""
+
+#: app/job/models.py:53
+msgid "waiting"
+msgstr ""
+
+#: app/job/models.py:54
+msgid "starting OS manager"
+msgstr ""
+
+#: app/job/models.py:55
+msgid "syncing with OS manager"
+msgstr ""
+
+#: app/job/models.py:56
+msgid "checking instance status"
+msgstr ""
+
+#: app/job/models.py:57
+msgid "Last Waiting Status"
+msgstr ""
+
+#: app/job/models.py:60
+msgid "pending"
+msgstr ""
+
+#: app/job/models.py:63
+msgid "timeout"
+msgstr ""
+
+#: app/job/models.py:65
+msgid "cancel"
+msgstr ""
+
+#: app/job/models.py:66
+msgid "Internal Error"
+msgstr ""
+
+#: app/job/models.py:67
+msgid "work started already"
+msgstr ""
+
+#: app/job/models.py:68
+msgid "node/instance busy"
+msgstr ""
+
+#: app/job/models.py:69
+msgid "request cancelled"
+msgstr ""
+
+#: app/job/models.py:70
+msgid "Last Cancel Status"
+msgstr ""
+
+#: app/job/models.py:75
+msgid "enable node"
+msgstr ""
+
+#: app/job/models.py:76
+msgid "disable node"
+msgstr ""
+
+#: app/job/models.py:77
+msgid "update node configure"
+msgstr ""
+
+#: app/job/models.py:78
+msgid "run"
+msgstr ""
+
+#: app/job/models.py:79 app/instance/models.py:24
+msgid "stop"
+msgstr ""
+
+#: app/job/models.py:80
+msgid "destroy"
+msgstr ""
+
+#: app/job/models.py:81
+msgid "query"
+msgstr ""
+
+#: app/job/models.py:86
+msgid "NODE"
+msgstr ""
+
+#: app/job/models.py:87
+msgid "INSTANCE"
+msgstr ""
+
+#: app/job/models.py:119
+#, python-format
+msgid "[Job(%s)]"
+msgstr ""
+
+#: app/job/models.py:124 app/job/models.py:148 app/job/models.py:152
+msgid "Unknown"
+msgstr ""
+
+#: app/home/models.py:46
+#, python-format
+msgid "[Attachment (%s)]"
+msgstr ""
+
+#: app/home/views.py:55
+msgid "Permission Denied"
+msgstr ""
+
+#: app/home/views.py:70
+msgid "No Resource"
+msgstr ""
+
+#: app/home/views.py:135
+#, python-format
+msgid "File is large than %s"
+msgstr ""
+
+#: app/home/views.py:138
+msgid "Upload from kindeditor"
+msgstr ""
+
+#: app/home/views.py:146
+msgid "You have not upload any file !"
+msgstr ""
+
+#: app/wiki/models.py:34
+#, python-format
+msgid "[WikiCatalog(%s)]"
+msgstr ""
+
+#: app/wiki/models.py:73
+#, python-format
+msgid "[Topic(%s)]"
+msgstr ""
+
+#: app/wiki/views.py:26
+msgid "Servers Home"
+msgstr ""
+
+#: app/wiki/views.py:38
+#, python-format
+msgid "View topic: %s"
+msgstr ""
+
+#: app/wiki/views.py:66
+msgid "Catalog not found"
+msgstr ""
+
+#: app/wiki/views.py:73 app/wiki/views.py:91
+#: template/wiki/view_catalog.html:19 template/wiki/index.html:8
+msgid "New Topic"
+msgstr ""
+
+#: app/wiki/views.py:120
+#, python-format
+msgid "Edit Topic %s"
+msgstr ""
+
+#: app/wiki/views.py:136
+msgid "Edit Topic"
+msgstr ""
+
+#: app/node/forms.py:10
+msgid "Virtual Memory(G)"
+msgstr ""
+
+#: app/node/forms.py:11
+msgid "Virtual CPUs"
+msgstr ""
+
+#: app/node/views.py:33
+msgid "No action specified"
+msgstr ""
+
+#: app/node/views.py:75 app/node/views.py:106 app/node/views.py:122
+#, python-format
+msgid "Can not find node %s."
+msgstr ""
+
+#: app/node/views.py:95 app/node/views.py:144
+#, python-format
+msgid "Run job failed: %s"
+msgstr ""
+
+#: app/node/views.py:112 app/node/views.py:146
+msgid "Edit note configure"
+msgstr ""
+
+#: app/instance/models.py:23
+msgid "new"
+msgstr ""
+
+#: app/instance/models.py:25
+msgid "started"
+msgstr ""
+
+#: app/instance/models.py:26
+msgid "osm connected"
+msgstr ""
+
+#: app/instance/models.py:27
+msgid "service running"
+msgstr ""
+
+#: app/instance/models.py:28
+msgid "suspend"
+msgstr ""
+
+#: app/instance/models.py:29
+msgid "deleted"
+msgstr ""
+
+#: app/instance/models.py:30
+msgid "need query"
+msgstr ""
+
+#: app/instance/models.py:31
+msgid "disk not exist"
+msgstr ""
+
+#: app/instance/models.py:193
+msgid "new instance that hasn't run once"
+msgstr ""
+
+#: app/instance/models.py:194
+msgid "instance is stopped"
+msgstr ""
+
+#: app/instance/models.py:195
+msgid "instance is started by hypervisor"
+msgstr ""
+
+#: app/instance/models.py:196
+msgid "osm in instance connected"
+msgstr ""
+
+#: app/instance/models.py:197
+msgid "application is running"
+msgstr ""
+
+#: app/instance/models.py:198
+msgid "instance is suspend"
+msgstr ""
+
+#: app/instance/models.py:199
+msgid "instance is deleted"
+msgstr ""
+
+#: app/instance/models.py:200
+msgid "instance needs queryed"
+msgstr ""
+
+#: app/instance/models.py:201
+msgid "the instance disk does not exist"
+msgstr ""
+
+#: app/instance/models.py:204
+msgid "Unknown Status"
+msgstr ""
+
+#: app/instance/forms.py:18 app/instance/forms.py:37
+#: template/admin/node/index.html:18
+msgid "CPU"
+msgstr ""
+
+#: app/instance/forms.py:20
+msgid "Hide"
+msgstr ""
+
+#: app/instance/forms.py:25 template/myun/instances.html:43
+#: template/myun/instance/view.html:53 template/admin/index.html:13
+#: template/admin/index.html:59 template/admin/appliance/index.html:4
+#: template/admin/appliance/catalog.html:4
+#: template/admin/appliance/change_owner.html:4
+#: template/admin/appliance/catalog_new.html:4
+#: template/admin/appliance/view.html:4
+#: template/admin/appliance/catalog_edit.html:4
+#: template/admin/appliance/change_catalog.html:4
+#: template/admin/admin_base.html:49 template/admin/admin_base.html:59
+#: template/admin/instance/index.html:58
+#: template/admin/instance/change_owner.html:4
+#: template/admin/instance/view.html:129 template/admin/user/index.html:36
+#: template/admin/user/view.html:40 template/admin/user/view.html:209
+#: template/home/index.html:17 template/instance/view.html:55
+msgid "Appliance"
+msgstr ""
+
+#: app/instance/forms.py:42
+msgid "Default"
+msgstr ""
+
+#: app/instance/forms.py:43
+msgid "LuoYunCloud Network Pool"
+msgstr ""
+
+#: app/instance/forms.py:60 app/instance/forms.py:79
+#: template/myun/instance/view.html:146 template/myun/instance/view.html:192
+#: template/admin/instance/view.html:207 template/admin/instance/view.html:243
+msgid "Type"
+msgstr ""
+
+#: app/instance/forms.py:70
+msgid "Virtual disk"
+msgstr ""
+
+#: app/instance/forms.py:80
+msgid "Size (GB)"
+msgstr ""
+
+#: app/instance/forms.py:86
+msgid "Confirm"
+msgstr ""
+
+#: app/instance/forms.py:91 template/myun/instance/view.html:225
+msgid "SSH Public Key"
+msgstr ""
+
+#: app/instance/views.py:118 app/instance/views.py:147
+#, python-format
+msgid "Instance %s is private !"
+msgstr ""
+
+#: app/instance/views.py:122 app/instance/views.py:143
+#, python-format
+msgid "Instance %s is deleted !"
+msgstr ""
+
+#: app/instance/views.py:158
+msgid "Previous task is not finished !"
+msgstr ""
+
+#: app/instance/views.py:177
+#, python-format
+msgid "Connect to control server failed: %s"
+msgstr ""
+
+#: app/instance/views.py:180
+msgid "Task starts successfully."
+msgstr ""
+
+#: app/instance/views.py:238
+msgid "LuoYun Public Instance"
+msgstr ""
+
+#: app/instance/views.py:321
+#, python-format
+msgid "Baseinfo of instance %s"
+msgstr ""
+
+#: app/instance/views.py:343
+msgid "Can not delete a running instance!"
+msgstr ""
+
+#: app/instance/views.py:351
+#, python-format
+msgid "No instance %s!"
+msgstr ""
+
+#: app/instance/views.py:396
+msgid "You have not login !"
+msgstr ""
+
+#: app/instance/views.py:414
+msgid "Just support run/stop/reboot/query action"
+msgstr ""
+
+#: app/instance/views.py:419
+#, python-format
+msgid "%s instance"
+msgstr ""
+
+#: app/instance/views.py:447
+msgid "Instance does not need query."
+msgstr ""
+
+#: app/instance/views.py:455
+msgid "Instance is stopped now !"
+msgstr ""
+
+#: app/instance/views.py:463
+msgid "Instance is running now !"
+msgstr ""
+
+#: app/instance/views.py:494
+#, python-format
+msgid "need %(need)s CPU, but %(have)s have."
+msgstr ""
+
+#: app/instance/views.py:498
+#, python-format
+msgid "need %(need)sMB memory, but %(have)sMB have."
+msgstr ""
+
+#: app/instance/views.py:501
+#, python-format
+msgid "No resource: %s"
+msgstr ""
+
+#: app/instance/views.py:561
+#, python-format
+msgid "Appliance is private: %s"
+msgstr ""
+
+#: app/instance/views.py:565
+#, python-format
+msgid "Appliance is locked: %s"
+msgstr ""
+
+#: app/instance/views.py:591 template/appliance/view.html:28
+msgid "Create Instance"
+msgstr ""
+
+#: app/instance/views.py:604
+msgid "No appliance found, please upload appliance first!"
+msgstr ""
+
+#: app/instance/views.py:635
+msgid "You have used the name for a instance !"
+msgstr ""
+
+#: app/instance/views.py:758 app/instance/views.py:781
+msgid "No such instance!"
+msgstr ""
+
+#: app/instance/views.py:1122 app/instance/views.py:1147
+#: app/instance/views.py:1182
+#, python-format
+msgid "Can not find instance %s."
+msgstr ""
+
+#: app/instance/views.py:1170
+msgid "No target found !"
+msgstr ""
+
+#: app/instance/views.py:1174
+#, python-format
+msgid "Not support target: %s"
+msgstr ""
+
+#: app/account/models.py:57
+#, python-format
+msgid "[Group(%s)]"
+msgstr ""
+
+#: app/account/models.py:109
+#, python-format
+msgid "[User(%s)]"
+msgstr ""
+
+#: app/account/models.py:206
+#, python-format
+msgid "[UserProfile(%s)]"
+msgstr ""
+
+#: app/account/models.py:253
+#, python-format
+msgid "[UserPermission(%s)]"
+msgstr ""
+
+#: app/account/models.py:277
+#, python-format
+msgid "[ApplyUser(%s)]"
+msgstr ""
+
+#: app/account/models.py:305
+#, python-format
+msgid "[User reset password apply (%s)]"
+msgstr ""
+
+#: app/account/forms.py:11
+msgid "password confirm failed"
+msgstr ""
+
+#: app/account/forms.py:33 template/admin/admin_base.html:116
+#: template/home/registration_protocol.html:11
+msgid "Registration Policy"
+msgstr ""
+
+#: app/account/views.py:90
+msgid ""
+"You have been lock by admin, can not login now. If you have any questions, "
+"contact admin first please !"
+msgstr ""
+
+#: app/account/views.py:103
+msgid "password is wrong !"
+msgstr ""
+
+#: app/account/views.py:105
+msgid "No such user !"
+msgstr ""
+
+#: app/account/views.py:145
+msgid "No key found !"
+msgstr ""
+
+#: app/account/views.py:147
+msgid "No apply record found !"
+msgstr ""
+
+#: app/account/views.py:213 template/home/welcome.html:17
+msgid "Welcome to use LuoYun Cloud !"
+msgstr ""
+
+#: app/account/views.py:261
+msgid "My Account Center"
+msgstr ""
+
+#: app/account/views.py:273
+msgid "My Permissions"
+msgstr ""
+
+#: app/account/views.py:308
+#, python-format
+msgid "View User %s"
+msgstr ""
+
+#: app/account/views.py:324
+#, python-format
+msgid "No such group: %s !"
+msgstr ""
+
+#: app/account/views.py:379 app/account/views.py:398
+msgid "Change my avatar"
+msgstr ""
+
+#: app/account/views.py:411
+#, python-format
+msgid "Create user home dir \"%(dir)s\" failed: %(emsg)s"
+msgstr ""
+
+#: app/account/views.py:420
+#, python-format
+msgid "Avatar file must smaller than %s !"
+msgstr ""
+
+#: app/account/views.py:451
+#, python-format
+msgid ""
+"\n"
+"Reset Password for Your LuoYun Cloud Account.\n"
+"\n"
+"Click the url to complete : %(URL)s\n"
+"\n"
+"If you can not click the link above, copy and paste it on your brower "
+"address.\n"
+msgstr ""
+
+#: app/account/views.py:462 app/account/views.py:532
+#: template/account/login.html:34
+msgid "Forget My Password"
+msgstr ""
+
+#: app/account/views.py:500
+msgid "[ LuoYun Cloud ] Reset Password"
+msgstr ""
+
+#: app/account/views.py:505
+msgid "Send Email Failed !"
+msgstr ""
+
+#: app/account/views.py:508
+#, python-format
+msgid "No such email address: %s"
+msgstr ""
+
+#: app/account/views.py:546
+msgid "You have completed reset password."
+msgstr ""
+
+#: app/account/views.py:549
+#, python-format
+msgid "No such key: %s !"
+msgstr ""
+
+#: app/account/views.py:598
+msgid "Delete Account"
+msgstr ""
+
+#: app/account/views.py:605
+msgid "You can not delete yourself!"
+msgstr ""
+
+#: app/account/views.py:607
+#, python-format
+msgid "User \"%s\" have instances exist, please remove them first."
+msgstr ""
+
+#: app/account/views.py:609
+#, python-format
+msgid "User \"%s\" have appliances exist, please remove them first."
+msgstr ""
+
+#: app/account/views.py:611
+#, python-format
+msgid "Have not found user by id %s"
+msgstr ""
+
+#: app/account/views.py:656
+msgid "Can not found the user."
+msgstr ""
+
+#: template/install/index.html:7
+msgid "DB Configure"
+msgstr ""
+
+#: template/install/index.html:28
+msgid "saved success, please"
+msgstr ""
+
+#: template/install/index.html:28
+msgid "reboot"
+msgstr ""
+
+#: template/install/index.html:28
+msgid "web server !"
 msgstr ""
 
 #: template/install/base.html:11
@@ -416,773 +1740,736 @@ msgstr ""
 msgid "Contact"
 msgstr ""
 
-#: template/install/index.html:7
-msgid "DB Configure"
+#: template/message/index.html:5
+msgid "Here is your message boxes"
 msgstr ""
 
-#: template/install/index.html:28
-msgid "saved success, please"
-msgstr ""
-
-#: template/install/index.html:28
-msgid "reboot"
-msgstr ""
-
-#: template/install/index.html:28
-msgid "web server !"
-msgstr ""
-
-#: template/base.html:13
-msgid "LuoYun Cloud"
-msgstr ""
-
-#: template/base.html:32 template/instance/instance_base.html:17
-#: template/admin/admin_base.html:49 template/admin/appliance/index.html:38
-#: template/admin/user/view.html:96 template/admin/user/view.html:123
-#: template/admin/user/instances.html:10 template/admin/node/instances.html:10
-#: template/home/no_resource.html:37 template/myun/myun_base.html:37
-#: template/myun/instances.html:4
-msgid "Instances"
-msgstr ""
-
-#: template/base.html:34 template/myun/myun_base.html:14
-msgid "My LuoYun"
-msgstr ""
-
-#: template/base.html:37
-msgid "Administration"
-msgstr ""
-
-#: template/base.html:49
-msgid "Sign In"
-msgstr ""
-
-#: template/base.html:50
-msgid "Register"
-msgstr ""
-
-#: template/base.html:73
-msgid "Powered by"
-msgstr ""
-
-#: template/base.html:73 template/admin/user/view.html:107
-msgid "LuoYun"
-msgstr ""
-
-#: template/instance/delete.html:5 template/instance/delete.ajax:1
-msgid "Delete instance"
-msgstr ""
-
-#: template/instance/delete.html:8
-msgid "Remove a instance is a dangrous action !"
-msgstr ""
-
-#: template/instance/delete.html:11
-msgid "Just owner can delete instance."
-msgstr ""
-
-#: template/instance/storage_edit.html:6 template/instance/storage.html:8
-#: template/instance/storage.ajax:4
-msgid "Configure Storage"
-msgstr ""
-
-#: template/instance/storage.html:11 template/instance/network.html:11
-#: template/instance/network.ajax:7 template/instance/storage.ajax:7
-msgid "Type"
-msgstr ""
-
-#: template/instance/storage.html:15 template/instance/storage.ajax:11
-msgid "Size"
-msgstr ""
-
-#: template/instance/storage.html:29 template/instance/storage.ajax:25
-msgid "You can add a disk for the instance. "
-msgstr ""
-
-#: template/instance/storage.html:30 template/instance/domain.html:18
-#: template/instance/domain.ajax:14 template/instance/storage.ajax:26
-msgid "Add"
-msgstr ""
-
-#: template/instance/domain.html:6 template/instance/domain.ajax:2
-msgid "Domain Binding"
-msgstr ""
-
-#: template/instance/domain.html:8 template/instance/domain.ajax:4
-msgid "Domain name of the instance is "
-msgstr ""
-
-#: template/instance/domain.html:17 template/instance/domain.ajax:13
-msgid "Domain is not configured."
-msgstr ""
-
-#: template/instance/create.html:6
-msgid "Create My Instance"
-msgstr ""
-
-#: template/instance/create.html:24
-msgid "Select a appliance to create instance."
-msgstr ""
-
-#: template/instance/create.html:36
-msgid "Please give a human instance name, can not be the same as others."
-msgstr ""
-
-#: template/instance/create.html:47
-msgid "The cpus of your instance."
-msgstr ""
-
-#: template/instance/create.html:48 template/instance/create.html:60
+#: template/message/inbox.html:7
 #, python-format
-msgid "total: %s, used: %s"
+msgid "Inbox have %s message."
 msgstr ""
 
-#: template/instance/create.html:59
-msgid "The memory of your instance."
+#: template/message/inbox.html:11 template/system/sendmail_success.html:11
+#: template/system/sendmail.html:15
+msgid "From"
 msgstr ""
 
-#: template/instance/create.html:71
-msgid ""
-"If a instance is private, can not be viable by any others except "
-"administrator."
+#: template/message/inbox.html:30 template/message/view_message.html:8
+msgid "Reply"
 msgstr ""
 
-#: template/instance/view_job.html:7 template/instance/joblist.html:7
-#: template/instance/joblist.ajax:3
-msgid "Recent Job History"
+#: template/message/inbox.html:31 template/message/view_message.html:9
+#: template/message/outbox.html:29 template/message/notice_view.html:35
+#: template/myun/instance_base.html:80 template/myun/instance/view.html:204
+#: template/myun/instance/view.html:246 template/myun/instance/view.html:275
+#: template/system/networkpool_view.html:13 template/admin/group/index.html:42
+#: template/admin/appliance/index.html:63
+#: template/admin/appliance/view.html:96 template/admin/instance/view.html:65
+#: template/admin/instance/view.html:299 template/admin/user/view.html:186
+#: template/appliance/view.html:60 template/wiki/view_topic.html:25
+msgid "Delete"
 msgstr ""
 
-#: template/instance/view_job.html:11 template/instance/joblist.html:11
-#: template/instance/joblist.ajax:7
-msgid "Job ID"
+#: template/message/inbox.html:41
+msgid "You have not receiverd any message yet !"
 msgstr ""
 
-#: template/instance/view_job.html:13 template/instance/joblist.html:13
-#: template/admin/job/index.html:25 template/admin/node/index.html:23
-#: template/instance/joblist.ajax:9 template/admin/job/index.ajax:22
-msgid "Action"
+#: template/message/reply_message.html:10
+#: template/message/view_message.html:19 template/message/view_message.html:56
+#: template/message/notice_view.html:21 template/message/notice.html:19
+msgid "Sender"
 msgstr ""
 
-#: template/instance/view_job.html:14 template/instance/joblist.html:14
-#: template/instance/joblist.ajax:10
-msgid "Result"
+#: template/message/reply_message.html:14
+#: template/message/view_message.html:23 template/message/view_message.html:60
+#: template/message/notice_view.html:25
+msgid "Send time"
 msgstr ""
 
-#: template/instance/view_job.html:15 template/instance/joblist.html:15
-#: template/instance/joblist.ajax:11
-msgid "Start Time"
+#: template/message/view_message.html:13 template/message/notice_view.html:15
+msgid "You have read this message already, at"
 msgstr ""
 
-#: template/instance/view_job.html:16 template/instance/joblist.html:16
-#: template/instance/joblist.ajax:12
-msgid "End Time"
+#: template/message/view_message.html:46 template/message/notice_view.html:38
+msgid "Can not find message !"
 msgstr ""
 
-#: template/instance/secret.html:5 template/admin/user/view.html:75
-#: template/instance/secret.ajax:1
-msgid "Password"
+#: template/message/view_message.html:51
+msgid "Original message"
 msgstr ""
 
-#: template/instance/secret.html:8 template/instance/secret.ajax:4
-msgid "Reset Root Password"
+#: template/message/message_base.html:14 template/admin/admin_base.html:77
+#: template/base.html:60
+msgid "Inbox"
 msgstr ""
 
-#: template/instance/secret.html:12 template/instance/secret.ajax:8
-msgid "SSH Public Key"
+#: template/message/message_base.html:15
+msgid "Outbox"
 msgstr ""
 
-#: template/instance/baseinfo.html:11 template/instance/baseinfo.ajax:7
-msgid "This is an instance of LuoYun Cloud platform."
+#: template/message/message_base.html:19
+msgid "New"
 msgstr ""
 
-#: template/instance/baseinfo.html:24 template/account/view_group.html:37
-#: template/admin/appliance/view.html:62
-#: template/admin/permission/view.html:41 template/instance/baseinfo.ajax:20
-msgid "Description"
+#: template/message/send_notice.html:4 template/message/notice_view.html:4
+#: template/message/notice.html:4 template/system/networkpool.html:4
+#: template/system/networkpool_delete_failed.html:4
+#: template/system/db_edit.html:4 template/system/index.html:4
+#: template/system/baseinfo.html:4 template/system/ippool.html:4
+#: template/system/welcome_new_user_edit.html:4
+#: template/system/domain_edit.html:4 template/system/networkpool_add.html:4
+#: template/system/sendmail.html:4 template/system/networkpool_view.html:4
+#: template/system/nginx_edit.html:4 template/system/baseinfo_edit.html:4
+#: template/system/clc_edit.html:4
+#: template/system/registration_protocol_edit.html:4
+#: template/system/networkpool_edit.html:4
+#: template/system/nameservers_edit.html:4 template/admin/system/index.html:8
+#: template/admin/admin_base.html:62
+msgid "System"
 msgstr ""
 
-#: template/instance/baseinfo.html:29 template/instance/baseinfo.ajax:25
-msgid "No description."
+#: template/message/send_notice.html:5
+msgid "Site Notice"
 msgstr ""
 
-#: template/instance/webssh.html:6 template/instance/instance_base.html:121
-#: template/instance/webssh.ajax:2
-msgid "WebSSH"
+#: template/message/outbox.html:7
+#, python-format
+msgid "Outbox have %s message."
 msgstr ""
 
-#: template/instance/webssh.html:8 template/instance/webssh.ajax:4
-msgid "WebSSH of the instance is enabled."
+#: template/message/outbox.html:38
+msgid "You have not sent any message before !"
 msgstr ""
 
-#: template/instance/webssh.html:12 template/admin/node/index.html:39
-#: template/instance/webssh.ajax:8
-msgid "Disable"
+#: template/message/new_message.html:7
+msgid "New Message"
 msgstr ""
 
-#: template/instance/webssh.html:17 template/instance/webssh.ajax:13
-msgid "WebSSH of the instance is disabled."
+#: template/message/notice_view.html:5 template/message/notice.html:5
+msgid "All Notice"
 msgstr ""
 
-#: template/instance/webssh.html:20 template/admin/node/index.html:37
-#: template/instance/webssh.ajax:13
-msgid "Enable"
+#: template/message/notice.html:11
+msgid "Send a notice"
 msgstr ""
 
-#: template/instance/resource_edit.html:6
-msgid "Edit Resource"
+#: template/message/notice.html:15
+#, python-format
+msgid "There are %s system notice."
 msgstr ""
 
-#: template/instance/network_edit.html:5 template/instance/network.html:6
-#: template/instance/network.ajax:2
-msgid "Configure Network"
+#: template/message/notice.html:21
+msgid "Send Time"
 msgstr ""
 
-#: template/instance/network_edit.html:8
-msgid ""
-"IP address pool is not configured or all IP addresses are being used. Please "
-"contact system administrator !"
+#: template/message/notice.html:41
+msgid "Have not sent any notice before !"
 msgstr ""
 
-#: template/instance/edit.html:8
-msgid "Edit "
-msgstr ""
-
-#: template/instance/edit.html:13
-msgid "Edit Instance"
-msgstr ""
-
-#: template/instance/edit.html:26
-msgid "Instance Name:"
-msgstr ""
-
-#: template/instance/edit.html:35
-msgid "Cpu Number:"
-msgstr ""
-
-#: template/instance/edit.html:44
-msgid "Memory:"
-msgstr ""
-
-#: template/instance/resource.html:5 template/instance/resource.ajax:1
-msgid "Resource of "
-msgstr ""
-
-#: template/instance/resource.html:9 template/instance/resource.ajax:5
-msgid "CPU numbers"
-msgstr ""
-
-#: template/instance/resource.html:10 template/admin/user/view.html:88
-#: template/admin/node/view.html:51 template/admin/index.html:43
-#: template/home/no_resource.html:27 template/myun/index.html:41
-#: template/instance/resource.ajax:6
-msgid "Memory"
-msgstr ""
-
-#: template/instance/network.html:15 template/instance/network.ajax:11
-msgid "MAC"
-msgstr ""
-
-#: template/instance/network.html:36 template/instance/network.ajax:32
-msgid "Reset"
-msgstr ""
-
-#: template/instance/network.html:41 template/instance/network.ajax:37
-msgid "Appliance Default Configuration"
-msgstr ""
-
-#: template/instance/index.html:15
-msgid "Public Instances"
-msgstr ""
-
-#: template/instance/index.html:17
-msgid "(My Instances)"
-msgstr ""
-
-#: template/instance/index.html:27
-msgid "Have not any instance yet !"
-msgstr ""
-
-#: template/instance/index.html:52 template/admin/appliance/view.html:57
-msgid "No summary yet !"
-msgstr ""
-
-#: template/instance/index.html:59 template/instance/index.html:130
-#: template/admin/job/index.html:22 template/admin/user/instances.html:20
-#: template/admin/instance/index.html:34 template/admin/node/view.html:43
-#: template/admin/node/view.html:77 template/admin/node/instances.html:21
-#: template/admin/node/index.html:21 template/home/index.html:111
-#: template/admin/job/index.ajax:19
-msgid "Status"
-msgstr ""
-
-#: template/instance/index.html:68 template/admin/user/view.html:117
-#: template/admin/user/view.html:128 template/admin/instance/index.html:68
-msgid "None"
-msgstr ""
-
-#: template/instance/index.html:98 template/home/index.html:13
-#: template/myun/instances.html:11 template/myun/index.html:10
+#: template/myun/index.html:10 template/myun/instances.html:11
+#: template/home/index.html:11 template/instance/index.html:94
 msgid "Create New Instance"
 msgstr ""
 
-#: template/instance/index.html:105
-msgid "All Public"
+#: template/myun/index.html:44
+msgid "Get your profile data failed."
 msgstr ""
 
-#: template/instance/index.html:106
-msgid "My  Public"
+#: template/myun/instances.html:14 template/home/index.html:69
+msgid "No instance found!"
 msgstr ""
 
-#: template/instance/index.html:113
-msgid "Selection"
+#: template/myun/instances.html:28 template/myun/appliances.html:28
+msgid "Please give a summary for this instance."
 msgstr ""
 
-#: template/instance/index.html:115 template/admin/appliance/view.html:40
-#: template/admin/user/reset_password_history.html:23
-#: template/admin/node/view.html:59
-msgid "Created"
+#: template/myun/instances.html:47 template/myun/instance/view.html:74
+#: template/myun/appliances.html:37 template/admin/instance/view.html:150
+#: template/appliance/view.html:47 template/instance/view.html:59
+msgid "Create Time"
 msgstr ""
 
-#: template/instance/index.html:122
-msgid "Order"
+#: template/myun/instances.html:51 template/myun/instance/view.html:78
+#: template/myun/appliances.html:41 template/admin/instance/view.html:154
+#: template/appliance/view.html:51 template/instance/view.html:63
+msgid "Update Time"
 msgstr ""
 
-#: template/instance/index.html:123
-msgid "Descending"
+#: template/myun/instances.html:56 template/myun/instance/view.html:57
+#: template/myun/appliances.html:58 template/admin/instance/view.html:133
+msgid "Private"
 msgstr ""
 
-#: template/instance/index.html:124
-msgid "Ascending"
+#: template/myun/instance_base.html:17 template/myun/myun_base.html:13
+#: template/admin/wiki/add_catalog.html:7 template/admin/admin_base.html:48
+#: template/admin/admin_base.html:133 template/appliance/view.html:7
+#: template/appliance/edit.html:6 template/wiki/view_catalog.html:7
+#: template/wiki/view_topic.html:8 template/instance/view.html:13
+#: template/account/account_base.html:13
+msgid "Home"
 msgstr ""
 
-#: template/instance/index.html:131
-msgid "Running"
-msgstr ""
-
-#: template/instance/index.html:132
-msgid "Stoped"
-msgstr ""
-
-#: template/instance/index.html:133 template/admin/appliance/index.html:13
-msgid "All"
-msgstr ""
-
-#: template/instance/index.html:139
-msgid "PageSize"
-msgstr ""
-
-#: template/instance/index.html:140
-msgid "10"
-msgstr ""
-
-#: template/instance/index.html:141
-msgid "20"
-msgstr ""
-
-#: template/instance/index.html:142
-msgid "50"
-msgstr ""
-
-#: template/instance/publickey_edit.html:6
-msgid "Edit SSH Public Key"
-msgstr ""
-
-#: template/instance/password_edit.html:6
-#: template/account/account_base.html:38
-#: template/account/reset_password.html:4 template/admin/user/view.html:76
-#: template/admin/user/reset_password.html:5
-#: template/admin/user/reset_password.html:10
-msgid "Reset Password"
-msgstr ""
-
-#: template/instance/baseinfo_edit.html:6
-msgid "Edit Baseinfo"
-msgstr ""
-
-#: template/instance/instance_base.html:75
-#: template/instance/instance_base.html:120 template/admin/admin_base.html:60
-msgid "Domain"
-msgstr ""
-
-#: template/instance/instance_base.html:90 template/admin/admin_base.html:40
-#: template/admin/appliance/view.html:4
-#: template/admin/appliance/catalog_edit.html:8
-#: template/admin/appliance/catalog.html:4
-#: template/admin/appliance/index.html:4 template/admin/user/index.html:28
-#: template/admin/instance/index.html:33 template/admin/index.html:15
-#: template/home/index.html:19 template/myun/instances.html:43
-msgid "Appliance"
-msgstr ""
-
-#: template/instance/instance_base.html:115 template/admin/admin_base.html:55
-#: template/admin/appliance/view.html:18 template/admin/user/view.html:21
-msgid "Baseinfo"
-msgstr ""
-
-#: template/instance/instance_base.html:116
-msgid "Resource"
-msgstr ""
-
-#: template/instance/instance_base.html:117
-msgid "Network"
-msgstr ""
-
-#: template/instance/instance_base.html:118 template/admin/user/view.html:100
-#: template/home/no_resource.html:42 template/myun/index.html:53
-msgid "Storage"
-msgstr ""
-
-#: template/instance/instance_base.html:119
-msgid "Secret"
-msgstr ""
-
-#: template/instance/instance_base.html:123
-msgid "History"
-msgstr ""
-
-#: template/instance/instance_base.html:130
+#: template/myun/instance_base.html:59 template/admin/instance/view.html:45
 msgid ""
 "Instance configuration has changed, please restart instance for new settings "
 "to be effective!"
 msgstr ""
 
-#: template/instance/domain_edit.html:5 template/instance/domain_edit.ajax:1
+#: template/myun/instance_base.html:73 template/admin/appliance/view.html:16
+#: template/admin/admin_base.html:109 template/admin/instance/view.html:59
+#: template/admin/user/view.html:36
+msgid "Baseinfo"
+msgstr ""
+
+#: template/myun/instance_base.html:74 template/myun/instance/view.html:110
+#: template/admin/instance/view.html:60 template/admin/instance/view.html:183
+#: template/admin/user/view.html:37
+msgid "Resource"
+msgstr ""
+
+#: template/myun/instance_base.html:75
+#: template/system/networkpool_delete_failed.html:20
+#: template/system/ippool.html:25 template/system/networkpool_edit.html:49
+#: template/admin/instance/view.html:61
+msgid "Network"
+msgstr ""
+
+#: template/myun/instance_base.html:76 template/admin/instance/view.html:62
+#: template/admin/user/view.html:127 template/home/no_resource.html:42
+msgid "Storage"
+msgstr ""
+
+#: template/myun/instance_base.html:77
+msgid "Secret"
+msgstr ""
+
+#: template/myun/instance_base.html:78 template/myun/instance/view.html:20
+#: template/admin/admin_base.html:114 template/admin/instance/view.html:63
+#: template/admin/instance/view.html:96
+msgid "Domain"
+msgstr ""
+
+#: template/myun/instance_base.html:79 template/myun/instance/view.html:259
+#: template/admin/instance/view.html:64 template/admin/instance/view.html:282
+msgid "WebSSH"
+msgstr ""
+
+#: template/myun/instance_base.html:81 template/admin/instance/view.html:66
+msgid "History"
+msgstr ""
+
+#: template/myun/instance/edit_public_key.html:4
+#: template/myun/instance/edit_password.html:4
+msgid "Edit Password"
+msgstr ""
+
+#: template/myun/instance/edit_public_key.html:10
+msgid "Edit SSH Public Key"
+msgstr ""
+
+#: template/myun/instance/edit_domain.html:4
+msgid "Configure domain"
+msgstr ""
+
+#: template/myun/instance/edit_domain.html:10
 msgid "Configure Domain"
 msgstr ""
 
-#: template/account/reset_password_complete.html:8
-msgid "Complete Reset Password"
+#: template/myun/instance/edit_domain.html:16
+msgid "Subdomain"
 msgstr ""
 
-#: template/account/account_base.html:14
-msgid "My Account"
+#: template/myun/instance/edit_general.html:9
+msgid "Edit General"
 msgstr ""
 
-#: template/account/account_base.html:32 template/myun/myun_base.html:31
+#: template/myun/instance/edit_general.html:15
+msgid "Edit Baseinfo"
+msgstr ""
+
+#: template/myun/instance/edit_resource.html:4
+#: template/myun/instance/edit_network.html:4
+msgid "Edit Network"
+msgstr ""
+
+#: template/myun/instance/edit_resource.html:10
+msgid "Edit Resource"
+msgstr ""
+
+#: template/myun/instance/edit_network.html:10
+#: template/admin/instance/view.html:201
+msgid "Configure Network"
+msgstr ""
+
+#: template/myun/instance/edit_network.html:22
+msgid "Static network configure for the second NIC."
+msgstr ""
+
+#: template/myun/instance/edit_storage.html:4
+msgid "Edit Storage"
+msgstr ""
+
+#: template/myun/instance/edit_storage.html:10
+#: template/myun/instance/view.html:189 template/admin/instance/view.html:240
+msgid "Configure Storage"
+msgstr ""
+
+#: template/myun/instance/view.html:44 template/admin/instance/view.html:120
+msgid "Recent Action"
+msgstr ""
+
+#: template/myun/instance/view.html:68 template/admin/instance/view.html:144
+#: template/admin/user/view.html:65
+msgid "Public Access"
+msgstr ""
+
+#: template/myun/instance/view.html:91 template/admin/instance/view.html:167
+msgid "No summary yet."
+msgstr ""
+
+#: template/myun/instance/view.html:100 template/admin/instance/view.html:176
+msgid "No description yet."
+msgstr ""
+
+#: template/myun/instance/view.html:105 template/myun/instance/view.html:125
+#: template/myun/instance/view.html:138 template/myun/instance/view.html:203
+#: template/myun/instance/view.html:245 template/system/baseinfo.html:28
+#: template/system/networkpool_view.html:12 template/admin/group/index.html:38
+#: template/admin/appliance/catalog.html:48 template/admin/node/view.html:11
+#: template/appliance/view.html:59 template/appliance/edit.html:8
+#: template/wiki/view_topic.html:24
+msgid "Edit"
+msgstr ""
+
+#: template/myun/instance/view.html:114 template/admin/instance/view.html:187
+msgid "CPU numbers"
+msgstr ""
+
+#: template/myun/instance/view.html:118 template/admin/node/index.html:19
+#: template/admin/node/view.html:51 template/admin/instance/view.html:191
+#: template/admin/user/view.html:115 template/home/no_resource.html:27
+msgid "Memory"
+msgstr ""
+
+#: template/myun/instance/view.html:136
+msgid "NIC"
+msgstr ""
+
+#: template/myun/instance/view.html:140
+msgid "Clean"
+msgstr ""
+
+#: template/myun/instance/view.html:164 template/admin/instance/view.html:223
+msgid "MAC"
+msgstr ""
+
+#: template/myun/instance/view.html:172 template/admin/instance/view.html:231
+msgid "Appliance Default Configuration"
+msgstr ""
+
+#: template/myun/instance/view.html:177
+msgid "Add a new NIC"
+msgstr ""
+
+#: template/myun/instance/view.html:196 template/admin/appliance/index.html:36
+#: template/admin/appliance/view.html:34 template/admin/instance/view.html:247
+msgid "Size"
+msgstr ""
+
+#: template/myun/instance/view.html:208
+msgid "You can add a disk for the instance. "
+msgstr ""
+
+#: template/myun/instance/view.html:209 template/myun/instance/view.html:251
+msgid "Add"
+msgstr ""
+
+#: template/myun/instance/view.html:216
+msgid "Use Global Password"
+msgstr ""
+
+#: template/myun/instance/view.html:222
+msgid "Reset Root Password"
+msgstr ""
+
+#: template/myun/instance/view.html:227
+msgid "Config public key"
+msgstr ""
+
+#: template/myun/instance/view.html:233 template/admin/instance/view.html:261
+msgid "Domain Binding"
+msgstr ""
+
+#: template/myun/instance/view.html:235 template/admin/instance/view.html:263
+msgid "Domain name of the instance is "
+msgstr ""
+
+#: template/myun/instance/view.html:250 template/admin/instance/view.html:274
+msgid "Domain is not configured."
+msgstr ""
+
+#: template/myun/instance/view.html:272 template/admin/instance/view.html:296
+msgid "Delete instance"
+msgstr ""
+
+#: template/myun/instance/view.html:273 template/myun/instance/view.html:282
+#: template/admin/instance/view.html:297 template/admin/instance/view.html:306
+msgid "Wait! All the instance data will be lost after instance is deleted."
+msgstr ""
+
+#: template/myun/instance/view.html:290 template/admin/instance/view.html:314
+msgid "Recent Job History"
+msgstr ""
+
+#: template/myun/instance/view.html:294 template/admin/instance/view.html:318
+msgid "Job ID"
+msgstr ""
+
+#: template/myun/instance/view.html:295 template/admin/index.html:108
+#: template/admin/appliance/change_owner.html:16
+#: template/admin/job/index.html:20 template/admin/admin_base.html:93
+#: template/admin/instance/change_owner.html:16
+#: template/admin/instance/view.html:319 template/admin/user/index.html:4
+#: template/admin/user/reset_password_history.html:4
+#: template/admin/user/reset_password_history.html:18
+#: template/admin/user/instances.html:8 template/admin/user/view.html:4
+#: template/admin/user/view.html:313 template/admin/user/reset_password.html:4
+#: template/admin/user/edit_resources.html:4 template/instance/index.html:123
+msgid "User"
+msgstr ""
+
+#: template/myun/instance/view.html:296 template/admin/index.html:112
+#: template/admin/job/index.html:24 template/admin/instance/view.html:320
+#: template/admin/user/view.html:317
+msgid "Action"
+msgstr ""
+
+#: template/myun/instance/view.html:297 template/admin/instance/view.html:321
+msgid "Result"
+msgstr ""
+
+#: template/myun/instance/view.html:298 template/admin/instance/view.html:322
+msgid "Start Time"
+msgstr ""
+
+#: template/myun/instance/view.html:299 template/admin/instance/view.html:323
+msgid "End Time"
+msgstr ""
+
+#: template/myun/appliances.html:4 template/myun/myun_base.html:38
+#: template/admin/appliance/catalog.html:22
+#: template/admin/wiki/add_catalog.html:9 template/admin/admin_base.html:99
+#: template/appliance/view.html:8 template/appliance/edit.html:7
+#: template/base.html:39
+msgid "Appliances"
+msgstr ""
+
+#: template/myun/appliances.html:14
+msgid "No appliances now !"
+msgstr ""
+
+#: template/myun/appliances.html:46
+msgid "Useable"
+msgstr ""
+
+#: template/myun/myun_base.html:31 template/account/account_base.html:32
 msgid "Welcome, "
 msgstr ""
 
-#: template/account/account_base.html:33 template/myun/myun_base.html:32
+#: template/myun/myun_base.html:32 template/account/account_base.html:33
 msgid "Last login:"
 msgstr ""
 
-#: template/account/account_base.html:39 template/account/avatar_edit.html:4
-msgid "Change Avatar"
+#: template/system/networkpool.html:5
+#: template/system/networkpool_delete_failed.html:5
+#: template/system/networkpool_add.html:5
+#: template/system/networkpool_view.html:5
+#: template/system/networkpool_edit.html:5
+msgid "Network pool"
 msgstr ""
 
-#: template/account/register.html:7
-msgid "Create a account on LuoYun"
+#: template/system/networkpool.html:10
+msgid "Add New Network"
 msgstr ""
 
-#: template/account/register.html:24
-msgid "I accept the site rules ."
-msgstr ""
-
-#: template/account/reset_password_apply_successed.html:8
-msgid ""
-"A email contain a url have send to the following address for reset password. "
-"Please check you email to complete it."
-msgstr ""
-
-#: template/account/view_user.html:21 template/admin/user/view.html:15
-msgid "Leave a message"
-msgstr ""
-
-#: template/account/view_user.html:31 template/account/view_group.html:29
-#: template/admin/job/index.html:20 template/admin/appliance/view.html:24
-#: template/admin/appliance/catalog.html:18
-#: template/admin/appliance/index.html:34 template/admin/group/view.html:16
-#: template/admin/group/view.html:49
-#: template/admin/group/delete_failed.html:24
-#: template/admin/group/index.html:20 template/admin/user/view.html:29
-#: template/admin/user/instances.html:18 template/admin/user/index.html:25
-#: template/admin/user/reset_password_history.html:19
-#: template/admin/instance/index.html:29 template/admin/node/view.html:17
-#: template/admin/node/view.html:75 template/admin/node/instances.html:19
-#: template/admin/node/index.html:18 template/admin/permission/view.html:16
-#: template/admin/permission/view.html:39
-#: template/admin/permission/index.html:16 template/admin/job/index.ajax:17
+#: template/system/networkpool.html:17 template/system/ippool.html:22
+#: template/system/traces.html:18 template/system/networkpool_view.html:21
+#: template/admin/index.html:56 template/admin/index.html:107
+#: template/admin/group/index.html:20 template/admin/group/view.html:13
+#: template/admin/group/view.html:46 template/admin/appliance/index.html:33
+#: template/admin/appliance/catalog.html:16
+#: template/admin/appliance/view.html:22 template/admin/job/index.html:19
+#: template/admin/permission/index.html:15 template/admin/node/index.html:14
+#: template/admin/node/instances.html:19 template/admin/node/view.html:17
+#: template/admin/instance/index.html:50 template/admin/instance/view.html:85
+#: template/admin/user/index.html:32
+#: template/admin/user/reset_password_history.html:17
+#: template/admin/user/instances.html:18 template/admin/user/view.html:61
+#: template/admin/user/view.html:145 template/admin/user/view.html:204
+#: template/admin/user/view.html:312 template/account/view_group.html:28
+#: template/account/view_user.html:30
 msgid "ID"
 msgstr ""
 
-#: template/account/view_user.html:35 template/admin/user/view.html:33
-msgid "Date Joined"
+#: template/system/networkpool.html:19
+#: template/system/networkpool_view.html:29
+msgid "Start"
 msgstr ""
 
-#: template/account/view_user.html:39 template/admin/user/view.html:37
-#: template/admin/user/index.html:32
-msgid "Last Login"
+#: template/system/networkpool.html:20
+#: template/system/networkpool_view.html:33
+msgid "End"
 msgstr ""
 
-#: template/account/view_user.html:43
-msgid "Last Activate"
+#: template/system/networkpool.html:44 template/system/ippool.html:54
+msgid "You have not configure the network pool yet."
 msgstr ""
 
-#: template/account/view_user.html:47 template/admin/user/view.html:46
-msgid "Last Entry"
+#: template/system/networkpool_delete_failed.html:11
+msgid "Delete Network Pool Failed !"
 msgstr ""
 
-#: template/account/view_user.html:51 template/account/permissions.html:32
-#: template/admin/admin_base.html:34 template/admin/group/view.html:4
-#: template/admin/group/delete_failed.html:4 template/admin/group/add.html:4
-#: template/admin/group/edit.html:4 template/admin/group/index.html:4
-#: template/admin/user/view.html:136
-msgid "Group"
+#: template/system/networkpool_delete_failed.html:13
+#: template/system/networkpool_edit.html:42
+msgid "The following ip is in used."
 msgstr ""
 
-#: template/account/view_user.html:60
-msgid "No group"
+#: template/system/networkpool_delete_failed.html:21
+#: template/system/ippool.html:27 template/system/networkpool_edit.html:50
+#: template/admin/index.html:14 template/admin/index.html:60
+#: template/admin/appliance/view.html:52 template/admin/admin_base.html:50
+#: template/admin/admin_base.html:60 template/admin/instance/index.html:4
+#: template/admin/instance/view.html:5 template/admin/user/index.html:37
+#: template/admin/user/view.html:43 template/home/index.html:22
+msgid "Instance"
 msgstr ""
 
-#: template/account/view_user.html:68
-msgid "Total public instances : "
+#: template/system/networkpool_delete_failed.html:22
+#: template/system/networkpool_edit.html:51
+#: template/admin/appliance/catalog.html:20
+#: template/admin/appliance/view.html:60 template/admin/job/index.html:25
+#: template/admin/node/view.html:67 template/admin/instance/index.html:60
+#: template/admin/user/reset_password_history.html:20
+#: template/instance/index.html:122
+msgid "Created"
 msgstr ""
 
-#: template/account/index.html:6
-msgid "welcome ! this is your control panel."
+#: template/system/db_edit.html:5
+msgid "Edit DB configure"
 msgstr ""
 
-#: template/account/view_group.html:44
-msgid "Total users : "
+#: template/system/db_edit.html:29
+#: template/system/welcome_new_user_edit.html:18
+#: template/system/domain_edit.html:23 template/system/nginx_edit.html:23
+#: template/system/baseinfo_edit.html:23 template/system/clc_edit.html:20
+#: template/system/registration_protocol_edit.html:18
+#: template/system/nameservers_edit.html:17
+msgid "saved success"
 msgstr ""
 
-#: template/account/reset_password_apply.html:8
-msgid "Forget Password"
+#: template/system/index.html:5
+msgid "System Configure Center"
 msgstr ""
 
-#: template/account/reset_password_apply.html:12
-msgid "Email Address"
+#: template/system/index.html:10
+msgid "System settings of LuoYun"
 msgstr ""
 
-#: template/account/login.html:8
-msgid "Sign in LuoYun System"
+#: template/system/baseinfo.html:5
+msgid "Baseinfo of luoyun system"
 msgstr ""
 
-#: template/account/login.html:34
-msgid "Forget My Password"
+#: template/system/baseinfo.html:10
+msgid "Control server"
 msgstr ""
 
-#: template/account/permissions.html:7
-msgid "No permission!"
+#: template/system/sendmail_success.html:5
+msgid "Send Email Success !"
 msgstr ""
 
-#: template/account/permissions.html:11
-msgid "Single Permission List"
+#: template/system/sendmail_success.html:20 template/system/sendmail.html:23
+msgid "To User"
 msgstr ""
 
-#: template/account/permissions.html:14 template/admin/group/view.html:50
-#: template/admin/permission/view.html:20
-#: template/admin/permission/index.html:17
-msgid "Codename"
+#: template/system/sendmail_success.html:22 template/system/sendmail.html:25
+msgid "To Group"
 msgstr ""
 
-#: template/account/permissions.html:29
-msgid "Group Permission List"
+#: template/system/sendmail_success.html:71 template/system/sendmail.html:84
+msgid "Invalid email"
 msgstr ""
 
-#: template/account/permissions.html:33 template/admin/user/view.html:147
-msgid "Permissions"
+#: template/system/ippool.html:7
+msgid "All in in "
 msgstr ""
 
-#: template/admin/wiki/topics.html:7 template/admin/wiki/add_catalog.html:8
-#: template/admin/wiki/index.html:7 template/admin/wiki/edit_catalog.html:7
-#: template/admin/job/index.html:9 template/admin/admin_base.html:20
-#: template/admin/appliance/catalog_edit.html:7
-#: template/admin/user/instances.html:7 template/admin/system/index.html:7
-#: template/admin/node/view.html:7 template/admin/node/instances.html:7
-#: template/admin/node/index.html:7 template/admin/wiki/index.ajax:3
-#: template/admin/job/index.ajax:6 template/admin/system/index.ajax:3
-msgid "Admin"
+#: template/system/ippool.html:17
+msgid "Total IP Numbers: "
 msgstr ""
 
-#: template/admin/wiki/add_catalog.html:10
-msgid "Add Catalog"
+#: template/system/ippool.html:28 template/admin/appliance/index.html:38
+#: template/admin/appliance/catalog.html:21
+#: template/admin/appliance/view.html:64 template/admin/node/view.html:71
+#: template/admin/instance/index.html:61 template/admin/user/view.html:152
+#: template/admin/user/view.html:211 template/instance/index.html:121
+msgid "Updated"
 msgstr ""
 
-#: template/admin/wiki/index.html:13 template/admin/wiki/index.ajax:9
-msgid "Create New Catalog"
+#: template/system/welcome_new_user_edit.html:5
+msgid "Welcome New User Edit"
 msgstr ""
 
-#: template/admin/wiki/index.html:14 template/admin/wiki/index.ajax:10
-msgid "All topics"
+#: template/system/welcome_new_user_edit.html:10
+msgid "Read Welcome New User"
 msgstr ""
 
-#: template/admin/wiki/edit_catalog.html:9
-#: template/admin/appliance/catalog_edit.html:9
-msgid "Edit catalog"
+#: template/system/domain_edit.html:5
+msgid "Edit Domain"
 msgstr ""
 
-#: template/admin/job/index.html:10 template/admin/job/index.ajax:7
-msgid "Jobs"
+#: template/system/traces.html:4
+msgid "System Action"
 msgstr ""
 
-#: template/admin/job/index.html:23 template/admin/job/index.ajax:20
+#: template/system/traces.html:10
+msgid "All action excute by "
+msgstr ""
+
+#: template/system/traces.html:19
+msgid "Who"
+msgstr ""
+
+#: template/system/traces.html:20
+msgid "Come From"
+msgstr ""
+
+#: template/system/traces.html:21
+msgid "Do What ?"
+msgstr ""
+
+#: template/system/traces.html:22 template/admin/index.html:110
+#: template/admin/job/index.html:22 template/admin/user/view.html:315
 msgid "Target Type"
 msgstr ""
 
-#: template/admin/job/index.html:24 template/admin/job/index.ajax:21
+#: template/system/traces.html:23 template/admin/index.html:111
+#: template/admin/job/index.html:23 template/admin/user/view.html:316
 msgid "Target ID"
 msgstr ""
 
-#: template/admin/job/index.html:26
-#: template/admin/user/reset_password_history.html:24
-#: template/admin/job/index.ajax:23
+#: template/system/traces.html:24
+msgid "When"
+msgstr ""
+
+#: template/system/sendmail.html:5 template/admin/admin_base.html:118
+msgid "Send Mail"
+msgstr ""
+
+#: template/system/sendmail.html:32
+msgid "ALL users in LuoYunCloud"
+msgstr ""
+
+#: template/system/sendmail.html:49
+msgid "Add more reciver"
+msgstr ""
+
+#: template/system/networkpool_view.html:6 template/admin/group/view.html:5
+#: template/admin/user/view.html:66 template/appliance/view.html:10
+#: template/home/index.html:59 template/wiki/view_catalog.html:9
+#: template/wiki/view_topic.html:10 template/instance/index.html:109
+msgid "View"
+msgstr ""
+
+#: template/system/nginx_edit.html:5
+msgid "Edit Nginx"
+msgstr ""
+
+#: template/system/baseinfo_edit.html:5
+msgid "Edit baseinfo of luoyun system"
+msgstr ""
+
+#: template/system/clc_edit.html:5
+msgid "Edit Control Server's Configure"
+msgstr ""
+
+#: template/system/registration_protocol_edit.html:5
+msgid "Registration Policy Edit"
+msgstr ""
+
+#: template/system/registration_protocol_edit.html:10
+#: template/account/register.html:25
+msgid "Read Registration Policy"
+msgstr ""
+
+#: template/system/nameservers_edit.html:5
+msgid "Edit Nameservers"
+msgstr ""
+
+#: template/admin/index.html:44
+msgid ""
+"Important: you have not any resources yet. please check you compute nodes."
+msgstr ""
+
+#: template/admin/index.html:44
+msgid "Node List"
+msgstr ""
+
+#: template/admin/index.html:51
+msgid "Last 10 users"
+msgstr ""
+
+#: template/admin/index.html:52
+msgid "View All User"
+msgstr ""
+
+#: template/admin/index.html:61 template/admin/user/index.html:38
+#: template/admin/user/view.html:87
+msgid "Email"
+msgstr ""
+
+#: template/admin/index.html:62 template/admin/user/index.html:40
+#: template/admin/user/view.html:77
+msgid "Last Active"
+msgstr ""
+
+#: template/admin/index.html:102 template/admin/user/view.html:306
+msgid "Last 10 jobs"
+msgstr ""
+
+#: template/admin/index.html:103 template/admin/user/view.html:307
+msgid "View All Job"
+msgstr ""
+
+#: template/admin/index.html:109 template/admin/job/index.html:21
+#: template/admin/node/index.html:17 template/admin/node/instances.html:21
+#: template/admin/node/view.html:43 template/admin/instance/index.html:52
+#: template/admin/user/instances.html:20 template/admin/user/view.html:210
+#: template/admin/user/view.html:314 template/home/index.html:108
+#: template/instance/index.html:58
+msgid "Status"
+msgstr ""
+
+#: template/admin/index.html:113 template/admin/job/index.html:27
+#: template/admin/user/reset_password_history.html:21
+#: template/admin/user/view.html:318
 msgid "Completed"
 msgstr ""
 
-#: template/admin/admin_base.html:31
-msgid "Account"
+#: template/admin/group/index.html:4 template/admin/group/add.html:4
+#: template/admin/group/view.html:4 template/admin/group/edit.html:4
+#: template/admin/group/delete_failed.html:4
+#: template/admin/permission/index.html:18 template/admin/admin_base.html:94
+#: template/admin/user/index.html:12 template/admin/user/index.html:35
+#: template/admin/user/view.html:270 template/account/permissions.html:32
+#: template/account/view_user.html:50
+msgid "Group"
 msgstr ""
 
-#: template/admin/admin_base.html:35 template/admin/permission/view.html:4
-#: template/admin/permission/index.html:4
-msgid "Permission"
+#: template/admin/group/index.html:11
+msgid "Users Have No Group"
 msgstr ""
 
-#: template/admin/admin_base.html:36
-msgid "Reset Password History"
-msgstr ""
-
-#: template/admin/admin_base.html:53 template/admin/system/index.html:8
-#: template/admin/system/index.ajax:4
-msgid "System"
-msgstr ""
-
-#: template/admin/admin_base.html:56
-msgid "DB"
-msgstr ""
-
-#: template/admin/admin_base.html:57
-msgid "Control Server"
-msgstr ""
-
-#: template/admin/admin_base.html:59
-msgid "IP Address Pool"
-msgstr ""
-
-#: template/admin/admin_base.html:61
-msgid "Nginx"
-msgstr ""
-
-#: template/admin/admin_base.html:62
-#: template/home/registration_protocol.html:11
-msgid "Registration Policy"
-msgstr ""
-
-#: template/admin/admin_base.html:63
-msgid "Welcome New User"
-msgstr ""
-
-#: template/admin/admin_base.html:64
-msgid "Job"
-msgstr ""
-
-#: template/admin/admin_base.html:65 template/admin/instance/index.html:36
-msgid "Node"
-msgstr ""
-
-#: template/admin/appliance/view.html:10
-msgid "Appliance View"
-msgstr ""
-
-#: template/admin/appliance/view.html:67
-msgid "No description yet !"
-msgstr ""
-
-#: template/admin/appliance/view.html:71
-#: template/admin/appliance/index.html:40
-msgid "Management"
-msgstr ""
-
-#: template/admin/appliance/catalog_new.html:4
-msgid "Appliance Catalog"
-msgstr ""
-
-#: template/admin/appliance/catalog_new.html:5
-#: template/admin/appliance/catalog.html:12
-msgid "New Catalog"
-msgstr ""
-
-#: template/admin/appliance/catalog_new.html:10
-msgid "Create Appliance Catalog"
-msgstr ""
-
-#: template/admin/appliance/catalog.html:10
-msgid "Appliance Catalog Management"
-msgstr ""
-
-#: template/admin/appliance/index.html:9
-msgid "Appliance Management"
-msgstr ""
-
-#: template/admin/appliance/index.html:24
-msgid "Total Appliance :"
-msgstr ""
-
-#: template/admin/appliance/index.html:27
-msgid "Filter by user: "
-msgstr ""
-
-#: template/admin/group/view.html:10
-msgid "Group View"
-msgstr ""
-
-#: template/admin/group/view.html:24
-msgid "Islocked"
-msgstr ""
-
-#: template/admin/group/view.html:28
-msgid "description"
-msgstr ""
-
-#: template/admin/group/view.html:36
-msgid "View all users"
-msgstr ""
-
-#: template/admin/group/view.html:38
-msgid "No users in this group !"
-msgstr ""
-
-#: template/admin/group/view.html:41
-msgid "Permission List"
-msgstr ""
-
-#: template/admin/group/view.html:68
-msgid "This group cantains no permissions !"
-msgstr ""
-
-#: template/admin/group/delete_failed.html:6
-msgid "Delete Group"
-msgstr ""
-
-#: template/admin/group/delete_failed.html:12
-msgid "Delete Group Failed"
-msgstr ""
-
-#: template/admin/group/delete_failed.html:15
-msgid ""
-"This group is locked for safely. If you want to delete it, please manuly "
-"modified the islocked flag of auth_group table in backend DB."
-msgstr ""
-
-#: template/admin/group/delete_failed.html:19
-msgid "There are users in group, please delete it first !"
-msgstr ""
-
-#: template/admin/group/add.html:5 template/admin/group/add.html:10
-#: template/admin/group/index.html:12
-msgid "Create New Group"
-msgstr ""
-
-#: template/admin/group/edit.html:6 template/admin/group/edit.html:11
-msgid "Edit Group"
-msgstr ""
-
-#: template/admin/group/index.html:9
-msgid "Group Management"
-msgstr ""
-
-#: template/admin/group/index.html:15
+#: template/admin/group/index.html:14
 msgid "Total Groups: "
 msgstr ""
 
@@ -1194,145 +2481,267 @@ msgstr ""
 msgid "locked"
 msgstr ""
 
-#: template/admin/user/view.html:25
-msgid "Username"
+#: template/admin/group/view.html:21 template/admin/appliance/index.html:39
+#: template/admin/instance/index.html:59 template/admin/user/index.html:34
+#: template/admin/user/view.html:151 template/admin/user/view.html:208
+msgid "Islocked"
 msgstr ""
 
-#: template/admin/user/view.html:42
-msgid "Last Active"
+#: template/admin/group/view.html:25
+msgid "description"
 msgstr ""
 
-#: template/admin/user/view.html:52 template/admin/user/index.html:30
-msgid "Email"
+#: template/admin/group/view.html:33
+msgid "All users in this group."
 msgstr ""
 
-#: template/admin/user/view.html:56
-msgid "Locale"
+#: template/admin/group/view.html:35
+msgid "No users in this group !"
 msgstr ""
 
-#: template/admin/user/view.html:62
-msgid "Locked"
+#: template/admin/group/view.html:38 template/admin/permission/index.html:9
+msgid "Permission List"
 msgstr ""
 
-#: template/admin/user/view.html:66
-msgid "Unlock"
+#: template/admin/group/view.html:47 template/admin/permission/index.html:16
+#: template/account/permissions.html:14
+msgid "Codename"
 msgstr ""
 
-#: template/admin/user/view.html:69
-msgid "Lock"
+#: template/admin/group/view.html:65
+msgid "This group cantains no permissions !"
 msgstr ""
 
-#: template/admin/user/view.html:83
-msgid "Resources"
+#: template/admin/group/edit.html:6
+msgid "Edit Group"
 msgstr ""
 
-#: template/admin/user/view.html:84
-msgid "Change User Resources"
+#: template/admin/group/delete_failed.html:6
+msgid "delete group failed"
 msgstr ""
 
-#: template/admin/user/view.html:92 template/home/index.html:31
-#: template/home/no_resource.html:32
-msgid "CPUs"
+#: template/admin/group/delete_failed.html:12
+msgid ""
+"This group is locked for safely. If you want to delete it, please manuly "
+"modified the islocked flag of auth_group table in backend DB."
 msgstr ""
 
-#: template/admin/user/view.html:140
-msgid "Edit Groups"
+#: template/admin/group/delete_failed.html:16
+msgid "There are users in group, please delete it first !"
 msgstr ""
 
-#: template/admin/user/view.html:146
-msgid "Group Name"
+#: template/admin/group/delete_failed.html:17
+msgid "All users in the group."
 msgstr ""
 
-#: template/admin/user/view.html:171
-msgid "User has no group!"
+#: template/admin/system/index.html:7 template/admin/wiki/edit_catalog.html:7
+#: template/admin/wiki/index.html:7 template/admin/wiki/topics.html:7
+#: template/admin/wiki/add_catalog.html:8 template/admin/node/instances.html:7
+#: template/admin/admin_base.html:57 template/admin/admin_base.html:82
+#: template/admin/admin_base.html:134 template/admin/user/instances.html:7
+msgid "Admin"
 msgstr ""
 
-#: template/admin/user/add.html:4 template/admin/user/add.html:9
-#: template/admin/user/index.html:12
-msgid "Create New User"
-msgstr ""
-
-#: template/admin/user/instances.html:35
-msgid " have not created any instance yet."
-msgstr ""
-
-#: template/admin/user/edit_resources.html:5
-msgid "Edit Resources"
-msgstr ""
-
-#: template/admin/user/edit_resources.html:10
-msgid "Edit User Resources"
-msgstr ""
-
-#: template/admin/user/edit_groups.html:5
-#: template/admin/user/edit_groups.html:22
-msgid "Edit User Groups"
-msgstr ""
-
-#: template/admin/user/index.html:9 template/admin/user/user_base.html:10
-msgid "User Management"
-msgstr ""
-
-#: template/admin/user/index.html:16
-msgid "Total Users in "
-msgstr ""
-
-#: template/admin/user/index.html:18
-msgid "Total Users: "
-msgstr ""
-
-#: template/admin/user/index.html:27
-msgid "Groups"
-msgstr ""
-
-#: template/admin/user/reset_password_history.html:5
-msgid "Reset Password Apply History"
-msgstr ""
-
-#: template/admin/user/reset_password_history.html:10
-msgid "User Reset Password History"
-msgstr ""
-
-#: template/admin/user/reset_password_history.html:12
-msgid "Total: "
-msgstr ""
-
-#: template/admin/user/reset_password_history.html:22
-#: template/admin/node/view.html:24
-msgid "Key"
-msgstr ""
-
-#: template/admin/system/index.html:13 template/admin/system/index.ajax:9
+#: template/admin/system/index.html:13
 msgid "Sync DB"
 msgstr ""
 
-#: template/admin/instance/index.html:9
-msgid "Instance Management"
-msgstr ""
-
-#: template/admin/instance/index.html:11
-msgid "Total instances: "
-msgstr ""
-
-#: template/admin/instance/index.html:13
-msgid "Sorted by"
-msgstr ""
-
-#: template/admin/instance/index.html:32
-msgid "Isprivate"
-msgstr ""
-
-#: template/admin/instance/index.html:79
-msgid "No instances yet !"
-msgstr ""
-
-#: template/admin/node/view.html:8 template/admin/node/instances.html:8
-#: template/admin/node/index.html:8
+#: template/admin/node.html:10 template/admin/node/instances.html:8
 msgid "Nodes"
 msgstr ""
 
-#: template/admin/node/view.html:21 template/admin/node/index.html:19
+#: template/admin/appliance/index.html:14
+#: template/admin/instance/index.html:14 template/admin/user/index.html:14
+#: template/instance/index.html:100
+msgid "All"
+msgstr ""
+
+#: template/admin/appliance/index.html:23
+msgid "Total Appliance :"
+msgstr ""
+
+#: template/admin/appliance/index.html:26
+msgid "Filter by user: "
+msgstr ""
+
+#: template/admin/appliance/index.html:35
+#: template/admin/appliance/view.html:38 template/admin/instance/index.html:57
+#: template/admin/instance/view.html:89 template/admin/user/view.html:147
+#: template/admin/user/view.html:205 template/appliance/view.html:19
+#: template/appliance/view.html:95 template/home/index.html:104
+#: template/instance/index.html:34 template/instance/index.html:46
+#: template/instance/view.html:51
+msgid "Owner"
+msgstr ""
+
+#: template/admin/appliance/index.html:40
+#: template/admin/appliance/view.html:91 template/admin/user/view.html:153
+msgid "Management"
+msgstr ""
+
+#: template/admin/appliance/index.html:65
+#: template/admin/appliance/view.html:98
+#, python-format
+msgid "Would you want to delete appliance %s"
+msgstr ""
+
+#: template/admin/appliance/index.html:123 template/admin/user/view.html:428
+msgid "Toggle Appliance islocked status Success"
+msgstr ""
+
+#: template/admin/appliance/index.html:127 template/admin/user/view.html:432
+msgid "Toggle Appliance islocked status Failed"
+msgstr ""
+
+#: template/admin/appliance/catalog.html:10
+msgid "New Catalog"
+msgstr ""
+
+#: template/admin/appliance/catalog.html:23
+msgid "Position"
+msgstr ""
+
+#: template/admin/appliance/catalog.html:59
+#: template/admin/instance/view.html:399 template/admin/user/view.html:464
+msgid "Toggle Instance isprivate status Success"
+msgstr ""
+
+#: template/admin/appliance/catalog.html:63
+#: template/admin/instance/view.html:403 template/admin/user/view.html:468
+msgid "Toggle Instance isprivate status Failed"
+msgstr ""
+
+#: template/admin/appliance/change_owner.html:6
+msgid "Change appliance owner."
+msgstr ""
+
+#: template/admin/appliance/change_owner.html:16
+msgid "Input a user name or user id."
+msgstr ""
+
+#: template/admin/appliance/change_owner.html:20
+#: template/admin/instance/change_owner.html:20
+msgid "Reason"
+msgstr ""
+
+#: template/admin/appliance/change_owner.html:20
+#: template/admin/instance/change_owner.html:20
+msgid "Why change the owner ?"
+msgstr ""
+
+#: template/admin/appliance/catalog_new.html:6
+msgid "Create a new catalog"
+msgstr ""
+
+#: template/admin/appliance/view.html:30
+msgid "Checksum"
+msgstr ""
+
+#: template/admin/appliance/view.html:41 template/admin/instance/view.html:92
+msgid "Change Owner"
+msgstr ""
+
+#: template/admin/appliance/view.html:48
+msgid "Change Catalog"
+msgstr ""
+
+#: template/admin/appliance/view.html:77 template/instance/index.html:51
+msgid "No summary yet !"
+msgstr ""
+
+#: template/admin/appliance/view.html:87
+msgid "No description yet !"
+msgstr ""
+
+#: template/admin/appliance/view.html:93
+msgid "Download"
+msgstr ""
+
+#: template/admin/appliance/catalog_edit.html:6
+#: template/admin/wiki/edit_catalog.html:9
+msgid "Edit catalog"
+msgstr ""
+
+#: template/admin/appliance/change_catalog.html:6
+msgid "Change appliance catalog"
+msgstr ""
+
+#: template/admin/appliance/change_catalog.html:16
+msgid "Select the catalog."
+msgstr ""
+
+#: template/admin/job/index.html:4 template/admin/admin_base.html:119
+msgid "Job"
+msgstr ""
+
+#: template/admin/job/index.html:10
+msgid "All jobs excute by "
+msgstr ""
+
+#: template/admin/job/index.html:26
+msgid "Started"
+msgstr ""
+
+#: template/admin/permission/index.html:4 template/admin/admin_base.html:95
+msgid "Permission"
+msgstr ""
+
+#: template/admin/wiki/edit_catalog.html:8 template/admin/wiki/index.html:8
+#: template/admin/wiki/topics.html:8 template/wiki/view_catalog.html:8
+msgid "Wiki"
+msgstr ""
+
+#: template/admin/wiki/index.html:13
+msgid "Create New Catalog"
+msgstr ""
+
+#: template/admin/wiki/index.html:14
+msgid "All topics"
+msgstr ""
+
+#: template/admin/wiki/add_catalog.html:10
+msgid "Add Catalog"
+msgstr ""
+
+#: template/admin/node/index.html:4 template/admin/node/view.html:4
+#: template/admin/admin_base.html:61 template/admin/admin_base.html:106
+#: template/admin/instance/index.html:55 template/admin/user/view.html:212
+#: template/node/edit.html:4
+msgid "Node"
+msgstr ""
+
+#: template/admin/node/index.html:15 template/admin/node/view.html:21
 msgid "Hostname"
+msgstr ""
+
+#: template/admin/node/index.html:20
+msgid "VCPU"
+msgstr ""
+
+#: template/admin/node/index.html:21 template/admin/node/view.html:59
+msgid "VMemory"
+msgstr ""
+
+#: template/admin/node/index.html:22
+msgid "Is enabled ?"
+msgstr ""
+
+#: template/admin/node/index.html:64
+msgid "Toggle Node isenable status Success"
+msgstr ""
+
+#: template/admin/node/index.html:68
+msgid "Toggle Node isenable status Failed"
+msgstr ""
+
+#: template/admin/node/instances.html:16 template/appliance/view.html:79
+#: template/appliance/delete_failed.html:15 template/account/delete.html:16
+msgid "Instance List"
+msgstr ""
+
+#: template/admin/node/view.html:24
+#: template/admin/user/reset_password_history.html:19
+msgid "Key"
 msgstr ""
 
 #: template/admin/node/view.html:31
@@ -1355,108 +2764,333 @@ msgstr ""
 msgid "CPUS"
 msgstr ""
 
-#: template/admin/node/index.html:22
-msgid "Max Memory (KB)"
+#: template/admin/node/view.html:63
+msgid "VCPUS"
 msgstr ""
 
-#: template/admin/node/index.html:24
-msgid "Info"
+#: template/admin/admin_base.html:36
+msgid "LuoYunCloud Admin Console"
 msgstr ""
 
-#: template/admin/index.html:5
-msgid "LuoYun Administration Console"
+#: template/admin/admin_base.html:52 template/wiki/view_topic.html:9
+#: template/base.html:44
+msgid "FAQ"
 msgstr ""
 
-#: template/admin/index.html:7
+#: template/admin/admin_base.html:58
+msgid "Account"
+msgstr ""
+
+#: template/admin/admin_base.html:76 template/account/account_base.html:14
+#: template/base.html:59
+msgid "My Account"
+msgstr ""
+
+#: template/admin/admin_base.html:83 template/base.html:68
+msgid "Logout"
+msgstr ""
+
+#: template/admin/admin_base.html:90
 msgid ""
 "Note: Any changes here will affect overall operation of LuoYunCloud "
 "platform. Please be careful!"
 msgstr ""
 
-#: template/admin/index.html:31 template/myun/index.html:29
-msgid "CPU"
+#: template/admin/admin_base.html:96
+msgid "Reset Password History"
 msgstr ""
 
-#: template/admin/index.html:33 template/admin/index.html:34
-#: template/myun/index.html:31 template/myun/index.html:32
-msgid "core"
+#: template/admin/admin_base.html:110
+msgid "DB"
 msgstr ""
 
-#: template/admin/permission/view.html:10
-msgid "Permission View"
+#: template/admin/admin_base.html:111
+msgid "Control Server"
 msgstr ""
 
-#: template/admin/permission/view.html:31
-msgid "Group List"
+#: template/admin/admin_base.html:113
+msgid "IP Address Pool"
 msgstr ""
 
-#: template/admin/permission/view.html:58
-msgid "Have no groups contain this permission !"
+#: template/admin/admin_base.html:115
+msgid "Nginx"
 msgstr ""
 
-#: template/admin/permission/index.html:5
-msgid "View All Permissions"
+#: template/admin/admin_base.html:120
+msgid "Action History"
 msgstr ""
 
-#: template/admin/permission/index.html:10
-msgid "Permission Management"
+#: template/admin/admin_base.html:121
+msgid "Notice"
 msgstr ""
 
-#: template/home/registration_protocol.html:17
-msgid "No default registration protocol yet !"
+#: template/admin/admin_base.html:143 template/base.html:89
+msgid "Powered by"
 msgstr ""
 
-#: template/home/no_permission.html:9
-msgid "NO PERMISSIONS !"
+#: template/admin/admin_base.html:143 template/base.html:89
+msgid "LuoYun"
 msgstr ""
 
-#: template/home/no_permission.html:10
-msgid "This action need permissions"
+#: template/admin/admin_base.html:159 template/base.html:105
+msgid "Go TOP"
 msgstr ""
 
-#: template/home/no_permission.html:21 template/home/no_resource.html:52
+#: template/admin/instance/index.html:12 template/instance/index.html:98
+msgid "Instance Status"
+msgstr ""
+
+#: template/admin/instance/index.html:22
+msgid "Sorted by"
+msgstr ""
+
+#: template/admin/instance/index.html:39
+msgid "Total instances: "
+msgstr ""
+
+#: template/admin/instance/index.html:89
+msgid "User is deleted"
+msgstr ""
+
+#: template/admin/instance/index.html:109
+msgid "No instances yet !"
+msgstr ""
+
+#: template/admin/instance/index.html:119 template/admin/user/view.html:452
+msgid "Toggle Instance islocked status Success"
+msgstr ""
+
+#: template/admin/instance/index.html:123 template/admin/user/view.html:456
+msgid "Toggle Instance islocked status Failed"
+msgstr ""
+
+#: template/admin/instance/change_owner.html:6
+msgid "Change instance owner"
+msgstr ""
+
+#: template/admin/instance/change_owner.html:16
+msgid "Input a user name of user id."
+msgstr ""
+
+#: template/admin/instance/view.html:254
+msgid "No storage now."
+msgstr ""
+
+#: template/admin/instance/view.html:285
+msgid "enable"
+msgstr ""
+
+#: template/admin/instance/view.html:287
+msgid "disable"
+msgstr ""
+
+#: template/admin/user/index.html:23
+msgid "Total : "
+msgstr ""
+
+#: template/admin/user/index.html:25
+msgid "Search"
+msgstr ""
+
+#: template/admin/user/index.html:39 template/admin/user/view.html:69
+#: template/account/view_user.html:34
+msgid "Date Joined"
+msgstr ""
+
+#: template/admin/user/index.html:84 template/admin/user/add.html:4
+#: template/admin/user/add.html:9
+msgid "Create New User"
+msgstr ""
+
+#: template/admin/user/index.html:85
+msgid "Users Have Remark"
+msgstr ""
+
+#: template/admin/user/index.html:114 template/admin/user/view.html:416
+msgid "Toggle Account islocked status Success"
+msgstr ""
+
+#: template/admin/user/index.html:118 template/admin/user/view.html:420
+msgid "Toggle Account islocked status Failed"
+msgstr ""
+
+#: template/admin/user/edit_description.html:5
+#: template/admin/user/edit_resources.html:6
+msgid "Edit Resources"
+msgstr ""
+
+#: template/admin/user/edit_description.html:10
+msgid "Edit User Resources"
+msgstr ""
+
+#: template/admin/user/edit_groups.html:5
+#: template/admin/user/edit_groups.html:22
+msgid "Edit User Groups"
+msgstr ""
+
+#: template/admin/user/reset_password_history.html:5
+msgid "Reset Password Apply History"
+msgstr ""
+
+#: template/admin/user/reset_password_history.html:10
+msgid "Total: "
+msgstr ""
+
+#: template/admin/user/instances.html:35
+msgid " have not created any instance yet."
+msgstr ""
+
+#: template/admin/user/view.html:38 template/admin/user/view.html:264
+msgid "Group & Permission"
+msgstr ""
+
+#: template/admin/user/view.html:46
+msgid "Job List"
+msgstr ""
+
+#: template/admin/user/view.html:48
+msgid "Other"
+msgstr ""
+
+#: template/admin/user/view.html:73 template/account/view_user.html:38
+msgid "Last Login"
+msgstr ""
+
+#: template/admin/user/view.html:81 template/account/view_user.html:46
+msgid "Last Entry"
+msgstr ""
+
+#: template/admin/user/view.html:91
+msgid "Locale"
+msgstr ""
+
+#: template/admin/user/view.html:99
+msgid "User Remark"
+msgstr ""
+
+#: template/admin/user/view.html:100
+msgid "Edit Description"
+msgstr ""
+
+#: template/admin/user/view.html:105
+msgid "No description now."
+msgstr ""
+
+#: template/admin/user/view.html:134
+msgid "Change User Resources"
+msgstr ""
+
+#: template/admin/user/view.html:139
+msgid "User appliance list"
+msgstr ""
+
+#: template/admin/user/view.html:150
+msgid "Aviable"
+msgstr ""
+
+#: template/admin/user/view.html:198
+msgid "User instance list"
+msgstr ""
+
+#: template/admin/user/view.html:207
+msgid "Isprivate"
+msgstr ""
+
+#: template/admin/user/view.html:295
+msgid "User has no group!"
+msgstr ""
+
+#: template/admin/user/view.html:299
+msgid "Edit Groups"
+msgstr ""
+
+#: template/admin/user/view.html:342
+msgid "IS LOCKED ?"
+msgstr ""
+
+#: template/admin/user/view.html:354
+msgid "Delete Accout"
+msgstr ""
+
+#: template/admin/user/view.html:361
+msgid "Wait! All the user data will be lost after account is deleted."
+msgstr ""
+
+#: template/admin/user/view.html:440
+msgid "Toggle Appliance isuseable status Success"
+msgstr ""
+
+#: template/admin/user/view.html:444
+msgid "Toggle Appliance isuseable status Failed"
+msgstr ""
+
+#: template/appliance/index.html:6
+msgid "Public Appliances"
+msgstr ""
+
+#: template/appliance/index.html:8
+msgid "(My Appliances)"
+msgstr ""
+
+#: template/appliance/index.html:43
+msgid "Have not any appliances yet !"
+msgstr ""
+
+#: template/appliance/delete_return.html:10
+msgid "Go to my appliance"
+msgstr ""
+
+#: template/appliance/view.html:24
 msgid ""
-"If you have any questions, you can contact the admin by following method:"
+"This is a appliance of LuoYun platform, you can create a instance from it."
 msgstr ""
 
-#: template/home/no_permission.html:23 template/home/no_resource.html:54
-msgid "Send a message"
+#: template/appliance/view.html:30
+msgid "This appliance is locked, you can not use it."
 msgstr ""
 
-#: template/home/no_permission.html:24 template/home/no_resource.html:55
-msgid "Send a email"
+#: template/appliance/view.html:44
+msgid "times"
+msgstr ""
+
+#: template/appliance/view.html:70
+msgid "About The Appliance"
+msgstr ""
+
+#: template/appliance/edit.html:46
+msgid "Select a new logo"
+msgstr ""
+
+#: template/appliance/delete_failed.html:9
+msgid "Delete Appliance Failed"
+msgstr ""
+
+#: template/home/index.html:36
+msgid "Memory(MB)"
+msgstr ""
+
+#: template/home/index.html:52
+msgid "Welcome, guest !"
+msgstr ""
+
+#: template/home/index.html:60
+msgid "myself"
+msgstr ""
+
+#: template/home/index.html:61
+msgid "all"
+msgstr ""
+
+#: template/home/index.html:95
+msgid "Instance "
 msgstr ""
 
 #: template/home/welcome.html:11
 msgid "Welcome !"
 msgstr ""
 
-#: template/home/welcome.html:17
-msgid "Welcome to use LuoYun Cloud !"
-msgstr ""
-
-#: template/home/index.html:38
-msgid "Memory(MB)"
-msgstr ""
-
-#: template/home/index.html:54
-msgid "Welcome, guest !"
-msgstr ""
-
-#: template/home/index.html:62
-msgid "myself"
-msgstr ""
-
-#: template/home/index.html:63
-msgid "all"
-msgstr ""
-
-#: template/home/index.html:72 template/myun/instances.html:14
-msgid "No instance found!"
-msgstr ""
-
-#: template/home/index.html:98
-msgid "Instance "
+#: template/home/registration_protocol.html:17
+msgid "No default registration protocol yet !"
 msgstr ""
 
 #: template/home/no_resource.html:20
@@ -1467,38 +3101,201 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: template/myun/appliances.html:11 template/myun/index.html:6
-msgid "Upload Appliance"
+#: template/home/no_resource.html:52 template/home/no_permission.html:21
+msgid ""
+"If you have any questions, you can contact the admin by following method:"
 msgstr ""
 
-#: template/myun/appliances.html:14
-msgid "No appliances now !"
+#: template/home/no_resource.html:54 template/home/no_permission.html:23
+msgid "Send a message"
 msgstr ""
 
-#: template/myun/appliances.html:28 template/myun/instances.html:28
-msgid "Please give a summary for this instance."
+#: template/home/no_resource.html:55 template/home/no_permission.html:24
+msgid "Send a email"
 msgstr ""
 
-#: template/myun/appliances.html:46
-msgid "Useable"
+#: template/home/no_permission.html:9
+msgid "NO PERMISSIONS !"
 msgstr ""
 
-#: template/myun/appliances.html:58 template/myun/instances.html:56
-msgid "Private"
+#: template/home/no_permission.html:10
+msgid "This action need permissions"
 msgstr ""
 
-#: template/system/baseinfo.ajax:23
-msgid "DB Edit"
+#: template/wiki/view_catalog.html:33 template/wiki/index.html:26
+msgid "by"
 msgstr ""
 
-#: template/instance/domain_edit.ajax:10
-msgid "Subdomain"
+#: template/wiki/view_catalog.html:35 template/wiki/index.html:28
+msgid "update"
 msgstr ""
 
-#: template/instance/delete.ajax:4
-msgid "Wait! All the instance data will be lost after instance is deleted."
+#: template/node/edit.html:6
+msgid "Edit node configure"
 msgstr ""
 
-#: template/instance/delete.ajax:7
-msgid "Only owner can delete instance."
+#: template/404.html:10
+msgid "404 Error"
+msgstr ""
+
+#: template/404.html:11
+msgid "No such page: "
+msgstr ""
+
+#: template/instance/index.html:12 template/instance/view.html:14
+msgid "Public Instances"
+msgstr ""
+
+#: template/instance/index.html:14
+msgid "(My Instances)"
+msgstr ""
+
+#: template/instance/index.html:24
+msgid "Have not any instance yet !"
+msgstr ""
+
+#: template/instance/index.html:101
+msgid "Running"
+msgstr ""
+
+#: template/instance/index.html:102
+msgid "Stoped"
+msgstr ""
+
+#: template/instance/index.html:111
+msgid "All Public"
+msgstr ""
+
+#: template/instance/index.html:112
+msgid "My Public"
+msgstr ""
+
+#: template/instance/index.html:119
+msgid "Selection"
+msgstr ""
+
+#: template/instance/index.html:128
+msgid "Order"
+msgstr ""
+
+#: template/instance/index.html:130
+msgid "Descending"
+msgstr ""
+
+#: template/instance/index.html:131
+msgid "Ascending"
+msgstr ""
+
+#: template/instance/create.html:11
+msgid "Create My Instance"
+msgstr ""
+
+#: template/instance/delete_return.html:11
+msgid "Go to my instance"
+msgstr ""
+
+#: template/instance/view.html:81
+msgid "This is an instance of LuoYun Cloud platform."
+msgstr ""
+
+#: template/instance/view.html:90
+msgid "No description."
+msgstr ""
+
+#: template/account/permissions.html:11
+msgid "Single Permission List"
+msgstr ""
+
+#: template/account/permissions.html:29
+msgid "Group Permission List"
+msgstr ""
+
+#: template/account/index.html:6
+msgid "welcome ! this is your control panel."
+msgstr ""
+
+#: template/account/account_base.html:39 template/account/avatar_edit.html:4
+msgid "Change Avatar"
+msgstr ""
+
+#: template/account/login.html:8
+msgid "Sign in LuoYun System"
+msgstr ""
+
+#: template/account/reset_password_apply_successed.html:8
+msgid ""
+"A email contain a url have send to the following address for reset password. "
+"Please check you email to complete it."
+msgstr ""
+
+#: template/account/reset_password_complete.html:8
+msgid "Complete Reset Password"
+msgstr ""
+
+#: template/account/view_group.html:43
+msgid "Total users : "
+msgstr ""
+
+#: template/account/reset_password_apply.html:8
+msgid "Forget Password"
+msgstr ""
+
+#: template/account/delete.html:2
+msgid "Delete Account "
+msgstr ""
+
+#: template/account/delete.html:5
+msgid "Errors:"
+msgstr ""
+
+#: template/account/delete.html:27
+msgid "Appliance List"
+msgstr ""
+
+#: template/account/delete.html:40
+msgid "Delete account success !"
+msgstr ""
+
+#: template/account/delete.html:40
+msgid "Go to user list"
+msgstr ""
+
+#: template/account/view_user.html:20
+msgid "Leave a message"
+msgstr ""
+
+#: template/account/view_user.html:42
+msgid "Last Activate"
+msgstr ""
+
+#: template/account/view_user.html:59
+msgid "No group"
+msgstr ""
+
+#: template/account/view_user.html:67
+msgid "Total public instances : "
+msgstr ""
+
+#: template/account/register.html:7
+msgid "Create a account on LuoYun"
+msgstr ""
+
+#: template/account/register.html:24
+msgid "I accept the site rules ."
+msgstr ""
+
+#: template/base.html:23
+msgid "LuoYunCloud"
+msgstr ""
+
+#: template/base.html:66
+msgid "Administration"
+msgstr ""
+
+#: template/base.html:72
+msgid "Sign In"
+msgstr ""
+
+#: template/base.html:73
+msgid "Register"
 msgstr ""

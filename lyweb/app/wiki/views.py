@@ -23,7 +23,7 @@ class Index(LyRequestHandler):
         catalogs = self.db2.query(WikiCatalog).order_by(
             asc(WikiCatalog.position)).all()
 
-        self.render( 'wiki/index.html', title = self.trans(_('Servers Home')), catalogs = catalogs )
+        self.render( 'wiki/index.html', title = self.trans(_('FAQ Home')), catalogs = catalogs )
 
 
 

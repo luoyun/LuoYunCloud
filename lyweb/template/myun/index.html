@@ -5,11 +5,12 @@
 <div class="myun-user-action">
   <a class="ly-btn2 medium blue" href="${ reverse_url('appliance:upload') }">${_("Upload Appliance")}</a>
   <a class="ly-btn2 medium blue" 
-     title="${ _('Create a new instance') }" 
+     title="${ _('Create a new instance') }"
      href="${ reverse_url('instance:create') }">
     ${ _("Create New Instance") }</a>
 </div>
 
+% if hasattr(current_user, 'profile'):
 <div id="myun-pie-show" class="c">
   <div class="pie" id="myun-cpu-pie"></div>
   <div class="pie" id="myun-mem-pie"></div>
@@ -19,38 +20,28 @@
 
 <script language="JavaScript" src="${ static_url('FusionCharts/JSClass/FusionCharts.js') }"></script>
 <script type="text/javascript">
-  var cpuData = "<graph caption=\"${ _('CPU USED INFO') }\" subCaption=\"${ _("TOTAL: ") }${ current_user.profile.cpus }CPU\" showNames='1' bgColor='F4F8FC' decimalPrecision='0' formatNumberScale='0' baseFontSize='16' baseFontColor='444450' numberSuffix=\"${ _('core') }\">" +
-    "<set name=\"${ _('Used') }\" value='${ USED_CPU }' color='FC0101' />" +
-    "<set name=\"${ _('Unused') }\" value='${ current_user.profile.cpus - USED_CPU }' color='AFD8F8' />" +
-    "</graph>";
-  var cpuChart = new FusionCharts("${ static_url('FusionCharts/Charts/FCF_Pie3D.swf') }", "cpuChartId", "360", "160");
+  var cpuData = '${ chart_data("cpu") }';
+  var cpuChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "cpuChartId", "360", "160");
   cpuChart.setDataXML(cpuData);
   cpuChart.render("myun-cpu-pie");
 
-  var memData = "<graph caption=\"${ _('MEMORY USED INFO') }\" subCaption=\"${ _("TOTAL: ") }${ human_size(current_user.profile.memory * 1024 * 1024) }\" showNames='1' bgColor='F4F8FC' decimalPrecision='0' formatNumberScale='0' baseFontSize='16' numberSuffix='M'>" +
-    "<set name=\"${ _('Used') }\" value='${ USED_MEMORY }' color='FC0101' />" +
-    "<set name=\"${ _('Unused') }\" value='${ current_user.profile.memory - USED_MEMORY }' color='AFD8F8' />" +
-    "</graph>";
-  var memChart = new FusionCharts("${ static_url('FusionCharts/Charts/FCF_Pie3D.swf') }", "memChartId", "360", "160");
+  var memData = '${ chart_data("memory") }';
+  var memChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "memChartId", "360", "160");
   memChart.setDataXML(memData);
   memChart.render("myun-mem-pie");
 
-  var instanceData = "<graph caption=\"${ _('INSTANCE USED INFO') }\" subCaption=\"${ _("TOTAL: ") }${ current_user.profile.instances }\" showNames='1' bgColor='F4F8FC' decimalPrecision='0' formatNumberScale='0' baseFontSize='16'>" +
-    "<set name=\"${ _('Used') }\" value='${ USED_INSTANCE }' color='FC0101' />" +
-    "<set name=\"${ _('Unused') }\" value='${ current_user.profile.instances - USED_INSTANCE }' color='AFD8F8' />" +
-    "</graph>";
-  var instanceChart = new FusionCharts("${ static_url('FusionCharts/Charts/FCF_Pie3D.swf') }", "instanceChartId", "360", "160");
+  var instanceData = '${ chart_data("instance") }';
+  var instanceChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "instanceChartId", "360", "160");
   instanceChart.setDataXML(instanceData);
   instanceChart.render("myun-instance-pie");
 
-  var storageData = "<graph caption=\"${ _('STORAGE USED INFO') }\" subCaption=\"${ _("TOTAL: ") }${ current_user.profile.storage } G\" showNames='1' bgColor='F4F8FC' decimalPrecision='0' formatNumberScale='0' baseFontSize='16' numberSuffix='G'>" +
-    "<set name=\"${ _('Used') }\" value='${ USED_STORAGE }' color='FC0101' />" +
-    "<set name=\"${ _('Unused') }\" value='${ current_user.profile.storage - USED_STORAGE }' color='AFD8F8' />" +
-    "</graph>";
-  var storageChart = new FusionCharts("${ static_url('FusionCharts/Charts/FCF_Pie3D.swf') }", "storageChartId", "360", "160");
+  var storageData = '${ chart_data("storage") }';
+  var storageChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "storageChartId", "360", "160");
   storageChart.setDataXML(storageData);
   storageChart.render("myun-storage-pie");
 </script>
-
+% else:
+<p class="ywarn">${ _("Get your profile data failed.") }</p>
+% endif
 
 </%block>

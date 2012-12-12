@@ -24,29 +24,27 @@ $("#admin-menu #index-item").addClass("current");
 </div>
 
 <div id="admin-pie-show" class="admin-index-item c">
+  % if TOTAL_CPU or TOTAL_MEMORY:
   <div class="pie" id="admin-cpu-pie"></div>
   <div class="pie" id="admin-mem-pie"></div>
+
+  <script language="JavaScript" src="${ static_url('FusionCharts/JSClass/FusionCharts.js') }"></script>
+  <script type="text/javascript">
+    var cpuData = '${ chart_data("cpu") }';
+    var cpuChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "cpuChartId", "420", "220");
+    cpuChart.setDataXML(cpuData);
+    cpuChart.render("admin-cpu-pie");
+
+    var memData = '${ chart_data("memory") }';
+    var memChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "memChartId", "420", "220");
+    memChart.setDataXML(memData);
+    memChart.render("admin-mem-pie");
+  </script>
+  % else:
+  <p class="ywarn">${ _("Important: you have not any resources yet. please check you compute nodes.") } <a href="${ reverse_url('admin:node') }">${ _("Node List") }</a></p>
+  % endif
 </div>
-
-<script language="JavaScript" src="${ static_url('FusionCharts/JSClass/FusionCharts.js') }"></script>
-<script type="text/javascript">
-  var cpuData = "<graph caption=\"${ _('CPU USED INFO') }\" subCaption=\"${ _("TOTAL: ") }${ TOTAL_CPU }CPU\" showNames='1' bgColor='F4F8FC' decimalPrecision='0' formatNumberScale='0' baseFontSize='16' baseFontColor='444450' numberSuffix=\"${ _('core') }\">" +
-    "<set name=\"${ _('Used') }\" value='${ USED_CPU }' color='FC0101' />" +
-    "<set name=\"${ _('Unused') }\" value='${ TOTAL_CPU - USED_CPU }' color='AFD8F8' />" +
-    "</graph>";
-  var cpuChart = new FusionCharts("${ static_url('FusionCharts/Charts/FCF_Pie3D.swf') }", "cpuChartId", "420", "220");
-  cpuChart.setDataXML(cpuData);
-  cpuChart.render("admin-cpu-pie");
-
-  var memData = "<graph caption=\"${ _('MEMORY USED INFO') }\" subCaption=\"${ _("TOTAL: ") }${ human_size(TOTAL_MEMORY * 1024) }\" showNames='1' bgColor='F4F8FC' decimalPrecision='0' formatNumberScale='0' baseFontSize='16' numberSuffix='M'>" +
-    "<set name=\"${ _('Used') }\" value='${ USED_MEMORY/1024 }' color='FC0101' />" +
-    "<set name=\"${ _('Unused') }\" value='${ (TOTAL_MEMORY - USED_MEMORY)/1024 }' color='AFD8F8' />" +
-    "</graph>";
-  var memChart = new FusionCharts("${ static_url('FusionCharts/Charts/FCF_Pie3D.swf') }", "memChartId", "420", "220");
-  memChart.setDataXML(memData);
-  memChart.render("admin-mem-pie");
-</script>
-
+`
 
 % if NEW_USER_LIST:
 <div id="admin-new-user" class="admin-user-list ly-table c">

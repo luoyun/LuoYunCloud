@@ -153,8 +153,8 @@ class ApplianceManagement(LyRequestHandler):
                 T = self.lytrace(
                     ttype = LY_TARGET['APPLIANCE'],
                     tid = self.appliance.id,
-                    do = self.trans(_('change appliance owner %s to %s')) % (
-                        self.appliance.user.username, U.username) )
+                    do = self.trans(_('change appliance owner %(old_owner)s to %(new_owner)s')) % {
+                        'old_owner': self.appliance.user.username, 'new_owner': U.username } )
 
                 self.appliance.user = U
                 self.db2.commit()

@@ -4,7 +4,7 @@
 <li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
 %if NETWORK:
 <li><a href="${ reverse_url('system:networkpool') }">${ _("Network Pool") }</a></li>
-<li>${ _("All in in ") } <a href="${ reverse_url('system:ippool') }?network=${ NETWORK.id }">${ NETWORK }</a></li>
+<li><a href="${ reverse_url('system:ippool') }?network=${ NETWORK.id }">${ NETWORK }</a></li>
 %else:
 <li><a href="${ reverse_url('system:ippool') }">${ _("IP Pool") }</a></li>
 %endif

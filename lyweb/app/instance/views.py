@@ -366,8 +366,8 @@ class Delete(InstRequestHandler):
 
             T = self.lytrace(
                 ttype = LY_TARGET['IP'], tid = x.id,
-                do = _('release ip %s from instance %s(%s)') % (
-                    x.ip, I.id, old_iname) )
+                do = _('release ip %(ip)s from instance %(instance_id)s(%(instance_name)s)') % {
+                    'ip': x.ip, 'instance_id': I.id, 'instance_name': old_iname } )
 
         self.db2.commit()
 
@@ -491,10 +491,12 @@ class InstanceControl(InstRequestHandler):
         desc = ''
         if TOTAL_CPU < inst.cpus:
             if TOTAL_CPU < 0: TOTAL_CPU = 0
-            desc = self.trans(_('need %s CPU, but %s have.')) % (inst.cpus, TOTAL_CPU)
+            desc = self.trans(_('need %(need)s CPU, but %(have)s have.')) % {
+                'need': inst.cpus, 'have': TOTAL_CPU }
         if TOTAL_MEM < inst.memory:
             if TOTAL_MEM < 0: TOTAL_MEM = 0
-            desc = self.trans(_('need %sMB memory, but %sMB have.')) % (inst.memory, TOTAL_MEM)
+            desc = self.trans(_('need %(need)sMB memory, but %(have)sMB have.')) % {
+                'need': inst.memory, 'have': TOTAL_MEM }
         if desc:
             return self.trans(_('No resource: %s')) % desc
 
@@ -695,8 +697,8 @@ class CreateInstance(InstRequestHandler):
 
             T = self.lytrace(
                 ttype = LY_TARGET['IP'], tid = ok_ip.id,
-                do = _('get ip %s for instance %s(%s)') % (
-                    ok_ip.ip, I.id, I.name) )
+                do = self.trans(_('get ip %(ip)s for instance %(instance_id)s(%(instance_name)s)')) % {
+                    'ip': ok_ip.ip, 'instance_id': I.id, 'instance_name': I.name } )
 
             self.db2.commit()
         except Exception, e:

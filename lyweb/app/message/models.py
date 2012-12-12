@@ -37,7 +37,7 @@ class Message(ORMBase):
         self.text_id = text_id
 
     def __unicode__(self):
-        return _("Message %s ( %s -> %s )") % (
+        return "Message %s ( %s -> %s )" % (
             self.id, self.sender.username, self.receiver.username)
 
 

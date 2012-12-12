@@ -45,7 +45,7 @@ class Node(ORMBase):
         self.arch = arch
 
     def __str__(self):
-        return _("<Node(%s:%s)>") % (self.hostname, self.ip)
+        return "<Node(%s:%s)>" % (self.hostname, self.ip)
 
     @property
     def memory_human(self):
