@@ -745,7 +745,7 @@ class InstanceEdit(InstanceManagement):
 
             url = self.reverse_url('myun:instance:view', I.id)
             url += '?tab=secret'
-            self.redirect( url )
+            return self.redirect( url )
 
         self.d['form'] = form
         self.render('myun/instance/edit_password.html', **self.d)
