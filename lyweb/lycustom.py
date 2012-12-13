@@ -140,7 +140,6 @@ class LyRequestHandler(RequestHandler):
         return user
 
 
-
     def get_user_locale(self):
         user_locale = self.get_cookie("user_locale")
 
@@ -150,10 +149,6 @@ class LyRequestHandler(RequestHandler):
             user_locale = self.current_user.profile.locale
 
         if user_locale:
-            # TODO: app and template have different i18n
-            gettext.translation(
-                'app', settings.I18N_PATH,
-                languages=[user_locale]).install(True)
             return tornado.locale.get(user_locale)
         else:
             # Use the Accept-Language header

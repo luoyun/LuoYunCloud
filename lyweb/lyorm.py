@@ -63,6 +63,11 @@ Session = sessionmaker(bind=dbengine)
 dbsession = Session()
 db=dbsession
 
+def get_new_session():
+    dbengine = create_engine(get_sql_uri(), echo=False, client_encoding = 'utf8')
+    Session = sessionmaker(bind=dbengine)
+    return Session()
+
 
 #dbsession.commit()
 

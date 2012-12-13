@@ -37,8 +37,8 @@ class ApplianceCatalog(ORMBase):
         self.summary = summary
         self.description = description
 
-    def __repr__(self):
-        return _("[Catalog(%s)]") % self.name
+    def __unicode__(self):
+        return '<Catalog(%s)>' % self.name
 
     @property
     def description_html(self):
@@ -88,8 +88,8 @@ class Appliance(ORMBase):
         self.filesize = filesize
         self.checksum = checksum
 
-    def __repr__(self):
-        return _("[Appliance(%s)]") % self.name
+    def __unicode__(self):
+        return "<Appliance(%s)>" % self.name
 
     @property
     def logourl(self):
