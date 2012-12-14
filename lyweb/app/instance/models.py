@@ -207,8 +207,6 @@ class Instance(ORMBase):
     def job_status_string(self):
         if self.lastjob:
             return self.lastjob.status_string
-        else:
-            return ''
 
     @property
     def lastjob_status_id(self):
