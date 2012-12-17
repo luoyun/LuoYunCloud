@@ -1,11 +1,14 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/system.html" />
 
-<%block name="sidemain">
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li>${ _("Send Mail") }</li>
+</%block>
 
-<h2>${ _("Send Mail") }</h2>
+<%block name="content">
 
-<div id="ly-sendmail-form" class="c">
-  <form method="POST">
+<div id="ly-sendmail-form" class="full-table-lrform c">
+  <form method="POST">${ xsrf_form_html() }
     <table>
       <tbody>
 	<tr>
@@ -14,7 +17,7 @@
 	    <span class="from">${ FROM }</span>
 	  </td>
 	</tr>
-	<tr>
+	<tr class="to">
 	  <td>
 	  % if TOTYPE == 'user':
 	  ${ _("To User") }
@@ -41,22 +44,21 @@
 	      % endfor
 	      % endif
 	    </ul>
-	    <h3>${ _("Add more reciver") }</h3>
 	    % endif
-
 	    % endif
+	    <p class="subtitle">${ _("Add more reciver") }</p>
 	    ${ form.to() }
 	    ${ form.html_errors(form.to.errors) }
 	  </td>
 	</tr>
-	<tr>
+	<tr class="cc">
 	  <td>${ form.cc.label }</td>
 	  <td>
 	    ${ form.cc() }
 	    ${ form.html_errors(form.cc.errors) }
 	  </td>
 	</tr>
-	<tr>
+	<tr class="bcc">
 	  <td>${ form.bcc.label }</td>
 	  <td>
 	    ${ form.bcc() }
@@ -77,7 +79,6 @@
 	    ${ form.html_errors(form.body.errors) }
 	  </td>
 	</tr>
-
 	% if INVALID_EMAIL:
 	<tr>
 	  <td>${ _("Invalid email") }</td>
@@ -90,14 +91,30 @@
 	  </td>
 	</tr>
 	% endif
-
+      </tbody>
+      <tfoot>
 	<tr>
 	  <td></td>
-	  <td><input type="submit" value="${ _('Send Mail') }"/></td>
+	  <td><input class="red-submit" type="submit" value="${ _('Send Mail') }"/></td>
 	</tr>
-      </tbody>
+      </tfoot>
     </table>
   </form>
 </div>
+
+<script charset="utf-8" src="${ STATIC_URL }kindeditor/kindeditor.js"></script>
+<script charset="utf-8" src="${ STATIC_URL }kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript">
+  var editor;
+  KindEditor.ready(function(K) {
+  editor = K.create('#body', {
+      width: '780px',
+      height: '300px',
+      uploadJson : '/ly/upload/kindeditor',
+      fileManagerJson : '/ly/upload/kindeditor',
+      allowFileManager : true
+  });
+  });
+</script>
 
 </%block>

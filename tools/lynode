@@ -1,0 +1,122 @@
+#!/bin/bash
+#
+# Init file for LuoYun node server daemon
+#
+# chkconfig: 2345 95 25
+# description: LuoYun node server daemon
+#
+# processname: lynode
+# TOPDIR: /opt/LuoYun/platform/
+# config: ${TOPDIR}/etc/luoyun-cloud/lynode.conf
+# pidfile: /var/run/lynode.pid
+
+LUOYUN_TOP_DIR=/opt/LuoYun/platform/
+prog="lynode"
+LYNODED="${LUOYUN_TOP_DIR}bin/lynode"
+OPTIONS="-d"
+PID_FILE="/var/run/lynode.pid"
+
+failure() {
+  local rc=$?
+  echo " FAILED "
+  return $rc
+}
+
+success() {
+  echo "  OK  "
+  return 0
+}
+
+check_kvm_module()
+{
+    RET=-1
+    modprobe kvm
+    modprobe kvm-amd
+    modprobe kvm-intel
+    if [ $(lsmod | grep kvm | wc -l) -ne 2 ]; then
+        echo "kvm module not found."
+        exit 1
+    fi
+}
+
+KVM_BIN=/usr/libexec/qemu-kvm
+check_kvm_bin()
+{
+    if [ -x /usr/bin/kvm ]; then
+        KVM_BIN=/usr/bin/kvm
+    elif [ ! -x $KVM_BIN ]; then
+        echo "$KVM_BIN not found"
+        exit 2
+    fi
+}
+
+check_libvirtd()
+{
+    if [ ! -f /var/run/libvirtd.pid ]; then
+        if [ -f /etc/init.d/libvirtd ]; then
+            service libvirtd start
+        elif [ -f /etc/init.d/libvirt-bin ]; then
+            service libvirt-bin start
+        else
+            echo "Can not start libvirt daemon"
+            exit 3
+        fi
+        if [ $? -ne 0 ]; then
+            echo "Start libvirtd error"
+            exit 3
+        fi
+    fi
+}
+
+start()
+{
+    check_kvm_module
+    check_kvm_bin
+    check_libvirtd
+
+    echo -n $"Starting $prog: "
+    out=$($LYNODED $OPTIONS 2>&1) && success || failure
+    RETVAL=$?
+    [ "$RETVAL" = 0 ] && touch /var/lock/subsys/lyclc && return 0
+    echo "$out"
+    return $RETVAL
+}
+
+stop()
+{
+    echo -n $"Stopping $prog: "
+    thispid=$(<$PID_FILE)
+    kill $thispid && success || failure
+    RETVAL=$?
+    [ "$RETVAL" = 0 ] && rm -f /var/lock/subsys/lynode
+}
+
+status()
+{
+    [ -f "$PID_FILE" ] && thispid=$(<$PID_FILE) && echo "$prog($thispid) is running..." && return 0
+    [ ! -f "$PID_FILE" ] && echo "$prog is stopped" && return 0
+    return 1
+}
+
+case "$1" in
+    start)
+        [ -f "$PID_FILE" ] && thispid=$(<$PID_FILE) && echo "$prog($thispid) is started already" && exit 0
+	start
+	;;
+    stop)
+        [ ! -f "$PID_FILE" ] && echo "$prog is stopped already" && exit 0
+	stop
+	;;
+    restart)
+	stop
+	start
+	;;
+    status)
+	status
+	RETVAL=$?
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|restart|status}"
+	RETVAL=1
+esac
+exit $RETVAL

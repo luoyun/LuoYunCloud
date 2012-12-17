@@ -1,7 +1,8 @@
+import os, logging
 from datetime import datetime
 from lyorm import ORMBase
 
-from sqlalchemy import Column, Integer, String, \
+from sqlalchemy import Column, BigInteger, Integer, String, \
     Sequence, DateTime, Text, ForeignKey, Boolean
 
 from sqlalchemy.orm import backref,relationship
@@ -27,8 +28,8 @@ class ApplianceCatalog(ORMBase):
 
     # TODO:  is self only ?! can used by myself !
 
-    created = Column( DateTime, default=datetime.utcnow )
-    updated = Column( DateTime, default=datetime.utcnow )
+    created = Column( DateTime, default=datetime.now )
+    updated = Column( DateTime, default=datetime.now )
 
 
     def __init__(self, name, summary='', description=''):
@@ -36,14 +37,18 @@ class ApplianceCatalog(ORMBase):
         self.summary = summary
         self.description = description
 
-    def __repr__(self):
-        return _("[Catalog(%s)]") % self.name
+    def __unicode__(self):
+        return '<Catalog(%s)>' % self.name
 
     @property
     def description_html(self):
         return YMK.convert( self.description )
 
 
+OSType = [
+    (1, _('GNU/Linux')),
+    (2, _('Microsoft Windows'))
+]
 
 class Appliance(ORMBase):
 
@@ -55,6 +60,8 @@ class Appliance(ORMBase):
     summary = Column( String(1024) )
     description = Column( Text() )
 
+    os = Column( Integer(), default = 1 ) # 1 is gnu/linux
+
     logoname = Column( String(64) )
 
     user_id = Column( ForeignKey('auth_user.id') )
@@ -63,15 +70,16 @@ class Appliance(ORMBase):
     catalog_id = Column( ForeignKey('appliance_catalog.id') )
     catalog = relationship("ApplianceCatalog",backref=backref('appliances',order_by=id))
 
-    filesize = Column( Integer )
+    filesize = Column( BigInteger )
     checksum = Column( String(32) ) # md5 value
 
+    islocked = Column( Boolean, default = False) # Used by admin
     isuseable = Column( Boolean, default = True)
     isprivate = Column( Boolean, default = True)
     popularity = Column( Integer, default = 0 )
 
-    created = Column( DateTime, default=datetime.utcnow )
-    updated = Column( DateTime, default=datetime.utcnow )
+    created = Column( DateTime, default=datetime.now )
+    updated = Column( DateTime, default=datetime.now )
 
 
     def __init__(self, name, user, filesize, checksum):
@@ -80,22 +88,39 @@ class Appliance(ORMBase):
         self.filesize = filesize
         self.checksum = checksum
 
-    def __repr__(self):
-        return _("[Appliance(%s)]") % self.name
-
+    def __unicode__(self):
+        return "<Appliance(%s)>" % self.name
 
     @property
-    def logo_url(self):
-
-        if hasattr(self, 'logoname') and self.logoname:
-            return '%s%s' % (
-                settings.appliance_top_url,
-                self.logoname)
+    def logourl(self):
+        if os.path.exists(self.logothum):
+            return os.path.join(settings.STATIC_URL, 'appliance/%s/%s' % (self.id, settings.APPLIANCE_LOGO_THUM_NAME))
         else:
-            return '%simg/appliance.png' % settings.THEME_URL
+            return settings.APPLIANCE_LOGO_DEFAULT_URL
 
+    @property
+    def logodir(self):
+        return os.path.join(settings.STATIC_PATH, 'appliance/%s' % self.id)
+
+    @property
+    def logopath(self):
+        return os.path.join(self.logodir, settings.APPLIANCE_LOGO_NAME)
+
+    @property
+    def logothum(self):
+        return os.path.join(self.logodir, settings.APPLIANCE_LOGO_THUM_NAME)
 
     @property
     def description_html(self):
         return YMK.convert( self.description )
 
+    @property
+    def catalog_name(self):
+        if self.catalog:
+            return self.catalog.name
+        else:
+            return _('None')
+
+    @property
+    def download_url(self):
+        return os.path.join(settings.appliance_top_url, 'appliance_%s' % self.checksum)

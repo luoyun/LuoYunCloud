@@ -1,6 +1,6 @@
 <%inherit file="/admin/admin_base.html" />
 
-<%block name="sidemain">
+<%block name="content">
 
 <div class="main-wrap">
   <div class="inner-navigator">
@@ -12,7 +12,7 @@
 </div>
 
 <div class="main-wrap small-left-right-form">
-  <form method="POST">
+  <form method="POST">${ xsrf_form_html() }
     ${ form.name.label } ${ form.name() }<br/>
     ${ form.html_errors( form.name.errors ) }
 

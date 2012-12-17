@@ -1,0 +1,123 @@
+#!/bin/bash
+#
+# Init file for LuoYun web server daemon
+#
+# chkconfig: 2345 90 25
+# description: LuoYun web server daemon
+#
+# processname: python
+# TOPDIR: /opt/LuoYun/web
+# config: ${TOPDIR}/luoyun.cfg
+# pidfile:
+
+LUOYUN_TOP_DIR=/opt/LuoYun
+prog="lyweb"
+OPTIONS=
+LYWEBD="python ${OPTIONS} ${LUOYUN_TOP_DIR}/web/site.py"
+LYWEBDLOG="${LUOYUN_TOP_DIR}/logs/luoyun.tornado.log"
+NGINX="$(which nginx)"
+
+failure()
+{
+    local rc=$?
+    echo " FAILED "
+    return $rc
+}
+
+success()
+{
+    echo "  OK  "
+    return 0
+}
+
+checkdb()
+{
+    su postgres -c "psql -l &> /dev/null"
+    if [ $? -ne 0 ]; then
+        echo "query postgresql failed. Will check again in 10 seconds..."
+        sleep 10
+        su postgres -c "psql -l &> /dev/null"
+        [ $? -ne 0 ] && echo "query postgresql failed" && exit 1
+    fi
+}
+
+startnginx()
+{
+    [ -f "/var/run/nginx.pid" ] || $NGINX
+    if [ $? -ne 0 ]; then
+        echo "start nginx failed"
+        exit 2
+    fi
+}
+
+stopnginx()
+{
+    [ -f "/var/run/nginx.pid" ] || return 0
+    $NGINX -s stop
+    if [ $? -ne 0 ]; then
+        echo "stop nginx failed"
+    fi
+}
+
+start()
+{
+    thispid=$(ps aux|grep 'python.*site.py'|grep -v grep| head -1 | awk '{print $2}')
+    [ -n "$thispid" ] && echo "$prog($thispid) is started already" && return 0
+
+    checkdb
+    startnginx
+
+    echo -n $"Starting $prog: "
+    $LYWEBD >> $LYWEBDLOG 2>&1 &
+    RETVAL=$?
+    [ "$RETVAL" = 0 ] && success && return 0 || failure
+    echo "Please check $LYWEBDLOG"
+    return $RETVAL
+}
+
+stop()
+{
+    thispid=$(ps aux|grep 'python.*site.py'|grep -v grep| head -1 | awk '{print $2}')
+    [ -z "$thispid" ] && echo "$prog is stopped already" && return 0
+
+    stopnginx
+
+    echo -n $"Stopping $prog: "
+    thispid=$(ps aux|grep 'python.*site.py'|grep -v grep| head -1 | awk '{print $2}')
+    if [ -n "$thispid" ] ; then
+        kill $thispid && success || failure
+    else
+        failure
+    fi
+    RETVAL=$?
+}
+
+status()
+{
+    thispid=$(ps aux|grep 'python.*site.py'|grep -v grep| head -1 | awk '{print $2}')
+    [ -n "$thispid" ] && echo "$prog($thispid) is running..." && return 0
+    [ -z "$thispid" ] && echo "$prog is stopped" && return 0
+    return 1
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    status)
+        status
+        RETVAL=$?
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|restart|status}"
+        RETVAL=1
+esac
+exit $RETVAL
+

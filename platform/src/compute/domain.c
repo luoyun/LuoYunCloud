@@ -170,7 +170,7 @@ char * libvirt_hostname(void)
 
     char * n = virConnectGetHostname(g_conn);
     if (n)
-        return strdup(n);
+        return n;
     else {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return NULL;

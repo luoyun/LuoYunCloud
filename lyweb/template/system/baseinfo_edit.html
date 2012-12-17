@@ -1,11 +1,14 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/system.html" />
 
-<%block name="sidemain">
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li>${ _("Edit baseinfo of luoyun system") }</li>
+</%block>
 
-<h2>${ _("Edit baseinfo of luoyun system") }</h2>
+<%block name="content">
 
-<div class="main-wrap small-left-right-form">
-  <form method="POST">
+<div class="small-left-right-form c">
+  <form method="POST">${ xsrf_form_html() }
     ${ form.app_dir.label } ${ form.app_dir() }<br/>
     ${ form.html_errors(form.app_dir.errors) }
 

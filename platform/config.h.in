@@ -3,6 +3,15 @@
 /* Max length of the data block allowed in the collection value. */
 #undef COL_MAX_DATA
 
+/* default instance job timeout */
+#undef DEFAULT_JOB_TIMOUT_INSTANCE
+
+/* default node job timeout */
+#undef DEFAULT_JOB_TIMOUT_NODE
+
+/* default job timeout */
+#undef DEFAULT_JOB_TIMOUT_OTHER
+
 /* default lyclc.conf location */
 #undef DEFAULT_LYCLC_CONF_PATH
 

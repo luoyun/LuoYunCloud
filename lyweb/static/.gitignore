@@ -6,4 +6,7 @@
 *.db
 cscope.out
 attachment
+appliance/*
+instance/*
+user/*
 *.log

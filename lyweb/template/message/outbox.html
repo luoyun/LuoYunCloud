@@ -2,37 +2,52 @@
 
 <%block name="sidemain">
 
-<div class="c">
-  % if messages:
-  <div class="outbox-list message-list">
-    <table>
-      <thead>
-	<tr>
-          <th>${ _("Send To") }</th>
-          <th>${ _("Subject") }</th>
-	</tr>
-      </thead>
-      <tbody>
-	% for M in messages:
-	<tr>
-          <td class="to">
-	    <div class="user">
-	      <a class="user-avatar" href="${ reverse_url('account:view', M.receiver_id) }" target="_blank"><img src="${ M.receiver.avatar_url }" alt="${ M.receiver.username }" /></a>
-	      <a class="username" href="${ reverse_url('account:view', M.receiver_id) }">${ M.receiver.username }</a>
-	    </div>
-	  </td>
-          <td>
-	    <div class="subject"><a href="${ reverse_url('message:outbox:view', M.id) }">${ M.subject }</a></div>
-            <div class="datetime">${ fulltime(M.created) }</div>
-	  </td>
-	</tr>
-	% endfor
-      </tbody>
-    </table>
-    % else:
-    <p class="ly-large-center">${ _("You have not sent any message before !") }</p>
-    % endif
-  </div>
+% if TOTAL:
+<div id="ly-outbox-list" class="ly-message-list">
+  <p class="global-info">${ _("Outbox have %s message.") % TOTAL } </p>
+  <table>
+    <thead>
+      <tr>
+        <th>${ _("Send To") }</th>
+        <th>${ _("Subject") }</th>
+	<th></th>
+      </tr>
+    </thead>
+    <tbody>
+      % for M in MESSAGE_LIST:
+      <tr>
+        <td class="receiver user">
+	  <a href="${ reverse_url('account:view', M.receiver_id) }"><img src="${ M.receiver.avatar_url }" /></a>
+	  <a href="${ reverse_url('account:view', M.receiver_id) }">${ M.receiver.username }</a>
+	</td>
+        <td class="subject">
+	  <div><a href="${ reverse_url('message:view', M.id) }">${ M.text.subject }</a></div>
+	  <div class="timestamp">${ htime(M.text.sendtime) }</div>
+	</td>
+	<td class="other">
+	  <div class="management hide" style="display: none;">
+	    <a class="delete-message red-submit" href="${ reverse_url('message:delete', M.id) }">${ _("Delete") }</a></div>
+
+</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  ${ PAGE_HTML }
+  % else:
+  <p class="ywarn">${ _("You have not sent any message before !") }</p>
+  % endif
 </div>
+
+<script type="text/javascript">
+  hoverShowHide(".ly-message-list tr");
+
+  aClickConfirm(".delete-message", {
+    title: "${ _("Delete Message") }",
+    text: "${ _("Wail ! the message will lost !") }",
+    ok: "${ _("I am sure !") }",
+    cancel: "${ _("Cancel") }",
+  });
+</script>
 
 </%block>

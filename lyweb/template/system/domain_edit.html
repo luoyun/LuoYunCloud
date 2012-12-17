@@ -1,11 +1,14 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/system.html" />
 
-<%block name="sidemain">
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li>${ _("Edit Domain") }</li>
+</%block>
 
-<h2>${ _("Edit Domain") }</h2>
+<%block name="content">
 
-<div class="main-wrap small-left-right-form">
-  <form method="POST" action="${ reverse_url('system:domain:edit') }">
+<div class="small-left-right-form c">
+  <form method="POST" action="${ reverse_url('system:domain:edit') }">${ xsrf_form_html() }
     ${ form.topdomain.label } ${ form.topdomain() }<br/>
     ${ form.html_errors(form.topdomain.errors) }
 

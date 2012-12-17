@@ -47,10 +47,12 @@ if [ $? -eq 0 ]
 then
     mntdir=$(echo ${mntinfo} | awk '{print $3}')
 else
+    module=$(lsmod | grep -w floppy | awk "{print $1}")
+    [ "$module" == "floppy" ] || modprobe floppy || myexit "osmanager error: failed load kerne module"
     tmpmntdir=$(mktemp -d /tmp/osmanger.XXXXXX)
     [ $? ] || myexit "osmanger error: failed create temp dir"
     mntdir=$tmpmntdir 
-    mount /dev/fd0 $mntdir || myexit "osmanger error: failed mount /dev/fd0 $mntdir"
+    mount /dev/fd0 $mntdir || (sleep 2 && mount /dev/fd0 $mntdir ) || myexit "osmanger error: failed mount /dev/fd0 $mntdir"
 fi
 [ -f "$mntdir/luoyun.ini" ] || myexit "osmanger error: $mntdir/luoyun.ini not found"
 

@@ -1,13 +1,5 @@
-<%inherit file="/base.html" />
-
-<%block name="head">
-<link rel="stylesheet" href="${ THEME_URL }delete-user.css" />
-</%block>
-
-<%block name="main">
-
-<div id="account-delete" class="min-height-300 c">
-  <h2>${ _("Delete Account ") } ${ USERNAME }</h2>
+<div id="account-delete" class="c">
+  <h2 class="title">${ _("Delete Account ") } ${ USERNAME }</h2>
   <div class="body">
     % if ERROR:
     <h3>${ _("Errors:") }</h3>
@@ -21,7 +13,7 @@
 
     % if USER.instances:
     <div class="instances">
-      <h3>${ _("Instance List") }</h3>
+      <h3 class="subtitle">${ _("Instance List") }</h3>
       <ul>
 	% for I in USER.instances:
 	<li><a href="${ reverse_url('instance:view', I.id) }" target="_blank">${ I.name }</a></li>
@@ -32,7 +24,7 @@
 
     % if USER.appliances:
     <div class="appliances">
-      <h3>${ _("Appliance List") }</h3>
+      <h3 class="subtitle">${ _("Appliance List") }</h3>
       <ul>
 	% for A in USER.appliances:
 	<li><a href="${ reverse_url('appliance:view', A.id) }" target="_blank">${ A.name }</a></li>
@@ -45,11 +37,7 @@
 
     % else:
 
-    <p>${ _("Delete account success !") }</p>
-
+    <p>${ _("Delete account success !") } <a class="ly-btn2 medium blue" href="${ reverse_url('admin:user') }">${ _("Go to user list") }</a></p>
     % endif
   </div>
 </div>
-
-
-</%block>

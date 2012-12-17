@@ -1,0 +1,61 @@
+<%inherit file="/myun/instance_base.html" />
+
+<%block name="exhead">
+<script charset="utf-8" src="${ static_url('kindeditor/kindeditor.js') }"></script>
+<script charset="utf-8" src="${ static_url('kindeditor/lang/zh_CN.js') }"></script>
+</%block>
+
+<%block name="innav">
+<li>${ _("Edit General") }</li>
+</%block>
+
+<%block name="instance">
+<div class="iedit-content">
+
+  <h2 class="title">${ _("Edit Baseinfo") }</h2>
+  <div class="full-tbform">
+    <form method="POST" action="${ reverse_url('myun:instance:edit', I.id) }?item=general">${ xsrf_form_html() }
+      <p>
+	${ form.name.label } ${ form.name() }
+	${ form.html_errors(form.name.errors) }
+      </p>
+
+      <p>
+	${ form.summary.label } ${ form.summary() }
+	${ form.html_errors(form.summary.errors) }
+      </p>
+
+      <p>
+	${ form.description.label } ${ form.description() }
+	${ form.html_errors(form.description.errors) }
+      </p>
+
+      <input class="blue-submit" type="submit" value="${ _('Save') }"/>
+    </form>
+  </div>
+</div>
+
+<script charset="utf-8" src="${ static_url('kindeditor/kindeditor.js') }"></script>
+<script charset="utf-8" src="${ static_url('kindeditor/lang/zh_CN.js') }"></script>
+
+<script type="text/javascript">
+    var editor;
+    KindEditor.ready(function(K) {
+	editor = K.create("#description", {
+	    width: '100%',
+	    height: '300px',
+	    uploadJson : '/ly/upload/kindeditor',
+	    fileManagerJson : '/ly/upload/kindeditor',
+	    allowFileManager : true,
+            items : [
+                'formatblock', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'removeformat', '|',
+                'undo', 'redo', '|', 'code', '|', 'justifyleft', 'justifycenter', 'justifyright',
+                'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', '|',
+                'image', 'insertfile', 'table', 'emoticons',
+                'anchor', 'link', 'unlink', '|', 'fullscreen', 'source', 'preview', 'about'
+            ],
+	});
+    });
+</script>
+
+</%block>

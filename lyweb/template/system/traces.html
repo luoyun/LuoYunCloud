@@ -1,0 +1,56 @@
+<%inherit file="/admin/system.html"/>
+
+<%block name="innav">
+<li><a href="${ reverse_url('system:trace') }">${ _("System Action") }</a></li>
+</%block>
+
+<%block name="content">
+
+% if USER:
+<p class="subtitle">${ _("Filter by user: ") } "${ USER.username }"</p>
+% endif
+
+% if TRACE_LIST:
+<div class="ly-table">
+  <table>
+    <thead>
+      <tr>
+        <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>
+        <th><a href="${ sort_by('who_id') }">${ _("Who") }</a></th>
+        <th><a href="${ sort_by('comefrom') }">${ _("Come From") }</a></th>
+        <th><a href="${ sort_by('do') }">${ _("Do What ?") }</a></th>
+        <th><a href="${ sort_by('target_type') }">${ _("Target Type") }</a></th>
+        <th><a href="${ sort_by('target_id') }">${ _("Target ID") }</a></th>
+        <th><a href="${ sort_by('when') }">${ _("When") }</a></th>
+      </tr>
+    </thead>
+    <tbody>
+      % for T in TRACE_LIST:
+      <tr>
+        <td>${ T.id }</td>
+        <td>
+	  %if T.whois:
+	  <a href="${ reverse_url('admin:user') }?id=${ T.who_id }">${ T.whois }</a>
+	  %else:
+	  ${ T.who_id }
+	  %endif
+	</td>
+        <td>${ T.comefrom }</td>
+        <td>${ T.do }</td>
+        <td>${ T.target_type }</td>
+        <td>${ T.target_id }</td>
+        <td>${ htime(T.when) }</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+
+  ${ PAGE_HTML }
+</div>
+% else:
+<div class="ywarn">
+  <p>Have not found any actions.</p>
+</div>
+% endif
+
+</%block>

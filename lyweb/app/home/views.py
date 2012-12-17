@@ -2,7 +2,7 @@
 
 import os, logging, json, time
 
-from lycustom import LyRequestHandler, Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated
 
 from sqlalchemy.sql.expression import asc, desc
@@ -52,7 +52,7 @@ class NoPermission(LyRequestHandler):
         else:
             ADMIN_EMAIL = 'contact@luoyun.co'
 
-        d = { 'title': _("Permission Denied"),
+        d = { 'title': self.trans(_("Permission Denied")),
               'ADMIN_EMAIL': ADMIN_EMAIL,
               'ADMIN_ID': 1,
               'PERMS': PERMS }
@@ -67,7 +67,7 @@ class NoResource(LyRequestHandler):
 
         reason = self.get_argument('reason', '')
 
-        d = { 'title': _("No Resource"),
+        d = { 'title': self.trans(_("No Resource")),
               'REASON': reason,
               'USED_STORAGE': self.get_argument('used', 0)}
 
@@ -135,7 +135,7 @@ class UploadKindeditor(LyRequestHandler):
                         raise Exception(_('File is large than %s' % settings.ATTACHMENT_MAXSIZE))
 
                     att = Attachment(self.current_user, f)
-                    att.description = _('Upload from kindeditor')
+                    att.description = self.trans(_('Upload from kindeditor'))
                     self.db2.add(att)
                     self.db2.commit()
                     info = { "error" : 0, "url" : att.url }
@@ -143,7 +143,7 @@ class UploadKindeditor(LyRequestHandler):
                     info = { "error" : 1, "message" : str(ex) }
 
         else:
-            info = {"error" : 1, "message": _("You have not upload any file !")}
+            info = {"error" : 1, "message": self.trans(_("You have not upload any file !"))}
 
         info = json.dumps(info)
         self.write(info)

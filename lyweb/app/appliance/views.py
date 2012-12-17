@@ -1,9 +1,9 @@
 # coding: utf-8
 
-import os, logging, re
+import os, logging, re, tempfile, Image
 import settings
 
-from lycustom import LyRequestHandler, Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, HTTPError
 
 from sqlalchemy.sql.expression import asc, desc
@@ -13,6 +13,8 @@ from app.appliance.models import Appliance, ApplianceCatalog
 from app.appliance.forms import EditApplianceForm
 
 from lycustom import has_permission
+from lytool.filesize import size as human_size
+from ytool.pagination import pagination
 
 
 
@@ -21,7 +23,7 @@ class AppRequestHandler(LyRequestHandler):
 
     def done(self, msg):
 
-        ajax = int(self.get_argument('ajax', 0))
+        ajax = self.get_argument_int('ajax', 0)
 
         if ajax:
             self.write(msg)
@@ -35,7 +37,7 @@ class AppRequestHandler(LyRequestHandler):
         app = self.db2.query(Appliance).get(id)
 
         if not app:
-            self.done( _('No such appliance: %s !') % id )
+            self.done( self.trans(_('No such appliance: %s !')) % id )
             return None
 
         if app.isprivate:
@@ -43,13 +45,13 @@ class AppRequestHandler(LyRequestHandler):
                     (self.current_user.id != app.user_id) and
                     (not self.has_permission('admin')) )
                  ):
-                self.done( _('Appliance %s is private !') % id )
+                self.done( self.trans(_('Appliance %s is private !')) % id )
                 return None
 
         # Just user can do
         if isowner:
             if app.user_id != self.current_user.id:
-                self.done( _('Only owner can do this!') )
+                self.done( self.trans(_('Only owner can do this!')) )
                 return None
 
         return app
@@ -59,14 +61,14 @@ class AppRequestHandler(LyRequestHandler):
 
 class Index(AppRequestHandler):
 
-    def initialize(self, title = _('Appliance Home')):
-        self.title = title
+    def initialize(self, title = None):
+        self.title = self.trans(_('Appliance Home'))
 
     def get(self):
 
-        catalog_id = int( self.get_argument('c', 1) )
-        page_size = int( self.get_argument('sepa', 10) )
-        cur_page = int( self.get_argument('p', 1) )
+        catalog_id = self.get_argument_int('c', 1)
+        page_size = self.get_argument_int('sepa', 20)
+        cur_page = self.get_argument_int('p', 1)
         by = self.get_argument('by', 'updated')
         sort = self.get_argument('sort', 'DESC')
 
@@ -87,11 +89,7 @@ class Index(AppRequestHandler):
                 catalog_id = c.id ).filter_by(
                 isprivate=False).count()
 
-        pagination = Pagination(
-            total = total,
-            page_size = page_size, cur_page = cur_page )
-
-        page_html = pagination.html( self.get_page_url )
+        page_html = pagination(self.request.uri, total,  page_size, cur_page)
 
         d = { 'title': self.title,
               'appliances': apps,
@@ -108,7 +106,7 @@ class Upload(AppRequestHandler):
     @has_permission('appliance.upload')
     def get(self):
 
-        d = { 'title': _("Upload Appliance") }
+        d = { 'title': self.trans(_("Upload Appliance")) }
         self.render("appliance/upload_appliance.html", **d)
 
 
@@ -136,7 +134,8 @@ class Upload(AppRequestHandler):
             d['error'] = msg
             self.set_status(400)
             return self.done(
-                _('Save %s failed: %s') % (fname, msg) )
+                self.trans(_('Save %(filename)s failed: %(emsg)s')) % {
+                    'filename': fname, 'emsg': msg } )
 
         newapp = Appliance( name=fname.replace('.', ' '),
                             user=self.current_user,
@@ -195,137 +194,165 @@ class Edit(LyRequestHandler):
 
         self.choices = []
         for s in self.db2.query(ApplianceCatalog.id, ApplianceCatalog.name).all():
-            self.choices.append( (s.id, s.name) )
+            self.choices.append( (str(s.id), s.name) )
 
- 
-    def get(self, id):
 
-        appliance = self.db2.query(Appliance).get(id)
+    def get_app(self, ID):
+
+        appliance = self.db2.query(Appliance).get(ID)
 
         if appliance.user_id != self.current_user.id:
-            return self.write( _('No permission!') )
+            return None
 
-        form = EditApplianceForm()
+        return appliance
+
+ 
+    def get(self, ID):
+
+        appliance = self.get_app(ID)
+        if not appliance:
+            return self.write( self.trans(_('No permission!')) )
+
+        form = EditApplianceForm(self)
+        form.catalog.choices = self.choices
+        form.catalog.default = appliance.catalog_id
+
+        form.os.default = appliance.os
+
+        form.process()
+
         form.name.data = appliance.name
         form.summary.data = appliance.summary
         form.description.data = appliance.description
 
+        return self.render( 'appliance/edit.html', title = self.trans(_('Edit Appliance ')), form = form, appliance = appliance )
+
+
+    def post(self, ID):
+
+        appliance = self.get_app(ID)
+        if not appliance:
+            return self.write( self.trans(_('No permission!')) )
+
+        form = EditApplianceForm(self)
         form.catalog.choices = self.choices
-        form.catalog.default = appliance.catalog_id
 
-        return self.render( 'appliance/edit.html', title = _('Edit Appliance '), form = form, appliance = appliance )
+        if form.validate():
+            appliance.name = form.name.data
+            appliance.os = self.get_int(form.os.data)
+            appliance.summary = form.summary.data
+            appliance.catalog_id = form.catalog.data
+            appliance.description = form.description.data
 
+            # Save logo file
+            if self.request.files:
+                r = self.save_logo(appliance)
+                if r:
+                    form.logo.errors.append( r )
 
-    def post(self, id):
+            try:
+                self.db2.commit()
+                if not form.logo.errors:
+                    url = self.reverse_url( 'appliance:view', appliance.id )
+                    return self.redirect( url )
 
-        appliance = self.db2.query(Appliance).get(id)
+            except Exception, emsg:
+                form.description.errors.append( self.trans(_('Save appliance info to DB failed: %s' % emsg )) )
 
-        if appliance.user_id != self.current_user.id:
-            return self.write( _('No permission!') )
-
-        form = EditApplianceForm( self.request.arguments )
-
-        appliance.name = form.name.data
-        appliance.summary = form.summary.data
-        appliance.catalog_id = form.catalog.data
-        appliance.description = form.description.data
-
-        # Save logo file
-        if self.request.files:
-            r = self.save_logo(appliance)
-            if r: return self.write( _('%s') % r )
-
-        try:
-            self.db2.commit()
-            url = self.reverse_url( 'appliance:view', appliance.id )
-            return self.redirect( url )
-
-        except Exception, emsg:
-            form.description.errors.append( _('DB : %s' % emsg ) )
-        self.render( 'appliance/edit.html', title = _('Edit Appliance'), form = form, appliance = appliance )
+        d = { 'title': self.trans(_('Edit Appliance "%s"')) % appliance.name,
+              'form': form, 'appliance': appliance }
+        self.render( 'appliance/edit.html', **d )
 
 
     def save_logo(self, appliance):
 
-        support_image = ['jpg', 'png', 'jpeg', 'gif', 'bmp']
+        if not os.path.exists(appliance.logodir):
+            try:
+                os.makedirs(appliance.logodir)
+            except Exception, e:
+                return self.trans(_('create appliance logo dir "%(dir)s" failed: %(emsg)s')) % {
+                    'dir': appliance.logodir, 'emsg': e }
+
+        max_size = settings.APPLIANCE_LOGO_MAXSIZE
+        logoname = settings.APPLIANCE_LOGO_NAME
+
         for f in self.request.files['logo']:
 
-            if len(f['body']) > 2097152: # 2M
-                return _('Logo file must smaller than 2M !')
+            if len(f['body']) > max_size:
+                return self.trans(_('Picture must smaller than %s !')) % human_size(max_size)
 
-            ftype = 'unknown'
-            x = f['content_type'].split('/')
-            if len(x) == 2:
-                ftype = x[-1]
-            else:
-                x = f['filename'].split('.')
-                if len(x) == 2:
-                    ftype = x[-1]
+            tf = tempfile.NamedTemporaryFile()
+            tf.write(f['body'])
+            tf.seek(0)
 
-            ftype = ftype.lower()
-
-            if ftype not in support_image:
-                return _('No support image, support is %s' % support_image )
-
-            p = self.settings['appliance_top_dir']
-            fname = 'logo_%s.%s' % (appliance.id, ftype)
-            fpath = '%s/%s' % (p, fname)
             try:
-                savef = file(fpath, 'w')
-                savef.write(f['body'])
-                savef.close()
-                appliance.logoname = fname
-                break # Just one upload file
+                img = Image.open(tf.name)
+            except Exception, emsg:
+                return self.trans(_('Open %(filename)s failed: %(emsg)s , is it a picture ?')) % {
+                    'filename': f.get('filename'), 'emsg': emsg }
+
+            try:
+                # can convert image type
+                img.save(appliance.logopath)
+ 
+                img.thumbnail(settings.APPLIANCE_LOGO_THUM_SIZE, resample=1)
+                img.save(appliance.logothum)
+ 
+                tf.close()
 
             except Exception, emsg:
-                return emsg
+                return self.trans(_('Save %(filename)s failed: %(emsg)s')) % {
+                    'filename': f.get('filename'), 'emsg': emsg }
 
 
 
 class Delete(AppRequestHandler):
 
-
     @authenticated
-    def get(self, id):
+    def get(self, ID):
 
-        app = self.db2.query(Appliance).get(id)
-        if not app:
-            msg = _('Have not found appliance %s !') % id
-            return self.done( msg )
+        A = self.db2.query(Appliance).get(ID)
+        d = {'A': A, 'E': []}
+
+        if not A:
+            d['E'].append( self.trans(_('Can not find appliance %s.')) % ID )
+            return self.end(d)
 
         # auth delete
-        if  not (self.current_user.id == app.user_id or self.has_permission('admin')):
-            msg = _('No permission to delete appliance !')
-            return self.done( msg )
+        if  not (self.current_user.id == A.user_id or self.has_permission('admin')):
+            d['E'].append( self.trans(_('No permission !')) )
+            return self.end(d)
 
         # TODO: have any instances exist ?
-        inst_list = self.db2.query(Instance).filter_by( appliance_id=app.id ).all()
-        if inst_list:
-            return self.render('appliance/delete_failed.html',
-                               ERROR = _('Have instances exist'),
-                               INSTANCE_LIST = inst_list )
-
+        IL = self.db2.query(Instance).filter_by(appliance_id=ID).all()
+        if IL:
+            d['E'].append( self.trans(_('Have instances exist')) )
+            return self.end(d)
 
         # Delete appliance file
         dpath = "%sappliance_%s" % (
-            self.settings["appliance_top_dir"], app.checksum )
+            self.settings["appliance_top_dir"], A.checksum )
 
         if os.path.exists(dpath):
             try:
                 os.unlink(dpath)
             except Exception, emsg:
-                msg = _('Delete %s failed: %s') % (
-                    dpath, emsg )
-                return self.done(msg)
+                d['E'].append( self.trans(_('Delete %(filename)s failed: %(emsg)s')) % {
+                        'filename': dpath, 'emsg': emsg } )
+                return self.end(d)
         else:
             logging.warning("%s did not exist !" % dpath)
 
         # DELETE appliance row from DB
-        self.db2.delete(app)
+        self.db2.delete(A)
         self.db2.commit()
 
-        msg = 'Delete appliance %s success !' % id
-        return self.done(msg)
+        d['E'].append( 'Delete appliance %s success !' % ID )
+        self.render('appliance/delete_return.html', **d)
+
+
+    def end(self, d):
+        self.render('appliance/delete_return.html', **d)
 
 
 
@@ -342,7 +369,7 @@ class View(AppRequestHandler):
 
         instances, page_html = self.page_view_instances(app)
 
-        d = { 'title': _("View Appliance"), 'appliance': app,
+        d = { 'title': self.trans(_("View Appliance")), 'appliance': app,
               'instances': instances, 'page_html': page_html }
 
         self.render('appliance/view.html', **d)
@@ -354,9 +381,10 @@ class View(AppRequestHandler):
         by = self.get_argument('by', 'updated')
         sort = self.get_argument('sort', 'desc')
         status = self.get_argument('status', 'all')
-        page_size = int(self.get_argument(
-                'sepa', settings.APPLIANCE_INSTANCE_LIST_PAGE_SIZE))
-        cur_page = int(self.get_argument('p', 1))
+        page_size = self.get_argument_int(
+                'sepa', settings.APPLIANCE_INSTANCE_LIST_PAGE_SIZE)
+
+        cur_page = self.get_argument_int('p', 1)
 
         start = (cur_page - 1) * page_size
         stop = start + page_size
@@ -390,13 +418,7 @@ class View(AppRequestHandler):
         total = instances.count()
         instances = instances.slice(start, stop).all()
 
-        if total > page_size:
-            page_html = Pagination(
-                total = total,
-                page_size = page_size,
-                cur_page = cur_page ).html(self.get_page_url)
-        else:
-            page_html = ""
+        page_html = pagination(self.request.uri, total,  page_size, cur_page)
 
         return instances, page_html
         
@@ -414,11 +436,11 @@ class SetUseable(AppRequestHandler):
 
         app = self.db2.query(Appliance).get(id)
         if not app:
-            return self.write( _('No such appliance!') )
+            return self.write( self.trans(_('No such appliance!')) )
 
         if not ( app.user_id == self.current_user.id or
                  self.has_permission('admin') ):
-            return self.write( _('No permission!') )
+            return self.write( self.trans(_('No permission!')) )
 
         flag = self.get_argument('flag', None)
         app.isuseable = True if flag == 'true' else False
@@ -440,14 +462,86 @@ class SetPrivate(AppRequestHandler):
 
         app = self.db2.query(Appliance).get(id)
         if not app:
-            return self.write( _('No such appliance !') )
+            return self.write( self.trans(_('No such appliance !')) )
 
         if not ( app.user_id == self.current_user.id or
                  self.has_permission('admin') ):
-            return self.write( _('No permission!') )
+            return self.write( self.trans(_('No permission!')) )
 
         flag = self.get_argument('flag', None)
         app.isprivate = True if flag == 'true' else False
         self.db2.commit()
 
         self.redirect( url )
+
+
+class islockedToggle(LyRequestHandler):
+    ''' Toggle islocked flag '''
+
+    @has_permission('admin')
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        A = self.db2.query(Appliance).get(ID)
+
+        if A:
+            A.islocked = not A.islocked
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( self.trans(_('Can not find appliance %s.')) % ID )
+
+
+class isuseableToggle(LyRequestHandler):
+    ''' Toggle isuseable flag '''
+
+    @authenticated
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        A = self.db2.query(Appliance).get(ID)
+
+        if A:
+            if not ( self.current_user.id == A.user_id or
+                     has_permission('admin') ):
+                return self.write( self.trans(_('No permissions !')) )
+
+            A.isuseable = not A.isuseable
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( self.trans(_('Can not find appliance %s.')) % ID )
+
+
+class tuneCatalogPosition(LyRequestHandler):
+    ''' change catalog position '''
+
+    @has_permission('admin')
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        C = self.db2.query(ApplianceCatalog).get(ID)
+
+        if C:
+            n = self.get_argument_int('value', 0)
+            if n:
+                C.position += n
+                self.db2.commit()
+                # no news is good news
+            else:
+                self.write( self.trans(_('tune value must be a integer.')) )
+
+        else:
+            self.write( self.trans(_('Can not find appliance catalog %s')) % ID )
+

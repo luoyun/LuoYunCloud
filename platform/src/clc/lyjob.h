@@ -3,10 +3,6 @@
 
 #include "../util/list.h"
 
-#define DEFAULT_JOB_TIMEOUT 600
-#define NODE_JOB_TIMEOUT 60
-#define INSTANCE_JOB_TIMEOUT 600
-
 typedef struct LYJobInfo_t {
     struct list_head j_list;
 

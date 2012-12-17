@@ -6,8 +6,8 @@ import sys, logging, json
 import settings
 
 # TODO: i18n is too ugly yet
-import gettext
-gettext.install( 'app', settings.I18N_PATH, unicode=False )
+import __builtin__
+__builtin__.__dict__['_'] = lambda s: s
 
 import tornado.ioloop
 import tornado.web
@@ -72,7 +72,7 @@ def main():
 
     # Locale
     tornado.locale.load_gettext_translations(settings.I18N_PATH, "luoyun")
-    #tornado.locale.set_default_locale('zh_CN')
+    tornado.locale.set_default_locale('zh_CN')
 
     # options
     tornado.options.parse_command_line()
@@ -81,7 +81,7 @@ def main():
 
     # Start listen
     application = Application()
-    application.listen(options.port)
+    application.listen(options.port, xheaders=True)
     tornado.ioloop.IOLoop.instance().start()
 
     # wait for singal
@@ -90,10 +90,6 @@ def main():
 
 
 if __name__ == "__main__":
-
-    # save the global argv of program
-    settings.CMD_ARGV = sys.argv
-    print 'settings.CMD_ARGV = ', settings.CMD_ARGV
 
     try:
         main()

@@ -76,10 +76,13 @@ def netconfig(netinf, mac = None, ip = None, netmask = None, gateway = None):
       print "%s Error: missing config info for  %s" % (PROGRAM_NAME, netinf)
       return
 
+    netinfisup = 0
     f = os.popen("/sbin/ifconfig %s 2>&1" % netinf)
     for l in f.readlines():
-      True
-    if f.close() == None:
+      l = l.strip().split()
+      if netinfisup == 0 and len(l) > 0 and l[0] == 'UP':
+        netinfisup = 1
+    if f.close() == None and netinfisup == 1:
       f = os.popen("/sbin/ifdown %s 2>&1" % netinf)
       l = "".join([ l for l in f.readlines() ])
       if f.close():
@@ -169,6 +172,14 @@ def main():
                 j["network"][1].get("ip"),
                 j["network"][1].get("netmask"),
                 j["network"][1].get("gateway"))
+  else:
+    f = os.popen("/sbin/ifup eth0 2>&1")
+    l = "".join([ l for l in f.readlines() ])
+    if l:
+      print l
+    if f.close():
+      print "%s Error: failed bringing up eth0" % PROGRAM_NAME
+
   if j.get("public_key"):
     sshkeyconfig(j["public_key"])
   else:

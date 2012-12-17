@@ -1,45 +1,52 @@
-<%inherit file="/admin/admin_base.html"/>
+<%inherit file="/admin/node.html"/>
 
-<%block name="sidemain">
+<%block name="innav">
+<li><a href="${ reverse_url('admin:node') }">${ _("Node") }</a></li>
+</%block>
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
-    <span><a href="${ reverse_url('admin:node') }">${ _("Nodes") }</a></span>
-  </div>
-</div>
+<%block name="content">
 
-
-<div class="main-wrap node-list">
+<div class="ly-table">
   % if nodes:
-  <table class="list">
+  <table>
     <thead>
       <tr>
         <th>${ _("ID") }</th>
         <th>${ _("Hostname") }</th>
         <th>${ _("IP") }</th>
         <th>${ _("Status") }</th>
-        <th>${ _("Max Memory (KB)") }</th>
-        <th>${ _("Action") }</th>
-        <th>${ _("Info") }</th>
+        <th>${ _("CPU") }</th>
+        <th>${ _("Memory") }</th>
+        <th>${ _("VCPU") }</th>
+        <th>${ _("VMemory") }</th>
+        <th>${ _("Is enabled ?") }</th>
+        <th>${ _("Instances") }</th>
       </tr>
     </thead>
     <tbody>
       % for n in nodes:
       <tr>
         <td>${ n.id }</td>
-        <td>${ n.hostname }</td>
-        <td><a href="${ reverse_url('admin:node') }?id=${ n.id }&action=view">${ n.ip }</a></td>
-        <td><img src="${ THEME_URL }icons/NodeStatus/${ n.status }.png"  alt="${ n.status }"/></td>
-        <td>${ n.memory }</td>
-        <td>
-          % if not n.isenable:
-          <a href="${ reverse_url('node:action', n.id) }?action=1">${ _("Enable") }</a>
-          % else:
-          <a href="${ reverse_url('node:action', n.id) }?action=2">${ _("Disable") }</a>
-          % endif
+        <td><a href="${ reverse_url('admin:node') }?id=${ n.id }">${ n.hostname }</a></td>
+        <td>${ n.ip }</td>
+        <td><img src="${ theme_url('icons/NodeStatus/%s.png' % n.status) }" alt="${ n.status }"/></td>
+        <td>${ n.cpus }</td>
+        <td>${ n.memory_human }</td>
+        <td>${ n.vcpus }</td>
+        <td>${ n.vmemory_human }</td>
+        <td><input type="checkbox"
+		   % if n.isenable:
+		   checked="checked"
+		   % endif
+		   onclick="simpleToggleCheckbox( this, '${ reverse_url('node:isenable', n.id) }', '#isenable-notify')" />
         </td>
-        <td><a class="action" href="${ reverse_url('admin:node') }?id=${ n.id }&action=instances"><img src="${ THEME_URL }img/instances.gif" title="${ _('Instances') }"/></a></td>
+        <td>
+	  % if n.instances_sum:
+	  <a href="${ reverse_url('admin:instance') }?node=${ n.id }" target="_blank">${ n.instances_sum }</a>
+	  /
+	  <a href="${ reverse_url('admin:instance') }?node=${ n.id }&status=running" target="_blank">${ n.instances_running_sum }</a>
+	  % endif
+	</td>
       </tr>
       % endfor
     </tbody>
@@ -49,6 +56,18 @@
     <p>Have not found any nodes. Please register first!</p>
   </div>
   % endif
+</div>
+
+<div id="isenable-notify" style="display:none">
+  <div id="basic-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <p>${ _("Toggle Node isenable status Success") }</p>
+  </div>
+  <div id="error-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <h1>${ _("Toggle Node isenable status Failed") }</h1>
+    <p>#{text}</p>
+  </div>
 </div>
 
 </%block>

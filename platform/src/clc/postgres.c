@@ -186,11 +186,11 @@ int db_node_find(int type, void * data, DBNodeRegInfo * db_nf)
     char sql[LINE_MAX];
     if (type == DB_NODE_FIND_BY_IP)
         ret = snprintf(sql, LINE_MAX,
-                       "SELECT id, status, ip, key, isenable from node "
+                       "SELECT id, status, ip, key, vcpus, vmemory, isenable from node "
                        "where ip = '%s' order by key DESC;", (char *)data);
     else if (type == DB_NODE_FIND_BY_ID)
         ret = snprintf(sql, LINE_MAX,
-                       "SELECT id, status, ip, key, isenable from node "
+                       "SELECT id, status, ip, key, vcpus, vmemory, isenable from node "
                        "where id = %d order by key DESC;", *(int *)data);
     else {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
@@ -216,7 +216,9 @@ int db_node_find(int type, void * data, DBNodeRegInfo * db_nf)
         s = PQgetvalue(res, 0, 3);
         if (s && strlen(s))
             db_nf->secret = strdup(s);
-        s = PQgetvalue(res, 0, 4);
+        db_nf->cpu_vlimit = atoi(PQgetvalue(res, 0, 4));
+        db_nf->mem_vlimit = atoi(PQgetvalue(res, 0, 5));
+        s = PQgetvalue(res, 0, 6);
         db_nf->enabled = s[0] == 't' ? 1 : 0;
     }
     if (ret > 1) {
@@ -335,12 +337,15 @@ int db_node_insert(NodeInfo * nf)
     if (snprintf(sql, LINE_MAX,
                  "INSERT INTO node (id, hostname, ip, arch, memory, "
                  "status, cpus, cpu_model, "
+                 "vcpus, vmemory, "
                  "cpu_mhz, created, updated) "
                  "VALUES (nextval('node_id_seq'), '%s', '%s', %d, %d, "
                  "%d, %d, '%s', "
+                 "%d, %d, "
                  "%d, 'now', 'now');",
                  nf->host_name, nf->host_ip, nf->cpu_arch, nf->mem_max,
                  nf->status, nf->cpu_max, nf->cpu_model,
+                 nf->cpu_vlimit, nf->mem_vlimit,
                  nf->cpu_mhz) >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);        
         return -1;
@@ -547,11 +552,14 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
     else
         snprintf(s_ip, 100, "ip = '%s',", ii->ip);
 
+    int ii_status = DOMAIN_S_UNKNOWN;
     char s_status[20];
     if (ii == NULL || ii->status == DOMAIN_S_UNKNOWN)
         s_status[0] = '\0';
-    else
+    else {
+        ii_status = ii->status;
         snprintf(s_status, 20, "status = %d,", ii->status);
+    }
 
     char s_node_id[20];
     if (node_id > 0)
@@ -563,9 +571,10 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
 
     char sql[LINE_MAX];
     if (snprintf(sql, LINE_MAX, "UPDATE instance SET %s %s %s "
-                                "updated = 'now' WHERE id = %d;",
+                                "updated = 'now' "
+                                "WHERE status != %d and status != %d and id = %d;",
                                 s_ip, s_status, s_node_id,
-                                instance_id) >= LINE_MAX) {
+                                DOMAIN_S_DELETE, ii_status, instance_id) >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
@@ -613,8 +622,9 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
             ci->ins_name = strdup(s);
         ci->ins_vcpu = atoi(PQgetvalue(res, 0, 1));
         ci->ins_mem = atoi(PQgetvalue(res, 0, 2));
-        if (ci->ins_mem < 2048)
-            ci->ins_mem = ci->ins_mem << 10;
+        if (ci->ins_mem > 131072)
+            ci->ins_mem = 131072; /* 128G max */
+        ci->ins_mem = ci->ins_mem << 10;
         s = PQgetvalue(res, 0, 3);
         if (s && strlen(s))
             ci->ins_ip = strdup(s);

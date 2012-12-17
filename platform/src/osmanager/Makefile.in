@@ -50,8 +50,6 @@ am_lyosm_OBJECTS = events.$(OBJEXT) lyauth.$(OBJEXT) \
 	osmutil.$(OBJEXT) osmlog.$(OBJEXT) options.$(OBJEXT)
 lyosm_OBJECTS = $(am_lyosm_OBJECTS)
 lyosm_LDADD = $(LDADD)
-lyosm_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
@@ -83,6 +81,9 @@ DEFAULT_CLC_DB_USER = @DEFAULT_CLC_DB_USER@
 DEFAULT_CLC_MCAST_IP = @DEFAULT_CLC_MCAST_IP@
 DEFAULT_CLC_MCAST_PORT = @DEFAULT_CLC_MCAST_PORT@
 DEFAULT_CLC_PORT = @DEFAULT_CLC_PORT@
+DEFAULT_JOB_TIMOUT_INSTANCE = @DEFAULT_JOB_TIMOUT_INSTANCE@
+DEFAULT_JOB_TIMOUT_NODE = @DEFAULT_JOB_TIMOUT_NODE@
+DEFAULT_JOB_TIMOUT_OTHER = @DEFAULT_JOB_TIMOUT_OTHER@
 DEFAULT_LYCLC_DATA_DIR = @DEFAULT_LYCLC_DATA_DIR@
 DEFAULT_LYCLC_LOG_PATH = @DEFAULT_LYCLC_LOG_PATH@
 DEFAULT_LYCLC_PID_PATH = @DEFAULT_LYCLC_PID_PATH@
@@ -111,7 +112,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
-LIBS = 
+LIBS = -lm -luuid -lgcrypt -lpthread
 LTLIBOBJS = @LTLIBOBJS@
 LYSYSCONFDIR = @LYSYSCONFDIR@
 MAKEINFO = @MAKEINFO@
@@ -185,7 +186,6 @@ lyosm_SOURCES = events.c  events.h \
                 options.c options.h \
                 lyosm.h
 
-lyosm_LDFLAGS = -lm -luuid -lgcrypt -lpthread
 CLEANFILES = *~
 all: all-am
 
@@ -260,7 +260,7 @@ clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 lyosm$(EXEEXT): $(lyosm_OBJECTS) $(lyosm_DEPENDENCIES) 
 	@rm -f lyosm$(EXEEXT)
-	$(lyosm_LINK) $(lyosm_OBJECTS) $(lyosm_LDADD) $(LIBS) $(lyosm_LDFLAGS)
+	$(LINK) $(lyosm_OBJECTS) $(lyosm_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

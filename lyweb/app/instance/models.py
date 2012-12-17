@@ -1,4 +1,4 @@
-import os, json
+import os, json, logging
 
 from datetime import datetime
 from lyorm import ORMBase
@@ -12,6 +12,23 @@ import settings
 
 from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'tables'])
+
+
+import Image
+from yimage import watermark
+
+
+INSTANCE_STATUS_SHORT_STR = [
+    ( 0, _('unknown') ),
+    ( 1, _("new") ),
+    ( 2, _('stop') ),
+    ( 3, _('started') ),
+    ( 4, _('osm connected') ),
+    ( 5, _('service running') ),
+    ( 9, _('suspend') ),
+    ( settings.INSTANCE_DELETED_STATUS, _('deleted') ),
+    ( 245, _('need query') ),
+    ( 255, _('disk not exist') ) ]
 
 
 class Instance(ORMBase):
@@ -44,11 +61,15 @@ class Instance(ORMBase):
     status = Column( Integer, default=1 )
     config = Column( Text() ) # Other configure
 
+    islocked = Column( Boolean, default = False) # Used by admin
     isprivate = Column( Boolean, default = True )
     ischanged = Column( Boolean, default = False )
 
-    created = Column( DateTime, default=datetime.utcnow )
-    updated = Column( DateTime, default=datetime.utcnow )
+    created = Column( DateTime, default=datetime.now )
+    updated = Column( DateTime, default=datetime.now )
+
+    lastjob_id = Column( ForeignKey('job.id') )
+    lastjob = relationship("Job")
 
     subdomain = Column( String(32), unique = True )
 
@@ -71,8 +92,96 @@ class Instance(ORMBase):
                             'port': 8001 }
                 } )
 
-    def __str__(self):
-        return _("<Instance(%s)>") % self.name
+    def get_network_count(self):
+        config = json.loads( self.config )
+        network = config.get('network', [])
+        return len(network)
+
+    def get_network(self, index=1):
+        config = json.loads( self.config )
+        network = config.get('network', [])
+        count = len(network)
+        if index > count or index < 1:
+            return {}
+
+        return network[index-1]
+
+
+    def set_network(self, nic_config, index=1):
+        config = json.loads( self.config )
+        network = config.get('network', [])
+
+        if network:
+            count = len(network)
+            if index < 1:
+                return False
+            elif index <= count:
+                network[index-1] = nic_config
+            else:
+                network.append(nic_config)
+        else:
+            network = [nic_config]
+
+        config['network'] = network
+        self.config = json.dumps(config)
+
+        # TODO: set status change flag
+        if self.is_running:
+            self.ischanged = True
+
+        return True
+
+    def clean_network(self, index):
+        config = json.loads( self.config )
+        network = config.get('network', [])
+        count = len(network)
+        if index > count or index < 1:
+            return False
+
+        if index == 1:
+            ip = network[0].get('ip')
+            if ip:
+                for x in self.ips:
+                    if ip == x.ip:
+                        x.instance_id = None
+                        x.updated = datetime.now()
+                        break
+
+            network[0] = {'type': 'default', 'mac': self.mac}
+
+        else:
+            del network[index-1]
+
+        config['network'] = network
+        self.config = json.dumps(config)
+
+        # TODO: set status change flag
+        if self.is_running:
+            self.ischanged = True
+
+        return True
+
+
+    def get_config(self, key=None, value=None):
+        config = json.loads(self.config) if self.config else {}
+
+        if config:
+            return config.get(key, value)
+
+        return None
+
+    def set_config(self, key, value):
+        config = json.loads(self.config) if self.config else {}
+        config[key] = value
+        self.config = json.dumps(config)
+        self.update_config()
+
+    def update_config(self):
+        if self.is_running:
+            self.ischanged = True
+
+    def __unicode__(self):
+        return self.name
 
 
     # TODO: have a lazy translation
@@ -89,24 +198,36 @@ class Instance(ORMBase):
             9: _('instance is suspend'),
             settings.INSTANCE_DELETED_STATUS: _('instance is deleted'),
             245: _('instance needs queryed'),
-            255: _('instance is not exist'),
+            255: _('the instance disk does not exist'),
         }
 
         return INSTANCE_STATUS_STR.get( self.status, _('Unknown Status') )
 
     @property
-    def logo_url(self):
+    def job_status_string(self):
+        if self.lastjob:
+            return self.lastjob.status_string
 
-        logoname = self.logo
+    @property
+    def lastjob_status_id(self):
+        if self.lastjob:
+            return self.lastjob.status
+        else:
+            return ''
 
-        p = os.path.join( settings.STATIC_PATH,
-                          'instance_logo/%s' % logoname )
-        if not os.path.exists(p):
-            logoname = 'default.png'
-
-        return '%s%s' % (
-            '/static/instance_logo/', logoname )
-
+    @property
+    def lastjob_imgurl(self):
+        if self.lastjob:
+            if self.lastjob.completed:
+                if self.lastjob.status >= 600:
+                    return '%s.png' % self.lastjob.id
+                else:
+                    return 'completed.png'
+            else:
+                return 'running.gif'
+        else:
+            return 'nojob.png'
+        
 
     # TODO: stop and run check should merge
     #       should check more ? 
@@ -116,16 +237,27 @@ class Instance(ORMBase):
 
     @property
     def can_run(self):
-        return self.status in [1, 2]
+        return self.status in [1, 2, 255]
 
     @property
     def is_running(self):
         return self.status in [3, 4, 5]
 
+    @property
+    def is_delete(self):
+        return self.status == settings.INSTANCE_DELETED_STATUS
 
-    def home_url(self, user=None):
+    @property
+    def need_query(self):
+        return self.status in [245, 255]
 
-        host = self.domain if self.domain else self.ip
+
+    def home_url(self, user=None, useip=None):
+
+        if useip:
+            host = self.ip
+        else:
+            host = self.domain if self.domain else self.ip
 
         if user and user.id == self.user_id and self.config:
             cookie = json.loads(self.config).get('cookie')
@@ -164,6 +296,13 @@ class Instance(ORMBase):
 
         return ip
 
+    @property
+    def work_ip(self):
+        if self.is_running and self.ip and self.ip != '0.0.0.0':
+            return self.ip
+        else:
+            return ''
+
 
     @property
     def storage(self):
@@ -178,4 +317,52 @@ class Instance(ORMBase):
     @property
     def description_html(self):
         return YMK.convert( self.description )
+
+    @property
+    def logourl(self):
+
+        if os.path.exists(self.logopath):
+            return os.path.join(settings.STATIC_URL, 'instance/%s/%s' % (self.id, settings.INSTANCE_LOGO_NAME))
+        else:
+            return settings.INSTANCE_LOGO_DEFAULT_URL
+
+
+    @property
+    def logodir(self):
+        return os.path.join(settings.STATIC_PATH, 'instance/%s' % self.id)
+
+    @property
+    def logopath(self):
+        return os.path.join( self.logodir, settings.INSTANCE_LOGO_NAME )
+
+    def save_logo(self):
+        ''' Create logo '''
+
+        if not os.path.exists(self.appliance.logothum):
+            return logging.warning('appliance %s has not logo.' % self.appliance_id)
+
+        # make sure dir is exist
+        if not os.path.exists(self.logodir):
+            try:
+                os.makedirs(self.logodir)
+            except Exception, e:
+                return logging.error('create instance logo dir "%s" failed: %s' % (self.logodir, e))
+
+
+        try:
+
+            I = Image.open(self.appliance.logothum)
+
+            if os.path.exists(settings.INSTANCE_LOGO_MARK):
+                M = Image.open(settings.INSTANCE_LOGO_MARK)
+                position = ( (I.size[0] - M.size[0]) / 2,
+                             I.size[1] - M.size[1] )
+                img = watermark(I, M, position, 0.3)
+                img.save( self.logopath )
+            else:
+                I.save( self.logopath )
+
+        except Exception, e:
+
+            logging.error('create instance logo failed: %s' % e)
 

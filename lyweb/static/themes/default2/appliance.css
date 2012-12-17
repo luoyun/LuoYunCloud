@@ -38,10 +38,6 @@ h5 {
 .sort-method {
     margin: 30px 10px;
 }
-.appliance-list {
-    height: 320px;
-}
-
 .appliance {
     float: left;
     width: 125px;
@@ -49,18 +45,14 @@ h5 {
     font-size: 0.9em;
     text-align: center;
     overflow: hidden;
-    white-space: nowrap;
+    /*white-space: nowrap; IE6 Error !!!*/
     text-overflow: ellipsis;
-}
-.appliance .logo {
-    background: none repeat scroll 0 0 #FFFFFF;
-    border: 1px solid #D9D9D9;
-    border-radius: 3px 3px 3px 3px;
 }
 .appliance .logo img {
     width: 120px;
     height: 120px;
-    border-radius: 5px;
+    border-radius: 100px;
+    border: 1px solid #ECEDEF;
 }
 .a-desc {
     margin-top: 12px;

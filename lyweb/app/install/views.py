@@ -70,7 +70,7 @@ class Index(InstallRequestHandler):
     def get(self):
 
         cf = self.cf
-        form = BaseForm()
+        form = BaseForm(self)
         try:
             form.dbname.data = cf.get('db', 'db_name')
             form.dbuser.data = cf.get('db', 'db_user')
@@ -88,7 +88,7 @@ class Index(InstallRequestHandler):
         cf = self.cf
         saved = None
 
-        form = BaseForm( self.request.arguments )
+        form = BaseForm(self)
         if form.validate():
             cf.set('db', 'db_host', form.dbhost.data)
             cf.set('db', 'db_type', form.dbtype.data)

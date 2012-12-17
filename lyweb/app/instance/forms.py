@@ -40,17 +40,30 @@ class ResourceForm(Form):
 
 NetworkType=[
     ('default', _('Default')),
+    ('networkpool', _('LuoYunCloud Network Pool')),
+#    ('static', _('Static Network Configure')),
 #    ('bridge', _('Bridge')),
 #    ('nat', _('Nat'))
 ]
 
 
+#class NetworkForm(Form):
+#
+#    type = SelectField( _('Type'), choices=NetworkType )
+#    ip = SelectField( _('IP') )
+#    netmask = TextField( _('Netmask') )
+#    gateway = TextField( _('Gateway') )
+
+
 class NetworkForm(Form):
 
     type = SelectField( _('Type'), choices=NetworkType )
-    ip = SelectField( _('IP') )
+
+class StaticNetworkForm(Form):
+    ip = TextField( _('IP') )
     netmask = TextField( _('Netmask') )
     gateway = TextField( _('Gateway') )
+    nameservers = TextAreaField( _('Nameservers') )
 
 
 StorageType=[

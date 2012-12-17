@@ -2,34 +2,59 @@
 
 <%block name="sidemain">
 
-<div class="edit-message reply-message">
-  <p class="title">
-    <span class="datetime">${ fulltime(message.created) }</span>
-    <a class="username" href="${ reverse_url('account:view', message.sender_id) }">${ message.sender.username }</a>
-    <span>${ _("Write :") }</span>
-  </p>
 
-  <div class="orig-message">
-    <h2 class="subject">${ message.subject }</h2>
-    <div class="markdown body">${ message.content_html }</div>
-  </div>
+<div class="ly-view-message">
+  <table class="baseinfo">
+    <tbody>
+      <tr>
+	<td>${ _("Sender") }</td>
+	<td class="sender"><a href="${ reverse_url('account:view', M.sender_id) }" target="_blank">${ M.sender.username }</a></td>
+      </tr>
+      <tr>
+	<td>${ _("Send time") }</td>
+	<td class="sendtime">${ ftime(M.text.sendtime) } (${ htime(M.text.sendtime) })</td>
+      </tr>
+      <tr>
+	<td>${ _("Subject") }</td>
+	<td class="subject">${ M.text.subject }</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="body">${ M.text.body }</div>
+</div>
 
-  <h1>${ _("Reply Message") }</h1>
+<div class="ly-send-message">
 
-  <div class="large-tbform">
-    <form method="POST">
-      ${ form.subject.label }
-      ${ form.subject() }
-      ${ form.html_errors( form.subject.errors ) }
-
-      ${ form.content.label }
-      ${ form.content() }
-      ${ form.html_errors( form.content.errors ) }
-
-      <input type="submit" value="${ _('Submit') }" class="button" />
+  <div class="full-tbform">
+    <form method="POST" action="${ reverse_url('message:reply', M.id) }">${ xsrf_form_html() }
+      <p>
+	<textarea name="text" id="text"></textarea>
+      </p>
+      <input class="blue-submit" type="submit" value="${ _('Submit') }" class="button" />
     </form>
   </div>
 
 </div>
+
+<script charset="utf-8" src="${ static_url('kindeditor/kindeditor.js') }"></script>
+<script charset="utf-8" src="${ static_url('kindeditor/lang/zh_CN.js') }"></script>
+<script>
+  var editor;
+  KindEditor.ready(function(K) {
+  editor = K.create('#text', {
+    uploadJson : '/ly/upload/kindeditor',
+    fileManagerJson : '/ly/upload/kindeditor',
+    allowFileManager : true,
+    items : [
+        'formatblock', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'removeformat', '|',
+        'undo', 'redo', '|', 'code', '|', 
+        'insertorderedlist', 'insertunorderedlist',  '|',
+        'image', 'insertfile', 'table', 'emoticons',
+        'link', 'unlink', '|', 'fullscreen', 'source', 'preview', 'about'
+    ],
+  });
+  });
+</script>
+
 
 </%block>

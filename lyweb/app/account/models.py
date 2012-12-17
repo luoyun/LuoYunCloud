@@ -1,6 +1,6 @@
 #/usr/bin/env python2.5
 
-import os, random
+import os, random, json
 from hashlib import sha1
 
 from datetime import datetime
@@ -80,14 +80,16 @@ class User(ORMBase):
     # TODO: if user is locked, could not login again.
     islocked = Column( Boolean, default = False )
 
-    last_login = Column(DateTime(), default=datetime.utcnow)
-    date_joined = Column(DateTime(), default=datetime.utcnow)
+    last_login = Column(DateTime(), default=datetime.now)
+    date_joined = Column(DateTime(), default=datetime.now)
 
     groups = relationship( "Group", secondary=user_groups,
                            backref="users" )
 
     permissions = relationship( "Permission", secondary=user_permissions,
                            backref="users" )
+
+    notification = Column( Integer, default=0 )
 
     profile = relationship("UserProfile", uselist=False, backref="user")
     #TODO: a flag, can not delete when the flag is set !!!
@@ -107,30 +109,62 @@ class User(ORMBase):
         return _("[User(%s)]") % self.username
 
 
-    # TODO
-    def notify(self):
-        ''' Add a notification to user '''
+    def notify(self, value=1):
+        try:
+            value = int(value)
+        except:
+            value = 0
 
-        self.profile.notification += 1
-        
+        #TODO: a hack for update 0.4 to 0.5
+        if not self.notification:
+            self.notification = 0
 
-    def decrease_notification(self):
+        self.notification += value
+        if self.notification < 0:
+            self.notification = 0
 
-        # TODO: to avoid a negative number !
-        if self.profile.notification > 0:
-            self.profile.notification -= 1
+    @property
+    def homedir(self):
+        return os.path.join(settings.STATIC_PATH, 'user/%s' % self.id)
 
     @property
     def avatar_url(self):
 
-        avatar = os.path.join( settings.STATIC_PATH,
-                               'user/%s/avatar' % self.id )
-        if os.path.exists(avatar):
-            return '%suser/%s/avatar' % (settings.STATIC_URL, self.id)
+        if os.path.exists(self.avatar_path):
+            return os.path.join(settings.STATIC_URL, 'user/%s/%s' % (self.id, settings.USER_AVATAR_NAME))
+        else:
+            return settings.USER_AVATAR_DEFAULT
 
-        return os.path.join(settings.THEME_URL, 'img/user.png')
+    @property
+    def avatar_path(self):
+        return os.path.join(self.homedir, 'thum_' + settings.USER_AVATAR_NAME)
 
-        
+    @property
+    def avatar_mini_url(self):
+
+        if os.path.exists(self.avatar_mini_path):
+            url = 'user/%s/%s' % (self.id, settings.USER_AVATAR_MINI_NAME)
+        else:
+            url = settings.USER_AVATAR_MINI_DEFAULT
+
+        return url
+
+    @property
+    def avatar_mini_path(self):
+        return os.path.join(self.homedir, settings.USER_AVATAR_MINI_NAME)
+
+
+    @property
+    def avatar_orig_path(self):
+        return os.path.join(self.homedir, settings.USER_AVATAR_NAME)
+
+    @property
+    def email(self):
+        if self.profile and self.profile.email:
+            return self.profile.email
+        else:
+            return ''
+
 
 class UserProfile(ORMBase):
 
@@ -146,15 +180,14 @@ class UserProfile(ORMBase):
     locale = Column( String(16), default='zh_CN' ) # TODO: select list
     email = Column( String(64) )
 
-    # All notification of LuoYun System
-    notification = Column( Integer, default=0 )
-
     # resource limit
     memory = Column( Integer, default=256 )  # 256 M
     cpus = Column( Integer, default=1 )      # 1 core
     instances = Column( Integer, default=3 ) # 3 instances
     storage = Column( Integer, default=2 )   # 2 G
 
+    # Other configure
+    config = Column( Text() )
 
     def __init__(self, user, email=''):
         self.user_id = user.id
@@ -172,6 +205,32 @@ class UserProfile(ORMBase):
     def __repr__(self):
         return _("[UserProfile(%s)]") % (self.user_id)
 
+    def get_secret(self, key=None, value=None):
+        config = json.loads(self.config) if self.config else {}
+
+        if config:
+            secret = config.get('secret')
+            if isinstance(secret, dict):
+                if key:
+                    return secret.get(key, value)
+                else:
+                    return secret
+
+        return None
+
+    def set_secret(self, key, value):
+        config = json.loads(self.config) if self.config else {}
+
+        if config:
+            secret = config.get('secret')
+            if not isinstance(secret, dict):
+                secret = {}
+        else:
+            secret = {}
+
+        secret[key] = value
+        config['secret'] = secret
+        self.config = json.dumps(config)
 
 
 class Permission(ORMBase):
@@ -206,7 +265,7 @@ class ApplyUser(ORMBase):
     email    = Column( String(32) )
     key      = Column( String(128) )
     ip       = Column( String(32) )
-    created  = Column( DateTime(), default=datetime.utcnow )
+    created  = Column( DateTime(), default=datetime.now )
 
     def __init__(self, email, ip):
         self.email = email
@@ -232,7 +291,7 @@ class UserResetpass(ORMBase):
 
     key = Column( String(128) )
 
-    created  = Column( DateTime(), default=datetime.utcnow )
+    created  = Column( DateTime(), default=datetime.now )
     completed  = Column( DateTime() )
 
 

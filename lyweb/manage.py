@@ -21,15 +21,10 @@ gettext.install( 'app', settings.I18N_PATH, unicode=False )
 
 def default_value(dbsession):
 
-    # LuoYunConfig
-    from app.system.models import LuoYunConfig
-    for k, v in settings.luoyun_system_config:
-        c = dbsession.query(LuoYunConfig).filter_by(key=k).first()
-        if c:
-            print '[W] config key exist: %s' % k
-        else:
-            nc = LuoYunConfig(key=k, value=v)
-            dbsession.add(nc)
+    from app.account.models import Group
+    if dbsession.query(Group).count() > 0:
+        print '[W] db is init already, do not init now.'
+        return
 
     # Permission
     from app.account.models import Permission
@@ -164,6 +159,12 @@ def i18n():
 
 
 if __name__ == '__main__':
+    import sys
+
+    if len(sys.argv) == 2:
+        if sys.argv[1] == '--i18n':
+            i18n()
+            sys.exit(0)
 
     syncdb()
     i18n()

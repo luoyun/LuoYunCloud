@@ -1,85 +1,65 @@
 <%inherit file="admin_base.html"/>
 
-<%block name="sidemain">
+<%block name="submenujs">
+$("#admin-menu #index-item").addClass("current");
+</%block>
 
-<h2 class="title">${ _("LuoYun Administration Console") }</h2>
-<div class="global-description">
-<p>${ _("Note: Any changes here will affect overall operation of LuoYunCloud platform. Please be careful!") }</p>
-</div>
+<%block name="content">
 
-<div id="system-global-info">
-
-  <table class="kvlist">
+<div id="system-global-info" class="admin-index-item">
+  <table>
+    <thead>
+      <tr>
+        <th>${ _("Appliance") }</th>
+        <th>${ _("Instance") }</th>
+      </tr>
+    </thead>
     <tbody>
       <tr>
-        <td class="c1">${ _("Appliance") }</td>
-        <td class="c2"><a href="${ reverse_url('admin:appliance') }">${ TOTAL_APPLIANCE }</a></td>
-      </tr>
-      <tr>
-        <td class="c1">${ _("Instance") }</td>
-        <td class="c2"><a href="${ reverse_url('admin:instance') }">${ TOTAL_INSTANCE }</a></td>
+        <td><a href="${ reverse_url('admin:appliance') }">${ TOTAL_APPLIANCE }</a></td>
+        <td><a href="${ reverse_url('admin:instance') }">${ TOTAL_INSTANCE }</a></td>
       </tr>
     </tbody>
   </table>
-
 </div>
 
-<div id="admin-pie-show" class="c">
+<div id="admin-pie-show" class="admin-index-item c">
+  % if TOTAL_CPU or TOTAL_MEMORY:
+  <div class="pie" id="admin-cpu-pie"></div>
+  <div class="pie" id="admin-mem-pie"></div>
 
-  <div class="admin-pie-item">
-    <div class="desc">
-      <h3>${ _("CPU") }</h3>
-      <div class="r-info">
-	<span class="total">${ TOTAL_CPU }${ _("core") }</span>
-	<span class="used">${ USED_CPU }${ _("core") }</span>
-      </div>
-      <div class="admin-pie-item-hover"></div>
-    </div>
-    <div id="admin-cpu-pie"></div>
-  </div>
+  <script language="JavaScript" src="${ static_url('FusionCharts/JSClass/FusionCharts.js') }"></script>
+  <script type="text/javascript">
+    var cpuData = '${ chart_data("cpu") }';
+    var cpuChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "cpuChartId", "420", "220");
+    cpuChart.setDataXML(cpuData);
+    cpuChart.render("admin-cpu-pie");
 
-  <div class="admin-pie-item">
-    <div class="desc">
-      <h3>${ _("Memory") }</h3>
-      <div class="r-info">
-	<span class="total">${ TOTAL_MEMORY }M</span>
-	<span class="used">${ USED_MEMORY }M</span>
-      </div>
-      <div class="admin-pie-item-hover"></div>
-    </div>
-    <div id="admin-mem-pie"></div>
-  </div>
-
+    var memData = '${ chart_data("memory") }';
+    var memChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "memChartId", "420", "220");
+    memChart.setDataXML(memData);
+    memChart.render("admin-mem-pie");
+  </script>
+  % else:
+  <p class="ywarn">${ _("Important: you have not any resources yet. please check you compute nodes.") } <a href="${ reverse_url('admin:node') }">${ _("Node List") }</a></p>
+  % endif
 </div>
-
-<%
-   PIE_CPU_USED_PER = (USED_CPU*100.0)/TOTAL_CPU if TOTAL_CPU else 0
-   PIE_MEM_USED_PER = (USED_MEMORY*100.0)/TOTAL_MEMORY if TOTAL_MEMORY else 0
-%>
-<script language="javascript" type="text/javascript" src="${ STATIC_URL }js/flot/jquery.flot.js"></script>
-<script language="javascript" type="text/javascript" src="${ STATIC_URL }js/flot/jquery.flot.pie.js"></script>
-<script type="text/javascript">
-lyAdminShowPie("#admin-cpu-pie", [
-    { label: "${ _('Used') }",  data: ${PIE_CPU_USED_PER} },
-    { label: "${ _('Unused') }",  data: ${100 - PIE_CPU_USED_PER} },
-]);
-lyAdminShowPie("#admin-mem-pie", [
-    { label: "${ _('Used') }",  data: ${PIE_MEM_USED_PER} },
-    { label: "${ _('Unused') }",  data: ${100 - PIE_MEM_USED_PER} },
-]);
-</script>
+`
 
 % if NEW_USER_LIST:
 <div id="admin-new-user" class="admin-user-list ly-table c">
-  <h3>${ _("Last 10 users") }</h3>
+  <h3 class="subtitle">${ _("Last 10 users") }</h3>
+  <p class="manage-content"><a href="${ reverse_url('admin:user') }">${ _("View All User") }</a></p>
   <table>
     <thead>
       <tr>
         <th>${ _("ID") }</th>
         <th>${ _("Name") }</th>
 	<th>${ _("Groups") }</th>
+	<th>${ _("Appliance") }</th>
+	<th>${ _("Instance") }</th>
 	<th>${ _("Email") }</th>
-	<th>${ _("Last Login") }</th>
+	<th>${ _("Last Active") }</th>
       </tr>
     </thead>
     <tbody>
@@ -88,32 +68,39 @@ lyAdminShowPie("#admin-mem-pie", [
         <td>${ U.id }</td>
         <td>
 	  <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a>
-	  % if U.islocked:
-	  <img src="${ THEME_URL }img/user-lock.gif" alt="${ _('locked') }"/>
-	  % endif
 	</td>
 	<td>
 	  % for G in U.groups:
-	  <p><a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></p>
+	  <a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a>
 	  % endfor
+	</td>
+	<td>
+	  % if U.appliances:
+	  <a href="${ reverse_url('admin:appliance') }?uid=${ U.id }">${ len(U.appliances) }</a>
+	  % endif
+	</td>
+	<td>
+	  % if U.instances:
+	  <a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
+	  % endif
 	</td>
 	<td>
 	  % if U.profile and U.profile.email:
 	  ${ U.profile.email }
 	  % endif
 	</td>
-	<td>${ lytime(U.last_login, '%Y-%m-%d %H:%M') }</td>
+	<td>${ htime(U.last_active) }</td>
       </tr>
       % endfor
     </tbody>
   </table>
-  <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }">${ _("View All User") }</a></p>
 </div>
 % endif
 
 % if NEW_JOB_LIST:
 <div id="admin-new-job" class="ly-table c">
-  <h3>${ _("Last 10 jobs") }</h3>
+  <h3 class="subtitle">${ _("Last 10 jobs") }</h3>
+  <p class="manage-content"><a href="${ reverse_url('admin:job') }">${ _("View All Job") }</a></p>
   <table>
     <thead>
       <tr>
@@ -130,19 +117,17 @@ lyAdminShowPie("#admin-mem-pie", [
       % for j in NEW_JOB_LIST:
       <tr>
         <td>${ j.id }</td>
-        <td><a href="${ reverse_url('account:view', j.user.id) }">${ j.user.username }</a></td>
-        <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png" alt="${ j.status_string }"/></td>
+        <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
+        <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png"/>${ locale.translate(j.status_string) }</td>
         <td>${ j.target_name }</td>
-        <td><a href="${ j.target_url }">${ j.target_id }</a></td>
+        <td>${ j.target_url }</a></td>
         <td>${ j.action_string }</td>
-        <td>${ fulltime(j.ended, UTC=True) }</td>
+        <td>${ htime(j.ended) }</td>
       </tr>
       % endfor
     </tbody>
   </table>
-  <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:job') }">${ _("View All Job") }</a></p>
 </div>
 % endif
-
 
 </%block>

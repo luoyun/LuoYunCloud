@@ -5,7 +5,7 @@ import datetime
 def get_sysinfo(hostname = None):
     """Get system info, including
        $hostname $application $version1 $version2 $curtime"""
-    if hostname == None:
+    if hostname == None or hostname == "":
         f = os.popen("/sbin/ifconfig eth0")
         s = f.read()
         if f.close() == None: 

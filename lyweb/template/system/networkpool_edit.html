@@ -1,11 +1,21 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/system.html" />
 
-<%block name="sidemain">
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li><a href="${ reverse_url('system:networkpool') }">${ _("Network pool") }</a></li>
+<li>${ _("Edit Network Pool") }</li>
+</%block>
 
-<h2>${ _("Edit IP Address Pool") }</h2>
+<%block name="content">
 
-<div class="main-wrap small-left-right-form">
-  <form method="POST" action="${ reverse_url('system:networkpool:edit') }">
+<div class="small-left-right-form c">
+  <form method="POST">${ xsrf_form_html() }
+    ${ form.name.label } ${ form.name() }<br/>
+    ${ form.html_errors(form.name.errors) }
+
+    ${ form.description.label } ${ form.description() }<br/>
+    ${ form.html_errors(form.description.errors) }
+
     ${ form.start.label } ${ form.start() }<br/>
     ${ form.html_errors(form.start.errors) }
 
@@ -25,11 +35,38 @@
     ${ form.html_errors(form.exclude_ips.errors) }
 
     <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
-% if saved:
-<span id="saved-success">${ _("saved success") }</span>
-% endif
-
   </form>
 </div>
+
+%if UNABLE_DELETE_IP:
+<p class="ywarn">${ _("The following ip is in used.") }</p>
+
+<div class="ly-table">
+  <table>
+    <thead>
+      <tr>
+	<th>${ _("IP") }</th>
+	<th>${ _("Network") }</th>
+	<th>${ _("Instance") }</th>
+	<th>${ _("Created") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      %for IP in UNABLE_DELETE_IP:
+      <tr>
+	<td>${ IP.ip }</td>
+	<td>${ IP.network }</td>
+	<td>
+	  %if IP.instance:
+	  <a href="${ reverse_url('admin:instance') }?id=${ IP.instance.id }">${ IP.instance }</a>
+	  %endif
+	</td>
+	<td>${ ftime(IP.created) }</td>
+      </tr>
+      %endfor
+    </tbody>
+  </table>
+</div>
+%endif
 
 </%block>

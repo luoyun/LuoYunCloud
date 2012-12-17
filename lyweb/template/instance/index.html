@@ -1,15 +1,12 @@
 <%inherit file="/base.html"/>
 
 <%block name="head">
-<link rel="stylesheet" href="${ THEME_URL }instance.css" />
-<link rel="stylesheet" href="${ THEME_URL }button.css" />
-<link rel="stylesheet" href="${ THEME_URL }table.css" />
-##<script type="text/javascript" src="${STATIC_URL}js/home.js"></script>
-<script type="text/javascript" src="${STATIC_URL}js/instance.js"></script>
+<link rel="stylesheet" href="${ theme_url('instance-index.css') }" />
+<link rel="stylesheet" href="${ theme_url('table.css') }" />
+<script type="text/javascript" src="${ static_url('js/instance.js') }"></script>
 </%block>
 
 <%block name="main">
-<script type="text/javascript" src="${ STATIC_URL }js/url.js"></script>
 
 <div class="ly-description">
   <p>${ _("Public Instances") }
@@ -31,13 +28,15 @@
     % for I in INSTANCE_LIST:
 
     <ul class="i">
-      <li class="i-logo"><a href="${ reverse_url('instance:view', I.id) }"><img src="${ I.logo_url }" /></a></li>
+      <li class="i-logo"><a href="${ reverse_url('instance:view', I.id) }"><img src="${ I.logourl }" /></a></li>
       <div class="c"></div>
       <li class="i_name c"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></li>
       <li class="i_user"><span class="t">${ _("Owner") }</span><a href="${ reverse_url('account:view', I.user_id) }">${ I.user.username }</a></li>
-##      <li class="i_user"><span class="t">${ _("Update") }</span>${ lytime(I.updated) }</li>
-##      <li class="i_status"><span class="t">${ _("Status") }</span><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ I.status_string }"/></li>
-      <li class="i_status"><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ I.status_string }"/></li>
+      <li class="i_status"><img id="i${ I.id }-is-img" src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }" /></li>
+      <li style="display:none;">
+	<span id="i${ I.id }-is">${ I.status }</span>
+	<span id="i${ I.id }-js">${ I.lastjob_status_id }</span>
+      </li>
 
       <div class="i-logo-hover" style="display:none;">
 	<div class="arrowBox">
@@ -57,7 +56,7 @@
 	  <tbody>
 	    <tr>
 	      <td>${ _("Status") }</td>
-	      <td>${ I.status_string }</td>
+	      <td>${ locale.translate(I.status_string) }</td>
 	    </tr>
 	    <tr>
 	      <td>${ _("IP") }</td>
@@ -92,70 +91,65 @@
   <div class="aside">
 
     <div id="create-instance" class="c">
-      <a class="ly-btn2 medium blue" 
-	 title="${ _('Create a new instance') }" 
-	 href="${ reverse_url('instance:create') }">
-	${ _("Create New Instance") }</a>
+      <a class="orange-submit" title="${ _('Create a new instance') }" href="${ reverse_url('instance:create') }">${ _("Create New Instance") }</a>
     </div>
+
+    <ul class="select-module">
+      <li class="t">${ _("Instance Status") }</li>
+      <li><select id="sort-by-status">
+	  <option value="all">${ _("All") }</option>
+	  <option value="running">${ _("Running") }</option>
+	  <option value="stoped">${ _("Stoped") }</option>
+	</select>
+      </li>
+    </ul>
 
     % if current_user:
-    <div class="sort-select c">
-      <ul class="single-choice">
-	<h3>${ _("View") }</h3>
-	<li><input type='checkbox' value="all" />${ _("All Public") }</li>
-	<li><input type='checkbox' value="self" />${ _("My  Public") }</li>
-      </ul>
-    </div>
+    <ul class="select-module">
+      <li class="t">${ _("View") }</li>
+      <li><select id="sort-by-view">
+	  <option value="all">${ _("All Public") }</option>
+	  <option value="self">${ _("My Public") }</option>
+	</select>
+      </li>
+    </ul>
     % endif
 
-    <div class="sort-select c">
-      <ul id="order-by-choice">
-	<h3>${ _("Selection") }</h3>
-	<li><input type='checkbox' value="updated" />${ _("Updated") }</li>
-	<li><input type='checkbox' value="created" />${ _("Created") }</li>
-##	<li><input type='checkbox' value="username" />${ _("Username") }</li>
-      </ul>
-    </div>
+    <ul class="select-module">
+      <li class="t">${ _("Selection") }</li>
+      <li><select id="sort-by-what">
+	  <option value="updated">${ _("Updated") }</option>
+	  <option value="created">${ _("Created") }</option>
+	  <option value="user">${ _("User") }</option>
+      </select></li>
+    </ul>
 
-    <div class="sort-select c">
-      <ul id="sort-method-choice">
-	<h3>${ _("Order") }</h3>
-	<li><input type='checkbox' value="desc" />${ _("Descending") }</li>
-	<li><input type='checkbox' value="asc" />${ _("Ascending") }</li>
-      </ul>
-    </div>
-
-    <div class="sort-select c">
-      <ul id="status-choice">
-	<h3>${ _("Status") }</h3>
-	<li><input type='checkbox' value="running" />${ _("Running") }</li>
-	<li><input type='checkbox' value="stoped" />${ _("Stoped") }</li>
-	<li><input type='checkbox' value="all" />${ _("All") }</li>
-      </ul>
-    </div>
-
-    <div class="sort-select c">
-      <ul id="pagesize-choice">
-	<h3>${ _("PageSize") }</h3>
-	<li><input type='checkbox' value="10" />${ _("10") }</li>
-	<li><input type='checkbox' value="20" />${ _("20") }</li>
-	<li><input type='checkbox' value="50" />${ _("50") }</li>
-      </ul>
-    </div>
+    <ul class="select-module">
+      <li>${ _("Order") }</li>
+      <li><select id="sort-order">
+	  <option value="1">${ _("Descending") }</option>
+	  <option value="0">${ _("Ascending") }</option>
+      </select></li>
+    </ul>
 
   </div>
 
 </div>
 
-
 <script type="text/javascript">
-  lyInstanceSort( 'view', '.single-choice input:checkbox', 'all' );
-  lyInstanceSort( 'by', '#order-by-choice input:checkbox', 'updated' );
-  lyInstanceSort( 'sort', '#sort-method-choice input:checkbox', 'desc' );
-  lyInstanceSort( 'status', '#status-choice input:checkbox', 'running' );
-  lyInstanceSort( 'sepa', '#pagesize-choice input:checkbox', '50' );
-
   indexInstanceLogoHover();
+
+  $("#sort-by-status").val("${ STATUS }");
+  submit_select_change("#sort-by-status", "${ urlupdate({'status': 'YREPLACEY'}) }");
+
+  $("#sort-by-view").val("${ VIEW }");
+  submit_select_change("#sort-by-view", "${ urlupdate({'view': 'YREPLACEY'}) }");
+
+  $("#sort-by-what").val("${ SORTBY }");
+  submit_select_change("#sort-by-what", "${ urlupdate({'by': 'YREPLACEY'}) }");
+
+  $("#sort-order").val("${ ORDER }");
+  submit_select_change("#sort-order", "${ urlupdate({'order': 'YREPLACEY'}) }");
 </script>
 
 </%block>

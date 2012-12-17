@@ -1,0 +1,52 @@
+<%inherit file="/admin/system.html"/>
+
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li><a href="${ reverse_url('message:notice') }">${ _("All Notice") }</a></li>
+</%block>
+
+
+<%block name="content">
+
+<div class="ly-view-message">
+  %if M:
+
+  %if M.readtime:
+  <p>${ _("You have read this message already, at") } <span class="readtime">${ ftime(M.readtime) } (${ htime(M.readtime) })</span></p>
+  %endif
+
+  <table class="baseinfo">
+    <tbody>
+      <tr>
+	<td>${ _("Sender") }</td>
+	<td class="sender"><a href="${ reverse_url('account:view', M.sender_id) }" target="_blank">${ M.sender.username }</a></td>
+      </tr>
+      <tr>
+	<td>${ _("Send time") }</td>
+	<td class="sendtime">${ ftime(M.text.sendtime) } (${ htime(M.text.sendtime) })</td>
+      </tr>
+      <tr>
+	<td>${ _("Subject") }</td>
+	<td class="subject">${ M.text.subject }</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="body">${ M.text.body }</div>
+  <p><a class="red-submit delete-message" href="${ reverse_url('message:notice:delete', M.id) }">${ _("Delete") }</a></p>
+
+  %else:
+  <p class="ywarn">${ _("Can not find message !") }</p>
+  %endif
+</div>
+
+<script type="text/javascript">
+  aClickConfirm(".delete-message", {
+    title: "${ _("Delete Message") }",
+    text: "${ _("Wail ! the message will lost !") }",
+    ok: "${ _("I am sure !") }",
+    cancel: "${ _("Cancel") }",
+  });
+</script>
+
+
+</%block>

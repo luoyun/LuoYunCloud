@@ -10,6 +10,8 @@ from app.wiki.forms import TopicForm, NewTopicForm
 
 from lycustom import has_permission
 
+from sqlalchemy.sql.expression import asc, desc
+
 from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'tables'])
 
@@ -18,9 +20,10 @@ class Index(LyRequestHandler):
 
     def get(self):
 
-        catalogs = self.db2.query(WikiCatalog).all()
+        catalogs = self.db2.query(WikiCatalog).order_by(
+            asc(WikiCatalog.position)).all()
 
-        self.render( 'wiki/index.html', title = _('Servers Home'), catalogs = catalogs )
+        self.render( 'wiki/index.html', title = self.trans(_('FAQ Home')), catalogs = catalogs )
 
 
 
@@ -32,7 +35,7 @@ class ViewTopic(LyRequestHandler):
         if not topic:
             return self.write('Have not found topic %s' % id)
 
-        d = { 'title': _('View topic: %s') % topic.name,
+        d = { 'title': self.trans(_('View topic: %s')) % topic.name,
               'topic': topic }
 
         self.render('wiki/view_topic.html', **d)
@@ -60,20 +63,20 @@ class NewTopic(LyRequestHandler):
         catalog_id = self.get_argument('catalog', 1)
         catalog = self.db2.query(WikiCatalog).get( catalog_id )
         if not catalog:
-            return self.write( _('Catalog not found') )
+            return self.write( self.trans(_('Catalog not found')) )
 
         # TODO: permission check for this catalog
 
-        form = NewTopicForm()
+        form = NewTopicForm(self)
         form.catalog.data = catalog_id
 
-        self.render( 'wiki/new_topic.html', title = _('New Topic'), form = form )
+        self.render( 'wiki/new_topic.html', title = self.trans(_('New Topic')), form = form )
 
 
     @has_permission('admin')
     def post(self):
 
-        form = NewTopicForm( self.request.arguments )
+        form = NewTopicForm(self)
         if form.validate():
             topic = Topic( name = form.name.data,
                            body = form.body.data,
@@ -85,7 +88,7 @@ class NewTopic(LyRequestHandler):
             url = self.reverse_url('wiki:view', topic.id)
             return self.redirect(url)
 
-        self.render( 'wiki/new_topic.html', title = _('New Topic'), form = form )
+        self.render( 'wiki/new_topic.html', title = self.trans(_('New Topic')), form = form )
 
 
 
@@ -109,18 +112,18 @@ class EditTopic(LyRequestHandler):
 
     def get(self, id):
 
-        form = TopicForm()
+        form = TopicForm(self)
         form.name.data = self.topic.name
         form.catalog.data = self.topic.catalog
         form.body.data = self.topic.body
 
-        title = _('Edit Topic %s') % self.topic.name
+        title = self.trans(_('Edit Topic %s')) % self.topic.name
         self.render( 'wiki/edit_topic.html', title = title, form = form )
 
 
     def post(self, id):
 
-        form = TopicForm( self.request.arguments )
+        form = TopicForm(self)
         if form.validate():
             self.topic.name = form.name.data
             self.topic.body = form.body.data
@@ -130,7 +133,7 @@ class EditTopic(LyRequestHandler):
             url = self.reverse_url('wiki:view', self.topic.id)
             return self.redirect(url)
 
-        self.render( 'wiki/edit_topic.html', title = _('Edit Topic'), form = form )
+        self.render( 'wiki/edit_topic.html', title = self.trans(_('Edit Topic')), form = form )
 
 
 

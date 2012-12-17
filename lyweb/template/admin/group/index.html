@@ -1,21 +1,19 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/account.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
 </%block>
 
-<%block name="sidemain">
+<%block name="content">
 
-<h2 class="title">${ _("Group Management") }</h2>
-
-<div class="manage-action c">
-  <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:group') }?action=add">${ _("Create New Group") }</a></p>
-  <p><a class="ly-btn2 small blue" href="${ reverse_url('admin:user') }?gid=0">${ _("No Group User") }</a></p>
-
+<div class="manage-content">
+  <a class="blue-submit" href="${ reverse_url('admin:group') }?action=add">${ _("Create New Group") }</a>
+  <a class="red-submit" href="${ reverse_url('admin:user') }?gid=0">${ _("Users Have No Group") }</a>
 </div>
 
-<h3>${ _("Total Groups: ") }${ len(GROUP_LIST) }</h3>
-<div class="admin-group-list ly-table">
+<p class="subtitle">${ _("Total Groups: ") } ${ len(GROUP_LIST) }</p>
+
+<div class="ly-table">
   <table>
     <thead>
       <tr>
@@ -29,22 +27,22 @@
       % for G in GROUP_LIST:
       <tr>
         <td>${ G.id }</td>
-        <td><a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></td>
+        <td><a href="${ reverse_url('admin:group') }?id=${ G.id }" target="_blank">${ G.name }</a></td>
 	<td>
 	  % if G.users:
-	  <a href="${ reverse_url('admin:user') }?gid=${ G.id }">${ len(G.users) }</a>
+	  <a href="${ reverse_url('admin:user') }?gid=${ G.id }" target="_blank">${ len(G.users) }</a>
 	  % endif
 	</td>
 
 	<td>
-	  <a class="ly-btn2 small blue" href="${ reverse_url('admin:group') }?id=${ G.id }&action=edit">${ _("Edit") }</a>
+	  <a href="${ reverse_url('admin:group') }?id=${ G.id }&action=edit">${ _("Edit") }</a>
 	  % if G.islocked:
 	  ${ _("locked") }
 	  % else:
-	  <a class="ly-btn2 small blue" href="${ reverse_url('admin:group') }?id=${ G.id }&action=delete">${ _("Delete") }</a>
+	  <a href="${ reverse_url('admin:group') }?id=${ G.id }&action=delete">${ _("Delete") }</a>
 	  % endif
 	  % if G.users:
-	  <a href="${ reverse_url('system:sendmail') }?totype=group&idlist=${ G.id }" title="${ _('Send a email to users in group: ') } ${ G.name }" target="_blank"><img src="${ THEME_URL }img/email.gif" alt="Email"/></a>
+	  <a href="${ reverse_url('system:sendmail') }?totype=group&idlist=${ G.id }" title="${ _('send a email to all users in this group.') }" target="_blank"><img class="small" src="${ theme_url('img/email.gif') }" /></a>
 	  % endif
 	</td>
       </tr>

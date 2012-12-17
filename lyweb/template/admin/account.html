@@ -1,0 +1,12 @@
+<%inherit file="admin_base.html"/>
+
+<%block name="subhead">
+<link rel="stylesheet" href="${ theme_url('admin-account.css') }" />
+</%block>
+
+<%block name="submenujs">
+$("#admin-menu #account-item").addClass("current");
+$("#submenu .item").hide();
+$("#account-item-submenu").show();
+</%block>
+

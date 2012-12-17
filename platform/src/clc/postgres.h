@@ -16,6 +16,7 @@ typedef struct DBNodeRegInfo_t {
     char * ip;
     char * secret;
     int enabled;
+    int cpu_vlimit, mem_vlimit;
 }DBNodeRegInfo;
 int db_node_reginfo_free(DBNodeRegInfo * nf);
 

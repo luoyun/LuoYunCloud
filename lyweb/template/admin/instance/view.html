@@ -1,0 +1,409 @@
+<%inherit file="/admin/instance.html" />
+
+
+<%block name="innav">
+<li><a href="${ reverse_url('admin:instance') }">${ _("Instance") }</a></li>
+<li><a href="${ reverse_url('admin:instance') }?id=${ I.id }">${ I.name }</a></li>
+</%block>
+
+
+<%block name="content">
+
+<div id="top-header" class="c">
+  <div class="c1">
+    <div id="i-logo">
+      <a href="${ reverse_url('admin:instance') }?id=${ I.id }"><img src="${ I.logourl }" /></a>
+    </div>
+
+    <div id="i-status">
+      <img id="i-is-img" src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }"/>
+      <span style="display:none;" id="i-is-str">${ locale.translate(I.status_string) }</span>
+      <span style="display:none;" id="i-is">${ I.status }</span>
+    </div>
+  </div>
+
+  <div class="c2">
+    <div id="i-control" class="c">
+      <div id="i-control-btn">
+	% if I.can_run:
+	<a href="${ reverse_url('instance:control', I.id) }?action=run"><img src="${ theme_url('img/run-instance.png') }"/></a>
+	% elif I.need_query:
+	<a href="${ reverse_url('instance:control', I.id) }?action=query"><img src="${ theme_url('img/query-instance.png') }"/></a>
+	% else:
+	<a href="${ reverse_url('instance:control', I.id) }?action=stop"><img src="${ theme_url('img/stop-instance.png') }"/></a>
+	<a id="i-control-reboot" href="${ reverse_url('instance:control', I.id) }?action=reboot"><img src="${ theme_url('img/reboot-instance.png') }"/></a>
+	% endif
+      </div>
+      <div id="i-control-result">
+	<span id="i-task-result"></span>
+	<span id="i-task-lastjob">
+	  <img class="little-status-img" id="i-js-img" src="${ theme_url('icons/JobStatus/%s' % I.lastjob_imgurl) }" />
+	  <span id="i-js-str">${ locale.translate(I.job_status_string) }</span>
+	  <span id="i-js">${ I.lastjob_status_id }</span>
+	</span>
+	% if I.ischanged:
+	<span id="i-reboot-warning" class="ly-warning">${ _("Instance configuration has changed, please restart instance for new settings to be effective!") }</span>
+	% endif
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<%
+   def isselected(tab):
+       return 'selected' if tab == TAB else ''
+%>
+<div id="i-management" class="tabs">
+  <ul>
+    <li><a id="tab-general" class="${ isselected('general') }" href="${ reverse_url('admin:instance') }?id=${ I.id }&tab=general">${ _("Baseinfo") }</a></li>
+    <li><a id="tab-resource" class="${ isselected('resource') }" href="${ reverse_url('admin:instance') }?id=${ I.id }&tab=resource">${ _("Resource") }</a></li>
+    <li><a id="tab-network" class="${ isselected('network') }" href="${ reverse_url('admin:instance') }?id=${ I.id }&tab=network">${ _("Network") }</a></li>
+    <li><a id="tab-storage" class="${ isselected('storage') }" href="${ reverse_url('admin:instance') }?id=${ I.id }&tab=storage">${ _("Storage") }</a></li>
+    <li><a id="tab-domain" class="${ isselected('domain') }" href="${ reverse_url('admin:instance') }?id=${ I.id }&tab=domain">${ _("Domain") }</a></li>
+    <li><a id="tab-webssh" class="${ isselected('webssh') }" href="${ reverse_url('admin:instance') }?id=${ I.id }&tab=webssh">${ _("WebSSH") }</a></li>
+    <li><a id="tab-delete" class="${ isselected('delete') }" href="${ reverse_url('admin:instance') }?id=${ I.id }&tab=delete">${ _("Delete") }</a></li>
+    <li><a id="tab-joblist" class="${ isselected('joblist') }" href="${ reverse_url('admin:instance') }?id=${ I.id }&tab=joblist">${ _("History") }</a></li>
+  </ul>
+</div>
+
+<%
+   def isshow(tab):
+       return '' if tab == TAB else 'display:none;'
+%>
+
+<div id="tab-content-general" class="tab-content" style="${ isshow('general') }">
+
+  <div id="i-baseinfo" class="c">
+    <table>
+      <tbody>
+	<tr>
+	  <td>${ _("Name") }</td>
+	  <td>${ I.name }</td>
+	</tr>
+	<tr>
+	  <td>${ _("ID") }</td>
+	  <td>${ I.id }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Owner") }</td>
+	  <td>
+	    <a href="${ reverse_url('admin:user') }?id=${ I.user_id }" target="_blank">${ I.user.username }</a>
+	    <a class="blue-submit" href="${ reverse_url('admin:instance') }?id=${ I.id }&action=change_owner">${ _("Change Owner") }</a>
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ _("Domain") }</td>
+	  <td>
+	    <span id="i-domain">
+	      % if I.domain:
+	      % if I.is_running:
+	      <a href="${ I.home_url(current_user) }" target="_blank">${ I.domain }</a>
+	      % else:
+	      ${ I.domain }
+	      % endif
+	      % endif
+	    </span>
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ _("IP") }</td>
+	  <td>
+	    <span id="i-ip">
+	      % if I.work_ip:
+	      <a href="${ I.home_url(current_user, useip=True) }" target="_blank"><span id="lyinst-ip">${ I.work_ip }</span></a>
+	      % endif
+	    </span>
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ _("Recent Action") }</td>
+	  <td><span id="i-lastjob-id">${ I.lastjob_id }</span></td>
+	</tr>
+      </tbody>
+    </table>
+
+    <table>
+      <tbody>
+	<tr>
+	  <td>${ _("Appliance") }</td>
+	  <td><a href="${ reverse_url('appliance:view', I.appliance_id) }">${ I.appliance.name }</a></td>
+	</tr>
+	<tr>
+          <td class="c1">${ _("Private") }</td>
+	  <td class="c2">
+	    <input type="checkbox"
+		   % if I.isprivate:
+		   checked="checked"
+		   % endif
+		   onclick="simpleToggleCheckbox( this, '${ reverse_url('instance:isprivate', I.id) }', '#isprivate-notify')" />
+	    <span class="public-view"
+		  % if I.isprivate:
+		  style="display:none;"
+		  % endif
+		  ><a href="${ reverse_url('instance:view', I.id) }" target="_blank">${ _("Public Access") }</a>
+	    </span>
+	    <span style="display:none;" class="access-url">${ reverse_url('instance:set_private', I.id) }</span>
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ _("Create Time") }</td>
+	  <td>${ ftime(I.created) }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Update Time") }</td>
+	  <td>${ ftime(I.updated) }</td>
+	</tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <h2>${ _("Summary") }</h2>
+  <p id="i-summary">
+    % if I.summary:
+    ${ I.summary }
+    % else:
+    ${ _("No summary yet.") }
+    % endif
+  </p>
+
+  <h2>${ _("Description") }</h2>
+  <div id="i-description">
+    % if I.description:
+    ${ I.description_html }
+    % else:
+    ${ _("No description yet.") }
+    % endif
+  </div>
+
+</div>
+
+<div id="tab-content-resource" class="tab-content" style="${ isshow('resource') }">
+  <h2>${ _("Resource") }</h2>
+  <table class="kv">
+    <tbody>
+      <tr>
+	<td>${ _("CPU numbers") }</td>
+	<td>${ I.cpus }</td>
+      </tr>
+      <tr>
+	<td>${ _("Memory") }</td>
+	<td>${ I.memory }</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<div id="tab-content-network" class="tab-content" style="${ isshow('network') }">
+  % if NETWORK_LIST:
+  <h2>${ _("Configure Network") }</h2>
+
+  % for N in NETWORK_LIST:
+  <table class="kv">
+    <tbody>
+      <tr>
+	<td>${ _("Type") }</td>
+	<td>${ N.get('type') }</td>
+      </tr>
+      <tr>
+	<td>${ _("IP") }</td>
+	<td>${ N.get('ip') }</td>
+      </tr>
+      <tr>
+	<td>${ _("Gateway") }</td>
+	<td>${ N.get('gateway') }</td>
+      </tr>
+      <tr>
+	<td>${ _("Netmask") }</td>
+	<td>${ N.get('netmask') }</td>
+      </tr>
+      <tr>
+	<td>${ _("MAC") }</td>
+	<td>${ N.get('mac') }</td>
+      </tr>
+    </tbody>
+  </table>
+  % endfor
+
+  % else:
+  <p class="c">${ _("Appliance Default Configuration") }</p>
+  % endif
+</div>
+
+
+<div id="tab-content-storage" class="tab-content" style="${ isshow('storage') }">
+  % if STORAGE_LIST:
+
+  % for S in STORAGE_LIST:
+  <h2>${ _("Configure Storage") }</h2>
+  <table class="kv">
+    <tr>
+      <td>${ _("Type") }</td>
+      <td>${ S.get('type') }</td>
+    </tr>
+    <tr>
+      <td>${ _("Size") }</td>
+      <td>${ S.get('size') }</td>
+    </tr>
+  </table>
+  % endfor
+
+  % else:
+  <p>${ _("No storage now.") }</p>
+  % endif
+</div>
+
+
+<div id="tab-content-domain" class="tab-content" style="${ isshow('domain') }">
+  % if I.domain:
+  <h2>${ _("Domain Binding") }</h2>
+
+  <p>${ _("Domain name of the instance is ") }
+    <span class="fulldomain">
+      % if I.is_running:
+      <a href="${ I.home_url(current_user) }" target="_blank">${ I.domain }</a>
+      % else:
+      ${ I.domain }
+      % endif
+    </span>
+  </p>
+
+  % else:
+  <p>${ _("Domain is not configured.") }</p>
+  % endif
+</div>
+
+<div id="tab-content-webssh" class="tab-content" style="${ isshow('webssh') }">
+  <table class="kv">
+    <tbody>
+      <tr>
+	<td>${ _("WebSSH") }</td>
+	<td>
+	  % if webssh and webssh.get('status') == 'enable':
+	  ${ _("enable") }
+	  % else:
+	  ${ _("disable") }
+	  % endif
+	</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="tab-content-delete" class="tab-content" style="${ isshow('delete') }">
+  <h2>${ _("Delete instance") }</h2>
+  <p class="ly-warning2">${ _("Wait! All the instance data will be lost after instance is deleted.") }</p>
+  <div class="i-management-btn">
+    <a class="ly-btn2 small green confirm-action" onclick="deleteInstanceConfirm( this ); return false;" href="/instance/${ I.id }/delete?_xsrf=${ xsrf_cookie }">${ _("Delete") }</a>
+  </div>
+
+  <div id="i-delete-confirm-dialog" style="display:none;">
+    <table class="vertical-align">
+      <tr>
+	<td><img class="ywarn-img" src="${ theme_url('img/warning48.png') }"/></td>
+	<td><span class="ywarn">${ _("Wait! All the instance data will be lost after instance is deleted.") }</span></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div id="tab-content-joblist" class="tab-content" style="${ isshow('joblist') }">
+  % if JOB_LIST.count():
+  <h2>${ _("Recent Job History") }</h2>
+  <table class="ly-table">
+    <tbody>
+      <tr>
+        <th>${ _("Job ID") }</th>
+        <th>${ _("User") }</th>
+        <th>${ _("Action") }</th>
+        <th>${ _("Result") }</th>
+        <th>${ _("Start Time") }</th>
+        <th>${ _("End Time") }</th>
+      </tr>
+      % for J in JOB_LIST:
+      <tr>
+        <td>${ J.id }</td>
+        <td><a href="${ reverse_url('account:view', J.user.id) }">${ J.user.username }</a></td>
+        <td>${ J.action_string }</td>
+        <td>${ locale.translate(J.status_string) }</td>
+        <td>${ ftime(J.started) }</td>
+        <td>${ ftime(J.ended) }</td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  % endif
+</div>
+
+<script type="text/javascript">
+  showTab();
+
+  $("html").data("inst_control_url", "${ reverse_url('instance:control', I.id) }");
+  $("html").data("inst_control_imgsrc", "${ theme_url('img/REPLACE-instance.png') }");
+
+  InstanceControl();
+
+  $("html").data("i-ctn-reboot-link", '<a id="i-control-reboot" href="${ reverse_url('instance:control', I.id) }?action=reboot"><img src="${ theme_url('img/reboot-instance.png') }"/></a>');
+
+  $("html").data("job-running-img", "${ theme_url('icons/JobStatus/running.gif') }");
+  $("html").data("instance-id", "${ I.id }");
+  InstanceStatusUpdate();
+</script>
+
+<script type="text/javascript">
+function deleteInstanceConfirm( obj ) {
+
+   var $obj = $(obj);
+
+    $('#i-delete-confirm-dialog').dialog({
+	title: "${ _('Are you sure ?') }",
+	resizable: false,
+	height: "auto",
+	minWidth: 520,
+	modal: true,
+	buttons: {
+	    "${ _('Cancel') }": function() {
+		$( this ).dialog( "close" );
+	    },
+	    "${ _('Delete Instance') }": function() {
+		$.ajax({
+		    url: $obj.attr("href"),
+		    type: 'GET',
+		    success: function(data) {
+			$(data).dialog({
+			    show: "slow",
+			    minWidth: 520,
+			    modal: true
+			});
+		    }
+		});
+		$( this ).dialog( "close" );
+	    }
+	},
+        close:function(){
+            $( this ).dialog("destroy");
+        }
+    });
+
+    return false;
+
+}
+</script>
+
+
+<div id="isprivate-notify" style="display:none">
+  <div id="basic-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <p>${ _("Toggle Instance isprivate status Success") }</p>
+  </div>
+  <div id="error-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <h1>${ _("Toggle Instance isprivate status Failed") }</h1>
+    <p>#{text}</p>
+  </div>
+</div>
+
+
+</%block>

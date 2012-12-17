@@ -51,8 +51,6 @@ am_lynode_OBJECTS = domain.$(OBJEXT) handler.$(OBJEXT) \
 lynode_OBJECTS = $(am_lynode_OBJECTS)
 lynode_DEPENDENCIES = ../luoyun/libluoyun.a ../util/libutil.a \
 	../../lib/libding.a ../../lib/json-parser/libjson_parser.a
-lynode_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
@@ -84,6 +82,9 @@ DEFAULT_CLC_DB_USER = @DEFAULT_CLC_DB_USER@
 DEFAULT_CLC_MCAST_IP = @DEFAULT_CLC_MCAST_IP@
 DEFAULT_CLC_MCAST_PORT = @DEFAULT_CLC_MCAST_PORT@
 DEFAULT_CLC_PORT = @DEFAULT_CLC_PORT@
+DEFAULT_JOB_TIMOUT_INSTANCE = @DEFAULT_JOB_TIMOUT_INSTANCE@
+DEFAULT_JOB_TIMOUT_NODE = @DEFAULT_JOB_TIMOUT_NODE@
+DEFAULT_JOB_TIMOUT_OTHER = @DEFAULT_JOB_TIMOUT_OTHER@
 DEFAULT_LYCLC_DATA_DIR = @DEFAULT_LYCLC_DATA_DIR@
 DEFAULT_LYCLC_LOG_PATH = @DEFAULT_LYCLC_LOG_PATH@
 DEFAULT_LYCLC_PID_PATH = @DEFAULT_LYCLC_PID_PATH@
@@ -112,7 +113,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
-LIBS = 
+LIBS = -lm -pthread -lvirt -lcurl -lbz2 -lz -lxml2 -luuid -lgcrypt
 LTLIBOBJS = @LTLIBOBJS@
 LYSYSCONFDIR = @LYSYSCONFDIR@
 MAKEINFO = @MAKEINFO@
@@ -190,7 +191,6 @@ lynode_SOURCES = $(top_srcdir)/config.h \
 lynode_LDADD = ../luoyun/libluoyun.a ../util/libutil.a ../../lib/libding.a \
                ../../lib/json-parser/libjson_parser.a
 
-lynode_LDFLAGS = -lm -pthread -lvirt -lcurl -lbz2 -lz -lxml2 -luuid -lgcrypt
 CLEANFILES = *~
 all: all-am
 
@@ -265,7 +265,7 @@ clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 lynode$(EXEEXT): $(lynode_OBJECTS) $(lynode_DEPENDENCIES) 
 	@rm -f lynode$(EXEEXT)
-	$(lynode_LINK) $(lynode_OBJECTS) $(lynode_LDADD) $(LIBS) $(lynode_LDFLAGS)
+	$(LINK) $(lynode_OBJECTS) $(lynode_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

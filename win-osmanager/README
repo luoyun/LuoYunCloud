@@ -1,0 +1,5 @@
+OS Manager for Windows
+
+1. Copy the LuoYun directory to C:\
+2. Set up Windows task so that C:\LuoYun\bin\pyosm\lyosm.py can be started automatically when Windows starts
+3. Restart Windows

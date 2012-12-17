@@ -5,88 +5,43 @@
 <div class="myun-user-action">
   <a class="ly-btn2 medium blue" href="${ reverse_url('appliance:upload') }">${_("Upload Appliance")}</a>
   <a class="ly-btn2 medium blue" 
-     title="${ _('Create a new instance') }" 
+     title="${ _('Create a new instance') }"
      href="${ reverse_url('instance:create') }">
     ${ _("Create New Instance") }</a>
 </div>
 
+% if hasattr(current_user, 'profile'):
 <div id="myun-pie-show" class="c">
-
-  <div class="myun-pie-item">
-    <div class="desc">
-      <h3>${ _("Instance") }</h3>
-      <div class="r-info">
-	<span class="total">${ current_user.profile.instances }</span>
-	<span class="used">${ USED_INSTANCE }</span>
-      </div>
-      <div class="myun-pie-item-hover"></div>
-    </div>
-    <div id="u-home-instance-pie"></div>
-  </div>
-
-  <div class="myun-pie-item">
-    <div class="desc">
-      <h3>${ _("CPU") }</h3>
-      <div class="r-info">
-	<span class="total">${ current_user.profile.cpus }${ _("core") }</span>
-	<span class="used">${ USED_CPU }${ _("core") }</span>
-      </div>
-      <div class="myun-pie-item-hover"></div>
-    </div>
-    <div id="u-home-cpu-pie"></div>
-  </div>
-
-  <div class="myun-pie-item">
-    <div class="desc">
-      <h3>${ _("Memory") }</h3>
-      <div class="r-info">
-	<span class="total">${ current_user.profile.memory }M</span>
-	<span class="used">${ USED_MEMORY }M</span>
-      </div>
-      <div class="myun-pie-item-hover"></div>
-    </div>
-    <div id="u-home-mem-pie"></div>
-  </div>
-
-  <div class="myun-pie-item">
-    <div class="desc">
-      <h3>${ _("Storage") }</h3>
-      <div class="r-info">
-	  <span class="total">${ current_user.profile.storage }G</span>
-	  <span class="used">${ USED_STORAGE }G</span>
-      </div>
-      <div class="myun-pie-item-hover"></div>
-    </div>
-    <div id="u-home-storage-pie"></div>
-  </div>
+  <div class="pie" id="myun-cpu-pie"></div>
+  <div class="pie" id="myun-mem-pie"></div>
+  <div class="pie" id="myun-instance-pie"></div>
+  <div class="pie" id="myun-storage-pie"></div>
 </div>
 
-<script language="javascript" type="text/javascript" src="${ STATIC_URL }js/flot/jquery.flot.js"></script>
-<script language="javascript" type="text/javascript" src="${ STATIC_URL }js/flot/jquery.flot.pie.js"></script>
-<%
-   PIE_CPU_USED_PER = (USED_CPU*100.0)/current_user.profile.cpus
-   PIE_MEM_USED_PER = (USED_MEMORY*100.0)/current_user.profile.memory
-   PIE_INS_USED_PER = (USED_INSTANCE*100.0)/current_user.profile.instances
-   PIE_STO_USED_PER = (USED_STORAGE*100.0)/current_user.profile.storage
-%>
+<script language="JavaScript" src="${ static_url('FusionCharts/JSClass/FusionCharts.js') }"></script>
 <script type="text/javascript">
-myunPieHover();
-lyShowPie("#u-home-cpu-pie", [
-    { label: "${ _('Used') }",  data: ${PIE_CPU_USED_PER} },
-    { label: "${ _('Unused') }",  data: ${100 - PIE_CPU_USED_PER} },
-]);
-lyShowPie("#u-home-mem-pie", [
-    { label: "${ _('Used') }",  data: ${PIE_MEM_USED_PER} },
-    { label: "${ _('Unused') }",  data: ${100 - PIE_MEM_USED_PER} },
-]);
-lyShowPie("#u-home-instance-pie", [
-    { label: "${ _('Used') }", data: ${PIE_INS_USED_PER} },
-    { label: "${ _('Unused') }", data: ${100 - PIE_INS_USED_PER} },
-]);
-lyShowPie("#u-home-storage-pie", [
-    { label: "${ _('Used') }", data: ${PIE_STO_USED_PER} },
-    { label: "${ _('Unused') }", data: ${100 - PIE_STO_USED_PER} },
-]);
-</script> 
+  var cpuData = '${ chart_data("cpu") }';
+  var cpuChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "cpuChartId", "360", "160");
+  cpuChart.setDataXML(cpuData);
+  cpuChart.render("myun-cpu-pie");
+
+  var memData = '${ chart_data("memory") }';
+  var memChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "memChartId", "360", "160");
+  memChart.setDataXML(memData);
+  memChart.render("myun-mem-pie");
+
+  var instanceData = '${ chart_data("instance") }';
+  var instanceChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "instanceChartId", "360", "160");
+  instanceChart.setDataXML(instanceData);
+  instanceChart.render("myun-instance-pie");
+
+  var storageData = '${ chart_data("storage") }';
+  var storageChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "storageChartId", "360", "160");
+  storageChart.setDataXML(storageData);
+  storageChart.render("myun-storage-pie");
+</script>
+% else:
+<p class="ywarn">${ _("Get your profile data failed.") }</p>
+% endif
 
 </%block>

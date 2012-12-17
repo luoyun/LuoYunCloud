@@ -28,7 +28,7 @@ class LuoYunConfig(ORMBase):
 
 
     def __repr__(self):
-        return _("[LuoYun(%s=%s)]") % (self.key, self.value)
+        return "[LuoYun(%s=%s)]" % (self.key, self.value)
 
 
 

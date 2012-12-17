@@ -1,9 +1,9 @@
 <%inherit file="/base.html"/>
 
 <%block name="head">
-<link rel="stylesheet" href="${ THEME_URL }myun.css" />
-<link rel="stylesheet" href="${ THEME_URL }button.css" />
-<script type="text/javascript" src="${ STATIC_URL }js/myun.js"></script>
+<link rel="stylesheet" href="${ theme_url('myun.css') }" />
+<script type="text/javascript" src="${ static_url('js/myun.js') }"></script>
+<%block name="exhead"/>
 </%block>
 
 <%block name="main">
@@ -29,7 +29,7 @@
 
     <div id="myun-welcome" class="c">
       <p>${ _("Welcome, ") }${ current_user.username }</p>
-      <p>${ _("Last login:")}<div id="myun-last-login">${ lytime(current_user.last_login) }</div></p>
+      <p>${ _("Last login:")}<div id="myun-last-login">${ ftime(current_user.last_login) }</div></p>
     </div>
 
     <div id="myun-sidebar-menu">

@@ -1,23 +1,43 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/instance.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:instance') }">${ _("Instance") }</a></li>
 </%block>
 
-<%block name="sidemain">
+<%block name="content">
 
-<h2 class="title">${ _("Instance Management") }</h2>
+<table class="sortby-module">
+  <tbody>
+    <tr>
+      <td nowrap="nowrap">${ _("Instance Status") }</td>
+      <td>
+	<a class="${ b2s(STATUS < 0) }" href="${ reverse_url('admin:instance') }?status=-1">${ _("All") }</a>
+	%for s, v in INSTANCE_STATUS:
+	<a class="${ b2s(STATUS == s) }" href="${ urlupdate({'status': s, 'p': 1}) }">${ v }</a>
+	%endfor
+      </td>
+    </tr>
+    %if SORT_USER or SORT_APPLIANCE or SORT_NODE:
+    <tr>
+      <td>${ _("Sorted by") }</td>
+      <td>
+	% if SORT_USER:
+	<a href="${ reverse_url('admin:user') }?id=${ SORT_USER.id }">${ SORT_USER.username }</a>
+	% endif
+	% if SORT_APPLIANCE:
+	<a href="${ reverse_url('admin:appliance') }?id=${ SORT_APPLIANCE.id }">${ SORT_APPLIANCE.name }</a>
+	% endif
+	% if SORT_NODE:
+	<a href="${ reverse_url('admin:node') }?id=${ SORT_NODE.id }">${ SORT_NODE.hostname } ( ${ SORT_NODE.ip } )</a>
+	% endif
+      </td>
+    </tr>
+    %endif
+  </tbody>
+</table>
 
-<p>${ _("Total instances: ") } ${ TOTAL_INSTANCE }</p>
+<p class="subtitle">${ _("Total instances: ") } ${ TOTAL_INSTANCE }</p>
 
-<p>${ _("Sorted by") } 
-% if SORT_USER:
-<a href="${ reverse_url('admin:user') }?id=${ SORT_USER.id }">${ SORT_USER.username }</a>
-% endif
-% if SORT_APPLIANCE:
-<a href="${ reverse_url('admin:appliance') }?id=${ SORT_APPLIANCE.id }">${ SORT_APPLIANCE.name }</a>
-% endif
-</p>
 
 <div class="admin-instance c">
 
@@ -26,73 +46,83 @@
     <table class="list">
       <thead>
 	<tr>
-          <th>${ _("ID") }</th>
-          <th>${ _("Owner") }</th>
-          <th>${ _("Name") }</th>
-          <th>${ _("Isprivate") }</th>
-	  <th>${ _("Appliance") }</th>
-          <th>${ _("Status") }</th>
-          <th>${ _("Updated") }</th>
-          <th>${ _("Node") }</th>
+	  <th></th>
+          <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>
+          <th><a href="${ sort_by('name') }">${ _("Name") }</a></th>
+          <th><a href="${ sort_by('status') }">${ _("Status") }</a></th>
+          <th>${ _("IP") }</th>
+	  % if not SORT_NODE:
+          <th><a href="${ sort_by('node') }">${ _("Node") }</a></th>
+	  % endif
+          <th><a href="${ sort_by('user') }">${ _("Owner") }</a></th>
+	  <th><a href="${ sort_by('appliance') }">${ _("Appliance") }</a></th>
+          <th>${ _("Islocked") }</th>
+          <th><a href="${ sort_by('created') }">${ _("Created") }</a></th>
+          <th><a href="${ sort_by('updated') }">${ _("Updated") }</a></th>
 	</tr>
       </thead>
       <tbody>
 	% for I in INSTANCE_LIST:
 	<tr>
+	  <td class="i-logo"><img src="${ I.logourl }" /></td>
           <td>${ I.id }</td>
+          <td><a href="${ reverse_url('admin:instance') }?id=${ I.id }">${ I.name }</a></td>
+          <td><img src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }" alt="${ locale.translate(I.status_string) }"/></td>
+	  <td>${ I.work_ip }</td>
+	  % if not SORT_NODE:
           <td>
-	    <div class="i-owner">
-	      <span class="link"><a href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a></span>
-	      <span class="uid" style="display:none;">${ I.user.id }</span>
-	    </div>
-	  </td>
-          <td><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></td>
-	  <td><input type="checkbox"
-		     % if I.isprivate:
-		     checked="checked"
-		     % endif
-		     />
-	  </td>
-	  <td>
-	    <div class="i-app">
-	      <span class="link"><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></span>
-	      <span class="id" style="display:none;">${ I.appliance_id }</span>
-	    </div>
-	  </td>
-          <td><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" title="${ I.status_string }"/></td>
-          <td>${ fulltime(I.updated) }</td>
-          <td>
-            % if I.node and I.is_running:
-            <a href="${ reverse_url('admin:node') }?id=${ I.node_id }&action=view">${ I.node.ip } (${ I.node.hostname })</a>
+            % if I.node:
+	    % if I.is_running:
+            <a href="${ reverse_url('admin:node') }?id=${ I.node_id }">${ I.node.ip }</a>
+	    % else:
+	    ${ I.node.ip }
+	    % endif:
             % else:
             ${ _("None") }
             % endif
           </td>
+	  % endif
+          <td>
+	    %if I.user:
+	    <a href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a>
+	    %else:
+	    ${ _("User is deleted") }
+	    %endif
+	  </td>
+	  <td><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></td>
+	  <td><input type="checkbox"
+		     % if I.islocked:
+		     checked="checked"
+		     % endif
+		     onclick="simpleToggleCheckbox( this, '${ reverse_url('instance:islocked', I.id) }', '#islocked-notify')" />
+	  </td>
+          <td>${ ftime(I.created) }</td>
+          <td>${ htime(I.updated) }</td>
 	</tr>
 	% endfor
       </tbody>
     </table>
 
-  ${ PAGE_HTML }
+    ${ PAGE_HTML }
 
-  % else:
-  <p>${ _("No instances yet !") }</p>
-  % endif
+    % else:
+    <p>${ _("No instances yet !") }</p>
+    % endif
 
   </div>
 
 </div>
 
-<script type="text/javascript">
-% if not SORT_USER:
-  var HTML_TEMP = "<div class=\"hover-content\"><a class='ly-btn2 small blue' href=\"${ reverse_url('admin:instance') }?uid=SELECT\">${ _('Instances owner by Me') }</a></div>";
-  lyAdminSortByHover( HTML_TEMP, '.i-owner', '.uid' );
-% endif
-
-% if not SORT_APPLIANCE:
-  var HTML_TEMP = "<div class=\"hover-content\"><a class=\"ly-btn2 small blue\" href=\"${ reverse_url('admin:instance') }?aid=SELECT\">${ _('Instances created from Me') }</a></div>";
-  lyAdminSortByHover( HTML_TEMP, '.i-app', '.id' );
-% endif
-</script>
+<div id="islocked-notify" style="display:none">
+  <div id="basic-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <p>${ _("Toggle Instance islocked status Success") }</p>
+  </div>
+  <div id="error-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <h1>${ _("Toggle Instance islocked status Failed") }</h1>
+    <p>#{text}</p>
+  </div>
+</div>
 
 </%block>

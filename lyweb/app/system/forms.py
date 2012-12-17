@@ -62,12 +62,16 @@ class NameserversForm(Form):
 
 class NetworkPoolForm(Form):
 
+    name = TextField( _('Name'), [ validators.Length(min=2, max=128) ] )
+    description = TextAreaField( _('Description') )
+
     start = TextField( _('Start IP'), [ ipcheck ] )
     end = TextField( _('End IP'), [ ipcheck ] )
     netmask = TextField( _('Netmask'), [ ipcheck ] )
     gateway = TextField( _('Gateway'), [ ipcheck ] )
-    nameservers = TextAreaField( _('Nameservers'), [ multi_ipcheck ] )
+    nameservers = TextAreaField( _('Nameservers'), [ multi_ipcheck, validators.Length(max=1024) ] )
     exclude_ips = TextAreaField( _('Exclude ip list'), [ multi_ipcheck ] )
+
 
 
 class DomainForm(Form):

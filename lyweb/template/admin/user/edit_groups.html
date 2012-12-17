@@ -1,11 +1,11 @@
-<%inherit file="user_base.html" />
+<%inherit file="/admin/account.html" />
 
 <%block name="usernav">
 <li><a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a></li>
 <li>${ _("Edit User Groups") }</li>
 </%block>
 
-<%block name="sidemain">
+<%block name="content">
 
 <%
    SELECT_HEIGHT = '%spx' % (len(form.groups.choices) * 20 + 60)
@@ -22,7 +22,7 @@
 <h2 class="title">${ _("Edit User Groups") }</h2>
 
 <div id="admin-user-edit-groups">
-  <form method="POST">
+  <form method="POST">${ xsrf_form_html() }
     ${ form.groups() }
     <input type="submit" value="${ _('Save') }"/>
   </form>

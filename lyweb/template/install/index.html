@@ -7,7 +7,7 @@
 <h2>${ _("DB Configure") }</h2>
 
 <div class="main-wrap small-left-right-form">
-  <form method="POST">
+  <form method="POST">${ xsrf_form_html() }
     ${ form.dbtype.label } ${ form.dbtype() }<br/>
     ${ form.html_errors(form.dbtype.errors) }
 

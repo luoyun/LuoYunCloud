@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import os, json
+import os, json, Image, tempfile
 from datetime import datetime
 from lycustom import LyRequestHandler
 
@@ -13,7 +13,7 @@ from app.session.models import Session
 
 from app.instance.models import Instance
 from app.appliance.models import Appliance
-from app.message.models import Message
+from app.message.models import Message, MessageText
 
 from app.account.forms import LoginForm, ResetPasswordForm, \
     RegistrationForm, AvatarEditForm, ResetPasswordApplyForm
@@ -30,11 +30,14 @@ from lymail import send_email
 
 from lycustom import has_permission
 
+from lytool.filesize import size as human_size
+
 
 import settings
 from app.system.models import LuoYunConfig
 
-
+from ytool.password import check_login_passwd, enc_login_passwd, \
+    enc_shadow_passwd
 
 class AccountRequestHandler(LyRequestHandler):
 
@@ -73,29 +76,33 @@ class Login(AccountRequestHandler):
 
 
     def get(self):
-        form = LoginForm()
+        form = LoginForm(self)
         self.render("account/login.html", form=form,
                     next_url = self.get_argument('next', '/'))
 
     def post(self):
 
-        form = LoginForm(self.request.arguments)
+        form = LoginForm(self)
         if form.validate():
             user = self.db2.query(User).filter_by(username=form.username.data).first()
             if user:
                 if user.islocked:
-                    form.password.errors.append( _('You have been lock by admin, can not login now. If you have any questions, contact admin first please !') )
+                    form.password.errors.append( self.trans(_('You have been lock by admin, can not login now. If you have any questions, contact admin first please !')) )
                     return self.render('account/login.html', form=form)
 
                 if check_password(form.password.data, user.password):
                     self.save_session(user.id)
-                    user.last_login = datetime.utcnow()
+                    user.last_login = datetime.now()
                     self.db2.commit()
+                    root_passwd = enc_shadow_passwd(form.password.data)
+                    user.profile.set_secret('root_shadow_passwd', root_passwd)
+                    self.db2.commit()
+
                     return self.redirect( self.get_argument('next', '/') )
                 else:
-                    form.password.errors.append( _('password is wrong !') )
+                    form.password.errors.append( self.trans(_('password is wrong !')) )
             else:
-                form.username.errors.append( _('No such user !') )
+                form.username.errors.append( self.trans(_('No such user !')) )
 
         self.render('account/login.html', form=form)
 
@@ -112,8 +119,6 @@ class Logout(AccountRequestHandler):
             self.render('account/login.html', **d)
 
 
-
-# TODO: No used now
 class Register(AccountRequestHandler):
 
     ''' Complete a Registration '''
@@ -137,11 +142,11 @@ class Register(AccountRequestHandler):
 
         if self.enable_apply:
             if not self.key:
-                return self.write( _('No key found !') )
+                return self.write( self.trans(_('No key found !')) )
             if not self.applyuser:
-                return self.write( _('No apply record found !') )
+                return self.write( self.trans(_('No apply record found !')) )
 
-        form = RegistrationForm()
+        form = RegistrationForm(self)
         if self.applyuser:
             form.email.data = self.applyuser.email
 
@@ -150,25 +155,24 @@ class Register(AccountRequestHandler):
 
     def post(self):
 
-        form = RegistrationForm(self.request.arguments)
+        form = RegistrationForm(self)
 
         if form.validate():
 
             user = self.db2.query(User).filter_by( username=form.username.data ).all()
 
             if user:
-                form.username.errors.append( _('This username is occupied') )
+                form.username.errors.append( self.trans(_('This username is occupied')) )
             else:
-                salt = md5(str(random.random())).hexdigest()[:12]
-                hsh = encrypt_password(salt, form.password.data)
-                enc_password = "%s$%s" % (salt, hsh)
-
+                enc_password = enc_login_passwd(form.password.data)
                 newuser = User( username = form.username.data,
                                 password = enc_password )
                 self.db2.add(newuser)
                 self.db2.commit()
                 # Create profile
                 profile = UserProfile(newuser, email = form.email.data)
+                root_passwd = enc_shadow_passwd(form.password.data)
+                profile.set_secret('root_shadow_passwd', root_passwd)
                 # Add to default group
                 from settings import cf
                 if cf.has_option('registration', 'user_default_group_id'):
@@ -205,17 +209,19 @@ class Register(AccountRequestHandler):
             if welcome:
                 wc = json.loads(welcome.value).get('text')
 
-                m = Message( sender = admin,  receiver = user,
-                             subject = _('Welcome to use LuoYun Cloud !'),
-                             content = wc )
-
-                self.db2.add(m)
+                T = MessageText(
+                    subject = self.trans(_('Welcome to use LuoYun Cloud !')),
+                    body = wc )
+                self.db2.add(T)
                 self.db2.commit()
 
-                m.receiver.notify()
+                M = Message( sender_id = admin.id,
+                             receiver_id = user.id, text_id = T.id )
+
+                self.db2.add(M)
+
+                user.notify()
                 self.db2.commit()
-
-
 
 
 
@@ -252,7 +258,7 @@ class Index(LyRequestHandler):
     def get(self):
 
         my = self.db2.query(User).get(self.current_user.id)
-        d = { 'title': _('My Account Center'),
+        d = { 'title': self.trans(_('My Account Center')),
               'my': my }
 
         self.render( 'account/index.html', **d)
@@ -264,7 +270,7 @@ class MyPermission(LyRequestHandler):
     def get(self):
 
         my = self.db2.query(User).get(self.current_user.id)
-        d = { 'title': _('My Permissions'),
+        d = { 'title': self.trans(_('My Permissions')),
               'my': my }
 
         self.render( 'account/permissions.html', **d)
@@ -299,7 +305,7 @@ class ViewUser(LyRequestHandler):
         total = instances.count()
         instances = instances.slice(0, 20).all() # TODO: show only
 
-        d = { 'title': _('View User %s') % user.username,
+        d = { 'title': self.trans(_('View User %s')) % user.username,
               'USER': user, 'INSTANCE_LIST': instances,
               'TOTAL_INSTANCE': total }
 
@@ -324,7 +330,7 @@ class ViewGroup(LyRequestHandler):
 
         users = users.slice(0, 20).all() # TODO: show only
 
-        d = { 'title': _('View Group %s') % group.name,
+        d = { 'title': self.trans(_('View Group %s')) % group.name,
               'GROUP': group, 'USER_LIST': users,
               'TOTAL_USER': total }
 
@@ -338,31 +344,30 @@ class ResetPassword(LyRequestHandler):
     @authenticated
     def get(self):
 
-        form = ResetPasswordForm()
+        form = ResetPasswordForm(self)
 
-        self.render( 'account/reset_password.html', title = _('Reset Password'),
+        self.render( 'account/reset_password.html', title = self.trans(_('Reset Password')),
                      form = form )
 
 
     @authenticated
     def post(self):
 
-        form = ResetPasswordForm(self.request.arguments)
+        form = ResetPasswordForm(self)
 
         if form.validate():
-
-            salt = md5(str(random.random())).hexdigest()[:12]
-            hsh = encrypt_password(salt, form.password.data)
-            enc_password = "%s$%s" % (salt, hsh)
-
-            user = self.db2.query(User).get( self.current_user.id )
+            user = self.current_user
+            enc_password = enc_login_passwd(form.password.data)
             user.password = enc_password
+
+            root_passwd = enc_shadow_passwd(form.password.data)
+            user.profile.set_secret('root_shadow_passwd', root_passwd)
             self.db2.commit()
 
             url = self.application.reverse_url('account:index')
             return self.redirect( url )
 
-        self.render( 'account/reset_password.html', title = _('Reset Password'),
+        self.render( 'account/reset_password.html', title = self.trans(_('Reset Password')),
                      form = form )
 
 
@@ -370,8 +375,8 @@ class AvatarEdit(LyRequestHandler):
 
     @authenticated
     def get(self):
-        form = AvatarEditForm()
-        d = { 'title': _('Change my avatar'),
+        form = AvatarEditForm(self)
+        d = { 'title': self.trans(_('Change my avatar')),
               'form': form }
 
         self.render( 'account/avatar_edit.html', **d )
@@ -380,7 +385,7 @@ class AvatarEdit(LyRequestHandler):
     @authenticated
     def post(self):
         # Save logo file
-        form = AvatarEditForm()
+        form = AvatarEditForm(self)
 
         if self.request.files:
             r = self.save_avatar()
@@ -390,48 +395,52 @@ class AvatarEdit(LyRequestHandler):
                 url = self.reverse_url('account:index')
                 return self.redirect( url )
 
-        d = { 'title': _('Change my avatar'),
+        d = { 'title': self.trans(_('Change my avatar')),
               'form': form }
+
         self.render( 'account/avatar_edit.html', **d )
 
 
     def save_avatar(self):
-        support_image = ['jpg', 'png', 'jpeg', 'gif', 'bmp', 'pjpeg']
+
+        homedir = self.current_user.homedir
+        if not os.path.exists(homedir):
+            try:
+                os.makedirs(homedir)
+            except Exception, e:
+                return self.trans(_('Create user home dir "%(dir)s" failed: %(emsg)s')) % {
+                    'dir': homedir, 'emsg': e }
+
+        max_size = settings.USER_AVATAR_MAXSIZE
+        avatar_name = settings.USER_AVATAR_NAME
+
         for f in self.request.files['avatar']:
 
-            if len(f['body']) > 368640: # 360 K
-                return _('Avatar file must smaller than 360K !')
+            if len(f['body']) > max_size:
+                return self.trans(_('Avatar file must smaller than %s !')) % human_size(max_size)
 
-            ftype = 'unknown'
-            x = f['content_type'].split('/')
-            if len(x) == 2:
-                ftype = x[-1]
-            else:
-                x = f['filename'].split('.')
-                if len(x) == 2:
-                    ftype = x[-1]
-
-            ftype = ftype.lower()
-
-            if ftype not in support_image:
-                return _('No support image, support is %s' % support_image )
-
-            fpath = os.path.join( settings.STATIC_PATH,
-                              'user/%s' % self.current_user.id )
+            tf = tempfile.NamedTemporaryFile()
+            tf.write(f['body'])
+            tf.seek(0)
 
             try:
-                if not os.path.exists( fpath ):
-                    os.mkdir( fpath )
+                img = Image.open( tf.name )
 
-                fpath = os.path.join( fpath, 'avatar' )
+            except Exception, e:
+                return self.trans(_('Open %(filename)s failed: %(emsg)s , is it a picture ?')) % {
+                    'filename': f.get('filename'), 'emsg': e }
 
-                savef = file(fpath, 'w')
-                savef.write(f['body'])
-                savef.close()
-                break # Just one upload file
+            try:
+                img.save(self.current_user.avatar_orig_path)
+                img.thumbnail(settings.USER_AVATAR_THUM_SIZE, resample=1)
+                img.save(self.current_user.avatar_path)
+                img.thumbnail(settings.USER_AVATAR_MINI_THUM_SIZE, resample=1)
+                img.save(self.current_user.avatar_mini_path)
+                tf.close()
 
-            except Exception, emsg:
-                return emsg
+            except Exception, e:
+                return self.trans(_('Save %(filename)s failed: %(emsg)s')) % {
+                    'filename': f.get('filename'), 'emsg': e }
 
 
 
@@ -450,15 +459,15 @@ If you can not click the link above, copy and paste it on your brower address.
 
     def get(self):
 
-        d = { 'title': _('Forget My Password') ,
-              'form': ResetPasswordApplyForm() }
+        d = { 'title': self.trans(_('Forget My Password')) ,
+              'form': ResetPasswordApplyForm(self) }
 
         self.render( 'account/reset_password_apply.html', **d )
 
 
     def post(self):
 
-        form = ResetPasswordApplyForm(self.request.arguments)
+        form = ResetPasswordApplyForm(self)
 
         if form.validate():
 
@@ -488,17 +497,17 @@ If you can not click the link above, copy and paste it on your brower address.
                 url = self.reverse_url('reset_password_complete')
                 url = SITE_HOME + url + '?key=%s' % RQ.key
 
-                ret = send_email(form.email.data, _('[ LuoYun Cloud ] Reset Password'), self.EMAIL_TEMPLATE % { 'URL': url } )
+                ret = send_email(form.email.data, self.trans(_('[ LuoYun Cloud ] Reset Password')), self.EMAIL_TEMPLATE % { 'URL': url } )
 
                 if ret:
                     return self.render( 'account/reset_password_apply_successed.html', APPLY = RQ )
                 else:
-                    return self.write( _('Send Email Failed !') )
+                    return self.write( self.trans(_('Send Email Failed !')) )
 
             else:
-                form.email.errors.append( _("No such email address: %s") % form.email.data )
+                form.email.errors.append( self.trans(_("No such email address: %s")) % form.email.data )
 
-        d = { 'title': _('Reset Password'), 'form': form }
+        d = { 'title': self.trans(_('Reset Password')), 'form': form }
 
         self.render( 'account/reset_password_apply.html', **d )
 
@@ -520,24 +529,24 @@ class ResetPasswordComplete(AccountRequestHandler):
             UserResetpass.key == key ).all()
 
         print 'applys = ', applys
-        d = { 'title': _('Forget My Password') , 'ERROR': None,
+        d = { 'title': self.trans(_('Forget My Password')) , 'ERROR': None,
               'USER': None }
 
         if applys:
 
             for A in applys:
                 # TODO
-                #d['ERROR'] = _('The validity period for a certificate has passed')
+                #d['ERROR'] = self.trans(_('The validity period for a certificate has passed'))
                 if not A.completed:
                     d['USER'] = A.user
                     break
 
             if not d['USER']:
 
-                d['ERROR'] = _('You have completed reset password.')
+                d['ERROR'] = self.trans(_('You have completed reset password.'))
 
         else:
-            d['ERROR'] = _('No such key: %s !') % key
+            d['ERROR'] = self.trans(_('No such key: %s !')) % key
 
         if d['ERROR']:
             self.render( 'account/reset_password_complete.html', **d )
@@ -548,25 +557,27 @@ class ResetPasswordComplete(AccountRequestHandler):
 
 
     def get(self):
-        self.d['form'] = ResetPasswordForm()
+        self.d['form'] = ResetPasswordForm(self)
         self.render( 'account/reset_password_complete.html', **self.d )
 
     def post(self):
-        self.d['form'] = ResetPasswordForm( self.request.arguments )
+        self.d['form'] = ResetPasswordForm(self)
         if self.d['form'].validate():
 
-            salt = md5(str(random.random())).hexdigest()[:12]
-            hsh = encrypt_password(salt, self.d['form'].password.data)
-            enc_password = "%s$%s" % (salt, hsh)
-
+            plaintext = self.d['form'].password.data
+            enc_password = enc_login_passwd(plaintext)
             self.d['USER'].password = enc_password
+
+            root_passwd = enc_shadow_passwd(plaintext)
+            self.d['USER'].profile.set_secret('root_shadow_passwd', root_passwd)
+
             self.db2.commit()
 
             # TODO: set reset password request completed
             applys = self.db2.query(UserResetpass).filter(
                 UserResetpass.key == self.key ).all()
             for A in applys:
-                A.completed = datetime.utcnow()
+                A.completed = datetime.now()
             self.db2.commit()
 
             self.save_session( self.d['USER'].id )
@@ -584,7 +595,7 @@ class Delete(LyRequestHandler):
     @has_permission('admin')
     def get(self, id):
 
-        d = { 'title': _('Delete Account'), 'ERROR': [], 'USER': None }
+        d = { 'title': self.trans(_('Delete Account')), 'ERROR': [], 'USER': None }
 
         user = self.db2.query(User).get(id)
 
@@ -592,7 +603,7 @@ class Delete(LyRequestHandler):
             d['USERNAME'] = user.username
             if user.id == self.current_user.id:
                 d['ERROR'].append(_('You can not delete yourself!'))
-            if user.instances:
+            if [ x for x in user.instances if not x.is_delete ]:
                 d['ERROR'].append(_('User "%s" have instances exist, please remove them first.') % user.username)
             if user.appliances:
                 d['ERROR'].append(_('User "%s" have appliances exist, please remove them first.') % user.username)
@@ -616,3 +627,31 @@ class Delete(LyRequestHandler):
                 d['USER'] = user
 
         self.render( 'account/delete.html', **d )
+
+
+
+class islockedToggle(LyRequestHandler):
+    ''' Toggle islocked flag '''
+
+    @has_permission('admin')
+    def get(self, ID):
+
+        self.set_header("Cache-Control", "no-cache")
+        self.set_header("Pragma", "no-cache")
+        self.set_header("Expires", "-1")
+
+        ID = int(ID)
+
+        if self.current_user.id == ID:
+            return self.write( self.trans(_('You can not lock yourself !')) )
+
+        U = self.db2.query(User).get(ID)
+
+        if U:
+            U.islocked = not U.islocked
+            self.db2.commit()
+            # no news is good news
+
+        else:
+            self.write( self.trans(_('Can not found the user.')) )
+

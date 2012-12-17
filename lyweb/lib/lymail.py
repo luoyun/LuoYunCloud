@@ -14,25 +14,19 @@ email_from     = None
 email_username = None
 email_pass     = None
 
-from settings import cf
+import settings
 
-if cf.has_option('email', 'smtp_server'):
-    smtp_server = cf.get('email', 'smtp_server')
-
-if cf.has_option('email', 'smtp_port'):
-    smtp_port = int( cf.get('email', 'smtp_port') )
-
-if cf.has_option('email', 'name'):
-    admin_name = cf.get('email', 'name')
-
-if cf.has_option('email', 'from'):
-    email_from = cf.get('email', 'from')
-
-if cf.has_option('email', 'username'):
-    email_username = cf.get('email', 'username')
-
-if cf.has_option('email', 'password'):
-    email_pass = cf.get('email', 'password')
+from ytool.ini import ConfigINI
+cf = ConfigINI(settings.SITE_CONFIG, 'email')
+smtp_server = cf.get('smtp_server', 'localhost')
+try:
+    smtp_port = int( cf.get('smtp_port', 25) )
+except:
+    smtp_port = 25
+admin_name = cf.get('name', 'LuoYunCloud Admin')
+email_from = cf.get('from', 'noreply@localhost.localhost')
+email_username = cf.get('username')
+email_pass = cf.get('password')
 
 if email_username and '@' in email_username:
     if not email_from:
@@ -96,10 +90,18 @@ def send_email(toaddr, subject, body, cc = [], bcc = []):
     toaddrs = [toaddr] + cc + bcc
 
     smtp = SMTP(smtp_server, smtp_port)
+
     #smtp.ehlo()
-    #smtp.starttls()
+
+    if smtp_server.endswith('gmail.com'):
+        smtp.starttls()
+
     #smtp.ehlo()
-    smtp.login(email_username, email_pass)
+
+    if not ( smtp_server.endswith('127.0.0.1') or
+             smtp_server.endswith('localhost') ):
+        smtp.login(email_username, email_pass)
+
     smtp.sendmail(fromaddr, toaddrs, msg.as_string())
     smtp.quit()
     return True
@@ -131,7 +133,14 @@ class LyMail:
         try:
 
             s = SMTP( self.host, self.port )
-            s.login( self.username, self.password )
+
+            if self.host.endswith('gmail.com'):
+                s.starttls()
+
+            if not ( self.host.endswith('127.0.0.1') or
+                     self.host.endswith('localhost') ):
+                s.login( self.username, self.password )
+
             self.server = s
             return True
 

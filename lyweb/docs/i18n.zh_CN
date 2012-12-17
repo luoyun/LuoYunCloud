@@ -1,0 +1,54 @@
+翻译 LuoYunCloud 到其他语言
+========================
+
+
+0. 前提
+------
+
+   1. 下载源码
+
+   2. 本手册假设主目录在 LuoYunCloud/lyweb/ 下。
+
+   3. 本文以翻译 zh_CN 为例，当然目前己经存在这个翻译了。
+
+
+1. 准备翻译文件
+-------------
+
+   有两种方法获得翻译文件：
+
+   1. 直接使用 locale/en_US/LC_MESSAGES/luoyun.po 文件
+
+   2. 使用 xgettext 命令生成 luoyun.po 文件，在主目录下运行命令即可以生
+      成 luoyun.po 文件：
+
+      xgettext -L python -k=_ -o luoyun.po \
+               *.py \
+               $(find app/ -name \*.py) \
+               $(find template/ -name \*.html)
+
+
+2. 修改或更新翻译文件
+
+   如果您是从头翻译，可以直接修改 luoyun.po 文件里开头的一些信息，比如：
+   翻译组织、字符编码等。然后就可以直接翻译其他字符串了。
+
+   如果您己经翻译过，可以用 msgmerge 命令合并以前的更新再翻译，运行命令：
+
+   msgmerge locale/zh_CN/LC_MESSAGES/luoyun.po luoyun.po > new.po
+
+   现在翻译 new.po 即可。
+
+
+3. 应用翻译
+
+   现在您的 .po 文件已经翻译好了，我们假设名字是 new.po，将它复制到
+   locale/ 下对应目录：
+
+   cp -v new.po locale/zh_CN/LC_MESSAGES/luoyun.po
+
+   在主目录下运行:
+
+   python manage.py
+
+   现在最新的 luoyun.mo 文件应该生成，重启 LuoYunCloud 的 web 服务即可。

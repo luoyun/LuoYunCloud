@@ -1,0 +1,65 @@
+<%inherit file="/admin/system.html" />
+
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+<li><a href="${ reverse_url('system:networkpool') }">${ _("Network pool") }</a></li>
+<li>${ _("View") } ${ N }</li>
+</%block>
+
+<%block name="content">
+
+<p>
+  <a class="blue-submit" href="${ reverse_url('system:networkpool:edit', N.id) }">${ _("Edit") }</a>
+  <a class="red-submit" id="delete-network" href="${ reverse_url('system:networkpool:delete', N.id) }">${ _("Delete") }</a>
+</p>
+
+<p>${ N.description }</p>
+
+<table class="kv">
+  <tbody>
+    <tr>
+      <td>${ _("ID") }</td>
+      <td>${ N.id }</td>
+    </tr>
+    <tr>
+      <td>${ _("Name") }</td>
+      <td>${ N.name }</td>
+    </tr>
+    <tr>
+      <td>${ _("Start") }</td>
+      <td>${ N.start }</td>
+    </tr>
+    <tr>
+      <td>${ _("End") }</td>
+      <td>${ N.end }</td>
+    </tr>
+    <tr>
+      <td>${ _("Netmask") }</td>
+      <td>${ N.netmask }</td>
+    </tr>
+    <tr>
+      <td>${ _("Gateway") }</td>
+      <td>${ N.gateway }</td>
+    </tr>
+    <tr>
+      <td>${ _("Nameservers") }</td>
+      <td>${ N.nameservers }</td>
+    </tr>
+    <tr>
+      <td>${ _("IP") }</td>
+      <td><a href="${ reverse_url('system:ippool') }?network=${ N.id }">${ len(N.ips) }</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<script type="text/javascript">
+  simpleClickConfirm("#delete-network", {
+    title: "${ _("Delete Network Pool") }",
+    text: "${ _("Wail ! All ip in this network pool would be deleted ?") }",
+    ok: "${ _("I am sure !") }",
+    cancel: "${ _("Cancel") }",
+  });
+</script>
+
+        
+</%block>

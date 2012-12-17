@@ -1,24 +1,22 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/appliance.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></li>
-<li><a href="${ reverse_url('admin:appliance') }?id=${ APPLIANCE.id }">${ APPLIANCE.name }</a></li>
+<li>${ _("View Appliance") } <a href="${ reverse_url('admin:appliance') }?id=${ APPLIANCE.id }">${ APPLIANCE.name }</a></li>
 </%block>
 
-<%block name="sidemain">
-
-<h2 class="title">${ _("Appliance View") }</h2>
+<%block name="content">
 
 <div class="a-view">
 
-  <div class="a-logo">
-    <img src="${ APPLIANCE.logo_url }" alt="Logo" />
+  <div id="a-logo">
+    <img class="medium" src="${ APPLIANCE.logourl }" alt="Logo" />
   </div>
 
-  <h3>${ _("Baseinfo") }</h3>
+  <p class="subtitle">${ _("Baseinfo") }</p>
 
-  <div class="c ly-table kvlist">
-    <table>
+  <div class="c">
+    <table class="kv">
       <tbody>
 	<tr>
 	  <td>${ _("ID") }</td>
@@ -38,26 +36,40 @@
 	</tr>
 	<tr>
 	  <td>${ _("Owner") }</td>
-	  <td><a href="${ reverse_url('admin:user') }?id=${ APPLIANCE.user.id }">${ APPLIANCE.user.username }</a></td>
+	  <td>
+	    <a href="${ reverse_url('admin:user') }?id=${ APPLIANCE.user.id }">${ APPLIANCE.user.username }</a>
+	    <a class="blue-submit" href="${ reverse_url('admin:appliance') }?id=${ APPLIANCE.id }&action=change_owner">${ _("Change Owner") }</a>
+	  </td>
 	</tr>
 	<tr>
 	  <td>${ _("Catalog") }</td>
-	  <td>${ APPLIANCE.catalog.name }</td>
+	  <td>
+	    <a href="${ reverse_url('admin:appliance') }?catalog=${ APPLIANCE.catalog_id }" title="${ _("View all appliances in this catalog.") }" target="_blank">${ APPLIANCE.catalog_name }</a>
+	    <a class="blue-submit" href="${ reverse_url('admin:appliance') }?id=${ APPLIANCE.id }&action=change_catalog">${ _("Change Catalog") }</a>
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ _("Instance") }</td>
+	  <td>
+	    % if APPLIANCE.instances:
+	    <a href="${ reverse_url('admin:instance') }?aid=${ APPLIANCE.id }">${ len(APPLIANCE.instances) }</a>
+	    % endif
+	  </td>
 	</tr>
 	<tr>
 	  <td>${ _("Created") }</td>
-	  <td>${ lytime(APPLIANCE.created, '%Y-%m-%d %H:%M:%S') }</td>
+	  <td>${ ftime(APPLIANCE.created) }</td>
 	</tr>
 	<tr>
 	  <td>${ _("Updated") }</td>
-	  <td>${ lytime(APPLIANCE.updated, '%Y-%m-%d %H:%M:%S') }</td>
+	  <td>${ ftime(APPLIANCE.updated) }</td>
 	</tr>
       </tbody>
     </table>
   </div>
 
 
-  <h3>${ _("Summary") }</h3>
+  <p class="subtitle">${ _("Summary") }</p>
   <p>
     % if APPLIANCE.summary:
     ${ APPLIANCE.summary }
@@ -67,7 +79,7 @@
   </p>
 
 
-  <h3>${ _("Description") }</h3>
+  <p class="subtitle">${ _("Description") }</p>
   <p>
     % if APPLIANCE.description:
     ${ APPLIANCE.description_html }
@@ -76,11 +88,59 @@
     % endif
   </p>
 
-  <h3>${ _("Management") }</h3>
-  <p>
-    <a class="ly-btn2 small blue" href="${ reverse_url('admin:appliance:delete', APPLIANCE.id) }">${ _("Delete") }</a>
-  </p>
+  <p class="subtitle">${ _("Management") }</p>
+
+  <p><a class="blue-submit" href="${ APPLIANCE.download_url }" target="_blank">${ _("Download") }</a></p>
+
+  <div>
+    <a class="red-submit" href="${ reverse_url('appliance:delete', APPLIANCE.id) }" onclick="deleteApplianceConfirm( this ); return false;">${ _("Delete") }</a>
+    <div class="show" style="display:none;">
+      <p class="ywarn">${ _("Would you want to delete appliance %s") % APPLIANCE.id }</p>
+    </div>
+  </div>
 
 </div>
+
+<script type="text/javascript">
+function deleteApplianceConfirm( obj ) {
+
+    var $obj = $(obj);
+
+    $obj.parent().find('.show').dialog({
+	title: "${ _('Are you sure ?') }",
+	resizable: false,
+	height: "auto",
+	minWidth: 420,
+	modal: true,
+	buttons: {
+	    "${ _('Cancel') }": function() {
+		$( this ).dialog( "close" );
+	    },
+	    "${ _('Delete Appliance !') }": function() {
+		$.ajax({
+		    url: $obj.attr("href"),
+		    type: "GET",
+		    success: function(data) {
+			$(data).dialog({
+			    show: "slow",
+			    minWidth: 520,
+			    modal: true
+			});
+                        $obj.parents('tr').remove();
+		    }
+		});
+		$( this ).dialog( "close" );
+	    }
+	},
+        close:function(){
+            $( this ).dialog("destroy");
+        }
+    });
+
+    return false;
+
+}
+</script>
+
 
 </%block>

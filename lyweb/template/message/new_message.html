@@ -7,7 +7,7 @@
   <h1>${ _("New Message") }</h1>
 
   <div class="large-tbform">
-    <form method="POST">
+    <form method="POST">${ xsrf_form_html() }
       ${ form.sendto.label }
       ${ form.sendto() }
       ${ form.html_errors( form.sendto.errors ) }

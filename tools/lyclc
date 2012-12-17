@@ -1,0 +1,90 @@
+#!/bin/bash
+#
+# Init file for LuoYun clc daemon
+#
+# chkconfig: 2345 95 25
+# description: LuoYun clc daemon
+#
+# processname: lyclc
+# TOPDIR: /opt/LuoYun/platform/
+# config: ${TOPDIR}/etc/luoyun-cloud/lyclc.conf
+# pidfile: /var/run/lyclc.pid
+
+LUOYUN_TOP_DIR=/opt/LuoYun/platform/
+prog="lyclc"
+LYCLCD="${LUOYUN_TOP_DIR}bin/lyclc"
+OPTIONS="-d"
+PID_FILE="/var/run/lyclc.pid"
+
+failure() 
+{
+    local rc=$?
+    echo " FAILED "
+    return $rc
+}
+
+success() 
+{
+    echo "  OK  "
+    return 0
+}
+
+checkdb()
+{
+    su postgres -c "psql -l &> /dev/null"
+    if [ $? -ne 0 ]; then
+        echo "query postgresql failed"
+        exit 1
+    fi
+}
+
+start()
+{
+    checkdb
+
+    echo -n $"Starting $prog: "
+    out=$($LYCLCD $OPTIONS 2>&1) && success || failure
+    RETVAL=$?
+    [ "$RETVAL" = 0 ] && touch /var/lock/subsys/lyclc && return 0
+    echo "$out"
+    return $RETVAL
+}
+
+stop()
+{
+    echo -n $"Stopping $prog: "
+    thispid=$(<$PID_FILE)
+    kill $thispid && success || failure
+    RETVAL=$?
+    [ "$RETVAL" = 0 ] && rm -f /var/lock/subsys/lyclc
+}
+
+status()
+{
+    [ -f "$PID_FILE" ] && thispid=$(<$PID_FILE) && echo "$prog($thispid) is running..." && return 0
+    [ ! -f "$PID_FILE" ] && echo "$prog is stopped" && return 0
+    return 1
+}
+
+case "$1" in
+    start)
+        [ -f "$PID_FILE" ] && thispid=$(<$PID_FILE) && echo "$prog($thispid) is started already" && exit 0
+	start
+	;;
+    stop)
+        [ ! -f "$PID_FILE" ] && echo "$prog is stopped already" && exit 0
+	stop
+	;;
+    restart)
+	stop
+	start
+	;;
+    status)
+	status
+	RETVAL=$?
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|restart|status}"
+	RETVAL=1
+esac
+exit $RETVAL

@@ -1,25 +1,24 @@
-<%inherit file="/admin/admin_base.html" />
+<%inherit file="/admin/appliance.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></li>
 </%block>
 
-<%block name="sidemain">
+<%block name="content">
 
-<h2 class="title">${ _("Appliance Management") }</h2>
-
-<div class="c catalog-list">
-  <ul>
-    <li><a href="${ reverse_url('admin:appliance') }">${ _("All") }</a></li>
-    % for C in CATALOG_LIST:
-    <li
-       % if CID and C.id == CID:
-       class="current"
-       % endif
-       ><a href="${ reverse_url('admin:appliance') }?catalog=${ C.id }">${ C.name }</a></li>
-    % endfor
-  </ul>
-</div>
+<table class="sortby-module">
+  <tbody>
+    <tr>
+      <td nowrap="nowrap">${ _("Appliance Catalog") }</td>
+      <td>
+	<a class="${ b2s(CID <= 0) }" href="${ reverse_url('admin:appliance') }">${ _("All") }</a>
+	% for C in CATALOG_LIST:
+	<a class="${ b2s(CID == C.id) }" href="${ urlupdate({'catalog': C.id, 'p': 1 }) }">${ C.name }</a>
+	% endfor
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <p>${ _("Total Appliance :") } ${ TOTAL_APPLIANCE }</p>
 
@@ -33,11 +32,11 @@
       <tr>
 	<th>${ _("ID") }</th>
 	<th>${ _("Name") }</th>
-	<th>${ _("Size") }</th>
 	<th>${ _("Owner") }</th>
-	<th>${ _("Catalog") }</th>
+	<th>${ _("Size") }</th>
 	<th>${ _("Instances") }</th>
 	<th>${ _("Updated") }</th>
+        <th>${ _("Islocked") }</th>
 	<th>${ _("Management") }</th>
       </tr>
     </thead>
@@ -46,21 +45,26 @@
       <tr>
 	<td>${ A.id }</td>
 	<td><a href="${ reverse_url('admin:appliance') }?id=${ A.id }">${ A.name }</a></td>
+	<td><a href="${ reverse_url('admin:user') }?id=${ A.user.id }" target="_blank">${ A.user.username }</a></td>
 	<td>${ human_size(A.filesize) }</td>
-	<td>
-	  <div class="a-owner">
-	    <span class="link"><a href="${ reverse_url('admin:user') }?id=${ A.user.id }">${ A.user.username }</a></span>
-	    <span class="uid" style="display:none;">${ A.user.id }</span>
-	  </div>
-	</td>
-	<td>${ A.catalog.name }</td>
 	<td>
 	  % if A.instances:
 	  <a href="${ reverse_url('admin:instance') }?aid=${ A.id }">${ len(A.instances) }</a>
 	  % endif
 	</td>
-	<td>${ lytime(A.updated) }</td>
-	<td><a class="ly-btn2 small blue" href="${ reverse_url('admin:appliance:delete', A.id) }">${ _("Delete") }</a></td>
+	<td>${ ftime(A.updated) }</td>
+	<td><input type="checkbox"
+		   % if A.islocked:
+		   checked="checked"
+		   % endif
+		   onclick="simpleToggleCheckbox( this, '${ reverse_url('appliance:islocked', A.id) }', '#islocked-notify')" />
+	</td>
+	<td>
+	  <a href="${ reverse_url('appliance:delete', A.id) }" onclick="deleteApplianceConfirm( this ); return false;">${ _("Delete") }</a>
+	  <div class="show" style="display:none;">
+	    <p class="ywarn">${ _("Would you want to delete appliance %s") % A.id }</p>
+	  </div>
+	</td>
       </tr>
       % endfor
     </tbody>
@@ -69,11 +73,60 @@
 
 ${ PAGE_HTML }
 
+<p class="manage-content"><a class="ly-btn2 medium blue" href="${ reverse_url('appliance:upload') }">${_("Upload Appliance")}</a></p>
+
 <script type="text/javascript">
-% if not USER:
-  var HTML_TEMP = "<div class=\"hover-content\"><a class='ly-btn2 small blue' href=\"${ reverse_url('admin:appliance') }?uid=SELECT\">${ _('Appliances owner by Me') }</a></div>";
-  lyAdminSortByHover( HTML_TEMP, '.a-owner', '.uid' );
-% endif
+function deleteApplianceConfirm( obj ) {
+
+    var $obj = $(obj);
+
+    $obj.parent().find('.show').dialog({
+	title: "${ _('Are you sure ?') }",
+	resizable: false,
+	height: "auto",
+	minWidth: 420,
+	modal: true,
+	buttons: {
+	    "${ _('Cancel') }": function() {
+		$( this ).dialog( "close" );
+	    },
+	    "${ _('Delete Appliance !') }": function() {
+		$.ajax({
+		    url: $obj.attr("href"),
+		    type: "GET",
+		    success: function(data) {
+			$(data).dialog({
+			    show: "slow",
+			    minWidth: 520,
+			    modal: true
+			});
+                        $obj.parents('tr').remove();
+		    }
+		});
+		$( this ).dialog( "close" );
+	    }
+	},
+        close:function(){
+            $( this ).dialog("destroy");
+        }
+    });
+
+    return false;
+
+}
 </script>
+
+
+<div id="islocked-notify" style="display:none">
+  <div id="basic-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <p>${ _("Toggle Appliance islocked status Success") }</p>
+  </div>
+  <div id="error-template">
+    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
+    <h1>${ _("Toggle Appliance islocked status Failed") }</h1>
+    <p>#{text}</p>
+  </div>
+</div>
 
 </%block>

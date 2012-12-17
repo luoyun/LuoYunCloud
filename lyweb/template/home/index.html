@@ -1,8 +1,6 @@
 <%inherit file="home_base.html"/>
 
 <%block name="main">
-<script type="text/javascript" src="${ STATIC_URL }js/url.js"></script>
-
 
 <div id="banner">
 
@@ -66,7 +64,6 @@ style="width: 0%"
 % endif
 
 <div id="instance-list" class="clearfix">
-##  <h2>${ _("Instances List") }</h2>
 
   % if not INSTANCE_LIST.count():
   <p>${ _("No instance found!") }</p>
@@ -77,11 +74,11 @@ style="width: 0%"
 
     <div class="logo">
       <a href="/instance/${I.id}">
-        <img src="${ I.logo_url }" /></a>
+        <img src="${ I.logourl }" /></a>
       <span class="count instance-id">${ I.id }</span>
       <span class="instance-status">
         <img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png"  alt="Stauts Image"/>
-        <span class="status-string" style="display: none;">${ I.status_string }</span>
+        <span class="status-string" style="display: none;">${ locale.translate(I.status_string) }</span>
       </span>
     </div>
 
@@ -109,7 +106,7 @@ style="width: 0%"
           </tr>
           <tr>
             <td>${ _("Status") }</td>
-            <td>${ I.status_string }</td>
+            <td>${ locale.translate(I.status_string) }</td>
           </tr>
           <tr>
             <td>${ _("IP") }</td>

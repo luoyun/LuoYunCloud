@@ -1,0 +1,57 @@
+<%inherit file="/admin/system.html" />
+
+<%block name="innav">
+<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+%if NETWORK:
+<li><a href="${ reverse_url('system:networkpool') }">${ _("Network Pool") }</a></li>
+<li><a href="${ reverse_url('system:ippool') }?network=${ NETWORK.id }">${ NETWORK }</a></li>
+%else:
+<li><a href="${ reverse_url('system:ippool') }">${ _("IP Pool") }</a></li>
+%endif
+</%block>
+
+<%block name="content">
+
+
+%if IPPOOL:
+<p class="subtitle">${ _("Total IP Numbers: ") } ${ TOTAL }</p>
+<div class="ly-table">
+  <table>
+    <thead>
+      <tr>
+	<th>${ _("ID") }</th>
+	<th>${ _("IP") }</th>
+	%if not NETWORK:
+	<th>${ _("Network") }</th>
+	% endif
+	<th>${ _("Instance") }</th>
+	<th>${ _("Updated") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      %for IP in IPPOOL:
+      <tr>
+	<td>${ IP.id }</td>
+	<td>${ IP.ip }</td>
+	%if not NETWORK:
+	<td>${ IP.network }</td>
+	%endif
+	<td>
+	  %if IP.instance:
+	  <a href="${ reverse_url('admin:instance') }?id=${ IP.instance.id }">${ IP.instance }</a>
+	  %endif
+	</td>
+	<td>${ ftime(IP.updated) }</td>
+      </tr>
+      %endfor
+    </tbody>
+  </table>
+
+  ${ PAGE_HTML }
+</div>
+
+%else:
+<p>${ _("You have not configure the network pool yet.") }</p>
+%endif
+        
+</%block>

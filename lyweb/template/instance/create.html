@@ -1,15 +1,20 @@
-<%inherit file="instance_base.html"/>
+<%inherit file="/base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${ THEME_URL }instance-create.css" />
+<script type="text/javascript" src="${STATIC_URL}js/instance.js"></script>
+</%block>
 
 <%block name="main">
 
 <div id="ly-create-instance-form" class="c">
   <h2 class="title">${ _("Create My Instance") }</h2>
-  <form method="POST" enctype="multipart/form-data">
+  <form method="POST" enctype="multipart/form-data">${ xsrf_form_html() }
 
     <div class="item">
       % if APPLIANCE:
       <div class="c1">
-	<img class="app-logo" src="${ APPLIANCE.logo_url }" alt="Logo"/>
+	<img class="app-logo" src="${ APPLIANCE.logourl }" alt="Logo"/>
       </div>
       <div class="c2">
 	<h3>${ APPLIANCE.name }</h3>
@@ -17,59 +22,42 @@
       </div>
       % else:
       <div class="c1">${ form.appliance.label }</div>
-      <div class="c2">
+      <div class="c2" title="${ _('Select a appliance to create instance.') }">
 	${ form.appliance() }
 	${ form.html_errors( form.appliance.errors ) }
-	<div class="hidden" style="display: none;">
-	  <p>${ _("Select a appliance to create instance.") }</p>
-	</div>
       </div>
       % endif
     </div>
 
     <div class="item">
       <div class="c1">${ form.name.label }</div>
-      <div class="c2">
+      <div class="c2" title="${ _("Please give a human instance name, can not be the same as others.") }">
 	${ form.name() }
 	${ form.html_errors( form.name.errors ) }
-	<div class="hidden" style="display: none;">
-	  <p>${ _("Please give a human instance name, can not be the same as others.") }</p>
-	</div>
       </div>
     </div>
 
     <div class="item">
       <div class="c1">${ form.cpus.label }</div>
-      <div class="c2">
+      <div class="c2" title="${ _('The cpus of your instance.') } ${ _('total: %s, used: %s') % (current_user.profile.cpus, USED_CPUS) }">
 	${ form.cpus() }
 	${ form.html_errors( form.cpus.errors ) }
-	<div class="hidden" style="display: none;">
-	  <p>${ _("The cpus of your instance.") }</p>
-	  <p>${ _("total: %s, used: %s") % (current_user.profile.cpus, USED_CPUS) }</p>
-	</div>
       </div>
     </div>
 
     <div class="item">
       <div class="c1">${ form.memory.label }</div>
-      <div class="c2">
+      <div class="c2" title="${ _('The memory of your instance.') } ${ _('total: %s, used: %s') % (current_user.profile.memory, USED_MEMORY) }">
 	${ form.memory() }
 	${ form.html_errors( form.memory.errors ) }
-	<div class="hidden" style="display: none;">
-	  <p>${ _("The memory of your instance.") }</p>
-	  <p>${ _("total: %s, used: %s") % (current_user.profile.memory, USED_MEMORY) }</p>
-	</div>
       </div>
     </div>
 
     <div class="item c">
       <div class="c1">${ form.isprivate.label }</div>
-      <div class="c2">
+      <div class="c2" title="${ _('If a instance is private, can not be viable by any others except administrator.') }">
 	${ form.isprivate() }
 	${ form.html_errors( form.isprivate.errors ) }
-	<div class="hidden" style="display: none;">
-	  <p>${ _("If a instance is private, can not be viable by any others except administrator.") }</p>
-	</div>
       </div>
     </div>
 
@@ -80,7 +68,9 @@
 </div>
 
 <script type="text/javascript">
-  lyItemHover( ".c2" );
+  $(function() {
+    $( document ).tooltip({track: true, items: "div[title], span[title]"});
+  });
 </script>
 
 </%block>

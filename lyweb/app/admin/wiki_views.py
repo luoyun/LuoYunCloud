@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import logging, datetime, time, re
-from lycustom import LyRequestHandler,  Pagination
+from lycustom import LyRequestHandler
 from tornado.web import authenticated, asynchronous
 
 from app.account.models import User, Group, Permission
@@ -25,7 +25,7 @@ class WikiManagement(LyRequestHandler):
         if topic_id:
             self.topic = self.db2.query(Topic).get( topic_id )
             if not self.topic:
-                self.write( _('No such topic : %s') % topic_id )
+                self.write( self.trans(_('No such topic : %s')) % topic_id )
                 return self.finish()
 
         c_id = self.get_argument('catalog', 0)
@@ -48,13 +48,13 @@ class WikiManagement(LyRequestHandler):
             self.get_edit_catalog()
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def post(self):
 
         if not self.action:
-            self.write( _('No action found !') )
+            self.write( self.trans(_('No action found !')) )
 
         elif self.action == 'add_catalog':
             self.post_add_catalog()
@@ -63,13 +63,13 @@ class WikiManagement(LyRequestHandler):
             self.post_edit_catalog()
 
         else:
-            self.write( _('Wrong action value!') )
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def get_index(self):
         catalogs = self.db2.query(WikiCatalog).all()
         self.render( 'admin/wiki/index.html',
-                     title = _('Wiki Management'),
+                     title = self.trans(_('Wiki Management')),
                      catalogs = catalogs )
 
 
@@ -81,7 +81,7 @@ class WikiManagement(LyRequestHandler):
             topics = topics.filter_by(catalog_id=self.catalog.id)
 
         self.render( 'admin/wiki/topics.html',
-                     title = _('List appliances'),
+                     title = self.trans(_('List topics')),
                      TOPIC_LIST = topics,
                      catalog = self.catalog )
 
@@ -89,16 +89,16 @@ class WikiManagement(LyRequestHandler):
 
     def get_add_catalog(self):
 
-        form = CatalogForm()
+        form = CatalogForm(self)
 
         self.render( 'admin/wiki/add_catalog.html',
-                     title = _('Add Wiki Catalog'),
+                     title = self.trans(_('Add Wiki Catalog')),
                      form = form )
 
 
     def post_add_catalog(self):
 
-        form = CatalogForm( self.request.arguments )
+        form = CatalogForm(self)
         if form.validate():
             c = WikiCatalog( name = form.name.data,
                              summary = form.summary.data,
@@ -110,31 +110,31 @@ class WikiManagement(LyRequestHandler):
             return self.redirect( url )
 
         self.render( 'admin/wiki/add_catalog.html',
-                     title = _('Add Wiki Catalog'),
+                     title = self.trans(_('Add Wiki Catalog')),
                      form = form )
 
 
     def get_edit_catalog(self):
 
         if not self.catalog:
-            return self.write( _('No catalog found') )
+            return self.write( self.trans(_('No catalog found')) )
         
-        form = CatalogForm()
+        form = CatalogForm(self)
         form.name.data = self.catalog.name
         form.summary.data = self.catalog.summary
         form.description.data = self.catalog.description
 
         self.render( 'admin/wiki/edit_catalog.html',
-                     title = _('Edit catalog: %s') % self.catalog.name,
+                     title = self.trans(_('Edit catalog: %s')) % self.catalog.name,
                      form = form )
 
 
     def post_edit_catalog(self):
 
         if not self.catalog:
-            return self.write( _('No catalog found') )
+            return self.write( self.trans(_('No catalog found')) )
 
-        form = CatalogForm( self.request.arguments )
+        form = CatalogForm(self)
         if form.validate():
             self.catalog.name = form.name.data
             self.catalog.summary = form.summary.data
@@ -145,5 +145,5 @@ class WikiManagement(LyRequestHandler):
             return self.redirect( url )
 
         self.render( 'admin/wiki/add_catalog.html',
-                     title = _('Edit Catalog'),
+                     title = self.trans(_('Edit Catalog')),
                      form = form )
