@@ -67,9 +67,7 @@ class Form(Form):
             obj=obj, prefix=prefix, **kwargs)
 
     def _get_translations(self):
-        locale = self._handler.get_user_locale() or tornado.locale.get('en-US')
-        return TornadoLocaleWrapper( locale )
-
+        return TornadoLocaleWrapper(self._handler.locale)
 
     def html_errors(self, errors):
         ''' Generate a HTML from a wtforms filed errors '''
