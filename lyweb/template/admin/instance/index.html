@@ -11,7 +11,7 @@
     <tr>
       <td nowrap="nowrap">${ _("Instance Status") }</td>
       <td>
-	<a class="${ b2s(STATUS < 0) }" href="${ reverse_url('admin:instance') }?status=-1">${ _("All") }</a>
+	<a class="${ b2s(STATUS < 0) }" href="${ urlupdate({'status': -1, 'p': 1}) }">${ _("All") }</a>
 	%for s, v in INSTANCE_STATUS:
 	<a class="${ b2s(STATUS == s) }" href="${ urlupdate({'status': s, 'p': 1}) }">${ v }</a>
 	%endfor
@@ -33,6 +33,15 @@
       </td>
     </tr>
     %endif
+    <tr>
+      <td>${ _("Sorted by Group") }</td>
+      <td>
+	<a class="${ b2s(USER_GROUP_ID < 0) }" href="${ urlupdate({'user_group': -1, 'p': 1}) }">${ _("All") }</a>
+	%for G in GROUP_LIST:
+	<a class="${ b2s(USER_GROUP_ID == G.id) }" href="${ urlupdate({'user_group': G.id, 'p': 1}) }">${ G.name }</a>
+	%endfor
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -51,10 +60,13 @@
           <th><a href="${ sort_by('name') }">${ _("Name") }</a></th>
           <th><a href="${ sort_by('status') }">${ _("Status") }</a></th>
           <th>${ _("IP") }</th>
-	  % if not SORT_NODE:
+	  %if not SORT_NODE:
           <th><a href="${ sort_by('node') }">${ _("Node") }</a></th>
-	  % endif
+	  %endif
           <th><a href="${ sort_by('user') }">${ _("Owner") }</a></th>
+	  %if USER_GROUP_ID < 1:
+          <th>${ _("Owner Group") }</th>
+	  %endif
 	  <th><a href="${ sort_by('appliance') }">${ _("Appliance") }</a></th>
           <th>${ _("Islocked") }</th>
           <th><a href="${ sort_by('created') }">${ _("Created") }</a></th>
@@ -89,6 +101,13 @@
 	    ${ _("User is deleted") }
 	    %endif
 	  </td>
+	  %if USER_GROUP_ID < 1:
+	  <td>
+	    % for G in I.user.groups:
+	    <a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a>
+	    % endfor
+	  </td>
+	  %endif
 	  <td><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></td>
 	  <td><input type="checkbox"
 		     % if I.islocked:

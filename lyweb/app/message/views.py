@@ -353,7 +353,7 @@ class SendNotice(MessageRequestHandler):
                 M = Message( sender_id = current_user_id,
                              receiver_id = U.id, text_id = text_id )
                 self.db2.add(M)
-                U.notification += 1
+                U.notify()
 
             self.db2.commit()
 

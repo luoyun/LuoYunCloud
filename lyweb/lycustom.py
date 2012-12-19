@@ -24,11 +24,7 @@ from app.system.models import LyTrace
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
-from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
-
-
-template_dir = os.path.join(
-    os.path.dirname(__file__), 'template' )
+from settings import JOB_ACTION, JOB_TARGET, LY_TARGET, TEMPLATE_DIR
 
 
 from ytime import htime, ftime
@@ -36,7 +32,7 @@ from ytool.hstring import b2s
 
 class LyRequestHandler(RequestHandler):
 
-    lookup = TemplateLookup([ template_dir ],
+    lookup = TemplateLookup([ TEMPLATE_DIR ],
                             input_encoding="utf-8")
 
     def render(self, template_name, **kwargs):

@@ -79,6 +79,7 @@ class InstanceManagement(LyRequestHandler):
         by = self.get_argument('by', 'id')
         order = self.get_argument_int('order', 1)
         status = self.get_argument_int('status', -1)
+        user_group = self.get_argument_int('user_group', -1)
         page_size = self.get_argument_int('sepa', 50)
         cur_page = self.get_argument_int('p', 1)
         uid = self.get_argument_int('uid', 0) # sort by user
@@ -89,6 +90,14 @@ class InstanceManagement(LyRequestHandler):
         stop = start + page_size
 
         instances = self.db2.query(Instance)
+
+        # Group filter
+        if user_group > 0:
+            ug = self.db2.query(Group).get(user_group)
+            if ug:
+                instances = instances.join(
+                    Instance.user).join(User.groups).filter(
+                    User.groups.contains(ug) )
 
         if status not in [k for k,v in INSTANCE_STATUS_SHORT_STR]:
             status = -1
@@ -154,9 +163,11 @@ class InstanceManagement(LyRequestHandler):
               'PAGE_HTML': page_html,
               'SORT_USER': U, 'SORT_APPLIANCE': APPLIANCE,
               'SORT_NODE': NODE, 'STATUS': status,
-              'INSTANCE_STATUS': INSTANCE_STATUS_SHORT_STR }
+              'INSTANCE_STATUS': INSTANCE_STATUS_SHORT_STR,
+              'USER_GROUP_ID': user_group, 'GROUP_LIST': self.db2.query(Group) }
 
         self.render( 'admin/instance/index.html', **d )
+
 
 
     def get_view(self):

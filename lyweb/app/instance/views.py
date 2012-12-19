@@ -27,6 +27,7 @@ from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
 
 from ytool.pagination import pagination
+from lymail import LyMail
 
 
 
@@ -160,6 +161,16 @@ class InstRequestHandler(LyRequestHandler):
                 if timeout > datetime.now():
                     return self.trans(_("Previous task is not finished !"))
 
+
+#        if I.user_id != self.current_user.id:
+#            # send email notice
+#            lymail = LyMail(HTML=True)
+#            to = I.user.profile.email
+#            subject = self.trans(_('LuoYunCloud Notice: instance %(instance)s action %(action)s')) % {'instance': I.id, 'action': action_id}
+#            body = _('Instance %(instance)s action %(action)s , by %(user)s') % {'instance': I.id, 'action': action_id, 'user': self.current_user.username}
+#            lymail.sendmail(to, subject, body, cc = ['contact@luoyun.co'])
+#            lymail.close()
+#            logging.debug('send notice to %s' % to)
 
         # Create new job
         job = Job( user = self.current_user,
@@ -587,8 +598,7 @@ class CreateInstance(InstRequestHandler):
              (USED_CPUS >= profile.cpus) or
              (USED_MEMORY >= profile.memory) ):
             url = self.get_no_resource_url() + "?reason=Resource Limit"
-            self.redirect( url )
-            return self.finish()
+            return self.redirect( url )
 
         self.USED_CPUS = USED_CPUS
         self.USED_MEMORY = USED_MEMORY
