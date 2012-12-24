@@ -38,7 +38,7 @@
       <td>
 	<a class="${ b2s(USER_GROUP_ID < 0) }" href="${ urlupdate({'user_group': -1, 'p': 1}) }">${ _("All") }</a>
 	%for G in GROUP_LIST:
-	<a class="${ b2s(USER_GROUP_ID == G.id) }" href="${ urlupdate({'user_group': G.id, 'p': 1}) }">${ G.name }</a>
+	<a class="${ b2s(USER_GROUP_ID == G.id) }" href="${ urlupdate({'user_group': G.id, 'p': 1, 'uid': 0}) }">${ G.name }</a>
 	%endfor
       </td>
     </tr>

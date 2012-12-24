@@ -108,9 +108,11 @@ class InstanceManagement(LyRequestHandler):
         else:
             instances = instances.filter(Instance.status==status)
 
-        U = self.db2.query(User).get( uid )
-        if U:
-            instances = instances.filter_by( user_id = uid )
+        U = None
+        if (user_group <= 0) and uid:
+            U = self.db2.query(User).get( uid )
+            if U:
+                instances = instances.filter_by( user_id = uid )
 
         APPLIANCE = self.db2.query(Appliance).get( aid )
         if APPLIANCE:
