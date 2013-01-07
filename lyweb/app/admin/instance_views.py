@@ -91,14 +91,6 @@ class InstanceManagement(LyRequestHandler):
 
         instances = self.db2.query(Instance)
 
-        # Group filter
-        if user_group > 0:
-            ug = self.db2.query(Group).get(user_group)
-            if ug:
-                instances = instances.join(
-                    Instance.user).join(User.groups).filter(
-                    User.groups.contains(ug) )
-
         if status not in [k for k,v in INSTANCE_STATUS_SHORT_STR]:
             status = -1
 
@@ -124,6 +116,14 @@ class InstanceManagement(LyRequestHandler):
                 instances = instances.filter_by( node_id = nid )
         else:
             NODE = None
+
+        # Group filter
+        if user_group > 0:
+            ug = self.db2.query(Group).get(user_group)
+            if ug:
+                instances = instances.join(
+                    Instance.user).join(User.groups).filter(
+                    User.groups.contains(ug) )
 
         if by == 'created':
             by_obj = Instance.created
@@ -156,11 +156,11 @@ class InstanceManagement(LyRequestHandler):
 
         def sort_by(by):
             return self.urlupdate(
-                {'by': by, 'order': 1 if order == 0 else 0, 'p': 1})
+                {'by': by, 'order': 1 if order == 0 else 0, 'p': 'dropthis'})
 
         d = { 'title': self.trans(_('Instance Management')),
               'urlupdate': self.urlupdate,
-              'sort_by': sort_by,
+              'sort_by': sort_by, 'SORTBY': by,
               'INSTANCE_LIST': instances, 'TOTAL_INSTANCE': total,
               'PAGE_HTML': page_html,
               'SORT_USER': U, 'SORT_APPLIANCE': APPLIANCE,

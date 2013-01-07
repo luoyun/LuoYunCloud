@@ -236,6 +236,10 @@ class LyRequestHandler(RequestHandler):
     # params is a dict: { 'key': value }
     def urlupdate(self, params):
 
+        droped = [ k for k in params if params[k] == 'dropthis' ]
+        for k in droped:
+            del params[k]
+
         new = []
 
         if '?' in self.request.uri:
@@ -243,6 +247,7 @@ class LyRequestHandler(RequestHandler):
             update_keys = params.keys()
 
             for k, v in urlparse.parse_qsl( oldparams ):
+                if k in droped: continue
                 if k in update_keys:
                     v = params[k]
                     del params[k]
@@ -252,7 +257,8 @@ class LyRequestHandler(RequestHandler):
 
         if params:
             for k in params.keys():
-                new.append( (k, params[k]) )
+                if k not in droped:
+                    new.append( (k, params[k]) )
 
         return '?'.join([path, urllib.urlencode( new )])
 

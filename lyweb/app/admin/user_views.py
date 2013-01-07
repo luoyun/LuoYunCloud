@@ -355,6 +355,7 @@ class UserManagement(LyRequestHandler):
         return self.redirect( url )
 
     def post_edit_description(self):
+        print 'self.request ', self.request
         description = self.get_argument('description', '').strip()
         if self.user:
             self.user.description = description if description else None

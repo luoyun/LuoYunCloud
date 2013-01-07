@@ -27,8 +27,8 @@ blockquote:before, blockquote:after, q:before, q:after {
     content: none;
 }
 table {
-    border-collapse: collapse;
-    border-spacing: 0;
+/*    border-collapse: collapse;
+    border-spacing: 0;*/
 }
 b, strong {
     font-weight: 700;
@@ -539,28 +539,29 @@ a.no-text-decoration {
 .sortby-module {
 }
 .sortby-module td {
-    vertical-align: middle;
-    padding: 10px;
+/*    vertical-align: middle;*/
+    padding: 0 10px;
 }
 .sortby-module td:first-child {
     font-weight: bold;
     text-align: right;
-    padding: 10px 10px 10px 0;
+    padding: 0;
+    white-space: nowrap;
 }
 .sortby-module a {
     display: inline-block;
-    padding: 5px 8px;
-    border-radius: 2px;
+    padding: 4px 6px;
     text-decoration: none;
+    border-radius: 2px;
 }
-.sortby-module a.current {
-    color: #FFF;
-    background-color: #467AA7;
-}
-.sortby-module a:hover {
-    color: #DEB110;
+.sortby-module a:hover, .sortby-module a.current {
+    color: #333;
+    background-color: #F6F044;
 }
 
+.filter-summary {
+    margin: 10px 0 15px;
+}
 
 .select-module {
     margin: 10px 0;

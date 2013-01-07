@@ -417,3 +417,12 @@ table th {
     width: 720px;
     height: 280px;
 }
+
+
+dl.sortby {
+}
+.sortby dt {
+    font-weight: bold;
+    text-align: right;
+    float: left;
+}
