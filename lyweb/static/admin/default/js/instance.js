@@ -89,3 +89,43 @@ function lyinst_control(xsrf) {
 	return false;
     });
 }
+
+
+function lyinst_name_hover() {
+    $("#lyinst-list .i-name").hover(
+	function(){
+	    $(this).parents('tr').after('<div class="hover-content"><h1>hELLO</h1></div>');
+	},
+	function(){
+	    $('#lyinst-list tbody > .hover-content').remove();
+	}
+    );
+}
+
+function lyinst_list_binding() {
+    $("#lyinst-list .i-list tr.even").hide();
+    
+    $("#lyinst-list .i-list td.ex").click(function(){
+	var id = $(this).parents("tr").attr("id")
+	var url = $(this).attr('href');
+	var $next_tr = $(this).parents("tr").next("tr");
+	$next_tr.toggle();
+	$(this).toggleClass("up");
+	if ($(this).text() == '+')
+	    $(this).text("-");
+	else
+	    $(this).text("+");
+
+	var content_id = '#' + id + '-hide';
+	if ( $(content_id).children().length <= 0 )
+	{
+	    $(content_id).html('<img src="/static/admin/default/css/img/running.gif" /> loading ...')
+	    $.ajax({
+		type: 'GET', 'url': url,
+		success: function (data, textStatus) {
+		    $(content_id).html(data);
+		}
+	    });
+	}
+    });
+}

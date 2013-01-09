@@ -198,7 +198,10 @@ class InstanceManagement(LyRequestHandler):
               'STORAGE_LIST': storage,
               'webssh': webssh, 'TAB': tab }
 
-        self.render( 'admin/instance/view.html', **d )
+        if self.get_argument('ajax', None):
+            self.render('admin/instance/view.ajax.html', **d)
+        else:
+            self.render('admin/instance/view.html', **d)
 
 
     def get_control_all(self, action):

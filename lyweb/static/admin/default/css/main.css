@@ -2,27 +2,23 @@ body, #pager {
     margin: 0;
 }
 body {
-    background-color: #FCFCFC;
+    background-color: #FFF;
 }
-
 p {
     margin: 15px 0;
 }
 
-#main {
-    padding: 15px 30px;
-}
 /* Begin Header */
 
 #header {
     background-color: #578BB8; /*#54060D; #35383B;*/
     height: 42px;
-    padding: 0px 10px;
+    padding: 0px;
 }
 #logo {
     float: left;
     position: relative;
-    padding: 0 10px;
+    padding: 0 10px 0 0;
     margin-right: 40px;
 }
 #logo img {
@@ -125,7 +121,6 @@ p {
     height:32px;
     padding: 5px 0;
     font-size: 0.9em;
-    margin-top: 60px;
 }
 #powered-by .text {
     display: inline-block;
@@ -540,35 +535,6 @@ img.ly-status-flag {
 
 
 
-/* Go Top Link */
-
-#gotop {
-     font-family: Georgia;
-     font-size: 22px;
-     color: #000000;
-     background-color: #ffffff;
-     padding: 10px;
-     width:100px;
-     text-align: center;
-     border-width : thin thin thin thin;
-     border-color : #999 #999 #999 #999;
-     border-style : solid solid solid solid;
-     border-collapse : collapse;
-     -moz-border-radius: 10px;
-     border-radius: 3px;
-     position: fixed;
-     bottom: 60px;
-     right: 20px;
-     z-index: 200;
-}
-
-#gotop:hover {
-     color: #ffffff;
-     background-color: #999;
-     cursor: pointer;
-     cursor: hand;
-}
-
 img.little-status-img {
     width: 16px;
     height: 16px;
@@ -725,10 +691,6 @@ td.username img {
 #system-global-info table td {
     padding: 25px;
 }
-#admin-new-job {
-    margin-top: 30px;
-    margin-bottom: 80px;
-}
 #admin-pie-show {
     width: 890px;
     margin: 50px auto;
@@ -782,3 +744,102 @@ td.username img {
     text-align: right;
     padding: 10px 10px 10px 0;
 }
+
+#header-wrap, #submenu-wrap, #main, #footer-wrap {
+    margin: 0 auto;
+    width: 980px;
+}
+#header-wrap {
+    height: 42px;
+}
+
+
+#lysys-new {
+    margin-bottom: 80px;
+}
+#lysys-new > .new-item {
+}
+
+
+/* Start instance */
+#lyinst-list .i-list {
+    width: 100%;
+}
+#lyinst-list .i-list th,
+#lyinst-list .i-list td {
+    padding: 6px 5px;
+    border-left: 0;
+}
+#lyinst-list .i-list .ex {
+    font-size: 22px;
+    font-weight: bold;
+    color: #777;
+    width: 20px;
+    font-family: DejaVu Sans Mono, Microsoft YaHei;
+    background-color: #F9FEF9;
+    padding:5px 8px;
+}
+#lyinst-list .i-list .ex:hover,
+#lyinst-list .i-list td.up {
+    cursor: pointer;
+    color: orange;
+    background-color: #444;
+    color: #FFF;
+}
+#lyinst-list .i-list tbody > tr.even {
+    background-color: #FFF;
+}
+
+#lyinst-list .i-logo img {
+    width: 100px;
+    border-radius: 3px;
+}
+#lyinst-list .ex-addons {
+    padding-top: 20px;
+}
+
+#lyinst-list .i-logo,
+#lyinst-list .i-addons {
+    float: left;
+}
+#lyinst-list .i-logo {
+    width: 100px;
+    margin: 0 20px;
+}
+#lyinst-list .i-addons {
+    width: 800px;
+    float: right;
+    min-height: 360px;
+}
+#lyinst-list h1,
+#lyinst-list h2 {
+    font-size: 16px;
+    color: #978D02;
+    margin: 10px 0 15px;
+}
+
+#lyinst-list .ui-tabs-nav {
+    padding: 0;
+}
+#lyinst-list .ui-tabs-nav li a {
+    padding: 4px 8px;
+}
+#lyinst-list .ui-widget {
+    font-size: 1em;
+    padding: 0;
+    border-radius: 3px;
+}
+#lyinst-list .ui-tabs-nav {
+    border-radius: 3px 3px 0 0;
+}
+#lyinst-list .ui-widget-content {
+    border: none;
+    background-color: #FFF;
+}
+#lyinst-list .ui-widget-header {
+    background-image: none;
+    background-color: #FFF;
+    border: none;
+    border-bottom: 1px solid #4297D7;
+}
+/* End instance */

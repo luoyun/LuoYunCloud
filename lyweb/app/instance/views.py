@@ -1365,6 +1365,8 @@ class LifeControl(InstRequestHandler):
         # delete instance files
         return self.run_job(I, JOB_ACTION['DESTROY_INSTANCE'])
 
+
+
     def have_resource(self, inst):
 
         # TODO: owner or myself ?

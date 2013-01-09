@@ -58,7 +58,7 @@ table.kvlist td.c1 {
 
 
 /* Start LuoYun Table */
-.ly-table table {
+.ly-table table, table.ly-table {
     *border-collapse: collapse; /* IE7 and lower */
     border-spacing: 0;
     /*width: 100%;*/
