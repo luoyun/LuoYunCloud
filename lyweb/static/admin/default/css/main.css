@@ -8,6 +8,10 @@ p {
     margin: 15px 0;
 }
 
+tr.hover {
+    background-color: #F8F3C5;
+}
+
 /* Begin Header */
 
 #header {
@@ -759,7 +763,13 @@ td.username img {
 }
 #lysys-new > .new-item {
 }
+#lysys-new table.ly-table {
+    width: 100%;
+}
 
+table.full {
+    width: 100%;
+}
 
 /* Start instance */
 #lyinst-list .i-list {
@@ -767,7 +777,7 @@ td.username img {
 }
 #lyinst-list .i-list th,
 #lyinst-list .i-list td {
-    padding: 6px 5px;
+    padding: 5px 6px;
     border-left: 0;
 }
 #lyinst-list .i-list .ex {
@@ -843,3 +853,42 @@ td.username img {
     border-bottom: 1px solid #4297D7;
 }
 /* End instance */
+
+a.tip-ajax:hover {
+    color: red;
+}
+
+.lyuser-tip-view {
+    background-color: #FFF;
+    padding: 10px;
+}
+.lyuser-tip-view .u-base, .lyuser-tip-view .u-info {
+    float: right;
+}
+.lyuser-tip-view .u-logo {
+    width: 36px;
+    border: 1px solid #ECEDEF;
+    border-radius: 3px;
+}
+.lyuser-tip-view .u-base {
+    width: 36px;
+}
+.lyuser-tip-view .u-info {
+    width: 350px;
+}
+.lyuser-tip-view table.kv > tbody > tr > td {
+    padding: 3px 5px;
+}
+
+/* Start qtip custom style */
+.qtip-light.ui-tooltip {
+    padding: 0;
+}
+.qtip-light .ui-tooltip-content {
+    padding: 1px;
+}
+.qtip-user-info.ui-tooltip {
+    max-width: 420px;
+    min-width: 0px;
+}
+/* End qtip custom style */

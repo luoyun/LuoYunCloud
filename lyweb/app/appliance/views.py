@@ -66,7 +66,7 @@ class Index(AppRequestHandler):
 
     def get(self):
 
-        catalog_id = self.get_argument_int('c', 1)
+        catalog_id = self.get_argument_int('c', 0)
         page_size = self.get_argument_int('sepa', 20)
         cur_page = self.get_argument_int('p', 1)
         by = self.get_argument('by', 'updated')
@@ -76,11 +76,13 @@ class Index(AppRequestHandler):
         start = (cur_page - 1) * page_size
         stop = start + page_size
 
-        apps = self.db2.query(Appliance).filter_by(
-            catalog_id=catalog_id).filter_by(
-            isprivate=False).order_by(by_exp)
-
+        apps = self.db2.query(Appliance).filter_by(isprivate=False)
         total = apps.count()
+
+        if catalog_id:
+            apps = apps.filter_by(catalog_id=catalog_id)
+
+        apps = apps.order_by(by_exp)
         apps = apps.slice(start, stop)
             
         catalogs = self.db2.query(ApplianceCatalog).all()
@@ -93,6 +95,7 @@ class Index(AppRequestHandler):
 
         d = { 'title': self.title,
               'appliances': apps,
+              'appliance_total': total,
               'catalogs': catalogs,
               'cur_catalog': catalog_id,
               'page_html': page_html }
@@ -225,7 +228,9 @@ class Edit(LyRequestHandler):
         form.summary.data = appliance.summary
         form.description.data = appliance.description
 
-        return self.render( 'appliance/edit.html', title = self.trans(_('Edit Appliance ')), form = form, appliance = appliance )
+        return self.render( 'appliance/edit.html',
+                            title = self.trans(_('Edit Appliance ')),
+                            form = form, appliance = appliance )
 
 
     def post(self, ID):
@@ -246,7 +251,7 @@ class Edit(LyRequestHandler):
 
             # Save logo file
             if self.request.files:
-                r = self.save_logo(appliance)
+                r = appliance.save_logo(self.request.files['logo'])
                 if r:
                     form.logo.errors.append( r )
 
@@ -257,52 +262,12 @@ class Edit(LyRequestHandler):
                     return self.redirect( url )
 
             except Exception, emsg:
-                form.description.errors.append( self.trans(_('Save appliance info to DB failed: %s' % emsg )) )
+                form.description.errors.append(
+                    self.trans(_('Save appliance info to DB failed: %s' % emsg )))
 
         d = { 'title': self.trans(_('Edit Appliance "%s"')) % appliance.name,
               'form': form, 'appliance': appliance }
         self.render( 'appliance/edit.html', **d )
-
-
-    def save_logo(self, appliance):
-
-        if not os.path.exists(appliance.logodir):
-            try:
-                os.makedirs(appliance.logodir)
-            except Exception, e:
-                return self.trans(_('create appliance logo dir "%(dir)s" failed: %(emsg)s')) % {
-                    'dir': appliance.logodir, 'emsg': e }
-
-        max_size = settings.APPLIANCE_LOGO_MAXSIZE
-        logoname = settings.APPLIANCE_LOGO_NAME
-
-        for f in self.request.files['logo']:
-
-            if len(f['body']) > max_size:
-                return self.trans(_('Picture must smaller than %s !')) % human_size(max_size)
-
-            tf = tempfile.NamedTemporaryFile()
-            tf.write(f['body'])
-            tf.seek(0)
-
-            try:
-                img = Image.open(tf.name)
-            except Exception, emsg:
-                return self.trans(_('Open %(filename)s failed: %(emsg)s , is it a picture ?')) % {
-                    'filename': f.get('filename'), 'emsg': emsg }
-
-            try:
-                # can convert image type
-                img.save(appliance.logopath)
- 
-                img.thumbnail(settings.APPLIANCE_LOGO_THUM_SIZE, resample=1)
-                img.save(appliance.logothum)
- 
-                tf.close()
-
-            except Exception, emsg:
-                return self.trans(_('Save %(filename)s failed: %(emsg)s')) % {
-                    'filename': f.get('filename'), 'emsg': emsg }
 
 
 

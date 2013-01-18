@@ -15,8 +15,8 @@ from settings import JOB_TARGET
 from lycustom import has_permission
 from ytool.pagination import pagination
 
-from sqlalchemy.sql.expression import asc, desc
-from sqlalchemy import and_
+from sqlalchemy.sql.expression import asc, desc, func
+from sqlalchemy import and_, or_
 
 import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
@@ -85,11 +85,25 @@ class InstanceManagement(LyRequestHandler):
         uid = self.get_argument_int('uid', 0) # sort by user
         aid = self.get_argument_int('aid', 0) # sort by appliance
         nid = self.get_argument_int('node', 0) # sort by node
+        search = self.get_argument('search', False)
 
         start = (cur_page - 1) * page_size
         stop = start + page_size
 
         instances = self.db2.query(Instance)
+
+        # TODO: more search func
+        if search:
+            sid = self.get_int(search, 0)
+            search = '%' + search.lower() + '%'
+            if sid:
+                instances = instances.filter( or_(
+                        func.lower(Instance.name).like(search),
+                        Instance.id.in_( [sid] ) ) )
+            else:
+                instances = instances.filter( or_(
+                    func.lower(Instance.name).like(search),
+                    ) )
 
         if status not in [k for k,v in INSTANCE_STATUS_SHORT_STR]:
             status = -1
@@ -168,9 +182,10 @@ class InstanceManagement(LyRequestHandler):
               'INSTANCE_STATUS': INSTANCE_STATUS_SHORT_STR,
               'USER_GROUP_ID': user_group, 'GROUP_LIST': self.db2.query(Group) }
 
-        self.render( 'admin/instance/index.html', **d )
-
-
+        if self.get_argument('ajax', None):
+            self.render( 'admin/instance/index.ajax.html', **d )
+        else:
+            self.render( 'admin/instance/index.html', **d )
 
     def get_view(self):
 

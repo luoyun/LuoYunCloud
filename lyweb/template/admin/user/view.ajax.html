@@ -1,0 +1,49 @@
+<div class="lyuser-tip-view c">
+  <div class="u-base c">
+    <a href="${ reverse_url('admin:user') }?id=${ U.id }"><img class="u-logo" src="${ U.avatar_url }" /></a>
+    <ul>
+      <li><a href="${ reverse_url('message:new') }?userid=${ U.id}" target="_blank" title="${ _('send message') }"><img class="small" src="${ theme_url('img/message.jpg') }"/></a></li>
+      <li><a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" target="_blank" title="${ _('send email') }"><img class="small" src="${ theme_url('img/email.gif') }"/></a></li>
+    </ul>
+  </div>
+  <div class="u-info">
+    <table class="kv">
+      <tbody>
+	<tr>
+          <td>${ _("ID") }</td>
+          <td>${ U.id }</td>
+	</tr>
+	<tr>
+          <td>${ _("Public Access") }</td>
+          <td><a href="${ reverse_url('account:view', U.id) }" target="_blank">${ _("View") }</a></td>
+	</tr>
+	<tr>
+          <td>${ _("Date Joined") }</td>
+          <td>${ ftime(U.date_joined) }</td>
+	</tr>
+	<tr>
+          <td>${ _("Last Login") }</td>
+          <td>${ ftime(U.last_login) }</td>
+	</tr>
+	<tr>
+          <td>${ _("Last Active") }</td>
+          <td>${ htime(U.last_active) }</td>
+	</tr>
+	% if U.profile:
+	<tr>
+          <td>${ _("Email") }</td>
+          <td>${ U.profile.email }</td>
+	</tr>
+	<tr>
+          <td>${ _("Locale") }</td>
+          <td>${ U.profile.locale }</td>
+	</tr>
+	% endif
+      </tbody>
+    </table>
+    <p><a href="${ reverse_url('admin:user') }?id=${ U.id }&action=edit_description">${ _("Edit Description") }</a></p>
+    % if U.description:
+    <div class="description">${ U.description }</div>
+    % endif
+  </div>
+</div>

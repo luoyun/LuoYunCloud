@@ -261,7 +261,7 @@ class InstanceManagement(LyRequestHandler):
             do = _('release ip %(ip)s from instance %(instance_id)s(%(instance_name)s)') % d
         else:
             do = _('get ip %(ip)s for instance %(instance_id)s(%(instance_name)s)') % d
-        T = self.lytrace( ttype = LY_TARGET['IP'], tid = ippool.id, do = do )
+        T = self.lytrace( ttype = settings.LY_TARGET['IP'], tid = ippool.id, do = do )
         return T
 
 

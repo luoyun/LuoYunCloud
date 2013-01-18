@@ -58,7 +58,7 @@ table.kvlist td.c1 {
 
 
 /* Start LuoYun Table */
-.ly-table table, table.ly-table {
+table.ly-table {
     *border-collapse: collapse; /* IE7 and lower */
     border-spacing: 0;
     /*width: 100%;*/
@@ -73,12 +73,12 @@ table.kvlist td.c1 {
     transition: all 0.1s ease-in-out;		
 }
 .ly-table th, .ly-table td {
-    padding: 10px;
+    padding: 8px 10px;
     text-align: left;
 }
-.ly-table td {
-    border-left: 1px solid #ECF1F4;
-    border-top: 1px solid #CDD8DC;
+.ly-table > tbody > tr > td {
+    border-left: 1px solid #CCC;
+    border-bottom: 1px solid #CCC;
 }
 .ly-table th {
     background-color: #dce9f9;
@@ -120,7 +120,7 @@ table.kvlist td.c1 {
     -webkit-border-radius: 0 0 3px 0;
     border-radius: 0 0 3px 0;
 }
-.ly-table tbody > tr:hover {
+.ly-table > tbody > tr:hover {
     background-color: #F8F3C5;
 }
 .ly-table a {

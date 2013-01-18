@@ -22,16 +22,16 @@
     <tr>
       <td>${ _("Status") }</td>
       <td>
-	<a class="${ b2s(STATUS < 0) }" href="${ urlupdate({'status': -1, 'p': 1}) }">${ _("All") }</a>
+	<a class="${ b2s(STATUS < 0) }" href="${ urlupdate({'status': -1, 'p': 'dropthis'}) }">${ _("All") }</a>
 	%for s, v in INSTANCE_STATUS:
-	<a class="${ b2s(STATUS == s) }" href="${ urlupdate({'status': s, 'p': 1}) }">${ v }</a>
+	<a class="${ b2s(STATUS == s) }" href="${ urlupdate({'status': s, 'p': 'dropthis'}) }">${ v }</a>
 	%endfor
       </td>
     </tr>
     <tr>
       <td>${ _("Group") }</td>
       <td>
-	<a class="${ b2s(USER_GROUP_ID < 0) }" href="${ urlupdate({'user_group': -1, 'p': 1}) }">${ _("All") }</a>
+	<a class="${ b2s(USER_GROUP_ID < 0) }" href="${ urlupdate({'user_group': -1, 'p': 'dropthis'}) }">${ _("All") }</a>
 	%for G in GROUP_LIST:
 	<a class="${ b2s(USER_GROUP_ID == G.id) }" href="${ urlupdate({'user_group': G.id, 'p': 'dropthis', 'uid': 0 }) }">${ G.name }</a>
 	%endfor
@@ -61,7 +61,10 @@
   </tbody>
 </table>
 
+<div class="m-item"><span class="k">${ _("Search") }</span><span id="search"><input type="text" title="${ _('Input text to search matched instances.') }"/></span></div>
+
 <div id="lyinst-list">
+  <div class="current-uri" style="display:none;">${ urlupdate({'ajax': 't'}) }</div>
   <div class="filter-summary">
     ${ _("Total instances: ") } ${ TOTAL_INSTANCE }
   </div>
@@ -88,11 +91,11 @@
         <td>${ I.id }</td>
         <td><a href="${ reverse_url('admin:instance') }?id=${ I.id }">${ I.name }</a></td>
         <td><img src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }" alt="${ locale.translate(I.status_string) }"/></td>
-        <td><a href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a></td>
+        <td><a class="tip-ajax" href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a></td>
 	<td><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></td>
         <td>${ ftime(I.created) }</td>
         <td>${ htime(I.updated) }</td>
-	<td class="ex" href="${ reverse_url('admin:instance') }?id=${ I.id }&ajax=True">+</td>
+	<td class="ex" href="${ reverse_url('admin:instance') }?id=${ I.id }&ajax=t">+</td>
       </tr>
       <tr class="even"><td colspan="9" id="i${ I.id }-hide" class="ex-addons"></td></tr>
       % endfor
@@ -114,6 +117,9 @@
     lyinst_control("${ xsrf_cookie }");
     //lyinst_name_hover();
     lyinst_list_binding();
+    lyinst_page_view_binding();
+    lytip_ajax_binding();
+    lyinst_search();
   </script>
 </div>
 
@@ -134,7 +140,7 @@
 </div>
 
 <div id="ictl-cfm-dialog-wait" style="display:none;">
-  <div class="pic"><img src="/static/admin/default/img/running.gif" /></div>
+  <div class="pic"><img src="/static/admin/default/css/img/running.gif" /></div>
   <div class="text">${ _("The request has been submitted, please wait ...") }</div>
 </div>
 
