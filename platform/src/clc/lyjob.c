@@ -345,7 +345,11 @@ static int __job_start_instance(LYJobInfo * job)
         luoyun_node_ctrl_instance_print(&ci);
 
     int ent_id;
-    if (node_id > 0) {
+    if (g_c->node_select == NODE_SELECT_ANY) {
+        logdebug(_("node selection\n"));
+        node_id = 0;
+    }
+    else if (node_id > 0) {
         logdebug(_("check origianl node %d for instance %d\n"),
                     node_id, ci.ins_id);
         ent_id = ly_entity_find_by_db(LY_ENTITY_NODE, node_id);
