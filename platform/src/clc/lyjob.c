@@ -441,6 +441,10 @@ static int __job_start_instance(LYJobInfo * job)
         goto failed;
     }
 
+    /* temprarily hold the resource, recovered automatically in case of failure */
+    ni->cpu_commit -= ci.ins_vcpu;
+    ni->mem_commit -= ci.ins_mem;
+
     free(xml);
     luoyun_node_ctrl_instance_cleanup(&ci);
     return 0;
