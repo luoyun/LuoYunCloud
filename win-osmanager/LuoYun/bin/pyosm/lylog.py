@@ -47,6 +47,8 @@ def setup(path = None, debug = 0, size = 1<<20, count = 1):
 def logger():
   return logging.getLogger(LOGNAME)
 
+LOG = logger()
+
 if __name__ == "__main__":
   setup(path = '/var/log/luoyun.log', debug = 1, size = 100, count = 2)
   #setup(path = None, count = 2)
