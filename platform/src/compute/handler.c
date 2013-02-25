@@ -47,7 +47,7 @@
 #include "node.h"
 #include "handler.h"
 
-#define LIBVIRT_XML_DATA_MAX 2048
+#define LIBVIRT_XML_DATA_MAX 4096
 
 static pthread_mutex_t handler_mutex = PTHREAD_MUTEX_INITIALIZER;
 static int g_handler_thread_num = 0;
