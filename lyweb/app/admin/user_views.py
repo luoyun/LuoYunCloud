@@ -194,7 +194,10 @@ class UserManagement(LyRequestHandler):
         d = { 'title': self.trans(_('View User')), 'TAB': TAB,
               'U': self.user, 'JOB_LIST': jobs }
 
-        self.render( 'admin/user/view.html', **d)
+        if self.get_argument('ajax', None):
+            self.render( 'admin/user/view.ajax.html', **d)
+        else:
+            self.render( 'admin/user/view.html', **d)
 
 
     def get_reset_password(self):
@@ -355,6 +358,7 @@ class UserManagement(LyRequestHandler):
         return self.redirect( url )
 
     def post_edit_description(self):
+        print 'self.request ', self.request
         description = self.get_argument('description', '').strip()
         if self.user:
             self.user.description = description if description else None

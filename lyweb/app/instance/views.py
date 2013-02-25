@@ -27,6 +27,7 @@ from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
 
 from ytool.pagination import pagination
+from lymail import LyMail
 
 
 
@@ -160,6 +161,16 @@ class InstRequestHandler(LyRequestHandler):
                 if timeout > datetime.now():
                     return self.trans(_("Previous task is not finished !"))
 
+
+#        if I.user_id != self.current_user.id:
+#            # send email notice
+#            lymail = LyMail(HTML=True)
+#            to = I.user.profile.email
+#            subject = self.trans(_('LuoYunCloud Notice: instance %(instance)s action %(action)s')) % {'instance': I.id, 'action': action_id}
+#            body = _('Instance %(instance)s action %(action)s , by %(user)s') % {'instance': I.id, 'action': action_id, 'user': self.current_user.username}
+#            lymail.sendmail(to, subject, body, cc = ['contact@luoyun.co'])
+#            lymail.close()
+#            logging.debug('send notice to %s' % to)
 
         # Create new job
         job = Job( user = self.current_user,
@@ -587,8 +598,7 @@ class CreateInstance(InstRequestHandler):
              (USED_CPUS >= profile.cpus) or
              (USED_MEMORY >= profile.memory) ):
             url = self.get_no_resource_url() + "?reason=Resource Limit"
-            self.redirect( url )
-            return self.finish()
+            return self.redirect( url )
 
         self.USED_CPUS = USED_CPUS
         self.USED_MEMORY = USED_MEMORY
@@ -1189,3 +1199,247 @@ class ToggleFlag(LyRequestHandler):
     def toggle_use_global_passwd(self, I):
         s = str(I.get_config('use_global_passwd')) != 'False'
         I.set_config('use_global_passwd', not s)
+
+
+
+from ytool.params import str2intlist
+class LifeControl(InstRequestHandler):
+    ''' Instance life control: stop/run/reboot/query
+
+    1. use ajax
+    2. use post
+
+    Input:
+           ids = [1,2,3,4,5,...]
+           action = "stop/run/reboot/query"
+
+    Output:
+           { code: 0/1/...,   # 0 is success.
+             data: [ { id: 1,
+                       code: 0/1/..., # 0 is success.
+                       data: "xxx",   # description about code
+                     }, {}, ... ]
+           }
+    '''
+
+
+    def prepare(self):
+
+        c, d = 1, []
+        
+        # check user login
+        if not self.current_user:
+            d.append( self.trans(_('You have not login !')) )
+
+        # check action
+        action = self.get_argument('action', '').lower()
+        if not action:
+            d.append( self.trans(_('No action specify.')) )
+        if not hasattr(self, action):
+            d.append(self.trans(_('Just support run/stop/reboot/query action')))
+
+        # check input
+        ids, fail = str2intlist(self.get_argument('ids', ''))
+        if not ids:
+            d.append( self.trans(_('Instance id list is empty.')) )
+
+        if d:
+            self.write({'code': c, 'data': d})
+            self.finish()
+        else:
+            self.action = action
+            self.ids = ids
+            self.fail = fail
+            
+
+    def post(self):
+        INST_DATA = []
+        for ID in self.ids:
+            INST_DATA.append(self.life_control(ID))
+
+        # The End
+        self.write( { 'code': 0, 'data': INST_DATA } )
+
+
+    def life_control(self, ID):
+
+        DATA = { 'id': ID, 'code': 1,
+                 'data': self.trans(_('Unknown error.')) }
+
+        I = self.db2.query(Instance).get(ID)
+        if not I:
+            DATA['data'] = self.trans(_('No such instance: %s !')) % ID
+            return DATA
+
+        if I.status == DELETED_S:
+            DATA['data'] = self.trans(_('Instance %s is deleted !')) % ID
+            return DATA
+
+        if ( not self.has_permission('admin') and 
+             ( self.current_user.id != inst.user_id ) ):
+            DATA['data'] = self.trans(_('Instance %s is private !')) % ID
+            return DATA
+
+        DATA['data'] = getattr(self, self.action)(I)
+
+        T = self.lytrace(
+            ttype = LY_TARGET['INSTANCE'], tid = I.id,
+            do = self.trans(_('%s instance')) % self.action )
+
+        I.updated = datetime.now()
+        if I.ischanged:
+            I.ischanged = False
+        self.db2.commit()
+
+        return DATA
+
+
+    def reboot(self, instance):
+
+        # TODO: a temp hack
+        self.set_nameservers(instance)
+        self.rebinding_domain(instance)
+        if instance.get_config('use_global_passwd', True):
+            self.set_root_passwd(instance)
+
+        return self.run_job(instance, JOB_ACTION['REBOOT_INSTANCE'])
+
+
+    def query(self, instance):
+        if instance.need_query:
+            return self.run_job(instance, JOB_ACTION['QUERY_INSTANCE'])
+        else:
+            return self.trans(_('Instance does not need query.'))
+
+
+    def stop(self, instance):
+        
+        if instance.is_running:
+            return self.run_job(instance, JOB_ACTION['STOP_INSTANCE'])
+        else:
+            return self.trans(_('Instance is stopped now !'))
+
+    def run(self, instance):
+
+        ret = self.have_resource(instance)
+        if ret: return ret
+
+        if instance.is_running:
+            return self.trans(_('Instance is running now !'))
+
+        # TODO: a temp hack
+        self.set_nameservers(instance)
+        self.rebinding_domain(instance)
+        if instance.get_config('use_global_passwd', True):
+            self.set_root_passwd(instance)
+
+        return self.run_job(instance, JOB_ACTION['RUN_INSTANCE'])
+
+
+    def delete(self, I):
+        if I.is_running:
+            return self.trans(_("Can not delete a running instance!"))
+
+        # TODO: delete domain binding
+        ret, reason = self.domain_delete( I )
+        if not ret:
+            return reason
+
+        old_iname = I.name
+        I.status = DELETED_S
+        I.subdomain = '_notexist_%s_' % I.id
+        I.name = '_notexist_%s_' % I.id
+        self.db2.commit()
+
+        for x in I.ips:
+            x.instance_id = None
+            x.updated = datetime.now()
+
+            T = self.lytrace(
+                ttype = LY_TARGET['IP'], tid = x.id,
+                do = _('release ip %(ip)s from instance %(instance_id)s(%(instance_name)s)') % {
+                    'ip': x.ip, 'instance_id': I.id, 'instance_name': old_iname } )
+
+        self.db2.commit()
+
+        # delete instance files
+        return self.run_job(I, JOB_ACTION['DESTROY_INSTANCE'])
+
+
+
+    def have_resource(self, inst):
+
+        # TODO: owner or myself ?
+        #owner = self.current_user
+        owner = inst.user
+
+        USED_INSTANCES = self.db2.query(Instance).filter(
+            Instance.user_id == owner.id).all()
+        USED_CPUS = 0
+        USED_MEMORY = 0
+        for I in USED_INSTANCES:
+            if I.is_running:
+                USED_CPUS += I.cpus
+                USED_MEMORY += I.memory
+
+        TOTAL_CPU = owner.profile.cpus - USED_CPUS
+        TOTAL_MEM = owner.profile.memory - USED_MEMORY
+
+        desc = ''
+        if TOTAL_CPU < inst.cpus:
+            if TOTAL_CPU < 0: TOTAL_CPU = 0
+            desc = self.trans(_('need %(need)s CPU, but %(have)s have.')) % {
+                'need': inst.cpus, 'have': TOTAL_CPU }
+        if TOTAL_MEM < inst.memory:
+            if TOTAL_MEM < 0: TOTAL_MEM = 0
+            desc = self.trans(_('need %(need)sMB memory, but %(have)sMB have.')) % {
+                'need': inst.memory, 'have': TOTAL_MEM }
+        if desc:
+            return self.trans(_('No resource: %s')) % desc
+
+
+    def set_nameservers(self, instance):
+        ''' TODO: This is a temp hack '''
+
+        NS = self.db2.query(LuoYunConfig).filter_by(
+            key='nameservers').first()
+
+        if NS and instance.config:
+            config = json.loads(instance.config)
+            config['nameservers'] = NS.value
+            instance.config = json.dumps(config)
+            self.db2.commit()
+                
+
+    # TODO: rebinding domain
+    def rebinding_domain(self, instance):
+        # Binding in nginx
+        from tool.domain import binding_domain_in_nginx
+        ret, reason = binding_domain_in_nginx(
+            self.db2, instance.id, domain = self.get_domain(instance) )
+        if not ret:
+            logging.warning(_('binding domain error: %s') % reason)
+        # TODO: update config about domain
+        self.binding_domain(instance)
+
+    def binding_domain(self, instance):
+
+        full_domain = self.get_domain( instance )
+
+        if not instance.config:
+            instance.init_config()
+
+        config = json.loads(instance.config)
+            
+        if 'domain' in config.keys():
+            domain = config['domain']
+        else:
+            domain = {}
+
+        domain['name'] = full_domain
+        domain['ip'] = instance.access_ip
+        config['domain'] = domain
+
+        instance.config = json.dumps( config )
+        instance.updated = datetime.now()
+        self.db2.commit()

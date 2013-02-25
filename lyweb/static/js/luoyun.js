@@ -263,3 +263,40 @@ function simpleToggleCheckbox ( obj, URL, container ) {
 };
 
 
+function lyurl_update_params(url, key, value) {
+    var L = url.split('?')
+    if ( L.length == 1 )
+	return url + '?' + key + '=' + value;
+
+    var path = L[0]
+    var search = L[1]
+
+    /*
+     * http://www.samaxes.com/2011/09/change-url-parameters-with-jquery/
+     *
+     * queryParameters -> handles the query string parameters
+     * queryString -> the query string without the fist '?' character
+     * re -> the regular expression
+     * m -> holds the string matching the regular expression
+     */
+    var queryParameters = {}, queryString = search, //location.search.substring(1),
+    re = /([^&=]+)=([^&]*)/g, m;
+
+    // Creates a map with the query string parameters
+    while (m = re.exec(queryString)) {
+	queryParameters[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+    }
+
+    // Add new parameters or update existing ones
+    //queryParameters['newParameter'] = 'new parameter';
+    queryParameters[key] = value;
+
+    /*
+     * Replace the query portion of the URL.
+     * jQuery.param() -> create a serialized representation of an array or
+     *     object, suitable for use in a URL query string or Ajax request.
+     */
+    //location.search = $.param(queryParameters); // Causes page to reload
+
+    return path + '?' + $.param(queryParameters);
+}

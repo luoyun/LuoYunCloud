@@ -3445,3 +3445,8 @@ msgstr "不是一个有效的十进制整数值"
 msgid "Not a valid float value"
 msgstr "不是一个有效的浮点数值"
 
+msgid "Prev"
+msgstr "前一页"
+
+msgid "Next"
+msgstr "下一页"

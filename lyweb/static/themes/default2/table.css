@@ -58,12 +58,12 @@ table.kvlist td.c1 {
 
 
 /* Start LuoYun Table */
-.ly-table table {
+table.ly-table {
     *border-collapse: collapse; /* IE7 and lower */
     border-spacing: 0;
     /*width: 100%;*/
     border: 1px solid #CEDBE1;
-    border-radius: 6px;
+    border-radius: 3px;
 }
 .ly-table tr {
     -o-transition: all 0.1s ease-in-out;
@@ -73,12 +73,12 @@ table.kvlist td.c1 {
     transition: all 0.1s ease-in-out;		
 }
 .ly-table th, .ly-table td {
-    padding: 10px;
+    padding: 8px 10px;
     text-align: left;
 }
-.ly-table td {
-    border-left: 1px solid #ECF1F4;
-    border-top: 1px solid #CDD8DC;
+.ly-table > tbody > tr > td {
+    border-left: 1px solid #CCC;
+    border-bottom: 1px solid #CCC;
 }
 .ly-table th {
     background-color: #dce9f9;
@@ -101,26 +101,29 @@ table.kvlist td.c1 {
     border-left: none;
 }
 .ly-table th:first-child {
-    -moz-border-radius: 6px 0 0 0;
-    -webkit-border-radius: 6px 0 0 0;
-    border-radius: 6px 0 0 0;
+    -moz-border-radius: 3px 0 0 0;
+    -webkit-border-radius: 3px 0 0 0;
+    border-radius: 3px 0 0 0;
 }
 .ly-table th:last-child {
-    -moz-border-radius: 0 6px 0 0;
-    -webkit-border-radius: 0 6px 0 0;
-    border-radius: 0 6px 0 0;
+    -moz-border-radius: 0 3px 0 0;
+    -webkit-border-radius: 0 3px 0 0;
+    border-radius: 0 3px 0 0;
 }
 .ly-table tr:last-child td:first-child {
-    -moz-border-radius: 0 0 0 6px;
-    -webkit-border-radius: 0 0 0 6px;
-    border-radius: 0 0 0 6px;
+    -moz-border-radius: 0 0 0 3px;
+    -webkit-border-radius: 0 0 0 3px;
+    border-radius: 0 0 0 3px;
 }
 .ly-table tr:last-child td:last-child {
-    -moz-border-radius: 0 0 6px 0;
-    -webkit-border-radius: 0 0 6px 0;
-    border-radius: 0 0 6px 0;
+    -moz-border-radius: 0 0 3px 0;
+    -webkit-border-radius: 0 0 3px 0;
+    border-radius: 0 0 3px 0;
 }
-.ly-table tr:hover {
-    background-color: #E6F0F4;
+.ly-table > tbody > tr:hover {
+    background-color: #F8F3C5;
+}
+.ly-table a {
+    text-decoration: none;
 }
 /* End LuoYun Table */

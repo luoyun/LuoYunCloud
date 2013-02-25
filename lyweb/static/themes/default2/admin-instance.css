@@ -1,14 +1,10 @@
 .ly-table td {
     /*vertical-align: center;*/
 }
-td.i-logo {
-    margin: 0;
-    padding: 5px;
-}
-.i-logo img {
+img.i-logo {
     border-radius: 3px;
-    width: 36px;
-    height: 36px;
+    width: 36px !important;
+    height: 36px !important;
     margin: 0;
     padding: 0;
 }
@@ -142,4 +138,20 @@ td.i-logo {
 .instance-status-select a.current {
     color: #FFF;
     background-color: #467AA7;
+}
+
+#ictl-cfm-dialog-wait {
+    padding: 30px 10px;
+}
+#ictl-cfm-dialog-wait .pic,
+#ictl-cfm-dialog-wait .text {
+    float: left;
+}
+#ictl-cfm-dialog-wait .pic {
+    margin: 10px 5px 10px 15px;
+    width: 32px;
+}
+#ictl-cfm-dialog-wait .text {
+    padding: 10px;
+    width: 200px;
 }

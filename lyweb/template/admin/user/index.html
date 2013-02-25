@@ -24,9 +24,9 @@
 
 <div class="m-item"><span class="k">${ _("Search") }</span><span id="search"><input type="text" title="${ _('Input text to search matched user.') }"/></span></div>
 
-<div id="aul" class="ly-table">
+<div id="aul">
 
-  <table>
+  <table class="ly-table full">
     <thead>
       <tr>
         <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>
@@ -36,7 +36,6 @@
         <th>${ _("Appliance") }</th>
         <th>${ _("Instance") }</th>
 	<th>${ _("Email") }</th>
-        <th><a href="${ sort_by('date_joined') }">${ _("Date Joined") }</a></th>
 	<th><a href="${ sort_by('last_active') }">${ _("Last Active") }</a></th>
       </tr>
     </thead>
@@ -70,7 +69,6 @@
 	  % endif
 	</td>
 	<td><a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" target="_blank">${ U.email }</a></td>
-	<td class="time">${ ftime(U.date_joined) }</td>
 	<td class="time">${ htime(U.last_active) }</td>
       </tr>
       % endfor

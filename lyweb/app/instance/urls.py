@@ -31,4 +31,6 @@ handlers = [
 
     url(r'/instance/([0-9]+)/toggle_flag', instance.ToggleFlag, name='instance:toggle_flag'),
 
+    url(r'/instance/life_control', instance.LifeControl, name='instance:life_control'),
+
 ]

@@ -338,7 +338,7 @@ class Instance(ORMBase):
     def save_logo(self):
         ''' Create logo '''
 
-        if not os.path.exists(self.appliance.logothum):
+        if not os.path.exists(self.appliance.p_logo_raw):
             return logging.warning('appliance %s has not logo.' % self.appliance_id)
 
         # make sure dir is exist
@@ -351,7 +351,7 @@ class Instance(ORMBase):
 
         try:
 
-            I = Image.open(self.appliance.logothum)
+            I = Image.open(self.appliance.p_logo_raw)
 
             if os.path.exists(settings.INSTANCE_LOGO_MARK):
                 M = Image.open(settings.INSTANCE_LOGO_MARK)

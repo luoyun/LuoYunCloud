@@ -11,9 +11,9 @@
 % endif
 
 % if JOB_LIST.count():
-<div class="ly-table">
+<div>
   ${ page_html }
-  <table class="ly-table">
+  <table class="ly-table full">
     <thead>
       <tr>
         <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>
@@ -23,7 +23,6 @@
         <th><a href="${ sort_by('target_id') }">${ _("Target ID") }</a></th>
         <th><a href="${ sort_by('action') }">${ _("Action") }</a></th>
         <th><a href="${ sort_by('created') }">${ _("Created") }</a></th>
-        <th><a href="${ sort_by('started') }">${ _("Started") }</a></th>
         <th><a href="${ sort_by('ended') }">${ _("Completed") }</a></th>
       </tr>
     </thead>
@@ -37,8 +36,7 @@
         <td>${ j.target_url }</td>
         <td>${ j.action_string }</td>
         <td class="time">${ ftime(j.created) }</td>
-        <td class="time">${ ftime(j.started, '%H:%M:%S') }</td>
-        <td class="time">${ ftime(j.ended, '%H:%M:%S') } ( ${ htime(j.ended) } )</td>
+        <td class="time">${ htime(j.ended) }</td>
       </tr>
       % endfor
     </tbody>
