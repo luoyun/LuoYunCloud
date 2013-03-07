@@ -422,6 +422,7 @@ int db_job_get(LYJobInfo * job)
         job->j_target_type = atoi(PQgetvalue(res, 0, 4));
         job->j_target_id = atoi(PQgetvalue(res, 0, 5));
         job->j_action = atoi(PQgetvalue(res, 0, 6));
+        logdebug(_("new job from db %d %d %d\n"), job->j_id, job->j_status, job->j_action);
         ret = 0;
     }
     else if (ret > 1) {
@@ -446,9 +447,9 @@ int db_job_get_all(void)
                  "extract(epoch FROM started), "
                  "target_type, target_id, action "
                  "from job "
-                 "where (status >= %d and status < %d) or status = %d;",
+                 "where (status >= %d and status < %d) or (status >= %d and status < %d);",
                  LY_S_INITIATED, LY_S_RUNNING_LAST_STATUS,
-                 LY_S_PENDING) >= LINE_MAX) {
+                 LY_S_PENDING, LY_S_PENDING_LAST_STATUS) >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
@@ -462,6 +463,7 @@ int db_job_get_all(void)
         LYJobInfo * job = malloc(sizeof(LYJobInfo));
         if (job == NULL)
             return -1;
+        bzero(job, sizeof(LYJobInfo));
         job->j_id = atoi(PQgetvalue(res, r, 0));
         job->j_status = atoi(PQgetvalue(res, r, 1));
         job->j_created = atol(PQgetvalue(res, r, 2));

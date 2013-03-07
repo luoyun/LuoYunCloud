@@ -274,6 +274,8 @@ static int __parse_config(CLCConfig * c)
         __parse_oneitem_int("LYCLC_JOB_TIMEOUT_INSTANCE", &c->job_timeout_instance,
                             ini_config) ||
         __parse_oneitem_int("LYCLC_JOB_TIMEOUT_NODE", &c->job_timeout_node,
+                            ini_config) ||
+        __parse_oneitem_int("LYCLC_JOB_INSTANCE_BUSY_LIMIT", &c->node_ins_job_busy_limit,
                             ini_config))
         return CLC_CONFIG_RET_ERR_CONF;
 
@@ -504,6 +506,12 @@ int clc_config(int argc, char *argv[], CLCConfig * c)
         c->job_timeout_node = DEFAULT_JOB_TIMOUT_NODE;
     if (c->job_timeout_other == 0)
         c->job_timeout_other = DEFAULT_JOB_TIMOUT_OTHER;
+    if (c->node_cpu_factor == 0)
+        c->node_cpu_factor = DEFAULT_NODE_CPU_FACTOR;
+    if (c->node_mem_factor == 0)
+        c->node_mem_factor = DEFAULT_NODE_MEM_FACTOR;
+    if (c->node_ins_job_busy_limit == 0)
+        c->node_ins_job_busy_limit = DEFAULT_NODE_INS_JOB_BUSY_LIMIT;
  
     /* simple configuration validity checking */
     if (c->vm_name_prefix && strlen(c->vm_name_prefix) > 10) {

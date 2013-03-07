@@ -12,6 +12,7 @@ typedef struct LYJobInfo_t {
      time_t j_created;         /* created time */
      time_t j_started;         /* started time */
      time_t j_ended;           /* old: ended time */
+     time_t j_last_run;        /* last time the job runs */
 
      int j_target_type;
      int j_target_id;
@@ -19,6 +20,7 @@ typedef struct LYJobInfo_t {
      int j_action;
 
      int j_ent_id;             /* job process entity */
+     int j_pending_nr;         /* > 0: the job pending number, 0: being processed, -1: not busy */
 } LYJobInfo;
 
 void job_print_queue();

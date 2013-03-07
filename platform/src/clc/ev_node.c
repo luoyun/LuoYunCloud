@@ -36,6 +36,7 @@
 #include "lyclc.h"
 #include "lyjob.h"
 #include "entity.h"
+#include "node.h"
 #include "postgres.h"
 
 #define NODE_SCHEDULE_CPU_LIMIT(n) (n*g_c->node_cpu_factor)
@@ -95,11 +96,12 @@ static int __node_xml_register(xmlDoc * doc, xmlNode * node, int ent_id)
         return -1;
     }
 
-    NodeInfo *nf = ly_entity_data(ent_id);
-    if (nf == NULL) {
+    LYNodeData * nd = ly_entity_data(ent_id);
+    if (nd == NULL ) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
+    NodeInfo * nf = &nd->node;
 
     /* Create xpath evaluation context */
     xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
@@ -363,11 +365,12 @@ static int __process_node_xml_request(xmlDoc * doc, xmlNode * node, int ent_id)
         return 0;
     }
 
-    NodeInfo * nf = ly_entity_data(ent_id);
-    if (nf == NULL) {
+    LYNodeData * nd = ly_entity_data(ent_id);
+    if (nd == NULL ) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
+    NodeInfo * nf = &nd->node;
 
     AuthConfig * ac = ly_entity_auth(ent_id);
 
@@ -471,11 +474,12 @@ static int __node_info_update(xmlDoc * doc, xmlNode * node,
         return 0;
     }
 
-    NodeInfo *nf = ly_entity_data(ent_id);
-    if (nf == NULL) {
+    LYNodeData * nd = ly_entity_data(ent_id);
+    if (nd == NULL) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto failed;
     }
+    NodeInfo * nf = &nd->node;
 
     /* Create xpath evaluation context */
     xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
@@ -644,11 +648,12 @@ static int __node_resource_update(xmlDoc * doc, xmlNode * node, int ent_id)
 {
     logdebug(_("%s called\n"), __func__);
 
-    NodeInfo *nf = ly_entity_data(ent_id);
-    if (nf == NULL) {
+    LYNodeData * nd = ly_entity_data(ent_id);
+    if (nd == NULL) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto failed;
     }
+    NodeInfo * nf = &nd->node;
 
     /* Create xpath evaluation context */
     xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
@@ -699,9 +704,11 @@ static int __node_resource_update(xmlDoc * doc, xmlNode * node, int ent_id)
                 nf->cpu_commit, nf->mem_free, nf->mem_commit,
                 nf->load_average);
 
+    xmlXPathFreeContext(xpathCtx);
     return 0;
 
 failed:
+    xmlXPathFreeContext(xpathCtx);
     return -1;
 }
 
@@ -741,10 +748,9 @@ static int __process_node_xml_report(xmlDoc * doc, xmlNode * node, int ent_id)
         }
     }
 
-    NodeInfo *nf = ly_entity_data(ent_id);
-    if (nf != NULL && status != -1) {
-        nf->status = status;
-        loginfo(_("update node status to %d from report\n"), status);
+    LYNodeData * nd = ly_entity_data(ent_id);
+    if (nd != NULL && status != -1) {
+        loginfo(_("update node status to %d from report\n"), nd->node.status);
     }
 
     return 0;
@@ -827,11 +833,12 @@ int eh_process_node_auth(int is_reply, void * data, int ent_id)
 
     loginfo(_("auth request from node %d(tag)\n"), ai->tag);
 
-    NodeInfo * nf = ly_entity_data(ent_id);
-    if (nf == NULL) {
+    LYNodeData * nd = ly_entity_data(ent_id);
+    if (nd == NULL) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
+    NodeInfo * nf = &nd->node;
 
     /* get secret */
     if (ac->secret == NULL) {

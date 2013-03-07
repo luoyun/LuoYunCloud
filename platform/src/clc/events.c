@@ -154,6 +154,7 @@ static int __process_web_job(char * buf, int size, int ent_id)
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
+    bzero(job, sizeof(LYJobInfo));
 
     job->j_id = job_id;
     if (db_job_get(job) != 0) {
