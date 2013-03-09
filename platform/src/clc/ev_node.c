@@ -328,6 +328,7 @@ xml_err:
     logerror(_("invalid node xml register request\n"));
 done:
     xmlXPathFreeContext(xpathCtx);
+    logdebug(_("end of %s, node status %d\n"), __func__, nf->status);
     return ret;
 }
 
@@ -699,8 +700,8 @@ static int __node_resource_update(xmlDoc * doc, xmlNode * node, int ent_id)
     nf->load_average = atoi(str);
     free(str);
 
-    logdebug(_("update info for node %d: %d %d %d %d\n"),
-                ly_entity_db_id(ent_id),
+    logdebug(_("report info for node %d: %d %d %d %d %d\n"),
+                ly_entity_db_id(ent_id), nf->status,
                 nf->cpu_commit, nf->mem_free, nf->mem_commit,
                 nf->load_average);
 

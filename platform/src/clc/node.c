@@ -52,11 +52,16 @@ int node_schedule(int node_id)
         if (nf->status == NODE_STATUS_BUSY || nf->status == NODE_STATUS_ERROR) {
             logwarn(_("node %d is %s\n"), node_id,
                       nf->status == NODE_STATUS_BUSY ?  "busy" : "in error state");
+            luoyun_node_info_print(nf);
             return NODE_SCHEDULE_NODE_BUSY;
         }
 
-        if (nf->cpu_commit >= nf->cpu_vlimit || nf->mem_commit >= nf->mem_vlimit)
+        if (nf->cpu_commit >= nf->cpu_vlimit || nf->mem_commit >= nf->mem_vlimit) {
+            logdebug("%s:%d %d %d %d\n", __func__,
+                      nf->cpu_commit, nf->cpu_vlimit,
+                      nf->mem_commit, nf->mem_vlimit);
             return NODE_SCHEDULE_NODE_BUSY;
+        }
 
         return ent_id;
     }

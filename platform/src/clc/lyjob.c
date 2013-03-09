@@ -176,6 +176,22 @@ int job_remove(LYJobInfo * job)
     return 0;
 }
 
+int job_busy_remove(LYJobInfo * job)
+{
+    if (job == NULL)
+        return -1;
+
+    if (job->j_pending_nr == 0) {
+        job->j_pending_nr = -1; /* not busy */
+        LYNodeData * nd = ly_entity_data(job->j_ent_id);
+        if (nd != NULL && nd->ins_job_busy_nr > 0) {
+            nd->ins_job_busy_nr--;
+            logdebug(_("entity %d job busy nr %d\n"), job->j_ent_id, nd->ins_job_busy_nr);
+        }
+    }
+    return 0;
+}
+
 int job_update_status(LYJobInfo * job, int status)
 {
     if (JOB_IS_INITIATED(status))
@@ -205,6 +221,7 @@ int job_update_status(LYJobInfo * job, int status)
             logerror(_("db error %s(%d)\n"), __func__, __LINE__);
             return -1;
         }
+        job_busy_remove(job);
         return 0;
     }
 
@@ -237,14 +254,8 @@ int job_update_status(LYJobInfo * job, int status)
             ii.status = DOMAIN_S_NEED_QUERY;
             ret = db_instance_update_status(job->j_target_id, &ii, -1);
             job_internal_query_instance(job->j_target_id);
-            if (job->j_action == LY_A_NODE_RUN_INSTANCE && job->j_pending_nr == 0) {
-                job->j_pending_nr = -1; 
-                LYNodeData * nd = ly_entity_data(job->j_ent_id);
-                if (nd != NULL && nd->ins_job_busy_nr > 0) {
-                    nd->ins_job_busy_nr--;
-                    logdebug(_("entity %d job busy nr %d\n"), job->j_ent_id, nd->ins_job_busy_nr);
-                }
-            }
+            if (job->j_action == LY_A_NODE_RUN_INSTANCE)
+                job_busy_remove(job);
         }
         else if ((job->j_action == LY_A_NODE_RUN_INSTANCE ||
                   job->j_action == LY_A_NODE_FULLREBOOT_INSTANCE) && 
@@ -258,14 +269,7 @@ int job_update_status(LYJobInfo * job, int status)
             ret = db_instance_update_status(job->j_target_id, &ii, node_id);
             */
             ret = 0;
-            if (job->j_pending_nr == 0) {
-                job->j_pending_nr = -1;
-                LYNodeData * nd = ly_entity_data(job->j_ent_id);
-                if (nd != NULL && nd->ins_job_busy_nr > 0) {
-                    nd->ins_job_busy_nr--;
-                    logdebug(_("entity %d job busy nr %d\n"), job->j_ent_id, nd->ins_job_busy_nr);
-                }
-            }
+            job_busy_remove(job);
         }
         else if (job->j_action == LY_A_NODE_STOP_INSTANCE &&
                  (status == LY_S_FINISHED_SUCCESS ||
@@ -461,8 +465,8 @@ static int __job_start_instance(LYJobInfo * job)
     nd->ins_job_busy_nr++;
  
     /* temprarily hold the resource, recovered automatically in case of failure */
-    nf->cpu_commit -= ci.ins_vcpu;
-    nf->mem_commit -= ci.ins_mem;
+    nf->cpu_commit += ci.ins_vcpu;
+    nf->mem_commit += ci.ins_mem;
 
     free(xml);
     luoyun_node_ctrl_instance_cleanup(&ci);
@@ -832,17 +836,19 @@ int job_dispatch(void)
                 timeout = g_c->job_timeout_node;
             else
                 timeout = g_c->job_timeout_other;
-            if ((now - job->j_started) > timeout) {
+            if (JOB_IS_PENDING(job->j_status)) {
+                if ((now - job->j_last_run) > (CLC_JOB_DISPATCH_INTERVAL)<<1) {
+                    /* interval of checking pending jobs needs further research */
+                    time(&job->j_last_run);
+                    __job_run(job);
+                }
+            }
+            else if ((now - job->j_started) > timeout) {
                 logwarn(_("job %d timed out\n"), job->j_id);
                 job_update_status(job, JOB_S_TIMEOUT);
             }
-            else if ((JOB_IS_WAITING(job->j_status) || 
-                      JOB_IS_PENDING(job->j_status)) && 
-                     (now - job->j_last_run) > (CLC_JOB_DISPATCH_INTERVAL)<<1) {
-                /* interval to check waiting/pending jobs needs further research */
-                time(&job->j_last_run);
+            else if (JOB_IS_WAITING(job->j_status))
                 __job_run(job);
-            }
         }
         else {
             logerror(_("in %s, job %d in unexpected status(%d)\n"),
