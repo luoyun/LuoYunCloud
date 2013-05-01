@@ -89,6 +89,14 @@ int job_check(LYJobInfo * job)
 
     LYJobInfo *curr;
     LYJobInfo *safe;
+    /* if instance is being destroyed, don't do anything */
+    list_for_each_entry_safe(curr, safe, &(g_job_list), j_list) {
+    if (curr->j_target_type == job->j_target_type &&
+        curr->j_target_id == job->j_target_id &&
+        curr->j_action == LY_A_NODE_DESTROY_INSTANCE)
+        return LY_S_CANCEL_TARGET_BUSY;
+    }
+
     if (job->j_action == LY_A_CLC_ENABLE_NODE ||
         job->j_action == LY_A_CLC_DISABLE_NODE) {
         list_for_each_entry_safe(curr, safe, &(g_job_list), j_list) {
@@ -106,6 +114,15 @@ int job_check(LYJobInfo * job)
             if (curr->j_target_type == job->j_target_type && 
                 curr->j_target_id == job->j_target_id && 
                 curr->j_action != LY_A_NODE_QUERY_INSTANCE)
+                /* no any control action actvie before running instance */
+                return LY_S_CANCEL_TARGET_BUSY;
+        }
+    }
+    else if (job->j_action == LY_A_NODE_FULLREBOOT_INSTANCE) {
+        list_for_each_entry_safe(curr, safe, &(g_job_list), j_list) {
+            if (curr->j_target_type == job->j_target_type &&
+                curr->j_target_id == job->j_target_id &&
+                curr->j_action == job->j_action)
                 /* no any control action actvie before running instance */
                 return LY_S_CANCEL_TARGET_BUSY;
         }
