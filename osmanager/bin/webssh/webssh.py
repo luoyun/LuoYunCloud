@@ -66,10 +66,9 @@ if __name__ == '__main__':
             if j["webssh"].get("port"):
                sshport = j["webssh"]["port"]
 
-    try:
-        p = os.path.dirname(sys.argv[0])
-        os.execl("%s/%s" % (p, DEFAULT_WEB_SSH_EXE), DEFAULT_WEB_SSH_EXE, "-t", "-b", "-p", "%d" % sshport, "-s /:SSH")
-    except OSError:
-        print "OSError: starting %s" % DEFAULT_WEB_SSH_EXE
+    p = os.path.dirname(sys.argv[0])
+    f = os.popen("%s/%s -t -b -p %d -s /:SSH" % (p, DEFAULT_WEB_SSH_EXE, sshport))
+    if f.close():
+        print "Error: start web ssh failed"
         sys.exit(1)
 
