@@ -65,14 +65,16 @@ Here are the steps to install os manager in instance,
    /LuoYun/custom/scrtips/config - is the file used to configure application.
                                    It's invoked by osmanager.sh.
 5) Review mand modify osmanager.sh when neceassry.
-6) Run /LuoYun/install.sh to start OS Manager automatically when instance gets
-   started.
+6) For system that doesn't support init scripts, run /LuoYun/install.sh to
+   start OS Manager automatically when instance gets started. For systems that
+   support init scripts, such as Centos6+, scripts in init/luoyun directory
+   will be picked up and run automatically by system's init process.
 
 While installing OS Manager in appliance, make sure stop 5 above is done in
 chroot or similar environment.
 
 3. Uninstall OS Manager
-1) Run /LuoYun/uninstall.sh
+1) Run /LuoYun/uninstall.sh and remove /etc/init/luoyun
 2) Remove whole directory of /LuoYun
 
 Any question, please send email to contact@luoyun.co
