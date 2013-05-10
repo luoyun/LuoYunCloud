@@ -326,6 +326,21 @@ int libvirt_domain_create(char * xml)
     return 0;
 }
 
+char * libvirt_domain_xml(char * name)
+{
+    char * xml = NULL;
+    if (g_conn == NULL)
+        return NULL;
+
+    virDomainPtr domain = virDomainLookupByName(g_conn, name);
+    if (domain) {
+        xml = virDomainGetXMLDesc(domain, 0);
+        virDomainFree(domain);
+    }
+
+    return xml;
+}
+
 #define __DOMAIN_OP_STOP       1
 #define __DOMAIN_OP_STOP_FORCE 2
 #define __DOMAIN_OP_REBOOT     3

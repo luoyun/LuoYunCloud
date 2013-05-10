@@ -357,7 +357,7 @@ static int __process_work_xml(char *xml)
     logdebug("%s\n", xml);
     xmlNode * node = xmlDocGetRootElement(doc);
     if (node == NULL || strcmp((char *)node->name, LYXML_ROOT) != 0) {
-        logwarn(_("error: xml string not for .\n"), LYXML_ROOT);
+        logwarn(_("error: xml string not for %s\n"), LYXML_ROOT);
         return 0;
     }
     node = node->children;

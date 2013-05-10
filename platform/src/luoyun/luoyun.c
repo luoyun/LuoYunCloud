@@ -180,8 +180,9 @@ void luoyun_instance_info_print(InstanceInfo *ii)
 {
     logsimple("Instance Info struct:\n"
               "ip = %s\n"
+              "gport = %d\n"
               "status = %d\n",
-              ii->ip, ii->status);
+              ii->ip, ii->gport, ii->status);
 }
 
 void luoyun_instance_info_cleanup(InstanceInfo *ii)

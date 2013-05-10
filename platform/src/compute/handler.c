@@ -693,6 +693,58 @@ out:
     return NULL;
 }
 
+/* get domain graphics port packet */
+static int __domain_xml_graphics_port(char *xml)
+{
+    int ret = 0;
+    xmlDoc *doc = xml_doc_from_str(xml);
+    if (doc == NULL) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return 0;
+    }
+    xmlNode * node = xmlDocGetRootElement(doc);
+    if (node == NULL || strcmp((char *)node->name, "domain") != 0) {
+        logwarn(_("error: xml string not for domain\n"));
+        return 0;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name); */
+            if (strcmp((char *)node->name, "devices") == 0 ) {
+                break;
+            }
+         }
+    }
+    if (node == NULL || strcmp((char *)node->name, "devices") != 0 ) {
+        logwarn(_("error: xml string not for domain\n"));
+        return 0;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name);*/
+            if (strcmp((char *)node->name, "graphics") == 0 ) {
+                char * str = (char *)xmlGetProp(node, (const xmlChar *)"port");
+                if (str == NULL) {
+                    logerror(_("domain has no graphics port\n"));
+                    return 0;
+                }
+                ret = atoi(str);
+                logdebug(_("graphics port is %d\n"), ret);
+                free(str);
+                break;
+            }
+            /* other nodes ignored */
+        }
+    }
+
+    xmlFreeDoc(doc);
+    return ret;
+}
+ 
 static int __domain_run_data_check(NodeCtrlInstance * ci)
 {
     if (ci == NULL || g_c == NULL)
@@ -1047,6 +1099,17 @@ static int __domain_run(NodeCtrlInstance * ci)
 
     ret = LY_S_WAITING_STARTING_OSM;
     ly_node_send_report_resource();
+
+    /* check whether the domain is active */
+    int wait = LY_NODE_START_INSTANCE_WAIT;
+    while (wait > 0) {
+        wait--;
+        if (libvirt_domain_active(ci->ins_domain)) {
+            loginfo(_("instance %s active.\n"), ci->ins_domain);
+            break;
+        }
+        sleep(1);
+    }
     goto out_unlock;
 
 out_umount:
@@ -1337,6 +1400,34 @@ void * __instance_control_func(void * arg)
         ret = __send_response(g_c->wfd, ci, LY_S_FINISHED_SUCCESS);
     else if (ret < 0)
         ret = __send_response(g_c->wfd, ci, LY_S_FINISHED_FAILURE);
+    else if (ret == LY_S_WAITING_STARTING_OSM && ci->req_action == LY_A_NODE_RUN_INSTANCE) {
+        InstanceInfo ii;
+        bzero(&ii, sizeof(InstanceInfo));
+        ii.status = DOMAIN_S_START;
+        ii.id = ci->ins_id;
+        char * xml = libvirt_domain_xml(ci->ins_domain);
+        if (xml) {
+            ii.gport = __domain_xml_graphics_port(xml);
+            free(xml);
+        }
+        else
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+
+        LYReply r;
+        r.req_id = ci->req_id;
+        r.from = LY_ENTITY_NODE;
+        r.to = LY_ENTITY_CLC;
+        r.status = ret;
+        r.data = &ii;
+        xml = lyxml_data_reply_instance_info(&r, NULL, 0);
+        if (xml) {
+            if (ly_packet_send(g_c->wfd, PKT_TYPE_CLC_INSTANCE_CONTROL_REPLY, xml, strlen(xml)) < 0)
+                logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+            free(xml);
+        }
+        else
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+    }
     else
         ret = __send_response(g_c->wfd, ci, ret);
 

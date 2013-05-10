@@ -525,6 +525,7 @@ char * lyxml_data_reply(LYReply * reply, char * buf, unsigned int size)
       "<id>%d</id>"\
       "<status>%d</status>"\
       "<ip>%s</ip>"\
+      "<gport>%d</gport>"\
     "</data>"\
   "</response>"\
 "</" LYXML_ROOT ">"
@@ -545,7 +546,8 @@ char * lyxml_data_reply_instance_info(LYReply * reply, char * buf,
                        DATA_INSTANCE_INFO,
                        ii->id,
                        ii->status,
-                       ii->ip ? (char *)(BAD_CAST ii->ip) : "");
+                       ii->ip ? (char *)(BAD_CAST ii->ip) : "",
+                       ii->gport);
     __LUOYUN_XML_DATA_RETURN(caller_buf_flag, buf, size, len)
 }
 

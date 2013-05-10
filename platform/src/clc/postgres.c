@@ -497,6 +497,8 @@ int db_job_update_status(LYJobInfo * job)
 
 int db_instance_find_secret(int id, char ** secret)
 {
+    *secret = NULL;
+
     char sql[LINE_MAX];
     int ret = snprintf(sql, LINE_MAX,
                        "SELECT key from instance where id = %d;",
@@ -513,13 +515,18 @@ int db_instance_find_secret(int id, char ** secret)
 
     ret = PQntuples(res);
     if (ret > 1) {
-        logerror(_("DB have multi node with same tag\n"));
+        logerror(_("DB have multi instance with same id %d\n"), id);
         ret = -1;
     }
     else if (ret == 1) {
         char * s = PQgetvalue(res, 0, 0);
-        if (s && strlen(s))
-            *secret = strdup(s);
+        if (s && strlen(s)) {
+            char * str = strdup(s);
+            char * str1 = strtok(str, ":");
+            if (str1)
+                *secret = strdup(str1);
+            free(str);
+        }
     }
 
     PQclear(res);
@@ -535,48 +542,143 @@ int db_instance_update_secret(int id, char * secret)
 
     char sql[LINE_MAX];
     int ret = snprintf(sql, LINE_MAX,
-                       "UPDATE instance SET key = '%s', "
-                       "updated = 'now' WHERE id= %d;",
-                       secret, id);
+                       "SELECT key from instance where id = %d;",
+                       id);
+
     if (ret >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
 
-    return __db_exec(sql);
+    PGresult *res = __db_select(sql);
+    if (res == NULL)
+        return -1;
+
+    char * str = NULL, * token = NULL, * saveptr1 = NULL;
+    ret = PQntuples(res);
+    if (ret > 1) {
+        logerror(_("DB have multi instance with same id %d\n"), id);
+        ret = -1;
+        goto done;
+    }
+    else if (ret == 1) {
+        char * s = PQgetvalue(res, 0, 0);
+        if (s && strlen(s)) {
+            str = strdup(s);
+            token = strtok_r(str, ":", &saveptr1);
+            if (token) {
+                if (strcmp(token, secret) == 0) {
+                    ret = 0;
+                    goto done;
+                }
+                token = strtok_r(NULL, ":", &saveptr1);
+            }
+        }
+    }
+    if (token)
+        ret = snprintf(sql, LINE_MAX,
+                       "UPDATE instance SET key = '%s:%s', "
+                       "updated = 'now' WHERE id= %d;",
+                       secret, token, id);
+    else
+        ret = snprintf(sql, LINE_MAX,
+                       "UPDATE instance SET key = '%s', "
+                       "updated = 'now' WHERE id= %d;",
+                       secret, id);
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        ret = -1;
+        goto done;
+    }
+
+    ret = __db_exec(sql);
+done:
+    PQclear(res);
+    if (str)
+        free(str);
+    return ret;
 }
 
 int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
 {
-    char s_ip[100];
-    if (ii == NULL || ii->ip == NULL || ii->ip[0] == '\0' || ii->ip[0] == ' ')
-        s_ip[0] = '\0';
-    else
-        snprintf(s_ip, 100, "ip = '%s',", ii->ip);
+    char sql[LINE_MAX];
+    int ret = snprintf(sql, LINE_MAX,
+                       "SELECT key, ip, node_id, status from instance where id = %d;",
+                       instance_id);
 
-    int ii_status = DOMAIN_S_UNKNOWN;
-    char s_status[20];
-    if (ii == NULL || ii->status == DOMAIN_S_UNKNOWN)
-        s_status[0] = '\0';
-    else {
-        ii_status = ii->status;
-        snprintf(s_status, 20, "status = %d,", ii->status);
+    if (ret >= LINE_MAX) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
     }
 
-    char s_node_id[20];
-    if (node_id > 0)
-        snprintf(s_node_id, 20, "node_id = %d,", node_id);
-    else if (node_id == 0)
-        snprintf(s_node_id, 20, "node_id = NULL,");
-    else
-        s_node_id[0] = '\0';
+    PGresult *res = __db_select(sql);
+    if (res == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
 
-    char sql[LINE_MAX];
-    if (snprintf(sql, LINE_MAX, "UPDATE instance SET %s %s %s "
+    char s_key[128], s_ip[100], s_status[20], s_node_id[20];
+    s_key[0] = '\0';
+    s_ip[0] = '\0';
+    s_node_id[0] = '\0';
+    s_status[0] = '\0';
+    ret = PQntuples(res);
+    if (ret > 1) {
+        logerror(_("DB have multi instance(%d) with same tag\n"), instance_id);
+        PQclear(res);
+        return -1;
+    }
+    else if (ret == 1) {
+        char * s = PQgetvalue(res, 0, 0);
+        if (ii && ii->gport != -1 && s && strlen(s)) {
+            char * str, * secret, * token, * saveptr1 = NULL;
+            str = strdup(s);
+            secret = strtok_r(str, ":", &saveptr1);
+            if (secret) {
+                token = strtok_r(NULL, ":", &saveptr1);
+                if (token) {
+                    if (ii && ii->gport != atoi(token)) {
+                        snprintf(s_key, 128, "key = '%s:%d',", secret, ii->gport);
+                        logdebug(_("new key is %s\n"), s_key);
+                    }
+                }
+                else {
+                    loginfo(_("no gport in key for %d\n"), instance_id);
+                    snprintf(s_key, 128, "key = '%s:%d',", secret, ii->gport);
+                 }
+            }
+            else {
+                loginfo(_("no secret in key for %d\n"), instance_id);
+                snprintf(s_key, 128, "key = ':%d',", ii->gport);
+            }
+            free(str);
+        }
+        s = PQgetvalue(res, 0, 1);
+        if (s && strlen(s)) {
+            if (ii && ii->ip && ii->ip[0] != '\0' && ii->ip[0] != ' ' && strcmp(ii->ip, s))
+                snprintf(s_ip, 100, "ip = '%s',", ii->ip);
+        }
+        s = PQgetvalue(res, 0, 2);
+        if (node_id == 0)
+            snprintf(s_node_id, 20, "node_id = NULL,");
+        else if (node_id > 0 && s && strlen(s)) {
+            if (node_id != atoi(s))
+                snprintf(s_node_id, 20, "node_id = %d,", node_id);
+        }
+        s = PQgetvalue(res, 0, 3);
+        if (s && strlen(s)) {
+            if (ii && ii->status != DOMAIN_S_UNKNOWN && ii->status != atoi(s)) {
+                snprintf(s_status, 20, "status = %d,", ii->status);
+            }
+        }
+    }
+    PQclear(res);
+
+    if (snprintf(sql, LINE_MAX, "UPDATE instance SET %s %s %s %s "
                                 "updated = 'now' "
-                                "WHERE status != %d and status != %d and id = %d;",
-                                s_ip, s_status, s_node_id,
-                                DOMAIN_S_DELETE, ii_status, instance_id) >= LINE_MAX) {
+                                "WHERE status != %d and id = %d;",
+                                s_ip, s_status, s_node_id, s_key,
+                                DOMAIN_S_DELETE, instance_id) >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
@@ -644,8 +746,14 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
         ci->app_checksum[32] = 0;
         ci->ins_status = atoi(PQgetvalue(res, 0, 9));
         s = PQgetvalue(res, 0, 10);
-        if (s && strlen(s))
-            ci->osm_secret = strdup(s);
+        if (s && strlen(s)) {
+            char * str, * str1;
+            str = strdup(s);
+            str1 = strtok(str, ":");
+            if (str1)
+                ci->osm_secret = strdup(str1);
+            free(str);
+        }
         ci->osm_tag = ci->ins_id;
         s = PQgetvalue(res, 0, 11);
         if (s && strlen(s))

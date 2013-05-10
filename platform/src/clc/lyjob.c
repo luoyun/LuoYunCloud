@@ -232,6 +232,7 @@ int job_update_status(LYJobInfo * job, int status)
     if (status == LY_S_WAITING_STARTING_OSM) {
         InstanceInfo ii;
         ii.ip = "0.0.0.0";
+        ii.gport = 0;
         ii.status = DOMAIN_S_START;
         int node_id = ly_entity_db_id(job->j_ent_id);
         if (db_instance_update_status(job->j_target_id, &ii, node_id) < 0) {
@@ -268,6 +269,7 @@ int job_update_status(LYJobInfo * job, int status)
                 ly_entity_release(ent_id);
             }
             ii.ip = NULL;
+            ii.gport = 0;
             ii.status = DOMAIN_S_NEED_QUERY;
             ret = db_instance_update_status(job->j_target_id, &ii, -1);
             job_internal_query_instance(job->j_target_id);
@@ -282,6 +284,7 @@ int job_update_status(LYJobInfo * job, int status)
             OSMInfo *oi = ly_entity_data(ent_id);
             ii.ip = oi->ip;
             ii.status = DOMAIN_S_SERVING;
+            ii.gport = -1;
             int node_id = ly_entity_db_id(job->j_ent_id);
             ret = db_instance_update_status(job->j_target_id, &ii, node_id);
             */
@@ -298,6 +301,7 @@ int job_update_status(LYJobInfo * job, int status)
                 ly_entity_release(ent_id);
             }
             ii.ip = "0.0.0.0";
+            ii.gport = 0;
             ii.status = DOMAIN_S_STOP;
             ret = db_instance_update_status(job->j_target_id, &ii, -1);
         }
@@ -530,6 +534,7 @@ static int __job_control_instance_simple(LYJobInfo * job)
         if (job->j_action == LY_A_NODE_QUERY_INSTANCE) {
             InstanceInfo ii;
             ii.ip = "0.0.0.0";
+            ii.gport = 0;
             ii.status = DOMAIN_S_NOT_EXIST;
             db_instance_update_status(job->j_target_id, &ii, node_id);
         }

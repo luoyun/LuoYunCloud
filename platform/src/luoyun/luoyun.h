@@ -397,6 +397,7 @@ typedef struct InstanceInfo_t {
     int id;
     int status;
     char *ip;
+    int gport; /* graphices port */
 } InstanceInfo;
 
 /*

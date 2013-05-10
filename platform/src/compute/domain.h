@@ -22,6 +22,8 @@ int libvirt_domain_create(char * xml);
 int libvirt_domain_stop(char * name);
 int libvirt_domain_poweroff(char * name);
 int libvirt_domain_reboot(char * name);
+char * libvirt_domain_xml(char * name);
+
 
 #if 0
 int libvirt_domain_save(char * name, int idonweb)
