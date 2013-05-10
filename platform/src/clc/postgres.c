@@ -629,47 +629,50 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
         return -1;
     }
     else if (ret == 1) {
-        char * s = PQgetvalue(res, 0, 0);
-        if (ii && ii->gport != -1 && s && strlen(s)) {
-            char * str, * secret, * token, * saveptr1 = NULL;
-            str = strdup(s);
-            secret = strtok_r(str, ":", &saveptr1);
-            if (secret) {
-                token = strtok_r(NULL, ":", &saveptr1);
-                if (token) {
-                    if (ii && ii->gport != atoi(token)) {
+        if (ii && ii->gport != -1) {
+            char * s = PQgetvalue(res, 0, 0);
+            if (s && strlen(s)) {
+                char * str, * secret, * token, * saveptr1 = NULL;
+                str = strdup(s);
+                secret = strtok_r(str, ":", &saveptr1);
+                if (secret) {
+                    token = strtok_r(NULL, ":", &saveptr1);
+                    if (token) {
+                        if (ii && ii->gport != atoi(token)) {
+                            snprintf(s_key, 128, "key = '%s:%d',", secret, ii->gport);
+                            logdebug(_("new key is %s\n"), s_key);
+                        }
+                    }
+                    else {
+                        loginfo(_("no gport in key for %d\n"), instance_id);
                         snprintf(s_key, 128, "key = '%s:%d',", secret, ii->gport);
-                        logdebug(_("new key is %s\n"), s_key);
                     }
                 }
                 else {
-                    loginfo(_("no gport in key for %d\n"), instance_id);
-                    snprintf(s_key, 128, "key = '%s:%d',", secret, ii->gport);
-                 }
+                    loginfo(_("no secret in key for %d\n"), instance_id);
+                    snprintf(s_key, 128, "key = ':%d',", ii->gport);
+                }
+                free(str);
             }
-            else {
-                loginfo(_("no secret in key for %d\n"), instance_id);
+            else
                 snprintf(s_key, 128, "key = ':%d',", ii->gport);
-            }
-            free(str);
         }
-        s = PQgetvalue(res, 0, 1);
-        if (s && strlen(s)) {
-            if (ii && ii->ip && ii->ip[0] != '\0' && ii->ip[0] != ' ' && strcmp(ii->ip, s))
+        if (ii && ii->ip && ii->ip[0] != '\0' && ii->ip[0] != ' ') {
+            char * s = PQgetvalue(res, 0, 1);
+            if (s == NULL || strlen(s) == 0 || strcmp(ii->ip, s))
                 snprintf(s_ip, 100, "ip = '%s',", ii->ip);
         }
-        s = PQgetvalue(res, 0, 2);
-        if (node_id == 0)
-            snprintf(s_node_id, 20, "node_id = NULL,");
-        else if (node_id > 0 && s && strlen(s)) {
-            if (node_id != atoi(s))
+        if (node_id >= 0) {
+            char * s = PQgetvalue(res, 0, 2);
+            if (node_id == 0)
+                snprintf(s_node_id, 20, "node_id = NULL,");
+            else if (s == NULL || strlen(s) == 0 || node_id != atoi(s))
                 snprintf(s_node_id, 20, "node_id = %d,", node_id);
         }
-        s = PQgetvalue(res, 0, 3);
-        if (s && strlen(s)) {
-            if (ii && ii->status != DOMAIN_S_UNKNOWN && ii->status != atoi(s)) {
+        if (ii && ii->status != DOMAIN_S_UNKNOWN) {
+            char * s = PQgetvalue(res, 0, 3);
+            if (s == NULL || strlen(s) == 0 || ii->status != atoi(s))
                 snprintf(s_status, 20, "status = %d,", ii->status);
-            }
         }
     }
     PQclear(res);
