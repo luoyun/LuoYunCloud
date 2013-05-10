@@ -36,7 +36,7 @@ CPPFLAGS := -I$(top_srcdir)\
             -I/usr/include/libxml2
 CFLAGS = -Wall -g -std=gnu99 -D_GNU_SOURCE -DVERSION=\"$(VERSION)\" -DPACKAGE="\"$(PACKAGE)\""
 LDFLAGS = -lm -pthread -lvirt -lcurl -lbz2 -lz -lxml2 -lpq -luuid -lgcrypt
-LDLIBS = ../src/luoyun/libluoyun.a ../src/util/libutil.a ../lib/libding.a
+LDLIBS = ../src/luoyun/libluoyun.a ../src/util/libutil.a ../lib/libding.a ../lib/json-parser/libjson_parser.a
 HEADERS = $(wildcard ../src/util/*.h)
 
 RM = /bin/rm -f
@@ -45,7 +45,7 @@ TEST_PROG = test_list test_lydl test_pidfile test_socket\
             test_getconf test_getfreemem test_getmem \
             test_vm test_xml test_md5 test_lynode test_pq \
             test_misc test_crypt test_echo test_clc \
-            test_nodeenable test_lyosm test_fileno
+            test_nodeenable test_lyosm test_libvirt
 TEST_OBJ = $(addsuffix .o, $(TEST_PROG))
 
 .PHONY : build clean

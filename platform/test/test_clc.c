@@ -282,7 +282,7 @@ int setup_reboot_job_in_db()
                  "VALUES (%d, %d, "
                  "1, %d, %d, 'now', 'now');",
                  JOB_TARGET_INSTANCE, test_ins_id,
-                 LY_A_NODE_REBOOT_INSTANCE, JOB_S_INITIATED) >= LINE_MAX) {
+                 LY_A_NODE_FULLREBOOT_INSTANCE, JOB_S_INITIATED) >= LINE_MAX) {
         printf("error in %s(%d)\n", __func__, __LINE__);
         return -1;
     }
