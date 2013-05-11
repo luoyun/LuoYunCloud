@@ -1318,13 +1318,21 @@ static int __domain_query(NodeCtrlInstance * ci)
 
     InstanceInfo ii;
     bzero(&ii, sizeof(InstanceInfo));
-    if (libvirt_domain_active(ci->ins_domain))
+    ii.id = ci->ins_id;
+    if (libvirt_domain_active(ci->ins_domain)) {
+        char * xml = libvirt_domain_xml(ci->ins_domain);
+        if (xml) {
+            ii.gport = __domain_xml_graphics_port(xml);
+            free(xml);
+        }
+        else
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         ii.status = DOMAIN_S_START;
+    }
     else if (access(path, F_OK) == 0)
         ii.status = DOMAIN_S_STOP;
     else
         ii.status = DOMAIN_S_NOT_EXIST;
-    ii.id = ci->ins_id;
 
     LYReply r;
     r.req_id = ci->req_id;
@@ -1400,7 +1408,7 @@ void * __instance_control_func(void * arg)
         ret = __send_response(g_c->wfd, ci, LY_S_FINISHED_SUCCESS);
     else if (ret < 0)
         ret = __send_response(g_c->wfd, ci, LY_S_FINISHED_FAILURE);
-    else if (ret == LY_S_WAITING_STARTING_OSM && ci->req_action == LY_A_NODE_RUN_INSTANCE) {
+    else if (ret == LY_S_WAITING_STARTING_OSM) {
         InstanceInfo ii;
         bzero(&ii, sizeof(InstanceInfo));
         ii.status = DOMAIN_S_START;

@@ -340,7 +340,7 @@ static int __job_start_instance(LYJobInfo * job)
         int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, job->j_target_id);
         if (ly_entity_is_registered(ent_id)) {
             logdebug(_("instance %d started\n"), job->j_target_id);
-            ly_entity_print_osm();
+            /* ly_entity_print_osm(); */
             job_update_status(job, LY_S_WAITING_STARTING_SERVICE);
         }
         else if (!ly_entity_is_online(ent_id)) {
