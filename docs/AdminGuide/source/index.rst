@@ -90,6 +90,7 @@ Appliances
    :maxdepth: 2
    
    appliances/centos6
+   appliances/windows
 
 
 
