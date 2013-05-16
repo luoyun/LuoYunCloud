@@ -320,6 +320,59 @@ out:
     return -1;
 }
 
+/* set domain graphics password */
+static char *  __domain_xml_graphics_passwd_set(char *xml, char *password)
+{
+    xmlDoc *doc = xml_doc_from_str(xml);
+    if (doc == NULL) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return NULL;
+    }
+    xmlNode * node = xmlDocGetRootElement(doc);
+    if (node == NULL || strcmp((char *)node->name, "domain") != 0) {
+        logwarn(_("error: xml string not for domain\n"));
+        xmlFreeDoc(doc);
+        return NULL;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name); */
+            if (strcmp((char *)node->name, "devices") == 0 ) {
+                break;
+            }
+         }
+    }
+    if (node == NULL || strcmp((char *)node->name, "devices") != 0 ) {
+        logwarn(_("error: xml string not for domain\n"));
+        xmlFreeDoc(doc);
+        return NULL;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name);*/
+            if (strcmp((char *)node->name, "graphics") == 0 ) {
+                char * str = (char *)xmlSetProp(node, (const xmlChar *)"passwd", (const xmlChar *)(BAD_CAST password));
+                if (str == NULL) {
+                    logerror(_("domain sets graphics password error\n"));
+                    return xml;
+                }
+                logdebug(_("graphics password set\n"));
+                int len;
+                xml = NULL;
+                xmlDocDumpMemory(doc, (xmlChar **)&xml, &len);
+                break;
+            }
+            /* other nodes ignored */
+        }
+    }
+
+    xmlFreeDoc(doc);
+    return xml;
+}
 #include <json.h>
 static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor, 
                              char * net, int net_size, 
@@ -539,6 +592,57 @@ out:
     return -1;
 }
 
+static char *  __domain_xml_json_vdi(NodeCtrlInstance * ci, char * xml)
+{
+    if (ci == NULL || ci->osm_json == NULL || xml == NULL || g_c == NULL)
+        return NULL;
+
+    json_settings settings;
+    memset((void *)&settings, 0, sizeof(json_settings));
+    char error[256];
+    json_value * value = json_parse_ex(&settings, ci->osm_json, error);
+    if (value == 0) {
+        logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, error);
+        return NULL;
+    }
+
+    if (value->type != json_object) {
+        logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "object");
+        goto out;
+    }
+
+    for (int i = 0; i < value->u.object.length; i++) {
+        if (strcmp(value->u.object.values[i].name, "vdi") == 0) {
+            json_value * vdi_value = value->u.object.values[i].value;
+            if (vdi_value->type != json_object) {
+                logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "vdi object");
+                goto out;
+            }
+            json_value * vdi_passwd = NULL;
+            for (int k = 0; k < vdi_value->u.object.length; k++) {
+                if (strcmp(vdi_value->u.object.values[k].name, "password") == 0) {
+                    vdi_passwd = vdi_value->u.object.values[k].value;
+                    break;
+                }
+            }
+            if (vdi_passwd) {
+                if (vdi_passwd->type == json_string)
+                    xml = __domain_xml_graphics_passwd_set(xml, (char *)vdi_passwd->u.string.ptr);
+                else
+                    logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "vdi passwd");
+            }
+            break;
+        }
+    }
+
+    json_value_free(value);
+    return xml;
+
+out:
+    json_value_free(value);
+    return NULL;
+}
+
 static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
 {
     if (ci == NULL || g_c == NULL)
@@ -683,6 +787,12 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
     else if (len >= size) {
         logerror(_("xml string is too large\n"));
         goto out;
+    }
+
+    char * bufnew = __domain_xml_json_vdi(ci, buf);
+    if (bufnew && bufnew != buf) {
+        free(buf);
+        buf = bufnew;
     }
     logsimple("%s\n", buf);
 
