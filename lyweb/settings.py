@@ -5,6 +5,7 @@ import os, sys, ConfigParser
 ## Global PATH
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, 'lib'))
+sys.path.insert(0, '/data/projects/LuoYunCloud/src/')
 #print sys.path
 
 LUOYUN_CONFIG_PATH = os.path.join(PROJECT_ROOT, 'luoyun.cfg')

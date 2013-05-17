@@ -82,6 +82,7 @@ img.i-logo {
     font-weight: bold;
     text-align: right;
     color: #27375D;
+	white-space: nowrap;
 }
 #i-baseinfo td input {
     vertical-align:middle;

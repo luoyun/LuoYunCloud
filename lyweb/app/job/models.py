@@ -77,6 +77,7 @@ JOB_ACTION_STR = {
     104: _('update node configure'),
     201: _('run'),
     202: _('stop'),
+    205: _('reboot'),
     206: _('destroy'),
     207: _('query'),
 }

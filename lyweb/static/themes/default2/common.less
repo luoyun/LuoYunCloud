@@ -1,67 +1,10 @@
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
-    border: 0 none;
-    margin: 0;
-    padding: 0;
-    vertical-align: baseline;
-}
-* {
-    word-wrap: break-word;
-    font-family: DejaVu Sans, Microsoft YaHei;
-}
-article, aside, details, figcaption, figure, footer, header, hgroup, masthead, menu, nav, section {
-    display: block;
-}
-body {
-    line-height: 1;
-    font-size: 14px;
-    color: #444444;
-}
-ol, ul {
-    list-style: none outside none;
-}
-blockquote, q {
-    quotes: none;
-}
-blockquote:before, blockquote:after, q:before, q:after {
-    content: none;
-}
-table {
-/*    border-collapse: collapse;
-    border-spacing: 0;*/
-}
-b, strong {
-    font-weight: 700;
-}
-abbr, acronym {
-    border-bottom: 1px dotted;
-}
-.c:after {
-    clear: both;
-    content: ".";
-    display: block;
-    height: 0;
-    visibility: hidden;
-}
-.c {
-    display: inline-block;
-}
-* html .c {
-    height: 1%;
-}
-.c {
-    display: block;
-}
-
 pre {
  overflow: auto; overflow-y:hidden
 }
 
 a {
     outline: none;
-    blr:expression(this.onFocus=this.blur()); /* for IE6, IE7 */
 }
-
-
 
 /* Start http404 error */
 #http404 {
@@ -89,7 +32,6 @@ a {
     float: left;
     padding: 6px 10px;
 }
-
 
 .vmenu {
     background-color: #FCFCFC;
@@ -572,3 +514,40 @@ a.no-text-decoration {
     font-weight: bold;
     color: #143340;
 }
+
+
+.clearfix:after { 
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.clearfix {display: inline-block;}
+
+
+
+/*** start need to drop style ***/
+
+/* Hides from IE-mac \*/
+* html .clearfix {height: 1%;} 
+.clearfix {display: block;} 
+/* End hide from IE-mac */
+
+.c:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+.c {
+    display: inline-block;
+}
+* html .c {
+    height: 1%;
+}
+.c {
+    display: block;
+}
+/*** end need to drop style ***/

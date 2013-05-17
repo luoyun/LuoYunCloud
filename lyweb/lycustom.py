@@ -30,6 +30,7 @@ from settings import JOB_ACTION, JOB_TARGET, LY_TARGET, TEMPLATE_DIR
 from ytime import htime, ftime
 from ytool.hstring import b2s
 
+
 class LyRequestHandler(RequestHandler):
 
     lookup = TemplateLookup([ TEMPLATE_DIR ],
@@ -191,6 +192,18 @@ class LyRequestHandler(RequestHandler):
         sk.sendall(rqhead)
         sk.close()
 
+    def _job_notify_new(self, ID):
+        ''' Notify the new job signal to control server '''
+
+        from settings import cf
+        if cf.has_option('clc', 'clc_pass'):
+            password = cf.get('clc', 'clc_pass')
+        else:
+            password = 'luoyun'
+
+        d = {'from': 'web', 'to': 'clc', 'password': password, 'jobid': ID}
+        self.application.clcstream.send_msg(d)
+
     def get_no_permission_url(self):
         self.require_setting("no_permission_url", "@has_permission")
         return self.application.settings["no_permission_url"]
@@ -279,6 +292,22 @@ class LyRequestHandler(RequestHandler):
     def trans(self, s):
         return self.locale.translate(s)
 
+    def msg2clc(self, key, msg, callback=None):
+        ''' send a message to clc '''
+
+        if not self.application.clcstream:
+            return None, self.trans( _('No clc found !') )
+
+        if not isinstance(msg, dict):
+            return None, self.trans( _('Message must be a dict') )
+
+        if callback:
+            # must add callback handler
+            msg['callback_id'] = self.application.get_unique_id()
+
+        self.application.clcstream.send_msg(key, msg)
+
+
 
 def show_error( E ):
 
@@ -335,6 +364,4 @@ class LyNotFoundHandler(LyRequestHandler):
             self.render("/404.html")
         except TemplateLookupException, e:
             self.send_error(500)
-
-
 
