@@ -2,6 +2,9 @@
 ----------------------------------------
 
 .. image:: /images/web_admin/node.jpg
+   :width: 600
+   :target: ../_images/node.jpg
+
 
 管理员用户进入“管理后台” 的“节点”标签，可以确认并“启用”新加入的 lynode 服务器。
 

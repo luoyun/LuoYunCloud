@@ -6,7 +6,7 @@
 
 1. 停止 lyweb  ::
 
-     service lynode start
+     service lyweb stop
    
    手动停止 lyweb 方法
 
