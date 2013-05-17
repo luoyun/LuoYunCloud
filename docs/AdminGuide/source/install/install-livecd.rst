@@ -3,7 +3,7 @@
 ============================
 **安装 Live CD 之前请先检查计算机是否支持虚拟化。您可以用 root 用户运行 LiveCD 里的如下命令进行检查** ::
 
-  # /opt/LuoYun/bin/checks
+  # /opt/LuoYun/bin/check
 
 1. 安装 LiveCD
 
