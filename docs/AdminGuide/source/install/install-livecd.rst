@@ -10,74 +10,89 @@
    a. 从 LiveCD 启动计算机,自动登陆系统 
       
       .. image:: /images/install/install-livecd-1.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-1.png
 
    #. 点击【硬盘安装】
       
       .. image:: /images/install/install-livecd-2.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-2.png
 
    #. 点击【下一步】 
 
       .. image:: /images/install/install-livecd-3.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-3.png
 
    #. 选择默认“美国英语式”，点击【下一步】  
       
       .. image:: /images/install/install-livecd-4.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-4.png
 
    #. 选择默认“基本存储设备”，点击【下一步】 
       
       .. image:: /images/install/install-livecd-5.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-5.png
 
    #. 选择“是，忽略所有数据”，点击【下一步】 
 
       .. image:: /images/install/install-livecd-6.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-6.png
 
    #. 自定义主机名称或默认，点击【下一步】 
 
       .. image:: /images/install/install-livecd-7.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-7.png
 
    #. 选择默认“亚洲/上海”，点击【下一步】
 
       .. image:: /images/install/install-livecd-8.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-8.png
 
    #. 自定义输入”根密码“并”确认“填写”，点击【下一步】 
 
       .. image:: /images/install/install-livecd-9.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-9.png
 
    #. 如果您的密码设置过于简单,会出现弹出框，继续使用该密码，点击【无论如何都使用】，点击【取消】重设密码 
 
       .. image:: /images/install/install-livecd-10.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-10.png
 
    #. 选择“使用所有空间”，点击【下一步】
 
       .. image:: /images/install/install-livecd-11.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-11.png
 
    #. 出现弹出框，点击【将修改写入磁盘】 
       
       .. image:: /images/install/install-livecd-12.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-12.png
 
    #. 等待安装
 
       .. image:: /images/install/install-livecd-13.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-14.png
       .. image:: /images/install/install-livecd-14.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-14.png
 
    #. 出现下图界面，表示您的 LiveCD 安装完成，点击【关闭】，重启计算机，进入 LuoYunCloud 系统。 
 
       .. image:: /images/install/install-livecd-15.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install-livecd-15.png
 
 #. 配置 LuoYunCloud
  
