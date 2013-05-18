@@ -49,30 +49,13 @@ from sqlalchemy.ext.declarative import declarative_base
 #postgresql+psycopg2://user:password@/dbname?host=/var/lib/postgresql", client_encoding = utf8
 dbengine = create_engine(get_sql_uri(), echo=False, client_encoding = 'utf8')
 
-
 ORMBase = declarative_base()
 
-
-#ORMBase.metadata.create_all(engine)
-
-
-from sqlalchemy.orm import sessionmaker
-Session = sessionmaker(bind=dbengine)
-#Session = sessionmaker()
-#Session.configure(bind=engine)
+from sqlalchemy.orm import sessionmaker, scoped_session
+session_factory = sessionmaker(bind=dbengine)
+Session = scoped_session(session_factory)
 dbsession = Session()
 db=dbsession
-
-def get_new_session():
-    dbengine = create_engine(get_sql_uri(), echo=False, client_encoding = 'utf8')
-    Session = sessionmaker(bind=dbengine)
-    return Session()
-
-
-#dbsession.commit()
-
-#dbengine.dispose()
-
 
 
 # TODO:

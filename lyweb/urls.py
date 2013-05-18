@@ -17,7 +17,6 @@ from app.message.urls import handlers as message_urls
 from app.system.urls import handlers as system_urls
 from app.myun.urls import handlers as myun_urls
 
-
 curdir = os.path.dirname(__file__)
 
 import settings

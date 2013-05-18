@@ -5,7 +5,7 @@ import os, sys, ConfigParser
 ## Global PATH
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, 'lib'))
-#print sys.path
+sys.path.insert(0, '/data/projects/LuoYunCloud/src/')
 
 LUOYUN_CONFIG_PATH = os.path.join(PROJECT_ROOT, 'luoyun.cfg')
 
@@ -13,8 +13,7 @@ STATIC_PATH = os.path.join(PROJECT_ROOT, "static")
 TEMPLATE_DIR = os.path.join(PROJECT_ROOT, "template")
 STATIC_URL = "/static/"
 
-#THEME = "default"
-THEME = "default2"
+THEME = "default"
 THEME_URL = "/static/themes/%s/" % THEME
 
 #ATTACHMENT
@@ -83,40 +82,6 @@ INSTANCE_SLIST_STOPED=[1, 2]
 
 # ADMIN display
 ADMIN_USER_LIST_PAGE_SIZE=50
-
-
-# Email Setting
-MAIL_SENDER = 'LuoYunCloud Administrator'  # Sender name
-MAIL_HOST = None  # SMTP server
-MAIL_PORT = 25    # SMTP port
-MAIL_FROM = None  # From email address
-MAIL_USER = None  # login username
-MAIL_PASS = None  # login password
-
-from settings import cf
-
-if cf.has_option('email', 'smtp_server'):
-    MAIL_SERVER = cf.get('email', 'smtp_server')
-
-if cf.has_option('email', 'smtp_port'):
-    MAIL_PORT = int( cf.get('email', 'smtp_port') )
-
-if cf.has_option('email', 'name'):
-    MAIL_SENDER = cf.get('email', 'name')
-
-if cf.has_option('email', 'from'):
-    MAIL_FROM = cf.get('email', 'from')
-
-if cf.has_option('email', 'username'):
-    MAIL_USER = cf.get('email', 'username')
-
-if cf.has_option('email', 'password'):
-    MAIL_PASS = cf.get('email', 'password')
-
-if MAIL_USER and '@' in MAIL_USER:
-    if not MAIL_FROM:
-        MAIL_FROM = MAIL_USER
-
 
 ## i18n
 

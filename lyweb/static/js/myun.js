@@ -47,6 +47,9 @@ function _setInstanceChange (data) {
     $('#i-js-str').text(I.js_str);
     $('#i-js-img').attr('src', I.js_img);
 
+	$('#i-vdi_ip').text(I.vdi_ip);
+	$('#i-vdi_port').text(I.vdi_port);
+
     if (I.lastjob) {
 	$('#i-lastjob-id').text(I.lastjob);
     }

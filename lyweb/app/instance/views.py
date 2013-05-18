@@ -151,6 +151,15 @@ class InstRequestHandler(LyRequestHandler):
         return inst, ''
 
 
+    def run_job_new(self, I, action_id):
+
+        d = { 'instance_id': I.id, 'action_id': action_id,
+              'user_id': self.current_user.id }
+
+        self.msg2clc('lyclc.instance.control', d, self.run_job_old)
+        return self.trans(_('Task starts successfully.'))
+
+
     def run_job(self, I, action_id):
 
         if I.lastjob and (not I.lastjob.completed):
@@ -873,6 +882,8 @@ class Status(InstRequestHandler):
 
                      'ip': ip, 'ip_link': ip_link,
                      'domain': domain, 'domain_link': domain_link,
+                     'vdi_ip': instance.vdi_ip,
+                     'vdi_port': instance.vdi_port,
 
                      'job_completed': 1 if job.completed else 0,
                      'iaction': iaction }
@@ -1079,6 +1090,9 @@ class SingleInstanceStatus(InstRequestHandler):
                'js'          : I.lastjob_status_id,
                'js_str'      : self.trans(I.job_status_string),
                'lastjob'     : I.lastjob_id if I.lastjob_id else 0,
+
+               'vdi_ip'      : I.vdi_ip,
+               'vdi_port'    : I.vdi_port,
 
                'ip'          : '',
                'ip_link'     : '',

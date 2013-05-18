@@ -366,3 +366,15 @@ class Instance(ORMBase):
 
             logging.error('create instance logo failed: %s' % e)
 
+    # TODO: a temp hack
+    @property
+    def vdi_port(self):
+        if not self.key: return 'None'
+        port = self.key.split(':')
+        return port[-1] if len(port) == 2 else 'None'
+
+    @property
+    def vdi_ip(self):
+        if not self.node or not self.is_running: return 'None'
+        return self.node.ip if hasattr(self.node, 'ip') else 'None'
+
