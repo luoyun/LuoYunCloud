@@ -181,8 +181,11 @@ void luoyun_instance_info_print(InstanceInfo *ii)
     logsimple("Instance Info struct:\n"
               "ip = %s\n"
               "gport = %d\n"
-              "status = %d\n",
-              ii->ip, ii->gport, ii->status);
+              "status = %d\n"
+              "netstat = %ld %ld %ld %ld\n",
+              ii->ip, ii->gport, ii->status,
+              ii->netstat[0].rx_bytes, ii->netstat[0].rx_pkts,
+              ii->netstat[0].tx_bytes, ii->netstat[0].tx_pkts);
 }
 
 void luoyun_instance_info_cleanup(InstanceInfo *ii)

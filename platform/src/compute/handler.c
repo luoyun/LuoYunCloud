@@ -855,6 +855,106 @@ static int __domain_xml_graphics_port(char *xml)
     return ret;
 }
  
+/* get network interface stat */
+static int __domain_xml_net_stat(char * name, char *xml,
+                                 unsigned long * rx_bytes, 
+                                 unsigned long * rx_pkts,
+                                 unsigned long * tx_bytes,
+                                 unsigned long * tx_pkts)
+{
+    int found = 0;
+    char * target = NULL;
+    int ret = -1;
+    xmlDoc *doc = xml_doc_from_str(xml);
+    if (doc == NULL) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        goto done;
+    }
+    xmlNode * node = xmlDocGetRootElement(doc);
+    if (node == NULL || strcmp((char *)node->name, "domain") != 0) {
+        logwarn(_("error: xml string not for domain\n"));
+        goto done;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name); */
+            if (strcmp((char *)node->name, "devices") == 0 ) {
+                break;
+            }
+         }
+    }
+    if (node == NULL || strcmp((char *)node->name, "devices") != 0 ) {
+        logwarn(_("error: xml string not for domain\n"));
+        goto done;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name);*/
+            if (strcmp((char *)node->name, "interface") == 0 ) {
+                char * str = (char *)xmlGetProp(node, (const xmlChar *)"type");
+                if (str == NULL) {
+                    logwarn(_("domain interface has no type\n"));
+                    continue;
+                }
+                else if (strcmp(str, "network")) {
+                    free(str);
+                    continue;
+                }
+                free(str);
+                xmlNode * node1 = node->children;
+                for (; node1; node1 = node1->next) {
+                    if (node1->type == XML_ELEMENT_NODE) {
+                        if (strcmp((char *)node1->name, "alias") == 0 ) {
+                            str = (char *)xmlGetProp(node1, (const xmlChar *)"name");
+                            if (str != NULL) {
+                                if (strcmp(str, "net0") == 0)
+                                    found = 1;
+                                else
+                                    loginfo(_("ignore domain interface alias %s\n"), str);
+                                free(str);
+                            }
+                            else
+                                logwarn(_("domain interface alias has no name\n"));
+                        }
+                        else if (strcmp((char *)node1->name, "target") == 0 ) {
+                            str = (char *)xmlGetProp(node1, (const xmlChar *)"dev");
+                            if (str != NULL)
+                                target = str;
+                            else
+                                logwarn(_("domain interface unexpected target\n"));
+                        }
+                        if (found && target) {
+                            logdebug(_("network interface net0 found\n"));
+                            break;
+                        }
+                    }
+                }
+            }
+            if (found && target)
+                break;
+            /* other nodes ignored */
+        }
+    }
+
+    xmlFreeDoc(doc);
+
+    if (found && target) {
+        if (libvirt_domain_ifstat(name, target, rx_bytes, rx_pkts, tx_bytes, tx_pkts) == 0)
+            ret = 0;
+        else
+            logerror(_("error get ifstat\n"));
+    }
+
+done:
+    if (target)
+        free(target);
+
+    return ret;
+}
 static int __domain_run_data_check(NodeCtrlInstance * ci)
 {
     if (ci == NULL || g_c == NULL)
@@ -1433,6 +1533,11 @@ static int __domain_query(NodeCtrlInstance * ci)
         char * xml = libvirt_domain_xml(ci->ins_domain);
         if (xml) {
             ii.gport = __domain_xml_graphics_port(xml);
+            __domain_xml_net_stat(ci->ins_domain, xml, &ii.netstat[0].rx_bytes,
+                                                       &ii.netstat[0].rx_pkts,
+                                                       &ii.netstat[0].tx_bytes,
+                                                       &ii.netstat[0].tx_pkts);
+            luoyun_instance_info_print(&ii);
             free(xml);
         }
         else

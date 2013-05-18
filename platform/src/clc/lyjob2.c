@@ -93,7 +93,7 @@ static void  __query_instance_all(void)
     /* logdebug(_("%s is called\n"), __func__); */
 
     int ins_num = 0;
-    int * ins_id = db_instance_get_all(&ins_num);;
+    int * ins_id = db_instance_get_all(&ins_num, DOMAIN_S_START);;
     if (ins_num <= 0 || ins_id == NULL)
         return;
     for (int i = 0; i < ins_num; i++) {

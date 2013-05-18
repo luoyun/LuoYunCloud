@@ -341,6 +341,44 @@ char * libvirt_domain_xml(char * name)
     return xml;
 }
 
+int libvirt_domain_ifstat(char * name, char * target,
+                          unsigned long * rx_bytes,
+                          unsigned long * rx_pkts,
+                          unsigned long * tx_bytes,
+                          unsigned long * tx_pkts)
+{
+    int ret = -1;
+    if (g_conn == NULL || name == NULL || target == NULL)
+        return -1;
+
+    virDomainPtr domain = virDomainLookupByName(g_conn, name);
+    if (domain == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        return -1;
+    }
+    virDomainInterfaceStatsPtr statsptr = malloc(sizeof(*statsptr));
+    if (statsptr == NULL) {
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+        goto done;
+    }
+
+    if (virDomainInterfaceStats(domain, target, statsptr, sizeof(*statsptr)) == 0) {
+        *rx_bytes = statsptr->rx_bytes;
+        *rx_pkts = statsptr->rx_packets;
+        *tx_bytes = statsptr->tx_bytes;
+        *tx_pkts = statsptr->tx_packets;
+        ret = 0;
+    }
+    else
+        logerror(_("error in %s(%d)\n"), __func__, __LINE__);
+
+    free(statsptr);
+done:
+    virDomainFree(domain);
+    return ret;
+}
+
+
 #define __DOMAIN_OP_STOP       1
 #define __DOMAIN_OP_STOP_FORCE 2
 #define __DOMAIN_OP_REBOOT     3

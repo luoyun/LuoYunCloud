@@ -23,6 +23,11 @@ int libvirt_domain_stop(char * name);
 int libvirt_domain_poweroff(char * name);
 int libvirt_domain_reboot(char * name);
 char * libvirt_domain_xml(char * name);
+int libvirt_domain_ifstat(char * name, char * target,
+                          unsigned long * rx_bytes,
+                          unsigned long * rx_pkts,
+                          unsigned long * tx_bytes,
+                          unsigned long * tx_pkts);
 
 
 #if 0

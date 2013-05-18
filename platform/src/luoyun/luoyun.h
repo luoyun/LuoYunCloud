@@ -393,11 +393,19 @@ typedef struct AuthInfo_t {
 /*
 ** common data structure for instance info
 */
+typedef struct InstanceIfStat_t {
+    unsigned long rx_bytes;
+    unsigned long rx_pkts;
+    unsigned long tx_bytes;
+    unsigned long tx_pkts;
+} InstanceIfStat;
+
 typedef struct InstanceInfo_t {
     int id;
     int status;
     char *ip;
     int gport; /* graphices port */
+    InstanceIfStat netstat[2];
 } InstanceInfo;
 
 /*

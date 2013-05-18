@@ -421,6 +421,7 @@ static int __instance_info_update(xmlDoc * doc, xmlNode * node)
     }
 
     InstanceInfo ii;
+    bzero(&ii, sizeof(InstanceInfo));
     char *str;
     str = xml_xpath_text_from_ctx(xpathCtx,
                          "/" LYXML_ROOT "/response/data/id");
@@ -441,13 +442,23 @@ static int __instance_info_update(xmlDoc * doc, xmlNode * node)
     if (str == NULL)
         goto failed;
     ii.gport = atoi(str);
+    free(str);
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/response/data/netstat0");
+    if (str)
+        sscanf(str, "%ld %ld %ld %ld", &ii.netstat[0].rx_bytes, &ii.netstat[0].rx_pkts,
+                                       &ii.netstat[0].tx_bytes, &ii.netstat[0].tx_pkts);
+    else
+        goto failed;
+    free(str);
 
-    logdebug(_("update info for instance %d: status %d, ip %s, gport %d\n"),
-                ii.id, ii.status, ii.ip, ii.gport);
+    logdebug(_("update info for instance %d:"), ii.id);
+    luoyun_instance_info_print(&ii);
 
     int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, ii.id);
-    if (!ly_entity_is_registered(ent_id) &&
-        db_instance_update_status(ii.id, &ii, -1) < 0) {
+    if (ly_entity_is_registered(ent_id))
+        ii.status = DOMAIN_S_UNKNOWN; /* don't update status */
+    if (db_instance_update_status(ii.id, &ii, -1) < 0) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         if (ii.ip)
             free(ii.ip);

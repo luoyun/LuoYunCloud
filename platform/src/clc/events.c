@@ -250,6 +250,7 @@ int ly_epoll_entity_recv(int ent_id)
 
         logdebug(_("update instance %d status in db\n"), db_id);
         InstanceInfo ii;
+        bzero(&ii, sizeof(InstanceInfo));
         ii.ip = NULL;
         ii.gport = 0;
         ii.status = DOMAIN_S_NEED_QUERY;

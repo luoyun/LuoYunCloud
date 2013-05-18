@@ -39,7 +39,7 @@ void job_cleanup(void);
 */ 
 #define CLC_JOB_QUERY_NODE_INTERVAL       3600
 #define CLC_JOB_CLEANUP_NODE_INTERVAL     86400
-#define CLC_JOB_QUERY_INSTANCE_INTERVAL   3600
+#define CLC_JOB_QUERY_INSTANCE_INTERVAL   120
 int job_internal_query_instance(int id);
 int job_internal_dispatch(void);
 int job_internal_init(void);

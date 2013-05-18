@@ -231,6 +231,7 @@ int job_update_status(LYJobInfo * job, int status)
 
     if (status == LY_S_WAITING_STARTING_OSM) {
         InstanceInfo ii;
+        bzero(&ii, sizeof(InstanceInfo));
         ii.ip = "0.0.0.0";
         ii.gport = 0;
         ii.status = DOMAIN_S_START;
@@ -258,6 +259,7 @@ int job_update_status(LYJobInfo * job, int status)
 
         /* update instance info */
         InstanceInfo ii;
+        bzero(&ii, sizeof(InstanceInfo));
         int ret = 0;
 
         /* need to query status if timed out */
@@ -313,7 +315,7 @@ int job_update_status(LYJobInfo * job, int status)
 
         job_remove(job);
         if (ret < 0)  {
-            logerror(_("db error %(%d)\n"), __func__, __LINE__);
+            logerror(_("db error %s(%d)\n"), __func__, __LINE__);
             return ret;
         }
     }
@@ -462,7 +464,7 @@ static int __job_start_instance(LYJobInfo * job)
     }
 
     if (db_instance_update_status(ci.ins_id, NULL, node_id) < 0) {
-        logerror(_("db error %(%d)\n"), __func__, __LINE__);
+        logerror(_("db error %s(%d)\n"), __func__, __LINE__);
         goto failed;
     }
 
@@ -533,6 +535,7 @@ static int __job_control_instance_simple(LYJobInfo * job)
         luoyun_node_ctrl_instance_cleanup(&ci);
         if (job->j_action == LY_A_NODE_QUERY_INSTANCE) {
             InstanceInfo ii;
+            bzero(&ii, sizeof(InstanceInfo));
             ii.ip = "0.0.0.0";
             ii.gport = 0;
             ii.status = DOMAIN_S_NOT_EXIST;
