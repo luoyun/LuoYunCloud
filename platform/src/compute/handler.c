@@ -895,6 +895,7 @@ static int __domain_xml_net_stat(char * name, char *xml,
         if (node->type == XML_ELEMENT_NODE) {
             /* logdebug(_("xml node %s\n"), node->name);*/
             if (strcmp((char *)node->name, "interface") == 0 ) {
+                /* skip type checking for now
                 char * str = (char *)xmlGetProp(node, (const xmlChar *)"type");
                 if (str == NULL) {
                     logwarn(_("domain interface has no type\n"));
@@ -905,7 +906,9 @@ static int __domain_xml_net_stat(char * name, char *xml,
                     continue;
                 }
                 free(str);
+                */
                 xmlNode * node1 = node->children;
+                char * str;
                 for (; node1; node1 = node1->next) {
                     if (node1->type == XML_ELEMENT_NODE) {
                         if (strcmp((char *)node1->name, "alias") == 0 ) {
