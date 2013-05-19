@@ -662,8 +662,9 @@ class SendMail(LyRequestHandler):
         self.GL = GL
         self.totype = totype
 
+        cf = ConfigINI(settings.SITE_CONFIG, 'db')
+
         self.d = { 'title': self.trans(_('LuoYun Send Mail')),
-                   'FROM': settings.MAIL_FROM,
                    'TOTYPE': self.totype,
                    'USER_LIST': self.UL,
                    'GROUP_LIST': self.GL }

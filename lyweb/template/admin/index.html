@@ -33,10 +33,10 @@
 	draw_used({
         container: '#admin-cpu-pie',
         title: '${ _("CPU USED INFO") }',
-        subtitle: '${ _("Total") } : ${ TOTAL_CPU } core',
+        subtitle: '${ _("Total") } : ${ TOTAL_CPU } ${ _("core") }',
         series_name: '${ _("Percentage") }',
-        used_text: '${ _("Used") }<br/>${ USED_CPU } core',
-	    unused_text: '${ _("Unused") }<br/>${ TOTAL_CPU - USED_CPU } core',
+        used_text: '${ _("Used") }<br/>${ USED_CPU } ${ _("core") }',
+	    unused_text: '${ _("Unused") }<br/>${ TOTAL_CPU - USED_CPU } ${ _("core") }',
         used: ${ USED_CPU },
         total: ${ TOTAL_CPU },
     });
