@@ -300,6 +300,7 @@ class InstanceView(InstanceManagement):
               'STORAGE_LIST': storage,
               'webssh': webssh,
               'TAB': tab,
+              'human_size': human_size,
               'USE_GLOBAL_PASSWD': str(I.get_config('use_global_passwd')) != 'False' }
 
         d['title'] = self.trans(_('View instance "%s" - My Yun')) % I.name

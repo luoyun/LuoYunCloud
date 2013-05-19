@@ -300,3 +300,66 @@ function lyurl_update_params(url, key, value) {
 
     return path + '?' + $.param(queryParameters);
 }
+
+
+function draw_used (data) {
+
+    used_percentage = data.used * 100.0 / data.total;
+    used_percentage = Math.round(used_percentage * Math.pow(10, 2)) / Math.pow(10, 2);
+
+	if (data.pie_size)
+		pie_size = data.pie_size;
+	else
+		pie_size = 200;
+    
+	$(data.container).highcharts({
+	    chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+        },
+        title: {
+            text: data.title,
+			floating: true,
+        },
+        subtitle: {
+            text: data.subtitle,
+			floating: true,
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+				size: pie_size,
+                dataLabels: {
+                    enabled: true,
+                    color: '#000000',
+                    connectorColor: '#000000',
+                    connectorWidth: 0,
+                    distance: 6, // -50 is inside
+                    formatter: function() {
+                        return '<b>'+ this.point.name +'</b><br/>'+ this.percentage +' %';
+                    }
+                }
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: data.series_name,
+            data: [
+				{
+					name: data.used_text,
+					color: '#FEC157',
+					y: used_percentage,
+                    sliced: true,
+                    selected: true
+				},
+                [data.unused_text, 100.0 - used_percentage]
+            ]
+        }],
+        credits: {
+            text: 'LuoYun.CO',
+            href: 'http://www.luoyun.co'
+        }
+    });
+}

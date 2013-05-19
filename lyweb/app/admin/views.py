@@ -27,19 +27,35 @@ class Index(LyRequestHandler):
         # TODO:
         TOTAL_INSTANCE = self.db2.query(Instance.id).count()
         TOTAL_APPLIANCE = self.db2.query(Appliance.id).count()
+        TOTAL_USER = self.db2.query(User.id).count()
+        TOTAL_JOB = self.db2.query(Job.id).count()
+        TOTAL_NODE = self.db2.query(Node.id).count()
 
         new_users = self.db2.query(User).order_by(
             desc(User.id) ).limit(10)
         new_jobs = self.db2.query(Job).order_by(
             desc(Job.id) ).limit(10)
 
+        ud = self._get_data()
+        print 'ud = ', ud
+
         d = { 'title': self.trans(_('Admin Console')),
               'human_size': human_size,
               'TOTAL_APPLIANCE': TOTAL_APPLIANCE,
               'TOTAL_INSTANCE': TOTAL_INSTANCE,
+              'TOTAL_USER': TOTAL_USER,
+              'TOTAL_JOB': TOTAL_JOB,
+              'TOTAL_NODE': TOTAL_NODE,
               'NEW_USER_LIST': new_users,
               'NEW_JOB_LIST': new_jobs,
-              'chart_data': self.chart_data }
+              'TOTAL_MEMORY': ud['TOTAL_MEMORY'],
+              'USED_MEMORY': ud['USED_MEMORY'],
+              'USED_MEMORY_P': ud['USED_MEMORY'] * 100.0 / ud['TOTAL_MEMORY'],
+              'TOTAL_CPU': ud['TOTAL_CPU'],
+              'USED_CPU': ud['USED_CPU'],
+              'USED_CPU_P': ud['USED_CPU'] * 100.0 / ud['TOTAL_CPU']}
+
+        print 'd["USED_MEMORY_P"] = ', d["USED_MEMORY_P"]
 
         d.update( self._get_data() )
 
@@ -75,50 +91,6 @@ class Index(LyRequestHandler):
             'USED_MEMORY': USED_MEMORY }
 
         return self.system_data
-
-
-    def chart_data(self, what=None):
-        if not what: return
-
-        ud = self._get_data()
-        if not ud: return
-
-        profile = self.current_user.profile
-
-        d = { 'subcaption': self.trans(_("TOTAL: ")),
-              'name1': self.trans(_("Used")),
-              'name2': self.trans(_("Unused")) }
-        number_suffix = ''
-
-        if what == 'cpu':
-            caption = self.trans(_("CPU USED INFO"))
-            total = '%s CPU' % ud['TOTAL_CPU']
-            value1 = ud['USED_CPU']
-            value2 = ud['TOTAL_CPU'] - ud['USED_CPU']
-            number_suffix = self.trans(_("core"))
-        elif what == 'memory':
-            caption = self.trans(_("MOMORY USED INFO"))
-            total = human_size(ud['TOTAL_MEMORY']*1024)
-            value1 = ud['USED_MEMORY']
-            value2 = ud['TOTAL_MEMORY'] - ud['USED_MEMORY']
-            number_suffix = "M"
-        else:
-            return
-
-        d.update({ 'caption': caption, 'total': total,
-                   'value1': value1, 'value2': value2,
-                   'number_suffix': number_suffix })
-
-        T = '<graph caption="%(caption)s" \
-subCaption="%(subcaption)s %(total)s" \
-showNames="1" bgColor="F4F8FC" decimalPrecision="0" \
-formatNumberScale="0" baseFontSize="16" \
-numberSuffix="%(number_suffix)s">\
-<set name="%(name1)s" value="%(value1)s" color="FC0101" />\
-<set name="%(name2)s" value="%(value2)s" color="AFD8F8" /></graph>'
-
-        return T % d
-
 
 
 
