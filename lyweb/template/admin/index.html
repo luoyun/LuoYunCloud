@@ -123,7 +123,7 @@
 		<tr>
           <td>${ j.id }</td>
           <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
-          <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png"/>${ locale.translate(j.status_string) }</td>
+          <td><img src="${ theme_url(j.status_img) }"/>${ locale.translate(j.status_string) }</td>
           <td>${ j.target_name }</td>
           <td>${ j.target_url }</td>
 		  <td>${ j.action_string }</td>
