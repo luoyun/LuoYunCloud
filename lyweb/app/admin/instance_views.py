@@ -23,6 +23,7 @@ from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import LY_TARGET
 
 from app.instance.models import INSTANCE_STATUS_SHORT_STR
+from lytool.filesize import size as human_size
 
 
 class InstanceManagement(LyRequestHandler):
@@ -211,7 +212,8 @@ class InstanceManagement(LyRequestHandler):
         d = { 'title': self.trans(_('View Instance "%s"')) % I.name,
               'I': I, 'JOB_LIST': JOB_LIST, 'NETWORK_LIST': network,
               'STORAGE_LIST': storage,
-              'webssh': webssh, 'TAB': tab }
+              'webssh': webssh, 'TAB': tab,
+              'human_size': human_size }
 
         if self.get_argument('ajax', None):
             self.render('admin/instance/view.ajax.html', **d)

@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 ===================================
-LuoYunCloud 0.5  管理员手册
+LuoYunCloud 用户手册
 ===================================
 
 落云文档小组： contact@luoyun.co

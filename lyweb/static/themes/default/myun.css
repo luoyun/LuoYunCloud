@@ -112,7 +112,7 @@
 
 
 #myun-pie-show {
-    margin: 100px auto;
+    margin: 50px auto;
     width: 759px;
     padding-left: 28px;
 }
@@ -121,6 +121,8 @@
     margin: 5px;
     border-radius: 3px;
     border: 1px solid #DCDCDC;
+	width: 350px;
+	height: 350px;
 }
 
 .myun-user-action {

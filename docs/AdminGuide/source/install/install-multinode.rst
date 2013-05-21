@@ -18,7 +18,6 @@
 编辑 /etc/sysconfig/network-scripts/ifcfg-eth0 文件。如果该文件不存在，请确认 NetworkManager 处于关闭状态。然后，将 eth0 连接至 br0  ::
 
   DEVICE=eth0
-
   ONBOOT=yes
   BRIDGE=br0
 

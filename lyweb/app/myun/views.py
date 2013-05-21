@@ -42,7 +42,6 @@ class Index(LyRequestHandler):
         d = { 'my': my, 'human_size': human_size }
 
         d['title'] = self.trans(_('My LuoYun'))
-        d.update({'chart_data': self.chart_data })
         d.update( self._get_data() )
 
         self.render("myun/index.html", **d)
@@ -96,59 +95,6 @@ class Index(LyRequestHandler):
 
         return self.user_data
 
-
-    def chart_data(self, what=None):
-        if not what: return
-
-        ud = self._get_data()
-        if not ud: return
-
-        profile = self.current_user.profile
-
-        d = { 'subcaption': self.trans(_("TOTAL: ")),
-              'name1': self.trans(_("Used")),
-              'name2': self.trans(_("Unused")) }
-        number_suffix = ''
-
-        if what == 'cpu':
-            caption = self.trans(_("CPU USED INFO"))
-            total = '%s CPU' % profile.cpus
-            value1 = ud['USED_CPU']
-            value2 = profile.cpus - ud['USED_CPU']
-            number_suffix = self.trans(_("core"))
-        elif what == 'memory':
-            caption = self.trans(_("MOMORY USED INFO"))
-            total = human_size(profile.memory*1024*1024)
-            value1 = ud['USED_MEMORY']
-            value2 = profile.memory - ud['USED_MEMORY']
-            number_suffix = "M"
-        elif what == 'instance':
-            caption = self.trans(_("INSTANCE USED INFO"))
-            total = profile.instances
-            value1 = ud['USED_INSTANCE']
-            value2 = profile.instances - ud['USED_INSTANCE']
-        elif what == 'storage':
-            caption = self.trans(_("STORAGE USED INFO"))
-            total = '%s G' % profile.storage
-            value1 = ud['USED_STORAGE']
-            value2 = profile.storage - ud['USED_STORAGE']
-            number_suffix = "G"
-        else:
-            return
-
-        d.update({ 'caption': caption, 'total': total,
-                   'value1': value1, 'value2': value2,
-                   'number_suffix': number_suffix })
-
-        T = '<graph caption="%(caption)s" \
-subCaption="%(subcaption)s %(total)s" \
-showNames="1" bgColor="F4F8FC" decimalPrecision="0" \
-formatNumberScale="0" baseFontSize="16" \
-numberSuffix="%(number_suffix)s">\
-<set name="%(name1)s" value="%(value1)s" color="FC0101" />\
-<set name="%(name2)s" value="%(value2)s" color="AFD8F8" /></graph>'
-
-        return T % d
 
 
 class MyunInstance(LyRequestHandler):
@@ -300,6 +246,7 @@ class InstanceView(InstanceManagement):
               'STORAGE_LIST': storage,
               'webssh': webssh,
               'TAB': tab,
+              'human_size': human_size,
               'USE_GLOBAL_PASSWD': str(I.get_config('use_global_passwd')) != 'False' }
 
         d['title'] = self.trans(_('View instance "%s" - My Yun')) % I.name

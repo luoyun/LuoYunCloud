@@ -81,9 +81,6 @@
 
    #. 等待安装
 
-      .. image:: /images/install/install-livecd-13.png
-	 :width: 600
-	 :target: ../_images/install-livecd-14.png
       .. image:: /images/install/install-livecd-14.png
 	 :width: 600
 	 :target: ../_images/install-livecd-14.png
@@ -99,6 +96,7 @@
    **【配置 LuoYunCloud】以及下面的【启动与停止 LuoYun 服务】，都需要 root 权限**
 
    a. 初始化 LuoYunCloud
+
       请确认您已经在新安装的 LuoYunCloud 系统中，打开终端，运行初始化命令 
       ::
 
@@ -127,21 +125,25 @@
    #. 启动完成，点击"IP地址“ 
 
       .. image:: /images/install/start_instance.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/install_instance.png
 
    #. 点击【进入 ownCloud 首页】进入虚拟机 
 
       .. image:: /images/install/view_instance.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/view_instance.png
 
    #. 输入用户名：admin、密码：luoyun 登陆 
 
       .. image:: /images/install/owncloud_login.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/owncloud_login.png
 	 
    #. 已进入 owncloud 应用，可以开始应用了 
 
       .. image:: /images/install/owncloud_login2.png
-	 :width: 750
+	 :width: 600
+	 :target: ../_images/owncloud_login2.png
 
    至此，您的第一台虚拟机，已创建完毕！ 

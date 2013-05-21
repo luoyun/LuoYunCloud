@@ -6,12 +6,18 @@
       <tr>
         <th>${ _("Appliance") }</th>
         <th>${ _("Instance") }</th>
+        <th>${ _("User") }</th>
+        <th>${ _("Job") }</th>
+        <th>${ _("Node") }</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td><a href="${ reverse_url('admin:appliance') }">${ TOTAL_APPLIANCE }</a></td>
         <td><a href="${ reverse_url('admin:instance') }">${ TOTAL_INSTANCE }</a></td>
+        <td><a href="${ reverse_url('admin:user') }">${ TOTAL_USER }</a></td>
+        <td><a href="${ reverse_url('admin:job') }">${ TOTAL_JOB }</a></td>
+        <td><a href="${ reverse_url('admin:node') }">${ TOTAL_NODE }</a></td>
       </tr>
     </tbody>
   </table>
@@ -20,83 +26,89 @@
 <div id="admin-pie-show" class="admin-index-item c">
   % if TOTAL_CPU or TOTAL_MEMORY:
   <div class="pie" id="admin-cpu-pie"></div>
-  <div class="pie" id="admin-mem-pie"></div>
+  <div class="pie right" id="admin-mem-pie"></div>
 
-  <script language="JavaScript" src="${ static_url('FusionCharts/JSClass/FusionCharts.js') }"></script>
+  <script src="${ static_url('js/highcharts/highcharts.js') }"></script>
   <script type="text/javascript">
-    var cpuData = '${ chart_data("cpu") }';
-    var cpuChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "cpuChartId", "420", "220");
-    cpuChart.setDataXML(cpuData);
-    cpuChart.render("admin-cpu-pie");
+	draw_used({
+        container: '#admin-cpu-pie',
+        title: '${ _("CPU USED INFO") }',
+        subtitle: '${ _("Total") } : ${ TOTAL_CPU } ${ _("core") }',
+        series_name: '${ _("Percentage") }',
+        used_text: '${ _("Used") }<br/>${ USED_CPU } ${ _("core") }',
+	    unused_text: '${ _("Unused") }<br/>${ TOTAL_CPU - USED_CPU } ${ _("core") }',
+        used: ${ USED_CPU },
+        total: ${ TOTAL_CPU },
+    });
 
-    var memData = '${ chart_data("memory") }';
-    var memChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "memChartId", "420", "220");
-    memChart.setDataXML(memData);
-    memChart.render("admin-mem-pie");
+	draw_used({
+        container: '#admin-mem-pie',
+        title: '${ _("MOMORY USED INFO") }',
+        subtitle: '${ _("Total") } : ${ human_size(TOTAL_MEMORY * 1000) }',
+        series_name: '${ _("Percentage") }',
+        used_text: '${ _("Used") }<br/>${ human_size(USED_MEMORY * 1024) }',
+	    unused_text: '${ _("Unused") }<br/>${ human_size((TOTAL_MEMORY - USED_MEMORY) * 1024) }',
+        used: ${ USED_MEMORY },
+        total: ${ TOTAL_MEMORY },
+    });
   </script>
+
   % else:
   <p class="ywarn">${ _("Important: you have not any resources yet. please check you compute nodes.") } <a href="${ reverse_url('admin:node') }">${ _("Node List") }</a></p>
   % endif
 </div>
 
 <div id="lysys-new">
-  <ul>
-    <li><a href="#lysys-new-user">${ _("Last 10 users") }</a></li>
-    <li><a href="#lysys-new-job">${ _("Last 10 jobs") }</a></li>
-  </ul>
+  <h2 class="subtitle">${ _("Last 10 users") }
+	<a href="${ reverse_url('admin:user') }">${ _("View All User") }</a></h2>
   % if NEW_USER_LIST:
   <div id="lysys-new-user" class="new-item">
     <table class="ly-table">
       <thead>
-	<tr>
-          <th>${ _("ID") }</th>
-          <th>${ _("Name") }</th>
-	  <th>${ _("Groups") }</th>
-	  <th>${ _("Appliance") }</th>
-	  <th>${ _("Instance") }</th>
-	  <th>${ _("Email") }</th>
-	  <th>${ _("Last Active") }</th>
-	</tr>
+		<tr>
+		  <th>${ _("ID") }</th>
+		  <th>${ _("Name") }</th>
+		  <th>${ _("Groups") }</th>
+		  <th>${ _("Instance") }</th>
+		  <th>${ _("Email") }</th>
+		  <th>${ _("Last Active") }</th>
+		</tr>
       </thead>
       <tbody>
-	% for U in NEW_USER_LIST:
-	<tr>
+		% for U in NEW_USER_LIST:
+		<tr>
           <td>${ U.id }</td>
           <td><a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a></td>
-	  <td>
-	    % for G in U.groups:
-	    <a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a>
-	    % endfor
-	  </td>
-	  <td>
-	    % if U.appliances:
-	    <a href="${ reverse_url('admin:appliance') }?uid=${ U.id }">${ len(U.appliances) }</a>
-	    % endif
-	  </td>
-	  <td>
-	    % if U.instances:
-	    <a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
-	    % endif
-	  </td>
-	  <td>
-	    % if U.profile and U.profile.email:
-	    ${ U.profile.email }
-	    % endif
-	  </td>
-	  <td>${ htime(U.last_active) }</td>
-	</tr>
-	% endfor
+		  <td>
+			% for G in U.groups:
+			<a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a>
+			% endfor
+		  </td>
+		  <td>
+			% if U.instances:
+			<a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
+			% endif
+		  </td>
+		  <td>
+			% if U.profile and U.profile.email:
+			${ U.profile.email }
+			% endif
+		  </td>
+		  <td>${ htime(U.last_active) }</td>
+		</tr>
+		% endfor
       </tbody>
     </table>
-    <p><a class="orange-submit" href="${ reverse_url('admin:user') }">${ _("View All User") }</a></p>
   </div>
   % endif
 
+  <h2 class="subtitle">${ _("Last 10 jobs") }
+	<a href="${ reverse_url('admin:job') }">${ _("View All Job") }</a></h2>
   % if NEW_JOB_LIST:
   <div id="lysys-new-job" class="new-item">
     <table class="ly-table">
       <thead>
-	<tr>
+		<tr>
           <th>${ _("ID") }</th>
           <th>${ _("User") }</th>
           <th>${ _("Status") }</th>
@@ -104,30 +116,23 @@
           <th>${ _("Target ID") }</th>
           <th>${ _("Action") }</th>
           <th>${ _("Completed") }</th>
-	</tr>
+		</tr>
       </thead>
       <tbody>
-	% for j in NEW_JOB_LIST:
-	<tr>
+		% for j in NEW_JOB_LIST:
+		<tr>
           <td>${ j.id }</td>
           <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
-          <td><img src="${ THEME_URL }icons/JobStatus/${ j.status }.png"/>${ locale.translate(j.status_string) }</td>
+          <td><img src="${ theme_url(j.status_img) }"/>${ locale.translate(j.status_string) }</td>
           <td>${ j.target_name }</td>
           <td>${ j.target_url }</td>
-	  <td>${ j.action_string }</td>
-	  <td>${ htime(j.ended) }</td>
-	</tr>
-	% endfor
+		  <td>${ j.action_string }</td>
+		  <td>${ htime(j.ended) }</td>
+		</tr>
+		% endfor
       </tbody>
     </table>
-    <p><a class="orange-submit" href="${ reverse_url('admin:job') }">${ _("View All Job") }</a></p>
   </div>
   % endif
 </div>
-
-<script>
-  $(function() {
-    $("#lysys-new").tabs({ event: "mouseover" });
-  });
-</script>
 </%block>
