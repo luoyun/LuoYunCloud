@@ -50,3 +50,6 @@ Windows XP 下安装
   .. image:: /images/osmanager/xp6.png
      :width: 600
      :target: ../_images/xp6.png
+
+
+**现​在​ Windows XP 应​用​的​ OsManager 服​务​已​经​配​置​完​成​，您​可​以​继​续​完​成​ LuoYunCloud 应​用​制​作​的​其​他​步​骤​（比​如​,用​gzip的​压​缩​镜​像​）**
