@@ -3,12 +3,13 @@ Windows 下安装
 
 Windows XP 下安装
 -----------------------------------
+.. note:: 
 
-**前提条件**
+   前提条件
 
-首先在 windows XP 虚拟机上安装 python version 2.7
+   首先在 windows XP 虚拟机上安装 python version 2.7
 
-下载 python_
+   下载 python_
 
 .. _python: http://python.org/
 
@@ -51,5 +52,5 @@ Windows XP 下安装
      :width: 600
      :target: ../_images/xp6.png
 
-
-**现​在​ Windows XP 应​用​的​ OsManager 服​务​已​经​配​置​完​成​，您​可​以​继​续​完​成​ LuoYunCloud 应​用​制​作​的​其​他​步​骤​（比​如​,用​gzip的​压​缩​镜​像​）**
+.. note::
+   现​在​ Windows XP 应​用​的​ OsManager 服​务​已​经​配​置​完​成​，您​可​以​继​续​完​成​ LuoYunCloud 应​用​制​作​的​其​他​步​骤​（比​如​,用​gzip的​压​缩​镜​像​）

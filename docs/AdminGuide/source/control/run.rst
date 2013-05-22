@@ -18,9 +18,10 @@
 
      service lyweb start
 
-   手动启动 lyweb 方法 ::
+   .. note::
+      手动启动 lyweb 方法 ::
 
-     python /opt/LuoYun/web/site.py >> /opt/LuoYun/logs/luoyun.tornado.log 2>&1 &
+	python /opt/LuoYun/web/site.py >> /opt/LuoYun/logs/luoyun.tornado.log 2>&1 &
 
 
 #. 启动 lyclc
@@ -29,9 +30,10 @@
 
      service lyclc start
 
-   手动启动 lyclc 方法 ::
+   .. note::
+      手动启动 lyclc 方法 ::
 
-     /opt/LuoYun/platform/bin/lyclc -d
+	/opt/LuoYun/platform/bin/lyclc -d
 
 #. 启动 lynode
 
@@ -39,9 +41,10 @@
 
      service lynode start
 
-   手动启动 lynode 方法 ::
+   .. note::
+      手动启动 lynode 方法 ::
 
-     /opt/LuoYun/platform/bin/lynode -d
+	/opt/LuoYun/platform/bin/lynode -d
 
    
      

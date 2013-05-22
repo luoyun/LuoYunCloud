@@ -2,11 +2,15 @@
 
 使用 yum 源安装
 -------------------------
-**本安装步骤适用于 RHEL/CentOS 6.x 64 位操作系统**
+.. note::
+ 
+   本安装步骤适用于 RHEL/CentOS 6.x 64 位操作系统
 
 为了方便大家更好的体验和部署 LuoYunCould 云计算系统，我们提供了 yum install 安装方式供大家使用。您只需要掌握 yum install 即可在您的计算机中快速的部署 LuoYunCloud 了。 
 
-**以下所有操作请使用 root 权限的帐户进行。**
+.. note::
+
+   以下所有操作请使用 root 权限的帐户进行。
 
 1. 将 LuoYunCloud 加入您的软件源中 ::
 
@@ -51,18 +55,20 @@
 
    至此，上述提示信息即表示您已经成功完成 lyweb 的安装。
 
-   **如果安装过程中出现错误提示，请执行下面的两条指令对数据库进行重置** 
-   ::
+   .. note::
+
+      如果安装过程中出现错误提示，请执行下面的两条指令对数据库进行重置 
+      ::
    
-      # service postgresql stop
+	 # service postgresql stop
 
-      # rm -rf /var/lib/pgsql/*
+	 # rm -rf /var/lib/pgsql/*
 
-   **然后重新执行** 
+      然后重新执行
 
-   ::
+      ::
    
-      /opt/LuoYun/install/install-web.sh 
+	 /opt/LuoYun/install/install-web.sh 
 
 #. 启动 lyweb 服务
 
