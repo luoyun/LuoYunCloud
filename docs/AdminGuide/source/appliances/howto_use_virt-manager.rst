@@ -114,3 +114,16 @@ LuoYunCloud 计算节点就可以 )。进行制作应用的工作。
    .. image:: /images/appliances/howto_use_virt-manager/Screenshot-20.png
 
    接下来，请参考我们手册其他部分，利用 virt-manager 做其能做到的事情吧 。
+
+
+FAQ
+----------
+
+1. 我是苹果电脑，没有 Ctrl+Alt+Delete 组合键怎么办？
+
+   比如远程管理 Windows 2003 虚拟机，一登录就需要按 Ctrl+Alt+Delete 键。
+   请看下图， virt-manager 菜单里有“发送按键”
+
+   .. image:: /images/appliances/howto_use_virt-manager/send_keys.png
+	  :width: 600
+
