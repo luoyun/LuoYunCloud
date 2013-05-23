@@ -10,6 +10,15 @@ LuoYunCloud 用户手册
 落云文档小组： contact@luoyun.co
 
 
+使用 LuoYunCloud
+====================
+
+.. toctree::
+   :maxdepth: 2
+
+   user/filezilla
+
+
 安装 LuoYunCloud
 ===========================
 
@@ -91,6 +100,7 @@ Appliances
    
    appliances/centos6
    appliances/windows
+   appliances/howto_use_virt-manager.rst
 
 
 
