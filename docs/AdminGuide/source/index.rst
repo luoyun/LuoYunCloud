@@ -100,7 +100,7 @@ Appliances
    
    appliances/centos6
    appliances/windows
-   appliances/howto_use_virt-manager.rst
+   appliances/howto_use_virt-manager
 
 
 
@@ -112,6 +112,14 @@ Nginx 的配置管理
 
    nginx/nginx-faq
 
+
+防火墙
+===============
+
+.. toctree::
+   :maxdepth: 2
+
+   iptables/single-version
 
 
 FAQ - 用户经常问道的问题
