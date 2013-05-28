@@ -648,6 +648,8 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
                         *str = '\0';
                         str++;
                     }
+                    else
+                        str = NULL;
                 }
             }
             int gport = 0;
