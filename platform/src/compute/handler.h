@@ -33,7 +33,7 @@ int ly_handler_busy(void);
 /*extern char * ly_node_xml_reply_result(int request_id, int ok, int *size);*/
 
 
-#define LIBVIRT_XML_MAX     2048
+#define LIBVIRT_XML_MAX     20480
 
 #define LIBVIRT_XML_TMPL_XEN_DISK \
         "<disk type=\'file\'>"\
