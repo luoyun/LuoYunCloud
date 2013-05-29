@@ -178,7 +178,7 @@ void luoyun_node_info_cleanup(NodeInfo * nf)
 
 void luoyun_instance_info_print(InstanceInfo *ii)
 {
-    logsimple("Instance Info struct:\n"
+    logdebug("Instance Info struct:\n"
               "ip = %s\n"
               "gport = %d\n"
               "status = %d\n"
