@@ -648,27 +648,35 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
                         *str = '\0';
                         str++;
                     }
-                    else
-                        str = NULL;
                 }
             }
             int gport = 0;
-            unsigned long d[4];
+            unsigned long pre1 = 0, pre2 = 0;
+            unsigned long sum1 = 0, sum2 = 0;
             if (ptr[1])
                 gport = atoi(ptr[1]);
-            for (i=0; i<4; i++) {
-                if (ptr[i+2])
-                    d[i] = atol(ptr[i+2]);
-                else
-                    d[i] = 0;
+            if (ptr[2])
+                sum1 = atol(ptr[2]);
+            if (ptr[3])
+                pre1 = atol(ptr[3]);
+            if (ptr[4])
+                sum2 = atol(ptr[4]);
+            if (ptr[5])
+                pre2 = atol(ptr[5]);
+            if (ii->netstat[0].rx_bytes >= pre1) {
+                sum1 += ii->netstat[0].rx_bytes - pre1;
+                sum2 += ii->netstat[0].tx_bytes - pre2;
             }
+            else {
+                /* just started or rebooted */
+                sum1 += ii->netstat[0].rx_bytes;
+                sum2 += ii->netstat[0].tx_bytes;
+            } 
             snprintf(s_key, 128, "key = '%s:%d:%ld:%ld:%ld:%ld' ", 
                                  ptr[0]?ptr[0]:"",
                                  ii->gport == -1?gport:ii->gport,
-                                 ii->netstat[0].rx_bytes >= d[0]?ii->netstat[0].rx_bytes:ii->netstat[0].rx_bytes+d[0],
-                                 ii->netstat[0].rx_bytes >= d[0]?ii->netstat[0].rx_pkts:ii->netstat[0].rx_pkts+d[1],
-                                 ii->netstat[0].rx_bytes >= d[0]?ii->netstat[0].tx_bytes:ii->netstat[0].tx_bytes+d[2],
-                                 ii->netstat[0].rx_bytes >= d[0]?ii->netstat[0].tx_pkts:ii->netstat[0].tx_pkts+d[3]);
+                                 sum1, ii->netstat[0].rx_bytes,
+                                 sum2, ii->netstat[0].tx_bytes);
             if (savestr)
                 free(savestr);
         }
