@@ -171,6 +171,7 @@ id luoyun &> /dev/null || useradd luoyun -s /sbin/nologin
 %changelog
 * Tue May 28 2013 Dongwu Zeng <dongwu@luoyun.co> - 0.5-13.5
 - rework net stats
+- remove daemon default debug mode 
 
 * Tue May 28 2013 Dongwu Zeng <dongwu@luoyun.co> - 0.5-13.4
 - increase XML tmplate size
