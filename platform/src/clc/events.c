@@ -279,7 +279,7 @@ int ly_epoll_entity_recv(int ent_id)
         }
 
         int type = ly_packet_type(pkt);
-        loginfo(_("socket %d recv packet, type %d\n"), fd, type);
+        logdebug(_("socket %d recv packet, type %d\n"), fd, type);
         /*
         if (type == PKT_TYPE_UNKNOW)
             break;

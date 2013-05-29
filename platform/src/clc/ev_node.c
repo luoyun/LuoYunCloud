@@ -573,7 +573,7 @@ done:
 static int __process_node_xml_response(xmlDoc * doc, xmlNode * node,
                                        int ent_id)
 {
-    loginfo(_("node response for entity %d\n"), ent_id);
+    logdebug(_("node response for entity %d\n"), ent_id);
     char * str = (char *) xmlGetProp(node, (const xmlChar *) "id");
     if (str)
         logdebug("node response id(job id) = %s\n", str);
