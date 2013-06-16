@@ -11,9 +11,6 @@
 #define CLC_SOCKET_KEEPALIVE_INTVL  10
 #define CLC_SOCKET_KEEPALIVE_PROBES 3
 
-#define DEFAULT_NODE_CPU_FACTOR 4
-#define DEFAULT_NODE_MEM_FACTOR 2
-
 /* functions defined in mcast.c */
 int ly_mcast_send_join(void);
 int ly_clc_ip_get(void);

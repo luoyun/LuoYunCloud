@@ -77,6 +77,7 @@ JOB_ACTION_STR = {
     104: _('update node configure'),
     201: _('run'),
     202: _('stop'),
+    205: _('reboot'),
     206: _('destroy'),
     207: _('query'),
 }
@@ -151,7 +152,6 @@ class Job(ORMBase):
     def status_string(self):
         return JOB_STATUS_STR.get( self.status, _('Unknown') )
 
-
     @property
     def completed(self):
         return 300 <= self.status < 400 or self.status >= 600
@@ -169,3 +169,10 @@ class Job(ORMBase):
         if (self.user_id and db.query(User).get(self.user_id)):
             url = '/admin/user?id=%s' % self.user_id
             return '<a href="%s" target="_blank">%s</a>' % (url, self.user.username)
+
+    @property
+    def status_img(self):
+        if self.completed:
+            return 'icons/JobStatus/%s.png' % self.status
+        else:
+            return 'icons/JobStatus/running.gif'

@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# wrapper script for luoyun services
+#
+# chkconfig: 2345 90 25
+# description: LuoYun service daemon wrapper
+#
+
+prog=$(basename $0)
+
+case "$1" in
+    start)
+        initctl start $prog
+        ;;
+    stop)
+        initctl stop $prog
+        ;;
+    restart)
+        initctl restart $prog
+        ;;
+    status)
+        initctl status $prog
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|restart|status}"
+        exit 1
+esac
+

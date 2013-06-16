@@ -4,31 +4,19 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="SHORTCUT ICON" href="${ static_url('favicon.ico') }" />
-    <link rel="stylesheet" href="${ theme_url('common.css') }" />
-    <link rel="stylesheet" href="${ theme_url('button.css') }" />
-    <link rel="stylesheet" href="${ theme_url('table.css') }" />
-    <link rel="stylesheet" href="${ theme_url('admin-main.css') }" />
+    <link rel="stylesheet" href="${ theme_url('admin.css') }" />
     <script type="text/javascript" src="${ static_url('js/json2.js') }"></script>
-    <script type="text/javascript" src="${ static_url('js/jquery-1.7.min.js') }"></script>
+    <script type="text/javascript" src="${ static_url('js/jquery-1.9.1.min.js') }"></script>
+    <script type="text/javascript" src="${ static_url('js/jquery-migrate-1.2.1.min.js') }"></script>
     <script type="text/javascript" src="${ static_url('js/jquery-ui/js/jquery-ui-1.9.1.custom.min.js') }"></script>
     <script type="text/javascript" src="${ static_url('js/common.js') }"></script>
-    <script type="text/javascript" src="${ static_url('js/luoyun.js') }"></script>
-    <link rel="stylesheet" href="${ static_url('js/jquery-ui/css/redmond/jquery-ui-1.9.1.custom.min.css') }" />
-
+    <link rel="stylesheet" href="${ static_url('js/jquery-ui/css/redmond/jquery-ui-1.9.1.custom.css') }" />
     <script type="text/javascript" src="${ static_url('js/admin.js') }"></script>
-    <link rel="stylesheet" href="${ static_url('js/jquery.multiselect2side/css/jquery.multiselect2side.css') }" />
-    <script type="text/javascript" src="${ static_url('js/jquery.multiselect2side/js/jquery.multiselect2side.js') }"></script>
-    <script type="text/javascript" src="${ static_url('js/jquery.blockUI.js') }"></script>
-
     <link rel="stylesheet" href="${ static_url('js/notify/ui.notify.css') }" />
     <script type="text/javascript" src="${ static_url('js/notify/jquery.notify.js') }"></script>
-    <script>
-      $(function() {
-          $( document ).tooltip({track: true, items: "img[alt], a[title], input[title], div[title], span[title], p[title]"});
-      });
-    </script>
+    <link type="text/css" rel="stylesheet" href="/static/t/qtip/jquery.qtip.css" />
+    <script type="text/javascript" src="/static/t/qtip/jquery.qtip.js"></script>
     <%block name="subhead" />
-
     <title>
 % if title:
 ${ title } -
@@ -42,6 +30,7 @@ ${ _("LuoYunCloud Admin Console") }
     <div id="pager">
 
       <div id="header">
+	<div id="header-wrap">
         <div id="logo">
           <a href="/"><img src="${ static_url('image/logo_white_42.png') }" /></a>
 	  <ul class="vmenu hide" style="display:none;">
@@ -84,8 +73,10 @@ ${ _("LuoYunCloud Admin Console") }
 	  </ul>
 	</div>
       </div>
+      </div>
 
       <div id="submenu">
+	<div id="submenu-wrap">
 	<div id="index-item-submenu" class="item c">
 	  <span>${ _("Note: Any changes here will affect overall operation of LuoYunCloud platform. Please be careful!") }</span>
 	</div>
@@ -125,6 +116,7 @@ ${ _("LuoYunCloud Admin Console") }
 	  <%block name="submenujs"/>
 	  topMenuHover();
 	</script>
+      </div>
       </div>
 
       <div id="main" class="luoyun-min-height">

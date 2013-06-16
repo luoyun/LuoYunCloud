@@ -5,7 +5,7 @@
 *.bak
 *.log
 mako
-tornado
+tornado*
 markdown
 wtforms
 Mako-0.5.0
@@ -20,3 +20,4 @@ dateutil
 python-dateutil-2.1
 tornadotools
 truemped-tornadotools-bd47622/
+alembic*

@@ -34,6 +34,7 @@
 #include "../util/lyxml.h"
 #include "postgres.h"
 #include "entity.h"
+#include "node.h"
 #include "lyclc.h"
 #include "lyjob.h"
 
@@ -92,7 +93,7 @@ static void  __query_instance_all(void)
     /* logdebug(_("%s is called\n"), __func__); */
 
     int ins_num = 0;
-    int * ins_id = db_instance_get_all(&ins_num);;
+    int * ins_id = db_instance_get_all(&ins_num, DOMAIN_S_START);;
     if (ins_num <= 0 || ins_id == NULL)
         return;
     for (int i = 0; i < ins_num; i++) {
@@ -135,10 +136,11 @@ static void  __query_node_all(void)
 
     int ent_curr = -1;
     while(1) {
-        NodeInfo * ni = ly_entity_data_next(LY_ENTITY_NODE, &ent_curr);
-        if (ni == NULL)
+        LYNodeData * nd = ly_entity_data_next(LY_ENTITY_NODE, &ent_curr);
+        if (nd == NULL)
             break;
-        logdebug(_("query entity %d, node %d\n"), ent_curr, ni->host_tag);
+        NodeInfo * nf = &nd->node;
+        logdebug(_("query entity %d, node %d\n"), ent_curr, nf->host_tag);
         __query_node(ent_curr);
     }
     return;
@@ -155,10 +157,11 @@ static void __cleanup_node_all(void)
 
     int ent_curr = -1;
     while(1) {
-        NodeInfo * ni = ly_entity_data_next(LY_ENTITY_NODE, &ent_curr);
-        if (ni == NULL)
+        LYNodeData * nd = ly_entity_data_next(LY_ENTITY_NODE, &ent_curr);
+        if (nd == NULL)
             break;
-        logdebug(_("cleanup entity %d, node %d\n"), ent_curr, ni->host_tag);
+        NodeInfo * nf = &nd->node;
+        logdebug(_("cleanup entity %d, node %d\n"), ent_curr, nf->host_tag);
         __cleanup_node(ent_curr);
     }
     return;

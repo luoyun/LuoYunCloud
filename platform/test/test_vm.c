@@ -122,7 +122,7 @@ static void __main_clean(int keeppid)
 
 static char * __build_xen_xml_from_template()
 {
-    char * tmpl = file2str("./vmfiles/txen.xml");
+    char * tmpl = file2str("./vmfiles/txen.xml", 4096);
     if (tmpl == NULL) {
         logerror("file2str failed\n");
         return NULL;
@@ -148,7 +148,7 @@ static char * __build_xen_xml_from_template()
 
 static char * __build_kvm_xml_from_template()
 {
-    char * tmpl = file2str("./vmfiles/tkvm.xml");
+    char * tmpl = file2str("./vmfiles/tkvm.xml", 4096);
     if (tmpl == NULL) {
         logerror("file2str failed\n");
         return NULL;

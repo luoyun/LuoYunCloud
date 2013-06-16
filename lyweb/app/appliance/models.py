@@ -1,4 +1,7 @@
-import os, logging
+import os
+import logging
+import Image
+import tempfile
 from datetime import datetime
 from lyorm import ORMBase
 
@@ -8,6 +11,8 @@ from sqlalchemy import Column, BigInteger, Integer, String, \
 from sqlalchemy.orm import backref,relationship
 
 import settings
+
+from lytool.filesize import size as human_size
 
 from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'tables'])
@@ -93,8 +98,8 @@ class Appliance(ORMBase):
 
     @property
     def logourl(self):
-        if os.path.exists(self.logothum):
-            return os.path.join(settings.STATIC_URL, 'appliance/%s/%s' % (self.id, settings.APPLIANCE_LOGO_THUM_NAME))
+        if os.path.exists(self.p_logo):
+            return os.path.join(settings.STATIC_URL, 'appliance/%s/d.png' % self.id)
         else:
             return settings.APPLIANCE_LOGO_DEFAULT_URL
 
@@ -103,12 +108,83 @@ class Appliance(ORMBase):
         return os.path.join(settings.STATIC_PATH, 'appliance/%s' % self.id)
 
     @property
-    def logopath(self):
-        return os.path.join(self.logodir, settings.APPLIANCE_LOGO_NAME)
+    def p_logo(self):
+        ''' Appliance default logo path'''
+        return os.path.join(self.logodir, 'd.png')
 
     @property
-    def logothum(self):
-        return os.path.join(self.logodir, settings.APPLIANCE_LOGO_THUM_NAME)
+    def p_logo_raw(self):
+        ''' Appliance raw logo path '''
+        return os.path.join(self.logodir, 'r.png')
+
+    def rebuild_logo(self):
+        ''' Generate relative file and type of logo '''
+
+        self._rebuild_default_logo()
+
+    def _rebuild_default_logo(self):
+        ''' Paste raw image to default logo '''
+
+        left = 14
+        top = 7
+        width = 160
+        height = 160
+
+        box = (left, top, left + width, top + height)
+
+        fg = Image.open(self.p_logo_raw)
+        fg = fg.resize((width, height))
+
+        border_path = os.path.join(settings.STATIC_PATH, 'image/appliance_border.png')
+        border = Image.open(border_path)
+        source = border.convert('RGB')
+        fg.paste(source, mask=border)
+
+        bg_path = os.path.join(settings.STATIC_PATH, 'image/appliance_bg.jpg')
+        bg = Image.open(bg_path)
+        bg.paste(fg, box)
+        bg.save(self.p_logo)
+
+    def save_logo(self, request_files):
+        ''' save logo file
+        request_files = self.request.files['logo']
+        '''
+
+        if not os.path.exists(self.logodir):
+            try:
+                os.makedirs(self.logodir)
+            except Exception, e:
+                return _('create appliance logo dir "%(dir)s" failed: %(emsg)s') % {
+                    'dir': self.logodir, 'emsg': e }
+
+        max_size = settings.APPLIANCE_LOGO_MAXSIZE
+
+        for f in request_files:
+
+            if len(f['body']) > max_size:
+                return self.trans(_('Picture must smaller than %s !')) % human_size(max_size)
+
+            tf = tempfile.NamedTemporaryFile()
+            tf.write(f['body'])
+            tf.seek(0)
+
+            try:
+                img = Image.open(tf.name)
+            except Exception, emsg:
+                return _('Open %(filename)s failed: %(emsg)s , is it a picture ?') % {
+                    'filename': f.get('filename'), 'emsg': emsg }
+
+            try:
+                # can convert image type
+                img.save(self.p_logo_raw)
+
+            except Exception, emsg:
+                return _('Save %(filename)s failed: %(emsg)s') % {
+                    'filename': f.get('filename'), 'emsg': emsg }
+
+            self._rebuild_default_logo()                
+            tf.close()
+
 
     @property
     def description_html(self):

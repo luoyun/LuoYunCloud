@@ -146,8 +146,10 @@ int ly_node_info_update()
     if (nf->status >= NODE_STATUS_ONLINE &&
         nf->status != NODE_STATUS_ERROR &&
         nf->status != NODE_STATUS_CHECK) {
-        if (load_average > LY_NODE_LOAD_MAX || ly_handler_busy())
+        if (load_average > LY_NODE_LOAD_MAX || ly_handler_busy()) {
             nf->status = NODE_STATUS_BUSY;
+            logdebug(_("node busy %d %d\n"), load_average, LY_NODE_LOAD_MAX);
+        }
         else
             nf->status = NODE_STATUS_READY;
     }

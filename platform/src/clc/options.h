@@ -31,10 +31,16 @@ typedef struct CLCConfig_t {
     int   daemon;
     int   node_cpu_factor, node_mem_factor;
     int   job_timeout_instance, job_timeout_node, job_timeout_other;
+    int   node_ins_job_busy_limit;
 } CLCConfig;
 
-#define NODE_SELECT_ANY		0 
-#define NODE_SELECT_LAST_ONLY	1
+#define DEFAULT_NODE_CPU_FACTOR 4
+#define DEFAULT_NODE_MEM_FACTOR 2
+
+#define DEFAULT_NODE_INS_JOB_BUSY_LIMIT 4
+
+#define NODE_SELECT_ANY		1
+#define NODE_SELECT_LAST_ONLY	2
 
 #define CLC_CONFIG_RET_HELP		1
 #define CLC_CONFIG_RET_VER		2

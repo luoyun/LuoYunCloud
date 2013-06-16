@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import sys, logging, json
+import os
+import signal
+import logging
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8') 
 
 import settings
 
@@ -9,23 +15,26 @@ import settings
 import __builtin__
 __builtin__.__dict__['_'] = lambda s: s
 
-import tornado.ioloop
+from tornado.ioloop import IOLoop, PeriodicCallback
 import tornado.web
 
 from urls import tornado_settings as app_settings
 from urls import handlers as app_handlers
 
+from tornado.options import define, options
+define("port", default=8888, help="given port", type=int)
 
 import lyorm
 
 
-from tornado.options import define, options
-define("port", default=8888, help="given port", type=int)
-
-
 class Application(tornado.web.Application):
+
+    _cur_unique_id = 0
+
     def __init__(self):
 
+        # Clc connect
+        self.clcstream = None
         # SQLAlchemy connect
         self.db2 = lyorm.dbsession
 
@@ -57,43 +66,52 @@ class Application(tornado.web.Application):
         from app.install.urls import handlers as install_handlers
         tornado.web.Application.__init__(self, install_handlers, **app_settings)
 
-                
+
+    def get_unique_id(self):
+        self._cur_unique_id += 1
+        return self._cur_unique_id
+
+
+def exit_handler(_signal, frame):
+
+    if _signal == signal.SIGINT:
+        print " ... You Pressed CTL+C, exit ... "
+
+    elif _signal == signal.SIGHUP:
+        print " ... get SIGHUP, exit ... "
+
+    if _signal == signal.SIGTERM:
+        print " ... get SIGTERM, exit ... "
+
+    # TODO: exit
+    lyorm.dbengine.dispose()
+
+    sys.exit(1)
 
 
 def main():
-    import sys,signal
-    reload(sys)
-    sys.setdefaultencoding('utf8') 
 
-    def signal_handler(signal, frame):
-        print "...You Pressed CTL+C ,exit..."
-        sys.exit(1)
-        # end def
+    # options
+    tornado.options.parse_command_line()
 
     # Locale
     tornado.locale.load_gettext_translations(settings.I18N_PATH, "luoyun")
     tornado.locale.set_default_locale('zh_CN')
 
-    # options
-    tornado.options.parse_command_line()
-
     logging.info("starting torando web server")
 
     # Start listen
-    application = Application()
-    application.listen(options.port, xheaders=True)
-    tornado.ioloop.IOLoop.instance().start()
-
-    # wait for singal
-    signal.pause()
-
+    Application().listen(options.port, xheaders=True)
+    IOLoop().instance().start()
 
 
 if __name__ == "__main__":
 
+    signal.signal(signal.SIGINT, exit_handler)
+    signal.signal(signal.SIGHUP, exit_handler)
+    signal.signal(signal.SIGTERM, exit_handler)
+
     try:
         main()
     finally:
-        # TODO: dispose from db
-        import lyorm
-        lyorm.dbengine.dispose()
+        pass

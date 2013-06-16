@@ -47,7 +47,7 @@
 #include "node.h"
 #include "handler.h"
 
-#define LIBVIRT_XML_DATA_MAX 2048
+#define LIBVIRT_XML_DATA_MAX 4096
 
 static pthread_mutex_t handler_mutex = PTHREAD_MUTEX_INITIALIZER;
 static int g_handler_thread_num = 0;
@@ -320,6 +320,59 @@ out:
     return -1;
 }
 
+/* set domain graphics password */
+static char *  __domain_xml_graphics_passwd_set(char *xml, char *password)
+{
+    xmlDoc *doc = xml_doc_from_str(xml);
+    if (doc == NULL) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return NULL;
+    }
+    xmlNode * node = xmlDocGetRootElement(doc);
+    if (node == NULL || strcmp((char *)node->name, "domain") != 0) {
+        logwarn(_("error: xml string not for domain\n"));
+        xmlFreeDoc(doc);
+        return NULL;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name); */
+            if (strcmp((char *)node->name, "devices") == 0 ) {
+                break;
+            }
+         }
+    }
+    if (node == NULL || strcmp((char *)node->name, "devices") != 0 ) {
+        logwarn(_("error: xml string not for domain\n"));
+        xmlFreeDoc(doc);
+        return NULL;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name);*/
+            if (strcmp((char *)node->name, "graphics") == 0 ) {
+                char * str = (char *)xmlSetProp(node, (const xmlChar *)"passwd", (const xmlChar *)(BAD_CAST password));
+                if (str == NULL) {
+                    logerror(_("domain sets graphics password error\n"));
+                    return xml;
+                }
+                logdebug(_("graphics password set\n"));
+                int len;
+                xml = NULL;
+                xmlDocDumpMemory(doc, (xmlChar **)&xml, &len);
+                break;
+            }
+            /* other nodes ignored */
+        }
+    }
+
+    xmlFreeDoc(doc);
+    return xml;
+}
 #include <json.h>
 static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor, 
                              char * net, int net_size, 
@@ -539,6 +592,57 @@ out:
     return -1;
 }
 
+static char *  __domain_xml_json_vdi(NodeCtrlInstance * ci, char * xml)
+{
+    if (ci == NULL || ci->osm_json == NULL || xml == NULL || g_c == NULL)
+        return NULL;
+
+    json_settings settings;
+    memset((void *)&settings, 0, sizeof(json_settings));
+    char error[256];
+    json_value * value = json_parse_ex(&settings, ci->osm_json, error);
+    if (value == 0) {
+        logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, error);
+        return NULL;
+    }
+
+    if (value->type != json_object) {
+        logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "object");
+        goto out;
+    }
+
+    for (int i = 0; i < value->u.object.length; i++) {
+        if (strcmp(value->u.object.values[i].name, "vdi") == 0) {
+            json_value * vdi_value = value->u.object.values[i].value;
+            if (vdi_value->type != json_object) {
+                logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "vdi object");
+                goto out;
+            }
+            json_value * vdi_passwd = NULL;
+            for (int k = 0; k < vdi_value->u.object.length; k++) {
+                if (strcmp(vdi_value->u.object.values[k].name, "password") == 0) {
+                    vdi_passwd = vdi_value->u.object.values[k].value;
+                    break;
+                }
+            }
+            if (vdi_passwd) {
+                if (vdi_passwd->type == json_string)
+                    xml = __domain_xml_graphics_passwd_set(xml, (char *)vdi_passwd->u.string.ptr);
+                else
+                    logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "vdi passwd");
+            }
+            break;
+        }
+    }
+
+    json_value_free(value);
+    return xml;
+
+out:
+    json_value_free(value);
+    return NULL;
+}
+
 static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
 {
     if (ci == NULL || g_c == NULL)
@@ -684,6 +788,12 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         logerror(_("xml string is too large\n"));
         goto out;
     }
+
+    char * bufnew = __domain_xml_json_vdi(ci, buf);
+    if (bufnew && bufnew != buf) {
+        free(buf);
+        buf = bufnew;
+    }
     logsimple("%s\n", buf);
 
     return buf;
@@ -693,6 +803,161 @@ out:
     return NULL;
 }
 
+/* get domain graphics port packet */
+static int __domain_xml_graphics_port(char *xml)
+{
+    int ret = 0;
+    xmlDoc *doc = xml_doc_from_str(xml);
+    if (doc == NULL) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return 0;
+    }
+    xmlNode * node = xmlDocGetRootElement(doc);
+    if (node == NULL || strcmp((char *)node->name, "domain") != 0) {
+        logwarn(_("error: xml string not for domain\n"));
+        return 0;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name); */
+            if (strcmp((char *)node->name, "devices") == 0 ) {
+                break;
+            }
+         }
+    }
+    if (node == NULL || strcmp((char *)node->name, "devices") != 0 ) {
+        logwarn(_("error: xml string not for domain\n"));
+        return 0;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name);*/
+            if (strcmp((char *)node->name, "graphics") == 0 ) {
+                char * str = (char *)xmlGetProp(node, (const xmlChar *)"port");
+                if (str == NULL) {
+                    logerror(_("domain has no graphics port\n"));
+                    return 0;
+                }
+                ret = atoi(str);
+                logdebug(_("graphics port is %d\n"), ret);
+                free(str);
+                break;
+            }
+            /* other nodes ignored */
+        }
+    }
+
+    xmlFreeDoc(doc);
+    return ret;
+}
+ 
+/* get network interface stat */
+static int __domain_xml_net_stat(char * name, char *xml,
+                                 unsigned long * rx_bytes, 
+                                 unsigned long * rx_pkts,
+                                 unsigned long * tx_bytes,
+                                 unsigned long * tx_pkts)
+{
+    int found = 0;
+    char * target = NULL;
+    int ret = -1;
+    xmlDoc *doc = xml_doc_from_str(xml);
+    if (doc == NULL) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        goto done;
+    }
+    xmlNode * node = xmlDocGetRootElement(doc);
+    if (node == NULL || strcmp((char *)node->name, "domain") != 0) {
+        logwarn(_("error: xml string not for domain\n"));
+        goto done;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name); */
+            if (strcmp((char *)node->name, "devices") == 0 ) {
+                break;
+            }
+         }
+    }
+    if (node == NULL || strcmp((char *)node->name, "devices") != 0 ) {
+        logwarn(_("error: xml string not for domain\n"));
+        goto done;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name);*/
+            if (strcmp((char *)node->name, "interface") == 0 ) {
+                /* skip type checking for now
+                char * str = (char *)xmlGetProp(node, (const xmlChar *)"type");
+                if (str == NULL) {
+                    logwarn(_("domain interface has no type\n"));
+                    continue;
+                }
+                else if (strcmp(str, "network")) {
+                    free(str);
+                    continue;
+                }
+                free(str);
+                */
+                xmlNode * node1 = node->children;
+                char * str;
+                for (; node1; node1 = node1->next) {
+                    if (node1->type == XML_ELEMENT_NODE) {
+                        if (strcmp((char *)node1->name, "alias") == 0 ) {
+                            str = (char *)xmlGetProp(node1, (const xmlChar *)"name");
+                            if (str != NULL) {
+                                if (strcmp(str, "net0") == 0)
+                                    found = 1;
+                                else
+                                    loginfo(_("ignore domain interface alias %s\n"), str);
+                                free(str);
+                            }
+                            else
+                                logwarn(_("domain interface alias has no name\n"));
+                        }
+                        else if (strcmp((char *)node1->name, "target") == 0 ) {
+                            str = (char *)xmlGetProp(node1, (const xmlChar *)"dev");
+                            if (str != NULL)
+                                target = str;
+                            else
+                                logwarn(_("domain interface unexpected target\n"));
+                        }
+                        if (found && target) {
+                            logdebug(_("network interface net0 found\n"));
+                            break;
+                        }
+                    }
+                }
+            }
+            if (found && target)
+                break;
+            /* other nodes ignored */
+        }
+    }
+
+    xmlFreeDoc(doc);
+
+    if (found && target) {
+        if (libvirt_domain_ifstat(name, target, rx_bytes, rx_pkts, tx_bytes, tx_pkts) == 0)
+            ret = 0;
+        else
+            logerror(_("error get ifstat\n"));
+    }
+
+done:
+    if (target)
+        free(target);
+
+    return ret;
+}
 static int __domain_run_data_check(NodeCtrlInstance * ci)
 {
     if (ci == NULL || g_c == NULL)
@@ -1047,6 +1312,17 @@ static int __domain_run(NodeCtrlInstance * ci)
 
     ret = LY_S_WAITING_STARTING_OSM;
     ly_node_send_report_resource();
+
+    /* check whether the domain is active */
+    int wait = LY_NODE_START_INSTANCE_WAIT;
+    while (wait > 0) {
+        wait--;
+        if (libvirt_domain_active(ci->ins_domain)) {
+            loginfo(_("instance %s active.\n"), ci->ins_domain);
+            break;
+        }
+        sleep(1);
+    }
     goto out_unlock;
 
 out_umount:
@@ -1255,13 +1531,26 @@ static int __domain_query(NodeCtrlInstance * ci)
 
     InstanceInfo ii;
     bzero(&ii, sizeof(InstanceInfo));
-    if (libvirt_domain_active(ci->ins_domain))
+    ii.id = ci->ins_id;
+    if (libvirt_domain_active(ci->ins_domain)) {
+        char * xml = libvirt_domain_xml(ci->ins_domain);
+        if (xml) {
+            ii.gport = __domain_xml_graphics_port(xml);
+            __domain_xml_net_stat(ci->ins_domain, xml, &ii.netstat[0].rx_bytes,
+                                                       &ii.netstat[0].rx_pkts,
+                                                       &ii.netstat[0].tx_bytes,
+                                                       &ii.netstat[0].tx_pkts);
+            luoyun_instance_info_print(&ii);
+            free(xml);
+        }
+        else
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         ii.status = DOMAIN_S_START;
+    }
     else if (access(path, F_OK) == 0)
         ii.status = DOMAIN_S_STOP;
     else
         ii.status = DOMAIN_S_NOT_EXIST;
-    ii.id = ci->ins_id;
 
     LYReply r;
     r.req_id = ci->req_id;
@@ -1337,6 +1626,34 @@ void * __instance_control_func(void * arg)
         ret = __send_response(g_c->wfd, ci, LY_S_FINISHED_SUCCESS);
     else if (ret < 0)
         ret = __send_response(g_c->wfd, ci, LY_S_FINISHED_FAILURE);
+    else if (ret == LY_S_WAITING_STARTING_OSM) {
+        InstanceInfo ii;
+        bzero(&ii, sizeof(InstanceInfo));
+        ii.status = DOMAIN_S_START;
+        ii.id = ci->ins_id;
+        char * xml = libvirt_domain_xml(ci->ins_domain);
+        if (xml) {
+            ii.gport = __domain_xml_graphics_port(xml);
+            free(xml);
+        }
+        else
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+
+        LYReply r;
+        r.req_id = ci->req_id;
+        r.from = LY_ENTITY_NODE;
+        r.to = LY_ENTITY_CLC;
+        r.status = ret;
+        r.data = &ii;
+        xml = lyxml_data_reply_instance_info(&r, NULL, 0);
+        if (xml) {
+            if (ly_packet_send(g_c->wfd, PKT_TYPE_CLC_INSTANCE_CONTROL_REPLY, xml, strlen(xml)) < 0)
+                logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+            free(xml);
+        }
+        else
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+    }
     else
         ret = __send_response(g_c->wfd, ci, ret);
 

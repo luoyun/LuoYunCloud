@@ -41,6 +41,14 @@
 	  </td>
 	</tr>
 	<tr>
+	  <td>${ _("VDI") }</td>
+	  <td><span id="i-vdi_ip">${ I.vdi_ip }</span>:<span id="i-vdi_port">${ I.vdi_port }</span></td>
+	</tr>
+	<tr>
+	  <td>${ _("Network Data") }</td>
+	  <td>${ _('RX') } <span id="i-rx_bytes">${ human_size(I.rx_bytes) }</span>/${ _('TX') } <span id="i-tx_bytes">${ human_size(I.tx_bytes) }</span></td>
+	</tr>
+	<tr>
 	  <td>${ _("Recent Action") }</td>
 	  <td><span id="i-lastjob-id">${ I.lastjob_id }</span></td>
 	</tr>

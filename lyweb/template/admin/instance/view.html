@@ -117,6 +117,14 @@
 	  </td>
 	</tr>
 	<tr>
+	  <td>${ _("VDI") }</td>
+	  <td><span id="i-vdi_ip">${ I.vdi_ip }</span>:<span id="i-vdi_port">${ I.vdi_port }</span></td>
+	</tr>
+	<tr>
+	  <td>${ _("Network Data") }</td>
+	  <td>${ _('RX') } <span id="i-rx_bytes">${ human_size(I.rx_bytes) }</span>/${ _('TX') } <span id="i-tx_bytes">${ human_size(I.tx_bytes) }</span></td>
+	</tr>
+	<tr>
 	  <td>${ _("Recent Action") }</td>
 	  <td><span id="i-lastjob-id">${ I.lastjob_id }</span></td>
 	</tr>
@@ -144,6 +152,20 @@
 		  ><a href="${ reverse_url('instance:view', I.id) }" target="_blank">${ _("Public Access") }</a>
 	    </span>
 	    <span style="display:none;" class="access-url">${ reverse_url('instance:set_private', I.id) }</span>
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ _("Node") }</td>
+	  <td>
+	    % if I.node:
+	    <a href="${ reverse_url('admin:node') }?id=${ I.node.id }" target="_blank">${ I.node.hostname }</a>
+	    /
+	    ${ I.node.ip }
+	    /
+	    <a href="${ reverse_url('admin:instance') }?node=${ I.node.id }" title="Instances count" target="_blank">${ len(I.node.instances) }</a>
+	    % else:
+	    ${ _("no node server found.") }
+	    % endif
 	  </td>
 	</tr>
 	<tr>

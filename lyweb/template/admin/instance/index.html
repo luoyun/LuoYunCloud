@@ -5,112 +5,122 @@
 </%block>
 
 <%block name="content">
-
 <table class="sortby-module">
   <tbody>
     <tr>
-      <td nowrap="nowrap">${ _("Instance Status") }</td>
+      <td>${ _("Sort") }</td>
       <td>
-	<a class="${ b2s(STATUS < 0) }" href="${ reverse_url('admin:instance') }?status=-1">${ _("All") }</a>
+	<a class="${ b2s(not SORTBY or SORTBY == 'id') }" href="${ urlupdate({'by': 'dropthis'}) }">${ _("Default") }</a>
+	<a class="${ b2s(SORTBY == 'name') }" href="${ sort_by('name') }">${ _("Name") }</a>
+	<a class="${ b2s(SORTBY == 'status') }" href="${ sort_by('status') }">${ _("Status") }</a>
+	<a class="${ b2s(SORTBY == 'user') }" href="${ sort_by('user') }">${ _("Owner") }</a>
+	<a class="${ b2s(SORTBY == 'appliance') }" href="${ sort_by('appliance') }">${ _("Appliance") }</a>
+	<a class="${ b2s(SORTBY == 'created') }" href="${ sort_by('created') }">${ _("Created") }</a>
+	<a class="${ b2s(SORTBY == 'updated') }" href="${ sort_by('updated') }">${ _("Updated") }</a>
+      </td>
+    </tr>
+    <tr>
+      <td>${ _("Status") }</td>
+      <td>
+	<a class="${ b2s(STATUS < 0) }" href="${ urlupdate({'status': -1, 'p': 'dropthis'}) }">${ _("All") }</a>
 	%for s, v in INSTANCE_STATUS:
-	<a class="${ b2s(STATUS == s) }" href="${ urlupdate({'status': s, 'p': 1}) }">${ v }</a>
+	<a class="${ b2s(STATUS == s) }" href="${ urlupdate({'status': s, 'p': 'dropthis'}) }">${ v }</a>
+	%endfor
+      </td>
+    </tr>
+    <tr>
+      <td>${ _("Group") }</td>
+      <td>
+	<a class="${ b2s(USER_GROUP_ID < 0) }" href="${ urlupdate({'user_group': -1, 'p': 'dropthis'}) }">${ _("All") }</a>
+	%for G in GROUP_LIST:
+	<a class="${ b2s(USER_GROUP_ID == G.id) }" href="${ urlupdate({'user_group': G.id, 'p': 'dropthis', 'uid': 0 }) }">${ G.name }</a>
 	%endfor
       </td>
     </tr>
     %if SORT_USER or SORT_APPLIANCE or SORT_NODE:
     <tr>
-      <td>${ _("Sorted by") }</td>
-      <td>
-	% if SORT_USER:
-	<a href="${ reverse_url('admin:user') }?id=${ SORT_USER.id }">${ SORT_USER.username }</a>
-	% endif
-	% if SORT_APPLIANCE:
-	<a href="${ reverse_url('admin:appliance') }?id=${ SORT_APPLIANCE.id }">${ SORT_APPLIANCE.name }</a>
-	% endif
-	% if SORT_NODE:
-	<a href="${ reverse_url('admin:node') }?id=${ SORT_NODE.id }">${ SORT_NODE.hostname } ( ${ SORT_NODE.ip } )</a>
-	% endif
+      % if SORT_USER:
+      <td>${ _("User") }</td><td>
+	<a href="${ urlupdate({'uid': 'dropthis'}) }">${ _("All") }</a>
+	<a class="${ b2s(SORT_USER) }" href="${ reverse_url('admin:user') }?id=${ SORT_USER.id }" target="_blank">${ SORT_USER.username }</a></td>
+      % endif
+      % if SORT_APPLIANCE:
+      <td>${ _("Appliance") }</td><td>
+	<a href="${ urlupdate({'aid': 'dropthis'}) }">${ _("All") }</a>
+	<a class="${ b2s(SORT_APPLIANCE) }" href="${ reverse_url('admin:appliance') }?id=${ SORT_APPLIANCE.id }" target="_blank">${ SORT_APPLIANCE.name }</a></td>
+      % endif
+      % if SORT_NODE:
+      <td>${ _("Node") }</td><td>
+	<a href="${ urlupdate({'node': 'dropthis'}) }">${ _("All") }</a>
+	<a class="${ b2s(SORT_NODE) }" href="${ reverse_url('admin:node') }?id=${ SORT_NODE.id }" target="_blank">${ SORT_NODE.hostname } ( ${ SORT_NODE.ip } )</a>
       </td>
+      % endif
     </tr>
     %endif
+
   </tbody>
 </table>
 
-<p class="subtitle">${ _("Total instances: ") } ${ TOTAL_INSTANCE }</p>
+<div class="m-item"><span class="k">${ _("Search") }</span><span id="search"><input type="text" title="${ _('Input text to search matched instances.') }"/></span></div>
 
-
-<div class="admin-instance c">
-
-  % if INSTANCE_LIST:
-  <div class="ly-table">
-    <table class="list">
-      <thead>
-	<tr>
-	  <th></th>
-          <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>
-          <th><a href="${ sort_by('name') }">${ _("Name") }</a></th>
-          <th><a href="${ sort_by('status') }">${ _("Status") }</a></th>
-          <th>${ _("IP") }</th>
-	  % if not SORT_NODE:
-          <th><a href="${ sort_by('node') }">${ _("Node") }</a></th>
-	  % endif
-          <th><a href="${ sort_by('user') }">${ _("Owner") }</a></th>
-	  <th><a href="${ sort_by('appliance') }">${ _("Appliance") }</a></th>
-          <th>${ _("Islocked") }</th>
-          <th><a href="${ sort_by('created') }">${ _("Created") }</a></th>
-          <th><a href="${ sort_by('updated') }">${ _("Updated") }</a></th>
-	</tr>
-      </thead>
-      <tbody>
-	% for I in INSTANCE_LIST:
-	<tr>
-	  <td class="i-logo"><img src="${ I.logourl }" /></td>
-          <td>${ I.id }</td>
-          <td><a href="${ reverse_url('admin:instance') }?id=${ I.id }">${ I.name }</a></td>
-          <td><img src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }" alt="${ locale.translate(I.status_string) }"/></td>
-	  <td>${ I.work_ip }</td>
-	  % if not SORT_NODE:
-          <td>
-            % if I.node:
-	    % if I.is_running:
-            <a href="${ reverse_url('admin:node') }?id=${ I.node_id }">${ I.node.ip }</a>
-	    % else:
-	    ${ I.node.ip }
-	    % endif:
-            % else:
-            ${ _("None") }
-            % endif
-          </td>
-	  % endif
-          <td>
-	    %if I.user:
-	    <a href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a>
-	    %else:
-	    ${ _("User is deleted") }
-	    %endif
-	  </td>
-	  <td><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></td>
-	  <td><input type="checkbox"
-		     % if I.islocked:
-		     checked="checked"
-		     % endif
-		     onclick="simpleToggleCheckbox( this, '${ reverse_url('instance:islocked', I.id) }', '#islocked-notify')" />
-	  </td>
-          <td>${ ftime(I.created) }</td>
-          <td>${ htime(I.updated) }</td>
-	</tr>
-	% endfor
-      </tbody>
-    </table>
-
-    ${ PAGE_HTML }
-
-    % else:
-    <p>${ _("No instances yet !") }</p>
-    % endif
-
+<div id="lyinst-list">
+  <div class="current-uri" style="display:none;">${ urlupdate({'ajax': 't'}) }</div>
+  <div class="filter-summary">
+    ${ _("Total instances: ") } ${ TOTAL_INSTANCE }
   </div>
 
+  ${ PAGE_HTML }
+  <table class="i-list ly-table">
+    <thead>
+      <tr>
+	<th><input type="checkbox" name="all" value="all"></th>
+        <th>${ _("ID") }</th>
+        <th>${ _("Name") }</th>
+        <th>${ _("Status") }</th>
+        <th>${ _("Owner") }</th>
+	<th>${ _("Appliance") }</th>
+        <th>${ _("Created") }</th>
+        <th>${ _("Updated") }</th>
+	<th></th>
+      </tr>
+    </thead>
+    <tbody>
+      % for I in INSTANCE_LIST:
+      <tr class="odd" id="i${ I.id }">
+	<td><input type="checkbox" name="instance" value="${ I.id }"></td>
+        <td>${ I.id }</td>
+        <td><a href="${ reverse_url('admin:instance') }?id=${ I.id }">${ I.name }</a></td>
+        <td><img src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }" alt="${ locale.translate(I.status_string) }"/></td>
+        <td><a class="tip-ajax" href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a></td>
+	<td><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></td>
+        <td>${ ftime(I.created) }</td>
+        <td>${ htime(I.updated) }</td>
+	<td class="ex" href="${ reverse_url('admin:instance') }?id=${ I.id }&ajax=t">+</td>
+      </tr>
+      <tr class="even"><td colspan="9" id="i${ I.id }-hide" class="ex-addons"></td></tr>
+      % endfor
+    </tbody>
+    <tfoot>
+      <tr>
+	<td><input type="checkbox" name="all" value="all"></td>
+	<td colspan="8">
+	  <a class="lyinst-control-btn green-submit stop" href="${ reverse_url('instance:life_control') }?action=stop">${ _("Stop") }</a>
+	  <a class="lyinst-control-btn green-submit run" href="${ reverse_url('instance:life_control') }?action=run">${ _("Run") }</a>
+	  <a class="lyinst-control-btn red-submit delete" href="${ reverse_url('instance:life_control') }?action=delete">${ _("Delete") }</a>
+	</td>
+      </tr>
+    </tfoot>
+  </table>
+  ${ PAGE_HTML }
+  <script type="text/javascript">
+    lyinst_checkbox_binding();
+    lyinst_control("${ xsrf_cookie }");
+    //lyinst_name_hover();
+    lyinst_list_binding();
+    lyinst_page_view_binding();
+    lytip_ajax_binding();
+    lyinst_search();
+  </script>
 </div>
 
 <div id="islocked-notify" style="display:none">
@@ -124,5 +134,29 @@
     <p>#{text}</p>
   </div>
 </div>
+
+<div id="ictl-cfm-dialog" style="display:none;">
+  <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span><span class="action">Control</span> ${ _("the following instances: ") } <span class="ids"></span></p>
+</div>
+
+<div id="ictl-cfm-dialog-wait" style="display:none;">
+  <div class="pic"><img src="/static/admin/default/css/img/running.gif" /></div>
+  <div class="text">${ _("The request has been submitted, please wait ...") }</div>
+</div>
+
+<div id="ictl-cfm-dialog-success" style="display:none;">
+  <p>${ _("Instance Control Return:") }</p>
+  <table class="ly-table">
+    <thead>
+      <tr>
+	<th>${ _("ID") }</th>
+	<th>${ _("Return") }</th>
+      </tr>
+    </thead>
+    <tbody class="return">
+    </tbody>
+  </table>
+</div>
+
 
 </%block>

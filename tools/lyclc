@@ -38,6 +38,20 @@ checkdb()
     fi
 }
 
+checkrunning()
+{
+    if [ -f "$PID_FILE" ]
+    then
+        thispid=$(<$PID_FILE)
+        if [ -e "/proc/${thispid}/cmdline" ]
+        then
+            thiscmd=$(</proc/${thispid}/cmdline)
+            [ "${thiscmd#$LYCLCD}" != "${thiscmd}" ] && return 0
+        fi
+    fi
+    return 1
+}
+
 start()
 {
     checkdb
@@ -61,18 +75,21 @@ stop()
 
 status()
 {
-    [ -f "$PID_FILE" ] && thispid=$(<$PID_FILE) && echo "$prog($thispid) is running..." && return 0
-    [ ! -f "$PID_FILE" ] && echo "$prog is stopped" && return 0
-    return 1
+    checkrunning && echo "$prog($thispid) is running..." || echo "$prog is stopped"
+    return 0
 }
 
 case "$1" in
     start)
-        [ -f "$PID_FILE" ] && thispid=$(<$PID_FILE) && echo "$prog($thispid) is started already" && exit 0
+        checkrunning && echo "$prog($thispid) is started already" && exit 0
 	start
 	;;
     stop)
-        [ ! -f "$PID_FILE" ] && echo "$prog is stopped already" && exit 0
+        if ! checkrunning
+        then
+            echo "$prog doesn't seem to be running"
+            exit 0
+        fi
 	stop
 	;;
     restart)

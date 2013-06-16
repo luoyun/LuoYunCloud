@@ -46,6 +46,23 @@ serve the request from LuoYunCloud web server.
 Here are the defails of building LuoYunCloud applications from
 source code, assuming the source files are ready in the current directory.
 
+2.0  Construct building environment
+     In Centos 6.3, make sure the following packages are installed
+
+     autotools
+     autoconf
+     automake
+     postgresql-devel
+     libtool
+     zlib-devel
+     bzip2-devel
+     libcurl-devel
+     libvirt-devel
+     libxml2-devel
+     libuuid-devel
+     libgcrypt-devel
+     make
+
 2.1  The first step is to run the configure script, which can be as
      simple as
 

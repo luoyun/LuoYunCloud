@@ -121,6 +121,8 @@ typedef enum LYActionStatus_t {
      LY_S_WAITING_STARTING_SERVICE = 421,
      LY_S_WAITING_LAST_STATUS = 499,
      LY_S_PENDING = 500,
+     LY_S_PENDING_NODE_STROKE = 501,
+     LY_S_PENDING_LAST_STATUS = 599,
      LY_S_TIMEOUT = 600,
      LY_S_CANCEL = 700,
      LY_S_CANCEL_INTERNAL_ERROR = 701,
@@ -145,7 +147,7 @@ typedef enum LYActionStatus_t {
 #define JOB_IS_FINISHED(s) (s >= LY_S_FINISHED && s < LY_S_FINISHED_LAST_STATUS)
 #define JOB_IS_WAITING(s) (s >= LY_S_WAITING && s < LY_S_WAITING_LAST_STATUS)
 #define JOB_IS_TIMEOUT(s) (s == LY_S_TIMEOUT)
-#define JOB_IS_PENDING(s) (s == LY_S_PENDING)
+#define JOB_IS_PENDING(s) (s >= LY_S_PENDING && s < LY_S_PENDING_LAST_STATUS)
 #define JOB_IS_CANCELLED(s) (s >= LY_S_CANCEL && s < LY_S_CANCEL_LAST_STATUS)
 #define JOB_S_UNKNOWN LY_S_UNKNOWN
 #define JOB_S_INITIATED LY_S_INITIATED 
@@ -391,10 +393,19 @@ typedef struct AuthInfo_t {
 /*
 ** common data structure for instance info
 */
+typedef struct InstanceIfStat_t {
+    unsigned long rx_bytes;
+    unsigned long rx_pkts;
+    unsigned long tx_bytes;
+    unsigned long tx_pkts;
+} InstanceIfStat;
+
 typedef struct InstanceInfo_t {
     int id;
     int status;
     char *ip;
+    int gport; /* graphices port */
+    InstanceIfStat netstat[2];
 } InstanceInfo;
 
 /*

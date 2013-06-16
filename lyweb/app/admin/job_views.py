@@ -76,9 +76,9 @@ class JobManagement(LyRequestHandler):
         if user_id:
             U = self.db2.query(User).get(user_id)
             JOB_LIST = JOB_LIST.filter(Job.user_id == user_id)
-        JOB_LIST = JOB_LIST.order_by( order_func ).slice(start, stop)
 
-        JOB_TOTAL = self.db2.query(Job.id).count()
+        JOB_TOTAL = JOB_LIST.count()
+        JOB_LIST = JOB_LIST.order_by( order_func ).slice(start, stop)
 
         page_html = pagination(self.request.uri, JOB_TOTAL,
                                page_size, cur_page,

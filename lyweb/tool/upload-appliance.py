@@ -25,9 +25,7 @@ for m in settings.app:
         logging.error('from %s import table failed: %s' % (m, e))
 
 
-#from lyorm import dbsession as db
-from lyorm import get_new_session
-db = get_new_session()
+from lyorm import db
 
 from app.appliance.models import Appliance
 from app.account.models import User

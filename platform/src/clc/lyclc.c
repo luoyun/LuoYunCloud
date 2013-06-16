@@ -168,12 +168,6 @@ int main(int argc, char *argv[])
     if (ret != 0)
         goto out;
 
-    /* node cpu/mem factors */
-    if (c->node_cpu_factor == 0)
-        c->node_cpu_factor = DEFAULT_NODE_CPU_FACTOR;
-    if (c->node_mem_factor == 0)
-        c->node_mem_factor = DEFAULT_NODE_MEM_FACTOR;
-
     /* for debuuging */
     if (c->debug)
         __print_config(c);

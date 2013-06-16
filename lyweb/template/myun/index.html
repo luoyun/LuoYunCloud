@@ -16,30 +16,59 @@
   <div class="pie" id="myun-mem-pie"></div>
   <div class="pie" id="myun-instance-pie"></div>
   <div class="pie" id="myun-storage-pie"></div>
+
+  <script src="${ static_url('js/highcharts/highcharts.js') }"></script>
+  <script type="text/javascript">
+	draw_used({
+        container: '#myun-cpu-pie',
+        title: '${ _("CPU USED INFO") }',
+        subtitle: '${ _("Total") } : ${ current_user.profile.cpus } ${ _("core") }',
+        series_name: '${ _("Percentage") }',
+        used_text: '${ _("Used") }<br/>${ USED_CPU } ${ _("core") }',
+	    unused_text: '${ _("Unused") }<br/>${ current_user.profile.cpus - USED_CPU } ${ _("core") }',
+        used: ${ USED_CPU },
+        total: ${ current_user.profile.cpus },
+	    pie_size: 150,
+    });
+
+	draw_used({
+        container: '#myun-mem-pie',
+        title: '${ _("MEMORY USED INFO") }',
+        subtitle: '${ _("Total") } : ${ current_user.profile.memory }M',
+        series_name: '${ _("Percentage") }',
+        used_text: '${ _("Used") }<br/>${ USED_MEMORY }M',
+	    unused_text: '${ _("Unused") }<br/>${ current_user.profile.memory - USED_MEMORY }M',
+        used: ${ USED_MEMORY },
+        total: ${ current_user.profile.memory },
+	    pie_size: 150,
+    });
+
+	draw_used({
+        container: '#myun-instance-pie',
+        title: '${ _("INSTANCE USED INFO") }',
+        subtitle: '${ _("Total") } : ${ current_user.profile.instances }',
+        series_name: '${ _("Percentage") }',
+        used_text: '${ _("Used") }<br/>${ USED_INSTANCE }',
+	    unused_text: '${ _("Unused") }<br/>${ current_user.profile.instances - USED_INSTANCE }',
+        used: ${ USED_INSTANCE },
+        total: ${ current_user.profile.instances },
+	    pie_size: 150,
+    });
+
+	draw_used({
+        container: '#myun-storage-pie',
+        title: '${ _("STORAGE USED INFO") }',
+        subtitle: '${ _("Total") } : ${ current_user.profile.storage }G',
+        series_name: '${ _("Percentage") }',
+        used_text: '${ _("Used") }<br/>${ USED_STORAGE }G',
+	    unused_text: '${ _("Unused") }<br/>${ current_user.profile.storage - USED_STORAGE }G',
+        used: ${ USED_STORAGE },
+        total: ${ current_user.profile.storage },
+	    pie_size: 150,
+    });
+  </script>
 </div>
 
-<script language="JavaScript" src="${ static_url('FusionCharts/JSClass/FusionCharts.js') }"></script>
-<script type="text/javascript">
-  var cpuData = '${ chart_data("cpu") }';
-  var cpuChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "cpuChartId", "360", "160");
-  cpuChart.setDataXML(cpuData);
-  cpuChart.render("myun-cpu-pie");
-
-  var memData = '${ chart_data("memory") }';
-  var memChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "memChartId", "360", "160");
-  memChart.setDataXML(memData);
-  memChart.render("myun-mem-pie");
-
-  var instanceData = '${ chart_data("instance") }';
-  var instanceChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "instanceChartId", "360", "160");
-  instanceChart.setDataXML(instanceData);
-  instanceChart.render("myun-instance-pie");
-
-  var storageData = '${ chart_data("storage") }';
-  var storageChart = new FusionCharts("/static/FusionCharts/Charts/FCF_Pie3D.swf", "storageChartId", "360", "160");
-  storageChart.setDataXML(storageData);
-  storageChart.render("myun-storage-pie");
-</script>
 % else:
 <p class="ywarn">${ _("Get your profile data failed.") }</p>
 % endif

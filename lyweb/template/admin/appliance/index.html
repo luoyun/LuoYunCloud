@@ -26,8 +26,8 @@
 <p>${ _("Filter by user: ") }<a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a></p>
 % endif
 
-<div class="c ly-table">
-  <table>
+<div>
+  <table class="ly-table full">
     <thead>
       <tr>
 	<th>${ _("ID") }</th>
@@ -69,9 +69,10 @@
       % endfor
     </tbody>
   </table>
+  ${ PAGE_HTML }
 </div>
 
-${ PAGE_HTML }
+
 
 <p class="manage-content"><a class="ly-btn2 medium blue" href="${ reverse_url('appliance:upload') }">${_("Upload Appliance")}</a></p>
 

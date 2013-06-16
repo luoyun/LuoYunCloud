@@ -2,36 +2,22 @@
 
 <%block name="main">
 
-<div class="ly-description">
-  <p>${ _("Public Appliances") }
-    % if current_user:
-    <a href="${ reverse_url('myun:appliance') }">${ _("(My Appliances)") }</a>
-    % endif
-  </p>
-</div>
-
 <div class="appliance-home c">
 
   <div class="sidebar">
-
     <div class="menu">
-      <h3>${ _("Catalog") }</h3>
       <ul>
+	<li><a class="${ b2s(cur_catalog == 0) }" href="${ reverse_url('appliance:index') }">${ _("All") }<span> ( ${ appliance_total } )</span></a></li>
         % for c in catalogs:
 	% if c.total:
-        <li id="catalog${ c.id }"><a
-            % if c.id == cur_catalog:
-            class="current"
-            % endif
-				     href="${ reverse_url('appliance:index') }?c=${ c.id }">${ c.name }
-            <span> ( ${ c.total } )</span>
-          </a>
-        </li>
+        <li id="catalog${ c.id }"><a class="${ b2s(cur_catalog == c.id) }" href="${ reverse_url('appliance:index') }?c=${ c.id }">${ c.name }<span> ( ${ c.total } )</span></a></li>
 	% endif
         % endfor
+	% if current_user:
+	<li><a href="${ reverse_url('myun:appliance') }">${ _("My Appliances") }</a></li>
+	% endif
       </ul>
     </div>
-
   </div>
 
 
@@ -46,13 +32,10 @@
       <% count = 0 %>
       <div class="c">
 	% for app in appliances:
-	<% USEABLE = '' if app.isuseable else 'unuseable' %>
 	<div class="appliance">
-	  <div class="${ USEABLE }">
-            <div class="logo">
-	      <a href="${ reverse_url('appliance:view', app.id) }"><img src="${ app.logourl }" alt="Appliance Picture" /></a>
-            </div>
-	  </div>
+          <div class="logo">
+	    <a href="${ reverse_url('appliance:view', app.id) }"><img src="${ app.logourl }" alt="Appliance Picture" /></a>
+          </div>
 	  <div class="a-desc">
 	    <ul>
 	      <li><span class="a-name">${ app.name }</span></li>

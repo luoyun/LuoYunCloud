@@ -11,7 +11,8 @@ DEFAULT_OSM_CONF_PATH = b'A:\luoyun.ini'
 DEFAULT_OSM_LOG_PATH = b'C:\LuoYun\log\luoyun.log'
 DEFAULT_OSM_SCRIPT_DIR = b'C:\LuoYun\scripts'
 
-LOG = lylog.logger()
+#LOG = lylog.logger()
+LOG = lylog.LOG
 progrun = 1
 osmsock = None
 
@@ -96,8 +97,8 @@ def main():
     lylog.setup(debug = 1)
   else:
     print "log to file %s\n" % log_path
-    if os.path.exists(log_path):
-      os.remove(log_path)
+#    if os.path.exists(log_path):
+#      os.remove(log_path)
     lylog.setup(path = log_path)
 
   LOG.info('Program parameters:')
@@ -119,8 +120,8 @@ def main():
   for h in LOG.handlers:
     h.flush()
 
-  signal.signal(signal.SIGTERM, myexit)
-  signal.signal(signal.SIGINT, myexit)
+#  signal.signal(signal.SIGTERM, myexit)
+#  signal.signal(signal.SIGINT, myexit)
 
   global osmsock
   osmsock = None

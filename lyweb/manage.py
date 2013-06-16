@@ -74,13 +74,6 @@ def default_value(dbsession):
         if u and (g not in u.groups):
             u.groups.append(g)
 
-    # User Permission
-    for username, codename in settings.default_user_permission:
-        u = dbsession.query(User).filter_by(username=username).first()
-        p = dbsession.query(Permission).filter_by(codename=codename).first()
-        if p not in u.permissions:
-            u.permissions.append(p)
-
     # Group Permission
     for groupname, codename in settings.default_group_permission:
         g = dbsession.query(Group).filter_by(name=groupname).first()

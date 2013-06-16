@@ -36,6 +36,7 @@
 #include "lyclc.h"
 #include "lyjob.h"
 #include "entity.h"
+#include "node.h"
 #include "postgres.h"
 
 #define NODE_SCHEDULE_CPU_LIMIT(n) (n*g_c->node_cpu_factor)
@@ -95,11 +96,12 @@ static int __node_xml_register(xmlDoc * doc, xmlNode * node, int ent_id)
         return -1;
     }
 
-    NodeInfo *nf = ly_entity_data(ent_id);
-    if (nf == NULL) {
+    LYNodeData * nd = ly_entity_data(ent_id);
+    if (nd == NULL ) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
+    NodeInfo * nf = &nd->node;
 
     /* Create xpath evaluation context */
     xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
@@ -326,6 +328,7 @@ xml_err:
     logerror(_("invalid node xml register request\n"));
 done:
     xmlXPathFreeContext(xpathCtx);
+    logdebug(_("end of %s, node status %d\n"), __func__, nf->status);
     return ret;
 }
 
@@ -363,11 +366,12 @@ static int __process_node_xml_request(xmlDoc * doc, xmlNode * node, int ent_id)
         return 0;
     }
 
-    NodeInfo * nf = ly_entity_data(ent_id);
-    if (nf == NULL) {
+    LYNodeData * nd = ly_entity_data(ent_id);
+    if (nd == NULL ) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
+    NodeInfo * nf = &nd->node;
 
     AuthConfig * ac = ly_entity_auth(ent_id);
 
@@ -399,13 +403,13 @@ static int __process_node_xml_request(xmlDoc * doc, xmlNode * node, int ent_id)
 }
 
 /*
-** process instance info query reply
+** process instance info data,
+** either from internal query or from xml response
 **
-** the is the reply of instance info query through node request
 */
-static int __instance_info_update(xmlDoc * doc, xmlNode * node,
-                                  int ent_id, int * j_status)
+static int __instance_info_update(xmlDoc * doc, xmlNode * node)
 {
+    int ret;
     logdebug(_("%s called\n"), __func__);
 
     /* Create xpath evaluation context */
@@ -413,11 +417,11 @@ static int __instance_info_update(xmlDoc * doc, xmlNode * node,
     if (xpathCtx == NULL) {
         logerror(_("unable to create new XPath context %s, %d\n"),
                  __func__, __LINE__);
-        *j_status = LY_S_FINISHED_FAILURE;
-        return 0;
+        return -1;
     }
 
     InstanceInfo ii;
+    bzero(&ii, sizeof(InstanceInfo));
     char *str;
     str = xml_xpath_text_from_ctx(xpathCtx,
                          "/" LYXML_ROOT "/response/data/id");
@@ -433,14 +437,28 @@ static int __instance_info_update(xmlDoc * doc, xmlNode * node,
     free(str);
     ii.ip = xml_xpath_text_from_ctx(xpathCtx,
                          "/" LYXML_ROOT "/response/data/ip");
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/response/data/gport");
+    if (str == NULL)
+        goto failed;
+    ii.gport = atoi(str);
+    free(str);
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/response/data/netstat0");
+    if (str)
+        sscanf(str, "%ld %ld %ld %ld", &ii.netstat[0].rx_bytes, &ii.netstat[0].rx_pkts,
+                                       &ii.netstat[0].tx_bytes, &ii.netstat[0].tx_pkts);
+    else
+        goto failed;
+    free(str);
 
-    logdebug(_("update info for instance %d: status %d, ip %s\n"),
-                ii.id, ii.status, ii.ip);
+    logdebug(_("update info for instance %d:"), ii.id);
+    luoyun_instance_info_print(&ii);
 
-    /* the ent_id passed to the routine is for node, not usefult */
-    ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, ii.id);
-    if (!ly_entity_is_registered(ent_id) &&
-        db_instance_update_status(ii.id, &ii, -1) < 0) {
+    int ent_id = ly_entity_find_by_db(LY_ENTITY_OSM, ii.id);
+    if (ly_entity_is_registered(ent_id))
+        ii.status = DOMAIN_S_UNKNOWN; /* don't update status */
+    if (db_instance_update_status(ii.id, &ii, -1) < 0) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         if (ii.ip)
             free(ii.ip);
@@ -449,13 +467,14 @@ static int __instance_info_update(xmlDoc * doc, xmlNode * node,
 
     if (ii.ip)
         free(ii.ip);
+    ret = 0;
     goto done;
 
 failed:
-    *j_status = LY_S_FINISHED_FAILURE;
+    ret = -1;
 done:
     xmlXPathFreeContext(xpathCtx);
-    return 0;
+    return ret;
 }
 
 /* process node info query reply */
@@ -471,11 +490,12 @@ static int __node_info_update(xmlDoc * doc, xmlNode * node,
         return 0;
     }
 
-    NodeInfo *nf = ly_entity_data(ent_id);
-    if (nf == NULL) {
+    LYNodeData * nd = ly_entity_data(ent_id);
+    if (nd == NULL) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto failed;
     }
+    NodeInfo * nf = &nd->node;
 
     /* Create xpath evaluation context */
     xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
@@ -553,7 +573,7 @@ done:
 static int __process_node_xml_response(xmlDoc * doc, xmlNode * node,
                                        int ent_id)
 {
-    loginfo(_("node response for entity %d\n"), ent_id);
+    logdebug(_("node response for entity %d\n"), ent_id);
     char * str = (char *) xmlGetProp(node, (const xmlChar *) "id");
     if (str)
         logdebug("node response id(job id) = %s\n", str);
@@ -617,13 +637,12 @@ static int __process_node_xml_response(xmlDoc * doc, xmlNode * node,
                 if (ins_id > 0)
                     ly_entity_release(ins_id);
             }
-        if (status != LY_S_FINISHED_SUCCESS || data_type < 0)
-            return 0;
+         /* continue processing for data */
     }
 
     int ent_type = ly_entity_type(ent_id);
     if (ent_type == LY_ENTITY_NODE && data_type == DATA_INSTANCE_INFO) { 
-        if ( __instance_info_update(doc, node, ent_id, &status)) {
+        if ( __instance_info_update(doc, node)) {
             logerror(_("error in %s(%d)\n"), __func__, __LINE__);
             return -1;
         }
@@ -644,11 +663,12 @@ static int __node_resource_update(xmlDoc * doc, xmlNode * node, int ent_id)
 {
     logdebug(_("%s called\n"), __func__);
 
-    NodeInfo *nf = ly_entity_data(ent_id);
-    if (nf == NULL) {
+    LYNodeData * nd = ly_entity_data(ent_id);
+    if (nd == NULL) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         goto failed;
     }
+    NodeInfo * nf = &nd->node;
 
     /* Create xpath evaluation context */
     xmlXPathContextPtr xpathCtx = xmlXPathNewContext(doc);
@@ -694,14 +714,16 @@ static int __node_resource_update(xmlDoc * doc, xmlNode * node, int ent_id)
     nf->load_average = atoi(str);
     free(str);
 
-    logdebug(_("update info for node %d: %d %d %d %d\n"),
-                ly_entity_db_id(ent_id),
+    logdebug(_("report info for node %d: %d %d %d %d %d\n"),
+                ly_entity_db_id(ent_id), nf->status,
                 nf->cpu_commit, nf->mem_free, nf->mem_commit,
                 nf->load_average);
 
+    xmlXPathFreeContext(xpathCtx);
     return 0;
 
 failed:
+    xmlXPathFreeContext(xpathCtx);
     return -1;
 }
 
@@ -741,10 +763,9 @@ static int __process_node_xml_report(xmlDoc * doc, xmlNode * node, int ent_id)
         }
     }
 
-    NodeInfo *nf = ly_entity_data(ent_id);
-    if (nf != NULL && status != -1) {
-        nf->status = status;
-        loginfo(_("update node status to %d from report\n"), status);
+    LYNodeData * nd = ly_entity_data(ent_id);
+    if (nd != NULL && status != -1) {
+        loginfo(_("update node status to %d from report\n"), nd->node.status);
     }
 
     return 0;
@@ -827,11 +848,12 @@ int eh_process_node_auth(int is_reply, void * data, int ent_id)
 
     loginfo(_("auth request from node %d(tag)\n"), ai->tag);
 
-    NodeInfo * nf = ly_entity_data(ent_id);
-    if (nf == NULL) {
+    LYNodeData * nd = ly_entity_data(ent_id);
+    if (nd == NULL) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
+    NodeInfo * nf = &nd->node;
 
     /* get secret */
     if (ac->secret == NULL) {

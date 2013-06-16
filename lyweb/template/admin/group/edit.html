@@ -1,5 +1,10 @@
 <%inherit file="/admin/account.html" />
 
+<%block name="subhead">
+<link rel="stylesheet" href="${ static_url('js/jquery.multiselect2side/css/jquery.multiselect2side.css') }" />
+<script type="text/javascript" src="${ static_url('js/jquery.multiselect2side/js/jquery.multiselect2side.js') }"></script>
+</%block>
+
 <%block name="innav">
 <li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
 <li><a href="${ reverse_url('admin:group') }?id=${ GROUP.id }">${ GROUP.name }</a></li>

@@ -83,8 +83,10 @@ int eh_process_osm_report(char * buf, int size, int ent_id)
         loginfo(_("osm report: %d, %s\n"), status, "application running");
         if (!ly_entity_is_serving(ent_id)) {
             InstanceInfo ii;
+            bzero(&ii, sizeof(InstanceInfo));
             ii.status = DOMAIN_S_SERVING;
             ii.ip = NULL;
+            ii.gport = -1;
             if (db_instance_update_status(db_id, &ii, -1) < 0) {
                 logerror(_("error in %s(%d)\n"), __func__, __LINE__);
                 return -1;
@@ -98,8 +100,10 @@ int eh_process_osm_report(char * buf, int size, int ent_id)
         loginfo(_("osm report: %d, %s\n"), status, "application status unknown");
         if (!ly_entity_is_running(ent_id) || ly_entity_is_serving(ent_id)) {
             InstanceInfo ii;
+            bzero(&ii, sizeof(InstanceInfo));
             ii.status = DOMAIN_S_RUNNING;
             ii.ip = NULL;
+            ii.gport = -1;
             if (db_instance_update_status(db_id, &ii, -1) < 0) {
                 logerror(_("error in %s(%d)\n"), __func__, __LINE__);
                 return -1;
@@ -162,8 +166,10 @@ int eh_process_osm_register(char * buf, int size, int ent_id)
         return 0;
 
     InstanceInfo ii;
+    bzero(&ii, sizeof(InstanceInfo));
     ii.status = DOMAIN_S_RUNNING;
     ii.ip = ip;
+    ii.gport = -1;
     if (db_instance_update_status(oi->tag, &ii, -1) < 0) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;

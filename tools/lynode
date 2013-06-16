@@ -68,6 +68,20 @@ check_libvirtd()
     fi
 }
 
+checkrunning()
+{
+    if [ -f "$PID_FILE" ]
+    then
+        thispid=$(<$PID_FILE)
+        if [ -e "/proc/${thispid}/cmdline" ]
+        then
+            thiscmd=$(</proc/${thispid}/cmdline)
+            [ "${thiscmd#$LYNODED}" != "${thiscmd}" ] && return 0
+        fi
+    fi
+    return 1
+}
+
 start()
 {
     check_kvm_module
@@ -100,11 +114,15 @@ status()
 
 case "$1" in
     start)
-        [ -f "$PID_FILE" ] && thispid=$(<$PID_FILE) && echo "$prog($thispid) is started already" && exit 0
+        checkrunning && echo "$prog($thispid) is started already" && exit 0
 	start
 	;;
     stop)
-        [ ! -f "$PID_FILE" ] && echo "$prog is stopped already" && exit 0
+        if ! checkrunning
+        then
+            echo "$prog doesn't seem to be running"
+            exit 0
+        fi
 	stop
 	;;
     restart)

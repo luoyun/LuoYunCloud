@@ -33,7 +33,7 @@ int ly_handler_busy(void);
 /*extern char * ly_node_xml_reply_result(int request_id, int ok, int *size);*/
 
 
-#define LIBVIRT_XML_MAX     2048
+#define LIBVIRT_XML_MAX     20480
 
 #define LIBVIRT_XML_TMPL_XEN_DISK \
         "<disk type=\'file\'>"\
@@ -89,7 +89,7 @@ int ly_handler_busy(void);
 
 #define LIBVIRT_XML_TMPL_KVM_DISK \
     "<disk type='file' device='disk'>"\
-      "<driver name='qemu' type='raw' cache='none' io='threads'/>"\
+      "<driver name='qemu' type='raw' io='threads'/>"\
       "<source file=\'%s\'/>"\
       "<target dev=\'%s\' bus='ide'/>"\
     "</disk>"
@@ -127,7 +127,7 @@ int ly_handler_busy(void);
   "<devices>"\
     "<emulator>/usr/libexec/qemu-kvm</emulator>"\
     "<disk type='file' device='floppy'>"\
-      "<driver name='qemu' type='raw' cache='none'/>"\
+      "<driver name='qemu' type='raw' />"\
       "<source file=\'%s\'/>"\
       "<target dev='fda' bus='fdc'/>"\
       "<address type='drive' controller='0' bus='0' unit='0'/>"\

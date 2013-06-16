@@ -1,5 +1,5 @@
-<div id="aul" class="ly-table">
-  <table>
+<div id="aul">
+  <table class="ly-table">
     <thead>
       <tr>
         <th><a href="${ reverse_url('admin:user') }?by=ID&sort=ASC" title="${ _('sorted by user id.') }">${ _("ID") }</a></th>

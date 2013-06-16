@@ -154,6 +154,7 @@ static int __process_web_job(char * buf, int size, int ent_id)
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
     }
+    bzero(job, sizeof(LYJobInfo));
 
     job->j_id = job_id;
     if (db_job_get(job) != 0) {
@@ -249,7 +250,9 @@ int ly_epoll_entity_recv(int ent_id)
 
         logdebug(_("update instance %d status in db\n"), db_id);
         InstanceInfo ii;
+        bzero(&ii, sizeof(InstanceInfo));
         ii.ip = NULL;
+        ii.gport = 0;
         ii.status = DOMAIN_S_NEED_QUERY;
         db_instance_update_status(db_id, &ii, -1);
         job_internal_query_instance(db_id);
@@ -276,7 +279,7 @@ int ly_epoll_entity_recv(int ent_id)
         }
 
         int type = ly_packet_type(pkt);
-        loginfo(_("socket %d recv packet, type %d\n"), fd, type);
+        logdebug(_("socket %d recv packet, type %d\n"), fd, type);
         /*
         if (type == PKT_TYPE_UNKNOW)
             break;

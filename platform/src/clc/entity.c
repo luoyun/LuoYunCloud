@@ -133,10 +133,10 @@ int ly_entity_init(int id, unsigned char type)
 
     ent->type = type;
     if (type == LY_ENTITY_NODE) {
-        ent->entity = malloc(sizeof(NodeInfo));
+        ent->entity = malloc(sizeof(LYNodeData));
         if (ent->entity == NULL)
             return -1;
-        bzero(ent->entity, sizeof(NodeInfo));
+        bzero(ent->entity, sizeof(LYNodeData));
         list_add(&(ent->list), &(g_node_list));
     }
     else if (type == LY_ENTITY_OSM) {
@@ -334,7 +334,8 @@ int ly_entity_node_active(char * ip)
 {
     LYEntity * curr;
     list_for_each_entry(curr, &g_node_list, list) {
-        NodeInfo * nf = curr->entity;
+        LYNodeData * nd = curr->entity;
+        NodeInfo * nf = &nd->node;
         if (ly_entity_is_registered(curr->id) &&
             nf->host_ip && strcmp(nf->host_ip, ip) == 0)
             return 1;

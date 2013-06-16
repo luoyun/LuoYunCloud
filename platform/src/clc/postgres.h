@@ -38,7 +38,7 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id);
 int db_instance_delete(int instance_id);
 int db_instance_find_ip_by_status(int status, char * ins_ip[], int size);
 int db_instance_get_node(int id);
-int * db_instance_get_all(int * num);
+int * db_instance_get_all(int * num, int status);
 int db_instance_init_status();
 int db_node_init_status();
 

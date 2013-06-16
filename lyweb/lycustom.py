@@ -24,19 +24,16 @@ from app.system.models import LyTrace
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
-from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
-
-
-template_dir = os.path.join(
-    os.path.dirname(__file__), 'template' )
+from settings import JOB_ACTION, JOB_TARGET, LY_TARGET, TEMPLATE_DIR
 
 
 from ytime import htime, ftime
 from ytool.hstring import b2s
 
+
 class LyRequestHandler(RequestHandler):
 
-    lookup = TemplateLookup([ template_dir ],
+    lookup = TemplateLookup([ TEMPLATE_DIR ],
                             input_encoding="utf-8")
 
     def render(self, template_name, **kwargs):
@@ -195,6 +192,18 @@ class LyRequestHandler(RequestHandler):
         sk.sendall(rqhead)
         sk.close()
 
+    def _job_notify_new(self, ID):
+        ''' Notify the new job signal to control server '''
+
+        from settings import cf
+        if cf.has_option('clc', 'clc_pass'):
+            password = cf.get('clc', 'clc_pass')
+        else:
+            password = 'luoyun'
+
+        d = {'from': 'web', 'to': 'clc', 'password': password, 'jobid': ID}
+        self.application.clcstream.send_msg(d)
+
     def get_no_permission_url(self):
         self.require_setting("no_permission_url", "@has_permission")
         return self.application.settings["no_permission_url"]
@@ -240,6 +249,10 @@ class LyRequestHandler(RequestHandler):
     # params is a dict: { 'key': value }
     def urlupdate(self, params):
 
+        droped = [ k for k in params if params[k] == 'dropthis' ]
+        for k in droped:
+            del params[k]
+
         new = []
 
         if '?' in self.request.uri:
@@ -247,6 +260,7 @@ class LyRequestHandler(RequestHandler):
             update_keys = params.keys()
 
             for k, v in urlparse.parse_qsl( oldparams ):
+                if k in droped: continue
                 if k in update_keys:
                     v = params[k]
                     del params[k]
@@ -256,7 +270,8 @@ class LyRequestHandler(RequestHandler):
 
         if params:
             for k in params.keys():
-                new.append( (k, params[k]) )
+                if k not in droped:
+                    new.append( (k, params[k]) )
 
         return '?'.join([path, urllib.urlencode( new )])
 
@@ -276,6 +291,22 @@ class LyRequestHandler(RequestHandler):
 
     def trans(self, s):
         return self.locale.translate(s)
+
+    def msg2clc(self, key, msg, callback=None):
+        ''' send a message to clc '''
+
+        if not self.application.clcstream:
+            return None, self.trans( _('No clc found !') )
+
+        if not isinstance(msg, dict):
+            return None, self.trans( _('Message must be a dict') )
+
+        if callback:
+            # must add callback handler
+            msg['callback_id'] = self.application.get_unique_id()
+
+        self.application.clcstream.send_msg(key, msg)
+
 
 
 def show_error( E ):
@@ -333,6 +364,4 @@ class LyNotFoundHandler(LyRequestHandler):
             self.render("/404.html")
         except TemplateLookupException, e:
             self.send_error(500)
-
-
 
