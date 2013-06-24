@@ -2,8 +2,8 @@
 %define LUOYUN_PLATFORM %{LUOYUN_HOME}platform/
 
 Name: luoyuncloud
-Version: 0.5
-Release: 13.5%{?dist}
+Version: 0.6
+Release: 0%{?dist}
 Summary: the Cloud Computing software that can be used to build IaaS, SaaS or PaaS platforms
 Group: Server/Cloud
 License: GPLv2+
@@ -169,6 +169,11 @@ id luoyun &> /dev/null || useradd luoyun -s /sbin/nologin
 
 
 %changelog
+* Sun Jun 23 2013 Dongwu Zeng <dongwu@luoyun.co> - 0.6-0
+- for 0.6 release
+- stop job on the node that's disabled/offline
+- daemon start with verbose option
+
 * Tue May 28 2013 Dongwu Zeng <dongwu@luoyun.co> - 0.5-13.5
 - rework net stats
 - remove daemon default debug mode 
