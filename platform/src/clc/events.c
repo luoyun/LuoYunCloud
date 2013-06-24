@@ -240,7 +240,9 @@ int ly_epoll_entity_recv(int ent_id)
         int type = ly_entity_type(ent_id);
         int db_id = ly_entity_db_id(ent_id);
         if (type == LY_ENTITY_NODE) {
-            logdebug(_("update node %d status in db to offline\n"), db_id);
+            loginfo(_("remove job on node %d\n"), db_id);
+            job_clean_on_entity(ent_id, LY_S_FINISHED_FAILURE_NODE_NOT_ONLINE);
+            loginfo(_("update node %d status in db to offline\n"), db_id);
             db_node_update_status(DB_NODE_FIND_BY_ID, &db_id, NODE_STATUS_OFFLINE);
             return 1;
         }

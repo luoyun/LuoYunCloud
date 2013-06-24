@@ -314,6 +314,9 @@ int ly_entity_enable(int id, int db_id, int enble)
 
 int ly_entity_find_by_db(int ent_type, int db_id)
 {
+    if (db_id <= 0)
+        return -1;
+
     struct list_head * head;
     if (ent_type == LY_ENTITY_NODE)
         head = &g_node_list;
@@ -325,6 +328,24 @@ int ly_entity_find_by_db(int ent_type, int db_id)
     LYEntity * curr;
     list_for_each_entry(curr, head, list) {
         if (curr->db_id == db_id)
+            return curr->id;
+    }
+    return -1;
+}
+
+int ly_entity_head(int ent_type)
+{
+    struct list_head * head;
+    if (ent_type == LY_ENTITY_NODE)
+        head = &g_node_list;
+    else if (ent_type == LY_ENTITY_OSM)
+        head = &g_instance_list;
+    else
+        return -1;
+
+    LYEntity * curr;
+    list_for_each_entry(curr, head, list) {
+        if (curr->db_id > 0)
             return curr->id;
     }
     return -1;

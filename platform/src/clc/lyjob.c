@@ -178,22 +178,12 @@ int job_insert(LYJobInfo * job)
         return -1;
 
     list_add_tail(&(job->j_list), &(g_job_list));
+    job->j_pending_nr = -1;
     g_job_count++;
     return 0;
 }
 
-int job_remove(LYJobInfo * job)
-{
-    if (job == NULL)
-        return -1;
-
-    list_del(&job->j_list);
-    g_job_count--;
-    free(job);
-    return 0;
-}
-
-int job_busy_remove(LYJobInfo * job)
+static int job_busy_remove(LYJobInfo * job)
 {
     if (job == NULL)
         return -1;
@@ -206,6 +196,18 @@ int job_busy_remove(LYJobInfo * job)
             logdebug(_("entity %d job busy nr %d\n"), job->j_ent_id, nd->ins_job_busy_nr);
         }
     }
+    return 0;
+}
+
+int job_remove(LYJobInfo * job)
+{
+    if (job == NULL)
+        return -1;
+
+    job_busy_remove(job);
+    list_del(&job->j_list);
+    g_job_count--;
+    free(job);
     return 0;
 }
 
@@ -275,8 +277,6 @@ int job_update_status(LYJobInfo * job, int status)
             ii.status = DOMAIN_S_NEED_QUERY;
             ret = db_instance_update_status(job->j_target_id, &ii, -1);
             job_internal_query_instance(job->j_target_id);
-            if (job->j_action == LY_A_NODE_RUN_INSTANCE)
-                job_busy_remove(job);
         }
         else if ((job->j_action == LY_A_NODE_RUN_INSTANCE ||
                   job->j_action == LY_A_NODE_FULLREBOOT_INSTANCE) && 
@@ -291,7 +291,6 @@ int job_update_status(LYJobInfo * job, int status)
             ret = db_instance_update_status(job->j_target_id, &ii, node_id);
             */
             ret = 0;
-            job_busy_remove(job);
         }
         else if (job->j_action == LY_A_NODE_STOP_INSTANCE &&
                  (status == LY_S_FINISHED_SUCCESS ||
@@ -530,6 +529,19 @@ static int __job_control_instance_simple(LYJobInfo * job)
     if (g_c->debug)
         luoyun_node_ctrl_instance_print(&ci);
 
+    int ent_id = -1;
+    if (g_c->node_select == NODE_SELECT_ANY && 
+        (job->j_action == LY_A_NODE_DESTROY_INSTANCE || 
+         job->j_action == LY_A_NODE_QUERY_INSTANCE)) {
+        if (node_id <= 0)
+            node_id = ly_entity_head(LY_ENTITY_NODE);
+        else {
+            ent_id = ly_entity_find_by_db(LY_ENTITY_NODE, node_id);
+            if (ly_entity_is_registered(ent_id) == 0)
+                node_id = ly_entity_head(LY_ENTITY_NODE);
+        }
+    }
+
     if (node_id <= 0) {
         logwarn(_("no node found for job %d\n"), job->j_id);
         luoyun_node_ctrl_instance_cleanup(&ci);
@@ -546,7 +558,7 @@ static int __job_control_instance_simple(LYJobInfo * job)
     }
     logdebug(_("send job to node %d\n"), node_id);
 
-    int ent_id = ly_entity_find_by_db(LY_ENTITY_NODE, node_id);
+    ent_id = ly_entity_find_by_db(LY_ENTITY_NODE, node_id);
     logdebug(_("run on entity %d\n"), ent_id);
     if (ly_entity_is_online(ent_id) == 0) {
         logerror(_("try to control instance(%d), "
@@ -681,7 +693,12 @@ int __job_node_disable(LYJobInfo * job)
     }
 
     int ent_id= ly_entity_find_by_db(LY_ENTITY_NODE, job->j_target_id);
-    if (ly_entity_is_online(ent_id)) {
+    if (ly_entity_is_registered(ent_id)) {
+        logdebug(_("node %d is registered. disable it\n"), job->j_target_id);
+        job_clean_on_entity(ent_id, LY_S_FINISHED_FAILURE_NODE_NOT_ENABLED);
+        ly_entity_enable(ent_id, -1, 0);
+    }
+    else if (ly_entity_is_online(ent_id)) {
         logdebug(_("node %d is online. disable it\n"), job->j_target_id);
         ly_entity_enable(ent_id, -1, 0);
     }
@@ -904,12 +921,25 @@ int job_init(void)
     return 0;
 }
 
+void job_clean_on_entity(int ent_id, int job_status)
+{
+    LYJobInfo *job;
+    LYJobInfo *tmp;
+    list_for_each_entry_safe(job, tmp, &(g_job_list), j_list) {
+        if (job->j_ent_id == ent_id) {
+            loginfo(_("removing job %d\n"), job->j_id);
+            job_update_status(job, job_status);
+        }
+    }
+    return;
+}
+
 void job_cleanup(void)
 {
     LYJobInfo *job;
     LYJobInfo *tmp;
     list_for_each_entry_safe(job, tmp, &(g_job_list), j_list) {
-        logdebug(_("deleting job %d\n"), job->j_id);
+        loginfo(_("deleting job %d\n"), job->j_id);
         list_del(&(job->j_list));
         free(job);
     }

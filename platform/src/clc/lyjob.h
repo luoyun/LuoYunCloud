@@ -32,6 +32,7 @@ int job_remove(LYJobInfo * job);
 int job_update_status(LYJobInfo * job, int status);
 int job_dispatch(void);
 int job_init(void);
+void job_clean_on_entity(int ent_id, int job_status);
 void job_cleanup(void);
 
 /*

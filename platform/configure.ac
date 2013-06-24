@@ -9,7 +9,7 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 AC_INIT([luoyun-cloud],
-        [0.5],
+        [0.6],
         [LuoYun Co. zengdongwu@hotmail.com])
 AC_CONFIG_AUX_DIR(config)
 AM_CONFIG_HEADER(config.h)

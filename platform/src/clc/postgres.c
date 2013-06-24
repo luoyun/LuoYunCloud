@@ -447,8 +447,7 @@ int db_job_get_all(void)
                  "extract(epoch FROM started), "
                  "target_type, target_id, action "
                  "from job "
-                 "where (status >= %d and status < %d) or (status >= %d and status < %d);",
-                 LY_S_INITIATED, LY_S_RUNNING_LAST_STATUS,
+                 "where status >= %d and status < %d;",
                  LY_S_PENDING, LY_S_PENDING_LAST_STATUS) >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
