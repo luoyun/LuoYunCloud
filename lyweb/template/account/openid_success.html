@@ -1,0 +1,14 @@
+<%inherit file="/base.html" />
+
+<%block name="main">
+
+<div class="min-height600">
+
+  <div class="hero-unit">
+	<a class="btn btn-large" href="${ reverse_url('openid:user:binding') }?auth_key=${ auth_key }&openid=${ openid }">${ _("Binding My Account") }</a>
+	<a class="btn btn-large" href="${ reverse_url('openid:user:new') }?auth_key=${ auth_key }&openid=${ openid }">${ _("Create A New Account") }</a>
+  </div>
+
+</div>
+
+</%block>

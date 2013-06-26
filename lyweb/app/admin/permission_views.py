@@ -1,15 +1,15 @@
 # coding: utf-8
 
 import logging, datetime, time, re
-from lycustom import LyRequestHandler
+from lycustom import RequestHandler
 from tornado.web import authenticated, asynchronous
 
-from app.account.models import User, Group, Permission
+from app.auth.models import User, Group, Permission
 
 from lycustom import has_permission
 
 
-class PermissionManagement(LyRequestHandler):
+class PermissionManagement(RequestHandler):
 
 
     @has_permission('admin')
@@ -20,7 +20,7 @@ class PermissionManagement(LyRequestHandler):
 
         permission_id = self.get_argument('id', 0)
         if permission_id:
-            self.permission = self.db2.query(Permission).get( permission_id  )
+            self.permission = self.db.query(Permission).get( permission_id  )
             if not self.permission:
                 self.write( self.trans(_('No such permission : %s')) % permission_id )
                 return self.finish()
@@ -28,6 +28,6 @@ class PermissionManagement(LyRequestHandler):
 
     def get(self):
 
-        PERMISSION_LIST = self.db2.query(Permission).all()
+        PERMISSION_LIST = self.db.query(Permission).all()
         self.render( 'admin/permission/index.html', title = self.trans(_('Permission Management')),
                      PERMISSION_LIST = PERMISSION_LIST )

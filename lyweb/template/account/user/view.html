@@ -1,0 +1,48 @@
+<%inherit file="/base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${ theme_url('myun.css') }" />
+</%block>
+
+<%block name="main">
+<div class="row-fluid">
+  <div class="span3">
+	<div id="user-present" class="text-center">
+	  <p><a href="${ reverse_url('user:view') }?id=${ user.id }"><img class="img-circle" src="${ user.avatar_url }" /></a></p>
+	  <p class="username"><a href="${ reverse_url('user:view') }?id=${ user.id }">${ user.username }</a></p>
+	</div>
+  </div>
+  <div class="span9">
+
+	<table class="table table-striped">
+	  <tbody>
+		<tr>
+		  <td>ID</td>
+		  <td>${ user.id }</td>
+		</tr>
+		<tr>
+		  <td>${ _("Nickname") }</td>
+		  <td>${ user.nickname }</td>
+		</tr>
+		<tr>
+		  <td>${ _("Instance") }</td>
+		  <td>${ len(user.instances) }</td>
+		</tr>
+		<tr>
+		  <td>${ _("Appliance") }</td>
+		  <td>${ len(user.appliances) }</td>
+		</tr>
+		<tr>
+		  <td>${ _("Date Joined") }</td>
+		  <td>${ ftime(user.date_joined) }</td>
+		</tr>
+		<tr>
+		  <td>${ _("Last Login") }</td>
+		  <td>${ ftime(user.last_login) }</td>
+		</tr>
+	  </tbody>
+	</table>
+
+  </div>
+</div>
+</%block>

@@ -1,14 +1,18 @@
 <%inherit file="message_base.html" />
 
-<%block name="sidemain">
+<%block name="head">
+<link rel="stylesheet" type="text/css" href="${ static_url('markitup/skins/simple/style.css') }" />
+<link rel="stylesheet" type="text/css" href="${ static_url('markitup/sets/markdown/style.css') }" />
+</%block>
 
+<%block name="sidemain">
 
 <div class="ly-view-message">
   <table class="baseinfo">
     <tbody>
       <tr>
 	<td>${ _("Sender") }</td>
-	<td class="sender"><a href="${ reverse_url('account:view', M.sender_id) }" target="_blank">${ M.sender.username }</a></td>
+	<td class="sender"><a href="${ reverse_url('user:view') }?id=${ M.sender_id }" target="_blank">${ M.sender.username }</a></td>
       </tr>
       <tr>
 	<td>${ _("Send time") }</td>
@@ -36,25 +40,14 @@
 
 </div>
 
-<script charset="utf-8" src="${ static_url('kindeditor/kindeditor.js') }"></script>
-<script charset="utf-8" src="${ static_url('kindeditor/lang/zh_CN.js') }"></script>
-<script>
-  var editor;
-  KindEditor.ready(function(K) {
-  editor = K.create('#text', {
-    uploadJson : '/ly/upload/kindeditor',
-    fileManagerJson : '/ly/upload/kindeditor',
-    allowFileManager : true,
-    items : [
-        'formatblock', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'removeformat', '|',
-        'undo', 'redo', '|', 'code', '|', 
-        'insertorderedlist', 'insertunorderedlist',  '|',
-        'image', 'insertfile', 'table', 'emoticons',
-        'link', 'unlink', '|', 'fullscreen', 'source', 'preview', 'about'
-    ],
-  });
-  });
-</script>
+<script type="text/javascript" src="${ static_url('markitup/jquery.markitup.js') }"></script>
+<script type="text/javascript" src="${ static_url('markitup/sets/markdown/set.js') }"></script>
 
+<script type="text/javascript" >
+   mySettings.previewParserPath = "/t/preview?markup_language=markdown&_xsrf=${ xsrf_cookie }";
+   $(document).ready(function() {
+      $("#text").markItUp(mySettings);
+   });
+</script>
 
 </%block>

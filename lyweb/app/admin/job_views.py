@@ -1,10 +1,10 @@
 # coding: utf-8
 
 import logging, datetime, time, re
-from lycustom import LyRequestHandler
+from lycustom import RequestHandler
 from tornado.web import authenticated, asynchronous
 
-from app.account.models import User, Group, Permission
+from app.auth.models import User, Group, Permission
 from app.job.models import Job
 
 from sqlalchemy.sql.expression import asc, desc
@@ -14,7 +14,7 @@ from lycustom import has_permission
 from ytool.pagination import pagination
 
 
-class JobManagement(LyRequestHandler):
+class JobManagement(RequestHandler):
 
     @has_permission('admin')
     def prepare(self):
@@ -24,7 +24,7 @@ class JobManagement(LyRequestHandler):
 
         job_id = self.get_argument('id', 0)
         if job_id:
-            self.job = self.db2.query(Job).get( job_id )
+            self.job = self.db.query(Job).get( job_id )
             if not self.job:
                 self.write( self.trans(_('No such node')) % job_id )
                 return self.finish()
@@ -70,11 +70,11 @@ class JobManagement(LyRequestHandler):
         start = (cur_page - 1) * page_size
         stop = start + page_size
 
-        JOB_LIST = self.db2.query(Job)
+        JOB_LIST = self.db.query(Job)
 
         U = None
         if user_id:
-            U = self.db2.query(User).get(user_id)
+            U = self.db.query(User).get(user_id)
             JOB_LIST = JOB_LIST.filter(Job.user_id == user_id)
 
         JOB_TOTAL = JOB_LIST.count()

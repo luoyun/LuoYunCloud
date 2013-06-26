@@ -1,8 +1,7 @@
-<%inherit file="/admin/account.html" />
+<%inherit file="/admin/account/base.html" />
 
 <%block name="subhead">
-<link rel="stylesheet" href="${ static_url('js/jquery.multiselect2side/css/jquery.multiselect2side.css') }" />
-<script type="text/javascript" src="${ static_url('js/jquery.multiselect2side/js/jquery.multiselect2side.js') }"></script>
+<link rel="stylesheet" href="${ static_url('third/jquery.multiselect2side/css/jquery.multiselect2side.css') }" />
 </%block>
 
 <%block name="innav">
@@ -11,7 +10,9 @@
 <li>${ _("Edit Group") }</li>
 </%block>
 
-<%block name="content">
+<%block name="main">
+
+<script type="text/javascript" src="${ static_url('third/jquery.multiselect2side/js/jquery.multiselect2side.js') }"></script>
 
 <div class="small-left-right-form c">
   <form method="POST">${ xsrf_form_html() }

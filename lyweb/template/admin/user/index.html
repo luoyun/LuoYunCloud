@@ -1,42 +1,82 @@
-<%inherit file="/admin/account.html" />
+<%inherit file="/admin/account/base.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:user') }">${ _("User") }</a></li>
 </%block>
 
-<%block name="content">
+<%block name="main">
 
-<table class="sortby-module">
-  <tbody>
-    <tr>
-      <td nowrap="nowrap">${ _("Group") }</td>
-      <td>
-	<a class="${ b2s(GID <= 0) }" href="${ reverse_url('admin:user') }">${ _("All") }</a>
-	% for G in GROUP_LIST:
-	<a class="${ b2s(GID == G.id) }" href="${ urlupdate({'gid': G.id, 'p': 1 }) }">${ G.name }</a>
-	% endfor
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="the-select">
+  <div class="row-fluid">
+	<ul class="span3 nav">
+	  <li>${ _("Group") }</li>
+	  <li><select id="group-select">
+		  <option value="all">${ _("All") }</option>
+		  % for G in GROUP_LIST:
+		  <option value="${ G.id }">${ G.name }</option>
+		  % endfor
+		</select></li>
+	</ul>
+
+	<ul class="span3 nav">
+	  <li>${ _("Sort") }</li>
+	  <li><select id="sortby-select">
+		  <option value="default">${ _("Default") }</option>
+		  <option value="id">ID</option>
+		  <option value="username">${ _("Username") }</option>
+		  <option value="last_active">${ _("Last Active") }</option>
+	  </select></li>
+	</ul>
+
+	<ul class="span3 nav">
+	  <li>${ _("Order") }</li>
+	  <li><select id="order-select">
+		  <option value="0">${ _("Descending") }</option>
+		  <option value="1">${ _("Ascending") }</option>
+	  </select></li>
+	</ul>
+
+	<div class="span3">
+	  <a class="btn" href="${ reverse_url('admin:user:add') }"><i class="icon-plus"></i> ${ _("Create New User") }</a>
+	  <a class="btn" href="${ reverse_url('admin:user:resource:all_add') }"><i class="icon-plus"></i> ${ _("Add Resource For All User") }</a>
+	</div>
+
+  </div>
+</div>
+
+<div class="input-prepend user-search">
+  <span class="add-on">${ _("Search") }</span>
+  <input class="span2" id="prependedInput" type="text" placeholder="${ _('Input name, id') }">
+</div>
+
+<script type="text/javascript">
+  y_input_search( ".user-search input", "${ urlupdate({'search': 'REPLACEOBJ', 'p': 1, 'ajax': 'true' }) }", "#aul" );
+</script>
+
+
+<script type="text/javascript">
+  selected_reload( "#group-select", "${ urlupdate({'gid': 'REPLACEOBJ', 'p': 1 }) }" )
+  selected_reload( "#sortby-select", "${ urlupdate({'by': 'REPLACEOBJ'}) }" )
+  selected_reload( "#order-select", "${ urlupdate({'order': 'REPLACEOBJ'}) }" )
+
+  $("#group-select option[value='${ GID }']").attr('selected', 'selected');
+  $("#sortby-select option[value='${ SORT_BY }']").attr('selected', 'selected');
+  $("#order-select option[value='${ ORDER }']").attr('selected', 'selected');
+</script>
 
 <p class="desc-title">${ _('Total : ') }${ TOTAL_USER }</p>
 
-<div class="m-item"><span class="k">${ _("Search") }</span><span id="search"><input type="text" title="${ _('Input text to search matched user.') }"/></span></div>
-
 <div id="aul">
 
-  <table class="ly-table full">
+  <table class="table table-striped table-bordered">
     <thead>
       <tr>
-        <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>
-        <th><a href="${ sort_by('username') }">${ _("Name") }</a></th>
-        <th><a href="${ sort_by('islocked') }">${ _("Islocked") }</a></th>
-	<th>${ _("Group") }</th>
+        <th>${ _("ID") }</th>
+        <th>${ _("Name") }</th>
         <th>${ _("Appliance") }</th>
         <th>${ _("Instance") }</th>
-	<th>${ _("Email") }</th>
-	<th><a href="${ sort_by('last_active') }">${ _("Last Active") }</a></th>
+		<th>${ _("Email") }</th>
+		<th>${ _("Last Active") }</th>
       </tr>
     </thead>
     <tbody>
@@ -44,78 +84,27 @@
       <tr>
         <td>${ U.id }</td>
         <td class="username">
-	  <img src="${ static_url( U.avatar_mini_url ) }" />
-	  <a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a>
-	</td>
-	<td><input type="checkbox"
-		   % if U.islocked:
-		   checked="checked"
-		   % endif
-		   onclick="simpleToggleCheckbox( this, '${ reverse_url('account:islocked', U.id) }', '#islocked-notify')" />
-	</td>
-	<td>
-	  % for G in U.groups:
-	  <a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a>
-	  % endfor
-	</td>
-	<td>
-	  % if U.appliances:
-	  <a href="${ reverse_url('admin:appliance') }?uid=${ U.id }">${ len(U.appliances) }</a>
-	  % endif
-	</td>
-	<td>
-	  % if U.instances:
-	  <a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
-	  % endif
-	</td>
-	<td><a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" target="_blank">${ U.email }</a></td>
-	<td class="time">${ htime(U.last_active) }</td>
+		  ${ U.avatar_mini }
+		  <a class="action" href="${ reverse_url('admin:user:view') }?id=${ U.id }">${ U.username }</a>
+		</td>
+		<td>
+		  % if U.appliances:
+		  <a href="${ reverse_url('admin:appliance') }?uid=${ U.id }">${ len(U.appliances) }</a>
+		  % endif
+		</td>
+		<td>
+		  % if U.instances:
+		  <a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
+		  % endif
+		</td>
+		<td><a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" target="_blank">${ U.email }</a></td>
+		<td class="time">${ htime(U.last_active) }</td>
       </tr>
       % endfor
     </tbody>
   </table>
   ${ PAGE_HTML }
 
-</div>
-
-<div class="manage-content">
-  <a class="blue-submit" href="${ reverse_url('admin:user') }?action=add">${ _("Create New User") }</a>
-  <a class="red-submit" href="${ sort_by('description') }">${ _("Users Have Remark") }</a>
-</div>
-
-<script charset="utf-8" src="${ STATIC_URL }js/instance.js"></script>
-
-<script type="text/javascript">
-  // usersearch
-  $("#search input").keyup(function(){
-    txt=$("#search input").val();
-
-    var url = lyurl_update_arg(location.href, 'search', txt);
-    url = lyurl_update_arg(url, 'ajax', 'True');
-    url = lyurl_update_arg(url, 'p', '1');
-
-    clearTimeout($(this).data('timeId'));
-
-    var timeoutId = setTimeout(function() {
-      $.get(url,function(result){
-        $("#aul").html(result);
-      }); }, 300);
-
-    $(this).data('timeId', timeoutId);
-  });
-</script>
-
-
-<div id="islocked-notify" style="display:none">
-  <div id="basic-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <p>${ _("Toggle Account islocked status Success") }</p>
-  </div>
-  <div id="error-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <h1>${ _("Toggle Account islocked status Failed") }</h1>
-    <p>#{text}</p>
-  </div>
 </div>
 
 </%block>

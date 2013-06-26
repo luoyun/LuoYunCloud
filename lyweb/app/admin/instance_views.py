@@ -1,10 +1,10 @@
 # coding: utf-8
 
 import logging, datetime, time, re, json
-from lycustom import LyRequestHandler
+from lycustom import RequestHandler
 from tornado.web import authenticated, asynchronous
 
-from app.account.models import User, Group, Permission
+from app.auth.models import User, Group, Permission
 from app.instance.models import Instance
 from app.appliance.models import Appliance
 from app.job.models import Job
@@ -26,55 +26,11 @@ from app.instance.models import INSTANCE_STATUS_SHORT_STR
 from lytool.filesize import size as human_size
 
 
-class InstanceManagement(LyRequestHandler):
 
+class Index(RequestHandler):
 
-    @has_permission('admin')
-    def prepare(self):
-
-        self.instance = None
-        self.action = self.get_argument('action', 'index')
-
-        instance_id = self.get_argument('id', 0)
-        if instance_id:
-            self.instance = self.db2.query(Instance).get( instance_id )
-            if self.instance and self.action == 'index':
-                self.action = 'view'
-            elif not self.instance:
-                self.write( self.trans(_('No such instance : %s')) % instance_id )
-                return self.finish()
-
-
+    @authenticated
     def get(self):
-
-        if self.action == 'index':
-            self.get_index()
-
-        elif self.action == 'view':
-            self.get_view()
-
-        elif self.action == 'change_owner':
-            self.change_owner()
-
-        elif self.action in ['stop_all', 'start_all']:
-            self.get_control_all(self.action)
-
-        else:
-            self.write( self.trans(_('Wrong action value!')) )
-
-
-    def post(self):
-
-        if not self.action:
-            self.write( self.trans(_('No action found !')) )
-
-        elif self.action == 'change_owner':
-            self.change_owner()
-
-        else:
-            self.write( self.trans(_('Wrong action value!')) )
-
-    def get_index(self):
 
         view = self.get_argument('view', 'all')
         by = self.get_argument('by', 'id')
@@ -91,10 +47,12 @@ class InstanceManagement(LyRequestHandler):
         start = (cur_page - 1) * page_size
         stop = start + page_size
 
-        instances = self.db2.query(Instance)
+        instances = self.db.query(Instance)
 
         # TODO: more search func
         if search:
+            if len(search) > 128: # TODO
+                return self.write( _('Too long search text.') )
             sid = self.get_int(search, 0)
             search = '%' + search.lower() + '%'
             if sid:
@@ -117,16 +75,16 @@ class InstanceManagement(LyRequestHandler):
 
         U = None
         if (user_group <= 0) and uid:
-            U = self.db2.query(User).get( uid )
+            U = self.db.query(User).get( uid )
             if U:
                 instances = instances.filter_by( user_id = uid )
 
-        APPLIANCE = self.db2.query(Appliance).get( aid )
+        APPLIANCE = self.db.query(Appliance).get( aid )
         if APPLIANCE:
             instances = instances.filter_by( appliance_id = aid )
 
         if nid:
-            NODE = self.db2.query(Node).get( nid )
+            NODE = self.db.query(Node).get( nid )
             if NODE:
                 instances = instances.filter_by( node_id = nid )
         else:
@@ -134,7 +92,7 @@ class InstanceManagement(LyRequestHandler):
 
         # Group filter
         if user_group > 0:
-            ug = self.db2.query(Group).get(user_group)
+            ug = self.db.query(Group).get(user_group)
             if ug:
                 instances = instances.join(
                     Instance.user).join(User.groups).filter(
@@ -175,61 +133,79 @@ class InstanceManagement(LyRequestHandler):
 
         d = { 'title': self.trans(_('Instance Management')),
               'urlupdate': self.urlupdate,
-              'sort_by': sort_by, 'SORTBY': by,
+              'sort_by': sort_by, 'SORTBY': by, 'ORDER': order,
               'INSTANCE_LIST': instances, 'TOTAL_INSTANCE': total,
               'PAGE_HTML': page_html,
               'SORT_USER': U, 'SORT_APPLIANCE': APPLIANCE,
               'SORT_NODE': NODE, 'STATUS': status,
               'INSTANCE_STATUS': INSTANCE_STATUS_SHORT_STR,
-              'USER_GROUP_ID': user_group, 'GROUP_LIST': self.db2.query(Group) }
+              'USER_GROUP_ID': user_group, 'GROUP_LIST': self.db.query(Group) }
 
         if self.get_argument('ajax', None):
             self.render( 'admin/instance/index.ajax.html', **d )
         else:
             self.render( 'admin/instance/index.html', **d )
 
-    def get_view(self):
 
-        I = self.instance
 
-        tab = self.get_argument('tab', 'general')
+class InstanceManagement(RequestHandler):
 
-        JOB_LIST = self.db2.query(Job).filter(
-            Job.target_id == I.id,
-            Job.target_type == JOB_TARGET['INSTANCE']
-            ).order_by( desc(Job.id) )
-        JOB_LIST = JOB_LIST.limit(10);
 
-        config = json.loads(I.config) if I.config else {}
+    @has_permission('admin')
+    def prepare(self):
 
-        network = config.get('network', [])
+        self.instance = None
+        self.action = self.get_argument('action', 'index')
 
-        password = config.get('passwd_hash')
+        instance_id = self.get_argument('id', 0)
+        if instance_id:
+            self.instance = self.db.query(Instance).get( instance_id )
+            if self.instance and self.action == 'index':
+                self.action = 'view'
+            elif not self.instance:
+                self.write( self.trans(_('No such instance : %s')) % instance_id )
+                return self.finish()
 
-        storage = config.get('storage', [])
-        webssh = config.get('webssh', None)
 
-        d = { 'title': self.trans(_('View Instance "%s"')) % I.name,
-              'I': I, 'JOB_LIST': JOB_LIST, 'NETWORK_LIST': network,
-              'STORAGE_LIST': storage,
-              'webssh': webssh, 'TAB': tab,
-              'human_size': human_size }
+    def get(self):
 
-        if self.get_argument('ajax', None):
-            self.render('admin/instance/view.ajax.html', **d)
+        if self.action == 'index':
+            self.get_index()
+
+        elif self.action == 'view':
+            self.get_view()
+
+        elif self.action == 'change_owner':
+            self.change_owner()
+
+        elif self.action in ['stop_all', 'start_all']:
+            self.get_control_all(self.action)
+
         else:
-            self.render('admin/instance/view.html', **d)
+            self.write( self.trans(_('Wrong action value!')) )
+
+
+    def post(self):
+
+        if not self.action:
+            self.write( self.trans(_('No action found !')) )
+
+        elif self.action == 'change_owner':
+            self.change_owner()
+
+        else:
+            self.write( self.trans(_('Wrong action value!')) )
 
 
     def get_control_all(self, action):
 
         if action == 'stop_all':
             action = 'stop'
-            INSTANCE_LIST = self.db2.query(Instance).filter( Instance.status != 2 )
+            INSTANCE_LIST = self.db.query(Instance).filter( Instance.status != 2 )
 
         elif action == 'start_all':
             action = 'run'
-            INSTANCE_LIST = self.db2.query(Instance).filter_by( status = 2 )
+            INSTANCE_LIST = self.db.query(Instance).filter_by( status = 2 )
 
         else:
             return self.write( self.trans(_('Unknown action "%s" !')) % action )
@@ -260,9 +236,9 @@ class InstanceManagement(LyRequestHandler):
             user = self.get_argument('user', 0)
             if user:
                 if user.isdigit():
-                    U = self.db2.query(User).get(user)
+                    U = self.db.query(User).get(user)
                 if not U:
-                    U = self.db2.query(User).filter_by(username=user).first()
+                    U = self.db.query(User).filter_by(username=user).first()
                 if not U:
                     E.append( self.trans(_('Can not find user: %s')) % user )
             else:
@@ -279,10 +255,49 @@ class InstanceManagement(LyRequestHandler):
                         'old_owner': I.user.username, 'new_owner': U.username } )
 
                 I.user = U
-                self.db2.commit()
+                self.db.commit()
                 # TODO: send reason to user
                 url = self.reverse_url('admin:instance')
                 url += '?id=%s' % I.id
                 return self.redirect( url )
 
         self.render( 'admin/instance/change_owner.html', **d)
+
+
+
+class InstanceHandler(RequestHandler):
+
+    def get_instance(self):
+
+        ID = self.get_argument('id', 0)
+        if ID:
+            I = self.db.query(Instance).get( ID )
+            if I:
+                return I
+
+            else:
+                self.write( _('Can not find instance %s') % ID )
+
+        else:
+            self.write( _('Give me instance id please.') )
+
+        return None
+
+
+
+class View(InstanceHandler):
+
+    @has_permission('admin')
+    def get(self):
+
+        I = self.get_instance()
+        if not I: return
+
+
+        d = { 'title': _('View Instance "%s"') % I.name,
+              'I': I, 'human_size': human_size }
+
+        if self.get_argument('ajax', None):
+            self.render('admin/instance/view.ajax.html', **d)
+        else:
+            self.render('admin/instance/view.html', **d)

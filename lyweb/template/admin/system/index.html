@@ -1,16 +1,10 @@
-<%inherit file="/admin/system.html" />
+<%inherit file="system_base.html" />
 
-<%block name="content">
 
-<div class="main-wrap">
-  <div class="inner-navigator">
-    <span><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></span>&gt;
-    <span><a href="${ reverse_url('admin:system') }">${ _("System") }</a></span>
-  </div>
-</div>
+<%block name="submain">
 
-<div class="main-wrap">
-  <span><a class="button" href="${ reverse_url('admin:system') }?action=syncdb">${ _("Sync DB") }</a></span>
+<div class="hero-unit">
+  <p>${ _("System configure.") }</p>
 </div>
 
 

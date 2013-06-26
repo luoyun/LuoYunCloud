@@ -1,4 +1,4 @@
-from lyforms import Form
+from yweb.forms import Form
 from wtforms import BooleanField, TextField, \
     validators, DateTimeField, TextAreaField, IntegerField, \
     PasswordField, SelectMultipleField, FileField, SelectField

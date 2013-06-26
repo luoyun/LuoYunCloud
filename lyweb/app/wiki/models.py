@@ -1,5 +1,5 @@
 from datetime import datetime
-from lyorm import ORMBase
+from yweb.orm import ORMBase
 
 from sqlalchemy import Column, Integer, String, \
     Sequence, DateTime, Table, ForeignKey, Boolean, Text

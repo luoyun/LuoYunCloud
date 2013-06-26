@@ -1,0 +1,27 @@
+<%inherit file="/admin/account/base.html"/>
+
+<%block name="innav">
+<li><a href="${ reverse_url('admin:user') }">${ _("User") }</a> <span class="divider">/</span></li>
+<%block name="userinnav" />
+</%block>
+
+<%block name="main">
+<div class="row-fluid">
+  <div class="span3">
+	<a href="${ reverse_url('admin:user:view') }?id=${ USER.id }"><img class="userlogo" src="${ USER.avatar_url }" /></a>
+
+	<ul class="nav nav-list">
+	  <li><a href="${ reverse_url('message:new') }?userid=${ USER.id}" target="_blank">${ _("Send Message") }</a></li>
+	  <li><a href="${ reverse_url('admin:job') }?user=${ USER.id }" target="_blank">${ _("View All Job") }</a></li>
+	  <li><a href="${ reverse_url('user:view') }?id=${ USER.id }" target="_blank">${ _("Home Page") }</a></li>
+	  <li><a href="${ reverse_url('admin:user:resetpass', USER.id) }">${ _("Reset Password") }</a></li>
+	</ul>
+
+  </div>
+
+  <div class="span9">
+	<%block name="usermain"/>
+  </div>
+</div>
+
+</%block>

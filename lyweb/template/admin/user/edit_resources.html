@@ -1,28 +1,31 @@
-<%inherit file="/admin/account.html" />
+<%inherit file="/admin/account/base.html" />
 
 <%block name="innav">
-<li><a href="${ reverse_url('admin:user') }">${ _("User") }</a></li>
-<li><a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a></li>
+<li><a href="${ reverse_url('admin:user') }">${ _("User") }</a> <span class="divider">/</span></li>
+<li><a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a> <span class="divider">/</span></li>
 <li>${ _("Edit Resources") }</li>
 </%block>
 
-<%block name="content">
+<%block name="main">
 
-<div class="small-left-right-form c">
+<div>
   <form method="POST">${ xsrf_form_html() }
-    ${ form.memory.label } ${ form.memory() }<br/>
-    ${ form.html_errors(form.memory.errors) }
+	<fieldset>
+	  <legend>${ _("Edit User Resources") }</legend>
+      ${ form.memory.label } ${ form.memory() }<br/>
+      ${ form.html_errors(form.memory.errors) }
 
-    ${ form.cpus.label } ${ form.cpus() }<br/>
-    ${ form.html_errors(form.cpus.errors) }
+      ${ form.cpus.label } ${ form.cpus() }<br/>
+      ${ form.html_errors(form.cpus.errors) }
 
-    ${ form.instances.label } ${ form.instances() }<br/>
-    ${ form.html_errors(form.instances.errors) }
+      ${ form.instances.label } ${ form.instances() }<br/>
+      ${ form.html_errors(form.instances.errors) }
 
-    ${ form.storage.label } ${ form.storage() }<br/>
-    ${ form.html_errors(form.storage.errors) }
+      ${ form.storage.label } ${ form.storage() }<br/>
+      ${ form.html_errors(form.storage.errors) }
 
-    <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
+	  <button type="submit" class="btn">${ _("Save") }</button>
+	</fieldset>
   </form>
 </div>
 

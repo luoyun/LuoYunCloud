@@ -2,7 +2,7 @@
 
 import logging, datetime, time, re
 import tornado
-from lycustom import LyRequestHandler
+from lycustom import RequestHandler
 from tornado.web import authenticated, asynchronous
 
 from app.wiki.models import WikiCatalog, Topic
@@ -16,22 +16,22 @@ from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'tables'])
 
 
-class Index(LyRequestHandler):
+class Index(RequestHandler):
 
     def get(self):
 
-        catalogs = self.db2.query(WikiCatalog).order_by(
+        catalogs = self.db.query(WikiCatalog).order_by(
             asc(WikiCatalog.position)).all()
 
         self.render( 'wiki/index.html', title = self.trans(_('FAQ Home')), catalogs = catalogs )
 
 
 
-class ViewTopic(LyRequestHandler):
+class ViewTopic(RequestHandler):
 
     def get(self, id):
 
-        topic = self.db2.query(Topic).get(id)
+        topic = self.db.query(Topic).get(id)
         if not topic:
             return self.write('Have not found topic %s' % id)
 
@@ -42,11 +42,11 @@ class ViewTopic(LyRequestHandler):
 
 
 
-class ViewTopicSource(LyRequestHandler):
+class ViewTopicSource(RequestHandler):
 
     def get(self, id):
 
-        topic = self.db2.query(Topic).get(id)
+        topic = self.db.query(Topic).get(id)
         if not topic:
             return self.write('Have not found topic %s' % id)
 
@@ -55,13 +55,13 @@ class ViewTopicSource(LyRequestHandler):
 
 
 
-class NewTopic(LyRequestHandler):
+class NewTopic(RequestHandler):
 
     @has_permission('admin')
     def get(self):
 
         catalog_id = self.get_argument('catalog', 1)
-        catalog = self.db2.query(WikiCatalog).get( catalog_id )
+        catalog = self.db.query(WikiCatalog).get( catalog_id )
         if not catalog:
             return self.write( self.trans(_('Catalog not found')) )
 
@@ -83,8 +83,8 @@ class NewTopic(LyRequestHandler):
                            user = self.current_user,
                            catalog = form.catalog.data )
 
-            self.db2.add(topic)
-            self.db2.commit()
+            self.db.add(topic)
+            self.db.commit()
             url = self.reverse_url('wiki:view', topic.id)
             return self.redirect(url)
 
@@ -92,14 +92,14 @@ class NewTopic(LyRequestHandler):
 
 
 
-class EditTopic(LyRequestHandler):
+class EditTopic(RequestHandler):
 
     @has_permission('admin')
     def prepare(self):
 
         _id = re.match('.*/([0-9]+)/.*', self.request.path).groups()[0]
 
-        self.topic = self.db2.query(Topic).get(_id)
+        self.topic = self.db.query(Topic).get(_id)
         if not self.topic:
             self.write('Have not found topic %s' % _id)
             return self.finish()
@@ -129,7 +129,7 @@ class EditTopic(LyRequestHandler):
             self.topic.body = form.body.data
             self.topic.catalog = form.catalog.data
             self.topic.body_html = YMK.convert( self.topic.body )
-            self.db2.commit()
+            self.db.commit()
             url = self.reverse_url('wiki:view', self.topic.id)
             return self.redirect(url)
 
@@ -137,27 +137,27 @@ class EditTopic(LyRequestHandler):
 
 
 
-class DeleteTopic(LyRequestHandler):
+class DeleteTopic(RequestHandler):
 
     @has_permission('admin')
     def get(self, id):
 
-        topic = self.db2.query(Topic).get(id)
+        topic = self.db.query(Topic).get(id)
         if not topic:
             return self.write('Have not found topic %s' % id)
 
-        self.db2.delete(topic)
-        self.db2.commit()
+        self.db.delete(topic)
+        self.db.commit()
         self.write('Delete topic %s success !' % id)
 
 
 
-class ViewCatalog(LyRequestHandler):
+class ViewCatalog(RequestHandler):
 
 
     def get(self, id):
 
-        catalog = self.db2.query(WikiCatalog).get(id)
+        catalog = self.db.query(WikiCatalog).get(id)
         if not catalog:
             return self.write(u'No such catalog !')
         

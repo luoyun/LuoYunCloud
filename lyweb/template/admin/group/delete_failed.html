@@ -1,4 +1,4 @@
-<%inherit file="/admin/account.html" />
+<%inherit file="/admin/account/base.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
@@ -6,7 +6,7 @@
 <li>${ _("delete group failed") }</li>
 </%block>
 
-<%block name="content">
+<%block name="main">
 
 % if GROUP.islocked:
 <p class="ywarn">${ _("This group is locked for safely. If you want to delete it, please manuly modified the islocked flag of auth_group table in backend DB.") }</p>

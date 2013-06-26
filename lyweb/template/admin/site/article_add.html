@@ -1,0 +1,49 @@
+<%inherit file="base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" type="text/css" href="${ static_url('markitup/skins/simple/style.css') }" />
+<link rel="stylesheet" type="text/css" href="${ static_url('markitup/sets/markdown/style.css') }" />
+</%block>
+
+<%block name="mainbody">
+
+<script type="text/javascript" src="${ static_url('markitup/jquery.markitup.js') }"></script>
+<script type="text/javascript" src="${ static_url('markitup/sets/markdown/set.js') }"></script>
+
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("New Article") }</legend>
+	  ${ form.entry.label } ${ form.entry() }
+	  ${ form.html_errors(form.entry.errors) }
+
+	  ${ form.language.label } ${ form.language() }
+	  ${ form.html_errors(form.language.errors) }
+
+	  ${ form.name.label } ${ form.name() }
+	  ${ form.html_errors(form.name.errors) }
+
+	  ${ form.summary.label } ${ form.summary() }
+	  ${ form.html_errors(form.summary.errors) }
+
+	  ${ form.body.label } ${ form.body() }
+	  ${ form.html_errors(form.body.errors) }
+
+	  <label for="is_visible">
+		<input id="is_visible" type="checkbox" name="is_visible">
+		${ _("Is it visible ?") }
+	  </label>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+
+</div>
+
+<script type="text/javascript" >
+   mySettings.previewParserPath = "/t/preview?markup_language=markdown&_xsrf=${ xsrf_cookie }";
+   $(document).ready(function() {
+      $("#body").markItUp(mySettings);
+   });
+</script>
+
+</%block>

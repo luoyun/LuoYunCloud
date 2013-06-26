@@ -1,0 +1,47 @@
+<%inherit file="/admin/account/base.html" />
+
+<%block name="subhead">
+<link rel="stylesheet" href="${ static_url('third/jquery.multiselect2side/css/jquery.multiselect2side.css') }" />
+</%block>
+
+<%block name="innav">
+<li><a href="${ reverse_url('admin:user') }">${ _("User") }</a> <span class="divider">/</span></li>
+<li><a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a> <span class="divider">/</span></li>
+<li>${ _("Edit User Groups") }</li>
+</%block>
+
+<%block name="main">
+
+<script type="text/javascript" src="${ static_url('third/jquery.multiselect2side/js/jquery.multiselect2side.js') }"></script>
+
+<%
+   SELECT_HEIGHT = '%spx' % (len(form.groups.choices) * 20 + 60)
+%>
+<style type="text/css">    
+<!--
+.ms2side__select select {
+    height: ${ SELECT_HEIGHT };
+}
+-->
+</style>
+
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Edit User Groups") }</legend>
+      ${ form.groups() }<br/>
+	  <button type="submit" class="btn">${ _("Save") }</button>
+	</fieldset>
+  </form>
+</div>
+
+<script type="text/javascript">
+  $("#groups").multiselect2side({
+    selectedPosition: 'right',
+    moveOptions: false,
+    labelsx: '${ _("Available") }',
+    labeldx: '${ _("Selected") }',
+  });
+</script>
+
+</%block>

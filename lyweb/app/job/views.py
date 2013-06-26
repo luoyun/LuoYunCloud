@@ -1,7 +1,7 @@
 import time
 import tornado
 
-from lycustom import LyRequestHandler
+from lycustom import RequestHandler
 from tornado.web import authenticated, asynchronous
 
 from sqlalchemy.sql.expression import asc, desc
@@ -9,14 +9,14 @@ from sqlalchemy.sql.expression import asc, desc
 from app.job.models import Job
 
 
-class JobStatus(LyRequestHandler):
+class JobStatus(RequestHandler):
 
     ''' A running job status '''
 
     @asynchronous
     def get(self, id):
 
-        job = self.db2.query(Job).get(id)
+        job = self.db.query(Job).get(id)
         if not job:
             return self.write(u'No job %s !' % id)
 
@@ -33,8 +33,8 @@ class JobStatus(LyRequestHandler):
         if self.request.connection.stream.closed():
             return
 
-        job = self.db2.query(Job).get(id)
-        self.db2.commit() # TODO: must commit ?
+        job = self.db.query(Job).get(id)
+        self.db.commit() # TODO: must commit ?
         #print 'id = %s, previous = %s, now = %s' % (
         #    id, previous, job.status )
 

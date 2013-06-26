@@ -3,26 +3,25 @@
 import logging, struct, socket, re, os, json
 import ConfigParser
 
-from lycustom import LyRequestHandler
+from lycustom import RequestHandler, has_permission
 from tornado.web import authenticated, asynchronous
 
 from sqlalchemy.sql.expression import asc, desc
 
-from app.system.models import LuoYunConfig, NetworkPool, IPPool, \
-    LyTrace
+from app.site.models import SiteConfig
+from app.system.models import LuoYunConfig, LyTrace
 from app.system.forms import BaseinfoForm, DBForm, \
-    CLCForm, NameserversForm, NetworkPoolForm, DomainForm, \
+    CLCForm, NameserversForm, \
     NginxForm, RegistrationProtocolForm, WelcomeNewUserForm, \
-    SendMailForm
+    SendMailForm, QQAuth2Form
 
-from app.account.models import User, Group
+from app.auth.models import User, Group
 
 from ytool.ini import ConfigINI
 from ytool.pagination import pagination
 
-from lycustom import has_permission
 from email.Utils import parseaddr, formataddr
-from lymail import LyMail, validate_email
+#from yweb.utils.mail import LyMail, validate_email
 
 from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'tables'])
@@ -32,19 +31,19 @@ import settings
 
 
 
-class Index(LyRequestHandler):
+class Index(RequestHandler):
 
     @has_permission('admin')
     def get(self):
-        self.render('system/index.html')
+        self.render('admin/system/index.html')
 
 
 
-class DBEdit(LyRequestHandler):
+class DBEdit(RequestHandler):
 
     @has_permission('admin')
     def prepare(self):
-        self.cf = ConfigINI(settings.SITE_CONFIG, 'db')
+        self.cf = ConfigINI(settings.sitecfg, 'db')
 
     def get(self):
 
@@ -83,11 +82,11 @@ class DBEdit(LyRequestHandler):
 
 
 
-class CLCEdit(LyRequestHandler):
+class CLCEdit(RequestHandler):
 
     @has_permission('admin')
     def prepare(self):
-        self.cf = ConfigINI(settings.SITE_CONFIG, 'clc')
+        self.cf = ConfigINI(settings.sitecfg, 'clc')
 
     def get(self):
 
@@ -119,12 +118,12 @@ class CLCEdit(LyRequestHandler):
 
 
 
-class BaseinfoEdit(LyRequestHandler):
+class BaseinfoEdit(RequestHandler):
 
     @has_permission('admin')
     def prepare(self):
 
-        self.cf = ConfigINI(settings.SITE_CONFIG, 'base')
+        self.cf = ConfigINI(settings.sitecfg, 'base')
 
     def get(self):
 
@@ -157,12 +156,12 @@ class BaseinfoEdit(LyRequestHandler):
 
 
 
-class NameserversEdit(LyRequestHandler):
+class NameserversEdit(RequestHandler):
 
     @has_permission('admin')
     def prepare(self):
 
-        self.nameservers = self.db2.query(LuoYunConfig).filter_by( key = 'nameservers' ).first()
+        self.nameservers = self.db.query(LuoYunConfig).filter_by( key = 'nameservers' ).first()
 
 
     def get(self):
@@ -188,381 +187,86 @@ class NameserversEdit(LyRequestHandler):
                 self.nameservers.value = nameservers
             else:
                 c = LuoYunConfig('nameservers', nameservers)
-                self.db2.add( c )
+                self.db.add( c )
 
-            self.db2.commit()
+            self.db.commit()
             saved = True
 
         self.render('system/nameservers_edit.html',
                     form = form, saved = saved)
 
 
-class IPPoolView(LyRequestHandler):
+class NginxEdit(RequestHandler):
 
-    @has_permission('admin')
-    def get(self):
-
-        page_size = self.get_argument_int('sepa', 50)
-        cur_page = self.get_argument_int('p', 1)
-        nid = self.get_argument_int('network', 0)
-        by = self.get_argument('by', 'id')
-        sort = self.get_argument('sort', 'ASC')
-
-        if by == 'created':
-            by = IPPool.created
-        elif by == 'network':
-            by = IPPool.network_id
-        else:
-            by = IPPool.id
-
-        by_exp = desc(by) if sort == 'DESC' else asc(by)
-
-        start = (cur_page - 1) * page_size
-        stop = start + page_size
-
-        N = self.db2.query(NetworkPool).get(nid) if nid else None
-
-        TOTAL = self.db2.query(IPPool.id).count()
-
-        POOL = self.db2.query(IPPool)
-        if N:
-            POOL = POOL.filter( IPPool.network_id == nid )
-
-        POOL = POOL.order_by( by_exp )
-        POOL = POOL.slice(start, stop)
-
-        page_html = pagination(self.request.uri, TOTAL, page_size, cur_page)
-
-
-        d = { 'title': self.trans(_('IP Pool')), 'TOTAL': TOTAL, 'NETWORK': N,
-              'IPPOOL': POOL.all(), 'PAGE_HTML': page_html }
-
-        self.render('system/ippool.html', **d)
-
-
-
-class NetworkHome(LyRequestHandler):
-
-    @has_permission('admin')
-    def get(self):
-        d = { 'title': self.trans(_('Network Pool')),
-              'NETWORKPOOL': self.db2.query(NetworkPool).all() }
-
-        self.render('system/networkpool.html', **d)
-
-
-class NetworkView(LyRequestHandler):
-
-    @has_permission('admin')
-    def get(self, ID):
-        
-        N = self.db2.query(NetworkPool).get(ID)
-
-        if N:
-            d = { 'title': self.trans(_('Network Pool')), 'N': N }
-            self.render('system/networkpool_view.html', **d)
-        else:
-            self.write( self.trans(_('Can not find networkpool %s')) % ID )
-
-
-
-class NetworkHandler(LyRequestHandler):
-
-    def add_to_ippool(self, N):
-
-        start, end = IP( N.start ), IP( N.end )
-        exclude_ips = N.exclude_ips
-
-        NETWORK = '%s/%s' % (N.start, N.netmask)
-        for x in IP(NETWORK, make_net=True):
-            cur_ip = IP(x)
-            if cur_ip > end:
-                break
-
-            if start <= cur_ip:
-                ip_str = x.strNormal()
-                if not exclude_ips.count(ip_str):
-                    if self.db2.query(IPPool).filter_by(ip=ip_str).first():
-                        logging.warning('ADD_IPPOOL: IP %s is exists, ommit.' % ip_str)
-                    else:
-                        self.db2.add( IPPool(ip_str, N) )
-
-        self.db2.commit()
-
-
-
-class NetworkDelete(LyRequestHandler):
-
-    @has_permission('admin')
-    def get(self, ID):
-
-        N = self.db2.query(NetworkPool).get(ID)
-        if not N: return self.write( self.trans(_('Can not find networkpool %s')) % ID )
-
-        ERROR = []
-        OK = [] # TODO: use session rollback
-
-        for x in self.db2.query(IPPool).filter_by(network_id=N.id):
-            if x.instance:
-                ERROR.append( x )
-            else:
-                OK.append( x )
-
-        if ERROR:
-            d = { 'title': self.trans(_('Delete Network Pool Failed')),
-                  'FAILED_LIST': ERROR, 'N': N }
-            self.render('system/networkpool_delete_failed.html', **d)
-
-        else:
-            for x in OK:
-                self.db2.delete(x)
-            self.db2.delete(N)
-            self.db2.commit()
-            self.redirect(self.reverse_url('system:networkpool'))
-
-
-
-class NetworkAdd(NetworkHandler):
-
-    @has_permission('admin')
-    def get(self):
-
-        form = NetworkPoolForm(self)
-        NS = self.db2.query(LuoYunConfig).filter_by( key = 'nameservers' ).first()
-        if NS: form.nameservers.data = NS.value
-
-        d = { 'title': self.trans(_('Add a new network pool')),  'form': form }
-        self.render('system/networkpool_add.html', **d)
-
-
-    @has_permission('admin')
-    def post(self):
-
-        form = NetworkPoolForm(self)
-        if form.validate():
-
-            N = NetworkPool(
-                name = form.name.data,
-                description = form.description.data,
-                start = form.start.data,
-                end = form.end.data,
-                netmask = form.netmask.data,
-                gateway = form.gateway.data,
-                nameservers = form.nameservers.data,
-                exclude_ips = form.exclude_ips.data )
-
-            self.db2.add( N )
-            self.db2.commit()
-
-            self.add_to_ippool(N)
-
-            url = self.reverse_url('system:networkpool')
-            return self.redirect( url )
-
-        d = { 'title': self.trans(_('Add a new network pool')),  'form': form }
-        self.render('system/networkpool_add.html', **d)
-
-
-
-class NetworkEdit(LyRequestHandler):
-
-    @has_permission('admin')
-    def get(self, ID):
-
-        N = self.db2.query(NetworkPool).get(ID)
-        if not N: return self.write( self.trans(_('Can not find networkpool %s')) % ID )
-
-        form = NetworkPoolForm(self)
-        form.name.data = N.name
-        form.description.data = N.description
-        form.start.data = N.start
-        form.end.data = N.end
-        form.netmask.data = N.netmask
-        form.gateway.data = N.gateway
-        if N.nameservers:
-            form.nameservers.data = N.nameservers
-        else:
-            nameservers = self.db2.query(LuoYunConfig).filter_by( key = 'nameservers' ).first()
-            if nameservers:
-                form.nameservers.data = nameservers.value
-        if N.exclude_ips:
-            form.exclude_ips.data = N.exclude_ips
-
-        d = { 'title': self.trans(_('Edit network pool')),  'form': form }
-        self.render('system/networkpool_edit.html', **d)
-
-
-    def post(self, ID):
-
-        N = self.db2.query(NetworkPool).get(ID)
-        if not N: return self.write( self.trans(_('Can not find networkpool %s')) % ID )
-
-        form = NetworkPoolForm(self)
-        if form.validate():
-
-            # TODO: a ugly algorithm
-            OLD, NEW = [], []
-            for x in self.db2.query(IPPool).filter_by(network_id=N.id):
-                OLD.append( x.ip )
-
-            start, end = IP( form.start.data ), IP( form.end.data )
-            exclude_ips = form.exclude_ips.data
-
-            NETWORK = '%s/%s' % (form.start.data, form.netmask.data)
-            for x in IP(NETWORK, make_net=True):
-                cur_ip = IP(x)
-                if cur_ip > end:
-                    break
-
-                if start <= cur_ip:
-                    ip_str = x.strNormal()
-                    if not exclude_ips.count(ip_str):
-                        NEW.append( ip_str )
-
-            OLD_SET, NEW_SET = set(OLD), set(NEW)
-            DROP = list(OLD_SET - NEW_SET)
-
-            ERROR, OK = [], []
-            for x in DROP:
-                find = self.db2.query(IPPool).filter_by(ip=x).first()
-                if find.instance_id:
-                    ERROR.append( find )
-                else:
-                    OK.append( find )
-
-            if ERROR:
-                d = { 'title': self.trans(_('Edit network pool failed')),
-                      'UNABLE_DELETE_IP': ERROR, 'NETWORK': N,
-                      'form': form }
-                return self.render('system/networkpool_edit.html', **d)
-
-            ADD = list(NEW_SET - OLD_SET)
-
-            N.name = form.name.data
-            N.description = form.name.description
-            N.start = form.start.data
-            N.end = form.end.data
-            N.netmask = form.netmask.data
-            N.gateway = form.gateway.data
-            N.nameservers = form.nameservers.data
-            N.exclude_ips = form.exclude_ips.data
-
-            for x in OK:
-                self.db2.delete(x)
-            for x in ADD:
-                self.db2.add( IPPool(x, N) )
-
-            self.db2.commit()
-
-            url = self.reverse_url('system:networkpool')
-            return self.redirect( url )
-
-        d = { 'title': self.trans(_('Edit Network Pool')),  'form': form }
-        self.render('system/networkpool_edit.html', **d)
-
-
-
-class DomainEdit(LyRequestHandler):
+    title = _('Nginx Config')
+    template_path = 'system/nginx_edit.html'
 
     @has_permission('admin')
     def prepare(self):
 
-        self.domain = self.db2.query(LuoYunConfig).filter_by( key = 'domain' ).first()
+        self.N = None
+        self.NC = settings.NGINX_CONF
+
+        self.N = self.db.query(SiteConfig).filter_by(
+            key = 'nginx' ).first()
+
+        if self.N and self.N.value:
+
+            self.NC.update( json.loads( self.N.value ) )
+
+        self.form = NginxForm(self)
+        self.prepare_kwargs['form'] = self.form
+
+        self.prepare_kwargs['saved'] = False
+
 
     def get(self):
 
-        form = DomainForm(self)
-        if self.domain:
-            domain = json.loads(self.domain.value)
-            if domain > 0:
-                form.topdomain.data = domain['topdomain']
-                form.prefix.data = domain['prefix']
-                form.suffix.data = domain['suffix']
+        NC = self.NC
+        form = self.form
 
-        self.render('system/domain_edit.html', form = form)
+        form.conf_path.data = NC.get('conf_path', '')
+        form.log_path.data  = NC.get('log_path' , '')
+        form.nginx.data     = NC.get('nginx'    , '')
+        form.template.data  = NC.get('template' , '')
+
+        self.render()
 
 
     def post(self):
 
-        saved = None
-        form = DomainForm(self)
+        form = self.form
+
         if form.validate():
 
-            domain = json.dumps( {
-                    'topdomain': form.topdomain.data,
-                    'prefix': form.prefix.data,
-                    'suffix': form.suffix.data } )
+            nc = { 'conf_path': form.conf_path.data,
+                   'log_path' : form.log_path.data,
+                   'nginx'    : form.nginx.data,
+                   'template' : form.template.data }
 
-            if self.domain:
-                self.domain.value = domain
+            v = json.dumps( nc )
+
+            if self.N:
+                self.N.value = v
             else:
-                c = LuoYunConfig('domain', domain)
-                self.db2.add(c)
+                c = SiteConfig( 'nginx', v )
+                self.db.add(c)
 
-            self.db2.commit()
-            saved = True
+            self.db.commit()
+            self.prepare_kwargs['saved'] = True
 
-        self.render('system/domain_edit.html', form = form, saved = saved)
-
-
-
-class NginxEdit(LyRequestHandler):
-
-    @has_permission('admin')
-    def prepare(self):
-
-        self.nginx = self.db2.query(LuoYunConfig).filter_by(key='nginx').first()
-
-    def get(self):
-
-        form = NginxForm(self)
-        if self.nginx:
-            nginx = json.loads(self.nginx.value)
-        else:
-            nginx = {}
-
-        form.confdir.data = nginx.get(
-            'conf_dir', settings.DEFAULT_NGINX_CONF_PATH )
-        form.logdir.data = nginx.get(
-            'log_dir', settings.DEFAULT_NGINX_LOG_PATH )
-        form.binpath.data = nginx.get(
-            'bin_path', settings.DEFAULT_NGINX_BIN_PATH )
-
-        self.render('system/nginx_edit.html', form = form)
-
-
-    def post(self):
-
-        saved = None
-        form = NginxForm(self)
-        if form.validate():
-
-            nginx = json.dumps( {
-                    'conf_dir': form.confdir.data,
-                    'log_dir': form.logdir.data,
-                    'bin_path': form.binpath.data } )
-
-            if self.nginx:
-                self.nginx.value = nginx
-            else:
-                c = LuoYunConfig('nginx', nginx)
-                self.db2.add(c)
-
-            self.db2.commit()
-            saved = True
-
-        self.render('system/nginx_edit.html', form = form, saved = saved)
+        self.render()
 
 
 
 from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'tables'])
-class RegistrationProtocolEdit(LyRequestHandler):
+class RegistrationProtocolEdit(RequestHandler):
 
     @has_permission('admin')
     def prepare(self):
 
-        self.protocol = self.db2.query(LuoYunConfig).filter_by(key='protocol').first()
+        self.protocol = self.db.query(LuoYunConfig).filter_by(key='protocol').first()
 
     def get(self):
 
@@ -590,21 +294,21 @@ class RegistrationProtocolEdit(LyRequestHandler):
                 self.protocol.value = protocol
             else:
                 c = LuoYunConfig('protocol', protocol)
-                self.db2.add(c)
+                self.db.add(c)
 
-            self.db2.commit()
+            self.db.commit()
             saved = True
 
         self.render('system/registration_protocol_edit.html', form = form, saved = saved)
 
 
 
-class WelcomeNewUserEdit(LyRequestHandler):
+class WelcomeNewUserEdit(RequestHandler):
 
     @has_permission('admin')
     def prepare(self):
 
-        self.welcome = self.db2.query(LuoYunConfig).filter_by(key='welcome_new_user').first()
+        self.welcome = self.db.query(LuoYunConfig).filter_by(key='welcome_new_user').first()
 
     def get(self):
 
@@ -632,16 +336,16 @@ class WelcomeNewUserEdit(LyRequestHandler):
                 self.welcome.value = welcome
             else:
                 c = LuoYunConfig('welcome_new_user', welcome)
-                self.db2.add(c)
+                self.db.add(c)
 
-            self.db2.commit()
+            self.db.commit()
             saved = True
 
         self.render('system/welcome_new_user_edit.html', form = form, saved = saved)
 
 
 
-class SendMail(LyRequestHandler):
+class SendMail(RequestHandler):
 
     @has_permission('admin')
     def prepare(self):
@@ -654,7 +358,7 @@ class SendMail(LyRequestHandler):
         elif totype == 'group':
             GL = self.get_email_from_grouplist( idlist )
         elif totype == 'all':
-            UL = self.db2.query(User)
+            UL = self.db.query(User)
         #else:
         #    return self.write( self.trans(_('No totype specified !')) )
 
@@ -662,7 +366,7 @@ class SendMail(LyRequestHandler):
         self.GL = GL
         self.totype = totype
 
-        cf = ConfigINI(settings.SITE_CONFIG, 'db')
+        cf = ConfigINI(settings.sitecfg, 'db')
 
         self.d = { 'title': self.trans(_('LuoYun Send Mail')),
                    'TOTYPE': self.totype,
@@ -687,7 +391,7 @@ class SendMail(LyRequestHandler):
 
         if form.validate():
 
-            lymail = LyMail(HTML=True)
+#            lymail = LyMail(HTML=True)
 
             subject = form.subject.data
             #body = YMK.convert( form.body.data )
@@ -754,7 +458,7 @@ class SendMail(LyRequestHandler):
             except:
                 continue
 
-            u = self.db2.query(User).get(x)
+            u = self.db.query(User).get(x)
             if u:
                 L.append(u)
         return L
@@ -769,14 +473,14 @@ class SendMail(LyRequestHandler):
                 x = int(x)
             except:
                 continue
-            g = self.db2.query(Group).get(x)
+            g = self.db.query(Group).get(x)
             if g:
                 L.append(g)
         return L
 
 
 
-class LyTraceManage(LyRequestHandler):
+class LyTraceManage(RequestHandler):
 
 
     @has_permission('admin')
@@ -784,7 +488,7 @@ class LyTraceManage(LyRequestHandler):
 
         trace_id = self.get_argument('id', 0)
         if trace_id:
-            T = self.db2.query(LyTrace).get( trace_id )
+            T = self.db.query(LyTrace).get( trace_id )
 
             if T:
                 self.get_view(T)
@@ -825,10 +529,10 @@ class LyTraceManage(LyRequestHandler):
         start = (cur_page - 1) * page_size
         stop = start + page_size
 
-        traces = self.db2.query(LyTrace)
+        traces = self.db.query(LyTrace)
 
         if user_id:
-            user = self.db2.query(User).get(user_id)
+            user = self.db.query(User).get(user_id)
             if user:
                 traces = traces.filter_by(who_id=user_id)
             else:
@@ -837,7 +541,7 @@ class LyTraceManage(LyRequestHandler):
 
         traces = traces.order_by(by_exp).slice(start, stop).all()
 
-        total = self.db2.query(LyTrace.id).count()
+        total = self.db.query(LyTrace.id).count()
             
         page_html = pagination(self.request.uri, total, page_size, cur_page)
 
@@ -856,10 +560,67 @@ class LyTraceManage(LyRequestHandler):
 
 
     def get_view(self):
-        catalogs = self.db2.query(ApplianceCatalog).all()
+        catalogs = self.db.query(ApplianceCatalog).all()
         self.render( 'admin/appliance/view.html',
                      title = self.trans(_('View Appliance %s')) % self.appliance.name,
                      CATALOG_LIST = catalogs,
                      APPLIANCE = self.appliance,
                      human_size = human_size )
+
+
+
+class QQAuth2Edit(RequestHandler):
+
+    title = _('Configure Auth2 For QQ Login')
+    template_path = 'system/qqauth2_edit.html'
+
+    @has_permission('admin')
+    def prepare(self):
+
+        self.Q = self.db.query(SiteConfig).filter_by(
+            key = 'qq.auth2').first()
+
+        self.QV = json.loads( self.Q.value ) if self.Q else {}
+
+        self.form = QQAuth2Form(self)
+        self.prepare_kwargs['form'] = self.form
+        self.prepare_kwargs['saved'] = False
+
+    def get(self):
+
+        QV = self.QV
+        form = self.form
+
+        if QV:
+            form.app_id.data = QV.get('app_id', '')
+            form.app_key.data = QV.get('app_key', '')
+            form.redirect_uri.data = QV.get('redirect_uri', '')
+            form.enabled.data = QV.get('enabled', False)
+
+        self.render()
+
+
+    def post(self):
+
+        Q = self.Q
+        form = self.form
+
+        if form.validate():
+
+            v = json.dumps( { 'app_id': form.app_id.data,
+                              'app_key': form.app_key.data,
+                              'redirect_uri': form.redirect_uri.data,
+                              'enabled': form.enabled.data } )
+
+            if Q:
+                Q.value = v
+            else:
+                Q = SiteConfig('qq.auth2', v)
+
+            self.db.add(Q)
+            self.db.commit()
+
+            self.prepare_kwargs['saved'] = True
+
+        self.render()
 

@@ -1,111 +1,98 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
+<!DOCTYPE html>
+<html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="SHORTCUT ICON" href="${ static_url('favicon.ico') }" />
-    <link rel="stylesheet" href="${ theme_url('luoyun.css') }" />
-    <script type="text/javascript" src="${ static_url('js/json2.js') }"></script>
-    <script type="text/javascript" src="${ static_url('js/jquery-1.9.1.min.js') }"></script>
-    <script type="text/javascript" src="${ static_url('js/common.js') }"></script>
-    <link rel="stylesheet" href="${ static_url('js/notify/ui.notify.css') }" />
-    <script type="text/javascript" src="${ static_url('js/notify/jquery.notify.js') }"></script>
-##    <link rel="stylesheet" href="${ static_url('js/jquery-ui/css/redmond/jquery-ui-1.9.1.custom.min.css') }" />
-##    <script type="text/javascript" src="${ static_url('js/jquery-ui/js/jquery-ui-1.9.1.custom.min.js') }"></script>
+<!--[if lt IE 9]>
+<script src="/static/js/html5.js?v=0.6"></script>
+<![endif]-->
+    <link rel="SHORTCUT ICON" href="/satic/favicon.ico?v=0.6" />
+    <link href="/static/third/bootswatch/cerulean/bootstrap.min.css?v=2.3.2" rel="stylesheet" media="screen">
+    <link href="/static/third/bootstrap/css/bootstrap-responsive.min.css?v=2.3.2" rel="stylesheet" type="text/css">
+    <link href="/static/third/font-awesome/css/font-awesome.min.css?v=3.1.0" rel="stylesheet" media="screen">
+<!--[if IE 7]>
+<link rel="stylesheet" href="/static/font-awesome/css/font-awesome-ie7.min.css?v=3.1.0">
+<![endif]-->
+    <link rel="stylesheet" href="${ theme_url('css/site.css') }" />
     <%block name="head"/>
-    <title>
-% if title:
-${ title } -
-% endif
-${ _("LuoYunCloud") }
-</title>
+    <title>${ title } - ${ _("LuoYunCloud") }</title>
   </head>
 
   <body>
+    <script type="text/javascript" src="/static/third/json2.js?v=20101018"></script>
+    <script type="text/javascript" src="/static/third/jquery-1.9.1.min.js?v=1.9.1"></script>
+    <script type="text/javascript" src="/static/third/jquery-migrate-1.2.1.min.js?v=1.2.1"></script>
+    <script type="text/javascript" src="/static/third/bootstrap/js/bootstrap.min.js?v=2.3.2"></script>
+    <script type="text/javascript" src="${ theme_url('js/site.js') }"></script>
 
-    <div id="pager">
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="doc4">
+          <a href="/" class="brand">${ _("LYC") }<sup>0.6.1 B1</sup></a>
+          <ul role="navigation" class="nav site-menu">
+			<li class="active"><a href="/"><i class="icon-home icon-large"></i> ${ _("Home") }</a></li>
+			<li><a href="/appliance"><i class="icon-globe icon-large"></i> ${ _("Appliance") }</a></li>
+			<li><a href="/instance"><i class="icon-hdd icon-large"></i> ${ _("Instance") }</a></li>
+			<li><a href="/myun"><i class="icon-cloud icon-large"></i> ${ _("My LuoYun") }</a></li>
+			<li><a href="/wiki"><i class="icon-question-sign icon-large"></i> ${ _("FAQ") }</a></li>
+          </ul>
 
-      <div id="header">
-        <div id="header-wrap">
-          <div id="logo">
-            <a href="/"><img src="${ static_url('image/logo_white_42.png') }" /></a>
-          </div>
-	  <div id="lyversion">0.5.9</div>
-          <div id="navigator">
-            <ul>
-              <li><a href="/appliance">${ _("Appliances") }</a></li>
-              <li><a href="/instance">${ _("Instances") }</a></li>
-              % if current_user:
-	      <li><a href="${ reverse_url('myun:index') }">${ _("My LuoYun") }</a></li>
-	      % endif
-              <li><a href="/wiki">${ _("FAQ") }</a></li>
-            </ul>
-          </div>
-
-	  <div id="ly-account-menu" class="c">
-            %if current_user:
-	    <div class="c show">
-	      <img class="user-avatar" src="${ static_url( current_user.avatar_mini_url ) }" />
-	      <span class="text">${ current_user.username }
-		%if current_user.notification:
-		(${ current_user.notification })
-		%endif
-	      </span>
-	    </div>
-	    <ul class="add-menu hide" style="display:none;">
-	      <li><a href="${ reverse_url('account:index') }">${ _("My Account") }</a></li>
-	      <li><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }
-		  %if current_user.notification:
-		  (${ current_user.notification })
-		  %endif
-	      </a></li>
-              % if has_permission('admin'):
-              <li><a href="/admin">${ _("Administration") }</a></li>
-              % endif
-	      <li><a href="${ reverse_url('logout') }" title="${ _('Logout') }">${ _("Logout") }</a></li>
-	    </ul>
-            %else:
-	    <div class="unlogin">
-              <a class="green-submit" href="${ reverse_url('login') }">${ _("Sign In") }</a>
-              <a class="orange-submit" href="${ reverse_url('register') }">${ _("Register") }</a>
-	    </div>
-            %endif
-          </div>
-	</div>
-      </div>
-
-      <div id="main" class="luoyun-min-height">
-        <%block name="main"/>
-        <div id="lyentry">
-          <%block name="lyentry"/>
+          <ul class="nav pull-right">
+			% if current_user:
+            <li class="dropdown" id="fat-menu">
+              <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop2" href="#"><i class="icon-user icon-large"></i> ${ current_user.username }
+				%if current_user.notice:
+				( ${ current_user.notice } )
+				%endif
+				<b class="caret"></b></a>
+              <ul aria-labelledby="drop2" role="menu" class="dropdown-menu">
+				<li role="presentation"><a href="/account" tabindex="-1" role="menuitem"><i class="icon-wrench"></i> ${ _("My Account") }</a></li>
+				<li role="presentation"><a href="${ reverse_url('message:inbox') }" tabindex="-1" role="menuitem"><i class="icon-inbox"></i> ${ _("Inbox") }</a></li>
+				% if has_permission('admin'):
+				<li role="presentation"><a href="/admin" tabindex="-1" role="menuitem"><i class="icon-dashboard"></i> ${ _("Admin Console") }</a></li>
+				% endif
+				<li role="presentation"><a href="/logout" tabindex="-1" role="menuitem"><i class="icon-download-alt"></i> ${ _("Logout") }</a></li>
+              </ul>
+            </li>
+			% else:
+            <li><a href="/login"><i class="icon-user"></i> ${ _("Sign In") }</a></li>
+            <li><a href="/register"><i class="icon-cloud-upload"></i> ${ _("Register") }</a></li>
+			% endif
+          </ul><!-- /pull-right -->
         </div>
       </div>
+    </div>
 
-      <div id="footer">
-        <div id="footer-wrap">
-          <span id="powered-by"><span class="text">${ _("Powered by") }</span><a href="http://www.luoyun.co" target="_blank">${ _("LuoYun") }</a></span>
+    <div id="main" class="container-fluid luoyun-min-height doc4">
+	  % if not current_user:
+	  <div class="text-right"><a href="/openid/qq/login"><img src="${ theme_url('img/qq_login.png') }" /></a></div>
+	  % endif
+      <%block name="main"/>
+	  <%block name="content"/>
+    </div>
 
-          <span id="select-language">
-            % if locale.code == 'en_US':
-            <img src="${ theme_url('img/zh_CN.png') }" />
-            <a href="/i18n/setlang?language=zh_CN&next=${ request.uri }">${ u"\u4e2d\u6587(\u7b80\u4f53)" }</a>
-            % else:
-            <img src="${ theme_url('img/en_US.png') }" />
-            <a href="/i18n/setlang?language=en_US&next=${ request.uri }">English</a>
-            % endif
-          </span>
-        </div>
+    <div id="footer">
+      <div id="footer-wrap" class="doc4">
+        ${ _("Powered by") }
+		<a href="http://www.luoyun.co" target="_blank">${ _("LuoYun") }</a>
+		<span class="site-language">
+		  ${ _("Select Language") }
+		  <select class="site-language-select">
+			% for L in supported_languages:
+			<option value="${ L.codename }" ${ b2s(L.codename == locale.code, 'selected="selected"') }>${ L.name }</option>
+			% endfor
+		  </select>
+		</span>
       </div>
+    </div>
 
-  </div>
-
-    <div id="gotop" style="display: none;">${ _("Go TOP") }</div>
-
-  <script type="text/javascript">
-    lySetCurrentNavigator();
-//    BackTop('gotop');
-    showHide( "#ly-account-menu" );
-  </script>
+	<script type="text/javascript">
+      $(function () {
+        $.scrollUp({
+          scrollText: '',
+        });
+      });
+	  binding_site_language_select();
+	</script>
 
   </body>
 </html>

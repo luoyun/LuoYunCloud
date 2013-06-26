@@ -1,5 +1,7 @@
 <%inherit file="admin_base.html"/>
-<%block name="content">
+
+<%block name="main">
+
 <div id="system-global-info" class="admin-index-item">
   <table>
     <thead>
@@ -23,12 +25,11 @@
   </table>
 </div>
 
-<div id="admin-pie-show" class="admin-index-item c">
+<div class="row-fluid">
   % if TOTAL_CPU or TOTAL_MEMORY:
-  <div class="pie" id="admin-cpu-pie"></div>
-  <div class="pie right" id="admin-mem-pie"></div>
-
-  <script src="${ static_url('js/highcharts/highcharts.js') }"></script>
+  <div class="span6 admin-pie1" id="admin-cpu-pie"></div>
+  <div class="span6 admin-pie1" id="admin-mem-pie"></div>
+  <script src="${ static_url('third/highcharts/highcharts.js') }"></script>
   <script type="text/javascript">
 	draw_used({
         container: '#admin-cpu-pie',
@@ -58,81 +59,72 @@
   % endif
 </div>
 
-<div id="lysys-new">
+<div class="container">
   <h2 class="subtitle">${ _("Last 10 users") }
 	<a href="${ reverse_url('admin:user') }">${ _("View All User") }</a></h2>
-  % if NEW_USER_LIST:
-  <div id="lysys-new-user" class="new-item">
-    <table class="ly-table">
-      <thead>
-		<tr>
-		  <th>${ _("ID") }</th>
-		  <th>${ _("Name") }</th>
-		  <th>${ _("Groups") }</th>
-		  <th>${ _("Instance") }</th>
-		  <th>${ _("Email") }</th>
-		  <th>${ _("Last Active") }</th>
-		</tr>
-      </thead>
-      <tbody>
-		% for U in NEW_USER_LIST:
-		<tr>
-          <td>${ U.id }</td>
-          <td><a class="action" href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a></td>
-		  <td>
-			% for G in U.groups:
-			<a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a>
-			% endfor
-		  </td>
-		  <td>
-			% if U.instances:
-			<a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
-			% endif
-		  </td>
-		  <td>
-			% if U.profile and U.profile.email:
-			${ U.profile.email }
-			% endif
-		  </td>
-		  <td>${ htime(U.last_active) }</td>
-		</tr>
-		% endfor
-      </tbody>
-    </table>
-  </div>
-  % endif
+  <table class="table table-striped table-bordered">
+    <thead>
+	  <tr>
+		<th>${ _("ID") }</th>
+		<th>${ _("Name") }</th>
+		<th>${ _("Groups") }</th>
+		<th>${ _("Instance") }</th>
+		<th>${ _("Email") }</th>
+		<th>${ _("Last Active") }</th>
+	  </tr>
+    </thead>
+    <tbody>
+	  % for U in NEW_USER_LIST:
+	  <tr>
+        <td>${ U.id }</td>
+        <td><a class="action" href="${ reverse_url('admin:user:view') }?id=${ U.id }">${ U.username }</a></td>
+		<td>
+		  % for G in U.groups:
+		  <a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a>
+		  % endfor
+		</td>
+		<td>
+		  % if U.instances:
+		  <a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
+		  % endif
+		</td>
+		<td>${ U.email }</td>
+		<td>${ htime(U.last_active) }</td>
+	  </tr>
+	  % endfor
+    </tbody>
+  </table>
+</div>
 
+<div class="container">
   <h2 class="subtitle">${ _("Last 10 jobs") }
 	<a href="${ reverse_url('admin:job') }">${ _("View All Job") }</a></h2>
-  % if NEW_JOB_LIST:
-  <div id="lysys-new-job" class="new-item">
-    <table class="ly-table">
-      <thead>
-		<tr>
-          <th>${ _("ID") }</th>
-          <th>${ _("User") }</th>
-          <th>${ _("Status") }</th>
-          <th>${ _("Target Type") }</th>
-          <th>${ _("Target ID") }</th>
-          <th>${ _("Action") }</th>
-          <th>${ _("Completed") }</th>
-		</tr>
-      </thead>
-      <tbody>
-		% for j in NEW_JOB_LIST:
-		<tr>
-          <td>${ j.id }</td>
-          <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
-          <td><img src="${ theme_url(j.status_img) }"/>${ locale.translate(j.status_string) }</td>
-          <td>${ j.target_name }</td>
-          <td>${ j.target_url }</td>
-		  <td>${ j.action_string }</td>
-		  <td>${ htime(j.ended) }</td>
-		</tr>
-		% endfor
-      </tbody>
-    </table>
-  </div>
-  % endif
+  <table class="table table-striped table-bordered">
+    <thead>
+	  <tr>
+        <th>${ _("ID") }</th>
+        <th>${ _("User") }</th>
+        <th>${ _("Status") }</th>
+        <th>${ _("Target Type") }</th>
+        <th>${ _("Target ID") }</th>
+        <th>${ _("Action") }</th>
+        <th>${ _("Completed") }</th>
+	  </tr>
+    </thead>
+    <tbody>
+	  % for j in NEW_JOB_LIST:
+	  <tr>
+        <td>${ j.id }</td>
+        <td><a href="${ reverse_url('admin:user:view') }?id=${ j.user_id }">${ j.user.username }</a></td>
+        <td>${ j.status_icon } ${ _(j.status_string) }</td>
+        <td>${ j.target_name }</td>
+        <td>${ j.target_url }</td>
+		<td>${ j.action_string }</td>
+		<td>${ htime(j.ended) }</td>
+	  </tr>
+	  % endfor
+    </tbody>
+  </table>
 </div>
+
 </%block>

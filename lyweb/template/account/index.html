@@ -1,9 +1,152 @@
-<%inherit file="account_base.html" />
+<%inherit file="base.html" />
 
-<%block name="sidemain">
+<%block name="submain">
 
 <div>
-  ${ _("welcome ! this is your control panel.") }
+
+  <h2>${ _("Base Information") }</h2>
+  
+  <p><i class="icon-edit"></i> <a href="${ reverse_url('account:baseinfo:edit') }">${ _("Edit") }</a></p>
+
+  <table class="table table-striped">
+	<tbody>
+	  <tr>
+		<td>ID</td>
+		<td>${ current_user.id }</td>
+	  </tr>
+	  <tr>
+		<td>${ _("Username") }</td>
+		<td>${ current_user.username }</td>
+	  </tr>
+	  <tr>
+		<td>${ _("Email") }</td>
+		<td>
+		  % if current_user.email_valid:
+		  <i class="icon-ok"></i>
+		  % else:
+		  <i class="icon-exclamation-sign"></i>
+		  % endif
+		  % if current_user.email:
+		  ${ current_user.email }
+		  % endif
+		  <a href="${ reverse_url('account:email:validate') }"><i class="icon-edit"></i> ${ _("Change or Validate My Email") }</a>
+		</td>
+	  </tr>
+	  <tr>
+		<td>${ _("First Name") }</td>
+		<td>${ current_user.first_name }</td>
+	  </tr>
+	  <tr>
+		<td>${ _("Last Name") }</td>
+		<td>${ current_user.last_name }</td>
+	  </tr>
+	  <tr>
+		<td>${ _("Nickname") }</td>
+		<td>${ current_user.nickname }</td>
+	  </tr>
+	  <tr>
+		<td>${ _("Gender") }</td>
+		<td>${ current_user.gender }</td>
+	  </tr>
+	  <tr>
+		<td>${ _("Is Staff") }</td>
+		<td>${ current_user.is_staff }</td>
+	  </tr>
+	  <tr>
+		<td>${ _("Is Active") }</td>
+		<td>${ current_user.is_active }</td>
+	  </tr>
+	  <tr>
+		<td>${ _("Notice") }</td>
+		<td>${ current_user.notice }</td>
+	  </tr>
+	  <tr>
+		<td>${ _("Language") }</td>
+		<td>${ current_user.language.name }</td>
+	  </tr>
+	  <tr>
+		<td>${ _("Last Login") }</td>
+		<td>${ ftime(current_user.last_login) }</td>
+	  </tr>
+	  <tr>
+		<td>${ _("Date Joined") }</td>
+		<td>${ ftime(current_user.date_joined) }</td>
+	  </tr>
+	</tbody>
+  </table>
+
+  <h2>${ _("Groups") }</h2>
+  % if current_user.groups:
+  <ul>
+	% for G in current_user.groups:
+	<li>${ G.name }</li>
+	% endfor
+  </ul>
+  % else:
+  <p>${ _("No groups yet.") }</p>
+  % endif
+
+
+  <h2>${ _("Resources") }</h2>
+  <table class="table table-condensed table-bordered">
+	<thead>
+	  <tr>
+		<th colspan="2">${ _("CPU") }</th>
+		<th colspan="2">${ _("Memory") }</th>
+		<th colspan="2">${ _("Storage") }</th>
+		<th colspan="2">${ _("Instance") }</th>
+	  </tr>
+	  <tr>
+		<th>${ _("Total") }</th>
+		<th>${ _("Used") }</th>
+		<th>${ _("Total") }</th>
+		<th>${ _("Used") }</th>
+		<th>${ _("Total") }</th>
+		<th>${ _("Used") }</th>
+		<th>${ _("Total") }</th>
+		<th>${ _("Used") }</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  <% profile = current_user.profile %>
+	  <tr>
+		<td>${ profile.cpu_total } ${ _("core") }</td>
+		<td>${ profile.cpu_used } ${ _("core") }</td>
+		<td>${ profile.memory_total } M</td>
+		<td>${ profile.memory_used } M</td>
+		<td>${ profile.storage_total } G</td>
+		<td>${ profile.storage_used } G</td>
+		<td>${ profile.instance_total }</td>
+		<td>${ profile.instance_used }</td>
+	  </tr>
+	</tbody>
+  </table>
+
+  % if current_user.resources:
+  <table class="table table-bordered">
+	<thead>
+	  <tr>
+		<th>ID</th>
+		<th>${ _("Type") }</th>
+		<th>${ _("Size") }</th>
+		<th>${ _("Effect Date") }</th>
+		<th>${ _("Expired Date") }</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  % for R in current_user.resources:
+	  <tr class="${ R.contextual_class }">
+		<td>${ R.id }</td>
+		<td>${ R.type_str }</td>
+		<td>${ R.size_str }</td>
+		<td>${ ftime(R.effect_date) }</td>
+		<td>${ ftime(R.expired_date) }</td>
+	  </tr>
+	  % endfor
+	</tbody>
+  </table>
+  % endif
+
 </div>
 
 

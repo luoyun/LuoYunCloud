@@ -11,73 +11,103 @@ lylog.setLevel(logging.DEBUG)
 import random, time, pickle, base64
 from hashlib import md5, sha512, sha1
 
-from app.account.utils import encrypt_password, check_password
+from app.auth.utils import enc_login_passwd
 
 # TODO: i18n is too ugly yet
 import gettext
 gettext.install( 'app', settings.I18N_PATH, unicode=False )
 
 
+from app.auth.models import User
+from app.account.models import UserProfile
 
-def default_value(dbsession):
 
-    from app.account.models import Group
-    if dbsession.query(Group).count() > 0:
-        print '[W] db is init already, do not init now.'
-        return
+def update_user(db):
+
+    # User
+    for username, password in settings.default_user:
+        u = db.query(User).filter_by(username=username).first()
+        if u:
+            print '[W] user exist: %s' % username
+        else:
+            enc_password = enc_login_passwd( password )
+            u = User(username = username, password = enc_password)
+            db.add(u)
+
+    db.commit()
+
+    # Profile
+    for user in db.query(User).order_by(User.id):
+        if user.profile: continue
+        profile = UserProfile(user)
+        db.add(profile)
+        print '[D] add profile for %s' % user.username
+
+    db.commit()
+            
+
+def update_language(db):
+
+    from yweb.locale import LANGUAGES
+    from app.language.models import Language
+
+    # languages
+    for L in LANGUAGES:
+        lang = db.query(Language).filter_by(codename = L['codename']).first()
+        if lang: continue
+        lang = Language( name = L['name'],
+                         name_en = L['name_en'],
+                         codename = L['codename'] )
+        db.add(lang)
+
+
+def update_storage(db):
+
+    from app.storage.models import StoragePool
+    for name, description, total in settings.default_storage_config:
+        p = StoragePool( name = name,
+                         description = description,
+                         total = total )
+        db.add(p)
+
+def default_value(db):
+
+    update_language(db)
 
     # Permission
-    from app.account.models import Permission
+    from app.auth.models import Permission
     for codename, name in settings.default_permission:
-        p = dbsession.query(Permission).filter_by(codename = codename).first()
+        p = db.query(Permission).filter_by(codename = codename).first()
         if p:
             print '[W] permission codename exist: %s' % codename
         else:
             p = Permission(codename = codename, name = name)
-            dbsession.add(p)
+            db.add(p)
 
     # Group
-    from app.account.models import Group
+    from app.auth.models import Group
     for name in settings.default_group:
-        g = dbsession.query(Group).filter_by(name=name).first()
+        g = db.query(Group).filter_by(name=name).first()
         if g:
             print '[W] group exist: %s' % name
         else:
             # Group created defaultly is locked.
             g = Group(name = name, islocked = True)
-            dbsession.add(g)
+            db.add(g)
 
-    # User
-    from app.account.models import User
-    for username, password in settings.default_user:
-        u = dbsession.query(User).filter_by(username=username).first()
-        if u:
-            print '[W] user exist: %s' % username
-        else:
-            salt = md5(str(random.random())).hexdigest()[:12]
-            hsh = encrypt_password(salt, password)
-            enc_password = "%s$%s" % (salt, hsh)
-            u = User(username = username, password = enc_password)
-            dbsession.add(u)
-            dbsession.commit()
-
-        if not u.profile:
-            from app.account.models import UserProfile
-            profile = UserProfile(u, email = '%s@localhost' % u.username)
-            dbsession.add(profile)
-
+    update_user(db)
 
     # User Group
     for groupname, username in settings.default_user_group:
-        u = dbsession.query(User).filter_by(username=username).first()
-        g = dbsession.query(Group).filter_by(name=groupname).first()
+        u = db.query(User).filter_by(username=username).first()
+        g = db.query(Group).filter_by(name=groupname).first()
         if u and (g not in u.groups):
             u.groups.append(g)
 
     # Group Permission
     for groupname, codename in settings.default_group_permission:
-        g = dbsession.query(Group).filter_by(name=groupname).first()
-        p = dbsession.query(Permission).filter_by(codename=codename).first()
+        g = db.query(Group).filter_by(name=groupname).first()
+        p = db.query(Permission).filter_by(codename=codename).first()
         if p not in g.permissions:
             g.permissions.append(p)
 
@@ -85,30 +115,44 @@ def default_value(dbsession):
     # Appliance Catalog
     from app.appliance.models import ApplianceCatalog
     for name, summary in settings.default_appliance_catalog:
-        c = dbsession.query(ApplianceCatalog).filter_by(name=name).first()
+        c = db.query(ApplianceCatalog).filter_by(name=name).first()
         if c:
             print '[W] appliance catalog exist: %s' % name
         else:
             c = ApplianceCatalog(name=name, summary=summary)
-            dbsession.add(c)
-            dbsession.commit()
+            db.add(c)
+            db.commit()
 
 
     # Wiki Catalog
     from app.wiki.models import WikiCatalog
     for name, summary in settings.default_wiki_catalog:
-        c = dbsession.query(WikiCatalog).filter_by(name=name).first()
+        c = db.query(WikiCatalog).filter_by(name=name).first()
         if c:
             print '[W] wiki catalog exist: %s' % name
         else:
             c = WikiCatalog(name=name, summary=summary)
-            dbsession.add(c)
-            dbsession.commit()
+            db.add(c)
+            db.commit()
         
 
+    update_site_config(db)
+    update_storage(db)
 
-    dbsession.commit()
+    db.commit()
 
+
+def update_site_config(db):
+
+    from app.site.models import SiteConfig
+    for key, value in settings.default_site_config:
+        it = db.query(SiteConfig).filter_by(key=key).first()
+        if it:
+            print '[W] SiteConfig: key exist: %s' % key
+        else:
+            it = SiteConfig(key=key, value=value)
+            db.add( it )
+            db.commit()
 
 
 def syncdb():
@@ -120,10 +164,10 @@ def syncdb():
         except ImportError:
             pass
 
-    from lyorm import ORMBase, dbengine, dbsession
+    from yweb.orm import ORMBase, dbengine, db
     ORMBase.metadata.create_all(dbengine)
 
-    default_value(dbsession)
+    default_value(db)
 
 
 def i18n():

@@ -1,0 +1,29 @@
+<%inherit file="base.html" />
+
+<%block name="main">
+
+% if E:
+${ E }
+% else:
+<div class="container registration">
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Complete Registration") }</legend>
+	  <label>${ _("Username") }</label>
+	  <input name="username" type="text" placeholder="Your username">
+	  <span class="help-block">${ form.html_errors(form.username.errors) }</span>
+
+	  <label>${ _("Password") }</label>
+	  <input name="password" type="password">
+	  <span class="help-block">${ form.html_errors(form.password.errors) }</span>
+
+	  <label>${ _("Confirm Password") }</label>
+	  <input name="password_confirm" type="password">
+	  <span class="help-block">${ form.html_errors(form.password_confirm.errors) }</span>
+
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+</div>
+% endif
+</%block>

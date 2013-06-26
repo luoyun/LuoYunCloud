@@ -1,0 +1,99 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="main">
+
+<h1>${ _("Site Registration Config") }</h1>
+
+
+<h2>${ _("Base Config") }</h2>
+
+
+<table class="table table-bordered">
+  <tbody>
+	<tr>
+	  <td>${ _("Status") }</td>
+	  <td>${ registration_status }
+		<a href="${ reverse_url('admin:registration:status_toggle') }">${ _("Change Status") }</a>
+	  </td>
+	  <td></td>
+	</tr>
+	<tr>
+	  <td>${ _("Host") }</td>
+	  <td>${ registration_host }</td>
+	  <td><i class="icon-edit"></i> <a href="${ reverse_url('admin:site:config:edit') }?key=registration.host&next_url=${ reverse_url('admin:registration') }">${ _("Edit") }</a></td>
+	</tr>
+	<tr>
+	  <td>${ _("Email From") }</td>
+	  <td>${ smtp_fromaddr }</td>
+	  <td><i class="icon-edit"></i> <a href="${ reverse_url('admin:site:config:edit') }?key=notice.smtp.fromaddr&next_url=${ reverse_url('admin:registration') }">${ _("Edit") }</a></td>
+	</tr>
+	<tr>
+	  <td>${ _("SMTP Server") }</td>
+	  <td>${ smtp_server }</td>
+	  <td><i class="icon-edit"></i> <a href="${ reverse_url('admin:site:config:edit') }?key=notice.smtp.server&next_url=${ reverse_url('admin:registration') }">${ _("Edit") }</a></td>
+	</tr>
+	<tr>
+	  <td>${ _("SMTP Port") }</td>
+	  <td>${ smtp_port }</td>
+	  <td><i class="icon-edit"></i> <a href="${ reverse_url('admin:site:config:edit') }?key=notice.smtp.port&next_url=${ reverse_url('admin:registration') }">${ _("Edit") }</a></td>
+	</tr>
+	<tr>
+	  <td>${ _("SMTP Username") }</td>
+	  <td>${ smtp_username }</td>
+	  <td><i class="icon-edit"></i> <a href="${ reverse_url('admin:site:config:edit') }?key=notice.smtp.username&next_url=${ reverse_url('admin:registration') }">${ _("Edit") }</a></td>
+	</tr>
+	<tr>
+	  <td>${ _("SMTP Password") }</td>
+	  <td>${ smtp_password }</td>
+	  <td><i class="icon-edit"></i> <a href="${ reverse_url('admin:site:config:edit') }?key=notice.smtp.password&next_url=${ reverse_url('admin:registration') }">${ _("Edit") }</a></td>
+	</tr>
+  </tbody>
+</table>
+
+
+<h2>${ _("Subject Of Registration Email") }</h2>
+
+<p><i class="icon-plus-sign"></i> <a href="${ reverse_url('admin:site:localeconfig:edit') }?key=registration.email.subject&next_url=${ reverse_url('admin:registration') }">${ _("Create Subject") }</a></p>
+
+% if subjects:
+<table class="table table-bordered">
+  <tbody>
+	<tr>
+	  % for it in subjects:
+	  <td>${ it.language.name }</td>
+	  <td><div>${ it.value }</td>
+	  <td>
+		<i class="icon-edit"></i> <a href="${ reverse_url('admin:site:localeconfig:edit') }?ID=${ it.id }&next_url=${ reverse_url('admin:registration') }">${ _("Edit") }</a>
+		<i class="icon-trash"></i> <a href="${ reverse_url('admin:site:localeconfig:delete', it.id) }?next_url=${ reverse_url('admin:registration') }">${ _("Delete") }</a>
+	  </td>
+	</tr>
+	% endfor
+  </tbody>
+</table>
+% endif
+
+
+
+<h2>${ _("Welcome info Of Registration Email") }</h2>
+
+<p><i class="icon-plus-sign"></i> <a href="${ reverse_url('admin:site:localeconfig:edit') }?key=registration.email.welcome&next_url=${ reverse_url('admin:registration') }">${ _("Create Welcome") }</a></p>
+
+% if welcomes:
+<table class="table table-bordered">
+  <tbody>
+	% for it in welcomes:
+	<tr>
+	  <td>${ it.language.name }</td>
+	  <td><div>${ it.html }</div></td>
+	  <td>
+		<i class="icon-edit"></i> <a href="${ reverse_url('admin:site:localeconfig:edit') }?ID=${ it.id }&next_url=${ reverse_url('admin:registration') }">${ _("Edit") }</a>
+		<i class="icon-trash"></i> <a href="${ reverse_url('admin:site:localeconfig:delete', it.id) }?next_url=${ reverse_url('admin:registration') }">${ _("Delete") }</a>
+	  </td>
+	</tr>
+	% endfor
+  </tbody>
+</table>
+% endif
+
+
+</%block>

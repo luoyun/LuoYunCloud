@@ -13,7 +13,7 @@
 % if JOB_LIST.count():
 <div>
   ${ page_html }
-  <table class="ly-table full">
+  <table class="table table-bordered">
     <thead>
       <tr>
         <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>
@@ -30,13 +30,13 @@
       % for j in JOB_LIST:
       <tr>
         <td>${ j.id }</td>
-        <td>${ j.user_link_module }</td>
-        <td class="job-status"><img src="${ theme_url(j.status_img) }"/>${ locale.translate(j.status_string) }</td>
+        <td><a href="${ reverse_url('admin:user:view') }?id=${ j.user_id }">${ j.user.username }</a></td>
+        <td>${ j.status_icon } ${ locale.translate(j.status_string) }</td>
         <td>${ j.target_name }</td>
         <td>${ j.target_url }</td>
         <td>${ j.action_string }</td>
-        <td class="time">${ ftime(j.created) }</td>
-        <td class="time">${ htime(j.ended) }</td>
+        <td>${ ftime(j.created) }</td>
+        <td>${ htime(j.ended) }</td>
       </tr>
       % endfor
     </tbody>
@@ -45,7 +45,7 @@
   ${ page_html }
 </div>
 % else:
-<div class="first-warning">
+<div class="hero-unit">
   <p>Have not found any jobs.</p>
 </div>
 % endif

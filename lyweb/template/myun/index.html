@@ -1,74 +1,84 @@
 <%inherit file="myun_base.html" />
 
-<%block name="sidemain">
+<%block name="innav">
+<li>${ _("Index") }</li>
+</%block>
 
-<div class="myun-user-action">
-  <a class="ly-btn2 medium blue" href="${ reverse_url('appliance:upload') }">${_("Upload Appliance")}</a>
-  <a class="ly-btn2 medium blue" 
-     title="${ _('Create a new instance') }"
-     href="${ reverse_url('instance:create') }">
-    ${ _("Create New Instance") }</a>
-</div>
+<%block name="submain">
 
-% if hasattr(current_user, 'profile'):
-<div id="myun-pie-show" class="c">
+<% profile = current_user.profile %>
+% if profile:
+<script src="${ static_url('third/highcharts/highcharts.js') }"></script>
+<div id="myun-analysis-chart">
+  % if profile.cpu_total:
   <div class="pie" id="myun-cpu-pie"></div>
-  <div class="pie" id="myun-mem-pie"></div>
-  <div class="pie" id="myun-instance-pie"></div>
-  <div class="pie" id="myun-storage-pie"></div>
-
-  <script src="${ static_url('js/highcharts/highcharts.js') }"></script>
   <script type="text/javascript">
 	draw_used({
         container: '#myun-cpu-pie',
         title: '${ _("CPU USED INFO") }',
-        subtitle: '${ _("Total") } : ${ current_user.profile.cpus } ${ _("core") }',
+        subtitle: '${ _("Total") } : ${ profile.cpu_total } ${ _("core") }',
         series_name: '${ _("Percentage") }',
-        used_text: '${ _("Used") }<br/>${ USED_CPU } ${ _("core") }',
-	    unused_text: '${ _("Unused") }<br/>${ current_user.profile.cpus - USED_CPU } ${ _("core") }',
-        used: ${ USED_CPU },
-        total: ${ current_user.profile.cpus },
-	    pie_size: 150,
-    });
-
-	draw_used({
-        container: '#myun-mem-pie',
-        title: '${ _("MEMORY USED INFO") }',
-        subtitle: '${ _("Total") } : ${ current_user.profile.memory }M',
-        series_name: '${ _("Percentage") }',
-        used_text: '${ _("Used") }<br/>${ USED_MEMORY }M',
-	    unused_text: '${ _("Unused") }<br/>${ current_user.profile.memory - USED_MEMORY }M',
-        used: ${ USED_MEMORY },
-        total: ${ current_user.profile.memory },
-	    pie_size: 150,
-    });
-
-	draw_used({
-        container: '#myun-instance-pie',
-        title: '${ _("INSTANCE USED INFO") }',
-        subtitle: '${ _("Total") } : ${ current_user.profile.instances }',
-        series_name: '${ _("Percentage") }',
-        used_text: '${ _("Used") }<br/>${ USED_INSTANCE }',
-	    unused_text: '${ _("Unused") }<br/>${ current_user.profile.instances - USED_INSTANCE }',
-        used: ${ USED_INSTANCE },
-        total: ${ current_user.profile.instances },
-	    pie_size: 150,
-    });
-
-	draw_used({
-        container: '#myun-storage-pie',
-        title: '${ _("STORAGE USED INFO") }',
-        subtitle: '${ _("Total") } : ${ current_user.profile.storage }G',
-        series_name: '${ _("Percentage") }',
-        used_text: '${ _("Used") }<br/>${ USED_STORAGE }G',
-	    unused_text: '${ _("Unused") }<br/>${ current_user.profile.storage - USED_STORAGE }G',
-        used: ${ USED_STORAGE },
-        total: ${ current_user.profile.storage },
+        used_text: '${ _("Used") }<br/>${ profile.cpu_used } ${ _("core") }',
+	    unused_text: '${ _("Unused") }<br/>${ profile.cpu_remain } ${ _("core") }',
+        used: ${ profile.cpu_used },
+        total: ${ profile.cpu_total },
 	    pie_size: 150,
     });
   </script>
-</div>
+  % endif
 
+  % if profile.memory_total:
+  <div class="pie" id="myun-mem-pie"></div>
+  <script type="text/javascript">
+	draw_used({
+        container: '#myun-mem-pie',
+        title: '${ _("MEMORY USED INFO") }',
+        subtitle: '${ _("Total") } : ${ profile.memory_total }M',
+        series_name: '${ _("Percentage") }',
+        used_text: '${ _("Used") }<br/>${ profile.memory_used }M',
+	    unused_text: '${ _("Unused") }<br/>${ profile.memory_remain }M',
+        used: ${ profile.memory_used },
+        total: ${ profile.memory_total },
+	    pie_size: 150,
+    });
+  </script>
+  % endif
+
+  % if profile.instance_total:
+  <div class="pie" id="myun-instance-pie"></div>
+  <script type="text/javascript">
+	draw_used({
+        container: '#myun-instance-pie',
+        title: '${ _("INSTANCE USED INFO") }',
+        subtitle: '${ _("Total") } : ${ profile.instance_total }',
+        series_name: '${ _("Percentage") }',
+        used_text: '${ _("Used") }<br/>${ profile.instance_used }',
+	    unused_text: '${ _("Unused") }<br/>${ profile.instance_remain }',
+        used: ${ profile.instance_used },
+        total: ${ profile.instance_total },
+	    pie_size: 150,
+    });
+  </script>
+  % endif
+
+  % if profile.storage_total:
+  <div class="pie" id="myun-storage-pie"></div>
+  <script type="text/javascript">
+	draw_used({
+        container: '#myun-storage-pie',
+        title: '${ _("STORAGE USED INFO") }',
+        subtitle: '${ _("Total") } : ${ profile.storage_total }G',
+        series_name: '${ _("Percentage") }',
+        used_text: '${ _("Used") }<br/>${ profile.storage_used }G',
+	    unused_text: '${ _("Unused") }<br/>${ profile.storage_remain }G',
+        used: ${ profile.storage_used },
+        total: ${ profile.storage_total },
+	    pie_size: 150,
+    });
+  </script>
+  % endif
+
+</div>
 % else:
 <p class="ywarn">${ _("Get your profile data failed.") }</p>
 % endif

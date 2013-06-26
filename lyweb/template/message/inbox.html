@@ -18,8 +18,8 @@
       <% newmsg = '' if M.isread else 'new-message' %>
       <tr class="${ newmsg }">
         <td class="sender user">
-	  <a href="${ reverse_url('account:view', M.sender_id) }" target="_blank"><img src="${ M.sender.avatar_url }" /></a>
-	  <a href="${ reverse_url('account:view', M.sender_id) }" target="_blank">${ M.sender.username }</a>
+	  <a href="${ reverse_url('user:view') }?id=${ M.sender_id }" target="_blank"><img src="${ M.sender.avatar_url }" /></a>
+	  <a href="${ reverse_url('user:view') }?id=${ M.sender_id }" target="_blank">${ M.sender.username }</a>
 	</td>
         <td class="subject">
 	  <div><a href="${ reverse_url('message:view', M.id) }">${ M.text.subject }</a></div>

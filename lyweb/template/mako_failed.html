@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="/static/bootstrap/css/bootstrap.min.css?v=2.3.2" rel="stylesheet" media="screen">
+    <link href="/static/bootstrap/css/bootstrap-responsive.min.css?v=2.3.2" rel="stylesheet" type="text/css">
+    <link href="/static/font-awesome/css/font-awesome.min.css?v=3.1.0" rel="stylesheet" media="screen">
+<!--[if IE 7]>
+<link rel="stylesheet" href="/static/font-awesome/css/font-awesome-ie7.min.css?v=3.1.0">
+<![endif]-->
+    <script type="text/javascript" src="/static/js/jquery-1.9.1.min.js?v=1.9.1"></script>
+    <script type="text/javascript" src="/static/js/jquery-migrate-1.2.1.min.js?v=1.2.1"></script>
+    <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js?v=2.3.2"></script>
+    <title>LuoYun Mako Template System Trac Info</title>
+  </head>
+  <body>
+	<div class="container">
+      <h1>LuoYun Mako Template System Trac Info</h1>
+
+	  <div>
+		% for (filename, lineno, function, line) in traceback.traceback:
+		<div>
+		  <p><span class="text-info">${ filename }</span>:<span class="text-error">${ lineno }</span>, ${ function }</p>
+		  <pre>${ line.replace('<', '&lt;').replace('>','&gt;') }</pre>
+		<div>
+		  % endfor
+
+		<div class="hero-unit">
+		  ${ traceback.error.__class__.__name__ }: ${ traceback.error }
+		</div>
+	  </div>
+	</div>
+  </body>
+</html>

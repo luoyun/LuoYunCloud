@@ -1,0 +1,36 @@
+<%inherit file="../base.html" />
+
+<%block name="mainbody">
+
+<h1>${ _("Site Config") }</h1>
+
+<p><i class="icon-plus-sign"></i> <a href="${ reverse_url('admin:site:config:edit') }">${ _("Add Config") }</a></p>
+
+
+% if configs:
+<table class="table table-striped">
+  <thead>
+	<tr>
+	  <th>ID</th>
+	  <th>${ _("Key") }</th>
+	  <th>${ _("Value") }</th>
+	  <th></th>
+	</tr>
+  </thead>
+  <tbody>
+	% for it in configs:
+	<tr>
+	  <td>${ it.id }</td>
+	  <td>${ it.key }</td>
+	  <td>${ it.value }</td>
+	  <td>
+		<i class="icon-edit"></i> <a href="${ reverse_url('admin:site:config:edit') }?key=${ it.key }">${ _("Edit") }</a>
+		<i class="icon-trash"></i> <a href="${ reverse_url('admin:site:config:delete') }?key=${ it.key }">${ _("Delete") }</a>
+	  </td>
+	</tr>
+	% endfor
+  </tbody>
+</table>
+% endif
+
+</%block>

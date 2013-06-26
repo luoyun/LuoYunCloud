@@ -1,0 +1,22 @@
+<%inherit file="instance_base.html" />
+
+<%block name="innav">
+<li>${ _("Configure Instance Resource") }</li>
+</%block>
+
+<%block name="submain">
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Configure Instance Resource") }</legend>
+      ${ form.cpus.label } ${ form.cpus() }
+      ${ form.html_errors(form.cpus.errors) }
+
+      ${ form.memory.label } ${ form.memory() }
+      ${ form.html_errors(form.memory.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+</div>
+</%block>

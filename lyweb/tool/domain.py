@@ -1,213 +1,145 @@
-import json, os, logging, subprocess
+import json
+import os
+import logging
+import subprocess
 import settings
 
-from app.system.models import LuoYunConfig
+from app.site.models import SiteConfig
 from app.instance.models import Instance
 
 
-def get_instance_domain(db, id):
+def _get_nginx_conf(db):
 
-    domain = db.query(LuoYunConfig).filter_by(key='domain').first()
+    nginx_conf = settings.NGINX_CONF
 
-    if not domain:
-        return ''
+    nginx_site_conf = db.query(SiteConfig).filter_by(
+        key = 'nginx' ).first()
 
-    domain =  json.loads(domain.value)
-
-    topdomain = domain['topdomain'].strip('.')
-    prefix = domain['prefix']
-    suffix = domain['suffix']
-
-    subdomain = '%s%s%s' % (prefix, id, suffix)
-
-    return '.'.join([subdomain, topdomain])
+    if nginx_site_conf and nginx_site_conf.value:
+        nginx_conf.update( json.loads( nginx_site_conf.value ) )
 
 
-def binding_domain_in_nginx(db, id, domain=None):
+    conf_path  = nginx_conf.get('conf_path', '')
+    log_path   = nginx_conf.get('log_path' , '')
+    template   = nginx_conf.get('template' , '')
+    nginx_path = nginx_conf.get('nginx' , '')
 
-    domain = domain if domain else get_instance_domain(db, id)
+    # make sure nginx is exists and executable
+    if not ( os.path.isfile( nginx_path ) and
+             os.access( nginx_path, os.X_OK) ):
+        return False, _('"%s" is not exist or executable.') % nginx_path
 
-    if not domain:
-        return False, _("Can not get domain.")
+    # make sure dir exists
+    for p in ( conf_path, log_path ):
+        if os.path.exists( p ): continue
 
-    nginx = db.query(LuoYunConfig).filter_by(key='nginx').first()
-    instance = db.query(Instance).get(id)
+        try:
+            os.makedirs(p)
+        except Exception, e:
+            return False, _('Create dir "%s" failed: %s') % (p, e)
 
-    ip = instance.access_ip
+    if not template:
+        return False, _('Template is empty.')
+
+
+    return True, nginx_conf
+
+
+
+def instance_domain_binding(db, I):
+
+    ret, nginx_conf = _get_nginx_conf(db)
+    if not ret:
+        return ret, nginx_conf
+
+    domains = [ I.default_domain ]
+
+    for d in I.domains:
+        domains.append( d.domain )
+
+    if not domains:
+        return False, _("Can not get domains.")
+
+    # TODO: binding only one ip now.
+    ip = I.access_ip
+
     # TODO: can not binding when no ip found !
     if not ip:
-        return False, _("Can not get access_ip.")
+        return False, _("Can not get access ip.")
 
-    NC = json.loads(nginx.value) if nginx else {
-        'conf_dir': settings.DEFAULT_NGINX_CONF_PATH,
-        'log_dir' : settings.DEFAULT_NGINX_LOG_PATH,
-        'bin_path': settings.DEFAULT_NGINX_BIN_PATH }
 
-    for x in (NC['conf_dir'], NC['log_dir'], NC['bin_path']):
-        if not os.path.exists( x ):
-            return False, _('No such dir or file: %s') % x
+    nginx_log  = os.path.join( nginx_conf['log_path'],
+                               'i.%s.log'  % I.id )
+    default_domain = domains[0]
+    domain_list = ' '.join(domains)
 
-    access_log = os.path.join(NC['log_dir'], '%s.log' % domain)
-    p = os.path.join(NC['conf_dir'], '%s.conf' % id)
+    vh = ''
+    for virtual_port, real_port in [ (80, 80),
+                                     (8080, 8080),
+                                     (8001, 8001) ]:
+        try:
+            vh += nginx_conf['template'] % {
+                'default_domain': default_domain,
+                'domain_list': domain_list,
+                'ip': ip,
+                'virtual_port': virtual_port,
+                'real_port': real_port,
+                'access_log': nginx_log,
+                }
 
-    x = '''
-    upstream %(domain)s-%(real_port)s {
-        server %(ip)s:%(real_port)s;
-    }
-    server {
-        listen %(access_port)s;
-        server_name %(domain)s;
+        except Exception, msg:
+            return False, _('Output virtual host failed: %s') % msg
 
-        access_log  %(access_log)s;
-
-        location / {
-            proxy_read_timeout 1800;
-            client_max_body_size 10m;
-            proxy_pass_header Server;
-            proxy_set_header Host $http_host;
-            proxy_redirect off;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Scheme $scheme;
-            proxy_pass http://%(domain)s-%(real_port)s;
-        }
-    }
-''' % {
-            'domain': domain,
-            'ip': ip,
-            'real_port': 8080,
-            'access_port': 8080,
-            'access_log': access_log,
-}
-    y = '''
-    upstream %(domain)s-%(real_port)s {
-        server %(ip)s:%(real_port)s;
-    }
-    server {
-        listen %(access_port)s;
-        server_name %(domain)s;
-
-        access_log  %(access_log)s;
-
-        location / {
-            proxy_read_timeout 1800;
-            client_max_body_size 512m;
-            proxy_pass_header Server;
-            proxy_set_header Host $http_host;
-            proxy_redirect off;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Scheme $scheme;
-            proxy_pass http://%(domain)s-%(real_port)s;
-        }
-    }
-''' % {
-            'domain': domain,
-            'ip': ip,
-            'real_port': 80,
-            'access_port': 80,
-            'access_log': access_log,
-}
-    z = '''
-    upstream %(domain)s-%(real_port)s {
-        server %(ip)s:%(real_port)s;
-    }
-    server {
-        listen %(access_port)s;
-        server_name %(domain)s;
-
-        access_log  %(access_log)s;
-
-        location / {
-            proxy_read_timeout 1800;
-            client_max_body_size 10m;
-            proxy_pass_header Server;
-            proxy_set_header Host $http_host;
-            proxy_redirect off;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Scheme $scheme;
-            proxy_pass http://%(domain)s-%(real_port)s;
-        }
-    }
-''' % {
-            'domain': domain,
-            'ip': ip,
-            'real_port': 8001,
-            'access_port': 8001,
-            'access_log': access_log,
-}
-
-    f = open(p, 'w')
-
-    f.write(x)
-    f.write(y)
-    f.write(z)
-
-    f.close()
-
-    # TODO: reload nginx
-    cmd = '%s -s reload' % NC['bin_path']
+    # update nginx file
+    cf = os.path.join( nginx_conf['conf_path'], 'i.%s.conf' % I.id)
+    cmd = '%s -s reload' % nginx_conf['nginx']
 
     try:
-        subprocess.check_call( cmd.split() )
-    #except CalledProcessError, e:
-    except Exception, e:
-        return False, _('reload nginx error: %s') % e
+        f = open(cf, 'w')
+        f.write( vh )
+        f.close()
 
+        subprocess.check_call( cmd.split() )
+
+    except Exception, e:
+        try:
+            os.unlink( cf ) # delete nginx conf file
+        except:
+            pass
+
+        return False, _('Update nginx failed: %s') % e
+
+
+    # He laughs best who laughs last. ;-)
+
+    logging.info('instance %(id)s: binding %(domains)s success.' % {
+            'id': I.id, 'domains': domain_list })
+
+    return True, _("OK")
+
+
+
+def instance_domain_unbinding(db, I):
+
+    ret, nginx_conf = _get_nginx_conf(db)
+    if not ret:
+        return ret, nginx_conf
+
+    # update nginx file
+    cf = os.path.join( nginx_conf['conf_path'], 'i.%s.conf' % I.id)
+    cmd = '%s -s reload' % nginx_conf['nginx']
+
+    try:
+        os.unlink( cf ) # delete nginx conf file
+        subprocess.check_call( cmd.split() )
+
+    except Exception, e:
+        return False, e
+
+    logging.info('instance %s: unbinding domains success.' % I.id)
 
     # He laughs best who laughs last. ;-)
     return True, _("OK")
 
 
 
-
-def unbinding_domain_from_nginx(db, id):
-
-    nginx = db.query(LuoYunConfig).filter_by(key='nginx').first()
-
-    NC = json.loads(nginx.value) if nginx else {
-        'conf_dir': settings.DEFAULT_NGINX_CONF_PATH,
-        'log_dir' : settings.DEFAULT_NGINX_LOG_PATH,
-        'bin_path': settings.DEFAULT_NGINX_BIN_PATH }
-
-    for x in (NC['conf_dir'], NC['log_dir'], NC['bin_path']):
-        if not os.path.exists( x ):
-            return False, _('No such dir or file: %s') % x
-
-    # remove config file
-    try:
-        cf = '%s/%s.conf' % (NC['conf_dir'], id)
-        os.unlink( cf )
-    except Exception, e:
-        # TODO: return failed when config is exist but cann't delete
-        if os.path.exists( cf ):
-            return False, _('remove nginx config error: %s') % e
-
-    # TODO: reload nginx
-    cmd = '%s -s reload' % NC['bin_path']
-
-    try:
-        subprocess.check_call( cmd.split() )
-    #except CalledProcessError, e:
-    except Exception, e:
-        return False, _('reload nginx error: %s') % e
-
-    # He laughs best who laughs last. ;-)
-    return True, _("OK")
-
-
-
-def get_default_domain(db, ID):
-
-    domain = db.query(LuoYunConfig).filter_by(key='domain').first()
-
-    if not domain:
-        return None, None
-
-    domain =  json.loads(domain.value)
-
-    topdomain = domain['topdomain'].strip('.')
-    prefix = domain['prefix']
-    suffix = domain['suffix']
-
-    subdomain = '%s%s%s' % (prefix, ID, suffix)
-
-    return subdomain, topdomain

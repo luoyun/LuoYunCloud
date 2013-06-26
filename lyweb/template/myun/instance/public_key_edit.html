@@ -1,0 +1,28 @@
+<%inherit file="instance_base.html" />
+
+<%block name="innav">
+<li>${ _("Configure Public Key For Instance") }</li>
+</%block>
+
+<%block name="submain">
+
+% if key_count:
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Configure Public Key For Instance") }</legend>
+      ${ form.key.label } ${ form.key() }
+      ${ form.html_errors(form.key.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+</div>
+% else:
+
+<div class="hero-unit">
+  <p class="text-warning"><i class="icon-exclamation-sign"></i> ${ _("You have not create any ssh public key now.") }</p>
+  <p>${ _("Click ") } <a href="${ reverse_url('account:public_key:add') }">${ _("Add Public Key") }</a> ${ _("to creata a pulic key.") }</p>
+</div>
+% endif
+</%block>

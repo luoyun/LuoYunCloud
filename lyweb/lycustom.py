@@ -15,12 +15,14 @@ mako.runtime.UNDEFINED = ''
 
 from mako.exceptions import TemplateLookupException
 
-from tornado.web import RequestHandler
+from tornado.web import RequestHandler as TornadoRequestHandler
 from tornado import escape
 
-from app.account.models import User
-from app.session.models import Session
+from app.auth.models import User
+from yweb.contrib.session.models import Session
 from app.system.models import LyTrace
+from settings import LY_TARGET
+from app.language.models import Language
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
@@ -29,15 +31,32 @@ from settings import JOB_ACTION, JOB_TARGET, LY_TARGET, TEMPLATE_DIR
 
 from ytime import htime, ftime
 from ytool.hstring import b2s
+from yweb.quemail import Email
+from app.site.models import SiteConfig
 
 
-class LyRequestHandler(RequestHandler):
+class RequestHandler(TornadoRequestHandler):
 
     lookup = TemplateLookup([ TEMPLATE_DIR ],
                             input_encoding="utf-8")
 
-    def render(self, template_name, **kwargs):
+    title = _('Home')
+    template_path = None
+
+    def __init__(self, application, request, **kwargs):
+
+        self.prepare_kwargs = {}
+
+        super(RequestHandler, self).__init__(application, request, **kwargs)
+
+
+
+
+    def render(self, template_name = None, return_string=False, **kwargs):
         """ Redefine the render """
+
+        if not template_name:
+            template_name = self.template_path
 
         t = self.lookup.get_template(template_name)
 
@@ -64,13 +83,14 @@ class LyRequestHandler(RequestHandler):
             has_permission = self.has_permission,
             show_error = show_error,
             b2s = b2s,
+            title = self.title,
+            supported_languages = self.application.supported_languages_list,
         )
 
         args.update(kwargs)
 
-        # We can define keyword in views with initialize()
-        if hasattr(self, 'view_kwargs'):
-            args.update(self.view_kwargs)
+        # We can set keyword with initialize() or prepare()
+        args.update(self.prepare_kwargs)
 
         # TODO: more readable bug track
         # http://docs.makotemplates.org/en/latest/usage.html#handling-exceptions
@@ -78,29 +98,18 @@ class LyRequestHandler(RequestHandler):
             html = t.render(**args)
         except:
             traceback = RichTraceback()
-            html = u'''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+            t = self.lookup.get_template('mako_failed.html')
+            html = t.render(traceback = traceback)
 
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" href="/static/css/mako.css" />
-    <title>LuoYun Mako Template System Trac Info</title>
-  </head>
-  <body>
-    <h1>LuoYun Mako Template System Trac Info</h1>
-    <pre>'''
-            for (filename, lineno, function, line) in traceback.traceback:
-                html += "File %s, line %s, in %s" % (filename, lineno, function)
-                html += "%s\n" % line
-            html += "%s: %s" % (str(traceback.error.__class__.__name__), traceback.error)
-            html += "</pre></body></html>"
+        if return_string: return html
+
         self.finish(html)
 
 
     def get_current_user(self):
 
         try:
-            session = self.db2.query(Session).filter_by(
+            session = self.db.query(Session).filter_by(
                 session_key = self.get_secure_cookie('session_key')).one()
         except MultipleResultsFound:
             logging.error( 'session: MultipleResultsFound, %s' %
@@ -124,15 +133,14 @@ class LyRequestHandler(RequestHandler):
         except:
             session_dict = {}
 
-        user = self.db2.query(User).get(
+        user = self.db.query(User).get(
             session_dict.get('user_id', 0) )
 
         if user:
-            if user.islocked: return None
+            if user.is_locked: return None
 
             user.last_active = datetime.datetime.now()
-            user.last_entry = self.request.uri
-            #self.db2.commit()
+            #self.db.commit()
 
         return user
 
@@ -140,16 +148,19 @@ class LyRequestHandler(RequestHandler):
     def get_user_locale(self):
         user_locale = self.get_cookie("user_locale")
 
-        if ( not user_locale and
-             self.current_user and
-             self.current_user.profile ):
-            user_locale = self.current_user.profile.locale
+        if ( not user_locale and self.current_user ):
+            user_locale = self.current_user.locale
 
         if user_locale:
             return tornado.locale.get(user_locale)
         else:
             # Use the Accept-Language header
             return None
+
+    @property
+    def language(self):
+        return self.db.query(Language).filter_by(
+            codename = self.locale.code ).first()
 
     def has_permission(self, perm, user=None):
 
@@ -159,9 +170,9 @@ class LyRequestHandler(RequestHandler):
         if not user:
             return False
 
-        for p in self.current_user.permissions:
-            if p.codename == perm or p.codename == 'admin':
-                return True
+#        for p in self.current_user.permissions:
+#            if p.codename == perm or p.codename == 'admin':
+#                return True
 
         for g in self.current_user.groups:
             for p in g.permissions:
@@ -174,10 +185,6 @@ class LyRequestHandler(RequestHandler):
     @property
     def db(self):
         return self.application.db
-
-    @property
-    def db2(self):
-        return self.application.db2
 
     def _job_notify(self, id):
         ''' Notify the new job signal to control server '''
@@ -229,6 +236,10 @@ class LyRequestHandler(RequestHandler):
             return default
 
     def lytrace(self, ttype, tid, do, isok=True, result=None):
+
+        if isinstance(ttype, str):
+            ttype = LY_TARGET.get(ttype, 0)
+
         ip = self.request.remote_ip
         agent = self.request.headers.get('User-Agent')
         visit = self.request.uri
@@ -241,8 +252,8 @@ class LyRequestHandler(RequestHandler):
         T.isok = isok
         T.result = result
 
-        self.db2.add(T)
-        self.db2.commit()
+        self.db.add(T)
+        self.db.commit()
 
         return T
 
@@ -307,6 +318,27 @@ class LyRequestHandler(RequestHandler):
 
         self.application.clcstream.send_msg(key, msg)
 
+    def redirect_next(self, url):
+        next_url = self.get_argument('next_url', None)
+        if next_url:
+            self.redirect( next_url )
+        else:
+            self.redirect( url )
+
+    @property
+    def quemail(self):
+        return self.application.get_quemail()
+
+    def sendmail(self, subject, body, adr_to, mime_type = 'html'):
+
+        adr_from = SiteConfig.get(self.db, 'notice.smtp.fromaddr',
+                                  'localhost@localhost')
+
+        e = Email( subject = subject, text = body, adr_to = adr_to,
+                   adr_from = adr_from, mime_type = mime_type )
+
+        self.quemail.send( e )
+
 
 
 def show_error( E ):
@@ -338,9 +370,9 @@ def has_permission(codename):
                 raise HTTPError(403)
 
             # User is authenticated
-            for p in self.current_user.permissions:
-                if p.codename == codename or p.codename == 'admin':
-                    return method(self, *args, **kwargs)
+#            for p in self.current_user.permissions:
+#                if p.codename == codename or p.codename == 'admin':
+#                    return method(self, *args, **kwargs)
 
             for g in self.current_user.groups:
                 for p in g.permissions:
@@ -357,7 +389,7 @@ def has_permission(codename):
 
 
 
-class LyNotFoundHandler(LyRequestHandler):
+class NotFoundHandler(RequestHandler):
     def prepare(self):
         try:
             self.set_status(404)

@@ -1,10 +1,10 @@
-<%inherit file="/admin/account.html" />
+<%inherit file="/admin/account/base.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
 </%block>
 
-<%block name="content">
+<%block name="main">
 
 <div class="manage-content">
   <a class="blue-submit" href="${ reverse_url('admin:group') }?action=add">${ _("Create New Group") }</a>

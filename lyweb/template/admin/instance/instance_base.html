@@ -1,0 +1,17 @@
+<%inherit file="/admin/admin_base.html"/>
+
+<%block name="main">
+
+<script type="text/javascript" src="${ theme_url('js/admin/instance.js') }"></script>
+
+<ul class="breadcrumb">
+  <li><a href="/admin"><i class="icon-home"></i> ${ _("Admin") }</a> <span class="divider">/</span></li>
+  <li><a href="${ reverse_url('admin:instance') }">${ _("Instances") }</a> <span class="divider">/</span></li>
+  <%block name="innav" />
+</ul>
+
+<div id="instance-base">
+  <%block name="submain"/>
+</div>
+
+</%block>

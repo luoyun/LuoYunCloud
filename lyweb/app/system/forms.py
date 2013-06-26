@@ -1,4 +1,4 @@
-from lyforms import Form
+from yweb.forms import Form
 from wtforms import BooleanField, TextField, \
     validators, DateTimeField, TextAreaField, IntegerField, \
     PasswordField, SelectMultipleField, FileField, SelectField
@@ -60,34 +60,13 @@ class NameserversForm(Form):
     nameservers = TextAreaField( _('Nameservers'), [ multi_ipcheck ] )
 
 
-class NetworkPoolForm(Form):
-
-    name = TextField( _('Name'), [ validators.Length(min=2, max=128) ] )
-    description = TextAreaField( _('Description') )
-
-    start = TextField( _('Start IP'), [ ipcheck ] )
-    end = TextField( _('End IP'), [ ipcheck ] )
-    netmask = TextField( _('Netmask'), [ ipcheck ] )
-    gateway = TextField( _('Gateway'), [ ipcheck ] )
-    nameservers = TextAreaField( _('Nameservers'), [ multi_ipcheck, validators.Length(max=1024) ] )
-    exclude_ips = TextAreaField( _('Exclude ip list'), [ multi_ipcheck ] )
-
-
-
-class DomainForm(Form):
-
-    # TODO: make sure it's a valid domain
-    topdomain = TextField( _('Top domain'), [ validators.Length(min=6, max=120) ] )
-    prefix = TextField( _('Name prefix') )
-    suffix = TextField( _('Name suffix') )
-
-
 class NginxForm(Form):
 
-    # TODO: make sure it's exist
-    confdir = TextField( _('Config dir'), [ validators.Length(min=6, max=120) ] )
-    logdir = TextField( _('Log dir'), [ validators.Length(min=6, max=120) ] )
-    binpath = TextField( _('Nginx program'), [ validators.Length(min=6, max=120) ] )
+    conf_path = TextField( _('Config dir') )
+    log_path  = TextField( _('Log dir') )
+    nginx     = TextField( _('Nginx program') )
+    template  = TextAreaField( _('Nginx Template') )
+
 
 class RegistrationProtocolForm(Form):
 
@@ -115,3 +94,10 @@ class SendMailForm(Form):
     
 
     
+class QQAuth2Form(Form):
+
+    app_id  = TextField( 'APP ID' )
+    app_key = TextField( 'APP KEY' )
+    redirect_uri = TextField( 'Redirect URI' )
+    enabled = BooleanField( 'Is Enabled ?', default = False )
+

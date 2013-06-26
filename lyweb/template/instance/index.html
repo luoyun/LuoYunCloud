@@ -1,154 +1,97 @@
-<%inherit file="/base.html"/>
+<%inherit file="instance_base.html"/>
 
-<%block name="head">
-<link rel="stylesheet" href="${ theme_url('instance-index.css') }" />
-<script type="text/javascript" src="${ static_url('js/instance.js') }"></script>
+<%block name="innav">
+<li>${ _("Index") }</li>
 </%block>
 
-<%block name="main">
+<%block name="submain">
 
-<div class="ly-description">
-  <p>${ _("Public Instances") }
-    % if current_user:
-    <a href="${ reverse_url('myun:instance') }">${ _("(My Instances)") }</a>
-    % endif
-  </p>
-</div>
+<div id="instance-list">
 
+  <div class="the-select">
+	<div class="row-fluid">
+      <ul class="span3 nav">
+		<li class="t">${ _("Instance Status") }</li>
+		<li><select id="sort-by-status">
+			<option value="all">${ _("All") }</option>
+			<option value="running">${ _("Running") }</option>
+			<option value="stoped">${ _("Stoped") }</option>
+		  </select>
+		</li>
+      </ul>
 
-<div id="ly-instance-main" class="c">
-  <div class="section c">
+      % if current_user:
+      <ul class="select-module span3 nav">
+		<li class="t">${ _("View") }</li>
+		<li><select id="sort-by-view">
+			<option value="all">${ _("All Public") }</option>
+			<option value="self">${ _("My Public") }</option>
+		  </select>
+		</li>
+      </ul>
+      % endif
+
+      <ul class="select-module span3 nav">
+		<li class="t">${ _("Selection") }</li>
+		<li><select id="sort-by-what">
+			<option value="updated">${ _("Updated") }</option>
+			<option value="created">${ _("Created") }</option>
+			<option value="user">${ _("User") }</option>
+		</select></li>
+      </ul>
+
+      <ul class="select-module span3 nav">
+		<li>${ _("Order") }</li>
+		<li><select id="sort-order">
+			<option value="1">${ _("Descending") }</option>
+			<option value="0">${ _("Ascending") }</option>
+		</select></li>
+      </ul>
+	</div>
+  </div>
+
+  <div class="the-list">
 
     % if not INSTANCE_LIST.count():
     <p>${ _("Have not any instance yet !") }</p>
     % endif
 
     <% count = 0 %>
+	<div class="row-fluid">
     % for I in INSTANCE_LIST:
 
-    <ul class="i">
-      <li class="i-logo"><a href="${ reverse_url('instance:view', I.id) }"><img src="${ I.logourl }" /></a></li>
-      <div class="c"></div>
-      <li class="i_name c"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></li>
-      <li class="i_user"><span class="t">${ _("Owner") }</span><a href="${ reverse_url('account:view', I.user_id) }">${ I.user.username }</a></li>
-      <li class="i_status"><img id="i${ I.id }-is-img" src="${ theme_url('icons/InstanceStatus/%s.png' % I.status) }" /></li>
-      <li style="display:none;">
-	<span id="i${ I.id }-is">${ I.status }</span>
-	<span id="i${ I.id }-js">${ I.lastjob_status_id }</span>
-      </li>
+    <div class="span2 instance">
+      <div class="logo"><a href="${ reverse_url('instance:view') }?id=${ I.id }"><img src="${ I.logourl }" /></a></div>
+      <div class="name"><a href="${ reverse_url('instance:view') }?id=${ I.id }">${ I.name }</a></div>
+	  <dl class="dl-horizontal">
+		<dt>${ _("User") }</dt>
+		<dd><a href="${ reverse_url('user:view') }?id=${ I.user_id }">${ I.user.username }</a></dd>
+	  </dl>
+	  <div class="status">${ I.status_icon }</div>
+    </div>
 
-      <div class="i-logo-hover" style="display:none;">
-	<div class="arrowBox">
-	  <div calss="arrow"></div>
-	</div>
-	<h2 class="title">${ I.name }</h2>
-	<p class="owner"><span class="t">${ _("Owner") }</span><a href="${ reverse_url('account:view', I.user_id) }">${ I.user.username }</a></p>
-	<p class="summary">
-	  % if I.summary:
-	  ${ I.summary }
-	  % else:
-	  ${ _("No summary yet !") }
-	  % endif
-	</p>
-
-	<table>
-	  <tbody>
-	    <tr>
-	      <td>${ _("Status") }</td>
-	      <td>${ locale.translate(I.status_string) }</td>
-	    </tr>
-	    <tr>
-	      <td>${ _("IP") }</td>
-	      <td><span class="i-ip">
-		% if I.status in [4, 5]:
-		<a href="${ I.home_url(current_user) }" target="_blank">${ I.ip }</a>
-		% else:
-		${ _("None") }
-		% endif
-		</span></td>
-	    </tr>
-	  </tbody>
-	</table>
-
-      </div>
-
-      <div class="i-owner-hover" style="display:none;">
-      </div>
-
-    </ul>
-
-    % if count % 5 == 4:
-    <div class="c"></div>
+    % if count % 6 == 5:
+    </div><div class="row-fluid">
     % endif
     <% count += 1 %>
     % endfor
-
-    <div class="clearfix"></div>
+	</div>
     ${ page_html }
   </div>
 
-  <div class="aside">
-
-    <div id="create-instance" class="c">
-      <a class="orange-submit" title="${ _('Create a new instance') }" href="${ reverse_url('instance:create') }">${ _("Create New Instance") }</a>
-    </div>
-
-    <ul class="select-module">
-      <li class="t">${ _("Instance Status") }</li>
-      <li><select id="sort-by-status">
-	  <option value="all">${ _("All") }</option>
-	  <option value="running">${ _("Running") }</option>
-	  <option value="stoped">${ _("Stoped") }</option>
-	</select>
-      </li>
-    </ul>
-
-    % if current_user:
-    <ul class="select-module">
-      <li class="t">${ _("View") }</li>
-      <li><select id="sort-by-view">
-	  <option value="all">${ _("All Public") }</option>
-	  <option value="self">${ _("My Public") }</option>
-	</select>
-      </li>
-    </ul>
-    % endif
-
-    <ul class="select-module">
-      <li class="t">${ _("Selection") }</li>
-      <li><select id="sort-by-what">
-	  <option value="updated">${ _("Updated") }</option>
-	  <option value="created">${ _("Created") }</option>
-	  <option value="user">${ _("User") }</option>
-      </select></li>
-    </ul>
-
-    <ul class="select-module">
-      <li>${ _("Order") }</li>
-      <li><select id="sort-order">
-	  <option value="1">${ _("Descending") }</option>
-	  <option value="0">${ _("Ascending") }</option>
-      </select></li>
-    </ul>
-
-  </div>
 
 </div>
 
 <script type="text/javascript">
-  indexInstanceLogoHover();
-
   $("#sort-by-status").val("${ STATUS }");
-  submit_select_change("#sort-by-status", "${ urlupdate({'status': 'YREPLACEY'}) }");
-
   $("#sort-by-view").val("${ VIEW }");
-  submit_select_change("#sort-by-view", "${ urlupdate({'view': 'YREPLACEY'}) }");
-
   $("#sort-by-what").val("${ SORTBY }");
-  submit_select_change("#sort-by-what", "${ urlupdate({'by': 'YREPLACEY'}) }");
-
   $("#sort-order").val("${ ORDER }");
-  submit_select_change("#sort-order", "${ urlupdate({'order': 'YREPLACEY'}) }");
+
+  selected_reload("#sort-by-status", "${ urlupdate({'status': 'REPLACEOBJ'}) }")
+  selected_reload("#sort-by-view", "${ urlupdate({'view': 'REPLACEOBJ'}) }");
+  selected_reload("#sort-by-what", "${ urlupdate({'by': 'REPLACEOBJ'}) }");
+  selected_reload("#sort-order", "${ urlupdate({'order': 'REPLACEOBJ'}) }");
 </script>
 
 </%block>

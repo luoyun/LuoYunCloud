@@ -1,0 +1,20 @@
+<%inherit file="base.html" />
+
+<%block name="submain">
+
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${_("Reset My Password")}</legend>
+	  ${ form.password.label } ${ form.password() }
+	  ${ form.html_errors(form.password.errors) }
+
+	  ${ form.password_confirm.label } ${ form.password_confirm() }
+	  ${ form.html_errors(form.password_confirm.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+</div>
+
+</%block>

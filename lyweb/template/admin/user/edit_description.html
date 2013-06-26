@@ -1,40 +1,29 @@
-<%inherit file="/admin/account.html" />
+<%inherit file="/admin/account/base.html" />
 
-<%block name="usernav">
+<%block name="innav">
 <li><a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a></li>
 <li>${ _("Edit Resources") }</li>
 </%block>
 
-<%block name="content">
-
-<h2 class="title">${ _("Edit User Resources") }</h2>
+<%block name="main">
 
 <% DESC = USER.description if USER.description else '' %>
-<div class="large-tbform c">
+
+<script type="text/javascript" src="${ static_url('markitup/jquery.markitup.js') }"></script>
+<script type="text/javascript" src="${ static_url('markitup/sets/markdown/set.js') }"></script>
+
+<div>
   <form method="POST">${ xsrf_form_html() }
     <textarea name="description" id="description">${ DESC }</textarea>
-    <input type="submit" value="${ _('Save') }"/>
+	<button type="submit" class="btn">${ _("Save") }</button>
   </form>
 </div>
 
-<script charset="utf-8" src="${ STATIC_URL }kindeditor/kindeditor.js"></script>
-<script charset="utf-8" src="${ STATIC_URL }kindeditor/lang/zh_CN.js"></script>
-<script>
-  var editor;
-  KindEditor.ready(function(K) {
-  editor = K.create('#description', {
-    uploadJson : '/ly/upload/kindeditor',
-    fileManagerJson : '/ly/upload/kindeditor',
-    allowFileManager : true,
-    items : [
-        'formatblock', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'removeformat', '|',
-        'undo', 'redo', '|', 'code', '|', 'justifyleft', 'justifycenter', 'justifyright',
-        'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', '|',
-        'image', 'insertfile', 'table', 'emoticons',
-        'anchor', 'link', 'unlink', '|', 'fullscreen', 'source', 'preview', 'about'
-    ],
-  });
-  });
+<script type="text/javascript" >
+   mySettings.previewParserPath = "/t/preview?markup_language=markdown&_xsrf=${ xsrf_cookie }";
+   $(document).ready(function() {
+      $("#description").markItUp(mySettings);
+   });
 </script>
 
 </%block>

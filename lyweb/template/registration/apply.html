@@ -1,0 +1,23 @@
+<%inherit file="base.html" />
+
+<%block name="main">
+
+<div class="container registration">
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Registration Apply") }</legend>
+	  <input name="email" type="text" placeholder="Input your email address">
+	  <span class="help-block">${ form.html_errors(form.email.errors) }</span>
+
+	  <label class="checkbox">
+		<input name="accept_rules" type="checkbox">${ _("I accept the site rules") }
+		<a href="/registration_terms">${ _("Registration Terms") }</a>
+	  </label>
+	  <span class="help-block">${ form.html_errors(form.accept_rules.errors) }</span>
+
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+</div>
+
+</%block>

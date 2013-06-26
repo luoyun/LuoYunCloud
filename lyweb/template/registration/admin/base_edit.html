@@ -1,0 +1,36 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="main">
+
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Edit Base Config") }</legend>
+	  ${ form.host.label } ${ form.host() }
+	  ${ form.html_errors(form.host.errors) }
+
+	  ${ form.email_address.label } ${ form.email_address() }
+	  ${ form.html_errors(form.email_address.errors) }
+
+	  ${ form.email_bcc.label } ${ form.email_bcc() }
+	  ${ form.html_errors(form.email_bcc.errors) }
+
+	  ${ form.smtp_server.label } ${ form.smtp_server() }
+	  ${ form.html_errors(form.smtp_server.errors) }
+
+	  ${ form.smtp_port.label } ${ form.smtp_port() }
+	  ${ form.html_errors(form.smtp_port.errors) }
+
+	  ${ form.smtp_username.label } ${ form.smtp_username() }
+	  ${ form.html_errors(form.smtp_username.errors) }
+
+	  ${ form.smtp_password.label } ${ form.smtp_password() }
+	  ${ form.html_errors(form.smtp_password.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+
+</div>
+
+</%block>

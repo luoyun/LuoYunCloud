@@ -1,0 +1,31 @@
+<%inherit file="instance_base.html" />
+
+<%block name="innav">
+<li>${ _("Add Port Mapping For Instance") }</li>
+</%block>
+
+<%block name="submain">
+<div>
+
+  % if error:
+  <div class="hero-unit">
+	${ error }
+  </div>
+
+  % else:
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Add Port Mapping For Instance") }</legend>
+      ${ form.ip.label } ${ form.ip() }
+      ${ form.html_errors(form.ip.errors) }
+
+      ${ form.port.label } ${ form.port() }
+      ${ form.html_errors(form.port.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+  % endif
+
+</div>
+</%block>

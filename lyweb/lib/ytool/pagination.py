@@ -1,43 +1,48 @@
 import re, urlparse, urllib
 from mako.template import Template
 
-
 PAGE_TEMPLATE = '''<div class="pagination">
+<ul>
   % if cur_page > 1:
-  <a href="${ page_url(cur_page -1) }"><span class="endside">${ _("Prev") }<span></a>
+  <li><a href="${ page_url(cur_page -1) }">${ _("Prev") }</a></li>
   % else:
-  <span class="endside">${ _("Prev") }</span>
+  <li class="disabled"><span>${ _("Prev") }</span></li>
   % endif
 
   % for p in plist:
   % if p == cur_page:
-  <span class="page current">${ p }</span>
+  <li class="active"><span>${ p }</span></li>
   % elif p == notexist_page:
-  <span>...</span>
+  <li><span>...</span></li>
   % else:
-  <a href="${ page_url(p) }"><span class="page">${ p }</span></a>
+  <li><a href="${ page_url(p) }">${ p }</a></li>
   % endif
   % endfor
 
   % if cur_page < page_sum:
-  <a href="${ page_url(cur_page + 1) }"><span class="endside">${ _("Next") }</span></a>
+  <li><a href="${ page_url(cur_page + 1) }">${ _("Next") }</a></li>
   % else:
-  <span class="endside">${ _("Next") }</span>
+  <li class="disabled"><span>${ _("Next") }</span></li>
   % endif
+</ul>
+
 
   % if sepa_range:
-  <span class="psize-select">
+<ul>
     %for s in sepa_range:
-    <% current = 'current' if sepa == s else '' %>
-    <a class="${ current }" href="${ psize_url(s) }">${ s }</a>
+    %if sepa == s:
+    <li class="active"><span>${ s }</span></li>
+    % else:
+    <li><a href="${ psize_url(s) }">${ s }</a></li>
+    % endif
     %endfor
-  </span>
+</ul>
   % endif
 </div>'''
 
 
 def pagination( url, total, sepa, cur, list_size=5,
-                sepa_range=[10, 20, 50] ):
+                sepa_range=[] ):
 
     if total <= sepa:
         return ''

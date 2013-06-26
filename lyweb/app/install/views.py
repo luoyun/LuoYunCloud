@@ -62,7 +62,7 @@ class Index(InstallRequestHandler):
     def prepare(self):
 
         self.cf = ConfigParser.ConfigParser()
-        self.cf.read( settings.LUOYUN_CONFIG_PATH )
+        self.cf.read( settings.sitecfg )
         if not self.cf.has_section('db'):
             self.cf.add_section('db')
 
@@ -95,7 +95,7 @@ class Index(InstallRequestHandler):
             cf.set('db', 'db_name', form.dbname.data)
             cf.set('db', 'db_user', form.dbuser.data)
             cf.set('db', 'db_password', form.dbpass.data)
-            cf.write(open(settings.LUOYUN_CONFIG_PATH, 'w'))
+            cf.write(open(settings.sitecfg, 'w'))
 
             saved = True
             # TODO: Important ! db settings should check for connect !

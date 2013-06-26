@@ -1,0 +1,75 @@
+<%inherit file="network_base.html" />
+
+<%block name="innav">
+<li>${ _("Gateway Information") }</li>
+</%block>
+
+<%block name="submain">
+
+<div class="container">
+<h2>${ _("Gateway Summary") }</h2>
+
+<p><a class="btn" href="${ reverse_url('admin:network:gateway:config') }"><i class="icon-plus"></i> ${ _("Add Gateway") }</a></p>
+
+% if gateway_list:
+
+% for g in gateway_list:
+<div>
+
+  <h3>${ g.name }
+	<a href="${ reverse_url('admin:network:gateway:config') }?gateway=${ g.id }"><i class="icon-edit"></i></a></h3>
+
+  <table class="table table-bordered table-striped">
+	<tbody>
+	  <tr>
+		<td>${ _("Port Total") }</td>
+		<td><a href="${ reverse_url('admin:network:portmapping') }?gateway=${ g.id }">${ len(g.ports) }</td>
+      </tr>
+
+	  <tr>
+		<td>${ _("Start Port") }</td>
+		<td>${ g.start }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("End Port") }</td>
+		<td>${ g.end }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("Gateway IP") }</td>
+		<td>${ g.ip }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("Netmask") }</td>
+		<td>${ g.netmask }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("Exclude Ports") }</td>
+		<td>${ g.exclude_ports }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("Created") }</td>
+		<td>${ ftime(g.created) }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("Updated") }</td>
+		<td>${ ftime(g.updated) }</td>
+	  </tr>
+	</tbody>
+  </table>
+</div>
+% endfor
+
+% else:
+<div class="hero-unit">
+  <p>${ _("Have not configure gateway yet.") }</p>
+</div>
+% endif
+</div>
+
+</%block>

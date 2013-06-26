@@ -3,7 +3,7 @@
 import struct, socket
 import logging, datetime, time
 import tornado
-from lycustom import LyRequestHandler
+from lycustom import RequestHandler
 from tornado.web import authenticated, asynchronous
 
 from settings import JOB_ACTION, JOB_TARGET
@@ -18,14 +18,14 @@ from lycustom import has_permission
 
 
 
-class Action(LyRequestHandler):
+class Action(RequestHandler):
 
     @authenticated
     def get(self, id):
 
         action = self.get_argument_int("action", 0)
 
-        node = self.db2.query(Node).get(id)
+        node = self.db.query(Node).get(id)
         if not node:
             return self.write('No such node!')
 
@@ -53,15 +53,15 @@ class Action(LyRequestHandler):
                    target_type = JOB_TARGET['NODE'],
                    target_id = id,
                    action = action_id )
-        self.db2.add(job)
-        self.db2.commit()
+        self.db.add(job)
+        self.db.commit()
         self._job_notify( job.id )
 
         return self.write('Action success !')
 
 
 
-class isenableToggle(LyRequestHandler):
+class isenableToggle(RequestHandler):
 
     @has_permission('admin')
     def get(self, ID):
@@ -70,7 +70,7 @@ class isenableToggle(LyRequestHandler):
         self.set_header("Pragma", "no-cache")
         self.set_header("Expires", "-1")
 
-        N = self.db2.query(Node).get(ID)
+        N = self.db.query(Node).get(ID)
         if not N:
             return self.write( self.trans(_('Can not find node %s.')) % ID )
 
@@ -81,14 +81,14 @@ class isenableToggle(LyRequestHandler):
                    target_id = ID,
                    action = action_id )
 
-        self.db2.add(job)
-        self.db2.commit()
+        self.db.add(job)
+        self.db.commit()
 
         try:
             self._job_notify( job.id )
 
             N.isenable = not N.isenable
-            self.db2.commit()
+            self.db.commit()
             # no news is good news
 
         except Exception, e:
@@ -96,12 +96,12 @@ class isenableToggle(LyRequestHandler):
 
 
 
-class NodeEdit(LyRequestHandler):
+class NodeEdit(RequestHandler):
 
     @has_permission('admin')
     def get(self, ID):
 
-        N = self.db2.query(Node).get(ID)
+        N = self.db.query(Node).get(ID)
         if not N:
             return self.write( self.trans(_('Can not find node %s.')) % ID )
 
@@ -117,7 +117,7 @@ class NodeEdit(LyRequestHandler):
     @has_permission('admin')
     def post(self, ID):
 
-        N = self.db2.query(Node).get(ID)
+        N = self.db.query(Node).get(ID)
         if not N:
             return self.write( self.trans(_('Can not find node %s.')) % ID )
 
@@ -133,8 +133,8 @@ class NodeEdit(LyRequestHandler):
                        target_id = ID,
                        action = JOB_ACTION.get('UPDATE_NODE') )
 
-            self.db2.add(job)
-            self.db2.commit()
+            self.db.add(job)
+            self.db.commit()
 
             try:
                 self._job_notify( job.id )

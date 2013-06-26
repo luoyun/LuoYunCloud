@@ -1,0 +1,19 @@
+<%inherit file="instance_base.html" />
+
+<%block name="innav">
+<li>${ _("Add New Network") }</li>
+</%block>
+
+<%block name="submain">
+<div id="instance-network-add">
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Add New Storage") }</legend>
+      ${ form.pool.label } ${ form.pool() }
+      ${ form.html_errors(form.pool.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+</div>
+</%block>

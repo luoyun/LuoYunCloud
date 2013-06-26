@@ -1,0 +1,119 @@
+<%inherit file="../myun_base.html" />
+
+<%block name="innav">
+<li><a href="${ reverse_url('myun:appliance') }">${ _("Appliances") }</a></li>
+</%block>
+
+<%block name="submain">
+
+<script type="text/javascript">
+  just_active_myself("#myun-appliance-entry");
+</script>
+
+% if APPLIANCE_LIST:
+<div id="appliance-list">
+
+  <div class="y-checkarea">
+	<table class="table table-hover">
+      <thead>
+		<tr>
+		  <th><i class="icon-check-empty y-check-all"></i></th>
+          <th>ID</th>
+          <th>${ _("Name") }</th>
+		  <th>${ _("Is Private") }</th>
+		  <th>${ _("Is Useable") }</th>
+		  <th>${ _("Instances") }</th>
+		</tr>
+      </thead>
+      <tbody>
+
+		% for A in APPLIANCE_LIST:
+		<tr class="y-check-line" id="i${ A.id }">
+		  <td><i class="icon-check-empty y-check"></i></td>
+          <td class="y-id">${ A.id }</td>
+          <td><a href="${ reverse_url('myun:appliance:view') }?id=${ A.id }">${ A.name }</a></td>
+          <td>
+			% if A.isprivate:
+			<i class="icon-eye-close"></i>
+			% endif
+		  </td>
+          <td>
+			% if A.isuseable:
+			<i class="icon-ok"></i>
+			% endif
+		  </td>
+		  <td>
+			% if A.instances:
+			${ len(A.instances) }
+			% endif
+		  </td>
+		</tr>
+		% endfor
+	  </tbody>
+	  <tfoot>
+		<tr>
+		  <td><i class="icon-check-empty y-check-all"></i></td>
+		  <td colspan="4">
+			<a href="" class="y-select-all">${ _("Select All") }</a>
+			<span class="divider">/</span>
+			<a href="" class="y-unselect-all">${ _("Unselect All") }</a>
+			<span class="divider">/</span>
+			<a href="" class="y-select-reverse">${ _("Select Reverse") }</a>
+		  </td>
+		</tr>
+	  </tfoot>
+	</table>
+	${ page_html }
+
+	<div>
+	  <div class="btn-group">
+		<a class="btn y-action-nonzero disabled action-setattr" href="${ reverse_url('appliance:attr_set') }?attr=isprivate&value=true"><i class="icon-eye-close"></i> ${ _("Private") }</a>
+		<a class="btn y-action-nonzero disabled action-setattr" href="${ reverse_url('appliance:attr_set') }?attr=isprivate&value=false"><i class="icon-eye-open"></i> ${ _("Public") }</a>
+	  </div>
+
+	  <div class="btn-group">
+		<a class="btn y-action-nonzero disabled action-setattr" href="${ reverse_url('appliance:attr_set') }?attr=isuseable&value=true"><i class="icon-ok"></i> ${ _("Usable") }</a>
+		<a class="btn y-action-nonzero disabled action-setattr" href="${ reverse_url('appliance:attr_set') }?attr=isuseable&value=false"><i class="icon-remove"></i> ${ _("Unusable") }</a>
+	  </div>
+
+	</div>
+
+  </div>
+</div>
+
+<div class="xsrf-cookie" style="display: none;">${ xsrf_cookie }</div>
+<script type="text/javascript" src="${ theme_url('js/myun-appliance.js') }"></script>
+
+<script type="text/javascript">
+  y_checkarea_binding();
+
+  appliance_list_attr_set(".action-setattr");
+</script>
+
+% else:
+<div class="hero-unit">${ _("You have not any appliance yet .") }</div>
+% endif
+
+
+<!-- Appliance Modal Data -->
+<div style="display:none;">
+  <div id="appliance-setattr-modal-body">
+	<h3 class="title"></h3>
+	<table class="table table-bordered"><tbody class="detail"></tbody></table>
+  </div>
+</div>
+
+<!-- Action Return Modal -->
+<div id="action-return-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	<h3 class="modal-title" id="myModalLabel">${ _("Action Is Return") }</h3>
+  </div>
+  <div class="modal-body"></div>
+  <div class="modal-footer">
+	<button class="btn" data-dismiss="modal" aria-hidden="true">${ _("Close") }</button>
+  </div>
+</div>
+
+
+</%block>

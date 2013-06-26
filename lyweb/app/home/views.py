@@ -2,36 +2,60 @@
 
 import os, logging, json, time
 
-from lycustom import LyRequestHandler
 from tornado.web import authenticated
 
 from sqlalchemy.sql.expression import asc, desc
+from sqlalchemy import and_
 
 from app.instance.models import Instance
 from app.appliance.models import Appliance
 from app.node.models import Node
-from app.account.models import Permission
+from app.auth.models import Permission
 from app.system.models import LuoYunConfig
 from app.home.models import Attachment
 
 import settings
 
-from lycustom import has_permission
+from lycustom import RequestHandler, has_permission
+
+from ..site.models import SiteEntry, SiteArticle
+from ..language.models import Language
 
 
+class Index(RequestHandler):
 
-class SetLocale(LyRequestHandler):
+    title = _('LuoYunCloud Home')
 
     def get(self):
 
-        user_locale = self.get_argument("language")
+        E = self.db.query(SiteEntry).filter_by(slug='home').first()
+        L = self.db.query(Language).filter_by(
+            codename = self.locale.code ).first()
+        if E and L:
+            A = self.db.query(SiteArticle).filter(
+                and_( SiteArticle.entry_id == E.id,
+                      SiteArticle.language_id == L.id ) ).first()
+        else: A = None
+
+        d = {}
+
+        if A:
+            d['mainbody'] = A.body
+
+        self.render('home/index.html', **d)
+
+
+class SetLocale(RequestHandler):
+
+    def get(self):
+
+        user_locale = self.get_argument("language", self.locale.code)
         next_url = self.get_argument("next", '/')
         self.set_cookie("user_locale", user_locale)
-
         self.redirect(next_url)
 
 
-class NoPermission(LyRequestHandler):
+class NoPermission(RequestHandler):
 
     def get(self):
 
@@ -39,7 +63,7 @@ class NoPermission(LyRequestHandler):
 
         codenames = self.get_argument('codenames', '')
         for cn in codenames.split(','):
-            p = self.db2.query(Permission).filter_by(
+            p = self.db.query(Permission).filter_by(
                 codename = cn ).first()
             if p:
                 PERMS.append(p)
@@ -61,25 +85,15 @@ class NoPermission(LyRequestHandler):
         self.render('home/no_permission.html', **d)
 
 
-class NoResource(LyRequestHandler):
+class NoResource(RequestHandler):
+
+    title = _('No Resource')
 
     def get(self):
 
         reason = self.get_argument('reason', '')
 
-        d = { 'title': self.trans(_("No Resource")),
-              'REASON': reason,
-              'USED_STORAGE': self.get_argument('used', 0)}
-
-        insts = self.db2.query(Instance).filter(
-            Instance.user_id == self.current_user.id )
-        d['USED_INSTANCES'] = insts.count()
-        d['USED_CPUS'] = 0
-        d['USED_MEMORY'] = 0
-        for i in insts:
-            if i.status in [4, 5]:
-                d['USED_CPUS'] += i.cpus
-                d['USED_MEMORY'] += i.memory
+        d = {'REASON': reason }
 
         if hasattr(settings, 'ADMIN_EMAIL'):
             d['ADMIN_EMAIL'] = settings.ADMIN_EMAIL
@@ -92,11 +106,11 @@ class NoResource(LyRequestHandler):
 
 
 
-class RegistrationProtocol(LyRequestHandler):
+class RegistrationProtocol(RequestHandler):
 
     def get(self):
 
-        protocol = self.db2.query(LuoYunConfig).filter_by(key='protocol').first()
+        protocol = self.db.query(LuoYunConfig).filter_by(key='protocol').first()
         if protocol:
             rp = json.loads(protocol.value).get('html')
         else:
@@ -107,13 +121,13 @@ class RegistrationProtocol(LyRequestHandler):
 
 
 
-class WelcomeNewUser(LyRequestHandler):
+class WelcomeNewUser(RequestHandler):
 
     # just admin can view this
     @has_permission('admin')
     def get(self):
 
-        welcome = self.db2.query(LuoYunConfig).filter_by(key='welcome_new_user').first()
+        welcome = self.db.query(LuoYunConfig).filter_by(key='welcome_new_user').first()
         if welcome:
             wc = json.loads(welcome.value).get('html')
         else:
@@ -123,7 +137,7 @@ class WelcomeNewUser(LyRequestHandler):
                      WELCOME = wc )
 
 
-class UploadKindeditor(LyRequestHandler):
+class UploadKindeditor(RequestHandler):
 
     @authenticated
     def post(self):
@@ -136,8 +150,8 @@ class UploadKindeditor(LyRequestHandler):
 
                     att = Attachment(self.current_user, f)
                     att.description = self.trans(_('Upload from kindeditor'))
-                    self.db2.add(att)
-                    self.db2.commit()
+                    self.db.add(att)
+                    self.db.commit()
                     info = { "error" : 0, "url" : att.url }
                 except Exception, ex:
                     info = { "error" : 1, "message" : str(ex) }

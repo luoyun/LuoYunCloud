@@ -1,473 +1,155 @@
-<%inherit file="/admin/account.html" />
+<%inherit file="base.html" />
 
-<%block name="innav">
-<li><a href="${ reverse_url('admin:user') }">${ _("User") }</a></li>
-<li><a href="${ reverse_url('admin:user') }?id=${ U.id }">${ U.username }</a></li>
+<%block name="userinnav">
+<li>${ _("View User ") } ${ USER.username }</li>
 </%block>
 
-<%block name="content">
-
-<%
-   def isshow(tab):
-       return '' if tab == TAB else 'display:none;'
-
-   def isselected(tab):
-       return 'selected' if tab == TAB else ''
-%>
-<div class="au-view c">
-
-  <div id="au-user-base" class="c">
-    <ul>
-      <li class="logo">
-	<a href="${ reverse_url('admin:user') }?id=${ U.id }"><img class="userlogo" src="${ U.avatar_url }" /></a>
-      </li>
-      <li>
-	<div class="community">
-	  <a href="${ reverse_url('message:new') }?userid=${ U.id}" target="_blank" title="${ _('send message') }"><img class="small" src="${ theme_url('img/message.jpg') }"/></a>
-	  <a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" target="_blank" title="${ _('send email') }"><img class="small" src="${ theme_url('img/email.gif') }"/></a>
-	</div>
-      </li>
-    </ul>
-  </div>
-
-
-  <div id="au-management" class="tabs">
-    <ul>
-      <li><a id="tab-general" class="${ isselected('general') }" href="${ reverse_url('admin:user') }?id=${ U.id }&tab=general">${ _("Baseinfo") }</a></li>
-      <li><a id="tab-resource" class="${ isselected('resource') }" href="${ reverse_url('admin:user') }?id=${ U.id }&tab=resource">${ _("Resource") }</a></li>
-      <li><a id="tab-group" class="${ isselected('group') }" href="${ reverse_url('admin:user') }?id=${ U.id }&tab=group">${ _("Group & Permission") }</a></li>
-      % if U.appliances:
-      <li><a id="tab-appliance" class="${ isselected('appliance') }" href="${ reverse_url('admin:user') }?id=${ U.id }&tab=appliance">${ _("Appliance") }</a></li>
-      % endif
-      % if U.instances:
-      <li><a id="tab-instance" class="${ isselected('instance') }" href="${ reverse_url('admin:user') }?id=${ U.id }&tab=instance">${ _("Instance") }</a></li>
-      % endif
-      % if JOB_LIST:
-      <li><a id="tab-job" class="${ isselected('job') }" href="${ reverse_url('admin:user') }?id=${ U.id }&tab=job">${ _("Job List") }</a></li>
-      % endif
-      <li><a id="tab-other" class="${ isselected('other') }" href="${ reverse_url('admin:user') }?id=${ U.id }&tab=other">${ _("Other") }</a></li>
-    </ul>
-  </div>
-
-  <div id="tab-content-general" class="tab-content" style="${ isshow('general') }">
-
-    <table class="kv">
-      <tbody>
+<%block name="usermain">
+<h2>${ _("Baseinfo") }</h2>
+<table class="table table-striped">
+  <tbody>
 	<tr>
-          <td>${ _("Username") }</td>
-          <td>${ U.username }</td>
+	  <td>${ _("Username") }</td>
+	  <td>${ USER.username }</td>
 	</tr>
 	<tr>
-          <td>${ _("ID") }</td>
-          <td>${ U.id }</td>
+	  <td>${ _("ID") }</td>
+	  <td>${ USER.id }</td>
 	</tr>
 	<tr>
-          <td>${ _("Public Access") }</td>
-          <td><a href="${ reverse_url('account:view', U.id) }" target="_blank">${ _("View") }</a></td>
+	  <td>${ _("Date Joined") }</td>
+	  <td>${ ftime(USER.date_joined) }</td>
 	</tr>
 	<tr>
-          <td>${ _("Date Joined") }</td>
-          <td>${ ftime(U.date_joined) }</td>
+	  <td>${ _("Last Login") }</td>
+	  <td>${ ftime(USER.last_login) }</td>
 	</tr>
 	<tr>
-          <td>${ _("Last Login") }</td>
-          <td>${ ftime(U.last_login) }</td>
+	  <td>${ _("Last Active") }</td>
+	  <td>${ htime(USER.last_active) }</td>
 	</tr>
 	<tr>
-          <td>${ _("Last Active") }</td>
-          <td>${ htime(U.last_active) }</td>
+	  <td>${ _("Email") }</td>
+	  <td>${ USER.email }</td>
 	</tr>
 	<tr>
-          <td>${ _("Last Entry") }</td>
-          <td>${ U.last_entry }</td>
+	  <td>${ _("Language") }</td>
+	  <td>${ USER.language.name }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Appliances") }</td>
+	  <td>
+		% if USER.appliances:
+		<a href="${ reverse_url('admin:appliance') }?uid=${ USER.id }">${ len(USER.appliances) }</a>
+		% endif
+	  </td>
 	</tr>
 
-	% if U.profile:
 	<tr>
-          <td>${ _("Email") }</td>
-          <td>${ U.profile.email }</td>
+	  <td>${ _("Instances") }</td>
+	  <td>
+		% if USER.instances:
+		<a href="${ reverse_url('admin:instance') }?uid=${ USER.id }">${ len(USER.instances) }</a>
+		% endif
+	  </td>
 	</tr>
+  </tbody>
+</table>
+
+
+<h2>${ _("Resources") }</h2>
+<p>
+  <a class="btn btn-primary" href="${ reverse_url('admin:user:resource:simple_add') }?id=${ USER.id }"><i class="icon-plus-sign"></i> ${ _("Simple Add Resource") }</a>
+  <a class="btn" href="${ reverse_url('admin:user:resource:add') }?id=${ USER.id }"><i class="icon-plus-sign"></i> ${ _("Add Resource") }</a>
+</p>
+
+<table class="table table-condensed table-bordered">
+  <thead>
 	<tr>
-          <td>${ _("Locale") }</td>
-          <td>${ U.profile.locale }</td>
+	  <th colspan="2">${ _("CPU") }</th>
+	  <th colspan="2">${ _("Memory") }</th>
+	  <th colspan="2">${ _("Storage") }</th>
+	  <th colspan="2">${ _("Instance") }</th>
 	</tr>
-	% endif
-
-      </tbody>
-    </table>
-
-    <h3 class="subtitle">${ _("User Remark") }</h3>
-    <p class="manage-content"><a class="blue-submit" href="${ reverse_url('admin:user') }?id=${ U.id }&action=edit_description">${ _("Edit Description") }</a></p>
-    <div class="description">
-    % if U.description:
-    ${ U.description }
-    % else:
-    ${ _("No description now.") }
-    % endif
-    </div>
-  </div>
-
-  <div id="tab-content-resource" class="tab-content" style="${ isshow('resource') }">
-    % if U.profile:
-    <table class="kv">
-      <tbody>
+  </thead>
+  <tbody>
 	<tr>
-          <td>${ _("Memory") }</td>
-          <td>${ U.profile.memory } M</td>
+	  <td>${ USER.profile.cpu_total } ${ _("core") }</td>
+	  <td>${ USER.profile.cpu_used } ${ _("core") }</td>
+	  <td>${ USER.profile.memory_total } M</td>
+	  <td>${ USER.profile.memory_used } M</td>
+	  <td>${ USER.profile.storage_total } G</td>
+	  <td>${ USER.profile.storage_used } G</td>
+	  <td>${ USER.profile.instance_total }</td>
+	  <td>${ USER.profile.instance_used }</td>
 	</tr>
+  </tbody>
+</table>
+
+% if USER.resources:
+<table class="table table-bordered">
+  <thead>
 	<tr>
-          <td>${ _("CPUs") }</td>
-          <td>${ U.profile.cpus } core</td>
+	  <th>ID</th>
+	  <th>${ _("Type") }</th>
+	  <th>${ _("Size") }</th>
+	  <th>${ _("Effect Date") }</th>
+	  <th>${ _("Expired Date") }</th>
+	  <th></th>
 	</tr>
-	<tr>
-          <td>${ _("Instances") }</td>
-          <td>${ U.profile.instances }</td>
+  </thead>
+  <tbody>
+	% for R in USER.resources:
+	<tr class="${ R.contextual_class }">
+	  <td>${ R.id }</td>
+	  <td>${ R.type_str }</td>
+	  <td>${ R.size_str }</td>
+	  <td>${ ftime(R.effect_date) }</td>
+	  <td>${ ftime(R.expired_date) }</td>
+	  <td>
+		<i class="icon-star"></i> <a href="${ reverse_url('admin:resource:view') }?id=${ R.id }">${ _("View") }</a>
+		<i class="icon-edit"></i> <a href="${ reverse_url('admin:resource:edit') }?id=${ R.id }&next_url=${ reverse_url('admin:user:view') }?id=${ USER.id }">${ _("Edit") }</a>
+		<i class="icon-trash"></i> <a href="${ reverse_url('admin:resource:delete') }?id=${ R.id }&next_url=${ reverse_url('admin:user:view') }?id=${ USER.id }">${ _("Delete") }</a>
+	  </td>
 	</tr>
-	<tr>
-          <td>${ _("Storage") }</td>
-          <td>${ U.profile.storage } G</td>
-	</tr>
-      </tbody>
-    </table>
-    % endif
+	% endfor
+  </tbody>
+</table>
+% endif
 
-    <div class="manage-content"><a class="blue-submit" href="${ reverse_url('admin:user') }?id=${ U.id }&action=edit_resources">${ _("Change User Resources") }</a></div>
 
-  </div>
+<h2>${ _("Group & Permission") }</h2>
 
-  <div id="tab-content-appliance" class="tab-content" style="${ isshow('appliance') }">
-    <h3 class="subtitle">${ _("User appliance list") }</h3>
-    % if U.appliances:
-    <div>
-      <table class="ly-table">
-	<thead>
-	  <tr>
-	    <th>${ _("ID") }</th>
-	    <th>${ _("Name") }</th>
-	    <th>${ _("Owner") }</th>
-	    <th>${ _("Catalog") }</th>
-	    <th>${ _("Instances") }</th>
-	    <th>${ _("Aviable") }</th>
-	    <th>${ _("Islocked") }</th>
-	    <th>${ _("Updated") }</th>
-	    <th>${ _("Management") }</th>
-	  </tr>
-	</thead>
-	<tbody>
-	  % for A in U.appliances:
-	  <tr>
-	    <td>${ A.id }</td>
-	    <td><a href="${ reverse_url('admin:appliance') }?id=${ A.id }">${ A.name }</a></td>
-	    <td>
-	      <div class="a-owner">
-		<span class="link"><a href="${ reverse_url('admin:user') }?id=${ A.user.id }">${ A.user.username }</a></span>
-		<span class="uid" style="display:none;">${ A.user.id }</span>
-	      </div>
-	    </td>
-	    <td>${ A.catalog_name }</td>
-	    <td>
-	      % if A.instances:
-	      <a href="${ reverse_url('admin:instance') }?aid=${ A.id }">${ len(A.instances) }</a>
-	      % endif
-	    </td>
-	    <td><input type="checkbox"
-		     % if A.isuseable:
-		     checked="checked"
-		     % endif
-		     onclick="simpleToggleCheckbox( this, '${ reverse_url('appliance:isuseable', A.id) }', '#app-isuseable-notify')" />
-	    </td>
-	    <td><input type="checkbox"
-		     % if A.islocked:
-		     checked="checked"
-		     % endif
-		     onclick="simpleToggleCheckbox( this, '${ reverse_url('appliance:islocked', A.id) }', '#app-islocked-notify')" />
-	    </td>
-	    <td>${ ftime(A.updated) }</td>
-	    <td><a class="red-submit" href="${ reverse_url('appliance:delete', A.id) }">${ _("Delete") }</a></td>
-	  </tr>
-	  % endfor
-	</tbody>
-      </table>
-    </div>
-    % else:
-    ${ _("None") }
-    % endif
-  </div>
+<p><i class="icon-edit"></i> <a href="${ reverse_url('admin:user:group:edit') }?id=${ USER.id }">${ _("Edit Groups") }</a></p>
 
-  <div id="tab-content-instance" class="tab-content" style="${ isshow('instance') }">
-    <h3 class="subtitle">${ _("User instance list") }</h3>
-    % if U.instances:
-    <div>
-      <table class="ly-table">
-	<thead>
-	  <tr>
-            <th>${ _("ID") }</th>
-            <th>${ _("Owner") }</th>
-            <th>${ _("Name") }</th>
-            <th>${ _("Isprivate") }</th>
-            <th>${ _("Islocked") }</th>
-	    <th>${ _("Appliance") }</th>
-            <th>${ _("Status") }</th>
-            <th>${ _("Updated") }</th>
-            <th>${ _("Node") }</th>
-	  </tr>
-	</thead>
-	<tbody>
-	  % for I in U.instances:
-	  <tr>
-            <td>${ I.id }</td>
-            <td>
-	      <div class="i-owner">
-		<span class="link"><a href="${ reverse_url('admin:user') }?id=${ I.user.id }">${ I.user.username }</a></span>
-		<span class="uid" style="display:none;">${ I.user.id }</span>
-	      </div>
-	    </td>
-            <td><a href="${ reverse_url('admin:instance') }?id=${ I.id }">${ I.name }</a></td>
-	    <td><input type="checkbox"
-		     % if I.isprivate:
-		     checked="checked"
-		     % endif
-		     onclick="simpleToggleCheckbox( this, '${ reverse_url('instance:isprivate', I.id) }', '#inst-isprivate-notify')" />
-	    </td>
-	    <td><input type="checkbox"
-		       % if I.islocked:
-		       checked="checked"
-		       % endif
-		       onclick="simpleToggleCheckbox( this, '${ reverse_url('instance:islocked', I.id) }', '#inst-islocked-notify')" />
-	    </td>
-	    <td>
-	      <div class="i-app">
-		<span class="link"><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></span>
-		<span class="id" style="display:none;">${ I.appliance_id }</span>
-	      </div>
-	    </td>
-            <td><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" title="${ locale.translate(I.status_string) }"/></td>
-            <td>${ ftime(I.updated) }</td>
-            <td>
-              % if I.node and I.is_running:
-              <a href="${ reverse_url('admin:node') }?id=${ I.node_id }&action=view">${ I.node.ip }</a>
-              % else:
-              ${ _("None") }
-              % endif
-            </td>
-	  </tr>
-	  % endfor
-	</tbody>
-      </table>
-    </div>
-    % else:
-    ${ _("None") }
-    % endif
-  </div>
-
-  <div id="tab-content-group" class="tab-content" style="${ isshow('group') }">
-    <h3 class="subtitle">${ _("Group & Permission") }</h3>
-
-    % if U.groups:
-    <table class="kv">
-      <thead>
+% if USER.groups:
+<table class="table">
+  <thead>
 	<tr>
 	  <th>${ _("Group") }</th>
 	  <th>${ _("Permissions") }</th>
 	</tr>
-      </thead>
-      <tbody>
-	% for G in U.groups:
+  </thead>
+  <tbody>
+	% for G in USER.groups:
 	<tr>
-          <td><a href="${reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></td>
-          <td class="have-table">
-	    <table class="inner-table">
-	      <tbody>
-		% for P in G.permissions:
-		<tr>
-		  <td><a href="${ reverse_url('admin:permission') }?id=${ P.id }">${ P.codename }</a></td>
-		  <td>${ P.name }</td>
-		</tr>
-		% endfor
-	      </tbody>
-	    </table>
-          </td>
+	  <td><a href="${reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></td>
+	  <td>
+		<ul>
+		  % for P in G.permissions:
+		  <li><a href="${ reverse_url('admin:permission') }?id=${ P.id }">${ P.codename }</a></li>
+		  % endfor
+		</ul>
+	  </td>
 	</tr>
 	% endfor
-      </tbody>
-    </table>
-    % else:
-    <p>${ _("User has no group!") }</p>
-    % endif
-
-    <div class="manage-content">
-      <a class="blue-submit" href="${ reverse_url('admin:user') }?id=${ U.id }&action=edit_groups">${ _("Edit Groups") }</a>
-    </div>
-
-  </div>
+  </tbody>
+</table>
+% else:
+<p>${ _("User has no group!") }</p>
+% endif
 
 
-  <div id="tab-content-job" class="tab-content" style="${ isshow('job') }">
-    <h3 class="subtitle">${ _("Last 10 jobs") }</h3>
-    <p class="manage-content"><a href="${ reverse_url('admin:job') }?user=${ U.id }" target="_blank">${ _("View All Job") }</a></p>
-    <div>
-      <table class="ly-table">
-	<thead>
-	  <tr>
-            <th>${ _("ID") }</th>
-            <th>${ _("User") }</th>
-            <th>${ _("Status") }</th>
-            <th>${ _("Target Type") }</th>
-            <th>${ _("Target ID") }</th>
-            <th>${ _("Action") }</th>
-            <th>${ _("Completed") }</th>
-	  </tr>
-	</thead>
-	<tbody>
-	  % for j in JOB_LIST:
-	  <tr>
-            <td>${ j.id }</td>
-            <td><a href="${ reverse_url('admin:user') }?id=${ j.user.id }">${ j.user.username }</a></td>
-            <td><img src="${ theme_url(j.status_img) }"/>${ locale.translate(j.status_string) }</td>
-            <td>${ j.target_name }</td>
-            <td>${ j.target_url }</a></td>
-            <td>${ j.action_string }</td>
-            <td>${ htime(j.ended) }</td>
-	  </tr>
-	  % endfor
-	</tbody>
-      </table>
-    </div>
-  </div>
-
-  <div id="tab-content-other" class="tab-content" style="${ isshow('other') }">
-    <table class="kv">
-      <tbody>
-	<tr>
-	  <td>${ _("IS LOCKED ?") }</td>
-	  <td><input type="checkbox"
-		     % if U.islocked:
-		     checked="checked"
-		     % endif
-		     onclick="simpleToggleCheckbox( this, '${ reverse_url('account:islocked', U.id) }', '#islocked-notify')" /></td>
-	</tr>
-      </tbody>
-    </table>
-
-    <p class="manage-content">
-      <a class="blue-submit" href="${ reverse_url('admin:user') }?id=${ U.id }&action=reset_password">${ _("Reset Password") }</a>
-      <a class="red-submit" href="${ reverse_url('account:delete', U.id) }" onclick="deleteAccountConfirm( this ); return false;" target="_blank">${ _("Delete Accout") }</a>
-    </p>
-
-    <div id="account-delete-confirm-dialog" style="display:none;">
-      <table class="vertical-align">
-	<tr>
-	  <td><img class="ywarn-img" src="${ theme_url('img/warning48.png') }"/></td>
-	  <td><span class="ywarn">${ _("Wait! All the user data will be lost after account is deleted.") }</span></td>
-	</tr>
-      </table>
-    </div>
-
-  </div>
-
-</div>
-<script type="text/javascript">
-  showTab();
-</script>
-
-<script type="text/javascript">
-function deleteAccountConfirm( obj ) {
-
-    var $obj = $(obj);
-
-    $("#account-delete-confirm-dialog").dialog({
-	title: "${ _('Are you sure ?') }",
-	resizable: false,
-	height: "auto",
-	minWidth: 520,
-	modal: true,
-	buttons: {
-	    "${ _('Cancel') }": function() {
-		$( this ).dialog( "close" );
-	    },
-	    "${ _('Delete Account !') }": function() {
-		$.ajax({
-		    url: $obj.attr("href"),
-		    type: "GET",
-		    success: function(data) {
-			$(data).dialog({
-			    show: "slow",
-			    minWidth: 520,
-			    modal: true
-			});
-		    }
-		});
-		$( this ).dialog( "close" );
-	    }
-	},
-        close:function(){
-            $( this ).dialog("destroy");
-        }
-    });
-
-    return false;
-
-}
-</script>
-
-<div id="islocked-notify" style="display:none">
-  <div id="basic-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <p>${ _("Toggle Account islocked status Success") }</p>
-  </div>
-  <div id="error-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <h1>${ _("Toggle Account islocked status Failed") }</h1>
-    <p>#{text}</p>
-  </div>
-</div>
-
-<div id="app-islocked-notify" style="display:none">
-  <div id="basic-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <p>${ _("Toggle Appliance islocked status Success") }</p>
-  </div>
-  <div id="error-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <h1>${ _("Toggle Appliance islocked status Failed") }</h1>
-    <p>#{text}</p>
-  </div>
-</div>
-
-<div id="app-isuseable-notify" style="display:none">
-  <div id="basic-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <p>${ _("Toggle Appliance isuseable status Success") }</p>
-  </div>
-  <div id="error-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <h1>${ _("Toggle Appliance isuseable status Failed") }</h1>
-    <p>#{text}</p>
-  </div>
-</div>
-
-<div id="inst-islocked-notify" style="display:none">
-  <div id="basic-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <p>${ _("Toggle Instance islocked status Success") }</p>
-  </div>
-  <div id="error-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <h1>${ _("Toggle Instance islocked status Failed") }</h1>
-    <p>#{text}</p>
-  </div>
-</div>
-
-<div id="inst-isprivate-notify" style="display:none">
-  <div id="basic-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <p>${ _("Toggle Instance isprivate status Success") }</p>
-  </div>
-  <div id="error-template">
-    <a class="ui-notify-cross ui-notify-close" href="#">x</a>
-    <h1>${ _("Toggle Instance isprivate status Failed") }</h1>
-    <p>#{text}</p>
-  </div>
-</div>
+<p><a class="btn btn-danger" href="${ reverse_url('admin:user:delete') }?id=${ USER.id }"><i class="icon-trash"></i> ${ _("Delete This User") }</a></p>
 
 </%block>

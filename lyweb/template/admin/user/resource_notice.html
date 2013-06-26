@@ -1,0 +1,25 @@
+<h1>${ _("Your resource has been changed") }</h1>
+
+<p>${ _("Your currently resources: ") }</p>
+
+<table>
+  <thead>
+	<tr>
+	  <th>${ _("CPU") }</th>
+	  <th>${ _("Memory") }</th>
+	  <th>${ _("Storage") }</th>
+	  <th>${ _("Instance") }</th>
+	</tr>
+  </thead>
+  <tbody>
+	<tr>
+	  <td>${ USER.profile.cpu_total } ${ _("core") }</td>
+	  <td>${ USER.profile.memory_total } M</td>
+	  <td>${ USER.profile.storage_total } G</td>
+	  <td>${ USER.profile.instance_total }</td>
+	</tr>
+  </tbody>
+</table>
+
+
+<p>${ _("Visit ") } <a href="${ account_url }">${ _("My Account") }</a></p>

@@ -1,0 +1,46 @@
+<%inherit file="instance_base.html"/>
+
+<%block name="submain">
+<div id="instance-create-form">
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Create A New Instance") }</legend>
+
+	  <div class="row-fluid">
+		<div class="span4">
+		  % if appliance:
+		  <div class="text-center">
+			<img class="app-logo" src="${ appliance.logourl }"/>
+			<h3>${ appliance.name }</h3>
+			<p>${ appliance.summary }</p>
+		  </div>
+		  % else:
+		  ${ form.appliance.label }	${ form.appliance() }
+		  ${ form.html_errors( form.appliance.errors ) }
+		  % endif
+		</div>
+
+		<div class="span8">
+
+		  ${ form.name.label } ${ form.name() }
+		  ${ form.html_errors( form.name.errors ) }
+
+		  ${ form.cpus.label } ${ form.cpus() }
+		  ${ form.html_errors( form.cpus.errors ) }
+
+		  ${ form.memory.label } ${ form.memory() }
+		  ${ form.html_errors( form.memory.errors ) }
+
+		  <label for="isprivate">
+			<input id="isprivate" type="checkbox" name="isprivate">${ _("Is private ?") }</label>
+
+		  ${ form.html_errors( form.isprivate.errors ) }
+
+		  <br>
+		  <button type="submit" class="btn btn-primary btn-large">${ _("Create Instance") }</button>
+		</div>
+	  </div>
+	</fieldset>
+  </form>
+</div>
+</%block>

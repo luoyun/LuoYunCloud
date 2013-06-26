@@ -1,10 +1,10 @@
 # coding: utf-8
 
 import logging, datetime, time, re
-from lycustom import LyRequestHandler
+from lycustom import RequestHandler
 from tornado.web import authenticated, asynchronous
 
-from app.account.models import User, Group, Permission
+from app.auth.models import User, Group, Permission
 from app.node.models import Node
 from app.instance.models import Instance
 
@@ -14,7 +14,7 @@ from lycustom import has_permission
 import settings
 
 
-class NodeManagement(LyRequestHandler):
+class NodeManagement(RequestHandler):
 
 
     @has_permission('admin')
@@ -25,7 +25,7 @@ class NodeManagement(LyRequestHandler):
 
         node_id = self.get_argument('id', 0)
         if node_id:
-            self.node = self.db2.query(Node).get( node_id )
+            self.node = self.db.query(Node).get( node_id )
             if not self.node:
                 self.write( self.trans(_('No such node')) % node_id )
                 return self.finish()
@@ -59,10 +59,10 @@ class NodeManagement(LyRequestHandler):
 
     def get_index(self):
 
-        nodes = self.db2.query(Node).order_by(asc(Node.id)).all()
+        nodes = self.db.query(Node).order_by(asc(Node.id)).all()
         run_status = settings.INSTANCE_SLIST_RUNING
         for N in nodes:
-            il = self.db2.query(Instance.id).filter(
+            il = self.db.query(Instance.id).filter(
                 Instance.node_id == N.id )
             N.instances_sum = il.count()
             N.instances_running_sum = il.filter(
@@ -80,7 +80,7 @@ class NodeManagement(LyRequestHandler):
 
     def get_instances(self):
 
-        instances = self.db2.query(Instance).filter(
+        instances = self.db.query(Instance).filter(
             Instance.node_id == self.node.id
             ).order_by('id').all()
 

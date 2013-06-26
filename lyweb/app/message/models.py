@@ -1,6 +1,6 @@
 from datetime import datetime
-from lyorm import ORMBase
-from app.account.models import User
+from yweb.orm import ORMBase
+from app.auth.models import User
 
 from sqlalchemy import Column, Integer, BigInteger, String, \
     Sequence, DateTime, Table, ForeignKey, Boolean, Text

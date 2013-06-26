@@ -1,21 +1,23 @@
-import os, json, logging
+import os
+import json
+import logging
+import datetime
 
-from datetime import datetime
-from lyorm import ORMBase
+from yweb.orm import ORMBase
 
 from sqlalchemy import Column, Integer, String, \
     Sequence, DateTime, Text, ForeignKey, Boolean
 
 from sqlalchemy.orm import backref,relationship
 
+from app.auth.utils import enc_shadow_passwd
+from app.site.models import SiteConfig
+
 import settings
+
 
 from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'tables'])
-
-
-import Image
-from yimage import watermark
 
 
 INSTANCE_STATUS_SHORT_STR = [
@@ -30,8 +32,23 @@ INSTANCE_STATUS_SHORT_STR = [
     ( 245, _('need query') ),
     ( 255, _('disk not exist') ) ]
 
+INSTANCE_STATUS_CLASS = {
+    0: ('#FFCC33', 'icon-exclamation-sign'),
+    1: ('#999999', 'icon-cloud'),
+    2: ('#CC0000', 'icon-off'),
+    3: ('#99CCFF', 'icon-spinner icon-spin'),
+    4: ('#6699FF', 'icon-spinner icon-spin'),
+    5: ('#66CC00', 'icon-ok-sign'),
+    9: ('red', 'icon-pause'),
+    settings.INSTANCE_DELETED_STATUS: ('', 'icon-remove'),
+    245: ('#FF9900', 'icon-question-sign'),
+    255: ('#FF0000', 'icon-bolt'),
+}
+
 
 class Instance(ORMBase):
+
+    _config_dict = {}
 
     __tablename__ = 'instance'
 
@@ -43,8 +60,8 @@ class Instance(ORMBase):
     description = Column( Text() )
     logo = Column( String(64) )
 
-    cpus = Column( Integer, default=1 )
-    memory = Column( Integer, default=256 )
+    cpus = Column( Integer, default=0 )
+    memory = Column( Integer, default=0 )
 
     user_id = Column( ForeignKey('auth_user.id') )
     user = relationship("User",backref=backref('instances',order_by=id) )
@@ -65,14 +82,11 @@ class Instance(ORMBase):
     isprivate = Column( Boolean, default = True )
     ischanged = Column( Boolean, default = False )
 
-    created = Column( DateTime, default=datetime.now )
-    updated = Column( DateTime, default=datetime.now )
+    created = Column( DateTime, default=datetime.datetime.now )
+    updated = Column( DateTime, default=datetime.datetime.now )
 
     lastjob_id = Column( ForeignKey('job.id') )
     lastjob = relationship("Job")
-
-    subdomain = Column( String(32), unique = True )
-
 
     def __init__(self, name, user, appliance):
         self.name = name
@@ -91,94 +105,6 @@ class Instance(ORMBase):
                 'webssh': { 'status': 'enable',
                             'port': 8001 }
                 } )
-
-    def get_network_count(self):
-        config = json.loads( self.config )
-        network = config.get('network', [])
-        return len(network)
-
-    def get_network(self, index=1):
-        config = json.loads( self.config )
-        network = config.get('network', [])
-        count = len(network)
-        if index > count or index < 1:
-            return {}
-
-        return network[index-1]
-
-
-    def set_network(self, nic_config, index=1):
-        config = json.loads( self.config )
-        network = config.get('network', [])
-
-        if network:
-            count = len(network)
-            if index < 1:
-                return False
-            elif index <= count:
-                network[index-1] = nic_config
-            else:
-                network.append(nic_config)
-        else:
-            network = [nic_config]
-
-        config['network'] = network
-        self.config = json.dumps(config)
-
-        # TODO: set status change flag
-        if self.is_running:
-            self.ischanged = True
-
-        return True
-
-    def clean_network(self, index):
-        config = json.loads( self.config )
-        network = config.get('network', [])
-        count = len(network)
-        if index > count or index < 1:
-            return False
-
-        if index == 1:
-            ip = network[0].get('ip')
-            if ip:
-                for x in self.ips:
-                    if ip == x.ip:
-                        x.instance_id = None
-                        x.updated = datetime.now()
-                        break
-
-            network[0] = {'type': 'default', 'mac': self.mac}
-
-        else:
-            del network[index-1]
-
-        config['network'] = network
-        self.config = json.dumps(config)
-
-        # TODO: set status change flag
-        if self.is_running:
-            self.ischanged = True
-
-        return True
-
-
-    def get_config(self, key=None, value=None):
-        config = json.loads(self.config) if self.config else {}
-
-        if config:
-            return config.get(key, value)
-
-        return None
-
-    def set_config(self, key, value):
-        config = json.loads(self.config) if self.config else {}
-        config[key] = value
-        self.config = json.dumps(config)
-        self.update_config()
-
-    def update_config(self):
-        if self.is_running:
-            self.ischanged = True
 
     def __unicode__(self):
         return self.name
@@ -204,48 +130,29 @@ class Instance(ORMBase):
         return INSTANCE_STATUS_STR.get( self.status, _('Unknown Status') )
 
     @property
-    def job_status_string(self):
+    def lastjob_status_string(self):
         if self.lastjob:
             return self.lastjob.status_string
+        return ''
 
     @property
     def lastjob_status_id(self):
         if self.lastjob:
             return self.lastjob.status
         else:
+            return 9999
+
+    @property
+    def lastjob_status_icon(self):
+        if self.lastjob:
+            return self.lastjob.status_icon
+        else:
             return ''
 
-    @property
-    def lastjob_imgurl(self):
-        if self.lastjob:
-            if self.lastjob.completed:
-                if self.lastjob.status >= 600:
-                    return '%s.png' % self.lastjob.id
-                else:
-                    return 'completed.png'
-            else:
-                return 'running.gif'
-        else:
-            return 'nojob.png'
-        
-
-    # TODO: stop and run check should merge
-    #       should check more ? 
-    @property
-    def can_stop(self):
-        return self.status in [0, 3, 4, 5, 9, 245]
-
-    @property
-    def can_run(self):
-        return self.status in [1, 2, 255]
 
     @property
     def is_running(self):
         return self.status in [3, 4, 5]
-
-    @property
-    def is_delete(self):
-        return self.status == settings.INSTANCE_DELETED_STATUS
 
     @property
     def need_query(self):
@@ -269,13 +176,11 @@ class Instance(ORMBase):
 
     @property
     def domain(self):
-        if self.config:
-            config = json.loads(self.config)
-            if 'domain' in config.keys():
-                domain = config['domain']
-                if 'name' in domain.keys():
-                    return domain['name']
-        return None
+
+        for D in self.domains:
+            return D.domain
+
+        return self.default_domain
 
 
     @property
@@ -284,17 +189,14 @@ class Instance(ORMBase):
 
         ip = None
 
-        if self.is_running and self.ip:
-            ip = self.ip
+        if self.is_running and self.ip and self.ip != '0.0.0.0':
+            return self.ip
 
-        if not ip:
-            config = json.loads(self.config)
-            if 'network' in config.keys():
-                network = config['network'][0]
-                if 'ip' in network.keys():
-                    ip = network['ip']
+        for IP in self.ips:
+            return IP.ip
 
         return ip
+
 
     @property
     def work_ip(self):
@@ -303,23 +205,15 @@ class Instance(ORMBase):
         else:
             return ''
 
-
-    @property
-    def storage(self):
-        config = json.loads(self.config)
-        if 'storage' in config.keys():
-            storage = config['storage'][0]
-            return int(storage.get('size', 0))
-
-        return 0
-
-
     @property
     def description_html(self):
         return YMK.convert( self.description )
 
     @property
     def logourl(self):
+        # TODO: use application logo default
+        if not self.logo:
+            return self.appliance.logourl
 
         if os.path.exists(self.logopath):
             return os.path.join(settings.STATIC_URL, 'instance/%s/%s' % (self.id, settings.INSTANCE_LOGO_NAME))
@@ -335,36 +229,6 @@ class Instance(ORMBase):
     def logopath(self):
         return os.path.join( self.logodir, settings.INSTANCE_LOGO_NAME )
 
-    def save_logo(self):
-        ''' Create logo '''
-
-        if not os.path.exists(self.appliance.p_logo_raw):
-            return logging.warning('appliance %s has not logo.' % self.appliance_id)
-
-        # make sure dir is exist
-        if not os.path.exists(self.logodir):
-            try:
-                os.makedirs(self.logodir)
-            except Exception, e:
-                return logging.error('create instance logo dir "%s" failed: %s' % (self.logodir, e))
-
-
-        try:
-
-            I = Image.open(self.appliance.p_logo_raw)
-
-            if os.path.exists(settings.INSTANCE_LOGO_MARK):
-                M = Image.open(settings.INSTANCE_LOGO_MARK)
-                position = ( (I.size[0] - M.size[0]) / 2,
-                             I.size[1] - M.size[1] )
-                img = watermark(I, M, position, 0.3)
-                img.save( self.logopath )
-            else:
-                I.save( self.logopath )
-
-        except Exception, e:
-
-            logging.error('create instance logo failed: %s' % e)
 
     # TODO: a temp hack
     # key format =>  key:vdi_port:rx_bytes:rx_pkts:tx_bytes:tx_pkts
@@ -398,4 +262,149 @@ class Instance(ORMBase):
             return int(tx)
         except:
             return 0
+
+
+    @property
+    def status_icon(self):
+        # a class for bootstrap style
+
+        color, _class =  INSTANCE_STATUS_CLASS.get(
+            self.status, ('red', 'icon-exclamation-sign'))
+
+        return '<i style="color: %s;" class="%s"></i>' % (
+            color, _class )
+
+        
+    def get(self, name, default=None):
+
+        if not self._config_dict:
+            self._config_dict = json.loads(self.config) if self.config else {}
+
+        return self._config_dict.get(name, default)
+
+
+    def set(self, item, value):
+
+        config = json.loads(self.config) if self.config else {}
+        config[item] = value
+
+        self.config = json.dumps(config)
+        self._config_dict = config
+        self.updated = datetime.datetime.now()
+
+    def delete(self, item):
+        config = json.loads(self.config) if self.config else {}
+        if item in config:
+            del config[item]
+
+            self.config = json.dumps(config)
+            self._config_dict = config
+            self.updated = datetime.datetime.now()
+
+    def update_network(self):
+        # TODO: support multi-network
+        network = []
+        nameservers = ""
+        domain = self.get('domain', {})
+        domain['ip'] = ''
+
+        for ip in self.ips:
+            network.append({
+                    "ip": ip.ip,
+                    "mac": self.mac,
+                    "type": "default",
+                    "netmask": ip.network.netmask,
+                    "gateway": ip.network.gateway,
+                    "nameservers": ip.network.nameservers,
+                    })
+            # TODO
+            if ip.network.nameservers:
+                nameservers = ip.network.nameservers
+
+            # TODO
+
+            domain['ip'] = ip.ip
+            domain['name'] = self.domain
+
+        self.set('network', network)
+        self.set('nameservers', nameservers)
+        self.set('domain', domain)
+
+        if self.is_running:
+            self.ischanged = True
+
+        self.updated = datetime.datetime.now()
+
+
+    def update_storage(self):
+
+        storage = []
+
+        for S in self.storages:
+
+            storage.append({
+                    "type": "disk",
+                    "size": S.size,
+                    })
+
+        if storage:
+            self.set('storage', storage)
+        else:
+            self.delete('storage')
+
+    def set_root_password(self, password):
+        root_passwd = enc_shadow_passwd( password )
+        self.set('passwd_hash', root_passwd)
+
+
+    @property
+    def storage(self):
+        s = 0
+        for S in self.storages:
+            s += S.size
+
+        return s
+
+    @property
+    def use_global_passwd(self):
+        return self.get('use_global_passwd', True)
+
+
+    @property
+    def default_domain(self):
+        domain = settings.runtime_data.get('domain', None)
+        if not domain:
+            return ''
+            
+        top = domain.get('topdomain')
+        prefix = domain.get('prefix')
+        suffix = domain.get('suffix')
+        return '%s%s%s.%s' % (prefix, self.id, suffix, top)
+
+    @property
+    def action(self):
+        ''' Which action can do for this instance. '''
+
+        a = 'stop'
+
+        if not self.is_running:
+            a = 'run'
+        elif self.need_query:
+            a = 'query'
+
+        return a
+
+
+    @property
+    def action_human(self):
+        ''' Which action can do for this instance. '''
+
+        a = _('Stop My Instance')
+
+        if not self.is_running:
+            a = _('Run My Instance')
+        elif self.need_query:
+            a = _('Query My Instance')
+
+        return a
 
