@@ -251,14 +251,14 @@ default_site_config = [
 
     # registration
     ('registration.status',  True),
-    ('registration.host', 'http://192.168.1.104'),
+    ('registration.host', 'http://127.0.0.1'),
 
     # notice , email
     ('notice.smtp.fromaddr', 'noreply@luoyun.co'),
     ('notice.smtp.server', 'smtp.exmail.qq.com'),
     ('notice.smtp.port', 25),
     ('notice.smtp.username', 'noreply@luoyun.co'),
-    ('notice.smtp.password', 'sajoealimple12367@87xz!$eiageO'),
+    ('notice.smtp.password', 'input you password'),
 ]
 
 default_storage_config = [
