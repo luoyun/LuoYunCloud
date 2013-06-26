@@ -254,11 +254,12 @@ default_site_config = [
     ('registration.host', 'http://127.0.0.1'),
 
     # notice , email
-    ('notice.smtp.fromaddr', 'noreply@luoyun.co'),
-    ('notice.smtp.server', 'smtp.exmail.qq.com'),
+    # default smtp is localhost
+    ('notice.smtp.fromaddr', 'noreply@luoyuncloud.com'),
+    ('notice.smtp.server', '127.0.0.1'),
     ('notice.smtp.port', 25),
-    ('notice.smtp.username', 'noreply@luoyun.co'),
-    ('notice.smtp.password', 'input you password'),
+    ('notice.smtp.username', ''),
+    ('notice.smtp.password', ''),
 ]
 
 default_storage_config = [

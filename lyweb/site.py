@@ -155,9 +155,7 @@ class Application(tornado.web.Application):
                 self.db, 'notice.smtp.password', None)
 
             if ( not smtp_server or
-                 not smtp_port or
-                 not smtp_username or
-                 not smtp_password ):
+                 not smtp_port ):
 
                 from yweb.quemail import DummyMail
                 return DummyMail.get_instance()

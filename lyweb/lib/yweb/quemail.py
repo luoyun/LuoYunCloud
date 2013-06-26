@@ -43,7 +43,7 @@ log = logging.getLogger("QueMail")
 class QueMail(Thread):
     instance = None
 
-    def init(self, smtp_host, smtp_login, smtp_pswd, smtp_port = 25, queue_size = 100):
+    def init(self, smtp_host, smtp_login=None, smtp_pswd=None, smtp_port = 25, queue_size = 200):
         self._queue = Queue(queue_size)
         log.info("Initializing QueMail with queue size %i. Using SMTP server: %s:%i." % (queue_size, smtp_host, smtp_port))
         self.smtp_host = smtp_host
@@ -72,41 +72,48 @@ class QueMail(Thread):
 
     def run(self):
         while not self._do_quit:
-            if not self._queue.empty():
-                log.debug(u"Connecting to SMTP server: %s:%i" % (self.smtp_host, self.smtp_port))
-                smtp = None
-                try:
-                    smtp = smtplib.SMTP()
-                    smtp.connect(self.smtp_host, self.smtp_port)
+            if self._queue.empty():
+                sleep(self.check_interval)
+                continue
+
+            log.debug(u"Connecting to SMTP server: %s:%i" % (self.smtp_host, self.smtp_port))
+            smtp = None
+            try:
+                smtp = smtplib.SMTP()
+                smtp.connect(self.smtp_host, self.smtp_port)
+                if self.smtp_login and self.smtp_password:
                     smtp.login(self.smtp_login, self.smtp_password)
     
-                    while not self._queue.empty():
-                        t = time.time()
-                        eml = self._queue.get()
-                        log.info(u"Sending (qs=%i): %s" % (self._queue.qsize(), eml))
-                        try:
-                            msg = eml.as_rfc_message()
-                            content = msg.as_string()
-                            log.debug(u"with content: %s" % content)
-                            smtp.sendmail(eml.adr_from, eml.adr_to, content) 
-                            log.warning(u"Sent (qs=%i,t=%f): %s" % (self._queue.qsize(),time.time()-t, eml))
-                        except Exception as e:
-                            log.error(u"Exception occured while sending email: %s" % eml)
-                            log.exception(e)
-                            # FIXME not good idea: when exception occured, add email at end of queue
-                            # Jian: TODO
-                            #self._queue.put(eml, False)
-                            #sleep(1)
-                except Exception as e:
-                    log.exception(e)
-                finally:
-                    if smtp:
-                        smtp.quit()
-            sleep(self.check_interval)
+                while not self._queue.empty():
+                    t = time.time()
+                    eml = self._queue.get()
+                    log.info(u"Sending (qs=%i): %s" % (self._queue.qsize(), eml))
+                    try:
+                        msg = eml.as_rfc_message()
+                        content = msg.as_string()
+                        log.debug(u"with content: %s" % content)
+                        smtp.sendmail(eml.adr_from, eml.adr_to, content) 
+                        log.warn(u"Sent (qs=%i,t=%f): %s" % (self._queue.qsize(),time.time()-t, eml))
+                    except Exception as e:
+                        log.error(u"Exception occured while sending email: %s" % eml)
+                        log.exception(e)
+                        # FIXME not good idea: when exception occured, add email at end of queue
+                        # Jian: TODO
+                        #self._queue.put(eml, False)
+                        #sleep(1)
+            except Exception as e:
+                log.exception(e)
+            finally:
+                if smtp:
+                    smtp.quit()
+
         
     def send(self, eml):
-        self._queue.put(eml, True, 5);
+        self._queue.put(eml, True, 30);
         log.debug(u'Accepted (qs=%i): %s' % (self._queue.qsize(), eml))
+
+    def full(self):
+        return self._queue.full()
         
     @classmethod
     def get_instance(cls):

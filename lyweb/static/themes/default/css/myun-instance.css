@@ -1,0 +1,64 @@
+#instance-list .instance {
+	border-bottom: 1px solid #DEDEDE;
+	padding-bottom: 15px;
+	margin-bottom: 20px;
+}
+#instance-list .name {
+	margin: 2px 0;
+}
+#instance-list .summary {
+	margin-bottom: 10px;
+}
+
+
+#my-instance-view {
+	border: 1px solid #DEDEDE;
+	border-radius: 5px;
+	margin-bottom: 30px;
+}
+#main-tabs > li:first-child {
+	padding-left: 38px;
+}
+#main-tab-content {
+	padding-left: 42px;
+	padding-right: 42px;
+}
+#my-instance-view .the-head {
+	padding: 20px;
+	margin-bottom: 30px;
+}
+#my-instance-view .the-head .logo {
+	width: 128px;
+	margin-top: 20px;
+}
+#my-instance-view .the-head dl {
+	margin-top: 15px;
+	margin-bottom: 0px;
+}
+#my-instance-view .the-head dt {
+	color: #3399CC;
+}
+#instance-life-control-btn {
+	margin: 20px auto 30px;
+	height: 38px;
+/*	position: absolute;*/
+}
+#instance-life-control-btn i {
+/*	z-index: 3;
+	position: relative;
+	top: 10px;
+	left: 168px;*/
+	cursor: pointer; cursor: hand; 
+}
+#instance-life-control-btn i.hover {
+	font-size: 18px;
+/*	top: 6px;
+	left: 162px;*/
+}
+#instance-status-info {
+/*	margin-top: 90px;*/
+}
+#instance-create-form .app-logo {
+	width: 136px;
+	height: 136px;
+}
