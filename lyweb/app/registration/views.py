@@ -94,8 +94,7 @@ class Register(AccountRequestHandler):
                 self.db.add(K)
 
             self.db.commit()
-            # TODO: sendmail
-            self.sendmail(K)
+            self.send_mail(K)
             return self.render('registration/apply_complete.html', **self.d)
 
         self.render(self.template, **self.d)
@@ -133,7 +132,7 @@ class Register(AccountRequestHandler):
         self.render(self.template, **self.d)
 
 
-    def sendmail(self, _apply):
+    def send_mail(self, _apply):
 
         host = SiteConfig.get(
             self.db, 'registration.host', 'http://127.0.0.1')
@@ -149,7 +148,7 @@ class Register(AccountRequestHandler):
         welcome = self.db.query(SiteLocaleConfig).filter(
             and_(SiteLocaleConfig.key == 'registration.email.welcome',
                  SiteLocaleConfig.language_id == self.language.id)).first()
-        welcome_html = welcome.html if welcome else ''
+        welcome_html = welcome.value if welcome else ''
 
         url = host + '/register?key=%s' % _apply.key
 
@@ -158,13 +157,10 @@ class Register(AccountRequestHandler):
 
         body = self.render('registration/apply_email.html', **d)
 
-        adr_from = SiteConfig.get(self.db, 'notice.smtp.fromaddr',
-                                  'localhost@localhost')
+        response = self.sendmsg(
+            uri = 'mailto.address',
+            data = { 'to': _apply.email,
+                     'subject': subject,
+                     'body': body } )
+        return response
 
-        from yweb.quemail import Email
-
-        e = Email( subject=subject, text=body,
-                   adr_to=_apply.email, adr_from=adr_from,
-                   mime_type = 'html' )
- 
-        self.quemail.send( e )

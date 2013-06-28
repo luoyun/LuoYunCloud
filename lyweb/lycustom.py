@@ -84,7 +84,7 @@ class RequestHandler(TornadoRequestHandler):
             show_error = show_error,
             b2s = b2s,
             title = self.title,
-            supported_languages = self.application.supported_languages_list,
+#            supported_languages = self.application.supported_languages_list,
         )
 
         args.update(kwargs)
@@ -184,7 +184,7 @@ class RequestHandler(TornadoRequestHandler):
 
     @property
     def db(self):
-        return self.application.db
+        return self.application.dbsession()
 
     def _job_notify(self, id):
         ''' Notify the new job signal to control server '''
@@ -198,18 +198,6 @@ class RequestHandler(TornadoRequestHandler):
 
         sk.sendall(rqhead)
         sk.close()
-
-    def _job_notify_new(self, ID):
-        ''' Notify the new job signal to control server '''
-
-        from settings import cf
-        if cf.has_option('clc', 'clc_pass'):
-            password = cf.get('clc', 'clc_pass')
-        else:
-            password = 'luoyun'
-
-        d = {'from': 'web', 'to': 'clc', 'password': password, 'jobid': ID}
-        self.application.clcstream.send_msg(d)
 
     def get_no_permission_url(self):
         self.require_setting("no_permission_url", "@has_permission")
@@ -303,21 +291,6 @@ class RequestHandler(TornadoRequestHandler):
     def trans(self, s):
         return self.locale.translate(s)
 
-    def msg2clc(self, key, msg, callback=None):
-        ''' send a message to clc '''
-
-        if not self.application.clcstream:
-            return None, self.trans( _('No clc found !') )
-
-        if not isinstance(msg, dict):
-            return None, self.trans( _('Message must be a dict') )
-
-        if callback:
-            # must add callback handler
-            msg['callback_id'] = self.application.get_unique_id()
-
-        self.application.clcstream.send_msg(key, msg)
-
     def redirect_next(self, url):
         next_url = self.get_argument('next_url', None)
         if next_url:
@@ -325,20 +298,45 @@ class RequestHandler(TornadoRequestHandler):
         else:
             self.redirect( url )
 
-    @property
-    def quemail(self):
-        return self.application.get_quemail()
+#    @property
+#    def quemail(self):
+#        return self.application.get_quemail()
+#
+#    def sendmail(self, subject, body, adr_to, mime_type = 'html'):
+#
+#        adr_from = SiteConfig.get(self.db, 'notice.smtp.fromaddr',
+#                                  'localhost@localhost')
+#
+#        e = Email( subject = subject, text = body, adr_to = adr_to,
+#                   adr_from = adr_from, mime_type = mime_type )
+#
+#        self.quemail.send( e )
 
-    def sendmail(self, subject, body, adr_to, mime_type = 'html'):
 
-        adr_from = SiteConfig.get(self.db, 'notice.smtp.fromaddr',
-                                  'localhost@localhost')
+    def sendmsg(self, uri, data):
 
-        e = Email( subject = subject, text = body, adr_to = adr_to,
-                   adr_from = adr_from, mime_type = mime_type )
+        import zmq
+        context = zmq.Context()
 
-        self.quemail.send( e )
+        #  Socket to talk to server
+        logging.debug("Connecting to lymaster server ...")
+        socket = context.socket(zmq.REQ)
+        socket.connect("tcp://127.0.0.1:1368")
 
+        d = {'uri': uri, 'data': data}
+        import json
+        message = json.dumps( d )
+        
+        socket.send( message )
+
+        #  Get the reply.  
+        message = socket.recv()  
+        logging.debug('Received reply "%s"' % message)
+
+        return message
+
+    def on_finish(self):
+        self.application.dbsession.remove()
 
 
 def show_error( E ):

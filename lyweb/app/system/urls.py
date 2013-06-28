@@ -31,9 +31,6 @@ handlers = [
     url( r'/admin/system/welcome/edit', system.WelcomeNewUserEdit,
          name='system:welcome:edit' ),
 
-    url( r'/admin/system/sendmail', system.SendMail,
-         name='system:sendmail' ),
-
     url( r'/admin/system/trace', system.LyTraceManage, name='admin:system:trace' ),
 
 ]

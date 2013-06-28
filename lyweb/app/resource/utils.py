@@ -22,4 +22,9 @@ def resource_mail_notice(hdr, user, subject=None):
 
     body = hdr.render('admin/user/resource_notice.html', **d)
 
-    hdr.sendmail(subject, body, user.email)
+    response = hdr.sendmsg(
+        uri = 'mailto.address',
+        data = { 'to_user_id': user.id,
+                 'subject': subject,
+                 'body': body } )
+    return response

@@ -27,7 +27,7 @@
 		<a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
 		% endif
 	  </td>
-	  <td><a href="${ reverse_url('system:sendmail') }?totype=user&idlist=${ U.id }" target="_blank">${ U.email }</a></td>
+	  <td>${ U.email }</td>
 	  <td class="time">${ htime(U.last_active) }</td>
     </tr>
     % endfor

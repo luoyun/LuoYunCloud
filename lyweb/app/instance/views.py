@@ -24,7 +24,6 @@ from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
 
 from ytool.pagination import pagination
-from yweb.utils.mail import sendmail
 
 from tool.domain import instance_domain_binding, \
     instance_domain_unbinding

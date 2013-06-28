@@ -178,3 +178,57 @@ class SiteLocaleConfig(ORMBase):
     @property
     def html(self):
         return YMK.convert( self.value )
+
+
+
+SITE_JOB_STATUS = (
+    (1, _('Job is new') ),
+    (2, _('Job is running') ),
+    (3, _('Job is stoped') ),
+    )
+class SiteJob(ORMBase):
+
+    __tablename__ = 'site_job'
+
+    id = Column( Integer, Sequence('site_job_id_seq'), primary_key=True )
+
+    # user is for permission
+    user_id = Column( Integer, ForeignKey('auth_user.id', ondelete='CASCADE') )
+
+    status = Column( Integer, default=1 )
+    desc = Column( String(2048) )
+    text = Column( Text )
+
+    started = Column( DateTime() )
+    updated = Column( DateTime() )
+    created = Column( DateTime(), default=datetime.datetime.now )
+
+
+    def __init__(self, user_id, desc ):
+        self.user_id = user_id
+        self.desc = desc
+
+    def __repr__(self):
+        return "SiteJob <%s>" % self.id
+
+    def update_status(self, text):
+        self.updated = datetime.datetime.now()
+        self.text = text
+
+    def set_started(self, text='started'):
+        self.started = datetime.datetime.now()
+        self.updated = datetime.datetime.now()
+        self.text = text
+        self.status = 2
+
+    def set_ended(self, text='ended'):
+        self.updated = datetime.datetime.now()
+        self.text = text
+        self.status = 3
+
+    def is_stoped(self):
+        return self.status == 3
+
+    def is_running(self):
+        return self.status == 2
+

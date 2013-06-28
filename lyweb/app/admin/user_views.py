@@ -505,3 +505,4 @@ class UserDelete(RequestHandler):
         url = self.reverse_url('admin:user')
         self.redirect_next( url )
 
+

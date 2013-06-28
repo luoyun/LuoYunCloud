@@ -1,0 +1,56 @@
+<%inherit file="/admin/account/base.html" />
+
+<%block name="head">
+<link rel="stylesheet" type="text/css" href="${ static_url('markitup/skins/simple/style.css') }" />
+<link rel="stylesheet" type="text/css" href="${ static_url('markitup/sets/markdown/style.css') }" />
+</%block>
+
+<%block name="innav">
+<li><a href="${ reverse_url('admin:user') }">${ _("User") }</a> <span class="divider">/</span></li>
+<li>${ _("Sent Mail") }</li>
+</%block>
+
+<%block name="main">
+
+<script type="text/javascript" src="${ static_url('markitup/jquery.markitup.js') }"></script>
+<script type="text/javascript" src="${ static_url('markitup/sets/markdown/set.js') }"></script>
+
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Send Mail") }</legend>
+	  
+	  <p>${ _("Mail To") }</p>
+
+% if USER_LIST:
+<div>
+  % for U in USER_LIST:
+  <a class="btn" href="${ reverse_url('admin:user:view') }?id=${ U.id }">${ U.username }</a>
+  % endfor
+</div>
+% else:
+<div class="text-warning">${ _("All User") }</div>
+% endif
+<br>
+      ${ form.subject.label } ${ form.subject() }
+      ${ form.html_errors(form.subject.errors) }
+
+      ${ form.body.label } ${ form.body() }
+      ${ form.html_errors(form.body.errors) }
+
+<br>
+
+
+	  <button type="submit" class="btn">${ _("Send Mail") }</button>
+	</fieldset>
+  </form>
+</div>
+
+<script type="text/javascript" >
+   mySettings.previewParserPath = "/t/preview?markup_language=markdown&_xsrf=${ xsrf_cookie }";
+   $(document).ready(function() {
+      $("#body").markItUp(mySettings);
+   });
+</script>
+
+</%block>

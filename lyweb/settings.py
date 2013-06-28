@@ -4,6 +4,7 @@ import os, sys, ConfigParser
 
 IPV4_ONLY=True
 DEBUG=True
+#DEBUG=False
 
 ## Global PATH
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
@@ -117,11 +118,10 @@ ADMIN_USER_LIST_PAGE_SIZE=50
 
 I18N_PATH = os.path.join(PROJECT_ROOT, "locale")
 
-LANGUAGES = (
-    ('zh_CN', u'简体中文'),
-#    ('zh_TW', u'繁體中文'),
-    ('en_US', 'English'),
-)
+LANGUAGES = {
+    "en_US": u"English (US)",
+    "zh_CN": u"\u4e2d\u6587(\u7b80\u4f53)",
+    }
 
 
 MAX_STORAGE_SIZE=60 # 60G

@@ -124,3 +124,12 @@ class OpenIDNewForm(Form):
         if user:
             raise ValidationError( _('This username is occupied.') )
 
+
+
+class MailToForm(Form):
+
+    subject = TextField( _('Subject') )
+    body = TextAreaField( _('Body'), [
+            validators.Length(min=6, max=12000) ] )
+
+    

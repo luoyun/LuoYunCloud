@@ -6,8 +6,8 @@
   % if languages:
   <select class="language-select">
 	<option value="all">${ _("All") }</option>
-	% for L in languages:
-	<option value="${ L.codename }" ${ b2s(L.codename == cur_locale, 'selected="selected"') }>${ L.name }</option>
+	% for code in LANGUAGES:
+	<option value="${ code }" ${ b2s(code == cur_locale, 'selected="selected"') }>${ LANGUAGES[code] }</option>
 	% endfor
   </select>
   % endif

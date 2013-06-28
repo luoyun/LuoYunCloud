@@ -1,0 +1,34 @@
+<%inherit file="../base.html"/>
+
+<%block name="submain">
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>${ _("User ID") }</th>
+      <th>${ _("Status") }</th>
+      <th>${ _("Description") }</th>
+      <th>${ _("Text") }</th>
+      <th>${ _("Started") }</th>
+      <th>${ _("Updated") }</th>
+      <th>${ _("Created") }</th>
+    </tr>
+  </thead>
+  <tbody>
+	% for J in JOB_LIST:
+    <tr>
+      <td><a href="${ reverse_url('admin:site:job:view') }?id=${ J.id }">${ J.id }</a></td>
+	  <td>${ J.user_id }</td>
+      <td>${ J.status }</td>
+	  <td>${ J.desc }</td>
+	  <td>${ J.text }</td>
+	  <td>${ htime(J.started) }</td>
+	  <td>${ htime(J.updated) }</td>
+	  <td>${ htime(J.created) }</td>
+    </tr>
+	% endfor
+  </tbody>
+</table>
+
+</%block>

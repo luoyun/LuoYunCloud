@@ -64,5 +64,10 @@ handlers = [
          admin_views.LocaleConfigDelete,
          name="admin:site:localeconfig:delete" ),
 
+    # site job
+    url( r'/admin/site/job', admin_views.SiteJobIndex,
+         name="admin:site:job" ),
+    url( r'/admin/site/job/view', admin_views.SiteJobView,
+         name="admin:site:job:view" ),
 
 ]

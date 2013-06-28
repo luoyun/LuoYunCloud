@@ -138,7 +138,7 @@ class ResetPassApply(RequestHandler):
                 self.db.add(new)
                 self.db.commit()
 
-                self.sendmail( new )
+                self.send_mail( new )
 
                 t = 'account/reset_password_apply_success.html'
                 return self.render( t, user = user )
@@ -148,7 +148,7 @@ class ResetPassApply(RequestHandler):
         self.render( form = form )
 
 
-    def sendmail(self, _apply):
+    def send_mail(self, _apply):
 
         LID = self.language.id
 
@@ -161,7 +161,6 @@ class ResetPassApply(RequestHandler):
         subject = subject.value if subject \
             else _('Reset your password.')
 
-        
         url = host + self.reverse_url('account:resetpass') \
             + '?key=%s' % _apply.key
 
@@ -170,15 +169,12 @@ class ResetPassApply(RequestHandler):
 
         body = self.render('account/reset_password_email.html', **d)
 
-        adr_from = SiteConfig.get(self.db, 'notice.smtp.fromaddr',
-                                  'localhost@localhost')
-
-        e = Email( subject   = subject, text=body,
-                   adr_to    = _apply.user.email,
-                   adr_from  = adr_from,
-                   mime_type = 'html' )
- 
-        self.quemail.send( e )
+        response = self.sendmsg(
+            uri = 'mailto.address',
+            data = { 'to_user_id': _apply.user_id,
+                     'subject': subject,
+                     'body': body } )
+        return response
 
 
 
@@ -254,8 +250,11 @@ class BaseInfoEdit(RequestHandler):
     def prepare(self):
 
         self.language_list = []
-        for L in self.application.supported_languages_list:
-            self.language_list.append( (str(L.id), L.name) )
+        for codename in settings.LANGUAGES:
+            L = self.db.query(Language).filter_by(
+                codename = codename).first()
+            if L:
+                self.language_list.append( (str(L.id), L.name) )
 
         self.user = self.db.query(User).get( self.current_user.id )
 

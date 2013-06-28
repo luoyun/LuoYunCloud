@@ -87,8 +87,8 @@
 		<span class="site-language">
 		  ${ _("Select Language") }
 		  <select class="site-language-select">
-			% for L in supported_languages:
-			<option value="${ L.codename }" ${ b2s(L.codename == locale.code, 'selected="selected"') }>${ L.name }</option>
+			% for code in LANGUAGES:
+			<option value="${ code }">${ LANGUAGES[code] }</option>
 			% endfor
 		  </select>
 		</span>
@@ -98,7 +98,7 @@
 	<script type="text/javascript">
       $('.dropdown-toggle').dropdown();
       $('.subnav').affix();
-	  binding_site_language_select();
+	  binding_site_language_select( "${ locale.code }" );
 	</script>
 
   </body>

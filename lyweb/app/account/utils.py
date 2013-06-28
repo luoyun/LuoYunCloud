@@ -13,5 +13,3 @@ def check_password(raw_password, enc_password):
         return False
     return hsh == encrypt_password(salt, raw_password)
 
-
-    

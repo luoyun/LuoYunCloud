@@ -12,9 +12,14 @@ from sqlalchemy import and_
 
 from ..language.models import Language
 from .models import SiteNav, SiteEntry, SiteArticle, SiteConfig, \
-    SiteLocaleConfig
+    SiteLocaleConfig, SiteJob
 from .forms import SiteNavForm, SiteEntryForm, ArticleForm, \
     ArticleEditForm, SiteConfigForm, SiteLocaleConfigForm
+
+from ytool.pagination import pagination
+
+import settings
+
 
 
 class Index(RequestHandler):
@@ -31,24 +36,19 @@ class NavIndex(RequestHandler):
     @has_permission('admin')
     def get(self):
 
-        supported_languages = self.application.supported_languages
-
-        cur_locale = self.get_argument(
-            'language', self.locale.code )
+        cur_locale = self.get_argument('language', self.locale.code)
 
         navs = self.db.query(SiteNav).order_by( SiteNav.position )
 
-        if cur_locale in supported_languages:
+        if cur_locale in settings.LANGUAGES:
 
-            cur_language = self.db.query(Language).filter_by(
+            L = self.db.query(Language).filter_by(
                 codename = cur_locale ).first()
 
-            if cur_language:
-                navs = navs.filter_by( language_id = cur_language.id )
+            if L:
+                navs = navs.filter_by( language_id = L.id )
 
-        d = { 'languages': supported_languages.values(),
-              'cur_locale': cur_locale,
-              'navs': navs }
+        d = { 'cur_locale': cur_locale, 'navs': navs }
 
         self.render('admin/site/nav.html', **d)
 
@@ -59,8 +59,12 @@ class NavRequestHandler(RequestHandler):
     def prepare(self):
 
         self.language_list = []
-        for L in self.application.supported_languages_list:
-            self.language_list.append( (str(L.id), L.name) )
+
+        for codename in settings.LANGUAGES:
+            L = self.db.query(Language).filter_by(
+                codename = codename).first()
+            if L:
+                self.language_list.append( (str(L.id), L.name) )
 
     # TODO:
     def get_entry_url(self, form):
@@ -376,13 +380,13 @@ class ArticleIndex(RequestHandler):
             d = { 'entry': E }
 
         else:
-            supported_languages = self.application.supported_languages
+            languages = settings.LANGUAGES
 
             cur_locale = self.get_argument(
                 'language', self.locale.code )
 
 
-            if cur_locale in supported_languages:
+            if cur_locale in languages:
 
                 cur_language = self.db.query(Language).filter_by(
                     codename = cur_locale ).first()
@@ -390,7 +394,7 @@ class ArticleIndex(RequestHandler):
                 if cur_language:
                     articles = articles.filter_by( language_id = cur_language.id )
 
-            d = { 'languages': supported_languages.values(),
+            d = { 'languages': languages,
                   'cur_locale': cur_locale }
 
         d['articles'] = articles
@@ -409,8 +413,11 @@ class ArticleRequestHandler(RequestHandler):
             self.entries_list.append( (str(E.id), E.slug) )
 
         self.language_list = []
-        for L in self.application.supported_languages_list:
-            self.language_list.append( (str(L.id), L.name) )
+        for codename in settings.LANGUAGES:
+            L = self.db.query(Language).filter_by(
+                codename = codename).first()
+            if L:
+                self.language_list.append( (str(L.id), L.name) )
 
 
 class ArticleAdd(ArticleRequestHandler):
@@ -631,8 +638,11 @@ class LocaleConfigEdit(RequestHandler):
     def prepare(self):
 
         self.language_list = []
-        for L in self.application.supported_languages_list:
-            self.language_list.append( (str(L.id), L.name) )
+        for codename in settings.LANGUAGES:
+            L = self.db.query(Language).filter_by(
+                codename = codename).first()
+            if L:
+                self.language_list.append( (str(L.id), L.name) )
 
 
     def get(self):
@@ -698,3 +708,71 @@ class LocaleConfigDelete(RequestHandler):
             self.redirect_next( self.reverse_url('admin:site:localeconfig') )
         else:
             self.write( _('No such locale config : %s') % ID )
+
+
+
+class SiteJobIndex(RequestHandler):
+
+    title = _('Site Job')
+
+    @has_permission('admin')
+    def get(self):
+
+        by = self.get_argument('by', 'id')
+        order = self.get_argument_int('order', 1)
+        status = self.get_argument('status', None)
+        page_size = self.get_argument_int('sepa', 50)
+        cur_page = self.get_argument_int('p', 1)
+
+        start = (cur_page - 1) * page_size
+        stop = start + page_size
+
+        jobs = self.db.query(SiteJob)
+
+        if by not in ['id', 'created', 'updated']:
+            by = 'id';
+
+        by = desc(by) if order else asc(by)
+        jobs = jobs.order_by( by )
+
+        total = jobs.count()
+
+        jobs = jobs.slice(start, stop)
+
+        page_html = pagination(self.request.uri, total, page_size, cur_page)
+
+        d = { 'PAGE_HTML': page_html,
+              'status': status,
+              'JOB_LIST': jobs }
+
+        self.render('admin/site/job/index.html', **d)
+
+
+class SiteJobView(RequestHandler):
+
+    title = _('Site Job View')
+
+    @has_permission('admin')
+    def get(self):
+
+        ID = self.get_argument_int('id', None)
+        if not ID:
+            return self.write( _('Give me site job id please.') )
+
+        J = self.db.query(SiteJob).get( ID )
+        if not J:
+            return self.write( _('Can not find site job %s') % ID )
+
+        ajax = self.get_argument('ajax', False)
+
+        if ajax:
+            d = { 'id': J.id,
+                  'user_id': J.user_id,
+                  'status': J.status,
+                  'desc': J.desc,
+                  'text': J.text }
+            self.write( d )
+
+        else:
+            d = { 'JOB': J }
+            self.render('admin/site/job/view.html', **d)

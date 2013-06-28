@@ -1,6 +1,7 @@
 from tornado.web import url
 from . import views
 from . import user_views as user
+from . import admin_views as admin
 
 handlers = [
 
@@ -52,5 +53,10 @@ handlers = [
 
     # user
     url( r'/user/view', user.View, name='user:view' ),
+
+
+    # admin
+    url(r'/admin/account/mailto', admin.MailTo,
+        name='admin:account:mailto'),
 
 ]
