@@ -118,6 +118,9 @@ class ResourceEdit(RequestHandler):
             self.db.commit()
 
             resource.user.profile.update_resource_total()
+            # TODO: a hack for sync of user resource
+            resource.user.profile.update_resource_used()
+            self.db.commit()
 
             # count be choices, email notice
             resource_mail_notice(self, resource.user)

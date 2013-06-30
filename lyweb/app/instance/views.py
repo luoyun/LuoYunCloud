@@ -453,6 +453,11 @@ class LifeControl(LifeHandler):
 
         profile = self.current_user.profile
 
+        # TODO: a temp hack for sync user resource
+        profile.update_resource_total()
+        profile.update_resource_used()
+        self.db.commit()
+
         if not ( profile and
                  profile.cpu_remain >= I.cpus and
                  profile.memory_remain >= I.memory ):
