@@ -81,6 +81,9 @@ tornado_settings = {
 
 class Application(tornado.web.Application):
 
+    _clcsock = None
+    _clcstream = None
+
     def __init__(self):
 
         # SQLAlchemy connect
@@ -92,6 +95,52 @@ class Application(tornado.web.Application):
 
         tornado.web.Application.__init__(
             self, site_handlers, **tornado_settings )
+
+
+    @property
+    def clcstream(self):
+        if not self._clcstream and self.clcsock:
+            from lyc.handler import MSGStream
+            self._clcstream = MSGStream(self.clcsock)
+        return self._clcstream
+
+    @property
+    def clcsock(self):
+        if self._clcsock:
+            return self._clcsock
+
+        host = '127.0.0.1'
+        port = 1368
+
+        ssl_options = {'ca_certs': self._get_ca_certs(host, port)}
+
+        from lyc.netutil import connect_to_server
+        self._clcsock = connect_to_server(host, port, ssl_options)
+
+        # TODO: auth
+
+        return self._clcsock
+
+
+    def _get_ca_certs(self, host, port):
+        ca_path = os.path.join('/tmp', 'ca.pem')
+        if os.path.exists(ca_path):
+            logging.debug('%s exists, use it as certfile', ca_path)
+            return ca_path
+
+        try:
+            import ssl
+            ca = ssl.get_server_certificate((host, port))
+            logging.debug('get_server_certificate from %s:%s success.', host, port)
+        except Exception, e:
+            logging.error('get_server_certificate failed: %s', e)
+            return
+
+        f = open(ca_path, 'w')
+        f.write(ca)
+        f.close()
+        return ca_path
+
 
 
 

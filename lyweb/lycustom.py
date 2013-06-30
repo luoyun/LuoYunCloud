@@ -298,42 +298,23 @@ class RequestHandler(TornadoRequestHandler):
         else:
             self.redirect( url )
 
-#    @property
-#    def quemail(self):
-#        return self.application.get_quemail()
-#
-#    def sendmail(self, subject, body, adr_to, mime_type = 'html'):
-#
-#        adr_from = SiteConfig.get(self.db, 'notice.smtp.fromaddr',
-#                                  'localhost@localhost')
-#
-#        e = Email( subject = subject, text = body, adr_to = adr_to,
-#                   adr_from = adr_from, mime_type = mime_type )
-#
-#        self.quemail.send( e )
-
 
     def sendmsg(self, uri, data):
 
-        import zmq
-        context = zmq.Context()
+        clcstream = self.application.clcstream
 
-        #  Socket to talk to server
-        logging.debug("Connecting to lymaster server ...")
-        socket = context.socket(zmq.REQ)
-        socket.connect("tcp://127.0.0.1:1368")
+        if clcstream:
+            ret = clcstream.send_msg(msg=data, key=uri)
+        else:
+            logging.error( _('Clc connect error.') )
 
-        d = {'uri': uri, 'data': data}
-        import json
-        message = json.dumps( d )
-        
-        socket.send( message )
+        # TODO: reconnect every time
+        self.application._clcsock.close()
+        self.application._clcsock = None
+        self.application._clcstream = None
 
-        #  Get the reply.  
-        message = socket.recv()  
-        logging.debug('Received reply "%s"' % message)
+        return {}
 
-        return message
 
     def on_finish(self):
         self.application.dbsession.remove()

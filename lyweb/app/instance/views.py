@@ -167,9 +167,9 @@ class SingleInstanceStatus(RequestHandler):
         old_is = cs['old_is']
         old_js = cs['old_js']
 
-        # TODO: hack for test I is exists already.
+        # TODO: hack for test I is exists.
         try:
-            I.id
+            I.id and I.vdi_port and I.vdi_ip
         except:
             logging.warn('Instance obj is deleted, can not check status.')
             return
@@ -318,10 +318,31 @@ class LifeHandler(RequestHandler):
             #[Errno 113] No route to host
             # TODO: should be a config value
             job.status = settings.JOB_S_FAILED
-            return self.trans(_("Connect to control server failed: %s")) % e
+            return _("Connect to control server failed: %s") % e
 
         self.db.commit()
+
+        # notice user when instance controled by any other people
+        if self.current_user.id != I.user_id:
+            self.instance_control_notice( I.user, job )
+
         return self.trans(_('Task starts successfully.'))
+
+    def instance_control_notice(self, user, J):
+
+        subject = _('[LYC] Instance was %(action)s by %(who)s') % {
+            'action': J.action_string, 'who': J.user.username }
+
+        d = { 'return_string': True, 'JOB': J }
+        body = self.render('instance/action_notice.html', **d)
+
+
+        response = self.sendmsg(
+            uri = 'mailto.address',
+            data = { 'to_user_id': user.id,
+                     'subject': subject,
+                     'body': body } )
+        return response
 
 
     # TODO: need a new design.

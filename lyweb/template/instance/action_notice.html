@@ -1,0 +1,22 @@
+<h3>${ _("Your instance's status has been changed") }</h3>
+
+<table>
+  <thead>
+	<tr>
+	  <th>${ _("Who") }</th>
+	  <th>${ _("When") }</th>
+	  <th>${ _("Do") }</th>
+	  <th>${ _("Instance") }</th>
+	</tr>
+  </thead>
+  <tbody>
+	<tr>
+	  <td>${ JOB.user.username }</td>
+	  <td>${ ftime(JOB.created) }</td>
+	  <td>${ JOB.action_string }</td>
+	  <td>${ JOB.target_url }</td>
+	</tr>
+  </tbody>
+</table>
+
+

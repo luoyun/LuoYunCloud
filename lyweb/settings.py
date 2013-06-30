@@ -3,8 +3,8 @@
 import os, sys, ConfigParser
 
 IPV4_ONLY=True
-DEBUG=True
-#DEBUG=False
+#DEBUG=True
+DEBUG=False
 
 ## Global PATH
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
