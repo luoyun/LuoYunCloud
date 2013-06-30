@@ -375,7 +375,10 @@ class Instance(ORMBase):
         domain = settings.runtime_data.get('domain', None)
         if not domain:
             return ''
-            
+
+        if not isinstance(domain, dict):
+            return ''
+
         top = domain.get('topdomain')
         prefix = domain.get('prefix')
         suffix = domain.get('suffix')

@@ -20,7 +20,6 @@ import tornado
 from tornado.ioloop import IOLoop, PeriodicCallback
 from tornado.httpserver import HTTPServer
 
-#from yweb.quemail import QueMail
 from app.site.models import SiteConfig
 
 from lycustom import NotFoundHandler
@@ -92,6 +91,7 @@ class Application(tornado.web.Application):
         # TODO: TEST db connect
 
         site_handlers = get_handlers()
+        self.init_runtime_data()
 
         tornado.web.Application.__init__(
             self, site_handlers, **tornado_settings )
@@ -141,6 +141,10 @@ class Application(tornado.web.Application):
         f.close()
         return ca_path
 
+    def init_runtime_data(self):
+        db = self.dbsession()
+        domain = SiteConfig.get(db, 'domain', '')
+        settings.runtime_data['domain'] = json.loads(domain)
 
 
 
