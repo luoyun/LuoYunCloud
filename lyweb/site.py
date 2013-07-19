@@ -38,6 +38,7 @@ def get_handlers():
 
     handlers.extend([
 #            (r'/([^/ ]+)', home_views.GlobalEntry ),
+            (r"/robots.txt", tornado.web.RedirectHandler, {"url": "/static/robots.txt"}),
             (r'/404.html', NotFoundHandler),
             (r'/(.*)', NotFoundHandler),
             ])
@@ -144,7 +145,8 @@ class Application(tornado.web.Application):
     def init_runtime_data(self):
         db = self.dbsession()
         domain = SiteConfig.get(db, 'domain', '')
-        settings.runtime_data['domain'] = json.loads(domain)
+        if domain:
+            settings.runtime_data['domain'] = json.loads(domain)
 
 
 

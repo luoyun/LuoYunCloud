@@ -7,7 +7,7 @@ import app.admin.appliance_views as appliance
 import app.admin.instance_views as instance
 import app.admin.node_views as node
 import app.admin.job_views as job
-import app.admin.wiki_views as wiki
+
 
 
 handlers = [
@@ -50,7 +50,6 @@ handlers = [
 
     url(r'/admin/node', node.NodeManagement, name='admin:node'),
     url(r'/admin/job', job.JobManagement, name='admin:job'),
-    url(r'/admin/wiki', wiki.WikiManagement, name='admin:wiki'),
 
     # instance
     url(r'/admin/instance', instance.Index, name='admin:instance'),

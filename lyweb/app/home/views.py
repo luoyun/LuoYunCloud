@@ -162,3 +162,21 @@ class UploadKindeditor(RequestHandler):
         info = json.dumps(info)
         self.write(info)
 
+
+from markdown import Markdown
+YMK = Markdown(extensions=['fenced_code', 'tables'])
+
+class Preview(RequestHandler):
+
+    def post(self):
+        markup_language = self.get_argument('markup_language', 'markdown')
+        data = self.get_argument('data', None)
+
+        d = { 'title': _('YLinux preview system'),
+              'MARKUP': markup_language, 'BODY': '' }
+
+        if data:
+            if markup_language == 'markdown':
+                d['BODY'] = YMK.convert(data)
+
+        self.render('forum/topic/preview.html', **d)

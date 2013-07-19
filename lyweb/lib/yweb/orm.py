@@ -50,7 +50,7 @@ ORMBase = declarative_base()
 from sqlalchemy.pool import NullPool
 dbengine = create_engine(DB_URI, echo=False)
 
-print dbengine.execute('show transaction isolation level').scalar()
+#print dbengine.execute('show transaction isolation level').scalar()
 
 session_factory = sessionmaker(bind=dbengine)
 Session = scoped_session(session_factory)

@@ -1,0 +1,26 @@
+<%inherit file="/base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${ theme_url('css/forum.css') }" />
+<%block name="subhead"/>
+</%block>
+
+<%block name="main">
+
+<script type="text/javascript" src="${ theme_url('js/forum.js') }?v=20130714"></script>
+
+<div class="min-height600">
+
+  <ul class="breadcrumb">
+	<li><a href="/"><i class="icon-home"></i> ${ _("Home") }</a> <span class="divider">/</span></li>
+	<li><a href="/forum">${ _("Forum") }</a> <span class="divider">/</span></li>
+	<%block name="innav" />
+  </ul>
+
+  <%block name="submain"/>
+
+  <script type="text/javascript">
+	menu_entry_active( "/forum" );
+  </script>
+</div>
+</%block>

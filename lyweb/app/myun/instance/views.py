@@ -626,7 +626,8 @@ class InstancePublicKeyEdit(InstanceActionHandler):
         self.prepare_kwargs['form'] = self.form
 
         key_list = []
-        for K in self.db.query(PublicKey):
+        for K in self.db.query(PublicKey).filter_by(
+            user_id = self.current_user.id):
             key_list.append(
                 (str(K.id), '%s' % K.name) )
 
@@ -960,6 +961,7 @@ class InstanceCreate(RequestHandler):
         passwd = self.current_user.profile.get_root_password()
         if passwd:
             I.set('passwd_hash', passwd)
+            I.set('use_global_passwd', True)
             self.db.commit()
 
         # ssh key

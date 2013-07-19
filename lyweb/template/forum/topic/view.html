@@ -1,0 +1,181 @@
+<%inherit file="../forum_base.html"/>
+
+<%block name="subhead">
+<link rel="stylesheet" href="${ theme_url('markup/%s.css' % BODY_MARKUP) }" />
+<link rel="stylesheet" href="${ theme_url('code/emacs.css') }" />
+<link rel="stylesheet" type="text/css" href="${ static_url('markitup/skins/simple/style.css') }" />
+<link rel="stylesheet" type="text/css" href="${ static_url('markitup/sets/markdown/style.css') }" />
+</%block>
+
+<%block name="innav">
+<li><a href="${ reverse_url('forum:catalog') }?id=${ TOPIC.catalog_id }">${ TOPIC.catalog.name }</a> <span class="divider">/</span></li>
+<li>${ TOPIC.name }</li>
+</%block>
+
+<%block name="submain">
+
+<script type="text/javascript" src="${ static_url('markitup/jquery.markitup.js') }"></script>
+<script type="text/javascript" src="${ static_url('markitup/sets/markdown/set.js') }"></script>
+
+<div style="display:none;">
+  <span id="xsrf-cookie">${ xsrf_cookie }</span>
+</div>
+
+<div id="topic-view" class="row-fluid">
+  <div class="span9">
+	<div class="well text-center">
+      <h2>${ TOPIC.name }</h2>
+	  <div class="vote">
+		<a class="vote-opt" href="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=1"><i class="icon-thumbs-up icon-large"></i> <span class="like value">${ TOPIC.like }</span></a>
+		<a class="vote-opt" href="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=-1"><i class="icon-thumbs-down icon-large"></i> <span class="unlike value">${ TOPIC.unlike }</span></a>
+	  </div>
+	</div>
+    %if TOPIC.summary:
+    <div class="well summary">${ TOPIC.summary }</div>
+    %endif
+
+    <div class="body ${ BODY_MARKUP }">${ TOPIC.body_html }</div>
+
+    %if POSTS:
+    <div class="posts">
+      %for P in POSTS:
+      <div class="post-item row-fluid">
+		<div class="span1 text-center status">
+		  <a name="#post${ P.id }"></a>
+		  <a class="vote-opt" href="${ reverse_url('forum:post:vote') }?id=${ P.id }&vote=1"><i class="icon-thumbs-up icon-large"></i> <span class="like value">${ P.like }</span></a>
+		  <a class="vote-opt" href="${ reverse_url('forum:post:vote') }?id=${ P.id }&vote=-1"><i class="icon-thumbs-down icon-large"></i> <span class="unlike value">${ P.unlike }</span></a>
+		</div>
+		<div class="span11">
+		  <% PP = get_post_parent(P) %>
+		  <div class="title">
+			<i class="icon-user"></i> <a href="${ reverse_url('user:view') }?id=${ P.user_id }">${ P.user.username }</a> 
+			${ htime(P.updated) } 
+		  </div>
+		  % if PP:
+		  <div>
+			<p>@ <a href="${ reverse_url('user:view') }?id=${ PP.user_id }">${ PP.user.username }</a></p>
+			<div class="well">${ PP.body_html }</div>
+		  </div>
+		  % endif
+		  <div class="body">${ P.body_html }</div>
+		  <div class="text-right">
+			% if current_user and P.user_id == current_user.id:
+			<a href="${ reverse_url('forum:post:edit') }?id=${ P.id }"><i class="icon-edit"></i> ${ _("Edit") }</a>
+			% else:
+			<a href="${ reverse_url('forum:post:reply') }?id=${ P.id }"><i class="icon-reply"></i> ${ _("Reply Post") }</a>
+			% endif
+			% if has_permission('admin'):
+			<a class="btn btn-danger" href="${ reverse_url('forum:post:edit') }?id=${ P.id }"><i class="icon-edit"></i> ${ _("Edit") }</a>
+			% endif
+		  </div>
+		</div>
+      </div>
+      %endfor
+      %if POST_TOTAL > 10:
+      <div>${ _("Total Post: ") } ${ POST_TOTAL }, <a href="">${ _("Read More") }</a></div>
+      %endif
+    </div>
+    %endif
+
+	<a name="reply-topic"></a>
+    <div id="topic-reply-content" class="large-table-form c">
+      %if not current_user:
+      <p class="text-warning"><i class="icon-warning-sign"></i> ${ _("You have not login now, can not reply this topic.") } <a href="/login?next=${ request.uri }">${ _("Sign In") }</a> | <a href="/register">${ _("Register") }</a></p>
+      %endif
+      <h2 class="reply">${ _("REPLY: ") } <a class="topic-replyed" href="${ reverse_url('forum:topic:view') }?id=${ TOPIC.id }">${ TOPIC.name }</a></h2>
+      <form method="POST" action="${ reverse_url('forum:topic:reply') }?id=${ TOPIC.id }">${ xsrf_form_html() }
+		<textarea id="reply-body" name="body"></textarea>
+		<button type="submit" class="btn btn-primary">${ _("Reply Topic") }</button>
+      </form>
+    </div>
+
+  </div>
+
+  <div class="span3" style="position: relative;">
+	<div class="well"><i class="icon-user icon-large"></i> <a class="user" href="${ reverse_url('user:view') }?id=${ TOPIC.user_id }">${ TOPIC.user.username }</a></div>
+
+    <table class="kvtable">
+	  <tbody>
+		<tr>
+		  <th>${ _("Visit") }</th>
+		  <td>${ TOPIC.visit }</td>
+		</tr>
+		<tr>
+		  <th>${ _("Created") }</th>
+		  <td>${ ftime(TOPIC.created) }</td>
+		</tr>
+		<tr>
+		  <th>${ _("Updated") }</th>
+		  <td>${ ftime(TOPIC.updated) }</td>
+		</tr>
+	  </tbody>
+    </table>
+
+	% if ( current_user and TOPIC.user_id == current_user.id ) or has_permission('admin'):
+	<br>
+	<p>
+	  <a class="btn" href="${ reverse_url('forum:topic:edit') }?id=${ TOPIC.id }">${ _("Edit") }</a>
+	  <a class="btn btn-danger topic-delete-btn" href="">${ _("Delete") }</a>
+	</p>
+	% endif
+
+    %if TOPIC.tags:
+	<h3><i class="icon-tags"></i> ${ _("Tags") }</h3>
+    <div class="tags">
+      %for T in TOPIC.tags:
+	  <a class="tag" href="${ reverse_url('forum:tag:view') }?id=${ T.id }">${ T.name }</a> x <span class="hit">${ T.hit }</span><br>
+      %endfor
+    </div>
+    %endif
+
+	<br>
+    <div class="bs-docs-sidebar">
+      <ul class="nav nav-list bs-docs-sidenav">
+		<li><a href="${ reverse_url('forum:topic:view') }?id=${ TOPIC.id }&t=source"><i class="icon-eye-open"></i> ${ _("View Source") }</a></li>
+		<li><a href="#reply-topic"><i class="icon-reply"></i> ${ _("Reply Topic") }</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+
+<div id="topic-delete-modal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>${ _("Delete Topic") }</h3>
+  </div>
+  <div class="modal-body">
+    <p>${ _("Did you want delete this topic really ?") }</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">${ _("Cancel") }</a>
+    <a href="${ reverse_url('forum:topic:delete') }?id=${ TOPIC.id }" class="btn btn-danger real-delete">${ _("Delete This Topic") }</a>
+  </div>
+</div>
+
+
+<script type="text/javascript" >
+   mySettings.previewParserPath = "/t/preview?markup_language=markdown&_xsrf=${ xsrf_cookie }";
+   $(document).ready(function() {
+      $("#reply-body").markItUp(mySettings);
+   });
+
+$(document).ready(function(){
+    var $window = $(window);
+    setTimeout(function () {
+        $('.bs-docs-sidenav').affix({
+            offset: {
+                top: function (){
+                    return $window.width() <= 980 ? 290 : 210
+                }
+            }
+        })
+    }, 100);
+});
+
+  forum_vote();
+  forum_topic_delete();
+</script>
+
+</%block>

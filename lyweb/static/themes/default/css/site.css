@@ -17,20 +17,25 @@
 }
 body {
 /*	background-color: #F7F7F7;*/
+/*    background: url("../img/mainBg.gif");*/
 }
 #main {
-	padding-top: 60px;
+	padding-top: 72px;
 }
 #footer {
     margin-top: 70px;
     padding-top: 30px;
-    background: none repeat scroll 0 0 #F5F5F5;
-    color: #9FA3A7;
+    color: #999;
     text-align: center;
     font-weight: bold;
     padding-bottom: 50px;
     position: relative;
     z-index: 3;
+
+    background: none repeat scroll 0 0 #323232;
+}
+#footer a {
+	color: #FFF;
 }
 
 .site-logo {
@@ -134,7 +139,7 @@ h3 {
 	border: 1px solid #ECEADB;
 }
 
-.affix {
+.subnav.affix {
     border-color: #D5D5D5;
     border-radius: 0 0 0 0;
     border-width: 0 0 1px;
@@ -146,7 +151,7 @@ h3 {
     z-index: 1020;
 	background-color: #FCFCFC;
 }
-.affix .nav {
+.subnav.affix .nav {
 	margin-bottom: 2px;
 }
 
@@ -214,13 +219,28 @@ h3 {
 }*/
 /* End sidebar menu */
 
-
+/*
 .nav-list {
 	border: 1px solid #D6D4D5;
 }
 .nav-list .nav-header {
 	background-color: #f6f6f6;
 }
+*/
+#header .navbar-inner {
+/*
+    background-color: #CCC;
+    background-image: linear-gradient(to bottom, #FFFFFF, #CCC);
+    background-repeat: repeat-x;
+*/
+}
+#header li {
+	line-height: 28px;
+}
+#header .brand {
+	line-height: 28px;
+}
+
 .breadcrumb {
 	background-color: #FFF;
 	padding-left: 0;
@@ -244,3 +264,9 @@ a:active {
 }
 /* End common style */
 
+
+.box {
+	border: 1px solid #EAEAEA;
+	border-radius: 3px;
+	padding: 5px 10px;
+}

@@ -184,7 +184,7 @@ app = [
     'app.node',
     'app.appliance',
     'app.job',
-    'app.wiki',
+#    'app.wiki',
     'app.system',
     'app.message',
     'app.myun',
@@ -194,6 +194,7 @@ app = [
     'app.storage',
     'app.network',
     'app.domain',
+    'app.forum',
     ]
 
 

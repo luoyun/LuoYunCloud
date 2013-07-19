@@ -68,7 +68,7 @@ from yweb.quemail import Email
 def mailto_user_list( data ):
 
     data = data.get('msg', {})
-    logging.debug('mailto_user_list: data = %s' % data)
+#    logging.debug('mailto_user_list: data = %s' % data)
 
     dbsession = orm.create_session()
     db = dbsession()
@@ -142,7 +142,7 @@ def mailto_user_list( data ):
 def mailto_address( data ):
 
     data = data.get('msg', {})
-    logging.debug('mailto_address: data = %s' % data)
+#    logging.debug('mailto_address: data = %s' % data)
 
     dbsession = orm.create_session()
     db = dbsession()
@@ -175,6 +175,10 @@ def mailto_address( data ):
         if U:
             username = U.nickname if U.nickname else U.username
             to = U.email
+            if not to:
+                logging.error( _('mailto_address: %s(%s) have not email address') % (username, U.id) )
+                return
+
 
     d = { 'subject': subject, 'BODY_HTML': body,
           'username': username }

@@ -1,0 +1,29 @@
+<%inherit file="index_base.html"/>
+
+<%block name="subsubmain">
+% for C in CATALOG_LIST:
+<div class="well">
+  <h3><a href="${ reverse_url('forum:catalog') }?id=${ C.id }">${ C.name }</a></h3>
+  <p>${ C.summary }</p>
+  <p>
+	<span>${ _("Topic: ") } ${ C.topic_total }</span>
+  </p>
+  % if C.managers:
+  <p>
+	${ _("Moderators") }
+	% for U in C.managers:
+	<a href="${ reverse_url('user:view') }?id=${ U.id }">${ U.nickname }</a>
+	% endfor
+  </p>
+  % endif
+  % if can_add_topic(C):
+  <p><a class="btn" href="${ reverse_url('forum:topic:add') }?cid=${ C.id }"><i class="icon-plus"></i> ${ _("New Topic") }</a></p>
+  % endif
+</div>
+% endfor
+
+  <script type="text/javascript">
+	just_active_myself('.index-tabs .tab-catalogs');
+  </script>
+
+</%block>

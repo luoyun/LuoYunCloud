@@ -1,0 +1,7 @@
+<h3>${ _("Post was updated") }</h3>
+
+<h4><a href="${ host }${ reverse_url('forum:topic:view') }?id=${ TOPIC.id }">${ TOPIC.name }</a></h4>
+
+<p><a href="${ host }${ reverse_url('user:view') }?id=${ POST.user_id }">${ POST.user.username }</a> ${ _("post at ") } ${ ftime(POST.created) }</p>
+
+<div>${ POST.body_html }</div>

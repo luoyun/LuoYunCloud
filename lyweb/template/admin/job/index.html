@@ -30,7 +30,11 @@
       % for j in JOB_LIST:
       <tr>
         <td>${ j.id }</td>
-        <td><a href="${ reverse_url('admin:user:view') }?id=${ j.user_id }">${ j.user.username }</a></td>
+        <td>
+		  % if j.user_id:
+		  <a href="${ reverse_url('admin:user:view') }?id=${ j.user_id }">${ j.user.username }</a>
+		  % endif
+		</td>
         <td>${ j.status_icon } ${ locale.translate(j.status_string) }</td>
         <td>${ j.target_name }</td>
         <td>${ j.target_url }</td>

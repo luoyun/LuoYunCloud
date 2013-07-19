@@ -390,10 +390,14 @@ class Instance(ORMBase):
 
         a = 'stop'
 
-        if not self.is_running:
-            a = 'run'
+        if self.is_running:
+            a = 'stop'
+
         elif self.need_query:
             a = 'query'
+
+        else:
+            a = 'run'
 
         return a
 

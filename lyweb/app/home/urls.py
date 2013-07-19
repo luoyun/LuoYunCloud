@@ -16,4 +16,5 @@ handlers = [
     url( r'/ly/upload/kindeditor', views.UploadKindeditor,
          name="upload:kindeditor" ),
 
+    url( r'/t/preview', views.Preview, name='preview' ),
 ]

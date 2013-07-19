@@ -124,18 +124,6 @@ def default_value(db):
             db.commit()
 
 
-    # Wiki Catalog
-    from app.wiki.models import WikiCatalog
-    for name, summary in settings.default_wiki_catalog:
-        c = db.query(WikiCatalog).filter_by(name=name).first()
-        if c:
-            print '[W] wiki catalog exist: %s' % name
-        else:
-            c = WikiCatalog(name=name, summary=summary)
-            db.add(c)
-            db.commit()
-        
-
     update_site_config(db)
     update_storage(db)
 

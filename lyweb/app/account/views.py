@@ -16,6 +16,7 @@ from lycustom import RequestHandler
 from yweb.contrib.session.models import Session
 from app.auth.models import User, Group, OpenID, AuthKey
 from app.auth.utils import enc_login_passwd
+from app.language.models import Language
 
 from .models import UserResetpass, PublicKey, UserProfile
 from .forms import LoginForm, ResetPassForm, ResetPassApplyForm, \

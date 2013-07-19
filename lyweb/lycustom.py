@@ -50,8 +50,6 @@ class RequestHandler(TornadoRequestHandler):
         super(RequestHandler, self).__init__(application, request, **kwargs)
 
 
-
-
     def render(self, template_name = None, return_string=False, **kwargs):
         """ Redefine the render """
 
@@ -309,7 +307,8 @@ class RequestHandler(TornadoRequestHandler):
             logging.error( _('Clc connect error.') )
 
         # TODO: reconnect every time
-        self.application._clcsock.close()
+        if self.application._clcsock:
+            self.application._clcsock.close()
         self.application._clcsock = None
         self.application._clcstream = None
 

@@ -123,7 +123,11 @@
 		  % endif
 		  <a href="${ reverse_url('admin:instance:view') }?id=${ I.id }">${ I.name }</a>
 		</td>
-        <td><a href="${ reverse_url('admin:user:view') }?id=${ I.user.id }">${ I.user.username }</a></td>
+        <td>
+		  % if I.user_id:
+		  <a href="${ reverse_url('admin:user:view') }?id=${ I.user.id }">${ I.user.username }</a>
+		  % endif
+		</td>
 		<td><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></td>
         <td>${ htime(I.created) }</td>
         <td>${ htime(I.updated) }</td>

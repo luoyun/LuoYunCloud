@@ -265,8 +265,10 @@ class LifeHandler(RequestHandler):
     def set_root_passwd(self, I):
 
         if I.get('use_global_passwd', True):
-            x = I.user.profile.get('root_shadow_passwd')
-            I.set('passwd_hash', x)
+
+            passwd = I.user.profile.get('secret', {}).get(
+                'root_shadow_passwd', '')
+            I.set('passwd_hash', passwd)
 
 
     def binding_domain(self, I):
@@ -529,6 +531,9 @@ class LifeControl(LifeHandler):
         self.db.commit()
 
         for x in I.ips:
+            for y in x.ports:
+                y.ip_id = None
+                y.ip_port = None
             x.instance_id = None
             x.updated = datetime.now()
 
@@ -536,6 +541,12 @@ class LifeControl(LifeHandler):
                 ttype = LY_TARGET['IP'], tid = x.id,
                 do = _('release ip %(ip)s from instance %(id)s') % {
                     'ip': x.ip, 'id': I.id } )
+
+        for x in I.domains:
+            self.db.delete(x)
+
+        for x in I.storages:
+            self.db.delete(x)
 
         self.db.commit()
         

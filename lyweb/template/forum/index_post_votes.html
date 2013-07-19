@@ -1,0 +1,41 @@
+<%inherit file="index_base.html"/>
+
+<%block name="subsubmain">
+% if VOTE_LIST:
+
+<ul class="nav nav-pills">
+  <li><a href="?tab=posts">${ _("Newest Posts") }</a></li>
+  <li class="active"><a href="?tab=post_votes">${ _("Votes") }</a></li>
+</ul>
+
+<div id="forum-post-list">
+  <table class="table table-striped">
+	<tbody>
+	  % for V in VOTE_LIST:
+	  <tr>
+		<td>${ htime(V.created) }</td>
+		<td><a href="${ reverse_url('user:view') }?id=${ V.user_id }">${ V.user.username }</a></td>
+		<td>
+		  % if V.value > 0:
+		  <i class="icon-thumbs-up"></i> ${ _("ding") }
+		  % else:
+		  <i class="icon-thumbs-down"></i> ${ _("cai") }
+		  % endif
+		</td>
+		<td><a href="${ reverse_url('user:view') }?id=${ V.post.user_id }">${ V.post.user.username }</a></td>
+		<td><a href="${ reverse_url('forum:topic:view') }?id=${ V.post.topic_id }">${ V.post.topic.name }</a></td>
+	  </tr>
+	  % endfor
+	</tbody>
+  </table>
+  ${ page_html }
+</div>
+
+% else:
+<div class="hero-unit">${ _("No votes yet.") }</div>
+% endif
+
+<script type="text/javascript" >
+  just_active_myself('.index-tabs .tab-posts');
+</script>
+</%block>

@@ -8,7 +8,6 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import ValidationError
 
 
-from app.wiki.models import WikiCatalog
 from yweb.orm import db
 
 

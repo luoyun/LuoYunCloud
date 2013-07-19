@@ -33,11 +33,12 @@
 			<li><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></li>
 			<li><a href="${ reverse_url('admin:instance') }">${ _("Instance") }</a></li>
 			<li><a href="${ reverse_url('admin:node') }">${ _("Node") }</a></li>
-			<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
-			<li><a href="/admin/site">${ _("Site") }</a></li>
+			<li><a href="${ reverse_url('admin:forum') }">${ _("Forum") }</a></li>
 			<li class="dropdown">
               <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop2" href="#">${ _("Other") } <b class="caret"></b></a>
               <ul aria-labelledby="drop2" role="menu" class="dropdown-menu">
+				<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+				<li><a href="/admin/site">${ _("Site") }</a></li>
 				<li><a href="${ reverse_url('admin:registration') }">${ _("Registration") }</a></li>
 				<li><a href="${ reverse_url('admin:resource') }">${ _("Resources") }</a></li>
 				<li><a href="${ reverse_url('admin:domain') }">${ _("Domain") }</a></li>
