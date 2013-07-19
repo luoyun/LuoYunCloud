@@ -26,7 +26,7 @@ body {
     margin-top: 70px;
     padding-top: 30px;
     color: #999;
-    text-align: center;
+/*    text-align: center;*/
     font-weight: bold;
     padding-bottom: 50px;
     position: relative;
@@ -38,12 +38,16 @@ body {
 	color: #FFF;
 }
 
+#footer .powered {
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px solid #444;
+}
 .site-logo {
 	margin: 8px 0;
 }
 
 .site-language {
-	float: right;
 }
 select.site-language-select {
 	width: auto;

@@ -74,23 +74,31 @@
     <div id="footer">
       <div id="footer-wrap" class="doc4">
 		<div class="row-fluid">
-		  <div class="span9">
-			${ _("Powered by") }
-			<a href="http://www.luoyun.co" target="_blank">${ _("LuoYun") }</a>
-			<span class="site-language">
-			  ${ _("Select Language") }
-			  <select class="site-language-select">
-				% for code in LANGUAGES:
-				<option value="${ code }">${ LANGUAGES[code] }</option>
-				% endfor
-			  </select>
-			</span>
+		  <div class="span4">
+			<h3>${ _("LuoYunCloud") }</h3>
+			<p>${ _("LuoYunCloud is a open source software for cloud computing. It can help you to setup your own platform easily.") }</p>
 		  </div>
-		  <div class="span3">
-			<div class="about-us">
-			  <h3>天津落云科技有限公司</h3>
-			</div>
+		  <div class="span4">
+			<h3>${ _("About US") }</h3>
+			<ul>
+			  <li><a href="http://www.luoyun.co">${ _("Home") }</a></li>
+			  <li><a href="http://www.luoyun.co/about">${ _("About") }</a></li>
+			  <li><a href="http://www.luoyun.co/contact">${ _("Contact") }</a></li>
+			</ul>
 		  </div>
+		  <div class="span4 site-language">
+			<h3>${ _("Select Your Language") }</h3>
+			<select class="site-language-select">
+			  % for code in LANGUAGES:
+			  <option value="${ code }">${ LANGUAGES[code] }</option>
+			  % endfor
+			</select>
+		  </div>
+		</div>
+
+		<div class="powered">
+		  <p>${ _("Powered by") }
+			<a href="http://www.luoyun.co" target="_blank">${ _("LuoYun") }</a></p>
 		</div>
 	  </div>
     </div>
