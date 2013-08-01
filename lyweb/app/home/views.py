@@ -180,3 +180,10 @@ class Preview(RequestHandler):
                 d['BODY'] = YMK.convert(data)
 
         self.render('forum/topic/preview.html', **d)
+
+
+class Search(RequestHandler):
+
+    def get(self):
+        d = {'title': _('Site Search')}
+        self.render('home/search.html', **d)

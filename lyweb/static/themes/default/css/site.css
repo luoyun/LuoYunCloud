@@ -1,3 +1,18 @@
+.wrapper {
+    -moz-box-sizing: border-box;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 0 3px #C9C9C9;
+    clear: both;
+    display: block;
+/*    float: left;*/
+    margin: 10px 0 30px;
+    padding-bottom: 20px;
+    position: relative;
+    width: 100%;
+    z-index: 1;
+}
+
 /* Tab style */
 
 #scrollUp {
@@ -9,7 +24,7 @@
 }
 
 .doc4 {
-	width: 950px;
+	width: 980px;
 	margin: 0 auto;
 }
 .doc4.container-fluid {
@@ -18,9 +33,14 @@
 body {
 /*	background-color: #F7F7F7;*/
 /*    background: url("../img/mainBg.gif");*/
+	background: url("../img/body_bg.jpg");
+	padding-top: 58px;
 }
 #main {
-	padding-top: 72px;
+/*	margin-top: 68px;*/
+    height:auto !important;
+    height:600px;
+    min-height:600px;
 }
 #footer {
     margin-top: 70px;
@@ -51,6 +71,14 @@ body {
 }
 select.site-language-select {
 	width: auto;
+}
+
+#searchbox {
+	margin-bottom: 0;
+/*	padding-top: 10px;*/
+}
+#searchbox .control-group {
+	margin-bottom: 0;
 }
 
 .min-height600 {
@@ -239,15 +267,17 @@ h3 {
 */
 }
 #header li {
-	line-height: 28px;
+	line-height: 20px;
 }
 #header .brand {
-	line-height: 28px;
+	line-height: 20px;
 }
-
 .breadcrumb {
 	background-color: #FFF;
-	padding-left: 0;
+	padding: 15px 10px;
+    border-bottom: 1px solid #DFDCD9;
+    margin-bottom: 20px;
+	border-radius: 5px 5px 0px 0px;
 }
 
 /* Start common style */

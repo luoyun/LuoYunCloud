@@ -18,6 +18,20 @@
 
 	<div class="span3">
 
+	  <div class="well">
+		<form action="/search" id="searchbox">
+		  <div class="control-group">
+			<label for="appendedInputButton" class="control-label">${ _("Search By Google") }</label>
+			<div class="controls">
+			  <div class="input-append">
+				<input type="text" name="q" class="span8" placeholder="Your search text">
+				<button type="submit" class="btn">Go!</button>
+			  </div>
+			</div>
+		  </div>
+		</form>
+	  </div>
+
 	  <p><a class="btn btn-primary btn-large" href="${ reverse_url('forum:topic:add') }"><i class="icon-plus"></i> ${ _("New Topic") }</a></p>
 
 	  <h2><i class="icon-tags"></i> ${ _("Tags") }</h2>

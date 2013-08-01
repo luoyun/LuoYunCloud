@@ -147,10 +147,11 @@ def syncdb():
 
 
     for m in settings.app:
+#        print 'm = ', m
         try:
             exec "from %s.models import *" % m
-        except ImportError:
-            pass
+        except ImportError, e:
+            print 'import error: %s' % e
 
     from yweb.orm import ORMBase, dbengine, db
     ORMBase.metadata.create_all(dbengine)

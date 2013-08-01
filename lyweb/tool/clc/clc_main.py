@@ -96,7 +96,8 @@ def main():
     app.listen(1368)
 
     from handler.base import start_filesysmail
-    start_filesysmail()
+    if not start_filesysmail():
+        return
 
     ioloop.start()
 

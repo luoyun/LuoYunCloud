@@ -82,7 +82,6 @@ class RequestHandler(TornadoRequestHandler):
             show_error = show_error,
             b2s = b2s,
             title = self.title,
-#            supported_languages = self.application.supported_languages_list,
         )
 
         args.update(kwargs)

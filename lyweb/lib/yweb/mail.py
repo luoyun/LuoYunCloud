@@ -88,13 +88,16 @@ class FileSysMail(Thread):
                 os.makedirs( store_path )
             except Exception, e:
                 logging.error('Can not create store dir "%s": %s' % (store_path, e))
-                return
+                return False
 
         self.store_path = store_path
         self.smtp_host = smtp_host
         self.smtp_login = smtp_login
         self.smtp_password = smtp_pswd
         self.smtp_port = smtp_port
+
+        return True
+
     
     def __init__(self):
         Thread.__init__(self)

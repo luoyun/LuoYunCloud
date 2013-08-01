@@ -9,6 +9,11 @@ from handler.node import NodeStreamHandler
 from lyc.security import get_enc_password, check_password
 
 
+def test_api( data ):
+
+    print 'test_api: data = ', data
+
+
 class NewClientHandler(TCPStreamHandler):
 
     def data_received(self, data):
@@ -27,6 +32,9 @@ class NewClientHandler(TCPStreamHandler):
 
         elif data['key'] == 'mailto.address':
             mailto_address( data )
+
+        elif data['key'] == 'test.api':
+            test_api( data )
 
         else:
             logging.error('unknown key = %s, body = %s', data['key'], data)
@@ -242,14 +250,21 @@ def start_filesysmail():
     mail_dir = SiteConfig.get(
         db, 'site.send_mail.dir', '/opt/LuoYun/run/email/')
 
+    dbsession.remove()
+
     print 'smtp_server   = ', smtp_server
     print 'smtp_port     = ', smtp_port
     print 'smtp_username = ', smtp_username
     print 'smtp_password = ', smtp_password
+    print 'mail_dir      = ', mail_dir
 
-    fm.init( smtp_server, smtp_username, smtp_password,
-             smtp_port = smtp_port, store_path = mail_dir )
+    if fm.init( smtp_server, smtp_username, smtp_password,
+                smtp_port = smtp_port, store_path = mail_dir ):
+        logging.info('FileSysMail init success.')
+        fm.start()
+        return True
 
-    fm.start()
+    else:
+        logging.error('FileSysMail init failed.')
+        return False
 
-    dbsession.remove()

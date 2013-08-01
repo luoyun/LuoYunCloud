@@ -37,6 +37,7 @@
 			<li><a href="/forum"><i class="icon-group icon-large"></i> ${ _("Community") }</a></li>
           </ul>
 
+
           <ul class="nav pull-right">
 			% if current_user:
             <li class="dropdown" id="fat-menu">
@@ -63,22 +64,22 @@
       </div>
     </div>
 
-    <div id="main" class="container-fluid luoyun-min-height doc4">
-	  % if not current_user:
-	  <div class="text-right"><a href="/openid/qq/login"><img src="${ theme_url('img/qq_login.png') }" /></a></div>
-	  % endif
-      <%block name="main"/>
-	  <%block name="content"/>
+    <div id="main" class="doc4 wrapper">
+	  <%block name="rowmain"/>
+	  <div class="container-fluid">
+		<%block name="main"/>
+		<%block name="content"/>
+	  </div>
     </div>
 
     <div id="footer">
       <div id="footer-wrap" class="doc4">
 		<div class="row-fluid">
-		  <div class="span4">
+		  <div class="span5">
 			<h3>${ _("LuoYunCloud") }</h3>
 			<p>${ _("LuoYunCloud is a open source software for cloud computing. It can help you to setup your own platform easily.") }</p>
 		  </div>
-		  <div class="span4">
+		  <div class="span3">
 			<h3>${ _("About US") }</h3>
 			<ul>
 			  <li><a href="http://www.luoyun.co">${ _("Home") }</a></li>
