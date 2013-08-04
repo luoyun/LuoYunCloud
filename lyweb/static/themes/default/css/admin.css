@@ -4,3 +4,18 @@ body {
     font: 13px/1.7em 'Open Sans';
 }
 */
+
+#main {
+    -moz-box-sizing: border-box;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 0 3px #C9C9C9;
+    clear: both;
+    display: block;
+/*    float: left;*/
+    margin: 10px auto 30px;
+    padding: 20px;
+    position: relative;
+
+    z-index: 1;
+}

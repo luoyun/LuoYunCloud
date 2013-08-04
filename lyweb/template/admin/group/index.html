@@ -14,7 +14,7 @@
 <p class="subtitle">${ _("Total Groups: ") } ${ len(GROUP_LIST) }</p>
 
 <div>
-  <table class="ly-table">
+  <table class="table table-bordered table-striped">
     <thead>
       <tr>
 	<th>${ _("ID") }</th>
@@ -40,9 +40,6 @@
 	  ${ _("locked") }
 	  % else:
 	  <a href="${ reverse_url('admin:group') }?id=${ G.id }&action=delete">${ _("Delete") }</a>
-	  % endif
-	  % if G.users:
-	  <a href="${ reverse_url('system:sendmail') }?totype=group&idlist=${ G.id }" title="${ _('send a email to all users in this group.') }" target="_blank"><img class="small" src="${ theme_url('img/email.gif') }" /></a>
 	  % endif
 	</td>
       </tr>
