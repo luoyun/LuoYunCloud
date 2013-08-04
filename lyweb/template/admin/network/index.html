@@ -9,12 +9,15 @@
 <div class="container">
 <h2>${ _("Network Pool") }</h2>
 
+<p><a class="btn" href="${ reverse_url('admin:network:config') }"><i class="icon-plus"></i> ${ _("Add Network Pool") }</a></p>
+
 % if networkpool_list:
 
 % for np in networkpool_list:
 <div>
 
-  <h3>${ np.name }</h3>
+  <h3>${ np.id }: ${ np.name } <a href="${ reverse_url('admin:network:delete') }?id=${ np.id }"><i class="icon-trash"></i></a></h3>
+
   <table class="table table-bordered table-striped">
 	<tbody>
 	  <tr>

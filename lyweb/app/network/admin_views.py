@@ -5,10 +5,12 @@ from lycustom import RequestHandler, has_permission
 from app.network.models import NetworkPool, IPPool, \
     Gateway, PortMapping
 
-from .forms import GatewayForm
+from .forms import GatewayForm, NetworkPoolForm
 
 from ytool.pagination import pagination
 from sqlalchemy import and_, asc, desc
+
+from IPy import IP
 
 
 class Index(RequestHandler):
@@ -236,3 +238,145 @@ class PortMappingIndex(RequestHandler):
 
 
 
+class NetworkHandler(RequestHandler):
+
+    def add_to_ippool(self, N):
+
+        start, end = IP( N.start ), IP( N.end )
+        exclude_ips = N.exclude_ips
+
+        NETWORK = '%s/%s' % (N.start, N.netmask)
+        for x in IP(NETWORK, make_net=True):
+            cur_ip = IP(x)
+            if cur_ip > end:
+                break
+
+            if start <= cur_ip:
+                ip_str = x.strNormal()
+                if not exclude_ips.count(ip_str):
+                    if self.db.query(IPPool).filter_by(ip=ip_str).first():
+                        logging.warning('ADD IP failed: %s is exists, ommit.' % ip_str)
+                    else:
+                        self.db.add( IPPool(ip_str, N) )
+
+        self.db.commit()
+
+
+
+class NetworkConfig(NetworkHandler):
+
+    title = _('Network Configure')
+    template_path = 'admin/network/network_config.html'
+
+    @has_permission('admin')
+    def prepare(self):
+
+        self.network = None
+
+        ID = self.get_argument('network', None)
+        if ID:
+            network = self.db.query(NetworkPool).get( ID )
+            if network:
+                self.network = network
+
+        self.prepare_kwargs['form'] = NetworkPoolForm(self)
+
+
+    def get(self):
+        if self.network:
+            N = self.network
+            form = self.prepare_kwargs['form']
+
+            form.name.data = N.name
+            form.description.data = N.description
+            form.start.data = N.start
+            form.end.data = N.end
+            form.netmask.data = N.netmask
+            form.gateway.data = N.gateway
+            form.nameservers.data = N.nameservers
+            form.exclude_ips.data = N.exclude_ips
+            
+        self.render()
+
+
+    def post(self):
+
+        form = self.prepare_kwargs['form']
+
+        if form.validate():
+
+            if self.network:
+                N             = self.network
+                N.name        = form.name.data
+                N.description = form.description.data
+                N.start       = form.start.data
+                N.end         = form.end.data
+                N.netmask     = form.netmask.data
+                N.gateway     = form.gateway.data
+                N.nameservers = form.nameservers.data
+                N.exclude_ips = form.exclude_ips.data
+
+            else:
+                N = NetworkPool(
+                    name        = form.name.data,
+                    description = form.description.data,
+                    start       = form.start.data,
+                    end         = form.end.data,
+                    netmask     = form.netmask.data,
+                    gateway     = form.gateway.data,
+                    nameservers = form.nameservers.data,
+                    exclude_ips = form.exclude_ips.data )
+
+                self.db.add( N )
+
+            self.db.commit()
+
+            # TODO: can not suitable for edit now !
+            self.add_to_ippool( N )
+
+            url = self.reverse_url('admin:network')
+            return self.redirect( url )
+
+        self.render()
+
+
+
+class NetworkDelete(NetworkHandler):
+
+    @has_permission('admin')
+    def get(self):
+
+        ID = self.get_argument('id', None)
+        if not ID:
+            return self.write( _('Give me network pool id please.') )
+
+        N = self.db.query(NetworkPool).get( ID )
+        if not N:
+            return self.write( _('Can not find network pool %s') % ID )
+
+        ERROR = []
+
+        IP_LIST = self.db.query(IPPool).filter_by( network_id = ID)
+
+        for IP in IP_LIST:
+            if IP.instance_id:
+                ERROR.append( _('%s was used by instance %s') % (
+                        IP.ip, IP.instance_id ) )
+
+        if ERROR:
+            d = { 'title': _('Delete NetworkPool failed'),
+                  'network': N, 'ERROR': ERROR }
+            return self.render('admin/network/network_delete_failed.html', **d)
+
+        # delete ip
+        for IP in IP_LIST:
+            self.db.delete(IP)
+
+        self.db.commit()
+
+        # delete network pool
+        self.db.delete( N )
+        self.db.commit()
+        
+        url = self.reverse_url('admin:network')
+        return self.redirect( url )

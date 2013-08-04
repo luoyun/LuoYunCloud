@@ -6,6 +6,14 @@ handlers = [
 
     url(r'/admin/network', admin.Index, name='admin:network'),
 
+    # Network Pool
+    url(r'/admin/network/config', admin.NetworkConfig,
+        name='admin:network:config'),
+
+    url(r'/admin/network/delete', admin.NetworkDelete,
+        name='admin:network:delete'),
+
+
     url(r'/admin/network/ippool', admin.IPPoolIndex,
         name='admin:network:ippool'),
 
