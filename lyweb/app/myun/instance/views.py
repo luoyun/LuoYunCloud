@@ -986,8 +986,7 @@ class PortMappingAdd(InstanceActionHandler):
 
         if self.db.query(Gateway.id).count() < 1:
             error = _('The system have not configure gateway yet.')
-            self.render( error = error )
-            return self.finish()
+            return self.render( error = error )
 
         self.set_myinstance()
 

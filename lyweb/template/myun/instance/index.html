@@ -10,9 +10,8 @@
   just_active_myself("#myun-instance-entry");
 </script>
 
-<div>
-  <i class="icon-bolt icon-large"></i> <a href="${ reverse_url('myun:instance:global_password_edit') }">${ _("Edit instance's default password.") }</a>
-</div>
+<div><a class="btn" href="${ reverse_url('myun:instance:global_password_edit') }"><i class="icon-edit icon-large"></i> ${ _("Edit instance's default password.") }</a></div>
+
 <br>
 
 % if INSTANCE_LIST:

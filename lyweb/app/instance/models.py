@@ -35,14 +35,14 @@ INSTANCE_STATUS_SHORT_STR = [
 INSTANCE_STATUS_CLASS = {
     0: ('#FFCC33', 'icon-exclamation-sign'),
     1: ('#999999', 'icon-cloud'),
-    2: ('#CC0000', 'icon-off'),
-    3: ('#99CCFF', 'icon-spinner icon-spin'),
-    4: ('#6699FF', 'icon-spinner icon-spin'),
+    2: ('red', 'icon-circle'),
+    3: ('blue', 'icon-circle'),
+    4: ('#6699FF', 'icon-ok-sign'),
     5: ('#66CC00', 'icon-ok-sign'),
     9: ('red', 'icon-pause'),
     settings.INSTANCE_DELETED_STATUS: ('', 'icon-remove'),
     245: ('#FF9900', 'icon-question-sign'),
-    255: ('#FF0000', 'icon-bolt'),
+    255: ('#FF0000', 'icon-remove-sign'),
 }
 
 
@@ -133,7 +133,7 @@ class Instance(ORMBase):
     def lastjob_status_string(self):
         if self.lastjob:
             return self.lastjob.status_string
-        return ''
+        return _('New instance.')
 
     @property
     def lastjob_status_id(self):
@@ -147,7 +147,7 @@ class Instance(ORMBase):
         if self.lastjob:
             return self.lastjob.status_icon
         else:
-            return ''
+            return '<i style="color: gray;" class="icon-exclamation-sign"></i>'
 
 
     @property

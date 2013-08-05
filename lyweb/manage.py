@@ -65,6 +65,8 @@ def update_storage(db):
 
     from app.storage.models import StoragePool
     for name, description, total in settings.default_storage_config:
+        s = db.query(StoragePool).filter_by(name = name).first()
+        if s: continue
         p = StoragePool( name = name,
                          description = description,
                          total = total )

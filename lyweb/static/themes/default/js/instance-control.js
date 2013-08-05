@@ -2,14 +2,14 @@ function _update_single_action_img(action) {
 
 	$btnimg = $('#instance-life-control-btn i');
 	if ( action == 'run' ) {
-		$btnimg.css('color', 'gray');
-		$btnimg.attr('class', 'icon-refresh');
+		$btnimg.css('color', 'blue');
+		$btnimg.attr('class', 'icon-play');
 	} else if ( action == 'query' ) {
 		$btnimg.css('color', 'blue');
 		$btnimg.attr('class', 'icon-question-sign');
 	} else if ( action == 'stop' ) {
 		$btnimg.css('color', 'red');
-		$btnimg.attr('class', 'icon-off');
+		$btnimg.attr('class', 'icon-stop');
 	} else {
 		$btnimg.css('color', 'orange');
 		$btnimg.attr('class', 'icon-spinner icon-spin');
@@ -55,13 +55,15 @@ function single_life_control( data ) {
 	$btn.click( function(event) {
 		event.preventDefault();
 
-		if ( $(this).hasClass('disable') )
-			return
+		var $this = $(this);
+
+		if ( $this.hasClass('disabled') )
+			return;
 
 		var data = { 'id': $('#i-id').text(),
 					 'action': $('#i-action').text() };
 
-		var URL = $(this).attr('href');
+		var URL = $this.attr('href');
 
 		$.ajax({
 			url: URL,
@@ -90,11 +92,16 @@ function single_life_control( data ) {
 
 					// update img
 					var $btnimg = $('#instance-life-control-btn i');
-					$btnimg.attr('class', 'icon-spinner icon-spin');
+					$btnimg.attr('class', 'icon-spinner icon-refresh');
 					$btnimg.css('color', 'green');
 
 					// add disable
-					$(this).addClass('disable');
+					if ( $('#previous-action').text() == $('#i-action').text() )
+						$this.addClass('disabled');
+					else {
+						$this.removeClass('disabled');
+						$('#previous-action').text( $('#i-action').text() );
+					}
 
 				} else {
 					$modal.find('.action-failed').show();

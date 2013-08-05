@@ -304,3 +304,8 @@ a:active {
 	border-radius: 3px;
 	padding: 5px 10px;
 }
+
+.ly-logo-large {
+	width: 120px;
+	height: 120px;
+}

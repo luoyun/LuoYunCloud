@@ -561,7 +561,7 @@ msgstr "隐藏"
 #: app/myun/instance/forms.py:178
 #, fuzzy
 msgid "You have used the name for a instance."
-msgstr "在某个虚拟服务器上你已经用过这个名字！不可以重复使用。"
+msgstr "在某个虚拟机上你已经用过这个名字！不可以重复使用。"
 
 #: app/myun/instance/forms.py:184
 #, python-format
@@ -615,7 +615,7 @@ msgstr "磁盘不存在"
 #: app/myun/instance/views.py:35 template/myun/instance/view.html:333
 #: template/myun/myun_base.html:29
 msgid "My Instances"
-msgstr "我的虚拟服务器"
+msgstr "我的虚拟机"
 
 #: app/myun/instance/views.py:99
 #, fuzzy
@@ -625,17 +625,17 @@ msgstr "虚拟机域名为"
 #: app/myun/instance/views.py:105 app/instance/views.py:256
 #, fuzzy, python-format
 msgid "Instance %s was deleted"
-msgstr "虚拟服务器 %s 已被删除！"
+msgstr "虚拟机 %s 已被删除！"
 
 #: app/myun/instance/views.py:108
 #, fuzzy
 msgid "Not your instance"
-msgstr "不是您的虚拟服务器！"
+msgstr "不是您的虚拟机！"
 
 #: app/myun/instance/views.py:110
 #, fuzzy, python-format
 msgid "No such instance: %s"
-msgstr "无此虚拟服务器：%s"
+msgstr "无此虚拟机：%s"
 
 #: app/myun/instance/views.py:135
 #, fuzzy, python-format
@@ -678,7 +678,7 @@ msgstr "没有发现此消息：%s"
 #: app/myun/instance/views.py:358
 #, fuzzy
 msgid "Not your instance's storage."
-msgstr "不是您的虚拟服务器！"
+msgstr "不是您的虚拟机！"
 
 #: app/myun/instance/views.py:373
 msgid "Configure storage for instance"
@@ -720,7 +720,7 @@ msgstr "找不到网络地址池 %s"
 #: app/myun/instance/views.py:533
 #, fuzzy
 msgid "Not your instance's network."
-msgstr "不是您的虚拟服务器！"
+msgstr "不是您的虚拟机！"
 
 #: app/myun/instance/views.py:541
 #, fuzzy
@@ -1274,7 +1274,7 @@ msgstr "虚拟机管理"
 #: app/admin/instance_views.py:166
 #, python-format
 msgid "No such instance : %s"
-msgstr "无此虚拟服务器：%s"
+msgstr "无此虚拟机：%s"
 
 #: app/admin/instance_views.py:211
 #, python-format
@@ -1284,7 +1284,7 @@ msgstr "未知 action \"%s\" ！"
 #: app/admin/instance_views.py:222
 #, python-format
 msgid "%(action)s all instance success: %(jid_list)s"
-msgstr "%(action)s 所有虚拟服务器成功：%(jid_list)s"
+msgstr "%(action)s 所有虚拟机成功：%(jid_list)s"
 
 #: app/admin/instance_views.py:230
 msgid "Change owner of instance"
@@ -1304,7 +1304,7 @@ msgstr "找不到虚拟机 %s"
 #: app/admin/instance_views.py:282 app/instance/views.py:105
 #, fuzzy
 msgid "Give me instance id please."
-msgstr "虚拟服务器已被删除"
+msgstr "虚拟机已被删除"
 
 #: app/admin/instance_views.py:297
 #, python-format
@@ -1439,7 +1439,7 @@ msgstr "无权限"
 
 #: app/appliance/views.py:214
 msgid "Have instances exist"
-msgstr "正在被虚拟服务器使用"
+msgstr "正在被虚拟机使用"
 
 #: app/appliance/views.py:225
 #, python-format
@@ -1569,15 +1569,15 @@ msgstr "正在卸载虚拟磁盘"
 
 #: app/job/models.py:31
 msgid "starting instance virtual machine"
-msgstr "正在启动虚拟服务器"
+msgstr "正在启动虚拟机"
 
 #: app/job/models.py:32
 msgid "stopping instance virtual machine"
-msgstr "正在停止虚拟服务器"
+msgstr "正在停止虚拟机"
 
 #: app/job/models.py:33
 msgid "virtual machine stopped"
-msgstr "虚拟服务器已经关机"
+msgstr "虚拟机已经关机"
 
 #: app/job/models.py:34
 msgid "Last Running Status"
@@ -1593,15 +1593,15 @@ msgstr "已正确完成"
 
 #: app/job/models.py:40
 msgid "instance running already"
-msgstr "虚拟服务器已经启动"
+msgstr "虚拟机已经启动"
 
 #: app/job/models.py:41
 msgid "instance not running"
-msgstr "虚拟服务器没有运行"
+msgstr "虚拟机没有运行"
 
 #: app/job/models.py:42
 msgid "instance not exist"
-msgstr "虚拟服务器不存在"
+msgstr "虚拟机不存在"
 
 #: app/job/models.py:43
 msgid "failed"
@@ -1637,15 +1637,15 @@ msgstr "等待中"
 
 #: app/job/models.py:54
 msgid "starting OS manager"
-msgstr "正在启动虚拟服务器后台程序"
+msgstr "正在启动虚拟机后台程序"
 
 #: app/job/models.py:55
 msgid "syncing with OS manager"
-msgstr "正在与虚拟服务器后台程序同步"
+msgstr "正在与虚拟机后台程序同步"
 
 #: app/job/models.py:56
 msgid "checking instance status"
-msgstr "正在检查虚拟服务器的状态"
+msgstr "正在检查虚拟机的状态"
 
 #: app/job/models.py:57
 msgid "Last Waiting Status"
@@ -1673,7 +1673,7 @@ msgstr "任务已经开始"
 
 #: app/job/models.py:68
 msgid "node/instance busy"
-msgstr "云节点/虚拟服务器忙碌"
+msgstr "云节点/虚拟机忙碌"
 
 #: app/job/models.py:69
 msgid "request cancelled"
@@ -1956,35 +1956,35 @@ msgstr "磁盘不存在"
 
 #: app/instance/models.py:119
 msgid "new instance that hasn't run once"
-msgstr "新建虚拟服务器还未运行过"
+msgstr "新建虚拟机还未运行过"
 
 #: app/instance/models.py:120
 msgid "instance is stopped"
-msgstr "虚拟服务器已经关机"
+msgstr "虚拟机已经关机"
 
 #: app/instance/models.py:121
 msgid "instance is started by hypervisor"
-msgstr "虚拟服务器已经启动"
+msgstr "虚拟机已经启动"
 
 #: app/instance/models.py:122
 msgid "osm in instance connected"
-msgstr "虚拟服务器管理程序已经连接上"
+msgstr "虚拟机管理程序已经连接上"
 
 #: app/instance/models.py:123
 msgid "application is running"
-msgstr "虚拟服务器服务程序正在运行"
+msgstr "虚拟机服务程序正在运行"
 
 #: app/instance/models.py:124
 msgid "instance is suspend"
-msgstr "虚拟服务器已经暂停"
+msgstr "虚拟机已经暂停"
 
 #: app/instance/models.py:125
 msgid "instance is deleted"
-msgstr "虚拟服务器已被删除"
+msgstr "虚拟机已被删除"
 
 #: app/instance/models.py:126
 msgid "instance needs queryed"
-msgstr "虚拟服务器需要查询"
+msgstr "虚拟机需要查询"
 
 #: app/instance/models.py:127
 msgid "the instance disk does not exist"
@@ -1995,39 +1995,36 @@ msgid "Unknown Status"
 msgstr "未知"
 
 #: app/instance/models.py:409
-#, fuzzy
 msgid "Stop My Instance"
-msgstr "我的虚拟服务器"
+msgstr "关机"
 
 #: app/instance/models.py:412
-#, fuzzy
 msgid "Run My Instance"
-msgstr "我的虚拟服务器"
+msgstr "开机"
 
 #: app/instance/models.py:414
-#, fuzzy
 msgid "Query My Instance"
-msgstr "我的虚拟服务器"
+msgstr "查询"
 
 #: app/instance/views.py:35
 #, fuzzy
 msgid "LuoYunCloud Public Instance Home"
-msgstr "公共虚拟服务器"
+msgstr "公共虚拟机"
 
 #: app/instance/views.py:115
 #, python-format
 msgid "Instance %s is private !"
-msgstr "虚拟服务器 %s 是私有的！"
+msgstr "虚拟机 %s 是私有的！"
 
 #: app/instance/views.py:118
 #, python-format
 msgid "Instance %s is deleted !"
-msgstr "虚拟服务器 %s 已被删除！"
+msgstr "虚拟机 %s 已被删除！"
 
 #: app/instance/views.py:129
 #, python-format
 msgid "Baseinfo of instance %s"
-msgstr "虚拟服务器 %s 的基本信息"
+msgstr "虚拟机 %s 的基本信息"
 
 #: app/instance/views.py:260
 #, fuzzy, python-format
@@ -2073,7 +2070,7 @@ msgstr "仅支持 run/stop/reboot/query 动作"
 #: app/instance/views.py:423
 #, fuzzy
 msgid "Instance id list is empty."
-msgstr "虚拟服务器 %s 是私有的！"
+msgstr "虚拟机 %s 是私有的！"
 
 #: app/instance/views.py:467
 #, python-format
@@ -2085,20 +2082,20 @@ msgstr ""
 #: app/instance/views.py:475
 #, fuzzy
 msgid "Instance is running now."
-msgstr "虚拟服务器正在运行！"
+msgstr "虚拟机正在运行！"
 
 #: app/instance/views.py:493
 #, fuzzy
 msgid "Instance is stopped now."
-msgstr "虚拟服务器已经关机"
+msgstr "虚拟机已经关机"
 
 #: app/instance/views.py:508
 msgid "Instance does not need query."
-msgstr "虚拟服务器不需要查询"
+msgstr "虚拟机不需要查询"
 
 #: app/instance/views.py:523
 msgid "Can not delete a running instance!"
-msgstr "虚拟服务器正在运行，不能删除！"
+msgstr "虚拟机正在运行，不能删除！"
 
 #: app/instance/views.py:542
 #, fuzzy, python-format
@@ -2509,7 +2506,7 @@ msgstr "任务列表"
 #: app/site/models.py:186
 #, fuzzy
 msgid "Job is running"
-msgstr "虚拟服务器服务程序正在运行"
+msgstr "虚拟机服务程序正在运行"
 
 #: app/site/models.py:187
 #, fuzzy
@@ -3143,7 +3140,7 @@ msgstr "私用"
 #: template/admin/instance/index.html:154
 #: template/admin/instance/index.ajax.html:57
 msgid "Public"
-msgstr "我的公用虚拟机"
+msgstr "公开"
 
 #: template/myun/appliance/index.html:75
 msgid "Usable"
@@ -3237,7 +3234,7 @@ msgstr "编辑虚拟机的默认密码"
 
 #: template/myun/instance/index.html:89
 msgid "You have not any instance yet !"
-msgstr "没有发现任何虚拟服务器 ！"
+msgstr "没有发现任何虚拟机 ！"
 
 #: template/myun/instance/general_edit.html:10
 msgid "Configure Base Information"
@@ -3287,7 +3284,7 @@ msgstr "私用"
 
 #: template/myun/instance/view.html:68 template/admin/instance/view.html:75
 msgid "VDI"
-msgstr "远程桌面连接"
+msgstr "远程桌面"
 
 #: template/myun/instance/view.html:73 template/admin/instance/view.html:89
 msgid "Network Data"
@@ -3303,7 +3300,7 @@ msgstr "发送"
 
 #: template/myun/instance/view.html:89 template/admin/instance/view.html:105
 msgid "This instance is private."
-msgstr "虚拟服务器是私有的！"
+msgstr "虚拟机是私有的！"
 
 #: template/myun/instance/view.html:94 template/admin/instance/view.html:110
 #, fuzzy
@@ -4860,11 +4857,11 @@ msgstr "停止"
 
 #: template/instance/index.html:27
 msgid "All Public"
-msgstr "全部公用虚拟机"
+msgstr "全部公开虚拟机"
 
 #: template/instance/index.html:28
 msgid "My Public"
-msgstr "我的公用虚拟机"
+msgstr "我的公开虚拟机"
 
 #: template/instance/index.html:35
 msgid "Selection"
@@ -4872,12 +4869,11 @@ msgstr "排序选择"
 
 #: template/instance/index.html:56
 msgid "Have not any instance yet !"
-msgstr "没有发现任何虚拟服务器 ！"
+msgstr "没有发现任何虚拟机 ！"
 
 #: template/instance/action_notice.html:1
-#, fuzzy
 msgid "Your instance's status has been changed"
-msgstr "新建虚拟服务器还未运行过"
+msgstr "新建虚拟机还未运行过"
 
 #: template/instance/action_notice.html:8
 msgid "Do"
@@ -4889,7 +4885,7 @@ msgstr "查看我的虚拟机"
 
 #: template/instance/view.html:28
 msgid "This is an instance of LuoYun Cloud platform."
-msgstr "这台虚拟服务器还没有填写它的使用概述。"
+msgstr "这台虚拟机还没有填写它的使用概述。"
 
 #: template/instance/view.html:75
 msgid "No description."
@@ -5061,26 +5057,26 @@ msgstr "选择适合您的语言"
 #~ msgid "[Session(%s)]"
 #~ msgstr "[会话(%s)]"
 
-#~ msgid "TOTAL: "
-#~ msgstr "总数："
+msgid "TOTAL: "
+msgstr "总数："
 
-#~ msgid "Unused"
-#~ msgstr "剩余"
+msgid "Unused"
+msgstr "剩余"
 
-#~ msgid "CPU USED INFO"
-#~ msgstr "CPU 使用信息"
+msgid "CPU USED INFO"
+msgstr "CPU 使用信息"
 
-#~ msgid "MOMORY USED INFO"
-#~ msgstr "内存使用信息"
+msgid "MEMORY USED INFO"
+msgstr "内存使用信息"
 
-#~ msgid "INSTANCE USED INFO"
-#~ msgstr "虚拟机创建许可信息"
+msgid "INSTANCE USED INFO"
+msgstr "虚拟机创建许可信息"
 
-#~ msgid "STORAGE USED INFO"
-#~ msgstr "存储使用信息"
+msgid "STORAGE USED INFO"
+msgstr "存储使用信息"
 
 #~ msgid "No such instance: %s !"
-#~ msgstr "无此虚拟服务器：%s !"
+#~ msgstr "无此虚拟机：%s !"
 
 #~ msgid "No domain needed unbinding!"
 #~ msgstr "没有域名需要解绑！"
@@ -5114,7 +5110,7 @@ msgstr "选择适合您的语言"
 
 #~ msgid ""
 #~ "Can not get access_ip, please configure instance network or run instance"
-#~ msgstr "无法获得虚拟服务器的IP，请配置网络或运行虚拟服务器"
+#~ msgstr "无法获得虚拟机 IP，请配置网络或运行虚拟机"
 
 #~ msgid ""
 #~ "can not get domain, domain may not have been configured in Administration "
@@ -5200,7 +5196,7 @@ msgstr "选择适合您的语言"
 #~ msgstr "虚拟磁盘"
 
 #~ msgid "No instance %s!"
-#~ msgstr "无此虚拟服务器 %s！"
+#~ msgstr "无此虚拟机 %s！"
 
 #~ msgid "%s instance"
 #~ msgstr "%s 虚拟机"
@@ -5218,7 +5214,7 @@ msgstr "选择适合您的语言"
 #~ msgstr "没有发现可用应用，请先上传应用！"
 
 #~ msgid "No such instance!"
-#~ msgstr "无此虚拟服务器！"
+#~ msgstr "无此虚拟机！"
 
 #~ msgid "No target found !"
 #~ msgstr "没有找到目标 ！"
@@ -5463,7 +5459,7 @@ msgstr "选择适合您的语言"
 #~ msgstr "全部"
 
 #~ msgid "Public Instances"
-#~ msgstr "公开虚拟服务器"
+#~ msgstr "公开虚拟机"
 
 #~ msgid "(My Instances)"
 #~ msgstr "(我的虚拟机)"
@@ -5508,7 +5504,7 @@ msgstr "选择适合您的语言"
 #~ msgstr "无组"
 
 #~ msgid "Total public instances : "
-#~ msgstr "全部公用虚拟机: "
+#~ msgstr "全部公开虚拟机: "
 
 #~ msgid "Create a account on LuoYun"
 #~ msgstr "创建用户"
@@ -5604,8 +5600,8 @@ msgstr "选择适合您的语言"
 #~ msgid "Not a valid float value"
 #~ msgstr "不是一个有效的浮点数值"
 
-#~ msgid "Prev"
-#~ msgstr "前一页"
+msgid "Prev"
+msgstr "前一页"
 
-#~ msgid "Next"
-#~ msgstr "下一页"
+msgid "Next"
+msgstr "下一页"

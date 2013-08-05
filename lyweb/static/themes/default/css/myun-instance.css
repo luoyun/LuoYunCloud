@@ -1,3 +1,23 @@
+#myun-instance-view .info-item {
+	border: 1px solid #D9D9D9;
+	border-left: 3px solid #529056;
+	border-radius: 3px;
+	padding: 6px 12px;
+	background-color: #F2F2F2;
+	font-weight: bold;
+}
+#myun-instance-view .view-body {
+	border-left: 1px solid #DEDEDE;
+	padding-left: 15px;
+}
+#myun-instance-view .info-item a {
+	float: right;
+	font-size: 1.2em;
+}
+#myun-instance-view .info-body {
+	margin: 30px 0 50px 0;
+}
+
 #instance-list .instance {
 	border-bottom: 1px solid #DEDEDE;
 	padding-bottom: 15px;
@@ -11,11 +31,6 @@
 }
 
 
-#my-instance-view {
-	border: 1px solid #DEDEDE;
-	border-radius: 5px;
-	margin-bottom: 30px;
-}
 #main-tabs > li:first-child {
 	padding-left: 38px;
 }
@@ -23,6 +38,7 @@
 	padding-left: 42px;
 	padding-right: 42px;
 }
+/*
 #my-instance-view .the-head {
 	padding: 20px;
 	margin-bottom: 30px;
@@ -38,9 +54,10 @@
 #my-instance-view .the-head dt {
 	color: #3399CC;
 }
+*/
 #instance-life-control-btn {
-	margin: 20px auto 30px;
-	height: 38px;
+	margin: 10px auto 25px;
+	height: 26px;
 /*	position: absolute;*/
 }
 #instance-life-control-btn i {
@@ -49,11 +66,6 @@
 	top: 10px;
 	left: 168px;*/
 	cursor: pointer; cursor: hand; 
-}
-#instance-life-control-btn i.hover {
-	font-size: 18px;
-/*	top: 6px;
-	left: 162px;*/
 }
 #instance-status-info {
 /*	margin-top: 90px;*/

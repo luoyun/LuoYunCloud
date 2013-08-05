@@ -347,38 +347,6 @@ class LifeHandler(RequestHandler):
         return response
 
 
-    # TODO: need a new design.
-    def update_user_resource(self, user, I, action, start, timeout):
-
-        if time.time() - start > timeout:
-            return
-
-        #logging.info('update_user_resource, i am here, now = %s' % time.time())
-
-        self.db.commit() # TODO: need sync now
-        time_interval = 3
-
-        if action == 'run':
-            if I.is_running:
-                user.profile.update_resource_used()
-                return
-
-        elif action == 'stop':
-            if not I.is_running:
-                user.profile.update_resource_used()
-                return
-
-        else:
-            time_interval = 10
-            user.profile.update_resource_used()
-
-
-        tornado.ioloop.IOLoop.instance().add_timeout(
-            time.time() + time_interval,
-            lambda: self.update_user_resource(
-                user, I, action, start, timeout) )
-
-
 
 class LifeControl(LifeHandler):
 
@@ -430,12 +398,8 @@ class LifeControl(LifeHandler):
                 _callback = getattr(self, action)
                 data.append( _callback( I ) )
 
-                # TODO: a monitor and update
-                timeout = 120 # 2 minutes
-                start = time.time()
-                tornado.ioloop.IOLoop.instance().add_callback(
-                    lambda: self.update_user_resource(
-                        self.current_user, I, action, start, timeout) )
+                # TODO: update user resource
+
             else:
                 data.append( { 'id': -1, 'code': 1, 'data': msg } )
 
