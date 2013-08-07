@@ -41,6 +41,28 @@ class RequestHandler(OrigHandler):
         return True
 
 
+    def can_view_topic(self, catalog):
+
+        if not (self.current_user and catalog):
+            return False
+
+        if self.current_user in catalog.managers:
+            return True
+
+        u = self.db.query(ForumForbiddenUser).filter_by(
+            user_id = self.current_user.id ).first()
+        if u:
+            return False
+
+        if ( catalog.is_private and
+             not catalog.is_visible and
+             not self.has_permission('admin') and
+             not self.current_user in catalog.allowed_users ):
+            return False
+
+        return True
+
+
     def get_post_parent(self, post):
         if post and post.parent_id:
             return self.db.query(ForumPost).get( post.parent_id )
@@ -533,6 +555,9 @@ class TopicView(RequestHandler):
 
         if topic.is_deleted:
             return self.write( _('Topic %s is deleted') % ID )
+
+        if not self.can_view_topic( topic.catalog ):
+            return self.write( _('No permission to view topic %s') % ID )
 
         t = self.get_argument('t', None)
         if t in ['source']:

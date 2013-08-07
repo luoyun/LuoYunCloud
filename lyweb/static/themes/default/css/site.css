@@ -1,3 +1,7 @@
+.bg {
+    background: none repeat scroll 0 0 #FFFFFF;
+}
+
 .wrapper {
     -moz-box-sizing: border-box;
     background: none repeat scroll 0 0 #FFFFFF;
@@ -5,12 +9,10 @@
     box-shadow: 0 0 3px #C9C9C9;
     clear: both;
     display: block;
-/*    float: left;*/
     margin: 10px 0 30px;
     padding-bottom: 20px;
     position: relative;
     width: 100%;
-    z-index: 1;
 }
 
 /* Tab style */
@@ -38,9 +40,6 @@ body {
 }
 #main {
 /*	margin-top: 68px;*/
-    height:auto !important;
-    height:600px;
-    min-height:600px;
 }
 #footer {
     margin-top: 70px;
@@ -127,6 +126,11 @@ select.site-language-select {
 /* Start Markdown Style */
 .markdown h1 {
 	font-size: 16px;
+}
+h1 {
+	font-size: 22px;
+	color: #0C2F68;
+	margin: 20px 0 15px;
 }
 h2 {
     font-size: 18px;
@@ -308,4 +312,40 @@ a:active {
 .ly-logo-large {
 	width: 120px;
 	height: 120px;
+}
+
+
+/* Start ly notification style */
+#ly-notification-large {
+/*	padding: 50px 120px 100px;*/
+}
+.notification-title {
+	margin: 30px 0 40px;
+	font-size: 22px;
+	color: #CC0000;
+	border-bottom: 1px solid #EAEAEA;
+	margin-bottom: 80px;
+	padding-bottom: 20px;
+}
+.notification-title img {
+	width: 48px;
+	height: 48px;
+}
+.notification-body {
+	margin: 30px 50px 50px;
+}
+.notification-help {
+	border-top: 1px solid #EAEAEA;
+	margin-top: 80px;
+	padding-top: 20px;
+}
+#ly-notification-large .subtitle {
+	margin-bottom: 15px;
+	font-weight: bold;
+	color: #666;
+}
+/* End ly notification style */
+
+#site-notice-base {
+	padding: 50px 80px 100px;
 }

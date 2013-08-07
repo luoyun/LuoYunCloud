@@ -1,0 +1,20 @@
+<%inherit file="appliance_base.html"/>
+
+<%block name="innav">
+<li>${ _("404 Error") }</li>
+</%block>
+
+<%block name="submain">
+
+<div class="min-height600" id="http404">
+  <h2>${ _("404 Error") }</h2>
+  <p>${ _("No such page: ") }<span class="request_uri">${ request.uri }</span></p>
+  % if msg:
+  <div class="hero-unit">
+	<div class="text-warning"><i class="icon-warning-sign"></i> ${ msg }</div>
+  </div>
+  % endif
+</div>
+
+
+</%block>

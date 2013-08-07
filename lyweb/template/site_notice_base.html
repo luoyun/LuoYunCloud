@@ -1,0 +1,20 @@
+<%inherit file="/base.html"/>
+
+<%block name="main">
+<div id="site-notice-base" class="min-height600 doc4 wrapper container-fluid">
+  <%block name="submain" />
+
+  <div class="notification-help">
+
+    <p class="subtitle"><i class="icon-lightbulb"></i> ${ _("If you have any questions, you can contact the admin by following method:") }</p>
+
+	<p>
+	  % if current_user:
+	  <a class="btn btn-primary" href="${ reverse_url('message:new') }?userid=${ ADMIN_ID }"><i class="icon-comment-alt"></i> ${ _("Send a message") }</a>
+	  % endif
+	  <a class="btn" href="mailto:${ ADMIN_EMAIL }"><i class="icon-envelope"></i> ${ _("Send a email") }</a>
+    </p>
+  </div>
+
+</div>
+</%block>

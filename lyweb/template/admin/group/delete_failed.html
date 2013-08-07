@@ -6,7 +6,7 @@
 <li>${ _("delete group failed") }</li>
 </%block>
 
-<%block name="main">
+<%block name="submain">
 
 % if GROUP.islocked:
 <p class="ywarn">${ _("This group is locked for safely. If you want to delete it, please manuly modified the islocked flag of auth_group table in backend DB.") }</p>

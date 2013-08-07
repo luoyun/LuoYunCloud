@@ -89,6 +89,7 @@ class NoResource(RequestHandler):
 
     title = _('No Resource')
 
+    @authenticated
     def get(self):
 
         reason = self.get_argument('reason', '')

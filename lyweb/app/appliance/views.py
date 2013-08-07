@@ -20,6 +20,12 @@ from ytool.pagination import pagination
 class AppRequestHandler(RequestHandler):
 
 
+    def render404(self, msg):
+
+        self.set_status(404)
+        self.render('appliance/404.html', msg = msg)
+
+
     def done(self, msg):
 
         ajax = self.get_argument_int('ajax', 0)
@@ -31,30 +37,23 @@ class AppRequestHandler(RequestHandler):
                          msg = msg )
 
 
-    def get_appliance(self, id, isowner=False):
+    def get_appliance_byid(self):
 
-        app = self.db.query(Appliance).get(id)
+        ID = self.get_argument_int('id', None)
+        if not ID:
+            return None, _('Give appliance id please.')
 
-        if not app:
-            self.done( self.trans(_('No such appliance: %s !')) % id )
-            return None
+        A = self.db.query(Appliance).get(ID)
+        if not A:
+            return None, _('Can not find appliance %s') % ID
 
-        if app.isprivate:
+        if A.isprivate:
             if ( (not self.current_user) or (
-                    (self.current_user.id != app.user_id) and
-                    (not self.has_permission('admin')) )
-                 ):
-                self.done( self.trans(_('Appliance %s is private !')) % id )
-                return None
+                    (self.current_user.id != A.user_id) and
+                    (not self.has_permission('admin')) ) ):
+                return None, _('Appliance %s is private !') % ID
 
-        # Just user can do
-        if isowner:
-            if app.user_id != self.current_user.id:
-                self.done( self.trans(_('Only owner can do this!')) )
-                return None
-
-        return app
-
+        return A, None
 
 
 
@@ -246,11 +245,9 @@ class View(AppRequestHandler):
 
     def get(self):
 
-        app = self.get_appliance( self.get_argument_int('id', 0) )
-        if not app:
-            return self.render(
-                'appliance/action_result.html',
-                msg = 'Have not found appliance %s !' % id )
+        A, msg = self.get_appliance_byid()
+        if not A:
+            return self.render404( msg )
 
         view = self.get_argument('view', 'all')
         by = self.get_argument('by', 'updated')
@@ -274,7 +271,7 @@ class View(AppRequestHandler):
         instances = self.db.query(Instance).filter(
             Instance.isprivate != True ).filter(
             Instance.status.in_( slist) ).filter(
-            Instance.appliance_id == app.id)
+            Instance.appliance_id == A.id)
             
 
         if view == 'self' and self.current_user:
@@ -295,15 +292,15 @@ class View(AppRequestHandler):
 
         page_html = pagination(self.request.uri, total,  page_size, cur_page)
 
-        d = { 'title': self.trans(_("View Appliance")), 'appliance': app,
-              'instances': instances, 'page_html': page_html }
+        d = { 'title': _('View Appliance "%s"') % A.name,
+              'appliance': A,
+              'instances': instances,
+              'page_html': page_html }
 
         self.render('appliance/view.html', **d)
 
 
         
-
-
 class SetUseable(AppRequestHandler):
 
     @authenticated

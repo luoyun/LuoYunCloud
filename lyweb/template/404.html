@@ -1,12 +1,8 @@
 <%inherit file="/base.html"/>
 
-<%block name="header">
-The 404 error !
-</%block>
-
 <%block name="main">
 
-<div class="min-height600" id="http404">
+<div class="min-height600 doc4 wrapper container-fluid" id="http404">
   <h2>${ _("404 Error") }</h2>
   <p>${ _("No such page: ") }<span class="request_uri">${ request.uri }</span></p>
   % if error:

@@ -1,8 +1,6 @@
-<%inherit file="/base.html" />
+<%inherit file="/site_notice_base.html" />
 
-<%block name="main">
-
-
+<%block name="submain">
 <div id="account-base-form">
 
   <form method="POST">${ xsrf_form_html() }
@@ -21,6 +19,4 @@
   <div><a target="_blank" href="${ reverse_url('account:resetpass_apply') }">${ _("Forget My Password") }</a></div>
 
 </div>
-
-
 </%block>

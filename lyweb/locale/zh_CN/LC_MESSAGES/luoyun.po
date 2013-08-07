@@ -4816,7 +4816,7 @@ msgstr "无权限"
 
 #: template/home/no_permission.html:10
 msgid "This action need permissions"
-msgstr "无权限"
+msgstr "需要权限"
 
 #: template/wiki/view_catalog.html:8
 msgid "Wiki"

@@ -4,23 +4,7 @@
 
 <div>
   <div class="row-fluid text-center ly-item-body">
-	<div class="span2">
-	  <div class="ly-box">
-		<img src="${ theme_url('img/virtual_appliance.png') }"/>
-		<h2>${ _("Appliance") }</h2>
-		<p><a href="${ reverse_url('admin:appliance') }"><span class="ly-count">${ TOTAL_APPLIANCE }</span></a></p>
-	  </div>
-	</div>
-
-	<div class="span2">
-	  <div class="ly-box">
-		<img src="${ theme_url('img/virtual_machine.png') }"/>
-		<h2>${ _("Instance") }</h2>
-		<p><a href="${ reverse_url('admin:instance') }"><span class="ly-count">${ TOTAL_INSTANCE }</span></a></p>
-	  </div>
-	</div>
-
-	<div class="span2">
+	<div class="span3">
 	  <div class="ly-box">
 		<img src="${ theme_url('img/user_group.png') }"/>
 		<h2>${ _("User") }</h2>
@@ -28,15 +12,23 @@
 	  </div>
 	</div>
 
-	<div class="span2">
+	<div class="span3">
 	  <div class="ly-box">
-		<img src="${ theme_url('img/job_history.png') }"/>
-		<h2>${ _("Job") }</h2>
-		<p><a href="${ reverse_url('admin:job') }"><span class="ly-count">${ TOTAL_JOB }</span></a></p>
+		<img src="${ theme_url('img/virtual_appliance.png') }"/>
+		<h2>${ _("Appliance") }</h2>
+		<p><a href="${ reverse_url('admin:appliance') }"><span class="ly-count">${ TOTAL_APPLIANCE }</span></a></p>
 	  </div>
 	</div>
 
-	<div class="span2">
+	<div class="span3">
+	  <div class="ly-box">
+		<img src="${ theme_url('img/virtual_machine.png') }"/>
+		<h2>${ _("Instance") }</h2>
+		<p><a href="${ reverse_url('admin:instance') }"><span class="ly-count">${ TOTAL_INSTANCE }</span></a></p>
+	  </div>
+	</div>
+
+	<div class="span3">
 	  <div class="ly-box">
 		<img src="${ theme_url('img/compute_node.png') }"/>
 		<h2>${ _("Node") }</h2>

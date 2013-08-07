@@ -4,18 +4,19 @@
 <link rel="stylesheet" href="${ theme_url('css/instance.css') }" />
 </%block>
 
-<%block name="content">
+<%block name="main">
 
-<ul class="breadcrumb">
-  <li><a href="/"><i class="icon-home"></i> ${ _("Home") }</a> <span class="divider">/</span></li>
-  <li><a href="/instance">${ _("Instances") }</a> <span class="divider">/</span></li>
-  <%block name="innav" />
-</ul>
+<div class="min-height600 doc4 wrapper container-fluid">
+  <ul class="breadcrumb">
+	<li><a href="/"><i class="icon-home"></i> ${ _("Home") }</a> <span class="divider">/</span></li>
+	<li><a href="/instance">${ _("Instances") }</a> <span class="divider">/</span></li>
+	<%block name="innav" />
+  </ul>
 
-<script type="text/javascript">
-  menu_entry_active ( "/instance" );
-</script>
+  <script type="text/javascript">
+	menu_entry_active ( "/instance" );
+  </script>
 
-<%block name="submain"/>
-
+  <%block name="submain"/>
+</div>
 </%block>

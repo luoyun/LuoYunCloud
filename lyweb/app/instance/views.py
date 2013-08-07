@@ -1,10 +1,10 @@
 # coding: utf-8
 
 import logging, struct, socket, re, os, json, time
-from datetime import datetime
+import datetime
 from dateutil import relativedelta
 
-from lycustom import RequestHandler
+from lycustom import RequestHandler as OrigRequestHandler
 from tornado.web import authenticated, asynchronous
 import tornado
 
@@ -27,6 +27,148 @@ from ytool.pagination import pagination
 
 from tool.domain import instance_domain_binding, \
     instance_domain_unbinding
+
+
+
+class RequestHandler(OrigRequestHandler):
+
+    def render404(self, msg):
+
+        self.set_status(404)
+        self.render('instance/404.html', msg = msg)
+
+
+    def get_instance_byid(self):
+
+        ID = self.get_argument_int('id', None)
+        if not ID:
+            return None, _('Give me instance id please')
+
+        I = self.db.query(Instance).get(ID)
+        if not I:
+            return None, _('Can not find instance %s') % ID
+
+        if I.status == DELETED_S:
+            return None, _('Instance %s was deleted') % ID
+
+        if self.current_user.id != I.user_id:
+            if not self.has_permission('admin'):
+                return None, _("No permission for instance %s") % ID
+
+        return I, None
+
+
+    def unbinding_domain(self, I):
+
+        # unbinding in nginx
+        ret, reason = instance_domain_unbinding(self.db, I)
+        if not ret:
+            logging.warn(_('unbinding domain failed: %s') % reason)
+
+        # TODO: update config about domain
+
+        I.update_network()
+
+
+    def binding_domain(self, I):
+        # Binding in nginx
+        ret, reason = instance_domain_binding(self.db, I)
+        if not ret:
+            logging.warn(_('binding domain failed: %s') % reason)
+
+        # TODO: update config about domain
+
+        I.update_network()
+
+
+    def run_job(self, I, action_id):
+
+        if I.lastjob and (not I.lastjob.completed):
+            if not ( action_id == JOB_ACTION['STOP_INSTANCE'] and
+                 I.lastjob.canstop ):
+                # TODO: status = 100, timeout > 60s
+                timeout = I.lastjob.created + relativedelta.relativedelta(seconds=+60)
+                if timeout > datetime.datetime.now():
+                    return self.trans(_("Previous task is not finished !"))
+
+        # Create new job
+        job = Job( user = self.current_user,
+                   target_type = JOB_TARGET['INSTANCE'],
+                   target_id = I.id,
+                   action = action_id )
+
+        self.db.add(job)
+        self.db.commit()
+        
+        I.lastjob = job
+
+        try:
+            self._job_notify( job.id )
+        except Exception, e:
+            #[Errno 113] No route to host
+            # TODO: should be a config value
+            job.status = settings.JOB_S_FAILED
+            return _("Connect to control server failed: %s") % e
+
+        self.db.commit()
+
+        # notice user when instance controled by any other people
+        if self.current_user.id != I.user_id:
+            self.instance_control_notice( I.user, job )
+
+        return self.trans(_('Task starts successfully.'))
+
+
+    def myfinish(self, status=1, string=None):
+
+        d = { 'code': status,
+              'data': [],
+              'string': string }
+
+        self.write( d )
+        self.finish()
+        
+
+    def get_instance(self, ID):
+
+        I = self.db.query(Instance).get(ID)
+        if not I:
+            return None, _('Can not find instance %s') % ID
+
+        if I.status == DELETED_S:
+            return None, _('Instance %s was deleted') % ID
+
+        if self.current_user.id != I.user_id:
+            if not self.has_permission('admin'):
+                return None, _("No permission for instance %s") % ID
+
+        return I, None
+        
+
+    def set_root_passwd(self, I):
+
+        if I.get('use_global_passwd', True):
+
+            passwd = I.user.profile.get('secret', {}).get(
+                'root_shadow_passwd', '')
+            I.set('passwd_hash', passwd)
+
+
+    def instance_control_notice(self, user, J):
+
+        subject = _('[LYC] Instance was %(action)s by %(who)s') % {
+            'action': J.action_string, 'who': J.user.username }
+
+        d = { 'return_string': True, 'JOB': J }
+        body = self.render('instance/action_notice.html', **d)
+
+
+        response = self.sendmsg(
+            uri = 'mailto.address',
+            data = { 'to_user_id': user.id,
+                     'subject': subject,
+                     'body': body } )
+        return response
 
 
 
@@ -96,7 +238,7 @@ class Index(RequestHandler):
 class View(RequestHandler):
     ''' Show Instance's information '''
 
-    def initialize(self):
+    def get(self):
 
         self.I = None
 
@@ -106,7 +248,7 @@ class View(RequestHandler):
 
         I = self.db.query(Instance).get( ID )
         if not I:
-            return self.write( _('Can not find instance %s') % ID )
+            return self.render404( _('Can not find instance %s') % ID )
 
         if I.isprivate:
             if ( not self.current_user or
@@ -117,14 +259,6 @@ class View(RequestHandler):
         if I.status == DELETED_S:
             return self.write( _('Instance %s is deleted !') % ID )
 
-        self.I = I
-
-
-    def get(self):
-
-        if not self.I: return
-
-        I = self.I
 
         d = { 'title': _('Baseinfo of instance %s') % I.id,
               'instance': I }
@@ -189,7 +323,7 @@ class SingleInstanceStatus(RequestHandler):
                 time_interval = settings.INSTANCE_S_UP_INTER_1
             else:
                 time_interval = settings.INSTANCE_S_UP_INTER_2
-            #print '[DD] %s SLEEP %s seconds' % (datetime.now(), time_interval)
+            #print '[DD] %s SLEEP %s seconds' % (datetime.datetime.now(), time_interval)
 
             tornado.ioloop.IOLoop.instance().add_timeout(
                 time.time() + time_interval,
@@ -234,121 +368,7 @@ class SingleInstanceStatus(RequestHandler):
 
 
 
-class LifeHandler(RequestHandler):
-
-    def myfinish(self, status=1, string=None):
-
-        d = { 'code': status,
-              'data': [],
-              'string': string }
-
-        self.write( d )
-        self.finish()
-        
-
-    def get_instance(self, ID):
-
-        I = self.db.query(Instance).get(ID)
-        if not I:
-            return None, _('Can not find instance %s') % ID
-
-        if I.status == DELETED_S:
-            return None, _('Instance %s was deleted') % ID
-
-        if self.current_user.id != I.user_id:
-            if not self.has_permission('admin'):
-                return None, _("No permission for instance %s") % ID
-
-        return I, None
-        
-
-    def set_root_passwd(self, I):
-
-        if I.get('use_global_passwd', True):
-
-            passwd = I.user.profile.get('secret', {}).get(
-                'root_shadow_passwd', '')
-            I.set('passwd_hash', passwd)
-
-
-    def binding_domain(self, I):
-        # Binding in nginx
-        ret, reason = instance_domain_binding(self.db, I)
-        if not ret:
-            logging.warn(_('binding domain failed: %s') % reason)
-
-        # TODO: update config about domain
-
-        I.update_network()
-
-    def unbinding_domain(self, I):
-
-        # unbinding in nginx
-        ret, reason = instance_domain_unbinding(self.db, I)
-        if not ret:
-            logging.warn(_('unbinding domain failed: %s') % reason)
-
-        # TODO: update config about domain
-
-        I.update_network()
-
-
-    def run_job(self, I, action_id):
-
-        if I.lastjob and (not I.lastjob.completed):
-            if not ( action_id == JOB_ACTION['STOP_INSTANCE'] and
-                 I.lastjob.canstop ):
-                # TODO: status = 100, timeout > 60s
-                timeout = I.lastjob.created + relativedelta.relativedelta(seconds=+60)
-                if timeout > datetime.now():
-                    return self.trans(_("Previous task is not finished !"))
-
-        # Create new job
-        job = Job( user = self.current_user,
-                   target_type = JOB_TARGET['INSTANCE'],
-                   target_id = I.id,
-                   action = action_id )
-
-        self.db.add(job)
-        self.db.commit()
-        
-        I.lastjob = job
-
-        try:
-            self._job_notify( job.id )
-        except Exception, e:
-            #[Errno 113] No route to host
-            # TODO: should be a config value
-            job.status = settings.JOB_S_FAILED
-            return _("Connect to control server failed: %s") % e
-
-        self.db.commit()
-
-        # notice user when instance controled by any other people
-        if self.current_user.id != I.user_id:
-            self.instance_control_notice( I.user, job )
-
-        return self.trans(_('Task starts successfully.'))
-
-    def instance_control_notice(self, user, J):
-
-        subject = _('[LYC] Instance was %(action)s by %(who)s') % {
-            'action': J.action_string, 'who': J.user.username }
-
-        d = { 'return_string': True, 'JOB': J }
-        body = self.render('instance/action_notice.html', **d)
-
-
-        response = self.sendmsg(
-            uri = 'mailto.address',
-            data = { 'to_user_id': user.id,
-                     'subject': subject,
-                     'body': body } )
-        return response
-
-
-
-class LifeControl(LifeHandler):
+class LifeControl(RequestHandler):
 
     ''' Instance life control: stop/run/reboot/query/delete
 
@@ -499,7 +519,7 @@ class LifeControl(LifeHandler):
                 y.ip_id = None
                 y.ip_port = None
             x.instance_id = None
-            x.updated = datetime.now()
+            x.updated = datetime.datetime.now()
 
             T = self.lytrace(
                 ttype = LY_TARGET['IP'], tid = x.id,
@@ -599,3 +619,53 @@ class AttrSet(RequestHandler):
                 _('Invalid value for attr "isprivate" : %s') % value )
 
 
+
+
+class InstanceDelete(RequestHandler):
+
+    ''' Delete instance '''
+
+    def myfinish(self, data, status=1):
+        self.write({'code': status, 'data': data})
+
+    @authenticated
+    def get(self):
+
+        I, msg = self.get_instance_byid(ID)
+        if not I:
+            return self.myfinish( msg )
+
+        if I.is_running:
+            return self.myfinish( _('Instance %s is running, can not delete it.') % ID )
+
+        # TODO: delete domain binding
+        self.unbinding_domain( I )
+
+        I.status = DELETED_S
+        I.name = '_deleted_%s_' % I.id
+        self.db.commit()
+
+        for x in I.ips:
+            for y in x.ports:
+                y.ip_id = None
+                y.ip_port = None
+            x.instance_id = None
+            x.updated = datetime.datetime.now()
+
+            T = self.lytrace(
+                ttype = LY_TARGET['IP'], tid = x.id,
+                do = _('release ip %(ip)s from instance %(id)s') % {
+                    'ip': x.ip, 'id': I.id } )
+
+        for x in I.domains:
+            self.db.delete(x)
+
+        for x in I.storages:
+            self.db.delete(x)
+
+        self.db.commit()
+        
+        # delete instance files
+        ret = self.run_job(I, JOB_ACTION['DESTROY_INSTANCE'])
+
+        self.myfinish( data = ret, status = 0 )

@@ -37,11 +37,16 @@ body {
 
 .ly-box {
 	border-radius: 5px;
-	border: 1px solid #D9D9D9;
+	border: 1px solid #DFDFDF;
 	padding: 5px;
 }
 
 .ly-count {
 	font: italic bold 28px/22px Georgia,Serif;
 	color: #999;
+}
+
+.ly-logo-large {
+	width: 120px;
+	height: 120px;
 }

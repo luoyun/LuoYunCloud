@@ -5,17 +5,15 @@
 <%block name="userinnav" />
 </%block>
 
-<%block name="main">
+<%block name="submain">
 <div class="row-fluid">
   <div class="span3">
-	<a href="${ reverse_url('admin:user:view') }?id=${ USER.id }"><img class="userlogo" src="${ USER.avatar_url }" /></a>
+	<a href="${ reverse_url('admin:user:view') }?id=${ USER.id }"><img class="ly-logo-large" src="${ USER.avatar_url }" /></a>
 
-	<ul class="nav nav-list">
-	  <li><a href="${ reverse_url('message:new') }?userid=${ USER.id}" target="_blank">${ _("Send Message") }</a></li>
-	  <li><a href="${ reverse_url('admin:job') }?user=${ USER.id }" target="_blank">${ _("View All Job") }</a></li>
-	  <li><a href="${ reverse_url('user:view') }?id=${ USER.id }" target="_blank">${ _("Home Page") }</a></li>
-	  <li><a href="${ reverse_url('admin:user:resetpass', USER.id) }">${ _("Reset Password") }</a></li>
-	</ul>
+	<p><a class="btn" href="${ reverse_url('message:new') }?userid=${ USER.id}" target="_blank">${ _("Send Message") }</a></p>
+	<p><a class="btn" href="${ reverse_url('admin:job') }?user=${ USER.id }" target="_blank">${ _("View All Job") }</a></p>
+	<p><a class="btn" href="${ reverse_url('user:view') }?id=${ USER.id }" target="_blank">${ _("Home Page") }</a></p>
+	<p><a class="btn" href="${ reverse_url('admin:user:resetpass', USER.id) }">${ _("Reset Password") }</a></p>
 
   </div>
 

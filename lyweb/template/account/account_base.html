@@ -1,0 +1,30 @@
+<%inherit file="/base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${ theme_url('css/account.css') }" />
+</%block>
+
+<%block name="main">
+
+<div class="min-height600 doc4 wrapper container-fluid">
+  <div class="row-fluid">
+	<div class="span3">
+	  <div id="user-present" class="text-center">
+		<p><a href="/account"><img class="img-circle" src="${ current_user.avatar_url }" /></a></p>
+		<p class="username"><a href="/account">${ current_user.username }</a></p>
+	  </div>
+
+	  <ul class="nav nav-list">
+		<li><a href="${ reverse_url('account:reset_mypass') }">${ _("Reset Password") }</a></li>
+		<li><a href="${ reverse_url('account:avatar:edit') }">${ _("Change Avatar") }</a></li>
+		<li><a href="${ reverse_url('account:public_key') }">${ _("Publick Key") }</a></li>
+	  </ul>
+
+	  <p><i class="icon-credit-card"></i> ${ current_user.profile.coins } ${ _("coins") }</p>
+	</div>
+	<div class="span9">
+	  <%block name="submain"/>
+	</div>
+  </div>
+</div>
+</%block>
