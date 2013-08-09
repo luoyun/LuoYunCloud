@@ -3,7 +3,7 @@
 
 Name: luoyuncloud
 Version: 0.6
-Release: 0%{?dist}
+Release: 1%{?dist}
 Summary: the Cloud Computing software that can be used to build IaaS, SaaS or PaaS platforms
 Group: Server/Cloud
 License: GPLv2+
@@ -169,6 +169,9 @@ id luoyun &> /dev/null || useradd luoyun -s /sbin/nologin
 
 
 %changelog
+* Thu Aug 08 2013 Dongwu Zeng <dongwu@luoyun.co> - 0.6-1
+- remove ins_mac, use mac from the json config
+
 * Sun Jun 23 2013 Dongwu Zeng <dongwu@luoyun.co> - 0.6-0
 - for 0.6 release
 - stop job on the node that's disabled/offline
