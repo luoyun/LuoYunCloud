@@ -1,0 +1,27 @@
+<%inherit file="base.html"/>
+
+<%block name="mainbody">
+
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Edit Resource") }</legend>
+	  ${ form.type.label } ${ form.type() }
+	  ${ form.html_errors(form.type.errors) }
+
+      ${ form.size.label } ${ form.size() }<br/>
+      ${ form.html_errors(form.size.errors) }
+
+      ${ form.effect_date.label } ${ form.effect_date() }<br/>
+      ${ form.html_errors(form.effect_date.errors) }
+
+      ${ form.expired_date.label } ${ form.expired_date() }<br/>
+      ${ form.html_errors(form.expired_date.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+
+</div>
+
+</%block>

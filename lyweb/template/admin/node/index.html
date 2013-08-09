@@ -4,11 +4,11 @@
 <li><a href="${ reverse_url('admin:node') }">${ _("Node") }</a></li>
 </%block>
 
-<%block name="content">
+<%block name="main">
 
 <div>
   % if nodes:
-  <table class="ly-table full">
+  <table class="table table-striped table-bordered">
     <thead>
       <tr>
         <th>${ _("ID") }</th>
@@ -52,8 +52,8 @@
     </tbody>
   </table>
   % else:
-  <div class="first-warning">
-    <p>Have not found any nodes. Please register first!</p>
+  <div class="hero-unit">
+    <p class="text-warning">Have not found any nodes. Please register first!</p>
   </div>
   % endif
 </div>

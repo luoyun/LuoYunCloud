@@ -1,0 +1,41 @@
+<%inherit file="base.html"/>
+
+<%block name="mainbody">
+
+<table class="table">
+  <thead>
+	<tr>
+	  <th>ID</th>
+	  <th>${ _("User") }</th>
+	  <th>${ _("Type") }</th>
+	  <th>${ _("Size") }</th>
+	  <th>${ _("Effect Date") }</th>
+	  <th>${ _("Expired Date") }</th>
+	  <th>${ _("Created") }</th>
+	  <th>${ _("Updated") }</th>
+	  <th></th>
+	</tr>
+  </thead>
+  <tbody>
+	% for R in RESOURCE_LIST:
+	<tr class="${ R.contextual_class }">
+	  <td>${ R.id }</td>
+	  <td>
+		<a href="${ reverse_url('admin:user:view') }?id=${ R.user_id }">${ R.user.username }</a></td>
+	  <td>${ R.type_str }</td>
+	  <td>${ R.size_str }</td>
+	  <td>${ ftime(R.effect_date) }</td>
+	  <td>${ ftime(R.expired_date) }</td>
+	  <td>${ ftime(R.created) }</td>
+	  <td>${ ftime(R.updated) }</td>
+	  <td>
+		<i class="icon-edit"></i> <a href="${ reverse_url('admin:resource:edit') }?id=${ R.id }">${ _("Edit") }</a>
+		<i class="icon-star"></i> <a href="${ reverse_url('admin:resource:view') }?id=${ R.id }">${ _("View") }</a>
+	  </td>
+	</tr>
+	% endfor
+  </tbody>
+</table>
+${ PAGE_HTML }
+
+</%block>

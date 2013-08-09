@@ -1,0 +1,45 @@
+#instance-list .the-select {
+	padding: 0px 12px;
+}
+#instance-list .the-list {
+	padding: 15px 0 30px;
+}
+#instance-list .logo {
+	width: 100px;
+	margin: 10px auto;
+}
+#instance-list .name {
+	text-align: center;
+	margin: 5px auto;
+	white-space:nowrap;
+}
+#instance-list .instance .dl-horizontal dt {
+	width: 50px;
+	color: gray;
+}
+#instance-list .instance .dl-horizontal dd {
+	margin-left: 55px;
+}
+#instance-list .instance {
+	position: relative;
+	margin-bottom: 30px;
+}
+#instance-list .instance .logo {
+/*	width: 80px;*/
+}
+#instance-list .instance .status {
+	position: absolute;
+	top: 0px;
+	left: 10px;
+}
+
+#instance-view .name {
+	margin-bottom: 2px;
+}
+#instance-view .logo {
+	width: 120px;
+	margin: 20px auto;
+}
+#instance-view .summary {
+	margin: 15px 0 20px;
+}

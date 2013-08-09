@@ -1,0 +1,8 @@
+#user-present {
+	margin: 20px 0;
+}
+
+#user-present .username {
+	font-size: 16px;
+	padding: 10px;
+}

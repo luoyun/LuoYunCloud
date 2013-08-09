@@ -1,11 +1,11 @@
-<%inherit file="/admin/account.html" />
+<%inherit file="/admin/account/base.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
 <li>${ _("Create New Group") }</li>
 </%block>
 
-<%block name="content">
+<%block name="submain">
 
 <div class="small-left-right-form c">
   <form method="POST">${ xsrf_form_html() }

@@ -1,0 +1,77 @@
+<%inherit file="network_base.html" />
+
+<%block name="innav">
+<li>${ _("Basic Information") }</li>
+</%block>
+
+<%block name="submain">
+
+<div class="container">
+<h2>${ _("Network Pool") }</h2>
+
+<p><a class="btn" href="${ reverse_url('admin:network:config') }"><i class="icon-plus"></i> ${ _("Add Network Pool") }</a></p>
+
+% if networkpool_list:
+
+% for np in networkpool_list:
+<div>
+
+  <h3>${ np.id }: ${ np.name } <a href="${ reverse_url('admin:network:delete') }?id=${ np.id }"><i class="icon-trash"></i></a></h3>
+
+  <table class="table table-bordered table-striped">
+	<tbody>
+	  <tr>
+		<td>${ _("IP Total") }</td>
+		<td><a href="${ reverse_url('admin:network:ippool') }?network=${ np.id }">${ len(np.ips) }</td>
+      </tr>
+
+	  <tr>
+		<td>${ _("Start") }</td>
+		<td>${ np.start }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("End") }</td>
+		<td>${ np.end }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("Netmask") }</td>
+		<td>${ np.netmask }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("Gateway") }</td>
+		<td>${ np.gateway }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("Nameservers") }</td>
+		<td>${ np.nameservers }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("Exclude IPs") }</td>
+		<td>${ np.exclude_ips }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("Created") }</td>
+		<td>${ ftime(np.created) }</td>
+	  </tr>
+
+	  <tr>
+		<td>${ _("Updated") }</td>
+		<td>${ ftime(np.updated) }</td>
+	  </tr>
+	</tbody>
+  </table>
+</div>
+% endfor
+
+% endif
+</div>
+
+  
+
+</%block>

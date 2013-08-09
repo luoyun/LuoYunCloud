@@ -25,14 +25,14 @@ for m in settings.app:
         logging.error('from %s import table failed: %s' % (m, e))
 
 
-from lyorm import db
+from yweb.orm import db
 
 from app.appliance.models import Appliance
-from app.account.models import User
+from app.auth.models import User
 
 from ytool.ini import ConfigINI
 
-cf = ConfigINI(settings.LUOYUN_CONFIG_PATH, catalog='base')
+cf = ConfigINI(settings.sitecfg, catalog='base')
 appdir = cf.get('appliance_top_dir', '/opt/LuoYun/data/appliance/')
 
 def _save_upfile(fpath, fhash):

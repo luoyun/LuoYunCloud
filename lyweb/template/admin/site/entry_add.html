@@ -1,0 +1,18 @@
+<%inherit file="base.html"/>
+
+<%block name="mainbody">
+
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Edit Navigation") }</legend>
+	  ${ form.slug.label } ${ form.slug() }
+	  ${ form.html_errors(form.slug.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+
+</div>
+
+</%block>

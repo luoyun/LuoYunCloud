@@ -1,0 +1,22 @@
+<%inherit file="instance_base.html" />
+
+<%block name="innav">
+<li>${ _("Edit Storage") }</li>
+</%block>
+
+<%block name="submain">
+<div id="instance-storage-edit">
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Configure Instance Storage") }</legend>
+      ${ form.type.label } ${ form.type() }
+      ${ form.html_errors(form.type.errors) }
+
+      ${ form.size.label } ${ form.size() }
+      ${ form.html_errors(form.size.errors) } <span class="muted"><small>${ _(" ( %s G available ) ") % current_user.profile.storage_remain }</small></span>
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+</div>
+</%block>

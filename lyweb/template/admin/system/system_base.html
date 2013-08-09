@@ -1,0 +1,27 @@
+<%inherit file="/admin/admin_base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${ theme_url('admin-system.css') }" />
+</%block>
+
+<%block name="main">
+<div class="container-fluid">
+  <div class="row-fluid">
+
+	<div class="span2">
+	  <div class="sidebar-menu">
+		<a href="#siteMeun" class="nav-header menu-first collapsed" data-toggle="collapse">${ _("System Configure") }</a>
+		<ul id="siteMeun" class="nav nav-list menu-second">
+		  <li><a href="${ reverse_url('system:nginx:edit') }">${ _("Nginx") }</a></li>
+		  <li><a href="${ reverse_url('system:qqauth2:edit') }">${ _("QQAuth2 Login") }</a></li>
+		  <li><a href="${ reverse_url('admin:system:trace') }">${ _("Trace") }</a></li>
+		</ul>
+	  </div>
+	</div>
+
+	<div class="span10">
+	  <%block name="submain"/>
+	</div>
+  </div>
+</div>
+</%block>

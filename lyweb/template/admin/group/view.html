@@ -1,11 +1,11 @@
-<%inherit file="/admin/account.html" />
+<%inherit file="/admin/account/base.html" />
 
 <%block name="innav">
 <li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
 <li>${ _("View") } <a href="${ reverse_url('admin:group') }?id=${ GROUP.id }">${ GROUP.name }</a></li>
 </%block>
 
-<%block name="content">
+<%block name="submain">
 
 <table class="kv">
   <tbody>

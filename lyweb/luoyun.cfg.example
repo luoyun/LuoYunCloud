@@ -30,3 +30,7 @@ smtp_port = 25
 
 [registration]
 user_default_group_id = 2
+
+
+[resource]
+default_indate = 1 hours

@@ -1,50 +1,62 @@
 from tornado.web import url
-import app.account.views as account
-import app.message.views as msg
+from . import views
+from . import user_views as user
+from . import admin_views as admin
 
 handlers = [
 
-    url( r'/login', account.Login,
-         name='login'),
+    ( r'/login', views.Login ),
+    ( r'/logout', views.Logout ),
 
-    url( r'/logout', account.Logout,
-         name='logout'),
+    ( r'/openid/qq/login', views.QQLogin ),
+    url ( r'/openid/user/binding', views.OpenIDUserBinding,
+          name="openid:user:binding" ),
+    url ( r'/openid/user/new', views.OpenIDUserNew,
+          name="openid:user:new" ),
 
-    url( r'/register', account.Register,
-         name='register'),
+    url( r'/account', views.MyAccount, name='account'),
 
-    url( r'/register_apply', account.RegisterApply,
-         name='register_apply'),
+    # email validate
+    url( r'/account/email/validate', views.EmailValidate,
+         name='account:email:validate'),
 
-    url( r'/account/reset_password_apply',
-         account.ResetPasswordApply, name='reset_password_apply'),
+    # password reset
+    url( r'/account/resetpass_apply', views.ResetPassApply,
+         name='account:resetpass_apply'),
 
-    url( r'/account/reset_password_complete',
-         account.ResetPasswordComplete, name='reset_password_complete'),
+    url( r'/account/resetpass', views.ResetPass,
+         name='account:resetpass'),
 
+    url( r'/account/resetmypass', views.ResetMyPass,
+         name='account:reset_mypass'),
 
-    url( r'/account', account.Index,
-         name='account:index'),
+    # baseinfo
+    url( r'/account/baseinfo/edit', views.BaseInfoEdit,
+         name='account:baseinfo:edit'),
 
-    url( r'/account/permission', account.MyPermission,
-         name='account:permission'),
-
-    url( r'/user/([0-9]+)', account.ViewUser,
-         name='account:view'),
-
-    url( r'/group/([0-9]+)', account.ViewGroup,
-         name='account:group:view'),
-
-    url( r'/account/reset_password', account.ResetPassword,
-         name='account:reset_password'),
-
-    url( r'/account/avatar/edit', account.AvatarEdit,
+    # avatar
+    url( r'/account/avatar/edit', views.AvatarEdit,
          name='account:avatar:edit'),
 
-    url( r'/account/([0-9]+)/delete', account.Delete,
-         name='account:delete'),
+    # pulic key
+    url( r'/account/public_key', views.PublicKeyIndex,
+         name='account:public_key' ),
 
-    url( r'/account/([0-9]+)/islocked', account.islockedToggle,
-         name='account:islocked'),
+    url( r'/account/public_key/add', views.PublicKeyAdd,
+         name='account:public_key:add' ),
+
+    url( r'/account/public_key/edit', views.PublicKeyEdit,
+         name='account:public_key:edit' ),
+
+    url( r'/account/public_key/delete', views.PublicKeyDelete,
+         name='account:public_key:delete' ),
+
+    # user
+    url( r'/user/view', user.View, name='user:view' ),
+
+
+    # admin
+    url(r'/admin/account/mailto', admin.MailTo,
+        name='admin:account:mailto'),
 
 ]

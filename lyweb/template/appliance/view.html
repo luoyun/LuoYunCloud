@@ -1,111 +1,73 @@
 <%inherit file="appliance_base.html" />
 
-<%block name="main">
+<%block name="innav">
+<li><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog_name }</a> <span class="divider">/</span></li>
+<li>${ _("View") } ${ appliance.name }</li>
+</%block>
 
-<div class="inner-nav">
-  <ol>
-    <li><a class="home" href="/">${ _("Home") }</a></li>
-    <li><a href="/appliance">${ _("Appliances") }</a></li>
-    <li><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog_name }</a></li>
-    <li>${ _("View") } ${ appliance.name }</li>
-  </ol>
-</div>
+<%block name="submain">
 
-<div id="app-baseinfo" class="c">
-  <div class="section ly-box c" style="float:left;">
-    <img class="app-logo" src="${ appliance.logourl }" alt="Logo" />
-    <div class="app-desc">
-      <h1 class="app-name">${ appliance.name }</h1>
-      <h4 class="app-user">${ _("Owner") }<a href="${ reverse_url('account:view', appliance.user_id) }">${ appliance.user.username }</a></h4>
-      <p class="app-summary">
-      % if appliance.summary:
-      ${ appliance.summary }
-      % else:
-      ${ _("This is a appliance of LuoYun platform, you can create a instance from it.") }
-      % endif
-      </p>
-      % if appliance.isuseable:
-      <p><span class="create-instance"><a class="ly-btn2 medium green" href="${ reverse_url('instance:create') }?appliance_id=${ appliance.id }">${ _("Create Instance") }</a></span></p>
-      % else:
-      <p class="app-unuseable">${ _("This appliance is locked, you can not use it.") }</p>
-      % endif
-    </div>
-  </div>
+<div id="appliance-view">
 
-  <div class="aside">
-    <table class="lrlist">
-      <tbody>
-	<tr>
-	  <td class="c1">${ _("Catalog") }</td>
-	  <td class="c2"><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog_name }</a></td>
-	</tr>
-	<tr>
-	  <td class="c1">${ _("Used") }</td>
-	  <td class="c2">${ len(appliance.instances) } ${ _("times") }</td>
-	</tr>
-        <tr>
-	  <td class="c1">${ _("Create Time") }</td>
-          <td class="c2">${ ftime(appliance.created) }</td>
-	</tr>
-        <tr>
-	  <td class="c1">${ _("Update Time") }</td>
-          <td class="c2">${ ftime(appliance.updated) }</td>
-	</tr>
-      </tbody>
-    </table>
+  <div id="appliance-summary" class="row-fluid">
 
-    % if current_user and current_user.id == appliance.user_id:
-    <div class="app-admin c">
-      <span class="edit"><a class="ly-btn2 small blue" href="${ reverse_url('appliance:edit', appliance.id) }">${ _("Edit") }</a></span>
-      <span class="delete"><a class="ly-btn2 small blue" href="${ reverse_url('appliance:delete', appliance.id) }">${ _("Delete") }</a></span>
-    </div>
-    % endif
+	<div class="span3 text-center">
+	  <img class="logo" src="${ appliance.logourl }" alt="Logo" />
+	</div>
+
+	<div class="span9">
+	  <h2>${ appliance.name }</h2>
+	  <div class="owner">${ _("Owner") }
+		<a href="${ reverse_url('user:view') }?id=${ appliance.user_id }">${ appliance.user.username }</a></div>
+	  <div class="summary muted">
+		% if appliance.summary:
+		${ appliance.summary }
+		% else:
+		${ _("This is a appliance of LuoYun platform, you can create a instance from it.") }
+		% endif
+	  </div>
+	</div>
 
   </div>
-</div>
 
+  <div id="appliance-detail" class="row-fluid">
 
-% if appliance.description:
-<div class="section c">
-  <h2 class="title2">${ _("About The Appliance") }</h2>
-  <div id="appliance-description" class="markdown">
-    ${ appliance.description_html }
+	<div class="span3">
+	  <div id="create-instance-btn" class="text-center">
+		% if appliance.isuseable:
+		<a class="btn btn-large btn-primary" href="${ reverse_url('myun:instance:create') }?appliance_id=${ appliance.id }" title="${ _('You can create a new instance based on this appliance.') }">${ _("Create Instance") }</a>
+		% else:
+		<a class="btn btn-large btn-primary disabled" title="${ _('This appliance is locked, you can not use it.') }">${ _("Create Instance") }</a>
+		% endif
+	  </div>
+	</div>
+
+	<div class="span9">
+
+	  <dl class="dl-horizontal">
+		<dt>${ _("Catalog") }</dt>
+		<dd><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog_name }</a></dd>
+
+		<dt>${ _("Used") }</dt>
+		<dd>${ len(appliance.instances) } ${ _("times") }</dd>
+
+		<dt>${ _("Create Time") }</dt>
+		<dd>${ ftime(appliance.created) }</dd>
+
+		<dt>${ _("Update Time") }</dt>
+		<dd>${ ftime(appliance.updated) }</dd>
+	  </dl>
+
+	  % if appliance.description:
+	  <div class="description">
+		<h2>${ _("About The Appliance") }</h2>
+		<div id="appliance-description" class="markdown">
+		  ${ appliance.description_html }
+		</div>
+	  </div>
+	  % endif
+	</div>
+
   </div>
 </div>
-% endif
-
-% if instances:
-<div class="section c">
-  <h2>${ _("Instance List") }</h2>
-  <% count = 0 %>
-  % for I in instances:
-
-  <ul class="v-instance">
-    <li class="i-logo">
-      <a
-	 % if I.status in [4, 5]:
-    	 href="${ I.home_url(current_user) }" title="${ I.ip }"
-	 % else:
-	 href="/instance/${I.id}" title="${ I.name }"
-         % endif
-	 target="_blank"><img src="${ I.logourl }" /></a>
-    </li>
-    <div class="c"></div>
-    <li class="i-name c"><a href="${ reverse_url('instance:view', I.id) }">${ I.name }</a></li>
-    <li class="i-user"><span class="t">${ _("Owner") }</span><a href="${ reverse_url('account:view', I.user_id) }">${ I.user.username }</a></li>
-    <li class="i-status"><img src="${ THEME_URL }icons/InstanceStatus/${ I.status }.png" alt="${ locale.translate(I.status_string) }"/></li>
-  </ul>
-
-  % if count % 5 == 4:
-  <div class="c"></div>
-  % endif
-  <% count += 1 %>
-  % endfor
-
-  <div class="clearfix"></div>
-  ${ page_html }
-
-</div>
-% endif
-
 </%block>

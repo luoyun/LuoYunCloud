@@ -1,0 +1,58 @@
+<%inherit file="index_base.html"/>
+
+<%block name="subsubmain">
+
+% if POST_LIST:
+
+<ul class="nav nav-pills">
+  <li class="active"><a href="?tab=posts">${ _("Newest Posts") }</a></li>
+  <li><a href="?tab=post_votes">${ _("Votes") }</a></li>
+</ul>
+
+<div id="forum-post-list">
+  % for P in POST_LIST:
+  <h3><i class="icon-comment-alt"></i> <a href="${ reverse_url('forum:topic:view') }?id=${ P.topic_id }">${ P.topic.name }</a></h3>
+  <div class="post-item row-fluid">
+	<div class="span1 text-center status">
+	  <a name="#post${ P.id }"></a>
+	  <a class="vote-opt" href="${ reverse_url('forum:post:vote') }?id=${ P.id }&vote=1"><i class="icon-thumbs-up icon-large"></i> <span class="like value">${ P.like }</span></a>
+	  <a class="vote-opt" href="${ reverse_url('forum:post:vote') }?id=${ P.id }&vote=-1"><i class="icon-thumbs-down icon-large"></i> <span class="unlike value">${ P.unlike }</span></a>
+	</div>
+	<div class="span11">
+	  <% PP = get_post_parent(P) %>
+	  <div class="title">
+		<i class="icon-user"></i> <a href="${ reverse_url('user:view') }?id=${ P.user_id }">${ P.user.username }</a> 
+		${ htime(P.updated) } 
+	  </div>
+	  % if PP:
+	  <div>
+		<p>@ <a href="${ reverse_url('user:view') }?id=${ PP.user_id }">${ PP.user.username }</a></p>
+		<div class="well">${ PP.body_html }</div>
+	  </div>
+	  % endif
+	  <div class="body">${ P.body_html }</div>
+	  <div class="text-right">
+		% if current_user and P.user_id == current_user.id:
+		<a href="${ reverse_url('forum:post:edit') }?id=${ P.id }"><i class="icon-edit"></i> ${ _("Edit") }</a>
+		% else:
+		<a href="${ reverse_url('forum:post:reply') }?id=${ P.id }"><i class="icon-reply"></i> ${ _("Reply Post") }</a>
+		% endif
+	  </div>
+	</div>
+  </div>
+  % endfor
+  ${ page_html }
+</div>
+
+% else:
+<div class="hero-unit">${ _("No posts yet.") }</div>
+% endif
+
+<div style="display:none;">
+  <span id="xsrf-cookie">${ xsrf_cookie }</span>
+</div>
+<script type="text/javascript" >
+  just_active_myself('.index-tabs .tab-posts');
+  forum_vote();
+</script>
+</%block>

@@ -1,18 +1,21 @@
 from tornado.web import url
-import app.home.views as home
+from . import views
 
 handlers = [
 
     # Home
-    url( r'/i18n/setlang', home.SetLocale ),
-    url( r'/no_permission', home.NoPermission ),
-    url( r'/no_resource', home.NoResource ),
-    url( r'/registration_protocol', home.RegistrationProtocol,
+    ( r'/', views.Index ),
+    url( r'/setlocale', views.SetLocale ),
+    url( r'/no_permission', views.NoPermission ),
+    url( r'/no_resource', views.NoResource ),
+    url( r'/registration_protocol', views.RegistrationProtocol,
          name="registration_protocol" ),
-    url( r'/welcome_new_user', home.WelcomeNewUser,
+    url( r'/welcome_new_user', views.WelcomeNewUser,
          name="welcome_new_user" ),
 
-    url( r'/ly/upload/kindeditor', home.UploadKindeditor,
+    url( r'/ly/upload/kindeditor', views.UploadKindeditor,
          name="upload:kindeditor" ),
 
+    url( r'/t/preview', views.Preview, name='preview' ),
+    url( r'/search', views.Search, name='search' ),
 ]

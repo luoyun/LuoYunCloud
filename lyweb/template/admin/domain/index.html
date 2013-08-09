@@ -1,0 +1,27 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="innav">
+<li><a href="${ reverse_url('admin:domain') }">${ _("Domain") }</a></li>
+</%block>
+
+<%block name="main">
+
+<div>
+  % if domain:
+  <dl class="dl-horizontal">
+	<dt>${ _("Top Domain") }</dt>
+	<dd>${ domain.get('topdomain', '') }</dd>
+	<dt>${ _("Prefix") }</dt>
+	<dd>${ domain.get('prefix', '') }</dd>
+	<dt>${ _("Suffix") }</dt>
+	<dd>${ domain.get('suffix', '') }</dd>
+  </dl>
+  % else:
+  <div class="hero-unit">
+	<p>${ _("Have not configure domain yet.") }</p>
+  </div>
+  % endif
+	<p><a class="btn" href="${ reverse_url('admin:domain:edit') }"><i class="icon-edit"></i> ${ _("Edit") }</a></p>
+</div>
+
+</%block>

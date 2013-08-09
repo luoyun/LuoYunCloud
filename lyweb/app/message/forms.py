@@ -1,4 +1,4 @@
-from lyforms import Form
+from yweb.forms import Form
 from wtforms import BooleanField, TextField, \
     validators, DateTimeField, TextAreaField, IntegerField, \
     PasswordField, SelectMultipleField, FileField, SelectField
@@ -8,8 +8,7 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import ValidationError
 
 
-from app.wiki.models import WikiCatalog
-from lyorm import db
+from yweb.orm import db
 
 
 class NewMessageForm(Form):

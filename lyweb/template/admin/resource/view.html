@@ -1,0 +1,44 @@
+<%inherit file="base.html"/>
+
+<%block name="mainbody">
+
+<table class="table table-striped">
+  <tbody>
+	<tr>
+	  <td>ID</td>
+	  <td>${ resource.id }</td>
+	</tr>
+	<tr>
+	  <td>${ _("User") }</td>
+	  <td>
+		<a href="${ reverse_url('admin:user:view') }?id=${ resource.user_id }">${ resource.user.username }</a>
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ _("Type") }</td>
+	  <td>${ resource.type_str }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Size") }</td>
+	  <td>${ resource.size_str }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Effect Date") }</td>
+	  <td>${ ftime(resource.effect_date) }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Expired Date") }</td>
+	  <td>${ ftime(resource.expired_date) }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Created") }</td>
+	  <td>${ ftime(resource.created) }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Updated") }</td>
+	  <td>${ ftime(resource.updated) }</td>
+	</tr>
+  </tbody>
+</table>
+
+</%block>

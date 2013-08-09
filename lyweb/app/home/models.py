@@ -2,13 +2,13 @@ import os, random
 from hashlib import sha1
 
 from datetime import datetime
-from lyorm import ORMBase
+from yweb.orm import ORMBase
 
 from sqlalchemy import Column, Integer, String, \
     Sequence, DateTime, Table, ForeignKey, Boolean, Text
 from sqlalchemy.orm import relationship, backref
 
-from app.account.models import User
+from app.auth.models import User
 
 import settings
 

@@ -1,72 +1,65 @@
 # coding: utf-8
 
-import os, json, Image, tempfile
-from datetime import datetime
-from lycustom import LyRequestHandler
+import os
+import json
+import tempfile
+import Image
+import random, pickle, base64, time, datetime
+from hashlib import sha1, md5
 
-from sqlalchemy.sql.expression import asc, desc
 
-from app.account.models import User, ApplyUser, UserProfile, \
-    UserResetpass, Group
-from app.instance.models import Instance
-from app.session.models import Session
+from sqlalchemy import and_
 
-from app.instance.models import Instance
-from app.appliance.models import Appliance
-from app.message.models import Message, MessageText
-
-from app.account.forms import LoginForm, ResetPasswordForm, \
-    RegistrationForm, AvatarEditForm, ResetPasswordApplyForm
-
-import random, time, pickle, base64
-from hashlib import md5, sha512, sha1
-
-import tornado
 from tornado.web import authenticated, asynchronous
+from lycustom import RequestHandler
 
-from app.account.utils import encrypt_password, check_password
+from yweb.contrib.session.models import Session
+from app.auth.models import User, Group, OpenID, AuthKey
+from app.auth.utils import enc_login_passwd
+from app.language.models import Language
 
-from lymail import send_email
+from .models import UserResetpass, PublicKey, UserProfile
+from .forms import LoginForm, ResetPassForm, ResetPassApplyForm, \
+    BaseInfoForm, AvatarForm, PublicKeyForm, EmailValidateForm, \
+    OpenIDNewForm
 
-from lycustom import has_permission
 
-from lytool.filesize import size as human_size
+from app.site.models import SiteConfig, SiteLocaleConfig
 
+from yweb.utils import randstring
+from yweb.quemail import Email
 
 import settings
-from app.system.models import LuoYunConfig
 
-from ytool.password import check_login_passwd, enc_login_passwd, \
-    enc_shadow_passwd
 
-class AccountRequestHandler(LyRequestHandler):
 
+class AccountRequestHandler(RequestHandler):
 
     def save_session(self, user_id):
         self.require_setting("cookie_secret", "secure cookies")
 
         session_key = sha1('%s%s' % (random.random(), time.time())).hexdigest()
-        self.set_secure_cookie('session_key', session_key)
 
         session_dict = {'user_id': user_id}
-        sk = self.application.settings["session_secret"]
+        sk = self.settings["session_secret"]
         pickled = pickle.dumps(session_dict, pickle.HIGHEST_PROTOCOL)
         pickled_md5 = md5(pickled + sk).hexdigest()
         session_data = base64.encodestring(pickled + pickled_md5)
 
         session = Session(session_key, session_data)
-        self.db2.add(session)
-        self.db2.commit()
+        self.db.add(session)
+        self.db.commit()
 
+        self.set_secure_cookie('session_key', session_key)
 
 
     def delete_session(self, user_id):
         session_key = self.get_secure_cookie('session_key')
 
-        session = self.db2.query(Session).filter_by(
+        session = self.db.query(Session).filter_by(
             session_key = session_key).first()
-        self.db2.delete(session)
-        self.db2.commit()
+        self.db.delete(session)
+        self.db.commit()
 
         self.clear_all_cookies()
 
@@ -74,331 +67,252 @@ class AccountRequestHandler(LyRequestHandler):
 
 class Login(AccountRequestHandler):
 
+    title = _('Welcome to Login')
+    template_path = 'account/login.html'
+
+    def prepare(self):
+
+        self.prepare_kwargs['form'] = LoginForm(self)
 
     def get(self):
-        form = LoginForm(self)
-        self.render("account/login.html", form=form,
-                    next_url = self.get_argument('next', '/'))
+        self.render()
 
     def post(self):
+        _ = self.trans
 
-        form = LoginForm(self)
+        form = self.prepare_kwargs['form']
+
         if form.validate():
-            user = self.db2.query(User).filter_by(username=form.username.data).first()
-            if user:
-                if user.islocked:
-                    form.password.errors.append( self.trans(_('You have been lock by admin, can not login now. If you have any questions, contact admin first please !')) )
-                    return self.render('account/login.html', form=form)
+            user = form.true_user
+            self.save_session(user.id)
+            user.last_login = datetime.datetime.now()
+            self.db.add(user)
+            self.db.commit()
+            return self.redirect_next('/')
 
-                if check_password(form.password.data, user.password):
-                    self.save_session(user.id)
-                    user.last_login = datetime.now()
-                    self.db2.commit()
-                    root_passwd = enc_shadow_passwd(form.password.data)
-                    user.profile.set_secret('root_shadow_passwd', root_passwd)
-                    self.db2.commit()
-
-                    return self.redirect( self.get_argument('next', '/') )
-                else:
-                    form.password.errors.append( self.trans(_('password is wrong !')) )
-            else:
-                form.username.errors.append( self.trans(_('No such user !')) )
-
-        self.render('account/login.html', form=form)
-
+        self.render()
 
 
 class Logout(AccountRequestHandler):
+
     @authenticated
     def get(self):
-        if self.current_user:
-            self.delete_session(self.current_user.id)
-            self.redirect('/')
-        else:
-            d['username_error'] = 'Have not found user.'
-            self.render('account/login.html', **d)
+        self.delete_session(self.current_user.id)
+        self.redirect('/')
 
 
-class Register(AccountRequestHandler):
 
-    ''' Complete a Registration '''
+class MyAccount(RequestHandler):
+
+    @authenticated
+    def get(self):
+
+        self.render( 'account/index.html' )
 
 
-    def initialize(self):
 
-        self.enable_apply = False
-        self.key = self.get_argument('key', None)
-        self.applyuser = None
+class ResetPassApply(RequestHandler):
 
-        if hasattr(settings, 'REGISTRATION_APPLY'):
-            self.enable_apply = settings.REGISTRATION_APPLY
-
-        if self.key:
-            self.applyuser = self.db2.query(Applyuser).filter_by(
-                key = self.key).one()
-
+    title = _('Reset My Password Please')
+    template_path = 'account/reset_password_apply.html'
 
     def get(self):
 
-        if self.enable_apply:
-            if not self.key:
-                return self.write( self.trans(_('No key found !')) )
-            if not self.applyuser:
-                return self.write( self.trans(_('No apply record found !')) )
-
-        form = RegistrationForm(self)
-        if self.applyuser:
-            form.email.data = self.applyuser.email
-
-        self.render( 'account/register.html', form = form )
-
+        self.render( form = ResetPassApplyForm(self) )
 
     def post(self):
 
-        form = RegistrationForm(self)
+        form = ResetPassApplyForm(self)
 
         if form.validate():
-
-            user = self.db2.query(User).filter_by( username=form.username.data ).all()
-
+            user = self.db.query(User).filter_by(
+                email = form.email.data.strip() ).first()
             if user:
-                form.username.errors.append( self.trans(_('This username is occupied')) )
+                applys = self.db.query(UserResetpass).filter(
+                    and_(UserResetpass.user_id == user.id,
+                         UserResetpass.completed is None)).all()
+                if len(applys):
+                    for a in applys:
+                        self.db.delete(a)
+
+                new = UserResetpass(user)
+                self.db.add(new)
+                self.db.commit()
+
+                self.send_mail( new )
+
+                t = 'account/reset_password_apply_success.html'
+                return self.render( t, user = user )
             else:
-                enc_password = enc_login_passwd(form.password.data)
-                newuser = User( username = form.username.data,
-                                password = enc_password )
-                self.db2.add(newuser)
-                self.db2.commit()
-                # Create profile
-                profile = UserProfile(newuser, email = form.email.data)
-                root_passwd = enc_shadow_passwd(form.password.data)
-                profile.set_secret('root_shadow_passwd', root_passwd)
-                # Add to default group
-                from settings import cf
-                if cf.has_option('registration', 'user_default_group_id'):
-                    try:
-                        DGID = int(cf.get('registration', 'user_default_group_id'))
-                        G = self.db2.query(Group).get(DGID)
-                        newuser.groups = [G]
-                        self.db2.commit()
-                    except:
-                        pass
+                form.email.errors.append( _("Unregistered Mail") )
 
-                self.db2.add(profile)
-                self.db2.commit()
-
-                # send_message
-                self.send_message( newuser )
-
-                # send_mail()
-
-                self.save_session(newuser.id)
-
-                return self.redirect( self.reverse_url('account:index') )
-
-        # Have a error
-        self.render( 'account/register.html', form = form )
+        self.render( form = form )
 
 
-    def send_message(self, user):
-        admin = self.db2.query(User).filter_by(username='admin').first()
-        if admin:
+    def send_mail(self, _apply):
 
-            welcome = self.db2.query(LuoYunConfig).filter_by(key='welcome_new_user').first()
+        LID = self.language.id
 
-            if welcome:
-                wc = json.loads(welcome.value).get('text')
+        host = SiteConfig.get(
+            self.db, 'site.host', 'http://127.0.0.1')
 
-                T = MessageText(
-                    subject = self.trans(_('Welcome to use LuoYun Cloud !')),
-                    body = wc )
-                self.db2.add(T)
-                self.db2.commit()
+        subject = self.db.query(SiteLocaleConfig).filter(
+            and_(SiteLocaleConfig.key == 'resetpass.email.subject',
+                 SiteLocaleConfig.language_id == LID)).first()
+        subject = subject.value if subject \
+            else _('Reset your password.')
 
-                M = Message( sender_id = admin.id,
-                             receiver_id = user.id, text_id = T.id )
+        url = host + self.reverse_url('account:resetpass') \
+            + '?key=%s' % _apply.key
 
-                self.db2.add(M)
+        d = { 'return_string': True, 'APPLY': _apply,
+              'RESET_URL': url }
 
-                user.notify()
-                self.db2.commit()
+        body = self.render('account/reset_password_email.html', **d)
+
+        response = self.sendmsg(
+            uri = 'mailto.address',
+            data = { 'to_user_id': _apply.user_id,
+                     'subject': subject,
+                     'body': body } )
+        return response
 
 
 
-# TODO:
-class RegisterApply(AccountRequestHandler):
+class ResetPass(AccountRequestHandler):
+
+    title = _('Complete Reset Password')
+    template_path = 'account/reset_password.html'
+
+    def prepare(self):
+        key = self.get_argument('key', None)
+        if key:
+            it = self.db.query(UserResetpass).filter_by(
+                key = key ).first()
+            if it:
+                self.user_apply = it
+                self.user = it.user
+                return
+
+        d = { 'emsg': _('No such key: %s') % key }
+        return self.render('account/reset_password_failed.html', **d)
 
 
     def get(self):
-
-        applyer = self.db2.query(Applyer).filter_by(key=key).one()
-
-        if applyer:
-
-            salt = md5(str(random.random())).hexdigest()[:12]
-            hsh = encrypt_password(salt, password)
-            enc_password = "%s$%s" % (salt, hsh)
-
-            user = User( username = applyer.username,
-                         password = enc_password )
-
+        d = { 'form': ResetPassForm(self), 'user': self.user }
+        return self.render( **d )
 
     def post(self):
 
-        applyer = ApplyUser( email = form.email.data,
-                             ip = self.request.remote_ip )
-        self.db2.add(applyuser)
-        self.db2.commit()
-
-
-
-class Index(LyRequestHandler):
-
-    @authenticated
-    def get(self):
-
-        my = self.db2.query(User).get(self.current_user.id)
-        d = { 'title': self.trans(_('My Account Center')),
-              'my': my }
-
-        self.render( 'account/index.html', **d)
-
-
-class MyPermission(LyRequestHandler):
-
-    @authenticated
-    def get(self):
-
-        my = self.db2.query(User).get(self.current_user.id)
-        d = { 'title': self.trans(_('My Permissions')),
-              'my': my }
-
-        self.render( 'account/permissions.html', **d)
-
-
-
-class ViewUser(LyRequestHandler):
-    ''' Show home of specified user '''
-    def get(self, id):
-
-        user = self.db2.query(User).get(id)
-
-        if not user:
-            return self.write('Have not found user by id %s' % id)
-
-        by = self.get_argument('by', 'updated')
-        sort = self.get_argument('sort', 'desc')
-
-        if by == 'created':
-            by_obj = Instance.created
-        elif by == 'updated':
-            by_obj = Instance.updated
-        else:
-            by_obj = Instance.id
-
-        sort_by_obj = desc(by_obj) if sort == 'desc' else asc(by_obj)
-
-        instances = self.db2.query(Instance).filter_by(
-            user_id = id ).filter(
-            Instance.isprivate != True ).order_by( sort_by_obj )
-
-        total = instances.count()
-        instances = instances.slice(0, 20).all() # TODO: show only
-
-        d = { 'title': self.trans(_('View User %s')) % user.username,
-              'USER': user, 'INSTANCE_LIST': instances,
-              'TOTAL_INSTANCE': total }
-
-        self.render( 'account/view_user.html', **d )
-
-
-
-class ViewGroup(LyRequestHandler):
-
-    @authenticated
-    def get(self, gid):
-
-        group = self.db2.query(Group).get(gid)
-
-        if not group:
-            return self.write(_('No such group: %s !') % gid)
-
-        users = self.db2.query(User).filter(
-            User.groups.contains(group) )
-
-        total = users.count()
-
-        users = users.slice(0, 20).all() # TODO: show only
-
-        d = { 'title': self.trans(_('View Group %s')) % group.name,
-              'GROUP': group, 'USER_LIST': users,
-              'TOTAL_USER': total }
-
-        self.render( 'account/view_group.html', **d )
-
-
-
-class ResetPassword(LyRequestHandler):
-
-
-    @authenticated
-    def get(self):
-
-        form = ResetPasswordForm(self)
-
-        self.render( 'account/reset_password.html', title = self.trans(_('Reset Password')),
-                     form = form )
-
-
-    @authenticated
-    def post(self):
-
-        form = ResetPasswordForm(self)
+        form = ResetPassForm(self)
 
         if form.validate():
-            user = self.current_user
-            enc_password = enc_login_passwd(form.password.data)
-            user.password = enc_password
+            self.user.password = enc_login_passwd(form.password.data)
+            self.db.add( self.user )
+            self.db.delete( self.user_apply )
+            self.db.commit()
+            self.save_session( self.user.id )
+            return self.redirect('/')
 
-            root_passwd = enc_shadow_passwd(form.password.data)
-            user.profile.set_secret('root_shadow_passwd', root_passwd)
-            self.db2.commit()
-
-            url = self.application.reverse_url('account:index')
-            return self.redirect( url )
-
-        self.render( 'account/reset_password.html', title = self.trans(_('Reset Password')),
-                     form = form )
+        d = { 'form': form, 'user': self.user }
+        self.render( **d )
 
 
-class AvatarEdit(LyRequestHandler):
+class ResetMyPass(AccountRequestHandler):
+
+    title = _('Reset My Password')
+    template_path = 'account/reset_mypass.html'
 
     @authenticated
     def get(self):
-        form = AvatarEditForm(self)
-        d = { 'title': self.trans(_('Change my avatar')),
-              'form': form }
+        return self.render( form = ResetPassForm(self) )
 
-        self.render( 'account/avatar_edit.html', **d )
+    @authenticated
+    def post(self):
+
+        form = ResetPassForm(self)
+
+        if form.validate():
+            self.current_user.password = enc_login_passwd(form.password.data)
+            self.db.add( self.current_user )
+            self.db.commit()
+            return self.redirect('/account')
+
+        self.render( form = form )
+
+
+
+class BaseInfoEdit(RequestHandler):
+
+    title = _('Edit Base Information Of My Account')
+    template_path = 'account/baseinfo_edit.html'
+
+    @authenticated
+    def prepare(self):
+
+        self.language_list = []
+        for codename in settings.LANGUAGES:
+            L = self.db.query(Language).filter_by(
+                codename = codename).first()
+            if L:
+                self.language_list.append( (str(L.id), L.name) )
+
+        self.user = self.db.query(User).get( self.current_user.id )
+
+    def get(self):
+
+        form = BaseInfoForm(self)
+        form.language.choices = self.language_list
+        form.language.default = self.user.language_id
+        form.process()
+
+        form.nickname.data = self.user.nickname
+        form.first_name.data = self.user.first_name
+        form.last_name.data = self.user.last_name
+
+        self.render( form = form )
+
+
+    def post(self):
+        form = BaseInfoForm(self)
+        form.language.choices = self.language_list
+
+        if form.validate():
+            self.user.nickname = form.nickname.data.strip()
+            self.user.first_name = form.first_name.data.strip()
+            self.user.last_name = form.last_name.data.strip()
+            self.user.language_id = form.language.data
+            self.db.add( self.user )
+            self.db.commit()
+
+            return self.redirect( '/account' )
+
+        self.render( form = form )
+
+
+
+class AvatarEdit(RequestHandler):
+
+    title = _('Edit My Avatar')
+    template_path = 'account/avatar_edit.html'
+
+    @authenticated
+    def get(self):
+        self.render( form = AvatarForm(self) )
 
 
     @authenticated
     def post(self):
-        # Save logo file
-        form = AvatarEditForm(self)
+        form = AvatarForm(self)
 
-        if self.request.files:
+        if self.request.files and form.validate():
             r = self.save_avatar()
             if r:
-                form.avatar.errors = [ r ] # TODO: a tuple
+                form.avatar.errors.append( r )
             else:
-                url = self.reverse_url('account:index')
-                return self.redirect( url )
+                return self.redirect( '/account' )
 
-        d = { 'title': self.trans(_('Change my avatar')),
-              'form': form }
-
-        self.render( 'account/avatar_edit.html', **d )
+        self.render( form = form )
 
 
     def save_avatar(self):
@@ -408,7 +322,7 @@ class AvatarEdit(LyRequestHandler):
             try:
                 os.makedirs(homedir)
             except Exception, e:
-                return self.trans(_('Create user home dir "%(dir)s" failed: %(emsg)s')) % {
+                return _('Create "%(dir)s" failed: %(emsg)s') % {
                     'dir': homedir, 'emsg': e }
 
         max_size = settings.USER_AVATAR_MAXSIZE
@@ -417,7 +331,7 @@ class AvatarEdit(LyRequestHandler):
         for f in self.request.files['avatar']:
 
             if len(f['body']) > max_size:
-                return self.trans(_('Avatar file must smaller than %s !')) % human_size(max_size)
+                return _('File should be less than %s') % human_size(max_size)
 
             tf = tempfile.NamedTemporaryFile()
             tf.write(f['body'])
@@ -427,7 +341,7 @@ class AvatarEdit(LyRequestHandler):
                 img = Image.open( tf.name )
 
             except Exception, e:
-                return self.trans(_('Open %(filename)s failed: %(emsg)s , is it a picture ?')) % {
+                return _('Open %(filename)s failed: %(emsg)s , is it a picture ?') % {
                     'filename': f.get('filename'), 'emsg': e }
 
             try:
@@ -439,219 +353,596 @@ class AvatarEdit(LyRequestHandler):
                 tf.close()
 
             except Exception, e:
-                return self.trans(_('Save %(filename)s failed: %(emsg)s')) % {
+                return _('Save %(filename)s failed: %(emsg)s') % {
                     'filename': f.get('filename'), 'emsg': e }
 
 
 
-class ResetPasswordApply(LyRequestHandler):
+class PublicKeyIndex(RequestHandler):
 
-    ''' Apply to reset password '''
+    @authenticated
+    def get(self):
+        self.render('account/public_key/index.html')
 
-    EMAIL_TEMPLATE = _('''
-Reset Password for Your LuoYun Cloud Account.
 
-Click the url to complete : %(URL)s
+class PublicKeyAdd(RequestHandler):
 
-If you can not click the link above, copy and paste it on your brower address.
-''')
+    title = _('Add Public Key')
+    template_path = 'account/public_key/edit.html'
+
+    @authenticated
+    def prepare(self):
+
+        self.form = PublicKeyForm(self)
+        self.prepare_kwargs['form'] = self.form
 
 
     def get(self):
-
-        d = { 'title': self.trans(_('Forget My Password')) ,
-              'form': ResetPasswordApplyForm(self) }
-
-        self.render( 'account/reset_password_apply.html', **d )
+        self.render()
 
 
     def post(self):
 
-        form = ResetPasswordApplyForm(self)
+        form = self.form
 
         if form.validate():
 
-            profile = self.db2.query(UserProfile).filter(
-                UserProfile.email == form.email.data ).first()
+            key = PublicKey( user = self.current_user,
+                             name = form.name.data,
+                             key = form.key.data )
+            self.db.add( key )
+            self.db.commit()
 
-            if profile:
+            if form.isdefault.data:
+                key.set_default()
+            self.db.commit()
 
-                # check exist request
-                exist = self.db2.query(UserResetpass).filter_by(
-                    user_id = profile.user.id ).all()
-                exist = [ x for x in exist if not x.completed ]
-                if exist:
-                    RQ = exist[0]
-                else:
-                    RQ = UserResetpass( profile.user )
-                    self.db2.add( RQ )
-                    self.db2.commit()
+            url = self.reverse_url('account:public_key')
+            return self.redirect( url )
 
-                # send email
-                from settings import cf
-                if cf.has_option('site', 'home'):
-                    SITE_HOME = cf.get('site', 'home').rstrip('/')
-                else:
-                    SITE_HOME = 'http://127.0.0.1'
-
-                url = self.reverse_url('reset_password_complete')
-                url = SITE_HOME + url + '?key=%s' % RQ.key
-
-                ret = send_email(form.email.data, self.trans(_('[ LuoYun Cloud ] Reset Password')), self.EMAIL_TEMPLATE % { 'URL': url } )
-
-                if ret:
-                    return self.render( 'account/reset_password_apply_successed.html', APPLY = RQ )
-                else:
-                    return self.write( self.trans(_('Send Email Failed !')) )
-
-            else:
-                form.email.errors.append( self.trans(_("No such email address: %s")) % form.email.data )
-
-        d = { 'title': self.trans(_('Reset Password')), 'form': form }
-
-        self.render( 'account/reset_password_apply.html', **d )
+        self.render()
 
 
 
-class ResetPasswordComplete(AccountRequestHandler):
+class PublicKeyHandler(RequestHandler):
 
-    ''' Apply to reset password '''
+    def initialize(self):
 
+        self.key = None
+
+        ID = self.get_argument_int('id', None)
+        if not ID:
+            return self.write( _("Give me the pulic key id please.") )
+
+        key = self.db.query(PublicKey).get( ID )
+        if not key:
+            return self.write( _('Can not find public key %s') % ID )
+
+        if key.user_id != self.current_user.id:
+            return self.write( _('Not you public key.') )
+
+        self.key = key
+        self.prepare_kwargs['key'] = key
+
+
+
+class PublicKeyEdit(PublicKeyHandler):
+
+    title = _('Add Public Key')
+    template_path = 'account/public_key/edit.html'
+
+    @authenticated
     def prepare(self):
 
-        key = self.get_argument('key', None)
-        if not key:
-            self.write('No Key !')
+        if not self.key:
             return self.finish()
 
-        print 'key = ', key
-        applys = self.db2.query(UserResetpass).filter(
-            UserResetpass.key == key ).all()
-
-        print 'applys = ', applys
-        d = { 'title': self.trans(_('Forget My Password')) , 'ERROR': None,
-              'USER': None }
-
-        if applys:
-
-            for A in applys:
-                # TODO
-                #d['ERROR'] = self.trans(_('The validity period for a certificate has passed'))
-                if not A.completed:
-                    d['USER'] = A.user
-                    break
-
-            if not d['USER']:
-
-                d['ERROR'] = self.trans(_('You have completed reset password.'))
-
-        else:
-            d['ERROR'] = self.trans(_('No such key: %s !')) % key
-
-        if d['ERROR']:
-            self.render( 'account/reset_password_complete.html', **d )
-            return self.finish()
-
-        self.d = d
-        self.key = key
+        self.form = PublicKeyForm(self)
+        self.prepare_kwargs['form'] = self.form
 
 
     def get(self):
-        self.d['form'] = ResetPasswordForm(self)
-        self.render( 'account/reset_password_complete.html', **self.d )
+        self.form.name.data = self.key.name
+        self.form.key.data = self.key.data
+        self.render()
+
 
     def post(self):
-        self.d['form'] = ResetPasswordForm(self)
-        if self.d['form'].validate():
 
-            plaintext = self.d['form'].password.data
-            enc_password = enc_login_passwd(plaintext)
-            self.d['USER'].password = enc_password
+        form = self.form
 
-            root_passwd = enc_shadow_passwd(plaintext)
-            self.d['USER'].profile.set_secret('root_shadow_passwd', root_passwd)
+        if form.validate():
 
-            self.db2.commit()
+            conflict = False
 
-            # TODO: set reset password request completed
-            applys = self.db2.query(UserResetpass).filter(
-                UserResetpass.key == self.key ).all()
-            for A in applys:
-                A.completed = datetime.now()
-            self.db2.commit()
+            for K in  self.db.query(PublicKey).filter_by(
+                data = form.key.data ):
+                if K.id == self.key.id: continue
+                if K.data == form.key.data:
+                    conflict = True
 
-            self.save_session( self.d['USER'].id )
+            if conflict:
+                form.key.errors.append( _('This key is exist.') )
 
-            url = self.reverse_url('account:index')
-            return self.redirect( url )
+            else:
+                self.key.name = form.name.data
+                self.key.data = form.key.data
 
-        self.render( 'account/reset_password_complete.html', **self.d )
+                if form.isdefault.data:
+                    self.key.set_default()
+
+                self.db.commit()
+
+                url = self.reverse_url('account:public_key')
+                return self.redirect( url )
+
+        self.render()
 
 
 
-class Delete(LyRequestHandler):
-    ''' Delete User '''
+class PublicKeyDelete(PublicKeyHandler):
 
-    @has_permission('admin')
-    def get(self, id):
+    title = _('Add Public Key')
+    template_path = 'account/public_key/edit.html'
 
-        d = { 'title': self.trans(_('Delete Account')), 'ERROR': [], 'USER': None }
+    @authenticated
+    def get(self):
 
-        user = self.db2.query(User).get(id)
+        if not self.key:
+            return self.finish()
 
-        if user:
-            d['USERNAME'] = user.username
-            if user.id == self.current_user.id:
-                d['ERROR'].append(_('You can not delete yourself!'))
-            if [ x for x in user.instances if not x.is_delete ]:
-                d['ERROR'].append(_('User "%s" have instances exist, please remove them first.') % user.username)
-            if user.appliances:
-                d['ERROR'].append(_('User "%s" have appliances exist, please remove them first.') % user.username)
+        isdefault = self.key.isdefault
+
+        self.db.delete( self.key )
+        self.db.commit()
+
+        if isdefault:
+            for K in self.current_user.keys:
+                K.isdefault = True
+                break
+
+            self.db.commit()
+
+        url = self.reverse_url('account:public_key')
+        self.redirect( url )
+
+
+from tornado.auth import GoogleMixin
+class GoogleHandler(RequestHandler, GoogleMixin):
+    @asynchronous
+    def get(self):
+        if self.get_argument("openid.mode", None):
+            self.get_authenticated_user(self.async_callback(self._on_auth))
+            return
+        self.authenticate_redirect()
+
+    def _on_auth(self, user):
+        if not user:
+            raise tornado.web.HTTPError(500, "Google auth failed")
+
+        print 'user = ', user
+        print 'type(user) = ', type(user)
+        print 'dir(user) = ', dir(user)
+        # Save the user with, e.g., set_secure_cookie()
+
+
+from yweb.auth import QQAuth2Minix
+class QQLogin(AccountRequestHandler, QQAuth2Minix):
+
+    def prepare(self):
+
+        Q = self.db.query(SiteConfig).filter_by(
+            key = 'qq.auth2').first()
+
+        if not Q:
+            self.write( _('QQ Auth2 have not configured.') )
+            return self.finish()
+
+        QV = {}
+        if Q and Q.value:
+            QV = json.loads( Q.value )
+
+        if not QV:
+            self.write( _('QQ Auth2 have not configured.') )
+            return self.finish()
+
+        if not QV.get('enabled', False):
+            self.write( _('QQ Auth2 login is disabled.') )
+            return self.finish()
+
+        self.client_id = QV.get('app_id', '')
+        self.client_secret = QV.get('app_key', '')
+        self.redirect_uri = QV.get('redirect_uri', '')
+
+        if not ( self.client_id and self.client_secret and
+                 self.redirect_uri ):
+            self.write( _('QQ Auth2 configure has wrong.') )
+            return self.finish()
+
+        self.openid = None
+        self.access_token = None
+
+
+    @asynchronous
+    def get(self):
+
+        code = self.get_argument('code', None)
+
+        if code:
+
+            state1 = self.get_argument('state', None)
+            state2 = self.get_secure_cookie('state_key')
+            if state1 != state2:
+                return self.write( _('state is not match.') )
+
+            self.clear_cookie('state_key')
+
+            self.get_authenticated_user(
+                redirect_uri = self.redirect_uri,
+                client_id = self.client_id,
+                client_secret = self.client_secret,
+                code = code,
+                callback = self._on_auth )
+
         else:
-            d['ERROR'].append(_('Have not found user by id %s') % id)
+            # first, set state string
+            state = randstring(16)
+            self.set_secure_cookie('state_key', state)
 
-        if not d['ERROR']:
-
-            # delete message
-            from sqlalchemy import or_
-            messages = self.db2.query(Message).filter(
-                or_(Message.receiver_id == user.id,
-                    Message.sender_id == user.id) )
-            for M in messages:
-                self.db2.delete(M)
-
-            self.db2.delete( user )
-            self.db2.commit()
-        else:
-            if user:
-                d['USER'] = user
-
-        self.render( 'account/delete.html', **d )
+            self.authorize_redirect(
+                redirect_uri = self.redirect_uri,
+                client_id = self.client_id,
+                extra_params = { 'state': state } )
 
 
+    def _on_auth(self, session):
+        if not session:
+            raise tornado.web.HTTPError(500, "QQ auth failed")
 
-class islockedToggle(LyRequestHandler):
-    ''' Toggle islocked flag '''
+        openid = session.get('openid', None)
+        if not openid:
+            self.write( _('Have not get openid') )
+            return self.finish()
 
-    @has_permission('admin')
-    def get(self, ID):
+        O = self.db.query(OpenID).filter_by(
+            openid = openid ).first()
 
-        self.set_header("Cache-Control", "no-cache")
-        self.set_header("Pragma", "no-cache")
-        self.set_header("Expires", "-1")
+        # user exist ?
+        if O:
+            if O.user_id:
+                self.save_session(O.user_id)
+                O.user.last_login = datetime.datetime.now()
+                self.db.commit()
+                return self.redirect('/')
 
-        ID = int(ID)
+            else:
+                # create auth key
+                K = AuthKey( data = O.openid, seconds = 3600*24*7 )
+                self.db.add( K )
+                self.db.commit()
 
-        if self.current_user.id == ID:
-            return self.write( self.trans(_('You can not lock yourself !')) )
+                d = { 'auth_key': K.auth_key, 'openid': O.id }
+                return self.render('account/openid_success.html',**d)
 
-        U = self.db2.query(User).get(ID)
+        # new user
+        self.openid = openid
+        self.access_token = session.get('access_token', None)
 
-        if U:
-            U.islocked = not U.islocked
-            self.db2.commit()
-            # no news is good news
+        if not ( self.openid and self.access_token ):
+            self.write( _('QQ auth failed') )
+            return self.finish()
 
-        else:
-            self.write( self.trans(_('Can not found the user.')) )
+        self.qq_request(
+            path = '/user/get_user_info',
+            method = 'GET',
+            open_id = self.openid,
+            token = self.access_token,
+            client_id = self.client_id,
+            callback = self._on_user_info )
 
+
+    def _on_user_info(self, data):
+
+        data = json.loads( data )
+
+        ret = data.get('ret', None)
+        if ret != 0:
+            self.write(_('QQ auth failed: %s') % data.get('msg',''))
+            return self.finish()
+
+        # create openid
+        O = OpenID( openid = self.openid, _type = 1 ) # TODO: QQ now
+        O.config = json.dumps( { 'get_user_info': data } )
+        self.db.add(O)
+        self.db.commit()
+
+        # create auth key
+        K = AuthKey( data = O.openid, seconds = 3600 * 24 * 7 )
+        self.db.add( K )
+        self.db.commit()
+
+        self.render('account/openid_success.html',
+                    auth_key = K.auth_key, openid=O.id)
+
+
+    def _on_user_info2(self, data):
+
+        data = json.loads( data )
+
+        ret = data.get('ret', None)
+        if ret != 0:
+            self.write(_('QQ auth failed: %s') % data.get('msg',''))
+            return self.finish()
+
+        # create new user
+        O = OpenID( openid = self.openid, _type = 1 ) # TODO: QQ now
+        O.config = json.dumps( { 'get_user_info': data } )
+        self.db.add(O)
+        self.db.commit()
+
+        while True:
+            username = 'QQ%s' % random.randint(1, 10000000)
+            U = self.db.query(User).filter_by(username=username).first()
+            if not U: break
+            
+        U = User( username = username,
+                  password = 'not exist',
+                  language = self.language )
+
+        U.nickname = data.get('nickname', None)
+        U.email_valid = True
+        self.db.add( U )
+        self.db.commit()
+
+        U.init_account(self.db)
+
+        self.save_session(U.id)
+        U.last_login = datetime.datetime.now()
+
+        O.user_id = U.id
+
+        self.db.commit()
+
+        # TODO: drop account relationships
+        profile = UserProfile( U )
+        self.db.add(profile)
+        self.db.commit()
+
+        self.redirect('/account')
+
+
+
+class OpenIDHandler(AccountRequestHandler):
+
+    def initialize(self):
+
+        self.auth_key = None
+
+        auth_key = self.get_argument('auth_key', None)
+
+        if not auth_key:
+            return self.write( _('No auth key') )
+
+        K = self.db.query(AuthKey).filter_by(
+            auth_key = auth_key).first()
+        if not K:
+            return self.write( _('Invalid key: %s') % auth_key )
+
+        # TEST auth key data == openid.id
+        openid = self.get_argument_int('openid', 0)
+        if not openid:
+            return self.write( _('No openid') )
+
+        O = self.db.query(OpenID).get( openid )
+        if not O:
+            return self.write( _('Invalid openid %s') % openid )
+
+        if K.auth_data != O.openid:
+            return self.write( _('auth key and openid not match.') )
+
+        self.auth_key = auth_key
+        self.openid = O
+        self.prepare_kwargs['auth_key'] = auth_key
+        self.K = K
+
+
+    @property
+    def get_user_info(self):
+        if not self.openid:
+            return {}
+
+        d = json.loads( self.openid.config )
+        return d.get('get_user_info', {})
+
+
+
+class OpenIDUserNew(OpenIDHandler):
+
+    title = _('Create New User For OpenID')
+    template_path = 'account/openid_user_new.html'
+
+    def prepare(self):
+
+        if not self.auth_key:
+            return self.finish()
+
+        self.form = OpenIDNewForm(self)
+        self.prepare_kwargs['form'] = self.form
+
+
+    def get(self):
+        self.render()
+
+
+    def post(self):
+
+        form = self.form
+        openid = self.openid
+
+        if form.validate():
+
+            encpass = enc_login_passwd(form.password.data)
+            U = User( username = form.username.data,
+                      password = encpass,
+                      language = self.language )
+
+            user_info = self.get_user_info
+            U.nickname = user_info.get('nickname', U.username)
+
+            U.email = form.email.data
+
+            self.db.add( U )
+            self.db.commit()
+
+            U.init_account(self.db)
+            U.last_login = datetime.datetime.now()
+            openid.user_id = U.id
+            self.db.commit()
+
+            self.save_session(U.id)
+            self.db.delete(self.K)
+            self.db.commit()
+
+            return self.redirect_next('/account')
+
+        self.render()
+
+
+
+class OpenIDUserBinding(OpenIDHandler):
+
+    title = _('Bingding My Account To OpenID')
+    template_path = 'account/openid_user_binding.html'
+
+    def prepare(self):
+
+        if not self.auth_key:
+            return self.finish()
+
+        self.form = LoginForm(self)
+        self.prepare_kwargs['form'] = self.form
+
+
+    def get(self):
+        self.render()
+
+
+    def post(self):
+
+        form = self.form
+        openid = self.openid
+
+        if form.validate():
+
+            U = form.true_user
+            openid.user_id = U.id
+            if not U.nickname or U.nickname == U.username:
+                user_info = self.get_user_info
+                U.nickname = user_info.get('nickname', U.username)
+
+            self.save_session(U.id)
+
+            self.db.delete(self.K)
+            self.db.commit()
+
+            return self.redirect_next('/')
+
+        self.render()
+
+
+
+class EmailValidate(RequestHandler):
+
+    title = _('Validate My Email')
+    template_path = 'account/email_validate.html'
+
+    @authenticated
+    def prepare(self):
+
+        self.auth_key = self.get_argument('auth_key', None)
+
+        form = EmailValidateForm(self)
+        self.prepare_kwargs['form'] = form
+
+
+    def get(self):
+
+        if not self.auth_key:
+            form = self.prepare_kwargs['form']
+            form.email.data = self.current_user.email
+            return self.render()
+
+        K = self.db.query(AuthKey).filter_by(
+            auth_key = self.auth_key).first()
+        if not K:
+            return self.write( _('Invalid key: %s') % self.auth_key )
+
+        # Does expired ?
+        if K.expire_date < datetime.datetime.now():
+            return self.write( _('The key is expired: %s') % K.auth_key )
+
+        self.current_user.email = K.auth_data
+        self.current_user.email_valid = True
+        self.db.delete( K )
+        self.db.commit()
+
+        self.redirect( self.reverse_url('account') )
+
+
+    def post(self):
+
+        form = self.prepare_kwargs['form']
+
+        if form.validate():
+
+            email = form.email.data
+
+            U = self.db.query(User).filter(
+                and_( User.id != self.current_user.id,
+                      User.email == email )).first()
+
+            if U:
+                form.email.errors.append(
+                    _('This email was used by other people.') )
+
+            elif ( self.current_user.email == email and
+                   self.current_user.email_valid ):
+                form.email.errors.append(
+                    _('This email was validate already.') )
+
+            else:
+                K = AuthKey( data = form.email.data,
+                             seconds = 3600 * 24 * 7 )
+                self.db.add( K )
+                self.db.commit()
+
+                # email
+                self.mail_notice(email, K)
+                return self.render('account/email_validate_apply_success.html')
+
+        self.render()
+
+
+    def mail_notice(self, email, K):
+
+        host = SiteConfig.get(
+            self.db, 'site.host', 'http://127.0.0.1')
+
+        adr_from = SiteConfig.get(self.db, 'notice.smtp.fromaddr',
+                                  'localhost@localhost')
+
+        subject = _('[ LuoYunCloud ] Validate your email address.')
+
+        validate_url = host + self.reverse_url('account:email:validate')
+        validate_url += "?auth_key=%s" % K.auth_key
+
+        d = { 'return_string': True,
+              'validate_url': validate_url }
+
+        body = self.render('account/email_validate_notice.html', **d)
+
+        e = Email( subject = subject, text = body,
+                   adr_to = email,
+                   adr_from = adr_from,
+                   mime_type = 'html' )
+        self.quemail.send( e )

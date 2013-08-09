@@ -1,10 +1,10 @@
 # coding: utf-8
 
 import logging, datetime, time, re
-from lycustom import LyRequestHandler
+from lycustom import RequestHandler
 from tornado.web import authenticated, asynchronous
 
-from app.account.models import User, Group, Permission
+from app.auth.models import User, Group, Permission
 from app.admin.forms import GroupForm
 
 from lycustom import has_permission
@@ -14,7 +14,7 @@ from sqlalchemy.sql.expression import asc, desc
 
 
 
-class GroupManagement(LyRequestHandler):
+class GroupManagement(RequestHandler):
 
 
     @has_permission('admin')
@@ -25,7 +25,7 @@ class GroupManagement(LyRequestHandler):
 
         group_id = self.get_argument('id', 0)
         if group_id:
-            self.group = self.db2.query(Group).get( group_id  )
+            self.group = self.db.query(Group).get( group_id  )
             if not self.group:
                 self.write( self.trans(_('No such group : %s')) % group_id )
                 return self.finish()
@@ -71,7 +71,7 @@ class GroupManagement(LyRequestHandler):
 
     def get_index(self):
 
-        GROUP_LIST = self.db2.query(Group).order_by('id').all()
+        GROUP_LIST = self.db.query(Group).order_by('id').all()
         self.render( 'admin/group/index.html',
                      title = self.trans(_('Group Management')),
                      GROUP_LIST = GROUP_LIST )
@@ -87,7 +87,7 @@ class GroupManagement(LyRequestHandler):
 
         if form.validate():
 
-            group = self.db2.query(Group).filter_by( name=form.name.data ).all()
+            group = self.db.query(Group).filter_by( name=form.name.data ).all()
             if group:
                 form.name.errors.append( self.trans(_('This name is occupied')) )
 
@@ -96,8 +96,8 @@ class GroupManagement(LyRequestHandler):
                     name = form.name.data,
                     description = form.description.data )
 
-                self.db2.add(newgroup)
-                self.db2.commit()
+                self.db.add(newgroup)
+                self.db.commit()
 
                 url = self.application.reverse_url('admin:group')
                 return self.redirect( url )
@@ -112,7 +112,7 @@ class GroupManagement(LyRequestHandler):
         perm_choices = []
         perm_default = []
 
-        for P in self.db2.query(Permission).all():
+        for P in self.db.query(Permission).all():
             perm_choices.append( (P.codename, P.name) )
             if P in self.group.permissions:
                 perm_default.append( P.codename )
@@ -133,7 +133,7 @@ class GroupManagement(LyRequestHandler):
     def post_edit(self):
 
         perm_choices = []
-        for P in self.db2.query(Permission).all():
+        for P in self.db.query(Permission).all():
             perm_choices.append( (P.codename, P.name) )
 
         form = GroupForm(self)
@@ -146,12 +146,12 @@ class GroupManagement(LyRequestHandler):
             bak = self.group.permissions
             self.group.permissions = []
             for codename in form.perms.data:
-                P = self.db2.query(Permission).filter_by(
+                P = self.db.query(Permission).filter_by(
                     codename = codename ).first()
                 self.group.permissions.append(P)
             #print 'self.group.permissions = ', self.group.permissions
 
-            self.db2.commit()
+            self.db.commit()
 
             url = self.application.reverse_url('admin:group')
             return self.redirect( url )
@@ -167,8 +167,8 @@ class GroupManagement(LyRequestHandler):
             self.render( 'admin/group/delete_failed.html',
                          GROUP = self.group )
         else:
-            self.db2.delete( self.group )
-            self.db2.commit()
+            self.db.delete( self.group )
+            self.db.commit()
             url = self.reverse_url('admin:group')
             self.redirect( url )
 

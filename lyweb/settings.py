@@ -2,12 +2,17 @@
 
 import os, sys, ConfigParser
 
+IPV4_ONLY=True
+#DEBUG=True
+DEBUG=False
+
 ## Global PATH
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, 'lib'))
 sys.path.insert(0, '/data/projects/LuoYunCloud/src/')
 
-LUOYUN_CONFIG_PATH = os.path.join(PROJECT_ROOT, 'luoyun.cfg')
+sitecfg = os.path.join(PROJECT_ROOT, 'luoyun.cfg')
+sitecfg_changed = False
 
 STATIC_PATH = os.path.join(PROJECT_ROOT, "static")
 TEMPLATE_DIR = os.path.join(PROJECT_ROOT, "template")
@@ -22,13 +27,39 @@ ATTACHMENT_URL = "/static/attachment/"
 ATTACHMENT_MAXSIZE = 10 * 1024 * 1024 # 10M
 
 # Nignx config path
+NGINX_CONF = {
+    'conf_path': '/etc/nginx/conf.d/',
+    'log_path': '/opt/LuoYun/logs/nginx/',
+    'nginx': '/usr/sbin/nginx',
+    'template': '''
+    upstream %(default_domain)s-%(virtual_port)s {
+        server %(ip)s:%(real_port)s;
+    }
+    server {
+        listen %(virtual_port)s;
+        server_name %(domain_list)s;
+
+        access_log  %(access_log)s;
+
+        location / {
+            proxy_read_timeout 1800;
+            client_max_body_size 128m;
+            proxy_pass_header Server;
+            proxy_set_header Host $http_host;
+            proxy_redirect off;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Scheme $scheme;
+            proxy_pass http://%(default_domain)s-%(virtual_port)s;
+        }
+    }
+'''
+}
 DEFAULT_NGINX_CONF_PATH = '/etc/nginx/conf.d/'
 DEFAULT_NGINX_LOG_PATH = '/opt/LuoYun/logs/nginx/'
 DEFAULT_NGINX_BIN_PATH = '/usr/sbin/nginx'
 
-SITE_CONFIG = LUOYUN_CONFIG_PATH
 cf = ConfigParser.ConfigParser()
-cf.read( LUOYUN_CONFIG_PATH )
+cf.read( sitecfg )
 
 if cf.has_option('base', 'appliance_top_dir'):
     appliance_top_dir = cf.get('base', 'appliance_top_dir')
@@ -72,9 +103,9 @@ USER_ACTIVE_MIN = 30*60 # Min actie time for user, seconds.
 
 
 # INSTANCE display
-INSTANCE_HOME_PAGE_SIZE=50
+INSTANCE_HOME_PAGE_SIZE=24
 APPLIANCE_INSTANCE_LIST_PAGE_SIZE=10
-MYUN_INSTANCE_LIST_PAGE_SIZE=10
+MYUN_INSTANCE_LIST_PAGE_SIZE=24
 
 INSTANCE_SLIST_ALL=[1, 2, 3, 4, 5]
 INSTANCE_SLIST_RUNING=[3, 4, 5]
@@ -87,11 +118,10 @@ ADMIN_USER_LIST_PAGE_SIZE=50
 
 I18N_PATH = os.path.join(PROJECT_ROOT, "locale")
 
-LANGUAGES = (
-    ('zh_CN', u'简体中文'),
-#    ('zh_TW', u'繁體中文'),
-    ('en_US', 'English'),
-)
+LANGUAGES = {
+    "en_US": u"English (US)",
+    "zh_CN": u"\u4e2d\u6587(\u7b80\u4f53)",
+    }
 
 
 MAX_STORAGE_SIZE=60 # 60G
@@ -116,7 +146,7 @@ JOB_ACTION = {
     # node action
     'ENABLE_NODE': 102,     # LY_A_CLC_ENABLE_NODE = 102
     'DISABLE_NODE': 103,    # LY_A_CLC_DISABLE_NODE = 103
-    'UPDATE_NODE': 104,    # LY_A_CLC_CONFIG_NODE = 104
+    'UPDATE_NODE': 104,     # LY_A_CLC_CONFIG_NODE = 104
 
     # instance action
     'RUN_INSTANCE': 201,    # LY_A_NODE_RUN_INSTANCE = 201,
@@ -144,18 +174,27 @@ INSTANCE_DELETED_STATUS = 100
 
 # TODO
 app = [
-    'app.home',
+    'app.auth',
+    'yweb.contrib.session',
+    'app.registration',
     'app.account',
+    'app.home',
     'app.admin',
     'app.instance',
     'app.node',
     'app.appliance',
     'app.job',
-    'app.wiki',
-    'app.session',
+#    'app.wiki',
     'app.system',
     'app.message',
     'app.myun',
+    'app.resource',
+    'app.language',
+    'app.site',
+    'app.storage',
+    'app.network',
+    'app.domain',
+    'app.forum',
     ]
 
 
@@ -208,6 +247,27 @@ default_wiki_catalog = [
     ('Default', 'Default Catalog'),
 ]
 
+default_site_config = [
+    # ( key, value )
+
+    # registration
+    ('registration.status',  True),
+    ('registration.host', 'http://127.0.0.1'),
+
+    # notice , email
+    # default smtp is localhost
+    ('notice.smtp.fromaddr', 'noreply@luoyuncloud.com'),
+    ('notice.smtp.server', '127.0.0.1'),
+    ('notice.smtp.port', 25),
+    ('notice.smtp.username', ''),
+    ('notice.smtp.password', ''),
+]
+
+default_storage_config = [
+    # name, description, total
+    ('Default', 'LuoYunCloud default storage pool', 1024), # 1024G
+]
+
 
 
 USER_AVATAR_MAXSIZE = 2 * 1024 * 1024 # 2M
@@ -215,17 +275,23 @@ USER_AVATAR_NAME = 'uavatar.png'
 USER_AVATAR_MINI_NAME = 'uavatar-mini.png'
 USER_AVATAR_THUM_SIZE = (120, 120)
 USER_AVATAR_MINI_THUM_SIZE = (36, 36)
-USER_AVATAR_DEFAULT = os.path.join(STATIC_URL, 'image/user2.png')
-USER_AVATAR_MINI_DEFAULT = 'image/user-mini.png'
+USER_AVATAR_DEFAULT = os.path.join(THEME_URL, 'img/user.png')
 
 APPLIANCE_LOGO_MAXSIZE = 2 * 1024 * 1024 # 2M
-APPLIANCE_LOGO_DEFAULT_URL = os.path.join(STATIC_URL, 'image/appliance.png')
+APPLIANCE_LOGO_DEFAULT_URL = os.path.join(THEME_URL, 'img/appliance.png')
 
 
-INSTANCE_LOGO_DEFAULT_URL = os.path.join(STATIC_URL, 'image/instance.png')
+INSTANCE_LOGO_DEFAULT_URL = os.path.join(THEME_URL, 'img/instance.png')
 INSTANCE_LOGO_NAME = 'ilogo.png'
-INSTANCE_LOGO_MARK = os.path.join(STATIC_PATH, 'image/instance-watermark.png' )
 
 # Instance status check interval time
 INSTANCE_S_UP_INTER_1 = 3  # seconds
 INSTANCE_S_UP_INTER_2 = 6  # seconds
+
+from tool.luoyuncloud_default import init_account
+init_account = init_account
+
+
+# TODO: global storage, mini cache
+runtime_data = {}
+

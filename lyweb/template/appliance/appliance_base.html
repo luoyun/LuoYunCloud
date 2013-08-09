@@ -1,6 +1,23 @@
 <%inherit file="/base.html"/>
 
 <%block name="head">
-<link rel="stylesheet" href="${ theme_url('appliance.css') }" />
+<link rel="stylesheet" href="${ theme_url('css/appliance.css') }" />
 </%block>
 
+<%block name="main">
+
+<div class="min-height600 doc4 wrapper container-fluid">
+
+  <ul class="breadcrumb">
+	<li><a href="/"><i class="icon-home"></i> ${ _("Home") }</a> <span class="divider">/</span></li>
+	<li><a href="/appliance">${ _("Appliances") }</a> <span class="divider">/</span></li>
+	<%block name="innav" />
+  </ul>
+
+  <%block name="submain"/>
+
+  <script type="text/javascript">
+	menu_entry_active( "/appliance" );
+  </script>
+</div>
+</%block>

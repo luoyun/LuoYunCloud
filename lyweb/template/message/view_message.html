@@ -17,7 +17,7 @@
     <tbody>
       <tr>
 	<td>${ _("Sender") }</td>
-	<td class="sender"><a href="${ reverse_url('account:view', M.sender_id) }" target="_blank">${ M.sender.username }</a></td>
+	<td class="sender"><a href="${ reverse_url('user:view') }?id=${ M.sender_id }" target="_blank">${ M.sender.username }</a></td>
       </tr>
       <tr>
 	<td>${ _("Send time") }</td>
@@ -54,7 +54,7 @@
     <tbody>
       <tr>
 	<td>${ _("Sender") }</td>
-	<td class="sender"><a href="${ reverse_url('account:view', M.reply.sender_id) }" target="_blank">${ M.reply.sender.username }</a></td>
+	<td class="sender"><a href="${ reverse_url('user:view') }?id=${ M.reply.sender_id }" target="_blank">${ M.reply.sender.username }</a></td>
       </tr>
       <tr>
 	<td>${ _("Send time") }</td>

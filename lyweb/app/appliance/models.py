@@ -3,7 +3,7 @@ import logging
 import Image
 import tempfile
 from datetime import datetime
-from lyorm import ORMBase
+from yweb.orm import ORMBase
 
 from sqlalchemy import Column, BigInteger, Integer, String, \
     Sequence, DateTime, Text, ForeignKey, Boolean

@@ -1,0 +1,28 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="innav">
+<li><a href="${ reverse_url('admin:forum:catalog') }">${ _("Forum Catalog") }</a></li>
+<li>${ _("Configure Forum Catalog") }</li>
+</%block>
+
+<%block name="main">
+
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Configure Forum Catalog") }</legend>
+      ${ form.name.label } ${ form.name() }
+      ${ form.html_errors(form.name.errors) }
+
+      ${ form.summary.label } ${ form.summary() }
+      ${ form.html_errors(form.summary.errors) }
+
+      ${ form.description.label } ${ form.description() }
+      ${ form.html_errors(form.description.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+</div>
+
+</%block>

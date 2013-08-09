@@ -1,0 +1,43 @@
+<%inherit file="../account_base.html" />
+
+<%block name="submain">
+
+<div>
+
+  % if len(current_user.keys):
+  <table class="table table-striped">
+	<thead>
+	  <tr>
+		<th>ID</th>
+		<th>${ _("Name") }</th>
+		<th>${ _("Is Default") }</th>
+		<th></th>
+	  </tr>
+	</thead>
+	<tbody>
+	  % for K in current_user.keys:
+	  <tr>
+		<td>${ K.id }</td>
+		<td>${ K.name }</td>
+		<td>
+		  % if K.isdefault:
+		  <i class="icon-ok"></i>
+		  % endif
+		</td>
+		<td>
+		  <i class="icon-edit"></i> <a href="${ reverse_url('account:public_key:edit') }?id=${ K.id }">${ _("Edit") }</a>
+		  <i class="icon-trash"></i> <a href="${ reverse_url('account:public_key:delete') }?id=${ K.id }">${ _("Delete") }</a>
+		</td>
+	  </tr>
+	  % endfor
+	</tbody>
+  </table>
+  % else:
+  <div class="hero-unit">
+	<p>${ _("Have not any pulic key yet.") }</p>
+  </div>
+  % endif
+
+  <p><a class="btn" href="${ reverse_url('account:public_key:add') }"><i class="icon-plus-sign"></i> ${ _("Add New Public Key") }</a></p>
+</div>
+</%block>

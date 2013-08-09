@@ -1,0 +1,52 @@
+/*
+body {
+    background: url("../img/tiny_grid.png") repeat scroll 0 0 #E9E9E9;
+    font: 13px/1.7em 'Open Sans';
+}
+*/
+
+#main {
+    -moz-box-sizing: border-box;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 0 3px #C9C9C9;
+    clear: both;
+    display: block;
+/*    float: left;*/
+    margin: 10px auto 30px;
+    padding: 20px;
+    position: relative;
+
+    z-index: 1;
+}
+
+.ly-item-title {
+	border: 1px solid #D9D9D9;
+	border-left: 3px solid #529056;
+	border-radius: 3px;
+	padding: 6px 12px;
+	background-color: #F2F2F2;
+	font-weight: bold;
+}
+.ly-item-title a {
+	float: right;
+}
+.ly-item-body {
+	margin: 30px 0 50px 0;
+}
+
+.ly-box {
+	border-radius: 5px;
+	border: 1px solid #DFDFDF;
+	padding: 5px;
+}
+
+.ly-count {
+	font: italic bold 28px/22px Georgia,Serif;
+	color: #999;
+}
+
+.ly-logo-large {
+	width: 120px;
+	height: 120px;
+}

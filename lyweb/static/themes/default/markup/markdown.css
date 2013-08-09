@@ -1,0 +1,112 @@
+.markdown {
+/*    border-right: 1px solid #BABBBC;*/
+}
+.markdown h1 {
+    border-left: 3px solid #668FB6;
+    border-bottom: 1px dotted #668FB6;
+    padding: 5px 0 8px 10px;
+    margin: 30px 0 12px -15px;
+    font-size: 18px;
+    color: #364989;
+}
+
+.markdown h2 {
+    padding: 5px 0;
+    font-size: 16px;
+    color: #535555;
+    font-weight: bold;
+    margin: 15px 0 8px;
+}
+/*
+.markdown h1:before {
+    content: "☺ ";
+}*/
+.markdown h2:before {
+    content: "★ ";
+}
+.markdown h3 {
+    margin: 10px 0 6px;
+    color: #666;
+    font-size: 14px;
+    font-weight: bold;
+}
+.markdown h4 {
+    color: #777;
+}
+.markdown h3:before {
+    content: "☺ ";
+}
+.markdown h4:before {
+    content: "☃ ";
+}
+.markdown p {
+    line-height: 1.4;
+    margin: 0.8rem 0 1.0rem;
+}
+
+/*
+.markdown pre {
+    margin: 10px;
+    padding: 10px;
+    background-color: #FCFCFC;
+    border: 1px solid #BABBBC;
+    border-radius: 3px;
+}
+.markdown pre {
+    margin: 0;
+    padding: 0;
+}
+*/
+
+.markdown td {
+    padding: 2px 5px;
+}
+.markdown tr {
+
+}
+
+.markdown ul, .markdown ol {
+    margin-left: 35px;
+}
+.markdown ul {
+    list-style-type: circle;
+}
+.markdown ol {
+    list-style-type: decimal-leading-zero;
+}
+
+.markdown table {
+    *border-collapse: collapse; /* IE7 and lower */
+    border-spacing: 0;
+    /*width: 100%;*/
+    border-bottom: 1px solid #CEDBE1;
+    border-right: 1px solid #CEDBE1;
+    border-radius: 3px;
+}
+.markdown th {
+    background-color: #dce9f9;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
+    background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: -moz-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: -ms-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: -o-linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: linear-gradient(top, #ebf3fc, #dce9f9);
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#ebf3fc, endColorstr=#dce9f9);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#ebf3fc, endColorstr=#dce9f9)";
+    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+    -moz-box-shadow:0 1px 0 rgba(255,255,255,.8) inset;
+    box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
+    border-top: none;
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
+}
+.markdown th, .markdown td {
+    border-left: 1px solid #ECF1F4;
+    border-top: 1px solid #CDD8DC;
+    padding: 10px;
+    text-align: left;
+}
+.markdown td {
+}
+.markdown tr:hover {
+    background-color: #F4F8FD;
+}

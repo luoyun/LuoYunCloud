@@ -1,0 +1,58 @@
+<%inherit file="../base.html"/>
+
+<%block name="submain">
+
+<h2>${ _("View Site Job %s") % JOB.id }</h2>
+
+<dl class="dl-horizontal">
+  <dt>ID</dt>
+  <dd>${ JOB.id }</dd>
+
+  <dt>${ _("User") }</dt>
+  <dd>${ JOB.user_id }</dd>
+
+  <dt>${ _("Status") }</dt>
+  <dd>${ JOB.status }</dd>
+
+  <dt>${ _("Description") }</dt>
+  <dd>${ JOB.desc }</dd>
+
+  <dt>${ _("Updated") }</dt>
+  <dd>${ ftime(JOB.updated) }</dd>
+
+  <dt>${ _("Created") }</dt>
+  <dd>${ ftime(JOB.created) }</dd>
+
+  <dt>${ _("Started") }</dt>
+  <dd>${ ftime(JOB.started) }</dd>
+
+  <dt>${ _("Text") }</dt>
+  <dd>
+	<pre id="job-text" style="height: 300px; overflow-y: scroll;">
+	  ${ JOB.text }
+	</pre>
+  </dd>
+</dl>
+
+<script type="text/javascript">
+function job_status_monitor() {
+    $.ajax({
+		url: "${ reverse_url('admin:site:job:view') }?id=${ JOB.id }&ajax=true",
+		type: 'GET',
+
+		success: function(data) {
+
+            $('#job-text').append( data.text + '\n');
+
+			if (data.status == 2)
+				setTimeout(job_status_monitor, 1500);
+		}
+
+    });
+}
+
+$('#job-text').html('');
+job_status_monitor();
+</script>
+
+</%block>

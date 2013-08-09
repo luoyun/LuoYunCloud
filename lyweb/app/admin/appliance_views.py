@@ -1,11 +1,11 @@
 # coding: utf-8
 
 import logging, datetime, time, re
-from lycustom import LyRequestHandler
+from lycustom import RequestHandler
 from tornado.web import authenticated, asynchronous
 
 from sqlalchemy.sql.expression import asc, desc
-from app.account.models import User, Group, Permission
+from app.auth.models import User, Group, Permission
 from app.appliance.models import Appliance, ApplianceCatalog
 
 from app.admin.forms import CatalogForm
@@ -16,7 +16,7 @@ from ytool.pagination import pagination
 
 from settings import LY_TARGET
 
-class ApplianceManagement(LyRequestHandler):
+class ApplianceManagement(RequestHandler):
 
 
     @has_permission('admin')
@@ -27,13 +27,13 @@ class ApplianceManagement(LyRequestHandler):
 
         appliance_id = self.get_argument('id', 0)
         if appliance_id:
-            self.appliance = self.db2.query(Appliance).get( appliance_id )
+            self.appliance = self.db.query(Appliance).get( appliance_id )
             if not self.appliance:
                 self.write( self.trans(_('No such appliance : %s')) % appliance_id )
                 return self.finish()
 
         c_id = self.get_argument('catalog', 0)
-        self.catalog = self.db2.query(ApplianceCatalog).get(c_id)
+        self.catalog = self.db.query(ApplianceCatalog).get(c_id)
 
 
     def get(self):
@@ -82,10 +82,10 @@ class ApplianceManagement(LyRequestHandler):
         start = (cur_page - 1) * page_size
         stop = start + page_size
 
-        catalog = self.db2.query(ApplianceCatalog).get( catalog_id )
-        user = self.db2.query(User).get( uid )
+        catalog = self.db.query(ApplianceCatalog).get( catalog_id )
+        user = self.db.query(User).get( uid )
 
-        apps = self.db2.query(Appliance)
+        apps = self.db.query(Appliance)
 
         if catalog:
             apps = apps.filter_by(catalog_id=catalog_id)
@@ -101,9 +101,9 @@ class ApplianceManagement(LyRequestHandler):
         page_html = pagination(self.request.uri, total, page_size, cur_page)
 
 
-        catalogs = self.db2.query(ApplianceCatalog).all()
+        catalogs = self.db.query(ApplianceCatalog).all()
         for c in catalogs:
-            c.total = self.db2.query(Appliance.id).filter_by( catalog_id = c.id ).count()
+            c.total = self.db.query(Appliance.id).filter_by( catalog_id = c.id ).count()
 
         d = { 'title': self.trans(_('LuoYun Appliance Management')),
               'CATALOG_LIST': catalogs, 'CID': catalog_id,
@@ -119,7 +119,7 @@ class ApplianceManagement(LyRequestHandler):
 
 
     def get_view(self):
-        catalogs = self.db2.query(ApplianceCatalog).all()
+        catalogs = self.db.query(ApplianceCatalog).all()
         self.render( 'admin/appliance/view.html',
                      title = self.trans(_('View Appliance %s')) % self.appliance.name,
                      CATALOG_LIST = catalogs,
@@ -137,9 +137,9 @@ class ApplianceManagement(LyRequestHandler):
             user = self.get_argument('user', 0)
             if user:
                 if user.isdigit():
-                    U = self.db2.query(User).get(user)
+                    U = self.db.query(User).get(user)
                 if not U:
-                    U = self.db2.query(User).filter_by(username=user).first()
+                    U = self.db.query(User).filter_by(username=user).first()
                 if not U:
                     E.append( self.trans(_('Can not find user: %s')) % user )
             else:
@@ -157,7 +157,7 @@ class ApplianceManagement(LyRequestHandler):
                         'old_owner': self.appliance.user.username, 'new_owner': U.username } )
 
                 self.appliance.user = U
-                self.db2.commit()
+                self.db.commit()
 
                 # TODO: send reason to user
                 url = self.reverse_url('admin:appliance')
@@ -169,7 +169,7 @@ class ApplianceManagement(LyRequestHandler):
 
     def change_catalog(self):
 
-        CATALOG_LIST = self.db2.query(ApplianceCatalog).all()
+        CATALOG_LIST = self.db.query(ApplianceCatalog).all()
 
         d = { 'title': self.trans(_('Change catalog of appliance')),
               'A': self.appliance, 'CATALOG_LIST': CATALOG_LIST }
@@ -180,7 +180,7 @@ class ApplianceManagement(LyRequestHandler):
         if self.request.method == 'POST':
             cid = self.get_argument('catalog', 0)
             if cid:
-                C = self.db2.query(ApplianceCatalog).get(cid)
+                C = self.db.query(ApplianceCatalog).get(cid)
                 if not C:
                     E.append( self.trans(_('Can not find catalog %s')) % cid )
             else:
@@ -190,7 +190,7 @@ class ApplianceManagement(LyRequestHandler):
                 d['ERROR'] = E
             else:
                 self.appliance.catalog = C
-                self.db2.commit()
+                self.db.commit()
 
                 url = self.reverse_url('admin:appliance')
                 url += '?id=%s' % self.appliance.id
@@ -201,7 +201,7 @@ class ApplianceManagement(LyRequestHandler):
 
 
 
-class CatalogManagement(LyRequestHandler):
+class CatalogManagement(RequestHandler):
 
     @has_permission('admin')
     def prepare(self):
@@ -209,7 +209,7 @@ class CatalogManagement(LyRequestHandler):
         self.action = self.get_argument('action', 'index')
 
         cid = self.get_argument_int('id', 0)
-        self.catalog = self.db2.query(ApplianceCatalog).get(cid)
+        self.catalog = self.db.query(ApplianceCatalog).get(cid)
 
         if self.action in ['edit'] and not self.catalog:
             self.write( self.trans(_('No catalog specified !')) )
@@ -245,7 +245,7 @@ class CatalogManagement(LyRequestHandler):
 
     def get_index(self):
 
-        CL = self.db2.query(ApplianceCatalog).order_by('id').all()
+        CL = self.db.query(ApplianceCatalog).order_by('id').all()
 
         d = { 'title': self.trans(_('Appliance Catalog')),
               'CATALOG_LIST': CL }
@@ -266,8 +266,8 @@ class CatalogManagement(LyRequestHandler):
                 name = form.name.data,
                 summary = form.summary.data,
                 description = form.description.data )
-            self.db2.add( c )
-            self.db2.commit()
+            self.db.add( c )
+            self.db.commit()
 
             url = self.reverse_url('admin:appliance:catalog')
             return self.redirect( url )
@@ -296,7 +296,7 @@ class CatalogManagement(LyRequestHandler):
             self.catalog.name = form.name.data
             self.catalog.summary = form.summary.data
             self.catalog.description = form.description.data
-            self.db2.commit()
+            self.db.commit()
 
             url = self.reverse_url('admin:appliance:catalog')
             return self.redirect( url )

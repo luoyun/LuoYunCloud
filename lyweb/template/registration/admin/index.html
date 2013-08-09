@@ -1,0 +1,81 @@
+<%inherit file="/admin/admin_base.html" />
+
+<%block name="main">
+
+<h1>${ _("Site Registration Config") }</h1>
+
+
+<h2>${ _("Base Config") }</h2>
+
+<p><i class="icon-edit"></i> <a href="${ reverse_url('admin:registration:base_edit') }">${ _("Edit") }</a></p>
+
+<table class="table table-bordered">
+  <tbody>
+	<tr>
+	  <td>${ _("Status") }</td>
+	  <td>${ registration_status }
+		<a href="${ reverse_url('admin:registration:status_toggle') }">${ _("Change Status") }</a>
+	  </td>
+	</tr>
+	<tr>
+	  <td>${ _("Host") }</td>
+	  <td>${ registration_host }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Email From") }</td>
+	  <td>${ registration_email_address }</td>
+	</tr>
+	<tr>
+	  <td>${ _("Email BCC") }</td>
+	  <td>${ registration_email_bcc }</td>
+	</tr>
+	<tr>
+	  <td>${ _("SMTP Server") }</td>
+	  <td>${ registration_smtp_server }</td>
+	</tr>
+	<tr>
+	  <td>${ _("SMTP Port") }</td>
+	  <td>${ registration_smtp_port }</td>
+	</tr>
+	<tr>
+	  <td>${ _("SMTP Username") }</td>
+	  <td>${ registration_smtp_username }</td>
+	</tr>
+	<tr>
+	  <td>${ _("SMTP Password") }</td>
+	  <td>${ registration_smtp_password }</td>
+	</tr>
+  </tbody>
+</table>
+
+
+<h2>${ _("Subject Of Registration") }</h2>
+
+<p><i class="icon-plus-sign"></i> <a href="${ reverse_url('admin:registration:localeconfig:add') }?key=registration.subject">${ _("Create Subject") }</a></p>
+
+% for it in registration_subject:
+<h3>${ it.language.name }</h3>
+<p>
+  <i class="icon-edit"></i> <a href="${ reverse_url('admin:registration:welcome:edit', it.id) }">${ _("Edit") }</a>
+  <i class="icon-trash"></i> <a href="${ reverse_url('admin:registration:localeconfig:delete', it.id) }">${ _("Delete") }</a>
+</p>
+<div>${ it.value_html }</div>
+% endfor
+
+
+
+<h2>${ _("Welcome info Of Registration") }</h2>
+
+<p><i class="icon-plus-sign"></i> <a href="${ reverse_url('admin:registration:localeconfig:add') }?key=registration.welcome">${ _("Create Welcome") }</a></p>
+
+% for it in registration_welcome:
+<h3>${ it.language.name }</h3>
+<p>
+  <i class="icon-edit"></i> <a href="${ reverse_url('admin:registration:welcome:edit', it.id) }">${ _("Edit") }</a>
+  <i class="icon-trash"></i> <a href="${ reverse_url('admin:registration:localeconfig:delete', it.id) }">${ _("Delete") }</a>
+</p>
+<div>${ it.value_html }</div>
+% endfor
+
+
+</%block>

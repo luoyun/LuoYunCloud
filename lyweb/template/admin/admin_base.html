@@ -1,162 +1,105 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
+<!DOCTYPE html>
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="SHORTCUT ICON" href="${ static_url('favicon.ico') }" />
-    <link rel="stylesheet" href="${ theme_url('admin.css') }" />
-    <script type="text/javascript" src="${ static_url('js/json2.js') }"></script>
-    <script type="text/javascript" src="${ static_url('js/jquery-1.9.1.min.js') }"></script>
-    <script type="text/javascript" src="${ static_url('js/jquery-migrate-1.2.1.min.js') }"></script>
-    <script type="text/javascript" src="${ static_url('js/jquery-ui/js/jquery-ui-1.9.1.custom.min.js') }"></script>
-    <script type="text/javascript" src="${ static_url('js/common.js') }"></script>
-    <link rel="stylesheet" href="${ static_url('js/jquery-ui/css/redmond/jquery-ui-1.9.1.custom.css') }" />
-    <script type="text/javascript" src="${ static_url('js/admin.js') }"></script>
-    <link rel="stylesheet" href="${ static_url('js/notify/ui.notify.css') }" />
-    <script type="text/javascript" src="${ static_url('js/notify/jquery.notify.js') }"></script>
-    <link type="text/css" rel="stylesheet" href="/static/t/qtip/jquery.qtip.css" />
-    <script type="text/javascript" src="/static/t/qtip/jquery.qtip.js"></script>
-    <%block name="subhead" />
-    <title>
-% if title:
-${ title } -
-% endif
-${ _("LuoYunCloud Admin Console") }
-</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!--[if lt IE 9]>
+<script src="/static/js/html5.js?v=0.6"></script>
+<![endif]-->
+    <link rel="SHORTCUT ICON" href="/satic/favicon.ico?v=0.6" />
+    <link href="/static/third/bootswatch/united/bootstrap.min.css?v=2.3.2" rel="stylesheet" media="screen">
+    <link href="/static/third/bootstrap/css/bootstrap-responsive.min.css?v=2.3.2" rel="stylesheet" type="text/css">
+    <link href="/static/third/font-awesome/css/font-awesome.min.css?v=3.1.0" rel="stylesheet" media="screen">
+<!--[if IE 7]>
+<link rel="stylesheet" href="/static/font-awesome/css/font-awesome-ie7.min.css?v=3.1.0">
+<![endif]-->
+    <link rel="stylesheet" href="${ theme_url('css/site.css') }">
+    <link rel="stylesheet" href="${ theme_url('css/admin.css') }">
+    <%block name="head" />
+    <title>${ title } - ${ _("LuoYunCloud Admin Console") }</title>
   </head>
+  <body data-spy="scroll" data-target=".subnav" data-offset="80">
+    <script type="text/javascript" src="/static/third/json2.js?v=20121008"></script>
+    <script type="text/javascript" src="/static/third/jquery-1.9.1.min.js?v=1.9.1"></script>
+    <script type="text/javascript" src="/static/third/jquery-migrate-1.2.1.min.js?v=1.2.1"></script>
+    <script type="text/javascript" src="/static/third/bootstrap/js/bootstrap.min.js?v=2.3.2"></script>
+    <script type="text/javascript" src="${ theme_url('js/site.js') }"></script>
 
-  <body>
-
-    <div id="pager">
-
-      <div id="header">
-	<div id="header-wrap">
-        <div id="logo">
-          <a href="/"><img src="${ static_url('image/logo_white_42.png') }" /></a>
-	  <ul class="vmenu hide" style="display:none;">
-	    <li><a href="/">${ _("Home") }</a></li>
-	    <li><a href="/appliance">${ _("Appliance") }</a></li>
-	    <li><a href="/instance">${ _("Instance") }</a></li>
-	    <li><a href="/myun">${ _("My LuoYun") }</a></li>
-	    <li><a href="/wiki">${ _("FAQ") }</a></li>
-	  </ul>
-        </div>
-        <div id="admin-menu">
-          <ul class="hmenu">
-	    <li><a id="index-item" href="/admin">${ _("Admin") }</a></li>
-            <li><a id="account-item" href="${ reverse_url('admin:user') }">${ _("Account") }</a></li>
-            <li><a id="appliance-item" href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></li>
-            <li><a id="instance-item" href="${ reverse_url('admin:instance') }">${ _("Instance") }</a></li>
-            <li><a id="node-item" href="${ reverse_url('admin:node') }">${ _("Node") }</a></li>
-            <li><a id="system-item" href="${ reverse_url('system') }">${ _("System") }</a></li>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a href="/admin" class="brand">${ _("Admin") }</a>
+          <ul role="navigation" class="nav">
+			<li><a href="${ reverse_url('admin:user') }">${ _("Account") }</a></li>
+			<li><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></li>
+			<li><a href="${ reverse_url('admin:instance') }">${ _("Instance") }</a></li>
+			<li><a href="${ reverse_url('admin:node') }">${ _("Node") }</a></li>
+			<li><a href="${ reverse_url('admin:forum') }">${ _("Forum") }</a></li>
+			<li class="dropdown">
+              <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop2" href="#">${ _("Other") } <b class="caret"></b></a>
+              <ul aria-labelledby="drop2" role="menu" class="dropdown-menu">
+				<li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
+				<li><a href="/admin/site">${ _("Site") }</a></li>
+				<li><a href="${ reverse_url('admin:registration') }">${ _("Registration") }</a></li>
+				<li><a href="${ reverse_url('admin:resource') }">${ _("Resources") }</a></li>
+				<li><a href="${ reverse_url('admin:domain') }">${ _("Domain") }</a></li>
+				<li><a href="${ reverse_url('admin:network') }">${ _("Network") }</a></li>
+			  </ul>
+			</li>
+			<li class="dropdown">
+              <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop1" href="#">${ _("Visit Site") } <b class="caret"></b></a>
+              <ul aria-labelledby="drop1" role="menu" class="dropdown-menu">
+				<li><a href="/">${ _("Home") }</a></li>
+				<li><a href="/appliance">${ _("Appliance") }</a></li>
+				<li><a href="/instance">${ _("Instance") }</a></li>
+				<li><a href="/myun">${ _("My LuoYun") }</a></li>
+				<li><a href="/wiki">${ _("FAQ") }</a></li>
+			  </ul>
+			</li>
           </ul>
-        </div>
 
-	<div id="ly-account-menu">
-	  <div class="c show">
-	    <img class="user-avatar" src="${ static_url( current_user.avatar_mini_url ) }" />
-	    <span class="text">${ current_user.username }
-	      %if current_user.notification:
-	      (${ current_user.notification })
-	      %endif
-	    </span>
-	  </div>
-	  <ul class="add-menu hide" style="display:none;">
-	    <li><a href="${ reverse_url('account:index') }">${ _("My Account") }</a></li>
-	    <li><a href="${ reverse_url('message:inbox') }">${ _("Inbox") }
-		%if current_user.notification:
-		(${ current_user.notification })
-		%endif
-	    </a></li>
-	    <li><a href="/admin">${ _("Admin") }</a></li>
-	    <li><a href="${ reverse_url('logout') }" title="${ _('Logout') }">${ _("Logout") }</a></li>
-	  </ul>
-	</div>
-      </div>
-      </div>
+          <ul class="nav pull-right">
+            <li class="dropdown" id="fat-menu">
+              <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop2" href="#"><i class="icon-user"></i> ${ current_user.username } <b class="caret"></b></a>
+              <ul aria-labelledby="drop2" role="menu" class="dropdown-menu">
+				<li role="presentation"><a href="/account" tabindex="-1" role="menuitem">${ _("My Account") }</a></li>
+				<li role="presentation"><a href="${ reverse_url('message:inbox') }" tabindex="-1" role="menuitem">${ _("Inbox") }
+					%if current_user.notice:
+					(${ current_user.notice })
+					%endif
+				</a></li>
+				<li role="presentation"><a href="/admin" tabindex="-1" role="menuitem">${ _("Admin") }</a></li>
+				<li role="presentation"><a href="/logout" tabindex="-1" role="menuitem">${ _("Logout") }</a></li>
+              </ul>
+            </li>
+          </ul><!-- /pull-right -->
 
-      <div id="submenu">
-	<div id="submenu-wrap">
-	<div id="index-item-submenu" class="item c">
-	  <span>${ _("Note: Any changes here will affect overall operation of LuoYunCloud platform. Please be careful!") }</span>
-	</div>
-	<div id="account-item-submenu" class="item c" style="display:none;">
-	  <a href="${ reverse_url('admin:user') }">${ _("User") }</a>
-	  <a href="${ reverse_url('admin:group') }">${ _("Group") }</a>
-	  <a href="${ reverse_url('admin:permission') }">${ _("Permission") }</a>
-	  <a href="${ reverse_url('admin:user:resetpass') }">${ _("Reset Password History") }</a>
-	</div>
-	<div id="appliance-item-submenu" class="item c" style="display:none;">
-	  <a href="${ reverse_url('admin:appliance') }">${ _("Appliances") }</a>
-	  <a href="${ reverse_url('admin:appliance:catalog') }">${ _("Catalog") }</a>
-	</div>
-	<div id="instance-item-submenu" class="item c" style="display:none;">
-	  <a href="${ reverse_url('admin:instance') }">${ _("Instances") }</a>
-	</div>
-	<div id="node-item-submenu" class="item c" style="display:none;">
-	  <a href="${ reverse_url('admin:node') }">${ _("Node") }</a>
-	</div>
-	<div id="system-item-submenu" class="item c" style="display:none;">
-	  <a href="${ reverse_url('system:baseinfo:edit') }">${ _("Baseinfo") }</a>
-	  <a href="${ reverse_url('system:db:edit') }">${ _("DB") }</a>
-	  <a href="${ reverse_url('system:clc:edit') }">${ _("Control Server") }</a>
-	  <a href="${ reverse_url('system:nameservers:edit') }">${ _("Nameservers") }</a>
-	  <a href="${ reverse_url('system:networkpool') }">${ _("IP Address Pool") }</a>
-	  <a href="${ reverse_url('system:domain:edit') }">${ _("Domain") }</a>
-	  <a href="${ reverse_url('system:nginx:edit') }">${ _("Nginx") }</a>
-	  <a href="${ reverse_url('system:protocol:edit') }">${ _("Registration Policy") }</a>
-	  <a href="${ reverse_url('system:welcome:edit') }">${ _("Welcome New User") }</a>
-	  <a href="${ reverse_url('system:sendmail') }">${ _("Send Mail") }</a>
-	  <a href="${ reverse_url('admin:job') }">${ _("Job") }</a>
-	  <a href="${ reverse_url('system:trace') }">${ _("Action History") }</a>
-	  <a href="${ reverse_url('message:notice') }">${ _("Notice") }</a>
-	</div>
-	<script type="text/javascript">
-	  $("#admin-menu a").removeClass("current");
-	  <%block name="submenujs"/>
-	  topMenuHover();
-	</script>
-      </div>
-      </div>
-
-      <div id="main" class="luoyun-min-height">
-	<div class="inner-nav">
-	  <ol>
-	    <li><a class="home" href="/">${ _("Home") }</a></li>
-	    <li><a href="${ reverse_url('admin:index') }">${ _("Admin") }</a></li>
-	    <%block name="innav"/>
-	  </ol>
-	</div>
-	<div id="ly-admin"><div id="xsrf-cookie" style="display:none;">${ xsrf_cookie }</div><%block name="content"/></div>
-      </div>
-
-      <div id="footer">
-        <div id="footer-wrap">
-          <span id="powered-by"><span class="text">${ _("Powered by") }</span><a href="http://www.luoyun.co" target="_blank">${ _("LuoYun") }</a></span>
-
-          <span id="select-language">
-            % if locale.code == 'en_US':
-            <img src="${ theme_url('img/zh_CN.png') }" />
-            <a href="/i18n/setlang?language=zh_CN&next=${ request.uri }">${ u"\u4e2d\u6587(\u7b80\u4f53)" }</a>
-            % else:
-            <img src="${ theme_url('img/en_US.png') }" />
-            <a href="/i18n/setlang?language=en_US&next=${ request.uri }">English</a>
-            % endif
-          </span>
         </div>
       </div>
-
     </div>
 
-    <div id="gotop" style="display: none;">${ _("Go TOP") }</div>
+	<div id="main" class="container min-height600">
+	  <%block name="main"/>
+	</div>
 
-  <script type="text/javascript">
-//    lySetCurrentNavigator();
-//    BackTop('gotop');
-    setCurrent();
-    showHide( "#logo" );
-    showHide( "#ly-account-menu" );
-  </script>
+    <div id="footer">
+      <div id="footer-wrap" class="doc4">
+        <span id="powered-by"><span class="text">${ _("Powered by") }</span><a href="http://www.luoyun.co" target="_blank">${ _("LuoYun") }</a></span>
+		<span class="site-language">
+		  ${ _("Select Language") }
+		  <select class="site-language-select">
+			% for code in LANGUAGES:
+			<option value="${ code }">${ LANGUAGES[code] }</option>
+			% endfor
+		  </select>
+		</span>
+      </div>
+    </div>
+
+	<script type="text/javascript">
+      $('.dropdown-toggle').dropdown();
+      $('.subnav').affix();
+	  binding_site_language_select( "${ locale.code }" );
+	</script>
 
   </body>
 </html>

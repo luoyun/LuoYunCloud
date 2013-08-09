@@ -1,0 +1,49 @@
+#appliance-catalog-menu {
+	margin-top: 15px;
+}
+
+#appliance-list .row-fluid {
+	margin: 10px 0 30px;
+}
+#appliance-list .logo {
+	width: 80px;
+	margin: 0px auto 10px;
+}
+
+#appliance-view > .span8 {
+	border-right: 1px solid #DEDEDE;
+}
+
+
+#create-instance-btn {
+	margin: 10px 0;
+}
+#appliance-detail {
+/*	margin: 30px 0;*/
+}
+#appliance-summary .logo {
+	width: 120px;
+/*	margin: 20px auto;*/
+/*	margin: 15px auto 30px;*/
+	margin-top: 10px;
+}
+#appliance-summary h2 {
+	margin-bottom: 2px;
+}
+#appliance-summary .summary {
+	padding: 15px 0;
+}
+#appliance-summary {
+	padding: 15px 0 0;
+	margin-bottom: 15px;
+/*	border-bottom: 1px solid #DEDEDE;*/
+}
+
+
+#appliance-detail .dl-horizontal dt {
+	width: 100px;
+	text-align: left;
+}
+#appliance-detail .dl-horizontal dd {
+	margin-left: 105px;
+}

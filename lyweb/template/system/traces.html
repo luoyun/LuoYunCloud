@@ -4,7 +4,7 @@
 <li><a href="${ reverse_url('system:trace') }">${ _("System Action") }</a></li>
 </%block>
 
-<%block name="content">
+<%block name="main">
 
 % if USER:
 <p class="subtitle">${ _("Filter by user: ") } "${ USER.username }"</p>
@@ -12,7 +12,7 @@
 
 % if TRACE_LIST:
 <div>
-  <table class="ly-table">
+  <table class="table table-bordered">
     <thead>
       <tr>
         <th><a href="${ sort_by('id') }">${ _("ID") }</a></th>

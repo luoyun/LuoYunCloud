@@ -1,0 +1,27 @@
+<%inherit file="../admin_base.html"/>
+
+<%block name="main">
+<div class="container-fluid">
+  <div class="row-fluid">
+
+	<div class="span2">
+	  <div class="sidebar-menu">
+		<a href="#siteMeun" class="nav-header menu-first collapsed" data-toggle="collapse">${ _("Site Configure") }</a>
+		<ul id="siteMeun" class="nav nav-list menu-second">
+		  <li><a href="${ reverse_url('admin:site:nav') }">${ _("Navigation") }</a></li>
+		  <li><a href="${ reverse_url('admin:site:entry') }">${ _("Site Entry") }</a></li>
+		  <li><a href="${ reverse_url('admin:site:article') }">${ _("Site Article") }</a></li>
+		  <li><a href="${ reverse_url('admin:site:config') }">${ _("Site Config") }</a></li>
+		  <li><a href="${ reverse_url('admin:site:localeconfig') }">${ _("Site Locale Config") }</a></li>
+		  <li><a href="${ reverse_url('admin:site:job') }">${ _("Site Job") }</a></li>
+		</ul>
+	  </div>
+	</div>
+
+	<div class="span10">
+	  <%block name="mainbody"/>
+	  <%block name="submain"/>
+	</div>
+  </div>
+</div>
+</%block>

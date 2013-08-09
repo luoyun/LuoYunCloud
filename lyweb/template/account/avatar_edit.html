@@ -1,18 +1,19 @@
 <%inherit file="account_base.html" />
 
-<%block name="innav">
-<li><a href="${ reverse_url('account:avatar:edit') }">${ _("Change Avatar") }</a></li>
-</%block>
 
+<%block name="submain">
 
-<%block name="sidemain">
-
-<div id="u-home-avatar-edit-form" class="small-left-right-form">
-  <form method="POST" enctype="multipart/form-data" action="${ reverse_url('account:avatar:edit') }">${ xsrf_form_html() }
-    <label><img class="user-avatar" src="${ current_user.avatar_url }" alt="User Avatar" /></label>${ form.avatar() }<br/>
-    ${ form.html_errors( form.avatar.errors ) }
-    <label>&nbsp;</label><input type="submit" value="${ _('Save') }" class="button" />
+<div>
+  <form method="POST" enctype="multipart/form-data">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${_("Reset My Avatar")}</legend>
+	  ${ form.avatar() }
+	  ${ form.html_errors(form.avatar.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
   </form>
 </div>
 
 </%block>
+

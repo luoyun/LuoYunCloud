@@ -1,0 +1,24 @@
+<%inherit file="/base.html"/>
+
+<%block name="head">
+<link rel="stylesheet" href="${ theme_url('css/myun-instance.css') }" />
+</%block>
+
+<%block name="main">
+
+<ul class="breadcrumb">
+  <li><a href="/"><i class="icon-home"></i> ${ _("Home") }</a> <span class="divider">/</span></li>
+  <li><a href="${ reverse_url('myun:index') }">${ _("My LuoYun") }</a> <span class="divider">/</span></li>
+  <li><a href="${ reverse_url('myun:instance') }">${ _("Instances") }</a> <span class="divider">/</span></li>
+  <%block name="innav" />
+</ul>
+
+<div id="instance-base">
+  <%block name="submain"/>
+</div>
+
+<script type="text/javascript">
+  menu_entry_active ( "/myun" );
+</script>
+
+</%block>

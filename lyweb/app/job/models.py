@@ -1,5 +1,5 @@
 from datetime import datetime
-from lyorm import ORMBase
+from yweb.orm import ORMBase
 
 from sqlalchemy import Column, Integer, String, \
     Sequence, DateTime, Table, ForeignKey, Boolean
@@ -7,10 +7,10 @@ from sqlalchemy.orm import relationship, backref
 
 import settings
 
-from lyorm import dbsession as db
+from yweb.orm import db
 from app.node.models import Node
 from app.instance.models import Instance
-from app.account.models import User
+from app.auth.models import User
 
 JOB_STATUS_STR = {
     0: _('unknown'),
@@ -95,8 +95,8 @@ class Job(ORMBase):
 
     id = Column( Integer, Sequence('job_id_seq'), primary_key=True )
 
-    user_id = Column( ForeignKey('auth_user.id') )
-    user = relationship("User",backref=backref('jobs',order_by=id) )
+    user_id = Column( Integer, ForeignKey('auth_user.id', ondelete='CASCADE') )
+    user = relationship("User",backref=backref('jobs',order_by=id))
 
     status = Column( Integer, default=settings.JOB_S_INITIATED )
 
@@ -134,7 +134,7 @@ class Job(ORMBase):
                 url = '/admin/node?id=%s&action=view' % self.target_id
             elif ( self.target_type == 4 and
                    db.query(Instance).get(self.target_id) ):
-                url = '/admin/instance?id=%s' % self.target_id
+                url = '/admin/instance/view?id=%s' % self.target_id
         except:
             pass
 
@@ -165,14 +165,29 @@ class Job(ORMBase):
         return 400 <= self.status < 500
 
     @property
-    def user_link_module(self):
-        if (self.user_id and db.query(User).get(self.user_id)):
-            url = '/admin/user?id=%s' % self.user_id
-            return '<a href="%s" target="_blank">%s</a>' % (url, self.user.username)
+    def status_icon(self):
+        # a class for bootstrap style
 
-    @property
-    def status_img(self):
-        if self.completed:
-            return 'icons/JobStatus/%s.png' % self.status
+        if self.status == 0:
+            color, _class = '#FFCC33', 'icon-exclamation-sign'
+
+        elif ( 100 <= self.status < 300 or
+               400 <= self.status <= 499 ):
+            color, _class = '#99CCFF', 'icon-spinner icon-spin'
+
+        elif 300 <= self.status < 302:
+            color, _class = '#66CC00', 'icon-ok-sign'
+
+        elif ( 302 <= self.status < 311 or
+               500 <= self.status < 799 ):
+            color, _class = 'red', 'icon-warning-sign'
+
+        elif ( self.status in [311, 701] ):
+            color, _class = 'red', 'icon-remove-sign'
+
         else:
-            return 'icons/JobStatus/running.gif'
+            color, _class = 'red', 'icon-exclamation-sign'
+
+        return '<i style="color: %s;" class="%s"></i>' % (
+            color, _class )
+

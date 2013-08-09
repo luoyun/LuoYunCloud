@@ -1,0 +1,20 @@
+<%inherit file="network_base.html" />
+
+<%block name="submain">
+
+<div class="hero-unit">
+  <h2>${ _("Delete NetworkPool failed.") }</h2>
+
+  <div>
+	<h3>${ network.name }</h3>
+  </div>
+
+  <ul class="text-error">
+	% for E in ERROR:
+	<li>${ E }</li>
+	% endfor
+  </ul>
+
+</div>
+
+</%block>

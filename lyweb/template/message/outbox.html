@@ -17,8 +17,8 @@
       % for M in MESSAGE_LIST:
       <tr>
         <td class="receiver user">
-	  <a href="${ reverse_url('account:view', M.receiver_id) }"><img src="${ M.receiver.avatar_url }" /></a>
-	  <a href="${ reverse_url('account:view', M.receiver_id) }">${ M.receiver.username }</a>
+	  <a href="${ reverse_url('user:view') }?id=${ M.receiver_id }"><img src="${ M.receiver.avatar_url }" /></a>
+	  <a href="${ reverse_url('user:view') }?id=${ M.receiver_id }">${ M.receiver.username }</a>
 	</td>
         <td class="subject">
 	  <div><a href="${ reverse_url('message:view', M.id) }">${ M.text.subject }</a></div>

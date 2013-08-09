@@ -5,24 +5,30 @@
 <li>${ _("Edit Nginx") }</li>
 </%block>
 
-<%block name="content">
+<%block name="main">
 
-<div class="small-left-right-form c">
-  <form method="POST" action="${ reverse_url('system:nginx:edit') }">${ xsrf_form_html() }
-    ${ form.confdir.label } ${ form.confdir() }<br/>
-    ${ form.html_errors(form.confdir.errors) }
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Nginx Configure") }</legend>
 
-    ${ form.logdir.label } ${ form.logdir() }<br/>
-    ${ form.html_errors(form.logdir.errors) }
+      ${ form.conf_path.label } ${ form.conf_path() }
+      ${ form.html_errors(form.conf_path.errors) }
 
-    ${ form.binpath.label } ${ form.binpath() }<br/>
-    ${ form.html_errors(form.binpath.errors) }
+      ${ form.log_path.label } ${ form.log_path() }
+      ${ form.html_errors(form.log_path.errors) }
 
-    <label>&nbsp;</label><input type="submit" value="${ _('Save') }"/>
-% if saved:
-<span id="saved-success">${ _("saved success") }</span>
-% endif
+      ${ form.bin_path.label } ${ form.bin_path() }
+      ${ form.html_errors(form.bin_path.errors) }
 
+      ${ form.template.label } ${ form.template() }
+      ${ form.html_errors(form.template.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	  % if saved:
+	  <span class="text-success">${ _("saved success") }</span>
+	  % endif
+	</fieldset>
   </form>
 </div>
 

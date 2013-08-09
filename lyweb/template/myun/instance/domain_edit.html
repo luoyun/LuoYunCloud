@@ -1,0 +1,19 @@
+<%inherit file="instance_base.html" />
+
+<%block name="innav">
+<li>${ _("Configure Domain For Instance") }</li>
+</%block>
+
+<%block name="submain">
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Configure Domain For Instance") }</legend>
+      ${ form.domain.label } ${ form.domain() }
+      ${ form.html_errors(form.domain.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+</div>
+</%block>

@@ -1,0 +1,12 @@
+<%inherit file="../forum_base.html"/>
+
+<%block name="submain">
+<div id="forum-tag-home">
+  <div><p>${ _("Total tags: ") } ${ TAG_TOTAL }</p></div>
+  <div class="tags">
+    %for T in TAGS:
+    <a class="tag" href="${ reverse_url('forum:tag:view') }?id=${ T.id }">${ T.name }</a> x <span class="hit">${ T.hit }</span>
+    %endfor
+  </div>
+</div>
+</%block>

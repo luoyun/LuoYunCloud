@@ -1,0 +1,17 @@
+<%inherit file="/site_notice_base.html" />
+
+<%block name="submain">
+
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${_("Validate My Email")}</legend>
+	  ${ form.email.label } ${ form.email() }
+	  ${ form.html_errors(form.email.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+</div>
+
+</%block>

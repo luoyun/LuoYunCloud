@@ -1,12 +1,3 @@
-*.pyc
-*.o
-*~
-*#
-*.bak
-*.db
-cscope.out
-attachment
-appliance/*
-instance/*
-user/*
-*.log
+appliance*
+instance*
+attachment*

@@ -1,11 +1,15 @@
 <%inherit file="appliance_base.html" />
 
-<%block name="main">
+<%block name="innav">
+<li>${ _("Upload Appliance") }</li>
+</%block>
 
-<script type="text/javascript" src="${ static_url('js/jquery.uploadProgress.js') }"></script>
-<script type="text/javascript" src="${ static_url('js/upload.js') }"></script>
+<%block name="submain">
 
-<div class="upload-appliance">
+<script type="text/javascript" src="${ static_url('third/jquery.uploadProgress.js') }"></script>
+<script type="text/javascript" src="${ static_url('third/upload.js') }"></script>
+
+<div class="hero-unit upload-appliance">
 
   <form id="upload" enctype="multipart/form-data" action="/upload" method="post">${ xsrf_form_html() }
     <input name="upfile" type="file"/>
@@ -13,8 +17,8 @@
   </form>
 
   <div id="uploading" style="display: none;">
-    <div id="progress" class="bar">
-      <div id="progressbar"> </div>
+    <div class="progress">
+      <div class="bar"> </div>
     </div>
     <div id="percents"></div>
   </div>

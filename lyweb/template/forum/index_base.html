@@ -1,0 +1,51 @@
+<%inherit file="forum_base.html"/>
+
+<%block name="submain">
+
+<div>
+  <div class="row-fluid">
+
+	<div class="span9">
+
+	  <ul class="nav nav-tabs index-tabs">
+		<li class="tab-catalogs"><a href="?tab=catalogs"><i class="icon-book"></i> ${ _("Catalogs") }</a></li>
+		<li class="tab-topics"><a href="?tab=topics"><i class="icon-file-alt"></i> ${ _("Topics") }</a></li>
+		<li class="tab-posts"><a href="?tab=posts"><i class="icon-comment-alt"></i> ${ _("Posts") }</a></li>
+	  </ul>
+
+	  <%block name="subsubmain"/>
+	</div>
+
+	<div class="span3">
+
+	  <div class="well">
+		<form action="/search" id="searchbox">
+		  <div class="control-group">
+			<label for="appendedInputButton" class="control-label">${ _("Search By Google") }</label>
+			<div class="controls">
+			  <div class="input-append">
+				<input type="text" name="q" class="span8" placeholder="Your search text">
+				<button type="submit" class="btn">Go!</button>
+			  </div>
+			</div>
+		  </div>
+		</form>
+	  </div>
+
+	  <p><a class="btn btn-primary btn-large" href="${ reverse_url('forum:topic:add') }"><i class="icon-plus"></i> ${ _("New Topic") }</a></p>
+
+	  <h2><i class="icon-tags"></i> ${ _("Tags") }</h2>
+      <div class="tags">
+		%for T in TAGS:
+		<a class="tag" href="${ reverse_url('forum:tag:view') }?id=${ T.id }">${ T.name }</a> x <span class="hit">${ T.hit }</span><br>
+		%endfor
+	  </div>
+	  <br>
+	  <p><a href="${ reverse_url('forum:tag:home') }">${ _("View All Tags") }</a></p>
+	</div>
+
+  </div>
+
+</div>
+
+</%block>

@@ -1,0 +1,39 @@
+<%inherit file="/base.html"/>
+
+<%block name="main">
+<div class="doc4 wrapper">
+
+  <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+  <script type="text/javascript">
+	google.load('search', '1', {language : 'zh-CN' });
+	google.setOnLoadCallback(function(){
+	var customSearchControl = new google.search.CustomSearchControl('000903556807681057948:jmkxq9r7ghe');
+	customSearchControl.setResultSetSize(google.search.Search.SMALL_RESULTSET);
+	customSearchControl.setLinkTarget(google.search.Search.LINK_TARGET_SELF);
+	customSearchControl.setNoResultsString('<img src="/b.gif" class="wp-smiley sm-sad">  ${ _("Nothing, try again !") }');
+	customSearchControl.setSearchCompleteCallback(null,function() {
+	$('input.gsc-input').select();
+	var searchwords = $('input.gsc-input').val();
+	$('.p > b').text(searchwords);
+	$('a.gs-title').addClass('new').unwrap().wrap('<h3></h3>').each(function() {
+	var title = $(this).html().replace(/\|.*/g, '');
+	$(this).html(title);
+	});
+	$('b:contains("...")').contents().unwrap();
+	$('.gsc-cursor-current-page').removeClass('gsc-cursor-page');
+	});
+	customSearchControl.draw('cse');
+	var match = location.search.match(/q=([^&]*)(&|$)/);
+	if(match && match[1]){
+	var search = decodeURIComponent(match[1]);
+	customSearchControl.execute(search);
+	}
+	});
+  </script>
+
+  <br>
+  <div class="well">${ _("Google is not work always now, wait a moment please.") }</div>
+  <div id="cse">${ _("Searching ...") }</div>
+
+</div>
+</%block>

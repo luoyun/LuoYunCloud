@@ -3,11 +3,11 @@
 
 import logging, datetime, time, re
 import tornado
-from lycustom import LyRequestHandler, has_permission
+from lycustom import RequestHandler, has_permission
 from ytime import ftime
 from tornado.web import authenticated, asynchronous
 
-from app.account.models import User
+from app.auth.models import User
 from app.message.models import Message, MessageText
 from app.message.forms import MessageForm, NewMessageForm,ReplyMessageForm
 
@@ -20,10 +20,10 @@ reply_regex = re.compile(r'(\s*Re:\s*|\s*回复：\s*|\s*Re：\s*|\s*回复:\s*)
 
 
 
-class MessageRequestHandler(LyRequestHandler):
+class MessageRequestHandler(RequestHandler):
 
     def my_message(self, ID):
-        M = self.db2.query(Message).get( ID )
+        M = self.db.query(Message).get( ID )
 
         if not M:
             self.write( self.trans(_('Can not find message %s')) % ID )
@@ -63,14 +63,14 @@ class MessageRequestHandler(LyRequestHandler):
         stop = start + page_size
 
         if show == "inbox":
-            ml = self.db2.query(Message).filter_by(
+            ml = self.db.query(Message).filter_by(
                 receiver_id=UID, isinbox=True)
         elif show == "outbox":
-            ml = self.db2.query(Message).filter_by(
+            ml = self.db.query(Message).filter_by(
                 sender_id=UID, isinbox=False).filter(
                 Message.receiver_id != None)
         elif show == "notice":
-            ml = self.db2.query(Message).filter(
+            ml = self.db.query(Message).filter(
                 Message.receiver_id == None)
         else:
             return {}
@@ -99,7 +99,7 @@ class Inbox(MessageRequestHandler):
     @authenticated
     def get(self):
 
-        unread = self.db2.query(Message.id).filter_by(
+        unread = self.db.query(Message.id).filter_by(
             receiver_id=self.current_user.id, isread=False).count()
 
         d = { 'title': self.trans(_('My inbox')), 'unread': unread }
@@ -140,10 +140,10 @@ class View(MessageRequestHandler):
             if not M.readtime:
                 M.readtime = datetime.datetime.now()
 
-            self.db2.commit()
+            self.db.commit()
 
             if M.reply_id: # a hack to add reply obj
-                M.reply = self.db2.query(Message).get( M.reply_id )
+                M.reply = self.db.query(Message).get( M.reply_id )
 
         self.render('message/view_message.html', **d)
 
@@ -156,25 +156,25 @@ class Delete(MessageRequestHandler):
 
         M = self.my_message(id)
         if M:
-            x = self.db2.query(Message.id).filter_by(
+            x = self.db.query(Message.id).filter_by(
                 text_id = M.text_id).count()
 
             if not M.isread:
                 M.receiver.notify(-1)
 
-            quote_list = self.db2.query(Message).filter_by(
+            quote_list = self.db.query(Message).filter_by(
                 reply_id = M.id)
             for q in quote_list:
                 if ( q.receiver_id == self.current_user.id or
                      q.sender_id == self.current_user.id ):
                     q.reply_id = None
 
-            self.db2.delete( M )
+            self.db.delete( M )
 
             if x == 1: # Delete text
-                self.db2.delete( M.text )
+                self.db.delete( M.text )
 
-            self.db2.commit()
+            self.db.commit()
 
             if not self.get_argument('ajax', None):
                 self.redirect(self.reverse_url("message:inbox"))
@@ -195,14 +195,14 @@ class New(MessageRequestHandler):
         form = MessageForm(self)
 
         if UID:
-            receiver = self.db2.query(User).get( UID )
+            receiver = self.db.query(User).get( UID )
             if receiver:
                 form.to.data = receiver.username
         else:
             receiver = None
 
         if ORIG_MSG_ID:
-            M = self.db2.query(Message).get( ORIG_MSG_ID )
+            M = self.db.query(Message).get( ORIG_MSG_ID )
             if M:
                 form.to.data = M.sender.username
                 subject = reply_regex.sub('', M.text.subject)
@@ -222,27 +222,27 @@ class New(MessageRequestHandler):
 
         form = MessageForm(self)
         if form.validate():
-            receiver = self.db2.query(User).filter_by(username=form.to.data).first()
+            receiver = self.db.query(User).filter_by(username=form.to.data).first()
             if receiver:
                 T = MessageText( subject = form.subject.data,
                                  body = form.text.data )
-                self.db2.add(T)
-                self.db2.commit()
+                self.db.add(T)
+                self.db.commit()
 
                 M = Message( sender_id = self.current_user.id,
                              receiver_id = receiver.id, text_id = T.id )
 
-                self.db2.add(M)
+                self.db.add(M)
 
                 # send a message to myself
                 if receiver.id != self.current_user.id:
                     M = Message( sender_id = self.current_user.id,
                                  receiver_id = receiver.id, text_id = T.id )
                     M.isinbox = False
-                    self.db2.add(M)
+                    self.db.add(M)
 
                 receiver.notify()
-                self.db2.commit()
+                self.db.commit()
 
                 url = self.reverse_url('message:inbox')
                 return self.redirect(url)
@@ -286,14 +286,14 @@ class Reply(MessageRequestHandler):
         subject = reply_regex.sub('', M.text.subject)
         subject = self.trans(_('Re: %s')) % subject
         T = MessageText( subject = subject, body = body )
-        self.db2.add(T)
-        self.db2.commit()
+        self.db.add(T)
+        self.db.commit()
 
         NewMsg = Message( sender_id = self.current_user.id,
                      receiver_id = M.sender_id, text_id = T.id )
         NewMsg.reply_id = M.id
 
-        self.db2.add(NewMsg)
+        self.db.add(NewMsg)
 
         # do not send a message to myself
         if M.sender_id != self.current_user.id:
@@ -302,10 +302,10 @@ class Reply(MessageRequestHandler):
                               text_id = T.id )
             NewMsg.reply_id = M.id
             NewMsg.isinbox = False
-            self.db2.add(NewMsg)
+            self.db.add(NewMsg)
 
         M.sender.notify()
-        self.db2.commit()
+        self.db.commit()
 
         url = self.reverse_url('message:outbox')
         self.redirect(url)
@@ -337,8 +337,8 @@ class SendNotice(MessageRequestHandler):
 
             T = MessageText( subject = form.subject.data,
                              body = form.text.data )
-            self.db2.add(T)
-            self.db2.commit()
+            self.db.add(T)
+            self.db.commit()
 
             current_user_id = self.current_user.id
             text_id = T.id
@@ -346,16 +346,16 @@ class SendNotice(MessageRequestHandler):
             M = Message( sender_id = current_user_id,
                          receiver_id = None, text_id = text_id )
             M.isinbox = False
-            self.db2.add(M)
+            self.db.add(M)
 
             # TODO: select method
-            for U in self.db2.query(User):
+            for U in self.db.query(User):
                 M = Message( sender_id = current_user_id,
                              receiver_id = U.id, text_id = text_id )
-                self.db2.add(M)
+                self.db.add(M)
                 U.notify()
 
-            self.db2.commit()
+            self.db.commit()
 
             url = self.reverse_url('message:notice')
             return self.redirect( url )
@@ -373,7 +373,7 @@ class NoticeHome(MessageRequestHandler):
 
         MSG_ID = self.get_argument_int('message', 0)
         if MSG_ID:
-            M = self.db2.query(Message).get( MSG_ID )
+            M = self.db.query(Message).get( MSG_ID )
             d = { 'title': self.trans(_('View notice %s')) % MSG_ID, 'M': M }
             self.render( 'message/notice_view.html', **d)
 
@@ -389,17 +389,17 @@ class NoticeDelete(MessageRequestHandler):
     @has_permission('admin')
     def get(self, ID):
 
-        M = self.db2.query(Message).get( ID )
+        M = self.db.query(Message).get( ID )
         if M.receiver_id:
             self.write( self.trans(_('This is not a notice !')) )
         else:
-            if not self.db2.query(Message.id).filter_by(
+            if not self.db.query(Message.id).filter_by(
                 text_id = M.text_id).count():
                 # Delete text
-                self.db2.delete( M.text )
+                self.db.delete( M.text )
 
-            self.db2.delete( M )
-            self.db2.commit()
+            self.db.delete( M )
+            self.db.commit()
 
             if not self.get_argument('ajax', None):
                 self.redirect(self.reverse_url("message:notice"))

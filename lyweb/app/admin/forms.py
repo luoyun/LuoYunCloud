@@ -1,7 +1,7 @@
-from lyforms import Form
+from yweb.forms import Form
 from wtforms import BooleanField, TextField, \
     validators, DateTimeField, TextAreaField, IntegerField, \
-    PasswordField, SelectMultipleField
+    PasswordField, SelectMultipleField, SelectField
 
 from wtforms.validators import ValidationError
 
@@ -12,11 +12,14 @@ def password_confirm(form, field):
 
 
 class CreateUserForm(Form):
-    username         = TextField( _('Username'), [validators.Length(min=4, max=25)] )
-    email            = TextField( _('Email Address'), [validators.Length(min=6, max=35), validators.Email()] )
-    password         = PasswordField( _('Password'),
-                                      [ password_confirm, validators.Length(min=6, max=120) ] )
+    username = TextField( _('Username'), [
+            validators.Length(min=2, max=25) ] )
+    email = TextField( _('Email Address'), [
+            validators.Length(min=6, max=35), validators.Email() ] )
+    password = PasswordField( _('Password'),[
+            password_confirm, validators.Length(min=6, max=120) ] )
     password_confirm = PasswordField( _('Confirm Password') )
+
 
 class UserResourceForm(Form):
     memory = IntegerField( _('Memory(M)'), [validators.NumberRange(min=256, max=10240)])
@@ -41,3 +44,35 @@ class CatalogForm(Form):
 
 class UserGroupEditForm(Form):
     groups = SelectMultipleField( _('Groups') )
+
+
+class ResourceForm(Form):
+
+    type = SelectField( _('Resource Type') )
+
+    size = IntegerField( _('Resource Size'), [
+            validators.NumberRange(min=1) ] )
+    
+    effect_date = DateTimeField( _('Effect Date') )
+    expired_date = DateTimeField( _('Expired Date') )
+
+
+
+class ResourceSimpleForm(Form):
+
+    cpu = IntegerField( _('CPU (core)'), [
+            validators.NumberRange(min=1) ] )
+
+    memory = IntegerField( _('Memory (M)'), [
+            validators.NumberRange(min=64) ] )
+
+    storage = IntegerField( _('Storage (G)'), [
+            validators.NumberRange(min=1) ] )
+
+    instance = IntegerField( _('Instance'), [
+            validators.NumberRange(min=1) ] )
+    
+    effect_date = DateTimeField( _('Effect Date') )
+    expired_date = DateTimeField( _('Expired Date') )
+
+

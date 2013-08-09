@@ -1,0 +1,21 @@
+<%inherit file="../base.html" />
+
+<%block name="mainbody">
+
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("Add Site Config") }</legend>
+	  ${ form.key.label } ${ form.key() }
+	  ${ form.html_errors(form.key.errors) }
+
+	  ${ form.value.label } ${ form.value() }
+	  ${ form.html_errors(form.value.errors) }
+	  <br>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+
+</div>
+
+</%block>

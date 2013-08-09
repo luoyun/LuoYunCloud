@@ -1,0 +1,27 @@
+<%inherit file="../admin_base.html"/>
+
+<%block name="subhead">
+<link rel="stylesheet" href="${ theme_url('css/admin-account.css') }" />
+</%block>
+
+<%block name="main">
+
+<div class="subnav">
+  <div class="container">
+	<ul class="nav nav-pills">
+	  <li><a href="${ reverse_url('admin:user') }">${ _("User") }</a></li>
+	  <li><a href="${ reverse_url('admin:group') }">${ _("Group") }</a></li>
+	  <li><a href="${ reverse_url('admin:permission') }">${ _("Permission") }</a></li>
+	</ul>
+  </div>
+</div>
+
+<ul class="breadcrumb">
+  <li><a href="/admin">${ _("Admin") }</a> <span class="divider">/</span></li>
+  <%block name="innav"/>
+</ul>
+
+<%block name="submain"/>
+</%block>
+
+

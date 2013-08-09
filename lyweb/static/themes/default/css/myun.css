@@ -1,0 +1,43 @@
+#myun-entry-menu.nav-list {
+	border: none;
+}
+#myun-entry-menu.nav-list, #myun-entry-menu.nav-list li a{
+	padding: 3px 0px;
+	margin: 0px;
+}
+#account-info {
+	padding-bottom: 15px;
+	margin-bottom: 20px;
+}
+#account-info .avatar {
+	border-radius: 5px;
+}
+#account-info .username {
+	margin: 30px 15px 30px auto;
+	text-align: center;
+}
+#myun-analysis-chart .pie {
+	height: 300px;
+	float: left;
+	width: 300px;
+}
+
+#myun {
+}
+#myun .sidebar, #myun .submain {
+	padding: 15px 0;
+}
+#myun .submain {
+	border-left: 1px solid #DEDEDE;
+}
+#myun .sidebar .logo {
+	width: 120px;
+	margin: 15px auto;
+}
+#myun .sidebar .logo img {
+	border-radius: 5px;
+}
+#myun .submain {
+	margin-left: 0;
+	padding-left: 30px;
+}
