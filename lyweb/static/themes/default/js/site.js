@@ -77,6 +77,15 @@
 })(jQuery);
 
 
+$(document).ready(function(){
+	
+	//Remove outline from links
+	$("a").click(function(){
+		$(this).blur();
+	});
+
+});
+
 // Ajax for xsrf , csrf
 $(document).ajaxSend(function(event, xhr, settings) {  
     function getCookie(name) {  

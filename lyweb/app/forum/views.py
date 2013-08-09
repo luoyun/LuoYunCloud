@@ -43,24 +43,21 @@ class RequestHandler(OrigHandler):
 
     def can_view_topic(self, catalog):
 
-        if not (self.current_user and catalog):
+        if not catalog:
             return False
 
-        if self.current_user in catalog.managers:
+        if ( catalog.is_private or
+             not catalog.is_visible ):
+            if self.current_user:
+                if ( self.current_user in catalog.managers or
+                     self.current_user in catalog.allowed_users or
+                     self.has_permission('admin') ):
+                    return True
+
+        else:
             return True
 
-        u = self.db.query(ForumForbiddenUser).filter_by(
-            user_id = self.current_user.id ).first()
-        if u:
-            return False
-
-        if ( catalog.is_private and
-             not catalog.is_visible and
-             not self.has_permission('admin') and
-             not self.current_user in catalog.allowed_users ):
-            return False
-
-        return True
+        return False
 
 
     def get_post_parent(self, post):

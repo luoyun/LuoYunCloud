@@ -25,24 +25,24 @@
       </thead>
       <tbody>
 		<tr>
-		  <td>${ _("Memory") }</td>
-		  <td>${ profile.memory_total } M</td>
-		  <td>${ profile.memory_used } M</td>
+		  <td>${ _("CPUs") }</td>
+		  <td>${ resource_total["cpu"] } ${ _("core") }</td>
+		  <td>${ resource_used["cpu"] } ${ _("core") }</td>
 		</tr>
 		<tr>
-		  <td>${ _("CPUs") }</td>
-		  <td>${ profile.cpu_total } core</td>
-		  <td>${ profile.cpu_used } core</td>
+		  <td>${ _("Memory") }</td>
+		  <td>${ resource_total["memory"] } M</td>
+		  <td>${ resource_used["memory"] } M</td>
 		</tr>
 		<tr>
 		  <td>${ _("Instances") }</td>
-		  <td>${ profile.instance_total }</td>
-		  <td>${ profile.instance_used }</td>
+		  <td>${ resource_total["instance"] }</td>
+		  <td>${ resource_used["instance"] }</td>
 		</tr>
 		<tr>
 		  <td>${ _("Storage") }</td>
-		  <td>${ profile.storage_total } G</td>
-		  <td>${ profile.storage_used } G</td>
+		  <td>${ resource_total["storage"] } G</td>
+		  <td>${ resource_used["storage"] } G</td>
 		</tr>
       </tbody>
 	</table>

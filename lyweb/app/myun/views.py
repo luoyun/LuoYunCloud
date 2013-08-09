@@ -33,10 +33,14 @@ class Index(RequestHandler):
     @authenticated
     def get(self):
 
-        my = self.db.query(User).get(self.current_user.id)
+        profile = self.current_user.profile
+        # TODO: profile is None
 
-        d = { 'my': my, 'human_size': human_size }
+        resource_total = profile.get_resource_total()
+        resource_used = profile.get_resource_used()
 
-        d['title'] = self.trans(_('My LuoYun'))
+        d = { 'title': _("My Yun"),
+              'resource_total': resource_total,
+              'resource_used': resource_used }
 
         self.render("myun/index.html", **d)

@@ -13,15 +13,16 @@ from sqlalchemy.orm import relationship, backref
 
 from app.auth.utils import enc_shadow_passwd
 
-import settings
+from app.site.utils import get_site_config
 
+import settings
 
 
 class UserProfile(ORMBase):
 
-    __tablename__ = 'user_profile'
-
     _config_dict = {}
+
+    __tablename__ = 'user_profile'
 
     id = Column( Integer, Sequence('user_profile_id_seq'), primary_key=True )
 
@@ -35,15 +36,16 @@ class UserProfile(ORMBase):
     coins = Column( Integer, default=0 )
 
     # resource
-    cpu_used      = Column( Integer, default=0 )
-    memory_used   = Column( Integer, default=0 )
-    storage_used  = Column( Integer, default=0 )
-    instance_used = Column( Integer, default=0 )
-
-    cpu_total      = Column( Integer, default=0 )
-    memory_total   = Column( Integer, default=0 )
-    storage_total  = Column( Integer, default=0 )
-    instance_total = Column( Integer, default=0 )
+    cpu       = Column( Integer, default = 0 ) # core
+    memory    = Column( Integer, default = 0 ) # MB
+    storage   = Column( Integer, default = 0 ) # GB
+    instance  = Column( Integer, default = 0 ) # Number
+    bandwidth = Column( Integer, default = 0 ) # Mbps
+    rx        = Column( Integer, default = 0 ) # G
+    tx        = Column( Integer, default = 0 ) # G
+    port      = Column( Integer, default = 0 ) # Number
+    vlan      = Column( Integer, default = 0 ) # Number
+    domain    = Column( Integer, default = 0 ) # Number
 
     created = Column( DateTime, default=datetime.datetime.now )
     updated = Column( DateTime, default=datetime.datetime.now )
@@ -53,26 +55,167 @@ class UserProfile(ORMBase):
 
 
     def __init__(self, user):
+
         self.user_id = user.id
+
+        self.cpu = get_site_config(
+            'user.default.static_cpu', settings.USER_DEFAULT_CPU )
+
+        self.memory = get_site_config(
+            'user.default.static_memory', settings.USER_DEFAULT_MEMORY )
+
+        self.storage = get_site_config(
+            'user.default.static_storage', settings.USER_DEFAULT_STORAGE )
+
+        self.instance = get_site_config(
+            'user.default.static_instance', settings.USER_DEFAULT_INSTANCE )
+
+        self.bandwidth = get_site_config(
+            'user.default.static_bandwidth', settings.USER_DEFAULT_BANDWIDTH )
+
+        self.rx = get_site_config(
+            'user.default.static_rx', settings.USER_DEFAULT_RX )
+
+        self.tx = get_site_config(
+            'user.default.static_tx', settings.USER_DEFAULT_TX )
+
+        self.port = get_site_config(
+            'user.default.static_port', settings.USER_DEFAULT_PORT )
+
+        self.vlan = get_site_config(
+            'user.default.static_vlan', settings.USER_DEFAULT_VLAN )
+
+        self.domain = get_site_config(
+            'user.default.static_domain', settings.USER_DEFAULT_DOMAIN )
+
 
     def __repr__(self):
         return "UserProfile <%s>" % self.id
 
+
+    def get_resource_total(self):
+
+        d = { 'cpu': self.cpu,
+              'memory': self.memory,
+              'instance': self.instance,
+              'storage': self.storage }
+
+        now = datetime.datetime.now()
+
+        for R in self.user.resources:
+            if ( R.effect_date < now < R.expired_date ):
+
+                if R.type == R.T_CPU:
+                    d['cpu'] += R.size
+
+                elif R.type == R.T_MEMORY:
+                    d['memory'] += R.size
+
+                elif R.type == R.T_STORAGE:
+                    d['storage'] += R.size
+
+                elif R.type == R.T_INSTANCE:
+                    d['instance'] += R.size
+
+        return d
+
+
+    def get_resource_used(self):
+
+        d = { 'cpu': 0,
+              'memory': 0,
+              'instance': 0,
+              'storage': 0 }
+
+        for I in self.user.instances:
+
+            if I.is_running:
+                d['cpu'] += I.cpus
+                d['memory'] += I.memory
+
+            d['instance'] += 1
+
+            for S in I.storages:
+                d['storage'] += S.size
+
+        return d
+
+
     @property
     def cpu_remain(self):
-        return self.cpu_total - self.cpu_used
+
+        total = self.cpu
+        used = 0
+
+        now = datetime.datetime.now()
+
+        for R in self.user.resources:
+            if ( R.type == R.T_CPU and
+                 R.effect_date < now < R.expired_date ):
+                total += R.size
+
+        for I in self.user.instances:
+            if I.is_running:
+                used += I.cpus
+
+        return total - used if total > used else 0
+
 
     @property
     def memory_remain(self):
-        return self.memory_total - self.memory_used
 
-    @property
-    def instance_remain(self):
-        return self.instance_total - self.instance_used
+        total = self.memory
+        used = 0
+
+        now = datetime.datetime.now()
+
+        for R in self.user.resources:
+            if ( R.type == R.T_MEMORY and
+                 R.effect_date < now < R.expired_date ):
+                total += R.size
+
+        for I in self.user.instances:
+            if I.is_running:
+                used += I.memory
+
+        return total - used if total > used else 0
+
 
     @property
     def storage_remain(self):
-        return self.storage_total - self.storage_used
+
+        total = self.storage
+        used = 0
+
+        now = datetime.datetime.now()
+
+        for R in self.user.resources:
+            if ( R.type == R.T_STORAGE and
+                 R.effect_date < now < R.expired_date ):
+                total += R.size
+
+        for I in self.user.instances:
+            for S in I.storages:
+                used += S.size
+
+        return total - used if total > used else 0
+
+
+    @property
+    def instance_remain(self):
+
+        used = len(self.user.instances)
+        total = self.instance
+
+        now = datetime.datetime.now()
+
+        for R in self.user.resources:
+            if ( R.type == R.T_INSTANCE and
+                 R.effect_date < now < R.expired_date ):
+                total += R.size
+
+        return total - used if total > used else 0
+
 
     def get(self, name, default=None):
 
@@ -112,60 +255,6 @@ class UserProfile(ORMBase):
 
         return None
             
-    def update_resource_total(self):
-
-        cpu_total = 0
-        memory_total = 0
-        instance_total = 0
-        storage_total = 0
-
-        now = datetime.datetime.now()
-
-        for R in self.user.resources:
-            if R.effect_date < now < R.expired_date:
-                if R.type == R.T_CPU:
-                    cpu_total += R.size
-                elif R.type == R.T_MEMORY:
-                    memory_total += R.size
-                elif R.type == R.T_STORAGE:
-                    storage_total += R.size
-                elif R.type == R.T_INSTANCE:
-                    instance_total += R.size
-
-        self.cpu_total = cpu_total
-        self.memory_total = memory_total
-        self.storage_total = storage_total
-        self.instance_total = instance_total
-
-
-    def update_resource_used(self):
-
-        cpu_used = 0
-        memory_used = 0
-        instance_used = 0
-        storage_used = 0
-
-        for I in self.user.instances:
-
-            if I.is_running:
-                cpu_used += I.cpus
-                memory_used += I.memory
-
-            instance_used += 1
-
-            for S in I.storages:
-                storage_used += S.size
-
-        self.cpu_used = cpu_used
-        self.memory_used = memory_used
-        self.instance_used = instance_used
-        self.storage_used = storage_used
-
-
-    def update_resource(self):
-        self.update_resource_total()
-        self.update_resource_used()
-
 
 
 class UserResetpass(ORMBase):

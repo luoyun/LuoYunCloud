@@ -6,81 +6,77 @@
 
 <%block name="submain">
 
-<% profile = current_user.profile %>
-% if profile:
 <script src="${ static_url('third/highcharts/highcharts.js') }"></script>
+
 <div id="myun-analysis-chart">
-  % if profile.cpu_total:
+  % if resource_total["cpu"]:
   <div class="pie" id="myun-cpu-pie"></div>
   <script type="text/javascript">
 	draw_used({
         container: '#myun-cpu-pie',
         title: '${ _("CPU USED INFO") }',
-        subtitle: '${ _("Total") } : ${ profile.cpu_total } ${ _("core") }',
+        subtitle: '${ _("Total") } : ${ resource_total["cpu"] } ${ _("core") }',
         series_name: '${ _("Percentage") }',
-        used_text: '${ _("Used") }<br/>${ profile.cpu_used } ${ _("core") }',
-	    unused_text: '${ _("Unused") }<br/>${ profile.cpu_remain } ${ _("core") }',
-        used: ${ profile.cpu_used },
-        total: ${ profile.cpu_total },
+        used_text: '${ _("Used") }<br/>${ resource_used["cpu"] } ${ _("core") }',
+	    unused_text: '${ _("Unused") }<br/>${ resource_total["cpu"] - resource_used["cpu"] } ${ _("core") }',
+        used: ${ resource_used["cpu"] },
+        total: ${ resource_total["cpu"] },
 	    pie_size: 150,
     });
   </script>
   % endif
 
-  % if profile.memory_total:
+  % if resource_total["memory"]:
   <div class="pie" id="myun-mem-pie"></div>
   <script type="text/javascript">
 	draw_used({
         container: '#myun-mem-pie',
         title: '${ _("MEMORY USED INFO") }',
-        subtitle: '${ _("Total") } : ${ profile.memory_total }M',
+        subtitle: '${ _("Total") } : ${ resource_total["memory"] }M',
         series_name: '${ _("Percentage") }',
-        used_text: '${ _("Used") }<br/>${ profile.memory_used }M',
-	    unused_text: '${ _("Unused") }<br/>${ profile.memory_remain }M',
-        used: ${ profile.memory_used },
-        total: ${ profile.memory_total },
+        used_text: '${ _("Used") }<br/>${ resource_used["memory"] }M',
+	    unused_text: '${ _("Unused") }<br/>${ resource_total["memory"] - resource_used["memory"] }M',
+        used: ${ resource_used["memory"] },
+        total: ${ resource_total["memory"] },
 	    pie_size: 150,
     });
   </script>
   % endif
 
-  % if profile.instance_total:
+  % if resource_total["instance"]:
   <div class="pie" id="myun-instance-pie"></div>
   <script type="text/javascript">
 	draw_used({
         container: '#myun-instance-pie',
         title: '${ _("INSTANCE USED INFO") }',
-        subtitle: '${ _("Total") } : ${ profile.instance_total }',
+        subtitle: '${ _("Total") } : ${ resource_total["instance"] }',
         series_name: '${ _("Percentage") }',
-        used_text: '${ _("Used") }<br/>${ profile.instance_used }',
-	    unused_text: '${ _("Unused") }<br/>${ profile.instance_remain }',
-        used: ${ profile.instance_used },
-        total: ${ profile.instance_total },
+        used_text: '${ _("Used") }<br/>${ resource_used["instance"] }',
+	    unused_text: '${ _("Unused") }<br/>${ resource_total["instance"] - resource_used["instance"] }',
+        used: ${ resource_used["instance"] },
+        total: ${ resource_total["instance"] },
 	    pie_size: 150,
     });
   </script>
   % endif
 
-  % if profile.storage_total:
+  % if resource_total["storage"]:
   <div class="pie" id="myun-storage-pie"></div>
   <script type="text/javascript">
 	draw_used({
         container: '#myun-storage-pie',
         title: '${ _("STORAGE USED INFO") }',
-        subtitle: '${ _("Total") } : ${ profile.storage_total }G',
+        subtitle: '${ _("Total") } : ${ resource_total["storage"] }G',
         series_name: '${ _("Percentage") }',
-        used_text: '${ _("Used") }<br/>${ profile.storage_used }G',
-	    unused_text: '${ _("Unused") }<br/>${ profile.storage_remain }G',
-        used: ${ profile.storage_used },
-        total: ${ profile.storage_total },
+        used_text: '${ _("Used") }<br/>${ resource_used["storage"] }G',
+	    unused_text: '${ _("Unused") }<br/>${ resource_total["storage"] - resource_used["storage"] }G',
+        used: ${ resource_used["storage"] },
+        total: ${ resource_total["storage"] },
 	    pie_size: 150,
     });
   </script>
   % endif
 
 </div>
-% else:
-<p class="ywarn">${ _("Get your profile data failed.") }</p>
-% endif
 
 </%block>

@@ -2,11 +2,10 @@
 
 <%block name="submain">
 
-<div>
+<div class="ly-item-title">${ _("Base Information") }</div>
 
-  <h2>${ _("Base Information") }</h2>
-  
-  <p><i class="icon-edit"></i> <a href="${ reverse_url('account:baseinfo:edit') }">${ _("Edit") }</a></p>
+<div class="ly-item-body">
+  <p><a class="btn" href="${ reverse_url('account:baseinfo:edit') }"><i class="icon-edit"></i> ${ _("Edit") }</a></p>
 
   <table class="table table-striped">
 	<tbody>
@@ -74,8 +73,12 @@
 	  </tr>
 	</tbody>
   </table>
+</div>
 
-  <h2>${ _("Groups") }</h2>
+
+<div class="ly-item-title">${ _("Groups") }</div>
+
+<div class="ly-item-body">
   % if current_user.groups:
   <ul>
 	% for G in current_user.groups:
@@ -85,45 +88,70 @@
   % else:
   <p>${ _("No groups yet.") }</p>
   % endif
+</div>
 
 
-  <h2>${ _("Resources") }</h2>
-  <table class="table table-condensed table-bordered">
+<div class="ly-item-title">${ _("Resources") }</div>
+
+<div class="ly-item-body">
+
+  <h3>${ _("User Resource Used Information") }</h3>
+  <table class="table table-bordered table-striped">
 	<thead>
 	  <tr>
 		<th colspan="2">${ _("CPU") }</th>
 		<th colspan="2">${ _("Memory") }</th>
 		<th colspan="2">${ _("Storage") }</th>
 		<th colspan="2">${ _("Instance") }</th>
-	  </tr>
-	  <tr>
-		<th>${ _("Total") }</th>
-		<th>${ _("Used") }</th>
-		<th>${ _("Total") }</th>
-		<th>${ _("Used") }</th>
-		<th>${ _("Total") }</th>
-		<th>${ _("Used") }</th>
-		<th>${ _("Total") }</th>
-		<th>${ _("Used") }</th>
+		<th colspan="2">${ _("Bandwidth") }</th>
 	  </tr>
 	</thead>
 	<tbody>
-	  <% profile = current_user.profile %>
 	  <tr>
-		<td>${ profile.cpu_total } ${ _("core") }</td>
-		<td>${ profile.cpu_used } ${ _("core") }</td>
-		<td>${ profile.memory_total } M</td>
-		<td>${ profile.memory_used } M</td>
-		<td>${ profile.storage_total } G</td>
-		<td>${ profile.storage_used } G</td>
-		<td>${ profile.instance_total }</td>
-		<td>${ profile.instance_used }</td>
+		<td>${ resource_total["cpu"] } ${ _("core") }</td>
+		<td>${ resource_used["cpu"] } ${ _("core") }</td>
+		<td>${ resource_total["memory"] } M</td>
+		<td>${ resource_used["memory"] } M</td>
+		<td>${ resource_total["storage"] } G</td>
+		<td>${ resource_used["storage"] } G</td>
+		<td>${ resource_total["instance"] }</td>
+		<td>${ resource_used["instance"] }</td>
+		<td></td>
+		<td></td>
 	  </tr>
 	</tbody>
   </table>
 
+  <h3>${ _("Static Resource") }</h3>
+  <table class="table table-bordered table-striped">
+	<thead>
+	  <tr>
+		<th>${ _("CPU") }</th>
+		<th>${ _("Memory") }</th>
+		<th>${ _("Storage") }</th>
+		<th>${ _("Instance") }</th>
+		<th>${ _("Bandwidth") }</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  <tr>
+		<td>${ current_user.profile.cpu } ${ _("core") }</td>
+		<td>${ current_user.profile.memory } M</td>
+		<td>${ current_user.profile.storage } G</td>
+		<td>${ current_user.profile.instance }</td>
+		<td>
+		  % if current_user.profile.bandwidth:
+		  ${ current_user.profile.bandwidth }
+		  % endif
+		</td>
+	  </tr>
+	</tbody>
+  </table>
+
+  <h3>${ _("Dynamic Resource") }</h3>
+
   % if current_user.resources:
-  <table class="table table-bordered">
+  <table class="table table-bordered table-striped">
 	<thead>
 	  <tr>
 		<th>ID</th>
@@ -145,9 +173,10 @@
 	  % endfor
 	</tbody>
   </table>
+  % else:
+  <p class="text-warning"><i class="icon-warning-sign"></i> ${ _("You have no dynamic resources.") }</p>
   % endif
 
 </div>
-
 
 </%block>

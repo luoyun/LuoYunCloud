@@ -1,12 +1,11 @@
 <%inherit file="/base.html"/>
 
 <%block name="main">
-
-% if mainbody:
-${ mainbody }
-
-% else:
 <div class="doc4">
+  % if mainbody:
+  ${ mainbody }
+
+  % else:
   <div class="hero-unit text-center">
 	<p>${ _("Administator have not set the home page yet.") }</p>
 	<p>${ _("LuoYunCloud is a simple but not simple cloud platform.") }</p>
@@ -38,6 +37,6 @@ ${ mainbody }
 	</ul>
   </div>
 
+  % endif
 </div>
-% endif
 </%block>

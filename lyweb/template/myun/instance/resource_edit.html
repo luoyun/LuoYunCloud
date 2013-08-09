@@ -6,17 +6,62 @@
 
 <%block name="submain">
 <div>
-  <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Configure Instance Resource") }</legend>
-      ${ form.cpus.label } ${ form.cpus() }
-      ${ form.html_errors(form.cpus.errors) }
+  <form class="form-horizontal" method="POST">${ xsrf_form_html() }
+	<div class="control-group">
+	  <label class="control-label" for="cpus">${ _("CPU") }</label>
+	  <div class="controls">
+		<div class="input-append">
+		  <input id="cpu-amount" class="input-small" type="text" value="${ I.cpus }" name="cpus" id="cpus">
+		  <button class="btn" type="button">${ _("core") }</button>
+		</div>
+		<span class="muted"><small>${ _(" %s core max ") % I.cpu_max }</small></span>
+		<div id="cpu-slider" class="ly-slider"></div>
+		${ form.html_errors(form.cpus.errors) }
+	  </div>
+	</div>
 
-      ${ form.memory.label } ${ form.memory() }
-      ${ form.html_errors(form.memory.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+	<div class="control-group">
+	  <label class="control-label" for="memory">${ _("Memory (M)") }</label>
+	  <div class="controls">
+		<div class="input-append">
+		  <input id="memory-amount" class="input-small" type="text" value="${ I.memory }" name="memory" id="memory">
+		  <button class="btn" type="button">M</button>
+		</div>
+		<span class="muted"><small>${ _(" %s M max ") % I.memory_max }</small></span>
+		<div id="memory-slider" class="ly-slider"></div>
+		${ form.html_errors(form.memory.errors) }
+		<br>
+		<button type="submit" class="btn">${ _("Submit") }</button>
+	  </div>
+	</div>
   </form>
 </div>
+
+<script type="text/javascript">
+$(function () {
+
+    $("#cpu-slider").slider({
+		range: "min",
+		min: 1,
+		max: ${ I.cpu_max },
+		value: ${ I.cpus },
+		slide: function (event, ui) {
+			$("#cpu-amount").val(ui.value);
+		}
+    });
+    $("#cpu-amount").val($("#cpu-slider").slider("value"));
+
+    $("#memory-slider").slider({
+		range: "min",
+		min: 256,
+		max: ${ I.memory_max },
+		value: ${ I.memory },
+		slide: function (event, ui) {
+			$("#memory-amount").val(ui.value);
+		}
+    });
+    $("#memory-amount").val($("#memory-slider").slider("value"));
+});
+</script>
+
 </%block>

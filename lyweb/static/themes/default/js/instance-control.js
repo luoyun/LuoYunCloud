@@ -24,23 +24,35 @@ function _update_single_status(data) {
     $('#i-is-img').html(I.is_img);
 
     $('#i-js').text(I.js);
-    $('#i-js-str').text(I.js_str);
-    $('#i-js-img').html(I.js_img);
+	$('#i-js-str').text(I.js_str);
 
-	$('#i-vdi-ip').text(I.vdi_ip);
-	$('#i-vdi-port').text(I.vdi_port);
+    $('#i-vdi-ip').text(I.vdi_ip);
+    $('#i-vdi-port').text(I.vdi_port);
 
+    $('#i-domain').html(I.domain_link);
+    $('#i-ip').html(I.ip_link);
 
 	// update action
-	if ( $('#i-action') != I.action ) {
-		var $btn = $('#instance-life-control-btn a');
-		$btn.removeClass('disable');
-
+	if ( $('#i-action').text() != I.action ) {
 		$('#i-action').text(I.action);
 		$('#instance-life-control-btn span').text(I.action_trans);
+
 		_update_single_action_img( I.action );
 	}
+
+	// update button status
+	var $btn = $('#instance-life-control-btn a');
+	if ( I.j_completed ) {
+		$btn.removeClass('disabled');
+
+		$('#i-js-str').text('');
+		$('#i-js-img').html('');
+
+	} else {
+		$btn.addClass('disabled');
+	}
 }
+
 
 function single_life_control( data ) {
 
@@ -59,6 +71,9 @@ function single_life_control( data ) {
 
 		if ( $this.hasClass('disabled') )
 			return;
+
+		single_status_monitor();
+		$this.addClass('disabled');
 
 		var data = { 'id': $('#i-id').text(),
 					 'action': $('#i-action').text() };
@@ -81,28 +96,20 @@ function single_life_control( data ) {
 				$modal.find('.modal-body').html(body);
 				$modal.modal();
 
-				var detail_html = '';
+				var j_str_html = '';
+
 				$.each(data.data, function(k, v) {
-					detail_html += '<tr><td>' + v.id + '</td><td>' + v.data + '</td></tr>';
+					if (j_str_html)
+						j_str_html += '<br>'
+					j_str_html += '<span class="text-error">' + v.data + '</span>';
 				});
-				$modal.find('.detail').html( detail_html );
+
+				$('#i-js-str').html( j_str_html );
+				$modal.find('.detail').html( j_str_html );
 
 				if (data.code == 0) {
+					$('#i-js-img').html('<img src="/static/image/running.gif?v=0.6.1" />');
 					$modal.find('.action-success').show();
-
-					// update img
-					var $btnimg = $('#instance-life-control-btn i');
-					$btnimg.attr('class', 'icon-spinner icon-refresh');
-					$btnimg.css('color', 'green');
-
-					// add disable
-					if ( $('#previous-action').text() == $('#i-action').text() )
-						$this.addClass('disabled');
-					else {
-						$this.removeClass('disabled');
-						$('#previous-action').text( $('#i-action').text() );
-					}
-
 				} else {
 					$modal.find('.action-failed').show();
 				};
@@ -136,7 +143,9 @@ function single_status_monitor () {
 		success: function(data) {
 			if (data.return_code == 0)
 				_update_single_status(data);
-            setTimeout(single_status_monitor, 3000);
+
+			if ( ! data.j_completed )
+				setTimeout(single_status_monitor, 3000);
 		},
 
 		error: function(data) {
@@ -154,7 +163,7 @@ function single_instance_delete() {
 	$btn.click( function(event) {
 		event.preventDefault();
 
-		if ( $(this).hasClass('disable') )
+		if ( $(this).hasClass('disabled') )
 			return
 
 		var title = $('#instance-delete-title').html();
@@ -171,27 +180,19 @@ function single_instance_delete() {
 			$modal.find('.action-failed').hide();
 
 			var URL = $(this).attr('href');
-			var post_data = { 'id': $('#i-id').text(),
-							  'action': 'delete' }
 
 			$body = $(this).parents('.modal-body');
 
 			$.ajax({
 				url: URL,
 				type: 'POST',
-				dataType: 'json',
-				data: post_data,
 
 				success: function(data) {
 					if (data.code == 0) {
 						$modal.find('.action-success').show();
 					} else {
 						$modal.find('.action-failed').show();
-						var detail_html = '';
-						$.each(data.data, function(k, v) {
-							detail_html += '<tr><td>' + v.id + '</td><td>' + v.data + '</td></tr>';
-						});
-						$modal.find('.detail').html( detail_html );
+						$modal.find('.detail').html( data.data );
 					};
 				},
 			});
@@ -250,8 +251,8 @@ function multi_life_control( selector ) {
 				if (data.code == 0) {
 					$modal.find('.action-success').show();
 
-					// add disable
-					$(this).addClass('disable');
+					// add disabled
+					$(this).addClass('disabled');
 
 				} else {
 					$modal.find('.action-failed').show();

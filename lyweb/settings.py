@@ -94,10 +94,17 @@ else:
 
 
 # User resource limit
-USER_DEFAULT_MEMORY = 256    # 256 M
-USER_DEFAULT_CPUS = 1        # 1 core
-USER_DEFAULT_INSTANCES = 10  # 10 instance
-USER_DEFAULT_STORAGE = 2     # 2 G
+USER_DEFAULT_MEMORY    = 256   # 256 M
+USER_DEFAULT_CPU       = 1     # 1 core
+USER_DEFAULT_INSTANCE  = 3     # 3 instances
+USER_DEFAULT_STORAGE   = 2     # 2 G
+USER_DEFAULT_BANDWIDTH = 1     # 1 Mbps
+USER_DEFAULT_RX        = 2000  # 2000 G
+USER_DEFAULT_TX        = 2000  # 2000 G
+USER_DEFAULT_PORT      = 6     # 6 ports
+USER_DEFAULT_VLAN      = 1     # 1 vlan
+USER_DEFAULT_DOMAIN    = 6     # 6 domains
+
 
 USER_ACTIVE_MIN = 30*60 # Min actie time for user, seconds.
 
@@ -261,7 +268,26 @@ default_site_config = [
     ('notice.smtp.port', 25),
     ('notice.smtp.username', ''),
     ('notice.smtp.password', ''),
+
+    ('user.default.group', 2),
+
+    ('user.default.static_cpu', 1),
+    ('user.default.static_memory', 256),
+    ('user.default.static_storage', 2),
+    ('user.default.static_instance', 3),
+    ('user.default.static_bandwidth', 0),
+    ('user.default.static_rx', 2000),
+    ('user.default.static_tx', 2000),
+    ('user.default.static_port', 6),
+    ('user.default.static_vlan', 1),
+    ('user.default.static_domain', 6),
+
+    ('user.default.dynamic_cpu', 0),
+    ('user.default.dynamic_memory', 0),
+    ('user.default.dynamic_storage', 0),
+    ('user.default.dynamic_instance', 0),
 ]
+
 
 default_storage_config = [
     # name, description, total

@@ -173,10 +173,19 @@ class View(RequestHandler):
         if not user:
             return self.write( _('No such user: %s') % ID )
 
+        profile = user.profile
+        # TODO: profile is None
+
+        resource_total = profile.get_resource_total()
+        resource_used = profile.get_resource_used()
+
         d = { 'title': _('View User %s') % user.username,
+              'resource_total': resource_total,
+              'resource_used': resource_used,
               'USER': user }
 
         self.render( 'admin/user/view.html', **d)
+
 
 
 class ResetPass(RequestHandler):
@@ -324,9 +333,6 @@ class ResourceAdd(RequestHandler):
             self.db.add( new )
             self.db.commit()
 
-            user.profile.update_resource_total()
-            self.db.commit()
-
             # count be choices, email notice
             resource_mail_notice(self, user)
 
@@ -396,9 +402,6 @@ class ResourceSimpleAdd(ResourceHandler):
 
             self.db.commit()
 
-            U.profile.update_resource_total()
-            self.db.commit()
-
             # count be choices, email notice
             resource_mail_notice(self, U)
 
@@ -448,10 +451,6 @@ class AllUserResourceAdd(RequestHandler):
                                   expired_date = expired_date )
 
                     self.db.add(r)
-
-                self.db.commit()
-
-                U.profile.update_resource_total()
 
                 self.db.commit()
 

@@ -12,6 +12,7 @@ from app.network.models import NetworkPool, IPPool, \
 from app.account.models import PublicKey
 from app.domain.models import UserDomain
 from app.appliance.models import Appliance
+from app.job.models import Job
 
 from .forms import PublicKeyForm, BaseinfoForm, StorageForm, \
     ResourceForm, NetworkForm, PasswordSetForm, \
@@ -27,6 +28,7 @@ from tool.firewall import Prerouting
 
 import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
+from settings import JOB_TARGET
 
 
 
@@ -114,6 +116,17 @@ class InstanceActionHandler(RequestHandler):
         self.prepare_kwargs['human_size'] = human_size
 
 
+    def get_instance_lastjob(self, I):
+
+        lastjob = self.db.query(Job).filter(
+            and_( Job.target_type == JOB_TARGET['INSTANCE'],
+                  Job.target_id == I.id ) ).order_by(
+            desc( Job.id ) ).first()
+
+        return lastjob
+
+
+
 class View(InstanceActionHandler):
 
     @authenticated
@@ -126,6 +139,8 @@ class View(InstanceActionHandler):
         if not I:
             return
 
+        lastjob = self.get_instance_lastjob( I )
+
         portmapping_list = []
         for IP in I.ips:
             portmapping_list.extend(
@@ -133,6 +148,7 @@ class View(InstanceActionHandler):
                     ip_id = IP.id).all() )
 
         d = { 'title': _('View instance "%s"') % I.name,
+              'lastjob': lastjob,
               'portmapping_list': portmapping_list  }
 
         self.render( 'myun/instance/view.html', **d)
@@ -214,7 +230,6 @@ class ResourceEdit(InstanceActionHandler):
             if I.is_running:
                 I.ischanged = True
 
-            I.user.profile.update_resource_used()
             self.db.commit()
 
             url = self.reverse_url('myun:instance:view')
@@ -307,10 +322,6 @@ class StorageAdd(InstanceActionHandler):
 
         I = self.I
 
-        # TODO: a temp hack
-        I.user.profile.update_resource_total()
-        self.db.commit()
-
         form = self.prepare_kwargs['form']
         form.process()
 
@@ -331,10 +342,6 @@ class StorageAdd(InstanceActionHandler):
 
             new.pool.update_used()
         
-            I.user.profile.update_resource_used()
-            I.update_storage()
-            self.db.commit()
-
             url = self.reverse_url('myun:instance:view')
             url += '?id=%s' % I.id
             return self.redirect( url )
@@ -413,10 +420,6 @@ class StorageEdit(StorageActionHandler):
 
                 storage.pool.update_used()
 
-                I.user.profile.update_resource_used()
-                I.update_storage()
-                self.db.commit()
-
                 url = self.reverse_url('myun:instance:view')
                 url += '?id=%s' % I.id
                 return self.redirect( url )
@@ -447,10 +450,6 @@ class StorageDelete(StorageActionHandler):
 
         pool.update_used()
         
-        I.user.profile.update_resource_used()
-        I.update_storage()
-        self.db.commit()
-
         url = self.reverse_url('myun:instance:view')
         url += '?id=%s' % I.id
         self.redirect( url )
@@ -903,10 +902,6 @@ class InstanceCreate(RequestHandler):
             I.isprivate = form.isprivate.data
 
             self.db.add( I )
-            self.db.commit()
-
-            I.mac = '92:1B:40:26:%02x:%02x' % (
-                I.id / 256, I.id % 256 )
             self.db.commit()
 
 #            I.save_logo()

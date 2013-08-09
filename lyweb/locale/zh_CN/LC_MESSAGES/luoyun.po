@@ -1782,9 +1782,8 @@ msgid "[Attachment (%s)]"
 msgstr "[附件(%s)]"
 
 #: app/home/views.py:27
-#, fuzzy
 msgid "LuoYunCloud Home"
-msgstr "落云首页"
+msgstr "落云云计算平台首页 LuoYunCloud 公有云平台在线 天津落云科技有限公司"
 
 #: app/home/views.py:79
 msgid "Permission Denied"
@@ -3272,7 +3271,7 @@ msgstr "添加新网络配置"
 #: template/myun/instance/storage_add.html:11
 #: template/myun/instance/view.html:204 template/admin/instance/view.html:228
 msgid "Add New Storage"
-msgstr "添加新网络配置"
+msgstr "添加新存储"
 
 #: template/myun/instance/create.html:7
 msgid "Create A New Instance"

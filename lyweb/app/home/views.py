@@ -92,9 +92,15 @@ class NoResource(RequestHandler):
     @authenticated
     def get(self):
 
-        reason = self.get_argument('reason', '')
+        profile = self.current_user.profile
+        # TODO: profile is None
 
-        d = {'REASON': reason }
+        resource_total = profile.get_resource_total()
+        resource_used = profile.get_resource_used()
+
+        d = { 'resource_total': resource_total,
+              'resource_used': resource_used,
+              'REASON': self.get_argument('reason', '') }
 
         if hasattr(settings, 'ADMIN_EMAIL'):
             d['ADMIN_EMAIL'] = settings.ADMIN_EMAIL

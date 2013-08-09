@@ -107,7 +107,17 @@ class MyAccount(RequestHandler):
     @authenticated
     def get(self):
 
-        self.render( 'account/index.html' )
+        profile = self.current_user.profile
+        # TODO: profile is None
+
+        resource_total = profile.get_resource_total()
+        resource_used = profile.get_resource_used()
+
+        d = { 'title': _("My LuoYunCloud Account Information"),
+              'resource_total': resource_total,
+              'resource_used': resource_used }
+
+        self.render( 'account/index.html', **d )
 
 
 

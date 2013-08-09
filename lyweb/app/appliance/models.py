@@ -66,8 +66,7 @@ class Appliance(ORMBase):
     description = Column( Text() )
 
     os = Column( Integer(), default = 1 ) # 1 is gnu/linux
-
-    logoname = Column( String(64) )
+    disksize = Column( BigInteger ) # disk size used by appliance
 
     user_id = Column( ForeignKey('auth_user.id') )
     user = relationship("User",backref=backref('appliances',order_by=id) )
@@ -78,10 +77,13 @@ class Appliance(ORMBase):
     filesize = Column( BigInteger )
     checksum = Column( String(32) ) # md5 value
 
-    islocked = Column( Boolean, default = False) # Used by admin
+    islocked  = Column( Boolean, default = False) # Used by admin
     isuseable = Column( Boolean, default = True)
     isprivate = Column( Boolean, default = True)
-    popularity = Column( Integer, default = 0 )
+
+    like   = Column(Integer, default=0)
+    unlike = Column(Integer, default=0)
+    visit  = Column(Integer, default=0) # view times
 
     created = Column( DateTime, default=datetime.now )
     updated = Column( DateTime, default=datetime.now )

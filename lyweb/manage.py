@@ -38,10 +38,24 @@ def update_user(db):
 
     # Profile
     for user in db.query(User).order_by(User.id):
-        if user.profile: continue
-        profile = UserProfile(user)
-        db.add(profile)
-        print '[D] add profile for %s' % user.username
+
+        if user.profile:
+            p = user.profile
+            if not p.cpu:       p.cpu       = 1
+            if not p.memory:    p.memory    = 256
+            if not p.storage:   p.storage   = 2
+            if not p.instance:  p.instance  = 3
+            if not p.bandwidth: p.bandwidth = 0
+            if not p.rx:        p.rx        = 2000
+            if not p.tx:        p.tx        = 2000
+            if not p.port:      p.port      = 6
+            if not p.vlan:      p.vlan      = 1
+            if not p.domain:    p.domain    = 6
+
+        else:
+            profile = UserProfile(user)
+            db.add(profile)
+            print '[D] add profile for %s' % user.username
 
     db.commit()
             

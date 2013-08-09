@@ -1,8 +1,9 @@
+import logging, datetime
+
 # account init
 def init_account(user, db):
 
-    import logging, datetime
-
+    from app.site.utils import get_site_config_int
     from app.resource.models import Resource
     from app.auth.models import Group
     from app.site.models import SiteConfig
@@ -14,16 +15,19 @@ def init_account(user, db):
     expired_date = now + datetime.timedelta( seconds = 365 * 3600 * 24 )
 
     # default resource
-    cpu = SiteConfig.get(db, 'account.default.cpu', 1)
-    memory = SiteConfig.get(db, 'account.default.memory', 256)
-    storage = SiteConfig.get(db, 'account.default.storage', 2)
-    instance = SiteConfig.get(db, 'account.default.instance', 3)
+    cpu      = get_site_config_int('user.default.dynamic_cpu', 0)
+    memory   = get_site_config_int('user.default.dynamic_memory', 0)
+    storage  = get_site_config_int('user.default.dynamic_storage', 0)
+    instance = get_site_config_int('user.default.dynamic_instance', 0)
 
     for t, s in [
         ( Resource.T_CPU, cpu ),
         ( Resource.T_MEMORY, memory ),
         ( Resource.T_STORAGE, storage ),
         ( Resource.T_INSTANCE, instance ) ]:
+
+        print 's = "%s"' % s
+        if not s: continue
 
         r = Resource( user = user, rtype = t, size = s,
                       effect_date = now,
@@ -41,14 +45,11 @@ def init_account(user, db):
         db.add( profile )
         db.commit()
 
-    # update user resource
-    user.profile.update_resource_total()
-
-    language_id = SiteConfig.get(db, 'account.default.language', 61)
+    language_id = SiteConfig.get(db, 'user.default.language', 61)
     user.language_id = language_id
 
     # default group
-    gid = SiteConfig.get(db, 'account.default.group', 2)
+    gid = SiteConfig.get(db, 'user.default.group', 2)
     g = db.query(Group).get( gid )
     if g:
         user.groups = [ g ]

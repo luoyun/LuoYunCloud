@@ -10,7 +10,7 @@
 
   <div id="appliance-summary" class="row-fluid">
 
-	<div class="span3 text-center">
+	<div class="span3">
 	  <img class="logo" src="${ appliance.logourl }" alt="Logo" />
 	</div>
 
@@ -32,16 +32,16 @@
   <div id="appliance-detail" class="row-fluid">
 
 	<div class="span3">
-	  <div id="create-instance-btn" class="text-center">
+	  <div id="create-instance-btn">
 		% if appliance.isuseable:
-		<a class="btn btn-large btn-primary" href="${ reverse_url('myun:instance:create') }?appliance_id=${ appliance.id }" title="${ _('You can create a new instance based on this appliance.') }">${ _("Create Instance") }</a>
+		<a class="btn btn-primary" href="${ reverse_url('myun:instance:create') }?appliance_id=${ appliance.id }" title="${ _('You can create a new instance based on this appliance.') }">${ _("Create Instance") }</a>
 		% else:
 		<a class="btn btn-large btn-primary disabled" title="${ _('This appliance is locked, you can not use it.') }">${ _("Create Instance") }</a>
 		% endif
 
 	  </div>
 	  <br>
-	  <p class="text-center"><a class="btn" href="${ reverse_url('myun:appliance:baseinfo:edit') }?id=${ appliance.id }">${ _("Edit") }</a></p>
+	  <p><a class="btn" href="${ reverse_url('myun:appliance:baseinfo:edit') }?id=${ appliance.id }">${ _("Edit") }</a></p>
 	</div>
 
 	<div class="span9">

@@ -6,47 +6,60 @@
 
 <%block name="submain">
 
-<div id="admin-instance-view">
+<div id="admin-instance-view" class="admin-instance-view">
 
-  <div class="the-head">
-	<div class="row-fluid">
-	  <div class="span5 text-center">
-		<img class="logo" src="${ I.logourl }" />
-		<div id="instance-life-control-btn">
-		  <a class="btn" href="${ reverse_url('instance:lifecontrol') }"><i class="icon-off"></i> <span>${ _(I.action_human) }</span></a>
-		</div>
+  <div class="row-fluid">
+	<div class="span3">
+	  <div class="text-center">
+		<img class="ly-logo-large" src="${ I.logourl }" />
 
 		<div id="instance-status-info">
 		  <span id="i-is-img">${ I.status_icon }</span>
-		  <span id="i-is-str">${ locale.translate(I.status_string) }</span>
+		  <span style="display:none;" id="i-is-str">${ _(I.status_string) }</span>
 		</div>
-		<div id="instance-job-info">
-		  <span id="i-js-img">${ I.lastjob_status_icon }</span>
-		  <span id="i-js-str">${ I.lastjob_status_string }</span>
+
+		<div id="instance-life-control-btn">
+		  <a class="btn" href="${ reverse_url('instance:lifecontrol') }"><i class="icon-off"></i> <span>${ _(I.action_human) }</span></a>
 		</div>
-		<div style="display:none;">
-		  <span id="i-id">${ I.id }</span>
-		  <span id="i-is">${ I.status }</span>
-		  <span id="i-action">${ I.action }</span>
-		  <span id="i-js">${ I.lastjob_status_id }</span>
-		  <span id="xsrf-cookie">${ xsrf_cookie }</span>
-		</div>
+		<div id="instance-job-info"><span id="i-js-img"></span><span id="i-js-str"></span></div>
 	  </div>
 
-	  <div class="span7">
+	  <div style="display:none;">
+		<span id="i-id">${ I.id }</span>
+		<span id="i-is">${ I.status }</span>
+		<span id="i-action">${ I.action }</span>
+		<span id="i-js">
+		  % if lastjob:
+		  ${ lastjob.status }
+		  % endif
+		</span>
+		<span id="xsrf-cookie">${ xsrf_cookie }</span>
+	  </div>
+
+	  <div id="i-summary" class="ly-item-body well">
+		% if I.summary:
+		${ I.summary }
+		% else:
+		${ _("No summary yet.") }
+		% endif
+		<a href="${ reverse_url('myun:instance:baseinfo:edit') }?id=${ I.id }"><i class="icon-edit"></i></a>
+	  </div>
+	</div>
+
+
+	<div class="span9 view-body">
+
+	  <div class="ly-item-title">
+		${ _("Base Information") }
+	  </div>
+
+	  <div class="ly-item-body">
 		<dl class="dl-horizontal">
 		  <dt>${ _("Name") }</dt>
 		  <dd>${ I.name }</dd>
 
 		  <dt>${ _("Appliance") }</dt>
 		  <dd><a href="${ reverse_url('appliance:view') }?id=${ I.appliance_id }">${ I.appliance.name }</a></dd>
-
-		  <dt>${ _("User") }</dt>
-		  <dd>
-			% if I.user_id:
-			<a href="${ reverse_url('admin:user:view') }?id=${ I.user_id }">${ I.user.username }</a>
-			% endif
-		  </dd>
 		</dl>
 
 		<dl class="dl-horizontal">
@@ -58,6 +71,8 @@
 			  % else:
 			  ${ I.domain }
 			  % endif
+			  % else:
+			  ${ _("None") }
 			  % endif
 			</span>
 		  </dd>
@@ -74,20 +89,11 @@
 
 		  <dt>${ _("VDI") }</dt>
 		  <dd><span id="i-vdi-ip">${ I.vdi_ip }</span>:<span id="i-vdi-port">${ I.vdi_port }</span></dd>
-
-		  <dt>${ _("Node") }</dt>
-		  <dd>
-			% if I.node_id:
-			<a href="${ reverse_url('admin:node') }?id=${ I.node_id }">${ I.node.ip }</a>
-			% else:
-			${ _("None") }
-			% endif
-		  </dd>
 		</dl>
 
 		<dl class="dl-horizontal">
 		  <dt>${ _("Network Data") }</dt>
-		  <dd>${ _('RX') } <span id="i-rx_bytes">${ human_size(I.rx_bytes) }</span>/${ _('TX') } <span id="i-tx_bytes">${ human_size(I.tx_bytes) }</span></dd>
+		  <dd>${ _('RX') } <span id="i-rx_bytes">${ human_size(I.rx_bytes) }</span> / ${ _('TX') } <span id="i-tx_bytes">${ human_size(I.tx_bytes) }</span></dd>
 		</dl>
 
 		<dl class="dl-horizontal">
@@ -114,72 +120,53 @@
 		</dl>
 	  </div>
 
-	</div>
-  </div>
 
-
-  <div class="tabbable min-height600"> <!-- Only required for left/right tabs -->
-    <ul id="main-tabs" class="nav nav-tabs">
-      <li class="active"><a href="#tab-summary" data-toggle="tab">${ _("Summary") }</a></li>
-      <li><a href="#tab-resource" data-toggle="tab">${ _("Resource") }</a></li>
-      <li><a href="#tab-network" data-toggle="tab">${ _("Network") }</a></li>
-      <li><a href="#tab-storage" data-toggle="tab">${ _("Storage") }</a></li>
-      <li><a href="#tab-domain" data-toggle="tab">${ _("Domain") }</a></li>
-      <li><a href="#tab-secret" data-toggle="tab">${ _("Secret") }</a></li>
-      <li><a href="#tab-other" data-toggle="tab">${ _("Other") }</a></li>
-    </ul>
-    <div id="main-tab-content" class="tab-content">
-
-	  <div class="tab-pane active" id="tab-summary">
-		<h2>${ _("Summary") }
-		  <a href="${ reverse_url('myun:instance:baseinfo:edit') }?id=${ I.id }"><i class="icon-edit"></i></a></h2>
-
-		<p id="i-summary">
-		  % if I.summary:
-		  ${ I.summary }
-		  % else:
-		  ${ _("No summary yet.") }
-		  % endif
-		</p>
-
-
-		<h2>${ _("Description") }
-		  <a href="${ reverse_url('myun:instance:baseinfo:edit') }?id=${ I.id }"><i class="icon-edit"></i></a></h2>
-
-		<div id="i-description" class="description">
-		  % if I.description:
-		  ${ I.description_html }
-		  % else:
-		  ${ _("No description yet.") }
-		  % endif
-		</div>
-
+	  <div class="ly-item-title">
+		${ _("Admin Information") }
 	  </div>
 
-
-      <div class="tab-pane" id="tab-resource">
-		<h2>${ _("Resource") }
-		  <a class="blue-submit" href="${ reverse_url('myun:instance:resource:edit') }?id=${ I.id }"><i class="icon-edit"></i></a></h2>
-
+	  <div class="ly-item-body">
 		<dl class="dl-horizontal">
-		  <dt>${ _("CPU numbers") }</dt>
-		  <dd>${ I.cpus }
-			% if I.user_id:
-			<span class="muted"><small>${ _(" ( %s core available ) ") % I.user.profile.cpu_remain }</small><span>
-			% endif
-		  </dd>
-		  <dt>${ _("Memory") }</dt>
-		  <dd>${ I.memory }
-			% if I.user_id:
-			<span class="muted"><small>${ _(" ( %s M available ) ") % I.user.profile.memory_remain }</small></span>
+		  <dt>${ _("Node") }</dt>
+		  <dd>
+			% if I.node_id:
+			<a href="${ reverse_url('admin:node') }?id=${ I.node_id }">${ I.node.hostname }</a>
+			% else:
+			${ _("None") }
 			% endif
 		  </dd>
 		</dl>
+	  </div>
+
+
+	  <div class="ly-item-title">${ _("Description") }
+		<a href="${ reverse_url('myun:instance:baseinfo:edit') }?id=${ I.id }"><i class="icon-edit"></i></a></div>
+
+	  <div id="i-description" class="description ly-item-body">
+		% if I.description:
+		${ I.description_html }
+		% else:
+		${ _("No description yet.") }
+		% endif
+	  </div>
+
+
+	  <div class="ly-item-title">${ _("Resource") }
+		  <a class="blue-submit" href="${ reverse_url('myun:instance:resource:edit') }?id=${ I.id }"><i class="icon-edit"></i></a></div>
+
+      <div class="ly-item-body">
+		<dl class="dl-horizontal">
+		  <dt>${ _("CPU numbers") }</dt>
+		  <dd>${ I.cpus } <span class="muted"><small>${ _(" ( %s core max ) ") % I.cpu_max }</small><span></dd>
+		  <dt>${ _("Memory") }</dt>
+		  <dd>${ I.memory } <span class="muted"><small>${ _(" ( %s M max ) ") % I.memory_max }</small></span></dd>
+		</dl>
       </div>
 
-      <div class="tab-pane" id="tab-network">
-		<h2>${ _("Network") }</h2>
 
+	  <div class="ly-item-title">${ _("Network") }</div>
+
+      <div class="ly-item-body">
 		## TODO:
 		% if len(I.ips) < 1:
 						  <p class="text-warning"><i class="icon-warning-sign"></i> ${ _("Have not configure network.") }</p>
@@ -218,10 +205,11 @@
 
 	  </div>
 
-      <div class="tab-pane" id="tab-storage">
 
-		<h2>${ _("Storage") }</h2>
 
+	  <div class="ly-item-title">${ _("Storage") }</div>
+
+      <div class="ly-item-body">
 		## TODO: this is a hack now
 		% if len(I.storages) < 1:
 							   <p class="text-warning"><i class="icon-warning-sign"></i> ${ _("Hove not configure storage.") }</p>
@@ -248,10 +236,9 @@
 	  </div>
 
 
-      <div class="tab-pane" id="tab-domain">
+	  <div class="ly-item-title">${ _("Domain") }</div>
 
-		<h2>${ _("Domain") }</h2>
-
+      <div class="ly-item-body">
 		<dl class="dl-horizontal">
 		  <dt>${ _("Default Domain") }</dt>
 		  <dd>
@@ -280,35 +267,42 @@
 		  </dd>
 		</dl>
 
-		% if not len(I.domains):
-		<p><a class="btn" href="${ reverse_url('myun:instance:domain:add') }?id=${ I.id }"><i class="icon-plus-sign"></i> ${ _("Add New Domain") }</a></p>
+		% if len(I.user.domains) < I.user.profile.domain:
+		<p><a class="btn" href="${ reverse_url('myun:instance:domain:add') }?id=${ I.id }"><i class="icon-plus-sign"></i> ${ _("Add New Domain") }</a>  <span class="muted"><small>${ _(" ( %s domains binding available ) ") % (I.user.profile.domain - len(I.user.domains)) }</small></span></p>
+		% else:
+		<p class="text-warning"><i class="icon-warning-sign"></i> ${ _("Your can binding %s domains, binding %s domains already.") % (I.user.profile.domain, len(I.user.domains)) }</p>
 		% endif
 
 	  </div>
 
 
-      <div class="tab-pane" id="tab-secret">
+	  <div class="ly-item-title">${ _("Password") }
+		<a href="${ reverse_url('myun:instance:password:edit') }?id=${ I.id }"><i class="icon-edit"></i></a></div>
 
-		<h2>${ _("Password") }
-		  <a href="${ reverse_url('myun:instance:password:edit') }?id=${ I.id }"><i class="icon-edit"></i></a></h2>
+      <div class="ly-item-body">
 		% if I.use_global_passwd:
 		<p class="text-info"><i class="icon-info-sign"></i> ${ _("Instance use global password now.") }</p>
 		% else:
 		<p class="text-success"><i class="icon-info-sign"></i> ${ _("Instance use custom password now.") }</p>
 		% endif
+	  </div>
 
 
-		<h2>${ _("SSH Public Key") }
-		  <a href="${ reverse_url('myun:instance:public_key:edit') }?id=${ I.id }"><i class="icon-edit"></i></a></h2>
+	  <div class="ly-item-title">${ _("SSH Public Key") }
+		<a href="${ reverse_url('myun:instance:public_key:edit') }?id=${ I.id }"><i class="icon-edit"></i></a></div>
 
+	  <div class="ly-item-body">
 		% if I.get('public_key'):
 		<p>${ I.get('public_key')[:40] }</p>
 		% else:
 		<p class="text-warning">${ _("Have not config ssh public key yet.") }</p>
 		% endif
+	  </div>
 
-		<h2>${ _("Binding Port") }</h2>
 
+	  <div class="ly-item-title">${ _("Binding Port") }</div>
+
+	  <div class="ly-item-body">
 		% if portmapping_list:
 		<table class="table table-bordered">
 		  <thead>
@@ -336,25 +330,27 @@
 		</table>
 		% endif
 
-		% if len(port_list) < current_user.profile.instance_total:
-        <p><a href="${ reverse_url('myun:instance:portmapping:add') }?id=${ I.id }"><i class="icon-plus-sign"></i> ${ _("New Port Mapping") }</a></p>
-        % endif
+		% if len(portmapping_list) < current_user.profile.port:
+        <p><a class="btn" href="${ reverse_url('myun:instance:portmapping:add') }?id=${ I.id }"><i class="icon-plus-sign"></i> ${ _("New Port Mapping") }</a>  <span class="muted"><small>${ _(" ( %s ports mapping available ) ") % (I.user.profile.port - len(portmapping_list)) }</small></span></p>
+		% else:
+		<p class="text-warning"><i class="icon-warning-sign"></i> ${ _("Your can mapping %s ports, mapping %s ports already.") % (I.user.profile.port, len(portmapping_list)) }</p>
+		% endif
 	  </div>
 
 
-      <div class="tab-pane" id="tab-other">
+	  <div class="ly-item-title">${ _("Delete instance") }</div>
 
-		<h2>${ _("Delete instance") }</h2>
+      <div class="ly-item-body">
 		<p class="text-warning"><i class="icon-warning-sign icon-large"></i> ${ _("Wait! All the instance data will be lost after instance is deleted.") }</p>
 		<p><a class="btn btn-danger instance-delete-btn" href="">${ _("Delete") }</a></p>
 		<div style="display:none;">
 		  <div id="instance-delete-title">${ _("Delete Instance Is Danger !") }</div>
 		  <div id="instance-delete-body">
 			<p><i class="icon-warning-sign icon-large"></i> ${ _("Wait! All the instance data will be lost after instance is deleted.") }</p>
-			<p><a class="instance-delete-btn-true btn btn-large btn-danger" href="${ reverse_url('instance:lifecontrol') }">${ _("Delete") }</a></p>
+			<p><a class="instance-delete-btn-true btn btn-large btn-danger" href="${ reverse_url('instance:delete') }?id=${ I.id }">${ _("Delete") }</a></p>
 			<div style="display:none;" class="action-success">
 			  <p>${ _("Delete instance success, go to ") }
-				<a href="${ reverse_url('admin:instance') }">${ _("Instances") }</a></p>
+				<a href="${ reverse_url('myun:instance') }">${ _("My Instances") }</a></p>
 			</div>
 			<div style="display:none;" class="action-failed">
 			  <p>${ _("Delete instance failed !") }</p>
@@ -362,11 +358,11 @@
 			</div>
 		  </div>
 		</div>
-
 	  </div>
 
-    </div>
+	</div>
   </div>
+
 </div>
 
 <!-- Instance LifeControl Modal Data -->

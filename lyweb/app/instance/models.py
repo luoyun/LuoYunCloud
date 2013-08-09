@@ -5,7 +5,7 @@ import datetime
 
 from yweb.orm import ORMBase
 
-from sqlalchemy import Column, Integer, String, \
+from sqlalchemy import Column, Integer, BigInteger, String, \
     Sequence, DateTime, Text, ForeignKey, Boolean
 
 from sqlalchemy.orm import backref,relationship
@@ -58,35 +58,43 @@ class Instance(ORMBase):
     key = Column( String(128) )
     summary = Column( String(1024) )
     description = Column( Text() )
-    logo = Column( String(64) )
 
-    cpus = Column( Integer, default=0 )
-    memory = Column( Integer, default=0 )
+    cpus       = Column( Integer, default=0 ) # core
+    memory     = Column( Integer, default=0 ) # MB
+    extendsize = Column( Integer, default=0 ) # GB
+    bandwidth  = Column( Integer, default=0 ) # Mbps
+
+    vdi_port = Column( Integer, default=0 )
+    vdi_pass = Column( String(128), default='luoyun' )
+
+    rx = Column( BigInteger, default=0 )
+    tx = Column( BigInteger, default=0 )
 
     user_id = Column( ForeignKey('auth_user.id') )
-    user = relationship("User",backref=backref('instances',order_by=id) )
+    user = relationship("User", backref=backref('instances',order_by=id) )
 
     appliance_id = Column( ForeignKey('appliance.id') )
-    appliance = relationship("Appliance",backref=backref('instances',order_by=id) )
+    appliance = relationship("Appliance", backref=backref('instances',order_by=id) )
 
     node_id = Column( ForeignKey('node.id') )
-    node = relationship("Node",backref=backref('instances', order_by=id) )
+    node = relationship("Node", backref=backref('instances', order_by=id) )
 
     ip = Column( String(32) )
-    mac = Column( String(32) )
 
     status = Column( Integer, default=1 )
     config = Column( Text() ) # Other configure
 
-    islocked = Column( Boolean, default = False) # Used by admin
+    islocked  = Column( Boolean, default = False) # Used by admin
     isprivate = Column( Boolean, default = True )
     ischanged = Column( Boolean, default = False )
+
+    like   = Column(Integer, default=0)
+    unlike = Column(Integer, default=0)
+    visit  = Column(Integer, default=0) # view times
 
     created = Column( DateTime, default=datetime.datetime.now )
     updated = Column( DateTime, default=datetime.datetime.now )
 
-    lastjob_id = Column( ForeignKey('job.id') )
-    lastjob = relationship("Job")
 
     def __init__(self, name, user, appliance):
         self.name = name
@@ -128,26 +136,6 @@ class Instance(ORMBase):
         }
 
         return INSTANCE_STATUS_STR.get( self.status, _('Unknown Status') )
-
-    @property
-    def lastjob_status_string(self):
-        if self.lastjob:
-            return self.lastjob.status_string
-        return _('New instance.')
-
-    @property
-    def lastjob_status_id(self):
-        if self.lastjob:
-            return self.lastjob.status
-        else:
-            return 9999
-
-    @property
-    def lastjob_status_icon(self):
-        if self.lastjob:
-            return self.lastjob.status_icon
-        else:
-            return '<i style="color: gray;" class="icon-exclamation-sign"></i>'
 
 
     @property
@@ -211,8 +199,7 @@ class Instance(ORMBase):
 
     @property
     def logourl(self):
-        # TODO: use application logo default
-        if not self.logo:
+        if self.appliance.logourl:
             return self.appliance.logourl
 
         if os.path.exists(self.logopath):
@@ -233,7 +220,7 @@ class Instance(ORMBase):
     # TODO: a temp hack
     # key format =>  key:vdi_port:rx_bytes:rx_pkts:tx_bytes:tx_pkts
     @property
-    def vdi_port(self):
+    def vdi_port_old(self):
         if not self.key: return 'None'
         port = self.key.split(':')
         return port[1] if len(port) >= 2 else 'None'
@@ -406,12 +393,64 @@ class Instance(ORMBase):
     def action_human(self):
         ''' Which action can do for this instance. '''
 
-        a = _('Stop My Instance')
+        a = _('Stop Instance')
 
         if not self.is_running:
-            a = _('Run My Instance')
+            a = _('Run Instance')
         elif self.need_query:
-            a = _('Query My Instance')
+            a = _('Query Instance')
 
         return a
 
+
+    @property
+    def mac(self):
+
+        return '92:1B:40:26:%02x:%02x' % (
+                self.id / 256, self.id % 256 )
+
+    @property
+    def cpu_max(self):
+        return self.user.profile.cpu_remain + self.cpus
+
+    @property
+    def memory_max(self):
+        return self.user.profile.memory_remain + self.memory
+
+
+class InstanceRuntime(ORMBase):
+
+    _config_dict = {}
+
+    __tablename__ = 'instance_runtime'
+
+    id = Column( Integer, Sequence('instance_runtime_id_seq'), primary_key=True )
+
+    instance_id = Column( ForeignKey('instance.id') )
+    instance    = relationship("Instance",backref=backref('runtimes',order_by=id) )
+
+    # who start this machine
+    user_id     = Column( ForeignKey('auth_user.id') )
+    user        = relationship("User",backref=backref('instance_runtimes',order_by=id) )
+
+    # cpu, memory, storage, bandwidth is snapshot of instance config
+    cpu       = Column( Integer, default=0 )    # core
+    memory    = Column( Integer, default=0 )    # MB
+    storage   = Column( Integer, default=0 )    # GB
+    bandwidth = Column( Integer, default=0 )    # Mbps
+
+    # rx, tx record
+    # when instance start, rx, tx is the instance's value
+    # when instance stop, rx, tx is the instance's used value
+    rx = Column( BigInteger, default=0 ) # bytes
+    tx = Column( BigInteger, default=0 ) # bytes
+
+    start  = Column( DateTime, default=datetime.datetime.now )
+    stop   = Column( DateTime, default=datetime.datetime.now )
+
+    # the total runtime of this instance
+    uptime = Column( Integer, default=0 ) # seconds
+
+
+# runtime record every second, minute, hour, day, month, year.
+# class InstanceRuntimeHistory(ORMBase):

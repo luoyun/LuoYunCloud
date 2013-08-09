@@ -6,16 +6,20 @@
 <script src="/static/third/html5.js?v=0.6"></script>
 <![endif]-->
     <link rel="SHORTCUT ICON" href="/static/favicon.ico?v=0.6" />
-##    <link href="/static/third/bootswatch/cerulean/bootstrap.min.css?v=2.3.2" rel="stylesheet" media="screen">
-    <link href="/static/third/bootstrap/css/bootstrap.min.css?v=2.3.2" rel="stylesheet" media="screen">
-    <link href="/static/third/bootstrap/css/bootstrap-responsive.min.css?v=2.3.2" rel="stylesheet" type="text/css">
-    <link href="/static/third/font-awesome/css/font-awesome.min.css?v=3.1.0" rel="stylesheet" media="screen">
+    <link type="text/css" rel="stylesheet" href="/static/third/bootstrap/css/bootstrap.min.css?v=2.3.2" media="screen" />
+    <link type="text/css" rel="stylesheet" href="/static/third/bootstrap/css/bootstrap-responsive.min.css?v=2.3.2" />
+    <link type="text/css" rel="stylesheet" href="/static/third/font-awesome/css/font-awesome.min.css?v=3.1.0" media="screen" />
+    <link type="text/css" rel="stylesheet" href="/static/third/css/jquery-ui-1.10.0.custom.css?v=1.10.0" />
 <!--[if IE 7]>
-<link rel="stylesheet" href="/static/third/font-awesome/css/font-awesome-ie7.min.css?v=3.1.0">
+    <link type="text/css" rel="stylesheet" href="/static/third/font-awesome/css/font-awesome-ie7.min.css?v=3.1.0" />
 <![endif]-->
-    <link rel="stylesheet" href="${ theme_url('css/site.css') }" />
+<!--[if lt IE 9]>
+    <link type="text/css" rel="stylesheet" type="text/css" href="/static/third/css/jquery.ui.1.10.0.ie.css" />
+<![endif]-->
+
+    <link type="text/css" rel="stylesheet" href="${ theme_url('css/site.css') }" />
     <%block name="head"/>
-    <title>${ title } - ${ _("LuoYunCloud") }</title>
+    <title>${ _(title) } - ${ _("LuoYunCloud OpenSource Cloud Platform") }</title>
   </head>
 
   <body>
@@ -23,12 +27,13 @@
     <script type="text/javascript" src="/static/third/jquery-1.9.1.min.js?v=1.9.1"></script>
     <script type="text/javascript" src="/static/third/jquery-migrate-1.2.1.min.js?v=1.2.1"></script>
     <script type="text/javascript" src="/static/third/bootstrap/js/bootstrap.min.js?v=2.3.2"></script>
+	<script type="text/javascript" src="/static/third/jquery-ui-1.10.0.custom.min.js?v=1.10.0"></script>
     <script type="text/javascript" src="${ theme_url('js/site.js') }"></script>
 
     <div id="header" class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="doc4">
-          <a href="/" class="brand">${ _("LYC") }<sup>0.6.1 B1</sup></a>
+          <a href="/" class="brand">${ _("LYC") }<sup>0.6.3</sup></a>
           <ul role="navigation" class="nav site-menu">
 			<li class="active"><a href="/"><i class="icon-home icon-large"></i> ${ _("Home") }</a></li>
 			<li><a href="/appliance"><i class="icon-globe icon-large"></i> ${ _("Appliance") }</a></li>
@@ -36,7 +41,6 @@
 			<li><a href="/myun"><i class="icon-cloud icon-large"></i> ${ _("My LuoYun") }</a></li>
 			<li><a href="/forum"><i class="icon-group icon-large"></i> ${ _("Community") }</a></li>
           </ul>
-
 
           <ul class="nav pull-right">
 			% if current_user:

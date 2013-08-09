@@ -303,15 +303,40 @@ a:active {
 /* End common style */
 
 
-.box {
-	border: 1px solid #EAEAEA;
+.ly-item-title {
+	border: 1px solid #D9D9D9;
+	border-left: 3px solid #529056;
 	border-radius: 3px;
-	padding: 5px 10px;
+	padding: 6px 12px;
+	background-color: #F2F2F2;
+	font-weight: bold;
+}
+.ly-item-title a {
+	float: right;
+}
+.ly-item-body {
+	margin: 30px 0 50px 0;
+}
+
+.ly-box {
+	border-radius: 5px;
+	border: 1px solid #DFDFDF;
+	padding: 5px;
+}
+
+.ly-count {
+	font: italic bold 28px/22px Georgia,Serif;
+	color: #999;
 }
 
 .ly-logo-large {
 	width: 120px;
 	height: 120px;
+}
+
+.ly-slider {
+	margin: 10px 0;
+	width: 200px;
 }
 
 

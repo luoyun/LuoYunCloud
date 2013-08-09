@@ -4,9 +4,9 @@ from mako.template import Template
 PAGE_TEMPLATE = '''<div class="pagination">
 <ul>
   % if cur_page > 1:
-  <li><a href="${ page_url(cur_page -1) }">${ _("Prev") }</a></li>
+  <li><a href="${ page_url(cur_page -1) }"><i class="icon-double-angle-left"></i></a></li>
   % else:
-  <li class="disabled"><span>${ _("Prev") }</span></li>
+  <li class="disabled"><span><i class="icon-double-angle-left"></i></span></li>
   % endif
 
   % for p in plist:
@@ -20,9 +20,9 @@ PAGE_TEMPLATE = '''<div class="pagination">
   % endfor
 
   % if cur_page < page_sum:
-  <li><a href="${ page_url(cur_page + 1) }">${ _("Next") }</a></li>
+  <li><a href="${ page_url(cur_page + 1) }"><i class="icon-double-angle-right"></i></a></li>
   % else:
-  <li class="disabled"><span>${ _("Next") }</span></li>
+  <li class="disabled"><span><i class="icon-double-angle-right"></i></span></li>
   % endif
 </ul>
 
