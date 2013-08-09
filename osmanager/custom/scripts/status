@@ -8,7 +8,7 @@ ip=$(ifconfig eth0 | awk  '/inet addr:/{print $2}')
 ip=${ip#addr:}
 [ -z "$ip" ] && exit 1
 
-status=$(printf "GET / HTTP/1.1\nHost:$ip\n\n" | nc $ip $port | head -1) 
+status=$(printf "GET / HTTP/1.1\nHost:$ip\n\n" | nc -q 3 $ip $port | head -1) 
 [ -z "$status" ] && exit 1
 
 status=$(echo $status | awk '{printf $2}')

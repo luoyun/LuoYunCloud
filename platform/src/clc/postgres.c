@@ -734,7 +734,7 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
     char sql[LINE_MAX];
     if (snprintf(sql, LINE_MAX,
                  "SELECT instance.name, instance.cpus, instance.memory, "
-                 "instance.ip, instance.mac, instance.node_id, "
+                 "instance.ip, instance.node_id, "
                  "instance.appliance_id, appliance.name, "
                  "appliance.checksum, instance.status, instance.key, "
                  "instance.config "
@@ -762,20 +762,18 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
         s = PQgetvalue(res, 0, 3);
         if (s && strlen(s))
             ci->ins_ip = strdup(s);
-        s = PQgetvalue(res, 0, 4);
-        if (s && strlen(s))
-            ci->ins_mac = strdup(s);
-        *node_id = atoi(PQgetvalue(res, 0, 5));
-        ci->app_id = atoi(PQgetvalue(res, 0, 6));
-        s = PQgetvalue(res, 0, 7);
+        ci->ins_mac = NULL;
+        *node_id = atoi(PQgetvalue(res, 0, 4));
+        ci->app_id = atoi(PQgetvalue(res, 0, 5));
+        s = PQgetvalue(res, 0, 6);
         if (s && strlen(s))
             ci->app_name = strdup(s);
         ci->app_checksum = malloc(33);
         if (ci->app_checksum)
-            strncpy(ci->app_checksum, PQgetvalue(res, 0, 8), 32);
+            strncpy(ci->app_checksum, PQgetvalue(res, 0, 7), 32);
         ci->app_checksum[32] = 0;
-        ci->ins_status = atoi(PQgetvalue(res, 0, 9));
-        s = PQgetvalue(res, 0, 10);
+        ci->ins_status = atoi(PQgetvalue(res, 0, 8));
+        s = PQgetvalue(res, 0, 9);
         if (s && strlen(s)) {
             char * str, * str1;
             str = strdup(s);
@@ -785,7 +783,7 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
             free(str);
         }
         ci->osm_tag = ci->ins_id;
-        s = PQgetvalue(res, 0, 11);
+        s = PQgetvalue(res, 0, 10);
         if (s && strlen(s))
             ci->osm_json = strdup(s);
         char ins_domain[21];
