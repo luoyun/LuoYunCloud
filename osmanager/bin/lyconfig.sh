@@ -31,8 +31,8 @@ if [ $? -eq 0 ]
 then
     mntdir=$(echo ${mntinfo} | awk '{print $3}')
 else
-    module=$(lsmod | grep -w floppy | awk "{print $1}")
-    [ "$module" == "floppy" ] || modprobe floppy || myexit "osmanager error: failed load kerne module"
+    module=$(lsmod | grep -w floppy | awk '{print $1}')
+    [ "x$module" = "xfloppy" ] || modprobe floppy || myexit "osmanager error: failed load kerne module"
     tmpmntdir=$(mktemp -d /tmp/osmanger.XXXXXX)
     [ $? ] || myexit "osmanger error: failed create temp dir"
     mntdir=$tmpmntdir 
