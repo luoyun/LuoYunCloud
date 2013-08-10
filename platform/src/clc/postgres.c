@@ -618,7 +618,8 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
         return -1;
     }
 
-    char s_key[128], s_ip[100], s_status[20], s_node_id[20];
+    unsigned long sum1 = 0, sum2 = 0;
+    char s_key[256], s_ip[100], s_status[20], s_node_id[20];
     s_key[0] = '\0';
     s_ip[0] = '\0';
     s_node_id[0] = '\0';
@@ -651,7 +652,6 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
             }
             int gport = 0;
             unsigned long pre1 = 0, pre2 = 0;
-            unsigned long sum1 = 0, sum2 = 0;
             if (ptr[1])
                 gport = atoi(ptr[1]);
             if (ptr[2])
@@ -671,11 +671,13 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
                 sum1 += ii->netstat[0].rx_bytes;
                 sum2 += ii->netstat[0].tx_bytes;
             } 
-            snprintf(s_key, 128, "key = '%s:%d:%ld:%ld:%ld:%ld' ", 
+            snprintf(s_key, 256, "key = '%s:%d:%ld:%ld:%ld:%ld', vdi_port = %d, rx = %ld, tx = %ld", 
                                  ptr[0]?ptr[0]:"",
                                  ii->gport == -1?gport:ii->gport,
                                  sum1, ii->netstat[0].rx_bytes,
-                                 sum2, ii->netstat[0].tx_bytes);
+                                 sum2, ii->netstat[0].tx_bytes,
+                                 ii->gport == -1?gport:ii->gport,
+                                 sum1, sum2);
             if (savestr)
                 free(savestr);
         }
