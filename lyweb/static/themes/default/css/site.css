@@ -37,6 +37,8 @@ body {
 /*    background: url("../img/mainBg.gif");*/
 	background: url("../img/body_bg.jpg");
 	padding-top: 58px;
+	color: #1A1A1A;
+    font: 14px/1.7 "Microsoft Yahei","Helvetica Neue","Luxi Sans","DejaVu Sans",Tahoma,"Hiragino Sans GB",STHeiti !important;
 }
 #main {
 /*	margin-top: 68px;*/
@@ -374,3 +376,4 @@ a:active {
 #site-notice-base {
 	padding: 50px 80px 100px;
 }
+

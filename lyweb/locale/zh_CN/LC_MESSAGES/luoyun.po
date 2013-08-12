@@ -267,7 +267,7 @@ msgstr "无此用户： %s"
 #: template/forum/index_posts.html:38 template/forum/topic/view.html:65
 #, fuzzy
 msgid "Reply Post"
-msgstr "回复:"
+msgstr "回复留言"
 
 #: app/forum/views.py:796 app/forum/views.py:886
 msgid "Give post id please."
@@ -2944,7 +2944,7 @@ msgstr "来自"
 
 #: template/message/inbox.html:30 template/message/view_message.html:8
 msgid "Reply"
-msgstr "回复:"
+msgstr "回复"
 
 #: template/message/inbox.html:41
 msgid "You have not receiverd any message yet !"

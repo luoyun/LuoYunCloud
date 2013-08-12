@@ -93,7 +93,12 @@
 
 		<dl class="dl-horizontal">
 		  <dt>${ _("Network Data") }</dt>
-		  <dd>${ _('RX') } <span id="i-rx_bytes">${ human_size(I.rx_bytes) }</span> / ${ _('TX') } <span id="i-tx_bytes">${ human_size(I.tx_bytes) }</span></dd>
+		  <dd>
+			<div class="i-rx"><i class="icon-signin"></i>
+			  <strong>${ _('RX') }</strong> ${ I.rx } ${ _("bytes") } (${ human_size(I.rx) })</div>
+			<div class="i-tx"><i class="icon-signout"></i>
+			  <strong>${ _('TX') }</strong> ${ I.tx } ${ _("bytes") } (${ human_size(I.tx) })</div>
+		  </dd>
 		</dl>
 
 		<dl class="dl-horizontal">

@@ -60,6 +60,17 @@ def update_user(db):
     db.commit()
             
 
+def update_instance(db):
+
+    from app.instance.models import Instance
+
+    for I in db.query(Instance).order_by(Instance.id):
+        if not I.rx:           I.rx           = 0
+        if not I.tx:           I.tx           = 0
+        if not I.extendsize:   I.extendsize   = 0
+        if not I.bandwidth:    I.bandwidth    = 0
+
+
 def update_language(db):
 
     from yweb.locale import LANGUAGES
@@ -142,6 +153,8 @@ def default_value(db):
 
     update_site_config(db)
     update_storage(db)
+
+    update_instance(db)
 
     db.commit()
 

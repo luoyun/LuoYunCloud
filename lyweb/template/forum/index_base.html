@@ -18,7 +18,15 @@
 
 	<div class="span3">
 
-	  <div class="well">
+	  <div>
+		<form method=get action="http://www.google.com/search">
+		  <input type=text name=q placeholder="Your search text">
+		  <input type=submit name=btnG value="Search">
+		  <input type=hidden name=hl value=zh-CN>
+		  <input type=hidden name=domains value="www.luoyuncloud.com">
+		  <input type=hidden name=sitesearch value="www.luoyuncloud.com">
+		</form>
+<%doc>
 		<form action="/search" id="searchbox">
 		  <div class="control-group">
 			<label for="appendedInputButton" class="control-label">${ _("Search By Google") }</label>
@@ -30,6 +38,7 @@
 			</div>
 		  </div>
 		</form>
+</%doc>
 	  </div>
 
 	  <p><a class="btn btn-primary btn-large" href="${ reverse_url('forum:topic:add') }"><i class="icon-plus"></i> ${ _("New Topic") }</a></p>

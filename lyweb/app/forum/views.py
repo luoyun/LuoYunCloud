@@ -361,8 +361,7 @@ class TopicHandler(RequestHandler):
 
 class TopicAdd(TopicHandler):
 
-    title = _('New Forum Topic')
-    template_path = 'forum/topic/add.html'
+    template_path = 'forum/topic/edit.html'
 
     @authenticated
     def prepare(self):
@@ -389,6 +388,10 @@ class TopicAdd(TopicHandler):
         self.prepare_kwargs['can_add_topic'] = self.can_add_topic
         self.prepare_kwargs['CATALOG'] = self.CATALOG
         self.prepare_kwargs['form'] = form
+        self.prepare_kwargs['markup_language'] = self.get_argument(
+            'markup_language', 'tinymce')
+
+        self.prepare_kwargs['title'] = _('Post A New Topic')
 
 
     def get(self):
@@ -415,6 +418,10 @@ class TopicAdd(TopicHandler):
             else:
                 topic.catalog_id = form.catalog.data
 
+            ml = self.prepare_kwargs['markup_language']
+            if ml == 'tinymce':
+                topic.markup_language = 2
+
             self.db.add(topic)
             self.db.commit()
             self.update_tag(form.tag.data, topic)
@@ -429,7 +436,6 @@ class TopicAdd(TopicHandler):
 
 class TopicEdit(TopicHandler):
 
-    title = _('Edit Forum Topic')
     template_path = 'forum/topic/edit.html'
 
     @authenticated
@@ -452,6 +458,7 @@ class TopicEdit(TopicHandler):
 
         self.prepare_kwargs['form'] = form
         self.prepare_kwargs['TOPIC'] = t
+        self.prepare_kwargs['title'] = _('Edit Topic: "%s"') % t.name
 
     def get(self):
 
@@ -808,7 +815,7 @@ class PostVote(RequestHandler):
 class PostReply(RequestHandler):
 
     title = _('Reply Post')
-    template_path = 'forum/post/reply.html'
+    template_path = 'forum/post/edit.html'
 
     @authenticated
     def prepare(self):
@@ -837,7 +844,7 @@ class PostReply(RequestHandler):
             return self.finish( _('Your speech is too fast!') )
 
         self.prepare_kwargs['form'] = PostForm(self)
-        self.prepare_kwargs['POST'] = P
+        self.prepare_kwargs['REPLY_POST'] = P
 
 
     def get(self):
@@ -847,7 +854,7 @@ class PostReply(RequestHandler):
     def post(self):
 
         form = self.prepare_kwargs['form']
-        P = self.prepare_kwargs['POST']
+        P = self.prepare_kwargs['REPLY_POST']
 
         if form.validate():
 

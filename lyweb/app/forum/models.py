@@ -97,7 +97,7 @@ TOPIC_STATUS = (
 )
 MARKUP_LANGUAGE = (
     (1, _('markdown')),
-    (2, _('org-mode')),
+    (2, _('tinymce')),
     )
 class ForumTopic(ORMBase):
     '''Forum Topic'''

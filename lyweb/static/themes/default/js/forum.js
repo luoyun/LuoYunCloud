@@ -2,25 +2,44 @@ function forum_vote() {
 
 	$('.vote-opt').click( function(event) {
 
-		event.preventDefault();
-
 		$this = $(this);
+/*
+		if ( $this.hasClass('disabled') ) {
 
-		if ( $this.hasClass('disabled') )
+			noty({
+				layout: 'topRight',
+				type: 'warning',
+				timeout: 3000,
+				text: $('#repeat-click-string').html()
+			});
+
 			return
-
-		var URL = $this.attr('href');
+		}
+*/
+		var URL = $this.data('url');
 
 		$.ajax({
 			url: URL,
 			type: "POST",
 			success: function( data ) {
 				if (data.ret_code != 0) {
-//					alert( data.ret_string );
+					noty({
+						layout: 'topRight',
+						type: 'warning',
+						timeout: 6000,
+						text: data.ret_string
+					});
 				} else {
-					var $p = $this.parent()
+					var $p = $this.parent().parent();
 					$p.find('.like').html( data.like );
 					$p.find('.unlike').html( data.unlike );
+
+					noty({
+						layout: 'topRight',
+						type: 'success',
+						timeout: 1500,
+						text: data.ret_string
+					});
 				}
 				$this.addClass('disabled');
 			},

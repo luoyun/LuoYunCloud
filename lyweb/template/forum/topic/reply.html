@@ -8,26 +8,14 @@
 </%block>
 
 <%block name="innav">
-% if REPLY_POST:
-<li><a href="reverse_url('forum:topic:view') + '?id=%s' % REPLY_POST.topic.id">${ REPLY_POST.topic.name }</a> <span class="divider">/</span></li>
-<li>${ _("Reply Post") }</li>
-% else:
-<li><a href="reverse_url('forum:topic:view') + '?id=%s' % POST.topic.id">${ POST.topic.name }</a> <span class="divider">/</span></li>
-<li>${ _("Edit My Post") }</li>
-% endif
+<li><a href="reverse_url('forum:topic:view') + '?id=%s' % TOPIC.id">${ TOPIC.name }</a> <span class="divider">/</span></li>
+<li>${ _("Reply Topic") }</li>
 </%block>
 
 <%block name="submain">
 
 <div class="container-fluid">
   <form method="POST">${ xsrf_form_html() }
-	% if REPLY_POST:
-	<div class="well post-item">
-	  <p>@ <a href="${ reverse_url('user:view') }?id=${ REPLY_POST.user_id }">${ REPLY_POST.user.username }</a></p>
-	  <div>${ REPLY_POST.body_html }</div>
-	</div>
-	% endif
-
 	${ form.body() }
 	${ form.html_errors( form.body.errors ) }
 	<br>

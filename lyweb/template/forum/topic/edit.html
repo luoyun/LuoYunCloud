@@ -1,44 +1,100 @@
 <%inherit file="../forum_base.html"/>
 
 <%block name="subhead">
+% if markup_language == 'markdown':
 <link rel="stylesheet" type="text/css" href="${ static_url('markitup/skins/simple/style.css') }" />
 <link rel="stylesheet" type="text/css" href="${ static_url('markitup/sets/markdown/style.css') }" />
+% endif
+</%block>
+
+<%block name="innav">
+% if TOPIC:
+<li>${ _("Edit") }
+  <a href="${ reverse_url('forum:topic:view') }?id=${ TOPIC.id }">${ TOPIC.name }</a></li>
+% else:
+
+% if CATALOG:
+<li><a href="${ reverse_url('forum:catalog') }?id=${ CATALOG.id }">${ CATALOG.name }</a> <span class="divider">/</span></li>
+% endif
+<li>${ _("Post A New Topic") }</li>
+
+% endif
 </%block>
 
 <%block name="submain">
 
-<script type="text/javascript" src="${ static_url('markitup/jquery.markitup.js') }"></script>
-<script type="text/javascript" src="${ static_url('markitup/sets/markdown/set.js') }"></script>
+<div class="topic-edit-form">
+  <form class="form-horizontal" method="POST">${ xsrf_form_html() }
 
-<div>
-  <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Edit Forum Topic") }</legend>
+% if CATALOG:
+	<div style="display: none;">
 	  ${ form.catalog.label } ${ form.catalog() }
 	  ${ form.html_errors( form.catalog.errors ) }
+	</div>
+% else:
+	<div class="control-group">
+	  <label class="control-label" for="catalog">${ _("Catalogs") }</label>
+	  <div class="controls">
+		${ form.catalog() }
+		${ form.html_errors(form.catalog.errors) }
+	  </div>
+	</div>
+% endif
 
-	  ${ form.name.label } ${ form.name() }
-	  ${ form.html_errors( form.name.errors ) }
+	<div class="control-group">
+	  <label class="control-label" for="name">${ _("Title") }</label>
+	  <div class="controls">
+		${ form.name() }
+		${ form.html_errors( form.name.errors ) }
+	  </div>
+	</div>
 
-	  ${ form.summary.label } ${ form.summary() }
-	  ${ form.html_errors( form.summary.errors ) }
+	<div class="control-group">
+	  <label class="control-label" for="summary">${ _("Summary") }</label>
+	  <div class="controls">
+		${ form.summary() }
+		${ form.html_errors( form.summary.errors ) }
+	  </div>
+	</div>
 
-	  ${ form.tag.label } ${ form.tag() }
-	  ${ form.html_errors( form.tag.errors ) }
+	<div class="control-group">
+	  <label class="control-label" for="tag">${ _("Tags") }</label>
+	  <div class="controls">
+		${ form.tag() }
+		${ form.html_errors( form.tag.errors ) }
+	  </div>
+	</div>
 
-	  ${ form.body.label } ${ form.body() }
-	  ${ form.html_errors( form.body.errors ) }
+	<div class="control-group">
+	  <label class="control-label" for="body">${ _("Body") }</label>
+	  <div class="controls">
+		${ form.body() }
+		${ form.html_errors( form.body.errors ) }
 
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+		<br>
+		<button type="submit" class="btn">${ _("Submit") }</button>
+	  </div>
+	</div>
   </form>
 </div>
 
+<div style="display:none;" id="xsrf-cookie">${ xsrf_cookie }</div>
+
+% if markup_language == 'markdown':
+<script type="text/javascript" src="${ static_url('markitup/jquery.markitup.js') }"></script>
+<script type="text/javascript" src="${ static_url('markitup/sets/markdown/set.js') }"></script>
 <script type="text/javascript" >
    mySettings.previewParserPath = "/t/preview?markup_language=markdown&_xsrf=${ xsrf_cookie }";
    $(document).ready(function() {
       $("#body").markItUp(mySettings);
    });
 </script>
+
+% else:
+<script charset="utf-8" src="${ static_url('third/kindeditor/kindeditor-min.js') }"></script>
+<script charset="utf-8" src="${ static_url('third/kindeditor/lang/zh_CN.js') }"></script>
+<script>
+  load_kindeditor({ selector: '#body' });
+</script>
+% endif
 </%block>
