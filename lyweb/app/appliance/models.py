@@ -10,7 +10,10 @@ from sqlalchemy import Column, BigInteger, Integer, String, \
 
 from sqlalchemy.orm import backref,relationship
 
+from app.site.utils import get_site_config
+
 import settings
+from settings import runtime_data
 
 from lytool.filesize import size as human_size
 
@@ -95,19 +98,37 @@ class Appliance(ORMBase):
         self.filesize = filesize
         self.checksum = checksum
 
+
     def __unicode__(self):
         return "<Appliance(%s)>" % self.name
 
+
     @property
     def logourl(self):
+
+        base_url = runtime_data.get('appliance.logo.base_url')
+        if not base_url:
+            base_url = get_site_config(
+                'appliance.logo.baseurl', '/dl/appliance/' )
+            runtime_data['appliance.logo.baseurl'] = base_url
+
         if os.path.exists(self.p_logo):
-            return os.path.join(settings.STATIC_URL, 'appliance/%s/d.png' % self.id)
+            return '%s/%s/d.png' % ( base_url.rstrip('/'), self.id )
         else:
             return settings.APPLIANCE_LOGO_DEFAULT_URL
 
+
     @property
     def logodir(self):
-        return os.path.join(settings.STATIC_PATH, 'appliance/%s' % self.id)
+
+        base_dir = runtime_data.get('appliance.logo.basedir')
+        if not base_dir:
+            base_dir = get_site_config(
+                'appliance.logo.basedir', '/opt/LuoYun/data/appliance/' )
+            runtime_data['appliance.logo.basedir'] = base_dir
+
+        return os.path.join(base_dir, '%s' % self.id)
+
 
     @property
     def p_logo(self):
