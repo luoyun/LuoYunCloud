@@ -891,8 +891,8 @@ function load_kindeditor( data ) {
 
     KindEditor.ready(function(K) {
         window.editor = K.create( data.selector, {
-            uploadJson : '/ly/upload/kindeditor',
-            fileManagerJson : '/ly/upload/kindeditor',
+            uploadJson : '/attachment/upload_kindeditor',
+            fileManagerJson : '/attachment/upload_kindeditor', //TODO
             allowFileManager : true,
 
             extraFileUploadParams : {

@@ -18,7 +18,8 @@ from app.auth.models import User, Group, OpenID, AuthKey
 from app.auth.utils import enc_login_passwd
 from app.language.models import Language
 
-from .models import UserResetpass, PublicKey, UserProfile
+from .models import UserResetpass, PublicKey, UserProfile, \
+    Attachment
 from .forms import LoginForm, ResetPassForm, ResetPassApplyForm, \
     BaseInfoForm, AvatarForm, PublicKeyForm, EmailValidateForm, \
     OpenIDNewForm
@@ -956,3 +957,31 @@ class EmailValidate(RequestHandler):
                    adr_from = adr_from,
                    mime_type = 'html' )
         self.quemail.send( e )
+
+
+
+class UploadKindeditor(RequestHandler):
+
+    @authenticated
+    def post(self):
+        if self.request.files:
+            for f in self.request.files["imgFile"]:
+                try:
+                    # Size check
+                    if len(f['body']) > settings.ATTACHMENT_MAXSIZE:
+                        raise Exception(_('File is large than %s' % settings.ATTACHMENT_MAXSIZE))
+
+                    att = Attachment(self.current_user, f)
+                    att.description = self.trans(_('Upload from kindeditor'))
+                    self.db.add(att)
+                    self.db.commit()
+                    info = { "error" : 0, "url" : att.url }
+                except Exception, ex:
+                    info = { "error" : 1, "message" : str(ex) }
+
+        else:
+            info = {"error" : 1, "message": self.trans(_("You have not upload any file !"))}
+
+        info = json.dumps(info)
+        self.write(info)
+

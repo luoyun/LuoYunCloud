@@ -322,3 +322,66 @@ class PublicKey(ORMBase):
             if K.isdefault:
                 K.isdefault = False
         self.isdefault = True
+
+
+
+class Attachment(ORMBase):
+
+    __tablename__ = 'attachment'
+
+    id = Column(Integer, Sequence('attachment_id_seq'), primary_key=True)
+
+    user_id = Column( Integer, ForeignKey('auth_user.id') )
+    user = relationship("User", order_by = id)
+
+    filename = Column( String(1024) )
+    size = Column( Integer )
+    checksum = Column( String(256) )
+
+    name = Column( String(512) )
+    description = Column( Text() )
+
+    dtimes = Column( Integer, default=0 )
+
+    created = Column( DateTime(), default=datetime.datetime.now )
+    updated = Column( DateTime() )
+
+
+    def __init__(self, user, fileobj):
+        self.user = user
+        self.user_id = user.id
+        self.save_file(fileobj)
+
+
+    @property
+    def url(self):
+
+        savename = '%s-%s' % (self.checksum, self.filename)
+
+        return '%s/%s/%s' % (settings.ATTACHMENT_URL.rstrip('/'),
+                             self.user_id, savename)
+
+    def save_file(self, fileobj):
+
+        USER_PATH = os.path.join(settings.ATTACHMENT_PATH, str(self.user_id))
+        if not os.path.exists( USER_PATH ):
+            os.makedirs( USER_PATH )
+
+        sha1_obj = sha1()
+        sha1_obj.update( fileobj['body'] )
+
+        checksum = sha1_obj.hexdigest()
+        filename = fileobj['filename']
+
+        savename = '%s-%s' % (checksum, filename)
+        fullname = os.path.join(USER_PATH, savename)
+
+        f = open(fullname, 'wb')
+        f.write( fileobj['body'] )
+        f.close()
+
+        self.filename = filename
+        self.name     = filename
+        self.checksum = checksum
+        self.size     = os.path.getsize( fullname )
+

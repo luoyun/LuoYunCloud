@@ -13,9 +13,6 @@ handlers = [
     url( r'/welcome_new_user', views.WelcomeNewUser,
          name="welcome_new_user" ),
 
-    url( r'/ly/upload/kindeditor', views.UploadKindeditor,
-         name="upload:kindeditor" ),
-
     url( r'/t/preview', views.Preview, name='preview' ),
     url( r'/search', views.Search, name='search' ),
 ]
