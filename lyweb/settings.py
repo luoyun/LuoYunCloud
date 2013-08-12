@@ -22,8 +22,8 @@ THEME = "default"
 THEME_URL = "/static/themes/%s/" % THEME
 
 #ATTACHMENT
-ATTACHMENT_PATH = os.path.join(PROJECT_ROOT, "static/attachment")
-ATTACHMENT_URL = "/static/attachment/"
+ATTACHMENT_PATH = '/opt/LuoYun/data/attachment/'
+ATTACHMENT_URL = "/dl/attachment/"
 ATTACHMENT_MAXSIZE = 10 * 1024 * 1024 # 10M
 
 # Nignx config path
@@ -286,6 +286,9 @@ default_site_config = [
     ('user.default.dynamic_memory', 0),
     ('user.default.dynamic_storage', 0),
     ('user.default.dynamic_instance', 0),
+
+    ('site.attachment.url', '/dl/attachment/' ),
+    ('site.attachment.path', '/opt/LuoYun/data/attachment/' ),
 ]
 
 
@@ -293,7 +296,6 @@ default_storage_config = [
     # name, description, total
     ('Default', 'LuoYunCloud default storage pool', 1024), # 1024G
 ]
-
 
 
 USER_AVATAR_MAXSIZE = 2 * 1024 * 1024 # 2M

@@ -26,7 +26,7 @@ handlers = [
 
     url(r'/admin/user/view', user.View, name='admin:user:view'),
 
-    url(r'/admin/user/([0-9]+)/resetpass', user.ResetPass,
+    url(r'/admin/user/resetpass', user.ResetPass,
         name='admin:user:resetpass'),
 
     url(r'/admin/user/group/edit', user.GroupEdit,

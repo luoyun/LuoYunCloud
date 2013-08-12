@@ -13,7 +13,7 @@
 	<p><a class="btn" href="${ reverse_url('message:new') }?userid=${ USER.id}" target="_blank">${ _("Send Message") }</a></p>
 	<p><a class="btn" href="${ reverse_url('admin:job') }?user=${ USER.id }" target="_blank">${ _("View All Job") }</a></p>
 	<p><a class="btn" href="${ reverse_url('user:view') }?id=${ USER.id }" target="_blank">${ _("Home Page") }</a></p>
-	<p><a class="btn" href="${ reverse_url('admin:user:resetpass', USER.id) }">${ _("Reset Password") }</a></p>
+	<p><a class="btn" href="${ reverse_url('admin:user:resetpass') }?id=${ USER.id }">${ _("Reset Password") }</a></p>
 
   </div>
 

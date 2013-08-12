@@ -358,12 +358,18 @@ class Attachment(ORMBase):
 
         savename = '%s-%s' % (self.checksum, self.filename)
 
-        return '%s/%s/%s' % (settings.ATTACHMENT_URL.rstrip('/'),
+        attachment_url = get_site_config(
+            'site.attachment.url', settings.ATTACHMENT_URL )
+
+        return '%s/%s/%s' % (attachment_url.rstrip('/'),
                              self.user_id, savename)
 
     def save_file(self, fileobj):
 
-        USER_PATH = os.path.join(settings.ATTACHMENT_PATH, str(self.user_id))
+        attachment_path = get_site_config(
+            'site.attachment.path', settings.ATTACHMENT_PATH )
+
+        USER_PATH = os.path.join(attachment_path, str(self.user_id))
         if not os.path.exists( USER_PATH ):
             os.makedirs( USER_PATH )
 
