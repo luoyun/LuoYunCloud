@@ -389,7 +389,7 @@ class TopicAdd(TopicHandler):
         self.prepare_kwargs['CATALOG'] = self.CATALOG
         self.prepare_kwargs['form'] = form
         self.prepare_kwargs['markup_language'] = self.get_argument(
-            'markup_language', 'tinymce')
+            'markup_language', 'WYSIWYM')
 
         self.prepare_kwargs['title'] = _('Post A New Topic')
 
@@ -419,7 +419,7 @@ class TopicAdd(TopicHandler):
                 topic.catalog_id = form.catalog.data
 
             ml = self.prepare_kwargs['markup_language']
-            if ml == 'tinymce':
+            if ml == 'WYSIWYM':
                 topic.markup_language = 2
 
             self.db.add(topic)
@@ -459,6 +459,8 @@ class TopicEdit(TopicHandler):
         self.prepare_kwargs['form'] = form
         self.prepare_kwargs['TOPIC'] = t
         self.prepare_kwargs['title'] = _('Edit Topic: "%s"') % t.name
+        self.prepare_kwargs['markup_language'] = t.language
+
 
     def get(self):
 

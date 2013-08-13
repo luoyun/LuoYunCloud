@@ -137,9 +137,6 @@ textarea#reply-body {
     padding: 10px 15px;
 	margin: 15px 0 20px;
 }
-.topic-body p {
-    padding-bottom: 20px;
-}
 
 .account-logo, .topic-time-info, .topic-statistics, .topic-actions, .topic-tags {
 	border: 1px solid #EAEAEA;

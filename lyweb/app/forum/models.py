@@ -97,7 +97,7 @@ TOPIC_STATUS = (
 )
 MARKUP_LANGUAGE = (
     (1, _('markdown')),
-    (2, _('tinymce')),
+    (2, _('WYSIWYM')),
     )
 class ForumTopic(ORMBase):
     '''Forum Topic'''
@@ -169,6 +169,14 @@ class ForumTopic(ORMBase):
     @property
     def is_deleted(self):
         return self.status == 1
+
+    @property
+    def language(self):
+        if self.markup_language == 1:
+            return 'markdown'
+
+        else:
+            return None
             
 
 class ForumTopicTag(ORMBase):
