@@ -27,11 +27,11 @@
     <div class="topic-body">${ TOPIC.body_html }</div>
 	<div class="topic-footer-actions text-right">
 	  <span class="vote">
-		<span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=1"><i class="icon-thumbs-up icon-2x"></i></span>
+		<span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=1"><img src="${ theme_url('img/like.png') }" /></span>
 		<span class="like count">${ TOPIC.like }</span>
 	  </span>
 	  <span class="vote">
-		<span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=-1"><i class="icon-thumbs-down icon-2x"></i></span>
+		<span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=-1"><img src="${ theme_url('img/unlike.png') }" /></span>
 		<span class="unlike count">${ TOPIC.unlike }</span>
 	  </span>
 	  <span class="reply">
@@ -57,11 +57,11 @@
 	<div class="row-fluid text-center topic-statistics">
 	  <div class="span3 divider vote">
 		<span class="like count">${ TOPIC.like }</span><br>
-		<span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=1"><i class="icon-thumbs-up icon-large"></i></span>
+		<span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=1"><img src="${ theme_url('img/like.png') }" /></span>
 	  </div>
 	  <div class="span3 divider vote">
 		<span class="unlike count">${ TOPIC.unlike }</span><br>
-		<span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=-1"><i class="icon-thumbs-down icon-large"></i></span>
+		<span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=-1"><img src="${ theme_url('img/unlike.png') }" /></span>
 	  </div>
 	  <div class="span3 post-count divider"><span class="count">${ len(TOPIC.posts) }</span><br>
 		<a href="#reply-topic"><i class="icon-reply"></i> ${ _("Reply") }</a></div>
@@ -121,11 +121,11 @@
 		<div class="body">${ P.body_html }</div>
 		<div class="post-footer-actions text-right">
 		  <span class="vote">
-			<span class="vote-opt" data-url="${ reverse_url('forum:post:vote') }?id=${ P.id }&vote=1"><i class="icon-thumbs-up icon-large"></i></span>
+			<span class="vote-opt" data-url="${ reverse_url('forum:post:vote') }?id=${ P.id }&vote=1"><img src="${ theme_url('img/like.png') }" /></span>
 			<span class="like count">${ P.like }</span>
 		  </span>
 		  <span class="vote">
-			<span class="vote-opt" data-url="${ reverse_url('forum:post:vote') }?id=${ P.id }&vote=-1"><i class="icon-thumbs-down icon-large"></i></span>
+			<span class="vote-opt" data-url="${ reverse_url('forum:post:vote') }?id=${ P.id }&vote=-1"><img src="${ theme_url('img/unlike.png') }" /></span>
 			<span class="unlike count">${ P.unlike }</span>
 		  </span>
 		  % if current_user and P.user_id == current_user.id:
@@ -158,19 +158,20 @@
 <p><a name="reply-topic"></a></p>
 <div class="row-fluid">
   <div class="span9">
-	<div class="topic-reply-form">
-	  <div id="topic-reply-content" class="large-table-form c">
-		%if not current_user:
-		<p class="text-warning"><i class="icon-warning-sign"></i> ${ _("You have not login now, can not reply this topic.") } <a href="/login?next=${ request.uri }">${ _("Sign In") }</a> | <a href="/register">${ _("Register") }</a></p>
-		%endif
-		<h2 class="reply"><i class="icon-reply"></i> ${ _("REPLY: ") } <a class="topic-replyed" href="${ reverse_url('forum:topic:view') }?id=${ TOPIC.id }">${ TOPIC.name }</a></h2>
-		<form method="POST" action="${ reverse_url('forum:topic:reply') }?id=${ TOPIC.id }">${ xsrf_form_html() }
-		  <textarea id="reply-body" name="body"></textarea>
-		  <br>
-		  <button type="submit" class="btn btn-primary">${ _("Reply Topic") }</button>
-		</form>
-	  </div>
-	</div>
+    <div class="topic-reply-form">
+      <div id="topic-reply-content" class="large-table-form c">
+        % if current_user:
+        <h2 class="reply"><i class="icon-reply"></i> ${ _("REPLY: ") } <a class="topic-replyed" href="${ reverse_url('forum:topic:view') }?id=${ TOPIC.id }">${ TOPIC.name }</a></h2>
+        <form method="POST" action="${ reverse_url('forum:topic:reply') }?id=${ TOPIC.id }">${ xsrf_form_html() }
+          <textarea id="reply-body" name="body"></textarea>
+          <br>
+          <button type="submit" class="btn btn-primary">${ _("Reply Topic") }</button>
+        </form>
+        % else:
+        <p class="text-warning"><i class="icon-warning-sign"></i> ${ _("You have not login now, can not reply this topic.") } <a href="/login?next=${ request.uri }">${ _("Sign In") }</a> | <a href="/register">${ _("Register") }</a></p>
+        % endif
+      </div>
+  </div>
   </div>
   <div class="span3">
   </div>

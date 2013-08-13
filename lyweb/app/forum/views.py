@@ -678,11 +678,14 @@ class TopicReply(TopicHandler):
 
 class TopicVote(TopicHandler):
 
-    @authenticated
     def post(self):
 
         d = { 'ret_code': 1,
               'ret_string': _('Something is wrong.') }
+
+        if not self.current_user:
+            d['ret_string'] = _('Please login to vote again.')
+            return self.write( d )
 
         ID = self.get_argument_int('id', None)
         if not ID:
