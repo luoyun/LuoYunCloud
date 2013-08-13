@@ -1,0 +1,46 @@
+<%inherit file="/admin/appliance/appliance_base.html" />
+
+
+<%block name="innav">
+<li><a href="${ reverse_url('admin:appliance:catalog') }">${ _("Catalog") }</a> <span class="divider">/</span></li>
+<li><a href="${ reverse_url('admin:appliance:catalog:view') }?id=${ CATALOG.id }">${ CATALOG.name }</a></li>
+</%block>
+
+<%block name="submain">
+
+<p><a class="btn btn-primary" href="${ reverse_url('admin:appliance:catalog:edit') }?id=${ CATALOG.id }"><i class="icon-edit"></i> ${ _("Edit Catalog") }</a></p>
+
+<div class="ly-item-title">${ _("Base Information") }</div>
+<div class="ly-item-body">
+  <dl class="dl-horizontal">
+	<dt>${ _("ID") }</dt>
+	<dd>${ CATALOG.id }</dd>
+
+	<dt>${ _("Name") }</dt>
+	<dd>${ CATALOG.name }</dd>
+
+	<dt>${ _("Position") }</dt>
+	<dd>${ CATALOG.position }</dd>
+
+	<dt>${ _("Created") }</dt>
+	<dd>${ ftime(CATALOG.created) }</dd>
+
+	<dt>${ _("Updated") }</dt>
+	<dd>${ ftime(CATALOG.updated) }</dd>
+  </dl>
+
+  <dl class="dl-horizontal">
+	<dt>${ _("Appliances") }</dt>
+	<dd><a class="ly-count" href="${ reverse_url('admin:appliance') }?catalog=${ CATALOG.id }">${ len(CATALOG.appliances) }</a></dd>
+  </dl>
+</div>
+
+<div class="ly-item-title">${ _("Description") }</div>
+<div class="ly-item-body">
+  <div class="well">${ CATALOG.summary }</div>
+  ${ CATALOG.description }
+</div>
+
+<p><a class="btn btn-danger" href="${ reverse_url('admin:appliance:catalog:delete') }?id=${ CATALOG.id }"><i class="icon-trash"></i> ${ _("Delete Catalog") }</a></p>
+
+</%block>

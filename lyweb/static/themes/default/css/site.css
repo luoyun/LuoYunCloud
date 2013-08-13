@@ -33,11 +33,9 @@
 /*	padding: 0;*/
 }
 body {
-/*	background-color: #F7F7F7;*/
-/*    background: url("../img/mainBg.gif");*/
 	background: url("../img/body_bg.jpg");
 	padding-top: 58px;
-	color: #1A1A1A;
+/*	color: #1A1A1A;*/
     font: 14px/1.7 "Microsoft Yahei","Helvetica Neue","Luxi Sans","DejaVu Sans",Tahoma,"Hiragino Sans GB",STHeiti !important;
 }
 #main {
