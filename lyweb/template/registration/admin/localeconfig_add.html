@@ -14,16 +14,16 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Add Locale Config For ") } ${ key }</legend>
-	  ${ form.language.label } ${ form.language() }
-	  ${ form.html_errors(form.language.errors) }
+    <fieldset>
+      <legend>${ _("Add Locale Config For ") } ${ key }</legend>
+      ${ form.language.label } ${ form.language() }
+      ${ form.html_errors(form.language.errors) }
 
-	  ${ form.body.label } ${ form.body() }
-	  ${ form.html_errors(form.body.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      ${ form.body.label } ${ form.body() }
+      ${ form.html_errors(form.body.errors) }
+      <br>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 
 </div>

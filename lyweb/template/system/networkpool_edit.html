@@ -45,23 +45,23 @@
   <table class="ly-table">
     <thead>
       <tr>
-	<th>${ _("IP") }</th>
-	<th>${ _("Network") }</th>
-	<th>${ _("Instance") }</th>
-	<th>${ _("Created") }</th>
+    <th>${ _("IP") }</th>
+    <th>${ _("Network") }</th>
+    <th>${ _("Instance") }</th>
+    <th>${ _("Created") }</th>
       </tr>
     </thead>
     <tbody>
       %for IP in UNABLE_DELETE_IP:
       <tr>
-	<td>${ IP.ip }</td>
-	<td>${ IP.network }</td>
-	<td>
-	  %if IP.instance:
-	  <a href="${ reverse_url('admin:instance') }?id=${ IP.instance.id }">${ IP.instance }</a>
-	  %endif
-	</td>
-	<td>${ ftime(IP.created) }</td>
+    <td>${ IP.ip }</td>
+    <td>${ IP.network }</td>
+    <td>
+      %if IP.instance:
+      <a href="${ reverse_url('admin:instance') }?id=${ IP.instance.id }">${ IP.instance }</a>
+      %endif
+    </td>
+    <td>${ ftime(IP.created) }</td>
       </tr>
       %endfor
     </tbody>

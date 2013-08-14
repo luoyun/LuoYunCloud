@@ -13,25 +13,25 @@
 <div class="ly-item-title">${ _("Base Information") }</div>
 <div class="ly-item-body">
   <dl class="dl-horizontal">
-	<dt>${ _("ID") }</dt>
-	<dd>${ CATALOG.id }</dd>
+    <dt>${ _("ID") }</dt>
+    <dd>${ CATALOG.id }</dd>
 
-	<dt>${ _("Name") }</dt>
-	<dd>${ CATALOG.name }</dd>
+    <dt>${ _("Name") }</dt>
+    <dd>${ CATALOG.name }</dd>
 
-	<dt>${ _("Position") }</dt>
-	<dd>${ CATALOG.position }</dd>
+    <dt>${ _("Position") }</dt>
+    <dd>${ CATALOG.position }</dd>
 
-	<dt>${ _("Created") }</dt>
-	<dd>${ ftime(CATALOG.created) }</dd>
+    <dt>${ _("Created") }</dt>
+    <dd>${ ftime(CATALOG.created) }</dd>
 
-	<dt>${ _("Updated") }</dt>
-	<dd>${ ftime(CATALOG.updated) }</dd>
+    <dt>${ _("Updated") }</dt>
+    <dd>${ ftime(CATALOG.updated) }</dd>
   </dl>
 
   <dl class="dl-horizontal">
-	<dt>${ _("Appliances") }</dt>
-	<dd><a class="ly-count" href="${ reverse_url('admin:appliance') }?catalog=${ CATALOG.id }">${ len(CATALOG.appliances) }</a></dd>
+    <dt>${ _("Appliances") }</dt>
+    <dd><a class="ly-count" href="${ reverse_url('admin:appliance') }?catalog=${ CATALOG.id }">${ len(CATALOG.appliances) }</a></dd>
   </dl>
 </div>
 

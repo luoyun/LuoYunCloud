@@ -10,65 +10,65 @@
 
   <div id="appliance-summary" class="row-fluid">
 
-	<div class="span3">
-	  <img class="logo" src="${ appliance.logourl }" alt="Logo" />
-	</div>
+    <div class="span3">
+      <img class="logo" src="${ appliance.logourl }" alt="Logo" />
+    </div>
 
-	<div class="span9">
-	  <h2>${ appliance.name }</h2>
-	  <div class="owner">${ _("Owner") }
-		<a href="${ reverse_url('user:view') }?id=${ appliance.user_id }">${ appliance.user.username }</a></div>
-	  <div class="summary muted">
-		% if appliance.summary:
-		${ appliance.summary }
-		% else:
-		${ _("This is a appliance of LuoYun platform, you can create a instance from it.") }
-		% endif
-	  </div>
-	</div>
+    <div class="span9">
+      <h2>${ appliance.name }</h2>
+      <div class="owner">${ _("Owner") }
+        <a href="${ reverse_url('user:view') }?id=${ appliance.user_id }">${ appliance.user.username }</a></div>
+      <div class="summary muted">
+        % if appliance.summary:
+        ${ appliance.summary }
+        % else:
+        ${ _("This is a appliance of LuoYun platform, you can create a instance from it.") }
+        % endif
+      </div>
+    </div>
 
   </div>
 
   <div id="appliance-detail" class="row-fluid">
 
-	<div class="span3">
-	  <div id="create-instance-btn">
-		% if appliance.isuseable:
-		<a class="btn btn-primary" href="${ reverse_url('myun:instance:create') }?appliance_id=${ appliance.id }" title="${ _('You can create a new instance based on this appliance.') }">${ _("Create Instance") }</a>
-		% else:
-		<a class="btn btn-large btn-primary disabled" title="${ _('This appliance is locked, you can not use it.') }">${ _("Create Instance") }</a>
-		% endif
+    <div class="span3">
+      <div id="create-instance-btn">
+        % if appliance.isuseable:
+        <a class="btn btn-primary" href="${ reverse_url('myun:instance:create') }?appliance_id=${ appliance.id }" title="${ _('You can create a new instance based on this appliance.') }">${ _("Create Instance") }</a>
+        % else:
+        <a class="btn btn-large btn-primary disabled" title="${ _('This appliance is locked, you can not use it.') }">${ _("Create Instance") }</a>
+        % endif
 
-	  </div>
-	  <br>
-	  <p><a class="btn" href="${ reverse_url('myun:appliance:baseinfo:edit') }?id=${ appliance.id }">${ _("Edit") }</a></p>
-	</div>
+      </div>
+      <br>
+      <p><a class="btn" href="${ reverse_url('myun:appliance:baseinfo:edit') }?id=${ appliance.id }">${ _("Edit") }</a></p>
+    </div>
 
-	<div class="span9">
+    <div class="span9">
 
-	  <dl class="dl-horizontal">
-		<dt>${ _("Catalog") }</dt>
-		<dd><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog_name }</a></dd>
+      <dl class="dl-horizontal">
+        <dt>${ _("Catalog") }</dt>
+        <dd><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog_name }</a></dd>
 
-		<dt>${ _("Used") }</dt>
-		<dd>${ len(appliance.instances) } ${ _("times") }</dd>
+        <dt>${ _("Used") }</dt>
+        <dd>${ len(appliance.instances) } ${ _("times") }</dd>
 
-		<dt>${ _("Create Time") }</dt>
-		<dd>${ ftime(appliance.created) }</dd>
+        <dt>${ _("Create Time") }</dt>
+        <dd>${ ftime(appliance.created) }</dd>
 
-		<dt>${ _("Update Time") }</dt>
-		<dd>${ ftime(appliance.updated) }</dd>
-	  </dl>
+        <dt>${ _("Update Time") }</dt>
+        <dd>${ ftime(appliance.updated) }</dd>
+      </dl>
 
-	  % if appliance.description:
-	  <div class="description">
-		<h2>${ _("About The Appliance") }</h2>
-		<div id="appliance-description" class="markdown">
-		  ${ appliance.description_html }
-		</div>
-	  </div>
-	  % endif
-	</div>
+      % if appliance.description:
+      <div class="description">
+        <h2>${ _("About The Appliance") }</h2>
+        <div id="appliance-description" class="markdown">
+          ${ appliance.description_html }
+        </div>
+      </div>
+      % endif
+    </div>
 
   </div>
 </div>

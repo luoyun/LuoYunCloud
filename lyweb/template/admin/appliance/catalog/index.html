@@ -12,12 +12,12 @@
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
-		<th>${ _("ID") }</th>
-		<th>${ _("Name") }</th>
-		<th>${ _("Appliances") }</th>
-		<th>${ _("Created") }</th>
-		<th>${ _("Updated") }</th>
-		<th></th>
+        <th>${ _("ID") }</th>
+        <th>${ _("Name") }</th>
+        <th>${ _("Appliances") }</th>
+        <th>${ _("Created") }</th>
+        <th>${ _("Updated") }</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -25,17 +25,17 @@
       <tr>
         <td>${ C.id }</td>
         <td><a href="${ reverse_url('admin:appliance:catalog:view') }?id=${ C.id }">${ C.name }</a></td>
-		<td>
-		  % if C.appliances:
-		  <a href="${ reverse_url('admin:appliance') }?catalog=${ C.id }" title="${ _("View all appliances in this catalog") }">${ len(C.appliances) }</a>
-		  % endif
-		</td>
-		<td>${ ftime(C.created) }</td>
-		<td>${ ftime(C.updated) }</td>
-		<td>
-		  <a href="${ reverse_url('admin:appliance:catalog:edit') }?id=${ C.id }"><i class="icon-edit"></i> ${ _("Edit") }</a>
-		  <a href="${ reverse_url('admin:appliance:catalog:delete') }?id=${ C.id }"><i class="icon-trash"></i> ${ _("Delete") }</a>
-		</td>
+        <td>
+          % if C.appliances:
+          <a href="${ reverse_url('admin:appliance') }?catalog=${ C.id }" title="${ _("View all appliances in this catalog") }">${ len(C.appliances) }</a>
+          % endif
+        </td>
+        <td>${ ftime(C.created) }</td>
+        <td>${ ftime(C.updated) }</td>
+        <td>
+          <a href="${ reverse_url('admin:appliance:catalog:edit') }?id=${ C.id }"><i class="icon-edit"></i> ${ _("Edit") }</a>
+          <a href="${ reverse_url('admin:appliance:catalog:delete') }?id=${ C.id }"><i class="icon-trash"></i> ${ _("Delete") }</a>
+        </td>
       </tr>
       % endfor
     </tbody>

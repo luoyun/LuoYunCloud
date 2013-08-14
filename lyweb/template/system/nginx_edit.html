@@ -9,8 +9,8 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Nginx Configure") }</legend>
+    <fieldset>
+      <legend>${ _("Nginx Configure") }</legend>
 
       ${ form.conf_path.label } ${ form.conf_path() }
       ${ form.html_errors(form.conf_path.errors) }
@@ -23,12 +23,12 @@
 
       ${ form.template.label } ${ form.template() }
       ${ form.html_errors(form.template.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	  % if saved:
-	  <span class="text-success">${ _("saved success") }</span>
-	  % endif
-	</fieldset>
+      <br>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+      % if saved:
+      <span class="text-success">${ _("saved success") }</span>
+      % endif
+    </fieldset>
   </form>
 </div>
 

@@ -16,18 +16,18 @@
     </tr>
   </thead>
   <tbody>
-	% for J in JOB_LIST:
+    % for J in JOB_LIST:
     <tr>
       <td><a href="${ reverse_url('admin:site:job:view') }?id=${ J.id }">${ J.id }</a></td>
-	  <td>${ J.user_id }</td>
+      <td>${ J.user_id }</td>
       <td>${ J.status }</td>
-	  <td>${ J.desc }</td>
-	  <td>${ J.text }</td>
-	  <td>${ htime(J.started) }</td>
-	  <td>${ htime(J.updated) }</td>
-	  <td>${ htime(J.created) }</td>
+      <td>${ J.desc }</td>
+      <td>${ J.text }</td>
+      <td>${ htime(J.started) }</td>
+      <td>${ htime(J.updated) }</td>
+      <td>${ htime(J.created) }</td>
     </tr>
-	% endfor
+    % endfor
   </tbody>
 </table>
 

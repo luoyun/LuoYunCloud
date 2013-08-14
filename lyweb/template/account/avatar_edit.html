@@ -5,13 +5,13 @@
 
 <div>
   <form method="POST" enctype="multipart/form-data">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${_("Reset My Avatar")}</legend>
-	  ${ form.avatar() }
-	  ${ form.html_errors(form.avatar.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+    <fieldset>
+      <legend>${_("Reset My Avatar")}</legend>
+      ${ form.avatar() }
+      ${ form.html_errors(form.avatar.errors) }
+      <br>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 </div>
 

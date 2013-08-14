@@ -6,12 +6,12 @@
 <table class="table table-hover table-bordered table-striped">
   <thead>
     <tr>
-	  <th><i class="icon-check-empty y-check-all"></i></th>
+      <th><i class="icon-check-empty y-check-all"></i></th>
       <th>ID</th>
-	  <th><i class="icon-exchange"></i></th>
+      <th><i class="icon-exchange"></i></th>
       <th>${ _("Name") }</th>
-	  <th>${ _("Owner") }</th>
-	  <th>${ _("Appliance") }</th>
+      <th>${ _("Owner") }</th>
+      <th>${ _("Appliance") }</th>
       <th>${ _("Created") }</th>
       <th>${ _("Updated") }</th>
     </tr>
@@ -19,19 +19,19 @@
   <tbody>
     % for I in INSTANCE_LIST:
     <tr class="y-check-line" id="i${ I.id }">
-	  <td><i class="icon-check-empty y-check"></i></td>
+      <td><i class="icon-check-empty y-check"></i></td>
       <td class="y-id">${ I.id }</td>
-	  <td>${ I.status_icon }</td>
+      <td>${ I.status_icon }</td>
       <td>
-		% if I.isprivate:
-		<i class="icon-eye-close"></i>
-		% else:
-		<i class="icon-ok"></i>
-		% endif
-		<a href="${ reverse_url('admin:instance:view') }?id=${ I.id }">${ I.name }</a>
-	  </td>
+        % if I.isprivate:
+        <i class="icon-eye-close"></i>
+        % else:
+        <i class="icon-ok"></i>
+        % endif
+        <a href="${ reverse_url('admin:instance:view') }?id=${ I.id }">${ I.name }</a>
+      </td>
       <td><a href="${ reverse_url('admin:user:view') }?id=${ I.user.id }">${ I.user.username }</a></td>
-	  <td><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></td>
+      <td><a href="${ reverse_url('admin:appliance') }?id=${ I.appliance_id }">${ I.appliance.name }</a></td>
       <td>${ htime(I.created) }</td>
       <td>${ htime(I.updated) }</td>
     </tr>
@@ -39,28 +39,28 @@
   </tbody>
   <tfoot>
     <tr>
-	  <td><i class="icon-check-empty y-check-all"></i></td>
-	  <td colspan="8">
-		<a href="" class="y-select-all">${ _("Select All") }</a>
-		<span class="divider">/</span>
-		<a href="" class="y-unselect-all">${ _("Unselect All") }</a>
-		<span class="divider">/</span>
-		<a href="" class="y-select-reverse">${ _("Select Reverse") }</a>
-	  </td>
+      <td><i class="icon-check-empty y-check-all"></i></td>
+      <td colspan="8">
+        <a href="" class="y-select-all">${ _("Select All") }</a>
+        <span class="divider">/</span>
+        <a href="" class="y-unselect-all">${ _("Unselect All") }</a>
+        <span class="divider">/</span>
+        <a href="" class="y-select-reverse">${ _("Select Reverse") }</a>
+      </td>
     </tr>
   </tfoot>
 </table>
 
 <div>
   <div class="btn-group">
-	<a class="btn y-action-nonzero disabled action-setattr" href="${ reverse_url('instance:attr_set') }?attr=isprivate&value=true"><i class="icon-eye-close"></i> ${ _("Private") }</a>
-	<a class="btn y-action-nonzero disabled action-setattr" href="${ reverse_url('instance:attr_set') }?attr=isprivate&value=false"><i class="icon-eye-open"></i> ${ _("Public") }</a>
+    <a class="btn y-action-nonzero disabled action-setattr" href="${ reverse_url('instance:attr_set') }?attr=isprivate&value=true"><i class="icon-eye-close"></i> ${ _("Private") }</a>
+    <a class="btn y-action-nonzero disabled action-setattr" href="${ reverse_url('instance:attr_set') }?attr=isprivate&value=false"><i class="icon-eye-open"></i> ${ _("Public") }</a>
   </div>
 
   <div class="btn-group">
-	<a class="btn y-action-nonzero disabled action-lifecontrol" href="${ reverse_url('instance:lifecontrol') }?action=run"><i class="icon-refresh"></i> ${ _("Run") }</a>
-	<a class="btn y-action-nonzero disabled action-lifecontrol" href="${ reverse_url('instance:lifecontrol') }?action=stop"><i class="icon-off"></i> ${ _("Stop") }</a>
-	<a class="btn y-action-nonzero disabled action-lifecontrol" href="${ reverse_url('instance:lifecontrol') }?action=query"><i class="icon-question-sign"></i> ${ _("Query") }</a>
+    <a class="btn y-action-nonzero disabled action-lifecontrol" href="${ reverse_url('instance:lifecontrol') }?action=run"><i class="icon-refresh"></i> ${ _("Run") }</a>
+    <a class="btn y-action-nonzero disabled action-lifecontrol" href="${ reverse_url('instance:lifecontrol') }?action=stop"><i class="icon-off"></i> ${ _("Stop") }</a>
+    <a class="btn y-action-nonzero disabled action-lifecontrol" href="${ reverse_url('instance:lifecontrol') }?action=query"><i class="icon-question-sign"></i> ${ _("Query") }</a>
   </div>
 
 </div>

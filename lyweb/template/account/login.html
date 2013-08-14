@@ -6,15 +6,15 @@
 <div id="login-form">
 
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Sign in LuoYun System") }</legend>
+    <fieldset>
+      <legend>${ _("Sign in LuoYun System") }</legend>
       ${ form.user.label } ${ form.user() }<br/>
-	  ${ form.html_errors(form.user.errors) }
+      ${ form.html_errors(form.user.errors) }
 
       ${ form.password.label } ${ form.password() }<br/>
-	  ${ form.html_errors(form.password.errors) }
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      ${ form.html_errors(form.password.errors) }
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 
   <div><a href="${ reverse_url('account:resetpass_apply') }">${ _("Forget My Password") }</a></div>

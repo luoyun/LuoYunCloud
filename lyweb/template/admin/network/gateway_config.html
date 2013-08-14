@@ -17,31 +17,31 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Gateway Configure") }</legend>
-	  ${ form.name.label } ${ form.name() }
-	  ${ form.html_errors(form.name.errors) }
+    <fieldset>
+      <legend>${ _("Gateway Configure") }</legend>
+      ${ form.name.label } ${ form.name() }
+      ${ form.html_errors(form.name.errors) }
 
-	  ${ form.ip.label } ${ form.ip() }
-	  ${ form.html_errors(form.ip.errors) }
+      ${ form.ip.label } ${ form.ip() }
+      ${ form.html_errors(form.ip.errors) }
 
-	  ${ form.netmask.label } ${ form.netmask() }
-	  ${ form.html_errors(form.netmask.errors) }
+      ${ form.netmask.label } ${ form.netmask() }
+      ${ form.html_errors(form.netmask.errors) }
 
-	  ${ form.start.label } ${ form.start() }
-	  ${ form.html_errors(form.start.errors) }
+      ${ form.start.label } ${ form.start() }
+      ${ form.html_errors(form.start.errors) }
 
-	  ${ form.end.label } ${ form.end() }
-	  ${ form.html_errors(form.end.errors) }
+      ${ form.end.label } ${ form.end() }
+      ${ form.html_errors(form.end.errors) }
 
-	  ${ form.exclude_ports.label } ${ form.exclude_ports() }
-	  ${ form.html_errors(form.exclude_ports.errors) }
+      ${ form.exclude_ports.label } ${ form.exclude_ports() }
+      ${ form.html_errors(form.exclude_ports.errors) }
 
-	  ${ form.description.label } ${ form.description() }
-	  ${ form.html_errors(form.description.errors) }
+      ${ form.description.label } ${ form.description() }
+      ${ form.html_errors(form.description.errors) }
 
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 </div>
 

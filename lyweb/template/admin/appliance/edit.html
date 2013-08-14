@@ -15,52 +15,52 @@
   <form class="form-horizontal" method="POST" enctype="multipart/form-data">${ xsrf_form_html() }
 
     <div class="control-group">
-	  <label class="control-label" for="name">${ _("Name") }</label>
-	  <div class="controls">
+      <label class="control-label" for="name">${ _("Name") }</label>
+      <div class="controls">
         ${ form.name() }
-	    ${ form.html_errors( form.name.errors ) }
+        ${ form.html_errors( form.name.errors ) }
       </div>
     </div>
 
     <div class="control-group">
-	  <label class="control-label" for="os">${ _("OS") }</label>
-	  <div class="controls">
+      <label class="control-label" for="os">${ _("OS") }</label>
+      <div class="controls">
         ${ form.os() }
-	    ${ form.html_errors( form.os.errors ) }
+        ${ form.html_errors( form.os.errors ) }
       </div>
     </div>
 
     <div class="control-group">
-	  <label class="control-label" for="summary">${ _("Summary") }</label>
-	  <div class="controls">
+      <label class="control-label" for="summary">${ _("Summary") }</label>
+      <div class="controls">
         ${ form.summary() }
-	    ${ form.html_errors( form.summary.errors ) }
+        ${ form.html_errors( form.summary.errors ) }
       </div>
     </div>
 
     <div class="control-group">
-	  <label class="control-label" for="catalog">${ _("Catalog") }</label>
-	  <div class="controls">
+      <label class="control-label" for="catalog">${ _("Catalog") }</label>
+      <div class="controls">
         ${ form.catalog() }
-	    ${ form.html_errors( form.catalog.errors ) }
+        ${ form.html_errors( form.catalog.errors ) }
       </div>
     </div>
 
     <div class="control-group">
-	  <label class="control-label" for="logo">${ _("Logo") }</label>
-	  <div class="controls">
+      <label class="control-label" for="logo">${ _("Logo") }</label>
+      <div class="controls">
         <img style="width: 48px; heigth: 48px;" src="${ APPLIANCE.logourl }" />
         ${ form.logo() }
-	    ${ form.html_errors( form.logo.errors ) }
+        ${ form.html_errors( form.logo.errors ) }
       </div>
     </div>
 
     <div class="control-group">
-	  <label class="control-label" for="description">${ _("Description") }</label>
-	  <div class="controls">
+      <label class="control-label" for="description">${ _("Description") }</label>
+      <div class="controls">
         ${ form.description() }
-	    ${ form.html_errors( form.description.errors ) }
-		<button type="submit" class="btn">${ _("Submit") }</button>
+        ${ form.html_errors( form.description.errors ) }
+        <button type="submit" class="btn">${ _("Submit") }</button>
       </div>
     </div>
   </form>

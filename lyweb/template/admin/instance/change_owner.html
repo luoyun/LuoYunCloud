@@ -13,12 +13,12 @@
   <div class="small-tbform">
     <form method="POST">${ xsrf_form_html() }
       <p>
-	<label for="user">${ _("User") }<span class="tips">${ _("Input a user name of user id.") }</span></label>
-	<input id="user" name="user" type="text">
+    <label for="user">${ _("User") }<span class="tips">${ _("Input a user name of user id.") }</span></label>
+    <input id="user" name="user" type="text">
       </p>
       <p>
-	<label for="reason">${ _("Reason") }<span class="tips">${ _("Why change the owner ?") }</span></label>
-	<textarea id="reason" name="reason"></textarea>
+    <label for="reason">${ _("Reason") }<span class="tips">${ _("Why change the owner ?") }</span></label>
+    <textarea id="reason" name="reason"></textarea>
       </p>
       ${ show_error( ERROR ) }
       <input class="red-submit" type="submit" value="Save"/>

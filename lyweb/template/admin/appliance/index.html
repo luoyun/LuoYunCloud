@@ -5,95 +5,95 @@
 <div class="row-fluid">
   <div class="span9">
 
-	% if USER:
-	<p>${ _("Filter by user: ") }<a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a></p>
-	% endif
+    % if USER:
+    <p>${ _("Filter by user: ") }<a href="${ reverse_url('admin:user') }?id=${ USER.id }">${ USER.username }</a></p>
+    % endif
 
-	% if CATALOG:
-	<p>${ _("Filter by catalog ") } <a href="${ reverse_url('admin:appliance:catalog:view') }?id=${ CATALOG.id }">${ CATALOG.name }</a></p>
-	% endif
+    % if CATALOG:
+    <p>${ _("Filter by catalog ") } <a href="${ reverse_url('admin:appliance:catalog:view') }?id=${ CATALOG.id }">${ CATALOG.name }</a></p>
+    % endif
 
-	<h5>${ _("Total Appliance :") } ${ TOTAL_APPLIANCE }</h5>
+    <h5>${ _("Total Appliance :") } ${ TOTAL_APPLIANCE }</h5>
 
-	<div>
-	  <table class="table table-bordered table-striped">
-		<thead>
-		  <tr>
-			<th>${ _("ID") }</th>
-			<th>${ _("Name") }</th>
-			<th>${ _("Owner") }</th>
-			<th>${ _("Size") }</th>
-			<th>${ _("Instances") }</th>
-			<th>${ _("Updated") }</th>
-			<th>${ _("Islocked") }</th>
-			<th>${ _("Management") }</th>
-		  </tr>
-		</thead>
-		<tbody>
-		  % for A in APPLIANCE_LIST:
-		  <tr>
-			<td>${ A.id }</td>
-			<td><a href="${ reverse_url('admin:appliance:view') }?id=${ A.id }">${ A.name }</a></td>
-			<td><a href="${ reverse_url('admin:user') }?id=${ A.user.id }" target="_blank">${ A.user.username }</a></td>
-			<td>${ human_size(A.filesize) }</td>
-			<td>
-			  % if A.instances:
-			  <a href="${ reverse_url('admin:instance') }?aid=${ A.id }">${ len(A.instances) }</a>
-			  % endif
-			</td>
-			<td>${ ftime(A.updated) }</td>
-			<td><input type="checkbox"
-					   % if A.islocked:
-					   checked="checked"
-					   % endif
-					   onclick="simpleToggleCheckbox( this, '${ reverse_url('appliance:islocked', A.id) }', '#islocked-notify')" />
-			</td>
-			<td>
+    <div>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>${ _("ID") }</th>
+            <th>${ _("Name") }</th>
+            <th>${ _("Owner") }</th>
+            <th>${ _("Size") }</th>
+            <th>${ _("Instances") }</th>
+            <th>${ _("Updated") }</th>
+            <th>${ _("Islocked") }</th>
+            <th>${ _("Management") }</th>
+          </tr>
+        </thead>
+        <tbody>
+          % for A in APPLIANCE_LIST:
+          <tr>
+            <td>${ A.id }</td>
+            <td><a href="${ reverse_url('admin:appliance:view') }?id=${ A.id }">${ A.name }</a></td>
+            <td><a href="${ reverse_url('admin:user') }?id=${ A.user.id }" target="_blank">${ A.user.username }</a></td>
+            <td>${ human_size(A.filesize) }</td>
+            <td>
+              % if A.instances:
+              <a href="${ reverse_url('admin:instance') }?aid=${ A.id }">${ len(A.instances) }</a>
+              % endif
+            </td>
+            <td>${ ftime(A.updated) }</td>
+            <td><input type="checkbox"
+                       % if A.islocked:
+                       checked="checked"
+                       % endif
+                       onclick="simpleToggleCheckbox( this, '${ reverse_url('appliance:islocked', A.id) }', '#islocked-notify')" />
+            </td>
+            <td>
               <a href="${ reverse_url('admin:appliance:edit') }?id=${ A.id }"><i class="icon-edit"></i></a>
-			</td>
-		  </tr>
-		  % endfor
-		</tbody>
-	  </table>
-	  ${ PAGE_HTML }
-	</div>
+            </td>
+          </tr>
+          % endfor
+        </tbody>
+      </table>
+      ${ PAGE_HTML }
+    </div>
   </div>
 
   <div class="span3">
 
-	<h5><i class="icon-sort"></i> ${ _("Sort By") }</h5>
-	<select id="sort-by-obj">
-	  <option value="id">${ _("ID") }</option>
-	  <option value="name">${ _("Name") }</option>
-	  <option value="user_id">${ _("User") }</option>
-	  <option value="os">${ _("OS") }</option>
-	  <option value="catalog_id">${ _("Catalog") }</option>
-	  <option value="disksize">${ _("Disk Size") }</option>
-	  <option value="filesize">${ _("Filesize") }</option>
-	  <option value="islocked">${ _("Is Locked") }</option>
-	  <option value="isprivate">${ _("Is Private") }</option>
-	  <option value="like">${ _("Like") }</option>
-	  <option value="unlike">${ _("Unlike") }</option>
-	  <option value="visit">${ _("Visit") }</option>
-	  <option value="created">${ _("Created") }</option>
-	  <option value="updated">${ _("Updated") }</option>
-	</select>
+    <h5><i class="icon-sort"></i> ${ _("Sort By") }</h5>
+    <select id="sort-by-obj">
+      <option value="id">${ _("ID") }</option>
+      <option value="name">${ _("Name") }</option>
+      <option value="user_id">${ _("User") }</option>
+      <option value="os">${ _("OS") }</option>
+      <option value="catalog_id">${ _("Catalog") }</option>
+      <option value="disksize">${ _("Disk Size") }</option>
+      <option value="filesize">${ _("Filesize") }</option>
+      <option value="islocked">${ _("Is Locked") }</option>
+      <option value="isprivate">${ _("Is Private") }</option>
+      <option value="like">${ _("Like") }</option>
+      <option value="unlike">${ _("Unlike") }</option>
+      <option value="visit">${ _("Visit") }</option>
+      <option value="created">${ _("Created") }</option>
+      <option value="updated">${ _("Updated") }</option>
+    </select>
 
-	<h5><i class="icon-sort"></i> ${ _("Appliance Catalog") }</h5>
-	<select id="sort-by-catalog">
-	  <option value="-1">${ _("All") }</option>
-	  % for C in CATALOG_LIST:
-	  <option value="${ C.id }">${ C.name }</option>
-	  % endfor
-	</select>
+    <h5><i class="icon-sort"></i> ${ _("Appliance Catalog") }</h5>
+    <select id="sort-by-catalog">
+      <option value="-1">${ _("All") }</option>
+      % for C in CATALOG_LIST:
+      <option value="${ C.id }">${ C.name }</option>
+      % endfor
+    </select>
 
-	<h5><i class="icon-sort"></i> ${ _("Order") }</h5>
-	<select id="sort-by-order">
-	  <option value="DESC">${ _("Descending") }</option>
-	  <option value="ASC">${ _("Ascending") }</option>
-	</select>
+    <h5><i class="icon-sort"></i> ${ _("Order") }</h5>
+    <select id="sort-by-order">
+      <option value="DESC">${ _("Descending") }</option>
+      <option value="ASC">${ _("Ascending") }</option>
+    </select>
 
-	<p><a class="btn btn-primary" href="${ reverse_url('admin:appliance:catalog') }">${ _("View All Cataloags") }</a></p>
+    <p><a class="btn btn-primary" href="${ reverse_url('admin:appliance:catalog') }">${ _("View All Cataloags") }</a></p>
 
   </div>
 </div>

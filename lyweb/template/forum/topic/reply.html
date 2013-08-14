@@ -16,10 +16,10 @@
 
 <div class="container-fluid">
   <form method="POST">${ xsrf_form_html() }
-	${ form.body() }
-	${ form.html_errors( form.body.errors ) }
-	<br>
-	<button type="submit" class="btn">${ _("Submit") }</button>
+    ${ form.body() }
+    ${ form.html_errors( form.body.errors ) }
+    <br>
+    <button type="submit" class="btn">${ _("Submit") }</button>
   </form>
 </div>
 

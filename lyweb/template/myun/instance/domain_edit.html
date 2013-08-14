@@ -7,13 +7,13 @@
 <%block name="submain">
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Configure Domain For Instance") }</legend>
+    <fieldset>
+      <legend>${ _("Configure Domain For Instance") }</legend>
       ${ form.domain.label } ${ form.domain() }
       ${ form.html_errors(form.domain.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      <br>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 </div>
 </%block>

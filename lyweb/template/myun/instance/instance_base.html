@@ -9,14 +9,14 @@
 <div class="min-height600 doc4 wrapper container-fluid">
 
   <ul class="breadcrumb">
-	<li><a href="/"><i class="icon-home"></i> ${ _("Home") }</a> <span class="divider">/</span></li>
-	<li><a href="${ reverse_url('myun:index') }">${ _("My LuoYun") }</a> <span class="divider">/</span></li>
-	<li><a href="${ reverse_url('myun:instance') }">${ _("Instances") }</a> <span class="divider">/</span></li>
-	<%block name="innav" />
+    <li><a href="/"><i class="icon-home"></i> ${ _("Home") }</a> <span class="divider">/</span></li>
+    <li><a href="${ reverse_url('myun:index') }">${ _("My LuoYun") }</a> <span class="divider">/</span></li>
+    <li><a href="${ reverse_url('myun:instance') }">${ _("Instances") }</a> <span class="divider">/</span></li>
+    <%block name="innav" />
   </ul>
 
   <div id="instance-base">
-	<%block name="submain"/>
+    <%block name="submain"/>
   </div>
 </div>
 

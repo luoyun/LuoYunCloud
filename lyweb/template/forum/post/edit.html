@@ -21,17 +21,17 @@
 
 <div class="container-fluid">
   <form method="POST">${ xsrf_form_html() }
-	% if REPLY_POST:
-	<div class="well post-item">
-	  <p>@ <a href="${ reverse_url('user:view') }?id=${ REPLY_POST.user_id }">${ REPLY_POST.user.username }</a></p>
-	  <div>${ REPLY_POST.body_html }</div>
-	</div>
-	% endif
+    % if REPLY_POST:
+    <div class="well post-item">
+      <p>@ <a href="${ reverse_url('user:view') }?id=${ REPLY_POST.user_id }">${ REPLY_POST.user.username }</a></p>
+      <div>${ REPLY_POST.body_html }</div>
+    </div>
+    % endif
 
-	${ form.body() }
-	${ form.html_errors( form.body.errors ) }
-	<br>
-	<button type="submit" class="btn">${ _("Submit") }</button>
+    ${ form.body() }
+    ${ form.html_errors( form.body.errors ) }
+    <br>
+    <button type="submit" class="btn">${ _("Submit") }</button>
   </form>
 </div>
 

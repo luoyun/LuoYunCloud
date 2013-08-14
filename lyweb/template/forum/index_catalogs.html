@@ -24,10 +24,10 @@
           <div class="summary muted">${ C.summary }</div>
           % if C.managers:
           <p>
-	        ${ _("Moderators") }
-	        % for U in C.managers:
-	        <a href="${ reverse_url('user:view') }?id=${ U.id }">${ U.nickname }</a>
-	        % endfor
+            ${ _("Moderators") }
+            % for U in C.managers:
+            <a href="${ reverse_url('user:view') }?id=${ U.id }">${ U.nickname }</a>
+            % endfor
           </p>
           % endif
           % if can_add_topic(C):

@@ -13,31 +13,31 @@
 
 <div class="container-fluid">
   <form class="form-horizontal" method="POST">${ xsrf_form_html() }
-	<div class="control-group">
-	  <label class="control-label" for="name">${ _("Name") }</label>
-	  <div class="controls">
-		${ form.name() }
-		${ form.html_errors( form.name.errors ) }
-	  </div>
-	</div>
+    <div class="control-group">
+      <label class="control-label" for="name">${ _("Name") }</label>
+      <div class="controls">
+        ${ form.name() }
+        ${ form.html_errors( form.name.errors ) }
+      </div>
+    </div>
 
-	<div class="control-group">
-	  <label class="control-label" for="summary">${ _("Summary") }</label>
-	  <div class="controls">
-		${ form.summary() }
-		${ form.html_errors( form.summary.errors ) }
-	  </div>
-	</div>
+    <div class="control-group">
+      <label class="control-label" for="summary">${ _("Summary") }</label>
+      <div class="controls">
+        ${ form.summary() }
+        ${ form.html_errors( form.summary.errors ) }
+      </div>
+    </div>
 
-	<div class="control-group">
-	  <label class="control-label" for="description">${ _("Description") }</label>
-	  <div class="controls">
-		${ form.description() }
-		${ form.html_errors( form.description.errors ) }
-		<br>
-		<button type="submit" class="btn">${ _("Submit") }</button>
-	  </div>
-	</div>
+    <div class="control-group">
+      <label class="control-label" for="description">${ _("Description") }</label>
+      <div class="controls">
+        ${ form.description() }
+        ${ form.html_errors( form.description.errors ) }
+        <br>
+        <button type="submit" class="btn">${ _("Submit") }</button>
+      </div>
+    </div>
   </form>
 </div>
 

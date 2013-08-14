@@ -4,10 +4,10 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Edit Resource") }</legend>
-	  ${ form.type.label } ${ form.type() }
-	  ${ form.html_errors(form.type.errors) }
+    <fieldset>
+      <legend>${ _("Edit Resource") }</legend>
+      ${ form.type.label } ${ form.type() }
+      ${ form.html_errors(form.type.errors) }
 
       ${ form.size.label } ${ form.size() }<br/>
       ${ form.html_errors(form.size.errors) }
@@ -17,9 +17,9 @@
 
       ${ form.expired_date.label } ${ form.expired_date() }<br/>
       ${ form.html_errors(form.expired_date.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      <br>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 
 </div>

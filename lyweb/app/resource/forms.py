@@ -1,6 +1,6 @@
 from yweb.forms import Form
 from wtforms import validators, DateTimeField, IntegerField, \
-	 SelectField
+     SelectField
 
 
 class ResourceForm(Form):

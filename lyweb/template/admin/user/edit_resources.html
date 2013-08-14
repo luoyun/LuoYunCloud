@@ -10,8 +10,8 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Edit User Resources") }</legend>
+    <fieldset>
+      <legend>${ _("Edit User Resources") }</legend>
       ${ form.memory.label } ${ form.memory() }<br/>
       ${ form.html_errors(form.memory.errors) }
 
@@ -24,8 +24,8 @@
       ${ form.storage.label } ${ form.storage() }<br/>
       ${ form.html_errors(form.storage.errors) }
 
-	  <button type="submit" class="btn">${ _("Save") }</button>
-	</fieldset>
+      <button type="submit" class="btn">${ _("Save") }</button>
+    </fieldset>
   </form>
 </div>
 

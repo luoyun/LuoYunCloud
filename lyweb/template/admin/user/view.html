@@ -10,53 +10,53 @@
 
 <div class="ly-item-body">
   <table class="table table-striped">
-	<tbody>
-	  <tr>
-		<td>${ _("Username") }</td>
-		<td>${ USER.username }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("ID") }</td>
-		<td>${ USER.id }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Date Joined") }</td>
-		<td>${ ftime(USER.date_joined) }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Last Login") }</td>
-		<td>${ ftime(USER.last_login) }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Last Active") }</td>
-		<td>${ htime(USER.last_active) }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Email") }</td>
-		<td>${ USER.email }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Language") }</td>
-		<td>${ USER.language.name }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Appliances") }</td>
-		<td>
-		  % if USER.appliances:
-		  <a href="${ reverse_url('admin:appliance') }?uid=${ USER.id }">${ len(USER.appliances) }</a>
-		  % endif
-		</td>
-	  </tr>
+    <tbody>
+      <tr>
+        <td>${ _("Username") }</td>
+        <td>${ USER.username }</td>
+      </tr>
+      <tr>
+        <td>${ _("ID") }</td>
+        <td>${ USER.id }</td>
+      </tr>
+      <tr>
+        <td>${ _("Date Joined") }</td>
+        <td>${ ftime(USER.date_joined) }</td>
+      </tr>
+      <tr>
+        <td>${ _("Last Login") }</td>
+        <td>${ ftime(USER.last_login) }</td>
+      </tr>
+      <tr>
+        <td>${ _("Last Active") }</td>
+        <td>${ htime(USER.last_active) }</td>
+      </tr>
+      <tr>
+        <td>${ _("Email") }</td>
+        <td>${ USER.email }</td>
+      </tr>
+      <tr>
+        <td>${ _("Language") }</td>
+        <td>${ USER.language.name }</td>
+      </tr>
+      <tr>
+        <td>${ _("Appliances") }</td>
+        <td>
+          % if USER.appliances:
+          <a href="${ reverse_url('admin:appliance') }?uid=${ USER.id }">${ len(USER.appliances) }</a>
+          % endif
+        </td>
+      </tr>
 
-	  <tr>
-		<td>${ _("Instances") }</td>
-		<td>
-		  % if USER.instances:
-		  <a href="${ reverse_url('admin:instance') }?uid=${ USER.id }">${ len(USER.instances) }</a>
-		  % endif
-		</td>
-	  </tr>
-	</tbody>
+      <tr>
+        <td>${ _("Instances") }</td>
+        <td>
+          % if USER.instances:
+          <a href="${ reverse_url('admin:instance') }?uid=${ USER.id }">${ len(USER.instances) }</a>
+          % endif
+        </td>
+      </tr>
+    </tbody>
   </table>
 </div>
 
@@ -66,94 +66,94 @@
 
   <h3>${ _("User Resource Used Information") }</h3>
   <table class="table table-bordered table-striped">
-	<thead>
-	  <tr>
-		<th colspan="2">${ _("CPU") }</th>
-		<th colspan="2">${ _("Memory") }</th>
-		<th colspan="2">${ _("Storage") }</th>
-		<th colspan="2">${ _("Instance") }</th>
-		<th colspan="2">${ _("Bandwidth") }</th>
-	  </tr>
-	</thead>
-	<tbody>
-	  <tr>
-		<td>${ resource_total["cpu"] } ${ _("core") }</td>
-		<td>${ resource_used["cpu"] } ${ _("core") }</td>
-		<td>${ resource_total["memory"] } M</td>
-		<td>${ resource_used["memory"] } M</td>
-		<td>${ resource_total["storage"] } G</td>
-		<td>${ resource_used["storage"] } G</td>
-		<td>${ resource_total["instance"] }</td>
-		<td>${ resource_used["instance"] }</td>
-		<td></td>
-		<td></td>
-	  </tr>
-	</tbody>
+    <thead>
+      <tr>
+        <th colspan="2">${ _("CPU") }</th>
+        <th colspan="2">${ _("Memory") }</th>
+        <th colspan="2">${ _("Storage") }</th>
+        <th colspan="2">${ _("Instance") }</th>
+        <th colspan="2">${ _("Bandwidth") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>${ resource_total["cpu"] } ${ _("core") }</td>
+        <td>${ resource_used["cpu"] } ${ _("core") }</td>
+        <td>${ resource_total["memory"] } M</td>
+        <td>${ resource_used["memory"] } M</td>
+        <td>${ resource_total["storage"] } G</td>
+        <td>${ resource_used["storage"] } G</td>
+        <td>${ resource_total["instance"] }</td>
+        <td>${ resource_used["instance"] }</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
   </table>
 
   <h3>${ _("Static Resource") }</h3>
   <table class="table table-bordered table-striped">
-	<thead>
-	  <tr>
-		<th>${ _("CPU") }</th>
-		<th>${ _("Memory") }</th>
-		<th>${ _("Storage") }</th>
-		<th>${ _("Instance") }</th>
-		<th>${ _("Bandwidth") }</th>
-	  </tr>
-	</thead>
-	<tbody>
-	  <tr>
-		<td>${ USER.profile.cpu } ${ _("core") }</td>
-		<td>${ USER.profile.memory } M</td>
-		<td>${ USER.profile.storage } G</td>
-		<td>${ USER.profile.instance }</td>
-		<td>
-		  % if USER.profile.bandwidth:
-		  ${ USER.profile.bandwidth }
-		  % endif
-		</td>
-	  </tr>
-	</tbody>
+    <thead>
+      <tr>
+        <th>${ _("CPU") }</th>
+        <th>${ _("Memory") }</th>
+        <th>${ _("Storage") }</th>
+        <th>${ _("Instance") }</th>
+        <th>${ _("Bandwidth") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>${ USER.profile.cpu } ${ _("core") }</td>
+        <td>${ USER.profile.memory } M</td>
+        <td>${ USER.profile.storage } G</td>
+        <td>${ USER.profile.instance }</td>
+        <td>
+          % if USER.profile.bandwidth:
+          ${ USER.profile.bandwidth }
+          % endif
+        </td>
+      </tr>
+    </tbody>
   </table>
 
   <h3>${ _("Dynamic Resource") }</h3>
 
   % if USER.resources:
   <table class="table table-bordered table-striped">
-	<thead>
-	  <tr>
-		<th>ID</th>
-		<th>${ _("Type") }</th>
-		<th>${ _("Size") }</th>
-		<th>${ _("Effect Date") }</th>
-		<th>${ _("Expired Date") }</th>
-		<th></th>
-	  </tr>
-	</thead>
-	<tbody>
-	  % for R in USER.resources:
-	  <tr class="${ R.contextual_class }">
-		<td>${ R.id }</td>
-		<td>${ R.type_str }</td>
-		<td>${ R.size_str }</td>
-		<td>${ ftime(R.effect_date) }</td>
-		<td>${ ftime(R.expired_date) }</td>
-		<td>
-		  <i class="icon-edit"></i> <a href="${ reverse_url('admin:resource:edit') }?id=${ R.id }&next_url=${ reverse_url('admin:user:view') }?id=${ USER.id }">${ _("Edit") }</a>
-		  <i class="icon-trash"></i> <a href="${ reverse_url('admin:resource:delete') }?id=${ R.id }&next_url=${ reverse_url('admin:user:view') }?id=${ USER.id }">${ _("Delete") }</a>
-		</td>
-	  </tr>
-	  % endfor
-	</tbody>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>${ _("Type") }</th>
+        <th>${ _("Size") }</th>
+        <th>${ _("Effect Date") }</th>
+        <th>${ _("Expired Date") }</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      % for R in USER.resources:
+      <tr class="${ R.contextual_class }">
+        <td>${ R.id }</td>
+        <td>${ R.type_str }</td>
+        <td>${ R.size_str }</td>
+        <td>${ ftime(R.effect_date) }</td>
+        <td>${ ftime(R.expired_date) }</td>
+        <td>
+          <i class="icon-edit"></i> <a href="${ reverse_url('admin:resource:edit') }?id=${ R.id }&next_url=${ reverse_url('admin:user:view') }?id=${ USER.id }">${ _("Edit") }</a>
+          <i class="icon-trash"></i> <a href="${ reverse_url('admin:resource:delete') }?id=${ R.id }&next_url=${ reverse_url('admin:user:view') }?id=${ USER.id }">${ _("Delete") }</a>
+        </td>
+      </tr>
+      % endfor
+    </tbody>
   </table>
   % else:
   <p class="text-warning"><i class="icon-warning-sign"></i> ${ _("User have no dynamic resources.") }</p>
   % endif
 
   <p>
-	<a class="btn btn-primary" href="${ reverse_url('admin:user:resource:simple_add') }?id=${ USER.id }"><i class="icon-plus-sign"></i> ${ _("Simple Add Dynamic Resource") }</a>
-	<a class="btn" href="${ reverse_url('admin:user:resource:add') }?id=${ USER.id }"><i class="icon-plus-sign"></i> ${ _("Add Dynamic Resource") }</a>
+    <a class="btn btn-primary" href="${ reverse_url('admin:user:resource:simple_add') }?id=${ USER.id }"><i class="icon-plus-sign"></i> ${ _("Simple Add Dynamic Resource") }</a>
+    <a class="btn" href="${ reverse_url('admin:user:resource:add') }?id=${ USER.id }"><i class="icon-plus-sign"></i> ${ _("Add Dynamic Resource") }</a>
   </p>
 
 </div>
@@ -166,26 +166,26 @@
 
   % if USER.groups:
   <table class="table">
-	<thead>
-	  <tr>
-		<th>${ _("Group") }</th>
-		<th>${ _("Permissions") }</th>
-	  </tr>
-	</thead>
-	<tbody>
-	  % for G in USER.groups:
-	  <tr>
-		<td><a href="${reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></td>
-		<td>
-		  <ul>
-			% for P in G.permissions:
-			<li><a href="${ reverse_url('admin:permission') }?id=${ P.id }">${ P.codename }</a></li>
-			% endfor
-		  </ul>
-		</td>
-	  </tr>
-	  % endfor
-	</tbody>
+    <thead>
+      <tr>
+        <th>${ _("Group") }</th>
+        <th>${ _("Permissions") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for G in USER.groups:
+      <tr>
+        <td><a href="${reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></td>
+        <td>
+          <ul>
+            % for P in G.permissions:
+            <li><a href="${ reverse_url('admin:permission') }?id=${ P.id }">${ P.codename }</a></li>
+            % endfor
+          </ul>
+        </td>
+      </tr>
+      % endfor
+    </tbody>
   </table>
   % else:
   <p>${ _("User has no group!") }</p>

@@ -27,54 +27,54 @@
   <form class="form-horizontal" method="POST">${ xsrf_form_html() }
 
 % if CATALOG:
-	<div style="display: none;">
-	  ${ form.catalog.label } ${ form.catalog() }
-	  ${ form.html_errors( form.catalog.errors ) }
-	</div>
+    <div style="display: none;">
+      ${ form.catalog.label } ${ form.catalog() }
+      ${ form.html_errors( form.catalog.errors ) }
+    </div>
 % else:
-	<div class="control-group">
-	  <label class="control-label" for="catalog">${ _("Catalogs") }</label>
-	  <div class="controls">
-		${ form.catalog() }
-		${ form.html_errors(form.catalog.errors) }
-	  </div>
-	</div>
+    <div class="control-group">
+      <label class="control-label" for="catalog">${ _("Catalogs") }</label>
+      <div class="controls">
+        ${ form.catalog() }
+        ${ form.html_errors(form.catalog.errors) }
+      </div>
+    </div>
 % endif
 
-	<div class="control-group">
-	  <label class="control-label" for="name">${ _("Title") }</label>
-	  <div class="controls">
-		${ form.name() }
-		${ form.html_errors( form.name.errors ) }
-	  </div>
-	</div>
+    <div class="control-group">
+      <label class="control-label" for="name">${ _("Title") }</label>
+      <div class="controls">
+        ${ form.name() }
+        ${ form.html_errors( form.name.errors ) }
+      </div>
+    </div>
 
-	<div class="control-group">
-	  <label class="control-label" for="summary">${ _("Summary") }</label>
-	  <div class="controls">
-		${ form.summary() }
-		${ form.html_errors( form.summary.errors ) }
-	  </div>
-	</div>
+    <div class="control-group">
+      <label class="control-label" for="summary">${ _("Summary") }</label>
+      <div class="controls">
+        ${ form.summary() }
+        ${ form.html_errors( form.summary.errors ) }
+      </div>
+    </div>
 
-	<div class="control-group">
-	  <label class="control-label" for="tag">${ _("Tags") }</label>
-	  <div class="controls">
-		${ form.tag() }
-		${ form.html_errors( form.tag.errors ) }
-	  </div>
-	</div>
+    <div class="control-group">
+      <label class="control-label" for="tag">${ _("Tags") }</label>
+      <div class="controls">
+        ${ form.tag() }
+        ${ form.html_errors( form.tag.errors ) }
+      </div>
+    </div>
 
-	<div class="control-group">
-	  <label class="control-label" for="body">${ _("Body") }</label>
-	  <div class="controls">
-		${ form.body() }
-		${ form.html_errors( form.body.errors ) }
+    <div class="control-group">
+      <label class="control-label" for="body">${ _("Body") }</label>
+      <div class="controls">
+        ${ form.body() }
+        ${ form.html_errors( form.body.errors ) }
 
-		<br>
-		<button type="submit" class="btn">${ _("Submit") }</button>
-	  </div>
-	</div>
+        <br>
+        <button type="submit" class="btn">${ _("Submit") }</button>
+      </div>
+    </div>
   </form>
 </div>
 

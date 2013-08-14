@@ -72,12 +72,12 @@
         <td>${ NODE.updated }</td>
       </tr>
       <tr>
-	<td>${ _("Instances") }</td>
+    <td>${ _("Instances") }</td>
         <td>
-	  % if len(NODE.instances):
-	  <a href="${ reverse_url('admin:instance') }?node=${ NODE.id }" target="_blank">${ len(NODE.instances) }</a>
-	  % endif
-	</td>
+      % if len(NODE.instances):
+      <a href="${ reverse_url('admin:instance') }?node=${ NODE.id }" target="_blank">${ len(NODE.instances) }</a>
+      % endif
+    </td>
       </tr>
     </tbody>
   </table>

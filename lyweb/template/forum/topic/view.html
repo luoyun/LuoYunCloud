@@ -25,64 +25,64 @@
     %endif
 
     <div class="topic-body">${ TOPIC.body_html }</div>
-	<div class="topic-footer-actions text-right">
-	  <span class="vote">
-		<span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=1"><img src="${ theme_url('img/like.png') }" /></span>
-		<span class="like count">${ TOPIC.like }</span>
-	  </span>
-	  <span class="vote">
-		<span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=-1"><img src="${ theme_url('img/unlike.png') }" /></span>
-		<span class="unlike count">${ TOPIC.unlike }</span>
-	  </span>
-	  <span class="reply">
-		<a class="btn btn-primary" href="#reply-topic"><i class="icon-reply"></i> ${ _("I Want To Say") }</a>
-	  </span>
-	</div>
+    <div class="topic-footer-actions text-right">
+      <span class="vote">
+        <span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=1"><img src="${ theme_url('img/like.png') }" /></span>
+        <span class="like count">${ TOPIC.like }</span>
+      </span>
+      <span class="vote">
+        <span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=-1"><img src="${ theme_url('img/unlike.png') }" /></span>
+        <span class="unlike count">${ TOPIC.unlike }</span>
+      </span>
+      <span class="reply">
+        <a class="btn btn-primary" href="#reply-topic"><i class="icon-reply"></i> ${ _("I Want To Say") }</a>
+      </span>
+    </div>
 
   </div>
 
   <div class="span3 topic-view-sidebar">
-	<div class="account-logo">
-	  <div><a href="${ reverse_url('user:view') }?id=${ TOPIC.user_id }"><img class="img-circle" src="${ TOPIC.user.avatar_url }" /></a></div>
-	  <div><a class="user" href="${ reverse_url('user:view') }?id=${ TOPIC.user_id }">${ TOPIC.user.username }</a></div>
-	</div>
-
-	<div class="topic-time-info">
-	  <div><strong>${ _("Created") }</strong>
-		${ ftime(TOPIC.created) }</div>
-	  <div><strong>${ _("Updated") }</strong>
-		${ ftime(TOPIC.updated) }</div>
+    <div class="account-logo">
+      <div><a href="${ reverse_url('user:view') }?id=${ TOPIC.user_id }"><img class="img-circle" src="${ TOPIC.user.avatar_url }" /></a></div>
+      <div><a class="user" href="${ reverse_url('user:view') }?id=${ TOPIC.user_id }">${ TOPIC.user.username }</a></div>
     </div>
 
-	<div class="row-fluid text-center topic-statistics">
-	  <div class="span3 divider vote">
-		<span class="like count">${ TOPIC.like }</span><br>
-		<span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=1"><img src="${ theme_url('img/like.png') }" /></span>
-	  </div>
-	  <div class="span3 divider vote">
-		<span class="unlike count">${ TOPIC.unlike }</span><br>
-		<span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=-1"><img src="${ theme_url('img/unlike.png') }" /></span>
-	  </div>
-	  <div class="span3 post-count divider"><span class="count">${ len(TOPIC.posts) }</span><br>
-		<a href="#reply-topic"><i class="icon-reply"></i> ${ _("Reply") }</a></div>
-	  <div class="span3 view-count"><span class="count">${ TOPIC.visit }</span><br>${ _("Views") }</div>
-	</div>
+    <div class="topic-time-info">
+      <div><strong>${ _("Created") }</strong>
+        ${ ftime(TOPIC.created) }</div>
+      <div><strong>${ _("Updated") }</strong>
+        ${ ftime(TOPIC.updated) }</div>
+    </div>
+
+    <div class="row-fluid text-center topic-statistics">
+      <div class="span3 divider vote">
+        <span class="like count">${ TOPIC.like }</span><br>
+        <span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=1"><img src="${ theme_url('img/like.png') }" /></span>
+      </div>
+      <div class="span3 divider vote">
+        <span class="unlike count">${ TOPIC.unlike }</span><br>
+        <span class="vote-opt" data-url="${ reverse_url('forum:topic:vote') }?id=${ TOPIC.id }&vote=-1"><img src="${ theme_url('img/unlike.png') }" /></span>
+      </div>
+      <div class="span3 post-count divider"><span class="count">${ len(TOPIC.posts) }</span><br>
+        <a href="#reply-topic"><i class="icon-reply"></i> ${ _("Reply") }</a></div>
+      <div class="span3 view-count"><span class="count">${ TOPIC.visit }</span><br>${ _("Views") }</div>
+    </div>
 
     %if TOPIC.tags:
-	<div class="topic-tags">
-	  <h3><i class="icon-tags"></i> ${ _("Tags") }</h3>
+    <div class="topic-tags">
+      <h3><i class="icon-tags"></i> ${ _("Tags") }</h3>
       <div class="tags">
-		%for T in TOPIC.tags:
-		<a class="tag" href="${ reverse_url('forum:tag:view') }?id=${ T.id }">${ T.name }</a> x <span class="hit">${ T.hit }</span><br>
-		%endfor
+        %for T in TOPIC.tags:
+        <a class="tag" href="${ reverse_url('forum:tag:view') }?id=${ T.id }">${ T.name }</a> x <span class="hit">${ T.hit }</span><br>
+        %endfor
       </div>
-	</div>
+    </div>
     %endif
 
-	% if ( current_user and TOPIC.user_id == current_user.id ) or has_permission('admin'):
-	<p><a  class="btn" href="${ reverse_url('forum:topic:edit') }?id=${ TOPIC.id }"><i class="icon-edit"></i> ${ _("Edit") }</a></p>
-##	<p><a class="btn btn-danger" href=""><i class="icon-trash"></i> ${ _("Delete") }</a></p>
-	% endif
+    % if ( current_user and TOPIC.user_id == current_user.id ) or has_permission('admin'):
+    <p><a  class="btn" href="${ reverse_url('forum:topic:edit') }?id=${ TOPIC.id }"><i class="icon-edit"></i> ${ _("Edit") }</a></p>
+##    <p><a class="btn btn-danger" href=""><i class="icon-trash"></i> ${ _("Delete") }</a></p>
+    % endif
 
   </div>
 
@@ -94,57 +94,57 @@
   <div class="posts">
     %for INDEX, P in enumerate(POSTS):
     <div class="post-item row-fluid">
-	  <div class="span9 post-view-sidemain">
+      <div class="span9 post-view-sidemain">
 
-		<p class="muted">${ _("Posted at ") } ${ ftime(P.updated) } (${ htime(P.updated) })</p>
+        <p class="muted">${ _("Posted at ") } ${ ftime(P.updated) } (${ htime(P.updated) })</p>
 
-		<% PP = get_post_parent(P) %>
-		% if PP:
-		<div class="accordion-group">
-		  <div class="accordion-heading">
-			<a class="accordion-toggle" data-toggle="collapse" href="#collapse-${ INDEX }">
-			  @ ${ PP.user.username }
-			</a>
-		  </div>
-		  <div id="collapse-${ INDEX }" class="accordion-body collapse">
-			<div class="accordion-inner">
-			  <p>
-				${ ftime(PP.updated) }
-				${ _("by ") } <a href="${ reverse_url('user:view') }?id=${ PP.user_id }">${ PP.user.username }</a>
-			  </p>
-			  ${ PP.body_html }
-			</div>
-		  </div>
-		</div>
+        <% PP = get_post_parent(P) %>
+        % if PP:
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" href="#collapse-${ INDEX }">
+              @ ${ PP.user.username }
+            </a>
+          </div>
+          <div id="collapse-${ INDEX }" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <p>
+                ${ ftime(PP.updated) }
+                ${ _("by ") } <a href="${ reverse_url('user:view') }?id=${ PP.user_id }">${ PP.user.username }</a>
+              </p>
+              ${ PP.body_html }
+            </div>
+          </div>
+        </div>
 
-		% endif
-		<div class="body">${ P.body_html }</div>
-		<div class="post-footer-actions text-right">
-		  <span class="vote">
-			<span class="vote-opt" data-url="${ reverse_url('forum:post:vote') }?id=${ P.id }&vote=1"><img src="${ theme_url('img/like.png') }" /></span>
-			<span class="like count">${ P.like }</span>
-		  </span>
-		  <span class="vote">
-			<span class="vote-opt" data-url="${ reverse_url('forum:post:vote') }?id=${ P.id }&vote=-1"><img src="${ theme_url('img/unlike.png') }" /></span>
-			<span class="unlike count">${ P.unlike }</span>
-		  </span>
-		  % if current_user and P.user_id == current_user.id:
-		  <a href="${ reverse_url('forum:post:edit') }?id=${ P.id }"><i class="icon-edit"></i> ${ _("Edit") }</a>
-		  % else:
-		  <a href="${ reverse_url('forum:post:reply') }?id=${ P.id }"><i class="icon-reply"></i> ${ _("Reply Post") }</a>
-		  % endif
-		</div>
-	  </div>
+        % endif
+        <div class="body">${ P.body_html }</div>
+        <div class="post-footer-actions text-right">
+          <span class="vote">
+            <span class="vote-opt" data-url="${ reverse_url('forum:post:vote') }?id=${ P.id }&vote=1"><img src="${ theme_url('img/like.png') }" /></span>
+            <span class="like count">${ P.like }</span>
+          </span>
+          <span class="vote">
+            <span class="vote-opt" data-url="${ reverse_url('forum:post:vote') }?id=${ P.id }&vote=-1"><img src="${ theme_url('img/unlike.png') }" /></span>
+            <span class="unlike count">${ P.unlike }</span>
+          </span>
+          % if current_user and P.user_id == current_user.id:
+          <a href="${ reverse_url('forum:post:edit') }?id=${ P.id }"><i class="icon-edit"></i> ${ _("Edit") }</a>
+          % else:
+          <a href="${ reverse_url('forum:post:reply') }?id=${ P.id }"><i class="icon-reply"></i> ${ _("Reply Post") }</a>
+          % endif
+        </div>
+      </div>
 
-	  <div class="span3 post-view-sidebar">
-		<div>
-		  ${ P.user.avatar_mini } <a href="${ reverse_url('user:view') }?id=${ P.user_id }">${ P.user.username }</a> 
-		</div>
+      <div class="span3 post-view-sidebar">
+        <div>
+          ${ P.user.avatar_mini } <a href="${ reverse_url('user:view') }?id=${ P.user_id }">${ P.user.username }</a> 
+        </div>
 
-		% if has_permission('admin'):
-		<p><a class="btn btn-danger" href="${ reverse_url('forum:post:edit') }?id=${ P.id }"><i class="icon-edit"></i> ${ _("Edit") }</a></p>
-		% endif
-	  </div>
+        % if has_permission('admin'):
+        <p><a class="btn btn-danger" href="${ reverse_url('forum:post:edit') }?id=${ P.id }"><i class="icon-edit"></i> ${ _("Edit") }</a></p>
+        % endif
+      </div>
 
     </div>
     %endfor

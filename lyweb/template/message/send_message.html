@@ -11,16 +11,16 @@
 
   <div class="full-tbform">
     <form method="POST">${ xsrf_form_html() }
-	  ${ form.to.label } ${ form.to() }
-	  ${ form.html_errors( form.to.errors ) }
+      ${ form.to.label } ${ form.to() }
+      ${ form.html_errors( form.to.errors ) }
 
-	  ${ form.subject.label } ${ form.subject() }
-	  ${ form.html_errors( form.subject.errors ) }
+      ${ form.subject.label } ${ form.subject() }
+      ${ form.html_errors( form.subject.errors ) }
 
-	  ${ form.text.label } ${ form.text() }
-	  ${ form.html_errors( form.text.errors ) }
+      ${ form.text.label } ${ form.text() }
+      ${ form.html_errors( form.text.errors ) }
 
-	  <button type="submit" class="btn">${ _("Submit") }</button>
+      <button type="submit" class="btn">${ _("Submit") }</button>
     </form>
   </div>
 

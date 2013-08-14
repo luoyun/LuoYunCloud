@@ -29,12 +29,12 @@
       <tr>
         <td>${ T.id }</td>
         <td>
-	  %if T.whois:
-	  <a href="${ reverse_url('admin:user') }?id=${ T.who_id }">${ T.whois }</a>
-	  %else:
-	  ${ T.who_id }
-	  %endif
-	</td>
+      %if T.whois:
+      <a href="${ reverse_url('admin:user') }?id=${ T.who_id }">${ T.whois }</a>
+      %else:
+      ${ T.who_id }
+      %endif
+    </td>
         <td>${ T.comefrom }</td>
         <td>${ T.do }</td>
         <td>${ T.target_type }</td>

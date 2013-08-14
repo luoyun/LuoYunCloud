@@ -19,41 +19,41 @@
   <table class="table table-striped">
     <thead>
       <tr>
-		<th>${ _("ID") }</th>
-		% if not gateway:
-		<th>${ _("Gateway") }</th>
-		% endif
-		<th>${ _("Gateway Port") }</th>
-		<th>${ _("Instance") }</th>
-		<th>${ _("Instance IP") }</th>
-		<th>${ _("Instance Port") }</th>
-		<th>${ _("Updated") }</th>
+        <th>${ _("ID") }</th>
+        % if not gateway:
+        <th>${ _("Gateway") }</th>
+        % endif
+        <th>${ _("Gateway Port") }</th>
+        <th>${ _("Instance") }</th>
+        <th>${ _("Instance IP") }</th>
+        <th>${ _("Instance Port") }</th>
+        <th>${ _("Updated") }</th>
       </tr>
     </thead>
     <tbody>
       %for P in portmapping_list:
       <tr>
-		<td>${ P.id }</td>
-		%if not gateway:
-		<td>${ P.gateway.name }</td>
-		%endif
-		<td>${ P.gateway_port }</td>
-		<td>
-		  % if P.ip and P.ip.instance_id:
-		  <a href="${ reverse_url('admin:instance:view') }?id=${ P.ip.instance_id }">${ P.ip.instance.name }</a>
-		  % endif
-		</td>
-		<td>
-		  % if P.ip:
-		  ${ P.ip.ip }
-		  % endif
-		</td>
-		<td>
-		  % if P.ip_port:
-		  ${ P.ip_port }
-		  % endif
-		</td>
-		<td>${ ftime(P.updated) }</td>
+        <td>${ P.id }</td>
+        %if not gateway:
+        <td>${ P.gateway.name }</td>
+        %endif
+        <td>${ P.gateway_port }</td>
+        <td>
+          % if P.ip and P.ip.instance_id:
+          <a href="${ reverse_url('admin:instance:view') }?id=${ P.ip.instance_id }">${ P.ip.instance.name }</a>
+          % endif
+        </td>
+        <td>
+          % if P.ip:
+          ${ P.ip.ip }
+          % endif
+        </td>
+        <td>
+          % if P.ip_port:
+          ${ P.ip_port }
+          % endif
+        </td>
+        <td>${ ftime(P.updated) }</td>
       </tr>
       %endfor
     </tbody>

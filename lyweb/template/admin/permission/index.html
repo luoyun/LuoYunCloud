@@ -24,15 +24,15 @@
         <td>${ P.id }</td>
         <td>${ P.codename }</td>
         <td>${ P.name }</td>
-	<td>
-	  % if P.groups:
-	  <ul>
-	    % for G in P.groups:
-	    <li><a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></li>
-	    % endfor
-	  </ul>
-	  % endif
-	</td>
+    <td>
+      % if P.groups:
+      <ul>
+        % for G in P.groups:
+        <li><a href="${ reverse_url('admin:group') }?id=${ G.id }">${ G.name }</a></li>
+        % endfor
+      </ul>
+      % endif
+    </td>
       </tr>
       % endfor
     </tbody>

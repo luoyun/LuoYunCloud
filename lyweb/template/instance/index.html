@@ -9,45 +9,45 @@
 <div id="instance-list">
 
   <div class="the-select">
-	<div class="row-fluid">
+    <div class="row-fluid">
       <ul class="span3 nav">
-		<li class="t">${ _("Instance Status") }</li>
-		<li><select id="sort-by-status">
-			<option value="all">${ _("All") }</option>
-			<option value="running">${ _("Running") }</option>
-			<option value="stoped">${ _("Stoped") }</option>
-		  </select>
-		</li>
+        <li class="t">${ _("Instance Status") }</li>
+        <li><select id="sort-by-status">
+            <option value="all">${ _("All") }</option>
+            <option value="running">${ _("Running") }</option>
+            <option value="stoped">${ _("Stoped") }</option>
+          </select>
+        </li>
       </ul>
 
       % if current_user:
       <ul class="select-module span3 nav">
-		<li class="t">${ _("View") }</li>
-		<li><select id="sort-by-view">
-			<option value="all">${ _("All Public") }</option>
-			<option value="self">${ _("My Public") }</option>
-		  </select>
-		</li>
+        <li class="t">${ _("View") }</li>
+        <li><select id="sort-by-view">
+            <option value="all">${ _("All Public") }</option>
+            <option value="self">${ _("My Public") }</option>
+          </select>
+        </li>
       </ul>
       % endif
 
       <ul class="select-module span3 nav">
-		<li class="t">${ _("Selection") }</li>
-		<li><select id="sort-by-what">
-			<option value="updated">${ _("Updated") }</option>
-			<option value="created">${ _("Created") }</option>
-			<option value="user">${ _("User") }</option>
-		</select></li>
+        <li class="t">${ _("Selection") }</li>
+        <li><select id="sort-by-what">
+            <option value="updated">${ _("Updated") }</option>
+            <option value="created">${ _("Created") }</option>
+            <option value="user">${ _("User") }</option>
+        </select></li>
       </ul>
 
       <ul class="select-module span3 nav">
-		<li>${ _("Order") }</li>
-		<li><select id="sort-order">
-			<option value="1">${ _("Descending") }</option>
-			<option value="0">${ _("Ascending") }</option>
-		</select></li>
+        <li>${ _("Order") }</li>
+        <li><select id="sort-order">
+            <option value="1">${ _("Descending") }</option>
+            <option value="0">${ _("Ascending") }</option>
+        </select></li>
       </ul>
-	</div>
+    </div>
   </div>
 
   <div class="the-list">
@@ -57,17 +57,17 @@
     % endif
 
     <% count = 0 %>
-	<div class="row-fluid">
+    <div class="row-fluid">
     % for I in INSTANCE_LIST:
 
     <div class="span2 instance">
       <div class="logo"><a href="${ reverse_url('instance:view') }?id=${ I.id }"><img src="${ I.logourl }" /></a></div>
       <div class="name"><a href="${ reverse_url('instance:view') }?id=${ I.id }">${ I.name }</a></div>
-	  <dl class="dl-horizontal">
-		<dt>${ _("User") }</dt>
-		<dd><a href="${ reverse_url('user:view') }?id=${ I.user_id }">${ I.user.username }</a></dd>
-	  </dl>
-	  <div class="status">${ I.status_icon }</div>
+      <dl class="dl-horizontal">
+        <dt>${ _("User") }</dt>
+        <dd><a href="${ reverse_url('user:view') }?id=${ I.user_id }">${ I.user.username }</a></dd>
+      </dl>
+      <div class="status">${ I.status_icon }</div>
     </div>
 
     % if count % 6 == 5:
@@ -75,7 +75,7 @@
     % endif
     <% count += 1 %>
     % endfor
-	</div>
+    </div>
     ${ page_html }
   </div>
 

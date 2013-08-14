@@ -11,14 +11,14 @@
 
   <div class="span3">
 
-	<div>
+    <div>
       <img class="ly-logo-large" src="${ APPLIANCE.logourl }"/>
-	</div>
+    </div>
 
     <br>
     <div>
       <a class="btn btn-primary" href="${ reverse_url('admin:appliance:edit') }?id=${ APPLIANCE.id }"><i class="icon-edit"></i> ${ _("Edit") }</a>
-	  <a class="btn" href="${ APPLIANCE.download_url }" target="_blank">${ _("Download") }</a>
+      <a class="btn" href="${ APPLIANCE.download_url }" target="_blank">${ _("Download") }</a>
       <a class="btn btn-danger" href="${ reverse_url('appliance:delete', APPLIANCE.id) }" onclick="deleteApplianceConfirm( this ); return false;">${ _("Delete") }</a>
     </div>
 
@@ -26,79 +26,79 @@
 
   <div class="span9">
 
-	<div class="ly-item-title">${ _("Base Information") }</div>
+    <div class="ly-item-title">${ _("Base Information") }</div>
 
-	<div class="ly-item-body">
+    <div class="ly-item-body">
       <table class="table table-bordered table-striped">
-		<tbody>
-		  <tr>
-			<th>${ _("ID") }</th>
-			<td>${ APPLIANCE.id }</td>
-		  </tr>
-		  <tr>
-			<th>${ _("Name") }</th>
-			<td>${ APPLIANCE.name }</td>
-		  </tr>
-		  <tr>
-			<th>${ _("Checksum") }</th>
-			<td>${ APPLIANCE.checksum }</td>
-		  </tr>
-		  <tr>
-			<th>${ _("Size") }</th>
-			<td>${ human_size(APPLIANCE.filesize) }</td>
-		  </tr>
-		  <tr>
-			<th>${ _("Owner") }</th>
-			<td>
-			  <a href="${ reverse_url('admin:user') }?id=${ APPLIANCE.user.id }">${ APPLIANCE.user.username }</a>
-			  <a class="btn" href="${ reverse_url('admin:appliance:change_user') }?id=${ APPLIANCE.id }"><i class="icon-edit"></i> ${ _("Change User") }</a>
-			</td>
-		  </tr>
-		  <tr>
-			<th>${ _("Catalog") }</th>
-			<td>
-			  <a href="${ reverse_url('admin:appliance') }?catalog=${ APPLIANCE.catalog_id }" title="${ _("View all appliances in this catalog.") }" target="_blank">${ APPLIANCE.catalog_name }</a>
-			</td>
-		  </tr>
-		  <tr>
-			<th>${ _("Instance") }</th>
-			<td>
-			  % if APPLIANCE.instances:
-			  <a class="ly-count" href="${ reverse_url('admin:instance') }?aid=${ APPLIANCE.id }">${ len(APPLIANCE.instances) }</a>
-			  % endif
-			</td>
-		  </tr>
-		  <tr>
-			<th>${ _("Created") }</th>
-			<td>${ ftime(APPLIANCE.created) }</td>
-		  </tr>
-		  <tr>
-			<th>${ _("Updated") }</th>
-			<td>${ ftime(APPLIANCE.updated) }</td>
-		  </tr>
-		</tbody>
+        <tbody>
+          <tr>
+            <th>${ _("ID") }</th>
+            <td>${ APPLIANCE.id }</td>
+          </tr>
+          <tr>
+            <th>${ _("Name") }</th>
+            <td>${ APPLIANCE.name }</td>
+          </tr>
+          <tr>
+            <th>${ _("Checksum") }</th>
+            <td>${ APPLIANCE.checksum }</td>
+          </tr>
+          <tr>
+            <th>${ _("Size") }</th>
+            <td>${ human_size(APPLIANCE.filesize) }</td>
+          </tr>
+          <tr>
+            <th>${ _("Owner") }</th>
+            <td>
+              <a href="${ reverse_url('admin:user') }?id=${ APPLIANCE.user.id }">${ APPLIANCE.user.username }</a>
+              <a class="btn" href="${ reverse_url('admin:appliance:change_user') }?id=${ APPLIANCE.id }"><i class="icon-edit"></i> ${ _("Change User") }</a>
+            </td>
+          </tr>
+          <tr>
+            <th>${ _("Catalog") }</th>
+            <td>
+              <a href="${ reverse_url('admin:appliance') }?catalog=${ APPLIANCE.catalog_id }" title="${ _("View all appliances in this catalog.") }" target="_blank">${ APPLIANCE.catalog_name }</a>
+            </td>
+          </tr>
+          <tr>
+            <th>${ _("Instance") }</th>
+            <td>
+              % if APPLIANCE.instances:
+              <a class="ly-count" href="${ reverse_url('admin:instance') }?aid=${ APPLIANCE.id }">${ len(APPLIANCE.instances) }</a>
+              % endif
+            </td>
+          </tr>
+          <tr>
+            <th>${ _("Created") }</th>
+            <td>${ ftime(APPLIANCE.created) }</td>
+          </tr>
+          <tr>
+            <th>${ _("Updated") }</th>
+            <td>${ ftime(APPLIANCE.updated) }</td>
+          </tr>
+        </tbody>
       </table>
-	</div>
+    </div>
 
 
-	<div class="ly-item-title">${ _("Summary") }</div>
-	<div class="ly-item-body">
-	  % if APPLIANCE.summary:
-	  ${ APPLIANCE.summary }
-	  % else:
-	  ${ _("No summary yet !") }
-	  % endif
-	</div>
+    <div class="ly-item-title">${ _("Summary") }</div>
+    <div class="ly-item-body">
+      % if APPLIANCE.summary:
+      ${ APPLIANCE.summary }
+      % else:
+      ${ _("No summary yet !") }
+      % endif
+    </div>
 
 
-	<div class="ly-item-title">${ _("Description") }</div>
-	<div class="ly-item-body">
+    <div class="ly-item-title">${ _("Description") }</div>
+    <div class="ly-item-body">
       % if APPLIANCE.description:
       ${ APPLIANCE.description_html }
       % else:
       ${ _("No description yet !") }
       % endif
-	</div>
+    </div>
 
   </div>
 

@@ -12,16 +12,16 @@
   % if resource_total["cpu"]:
   <div class="pie" id="myun-cpu-pie"></div>
   <script type="text/javascript">
-	draw_used({
+    draw_used({
         container: '#myun-cpu-pie',
         title: '${ _("CPU USED INFO") }',
         subtitle: '${ _("Total") } : ${ resource_total["cpu"] } ${ _("core") }',
         series_name: '${ _("Percentage") }',
         used_text: '${ _("Used") }<br/>${ resource_used["cpu"] } ${ _("core") }',
-	    unused_text: '${ _("Unused") }<br/>${ resource_total["cpu"] - resource_used["cpu"] } ${ _("core") }',
+        unused_text: '${ _("Unused") }<br/>${ resource_total["cpu"] - resource_used["cpu"] } ${ _("core") }',
         used: ${ resource_used["cpu"] },
         total: ${ resource_total["cpu"] },
-	    pie_size: 150,
+        pie_size: 150,
     });
   </script>
   % endif
@@ -29,16 +29,16 @@
   % if resource_total["memory"]:
   <div class="pie" id="myun-mem-pie"></div>
   <script type="text/javascript">
-	draw_used({
+    draw_used({
         container: '#myun-mem-pie',
         title: '${ _("MEMORY USED INFO") }',
         subtitle: '${ _("Total") } : ${ resource_total["memory"] }M',
         series_name: '${ _("Percentage") }',
         used_text: '${ _("Used") }<br/>${ resource_used["memory"] }M',
-	    unused_text: '${ _("Unused") }<br/>${ resource_total["memory"] - resource_used["memory"] }M',
+        unused_text: '${ _("Unused") }<br/>${ resource_total["memory"] - resource_used["memory"] }M',
         used: ${ resource_used["memory"] },
         total: ${ resource_total["memory"] },
-	    pie_size: 150,
+        pie_size: 150,
     });
   </script>
   % endif
@@ -46,16 +46,16 @@
   % if resource_total["instance"]:
   <div class="pie" id="myun-instance-pie"></div>
   <script type="text/javascript">
-	draw_used({
+    draw_used({
         container: '#myun-instance-pie',
         title: '${ _("INSTANCE USED INFO") }',
         subtitle: '${ _("Total") } : ${ resource_total["instance"] }',
         series_name: '${ _("Percentage") }',
         used_text: '${ _("Used") }<br/>${ resource_used["instance"] }',
-	    unused_text: '${ _("Unused") }<br/>${ resource_total["instance"] - resource_used["instance"] }',
+        unused_text: '${ _("Unused") }<br/>${ resource_total["instance"] - resource_used["instance"] }',
         used: ${ resource_used["instance"] },
         total: ${ resource_total["instance"] },
-	    pie_size: 150,
+        pie_size: 150,
     });
   </script>
   % endif
@@ -63,16 +63,16 @@
   % if resource_total["storage"]:
   <div class="pie" id="myun-storage-pie"></div>
   <script type="text/javascript">
-	draw_used({
+    draw_used({
         container: '#myun-storage-pie',
         title: '${ _("STORAGE USED INFO") }',
         subtitle: '${ _("Total") } : ${ resource_total["storage"] }G',
         series_name: '${ _("Percentage") }',
         used_text: '${ _("Used") }<br/>${ resource_used["storage"] }G',
-	    unused_text: '${ _("Unused") }<br/>${ resource_total["storage"] - resource_used["storage"] }G',
+        unused_text: '${ _("Unused") }<br/>${ resource_total["storage"] - resource_used["storage"] }G',
         used: ${ resource_used["storage"] },
         total: ${ resource_total["storage"] },
-	    pie_size: 150,
+        pie_size: 150,
     });
   </script>
   % endif

@@ -13,28 +13,28 @@
 
 <div id="appliance-edit-form">
   <form method="POST" enctype="multipart/form-data">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Edit Baseinfo") }</legend>
-	  ${ form.name.label } ${ form.name() }
-	  ${ form.html_errors( form.name.errors ) }
+    <fieldset>
+      <legend>${ _("Edit Baseinfo") }</legend>
+      ${ form.name.label } ${ form.name() }
+      ${ form.html_errors( form.name.errors ) }
 
-	  ${ form.os.label } ${ form.os() }
-	  ${ form.html_errors( form.os.errors ) }
+      ${ form.os.label } ${ form.os() }
+      ${ form.html_errors( form.os.errors ) }
 
-	  ${ form.summary.label } ${ form.summary() }
-	  ${ form.html_errors( form.summary.errors ) }
+      ${ form.summary.label } ${ form.summary() }
+      ${ form.html_errors( form.summary.errors ) }
 
-	  ${ form.catalog.label } ${ form.catalog() }
-	  ${ form.html_errors( form.catalog.errors ) }
+      ${ form.catalog.label } ${ form.catalog() }
+      ${ form.html_errors( form.catalog.errors ) }
 
-	  ${ form.logo.label } ${ form.logo() }
-	  ${ form.html_errors( form.logo.errors ) }
+      ${ form.logo.label } ${ form.logo() }
+      ${ form.html_errors( form.logo.errors ) }
 
-	  ${ form.description.label } ${ form.description() }
-	  ${ form.html_errors( form.description.errors ) }
+      ${ form.description.label } ${ form.description() }
+      ${ form.html_errors( form.description.errors ) }
 
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 </div>
 

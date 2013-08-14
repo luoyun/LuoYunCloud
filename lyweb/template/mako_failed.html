@@ -15,21 +15,21 @@
     <title>LuoYun Mako Template System Trac Info</title>
   </head>
   <body>
-	<div class="container">
+    <div class="container">
       <h1>LuoYun Mako Template System Trac Info</h1>
 
-	  <div>
-		% for (filename, lineno, function, line) in traceback.traceback:
-		<div>
-		  <p><span class="text-info">${ filename }</span>:<span class="text-error">${ lineno }</span>, ${ function }</p>
-		  <pre>${ line.replace('<', '&lt;').replace('>','&gt;') }</pre>
-		<div>
-		  % endfor
+      <div>
+        % for (filename, lineno, function, line) in traceback.traceback:
+        <div>
+          <p><span class="text-info">${ filename }</span>:<span class="text-error">${ lineno }</span>, ${ function }</p>
+          <pre>${ line.replace('<', '&lt;').replace('>','&gt;') }</pre>
+        <div>
+          % endfor
 
-		<div class="hero-unit">
-		  ${ traceback.error.__class__.__name__ }: ${ traceback.error }
-		</div>
-	  </div>
-	</div>
+        <div class="hero-unit">
+          ${ traceback.error.__class__.__name__ }: ${ traceback.error }
+        </div>
+      </div>
+    </div>
   </body>
 </html>

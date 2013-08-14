@@ -5,22 +5,22 @@
 <div id="account-base-form">
 
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Create A New Account") }</legend>
-	  ${ form.email.label } ${ form.email() }
-	  ${ form.html_errors(form.email.errors) }
+    <fieldset>
+      <legend>${ _("Create A New Account") }</legend>
+      ${ form.email.label } ${ form.email() }
+      ${ form.html_errors(form.email.errors) }
 
-	  ${ form.username.label } ${ form.username() }
-	  ${ form.html_errors(form.username.errors) }
+      ${ form.username.label } ${ form.username() }
+      ${ form.html_errors(form.username.errors) }
 
-	  ${ form.password.label } ${ form.password() }
-	  ${ form.html_errors(form.password.errors) }
+      ${ form.password.label } ${ form.password() }
+      ${ form.html_errors(form.password.errors) }
 
-	  ${ form.password_confirm.label } ${ form.password_confirm() }
-	  ${ form.html_errors(form.password_confirm.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      ${ form.password_confirm.label } ${ form.password_confirm() }
+      ${ form.html_errors(form.password_confirm.errors) }
+      <br>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 
 </div>

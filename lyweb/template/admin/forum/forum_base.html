@@ -8,27 +8,27 @@
 
 <div class="subnav">
   <div class="container">
-	<ul class="nav nav-pills">
-	  <li><a href="${ reverse_url('admin:forum') }">${ _("Forum") }</a></li>
-	  <li><a href="${ reverse_url('admin:forum:catalog') }">${ _("Forum Catalog") }</a></li>
-	  <li><a href="">${ _("Topic") }</a></li>
-	  <li><a href="">${ _("Tag") }</a></li>
-	</ul>
+    <ul class="nav nav-pills">
+      <li><a href="${ reverse_url('admin:forum') }">${ _("Forum") }</a></li>
+      <li><a href="${ reverse_url('admin:forum:catalog') }">${ _("Forum Catalog") }</a></li>
+      <li><a href="">${ _("Topic") }</a></li>
+      <li><a href="">${ _("Tag") }</a></li>
+    </ul>
   </div>
 </div>
 
 <div class="min-height600">
 
   <ul class="breadcrumb">
-	<li><a href="/admin"><i class="icon-home"></i> ${ _("Admin") }</a> <span class="divider">/</span></li>
-	<li><a href="/admin/forum">${ _("Forum") }</a> <span class="divider">/</span></li>
-	<%block name="innav" />
+    <li><a href="/admin"><i class="icon-home"></i> ${ _("Admin") }</a> <span class="divider">/</span></li>
+    <li><a href="/admin/forum">${ _("Forum") }</a> <span class="divider">/</span></li>
+    <%block name="innav" />
   </ul>
 
   <%block name="submain"/>
 
   <script type="text/javascript">
-	menu_entry_active( "/admin/forum" );
+    menu_entry_active( "/admin/forum" );
   </script>
 </div>
 </%block>

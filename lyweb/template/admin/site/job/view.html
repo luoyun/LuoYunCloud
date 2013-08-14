@@ -28,25 +28,25 @@
 
   <dt>${ _("Text") }</dt>
   <dd>
-	<pre id="job-text" style="height: 300px; overflow-y: scroll;">
-	  ${ JOB.text }
-	</pre>
+    <pre id="job-text" style="height: 300px; overflow-y: scroll;">
+      ${ JOB.text }
+    </pre>
   </dd>
 </dl>
 
 <script type="text/javascript">
 function job_status_monitor() {
     $.ajax({
-		url: "${ reverse_url('admin:site:job:view') }?id=${ JOB.id }&ajax=true",
-		type: 'GET',
+        url: "${ reverse_url('admin:site:job:view') }?id=${ JOB.id }&ajax=true",
+        type: 'GET',
 
-		success: function(data) {
+        success: function(data) {
 
             $('#job-text').append( data.text + '\n');
 
-			if (data.status == 2)
-				setTimeout(job_status_monitor, 1500);
-		}
+            if (data.status == 2)
+                setTimeout(job_status_monitor, 1500);
+        }
 
     });
 }

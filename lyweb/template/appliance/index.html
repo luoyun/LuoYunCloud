@@ -11,48 +11,48 @@
 <div class="row-fluid">
   <div class="span2">
     <ul id="appliance-catalog-menu" class="nav nav-list">
-	  <li class="nav-header">${ _("Catalog") }</li>
-	  <li class="active"><a href="${ reverse_url('appliance:index') }">${ _("All") }</a></li>
+      <li class="nav-header">${ _("Catalog") }</li>
+      <li class="active"><a href="${ reverse_url('appliance:index') }">${ _("All") }</a></li>
       % for c in catalogs:
-	  % if c.total:
+      % if c.total:
       <li id="catalog${ c.id }"><a href="${ reverse_url('appliance:index') }?c=${ c.id }">${ c.name }</a></li>
-	  % endif
+      % endif
       % endfor
     </ul>
 
-	<script type="text/javascript">
-	  var $cur = $("#catalog" + ${ cur_catalog });
-	  $cur.siblings().removeClass("active");
-	  $cur.addClass("active");
-	</script>
+    <script type="text/javascript">
+      var $cur = $("#catalog" + ${ cur_catalog });
+      $cur.siblings().removeClass("active");
+      $cur.addClass("active");
+    </script>
   </div>
 
   <div class="span10">
 
-	<div id="appliance-list">
+    <div id="appliance-list">
 
-	  % if not appliances:
-	  <p>${ _("Have not any appliances yet !") }</p>
-	  % endif
+      % if not appliances:
+      <p>${ _("Have not any appliances yet !") }</p>
+      % endif
 
-	  <% count = 0 %>
-	  <div class="row-fluid">
-		% for app in appliances:
-		<div class="span2">
-		  <div class="logo"><a href="${ reverse_url('appliance:view') }?id=${ app.id }"><img src="${ app.logourl }" alt="Appliance Picture" /></a></div>
-		  <p class="text-center">${ app.name }</p>
-		</div>
+      <% count = 0 %>
+      <div class="row-fluid">
+        % for app in appliances:
+        <div class="span2">
+          <div class="logo"><a href="${ reverse_url('appliance:view') }?id=${ app.id }"><img src="${ app.logourl }" alt="Appliance Picture" /></a></div>
+          <p class="text-center">${ app.name }</p>
+        </div>
 
-		% if count % 6 == 5:
-	  </div>
-	  <div class="row-fluid">
-		% endif
-		<% count += 1 %>
-		% endfor
-	  </div>
-	</div>
+        % if count % 6 == 5:
+      </div>
+      <div class="row-fluid">
+        % endif
+        <% count += 1 %>
+        % endfor
+      </div>
+    </div>
 
-	${ page_html }
+    ${ page_html }
   </div>
 </div>
 
