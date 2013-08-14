@@ -476,7 +476,7 @@ class LifeControl(RequestHandler):
 
         d = { 'id': I.id, 'code': 1, 'data': '' }
 
-        profile = self.current_user.profile
+        profile = I.user.profile
 
         resource_total = profile.get_resource_total()
         resource_used = profile.get_resource_used()
