@@ -72,14 +72,14 @@ class Index(RequestHandler):
     def prepare(self):
 
         tags = self.db.query(ForumTopicTag).order_by(
-            desc('hit') ).limit(30)
+            desc('hit') ).limit(12)
 
         self.prepare_kwargs['TAGS'] = tags
 
 
     def get(self):
 
-        tab = self.get_argument('tab', 'topics')
+        tab = self.get_argument('tab', 'catalogs')
 
         if tab == 'catalogs':
             self.get_catalogs()

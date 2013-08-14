@@ -900,7 +900,7 @@ function load_kindeditor( data ) {
                 _xsrf: $("#xsrf-cookie").text(),
                 way: 'local'
             },
-
+/*
 			items: [
 				'source', '|', 'undo', 'redo', '|', 'preview', 'code',
 				'|', 'justifyleft', 'justifycenter', 'justifyright',
@@ -911,6 +911,7 @@ function load_kindeditor( data ) {
 				'media', 'insertfile', 'table', 'emoticons', 'baidumap',
 				'anchor', 'link', 'unlink', '|', 'about'
 			],
+*/
         });
     });
 

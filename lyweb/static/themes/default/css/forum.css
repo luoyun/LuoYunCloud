@@ -206,3 +206,40 @@ textarea#reply-body {
 .post-footer-actions .vote {
 	margin-right: 10px;
 }
+
+
+#forum-catalog-index .catalog-item {
+    margin: 0;
+    padding: 15px;
+    border: 1px solid #FFF;
+}
+/*
+#forum-catalog-index .catalog-item:hover {
+    border: 1px solid #EAEAEA;
+    border-radius: 5px;
+    background-color: #FEFEFE;
+}
+*/
+#forum-catalog-index .first {
+    border-right: 1px solid #EAEAEA;
+}
+#forum-catalog-index hr {
+    height:1px;
+    border:none;
+    border-top:1px dashed #EAEAEA;
+    margin: 20px;
+}
+#forum-catalog-index .summary {
+    margin: 10px 0 15px;
+}
+#forum-catalog-index .name {
+    font-weight: bold;
+    margin-top: 10px;
+}
+#forum-catalog-index img {
+    border-radius: 5px;
+    width: 88px;
+}
+#forum-catalog-index .logo {
+    height: 90px;
+}

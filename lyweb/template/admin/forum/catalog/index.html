@@ -1,0 +1,55 @@
+<%inherit file="../forum_base.html"/>
+
+<%block name="innav">
+<li>${ _("Forum Catalog") }</li>
+</%block>
+
+<%block name="submain">
+
+<div>
+  <p><a class="btn" href="${ reverse_url('admin:forum:catalog:add') }"><i class="icon-plus"></i> ${ _("Add Catalog") }</a></p>
+
+  % if CATALOG_LIST:
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>${ _("ID") }</th>
+        <th>${ _("Name") }</th>
+        <th>${ _("Is Private") }</th>
+        <th>${ _("Is Visible") }</th>
+        <th>${ _("Managers") }</th>
+        <th>${ _("Created") }</th>
+        <th>${ _("Updated") }</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      % for C in CATALOG_LIST:
+      <tr>
+        <td>${ C.id }</td>
+        <td><a href="${ reverse_url('admin:forum:catalog:view') }?id=${ C.id }">${ C.name }</a></td>
+        <td>${ C.is_private }</td>
+        <td>${ C.is_visible }</td>
+        <td>
+          % for M in C.managers:
+          <a href="${ reverse_url('admin:user:view') }?id=${ M.id }">${ M.username }</a>
+          % endfor
+        </td>
+        <td>${ ftime(C.updated) }</td>
+        <td>${ ftime(C.created) }</td>
+        <td>
+          <a href="${ reverse_url('admin:forum:catalog:edit') }?id=${ C.id }"><i class="icon-edit"></i></a>
+        </td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+  % else:
+  <div class="hero-unit">
+	<h2>${ _("No catalog now.") }</h2>
+  </div>
+  % endif
+
+</div>
+
+</%block>
