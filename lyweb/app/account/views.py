@@ -10,7 +10,7 @@ from hashlib import sha1, md5
 
 from sqlalchemy import and_
 
-from tornado.web import authenticated, asynchronous
+from tornado.web import authenticated, asynchronous, HTTPError
 from lycustom import RequestHandler
 
 from yweb.contrib.session.models import Session
@@ -529,7 +529,7 @@ class GoogleHandler(RequestHandler, GoogleMixin):
 
     def _on_auth(self, user):
         if not user:
-            raise tornado.web.HTTPError(500, "Google auth failed")
+            raise HTTPError(500, "Google auth failed")
 
         print 'user = ', user
         print 'type(user) = ', type(user)
@@ -608,7 +608,7 @@ class QQLogin(AccountRequestHandler, QQAuth2Minix):
 
     def _on_auth(self, session):
         if not session:
-            raise tornado.web.HTTPError(500, "QQ auth failed")
+            raise HTTPError(500, "QQ auth failed")
 
         openid = session.get('openid', None)
         if not openid:
