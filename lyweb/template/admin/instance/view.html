@@ -127,6 +127,9 @@
 
 	  <div class="ly-item-body">
 		<dl class="dl-horizontal">
+          <dt>${ _("User") }</dt>
+          <dd><a href="${ reverse_url('admin:user:view') }?id=${ I.user_id }">${ I.user.username }</a></dd>
+
 		  <dt>${ _("Node") }</dt>
 		  <dd>
 			% if I.node_id:
