@@ -41,7 +41,12 @@
         <div class="span6 appliance">
           <div class="row-fluid">
             <div class="span4 app-left">
-              <a href="${ reverse_url('appliance:view') }?id=${ A.id }"><img src="${ A.logourl }" alt="Appliance Picture" /></a>
+              <a href="${ reverse_url('appliance:view') }?id=${ A.id }"><img src="${ A.logourl }" alt="Appliance Picture" /></a><br>
+              % if A.isuseable:
+              <a class="btn btn-mini" href="${ reverse_url('myun:instance:create') }?appliance_id=${ A.id }" title="${ _('You can create a new instance based on this appliance.') }"><i class="icon-plus"></i> ${ _("Create Instance") }</a>
+              % else:
+              <a class="btn btn-mini disabled"><i class="icon-plus"></i> ${ _("Create Instance") }</a>
+              % endif
             </div>
             <div class="span8 app-right">
               <div><a class="name" href="${ reverse_url('appliance:view') }?id=${ A.id }">${ A.name }</a></div>

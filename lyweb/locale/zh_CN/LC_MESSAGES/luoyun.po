@@ -5041,7 +5041,7 @@ msgid ""
 "LuoYunCloud is a open source software for cloud computing. It can help you "
 "to setup your own platform easily."
 msgstr "LuoYunCloud 是由落云科技开发的云计算平台软件，完全遵守 GPL 协议，"
-"开放源码，您可以用来部署 IaaS，SaaS， PaaS 等多种不同功能的计算平台，"
+"开放源码，您可以用来部署 IaaS， PaaS, SaaS 等多种不同功能的计算平台，"
 "帮助您快速部署自己的私有云、公有云或者混合云。"
 
 #: template/base.html:82

@@ -35,7 +35,7 @@
     <div class="span3">
       <div id="create-instance-btn" class="text-center">
         % if appliance.isuseable:
-        <a class="btn btn-large btn-primary" href="${ reverse_url('myun:instance:create') }?appliance_id=${ appliance.id }" title="${ _('You can create a new instance based on this appliance.') }">${ _("Create Instance") }</a>
+        <a class="btn btn-primary" href="${ reverse_url('myun:instance:create') }?appliance_id=${ appliance.id }" title="${ _('You can create a new instance based on this appliance.') }">${ _("Create Instance") }</a>
         % else:
         <a class="btn btn-large btn-primary disabled" title="${ _('This appliance is locked, you can not use it.') }">${ _("Create Instance") }</a>
         % endif

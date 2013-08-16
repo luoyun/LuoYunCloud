@@ -200,7 +200,7 @@
         ## TODO: this is a hack now
         % if len(I.storages) < 1:
                                <p class="text-warning"><i class="icon-warning-sign"></i> ${ _("Hove not configure storage.") }</p>
-        <p><a class="btn" href="${ reverse_url('myun:instance:storage:add') }?id=${ I.id }"><i class="icon-plus-sign"></i> ${ _("Add New Storage") }</a> <span class="muted"><small>${ _(" ( %s G available ) ") % current_user.profile.storage_remain }</small></span></p>
+        <p><a class="btn" href="${ reverse_url('myun:instance:storage:add') }?id=${ I.id }"><i class="icon-plus-sign"></i> ${ _("Add New Storage") }</a> <span class="muted"><small>${ _(" ( %s G available ) ") % I.user.profile.storage_remain }</small></span></p>
         % endif
 
         % for index, S in enumerate(I.storages):
@@ -212,7 +212,7 @@
           <dt>${ _("Storage Pool") }</dt>
           <dd>${ S.pool.name }</dd>
           <dt>${ _("Size") }</dt>
-          <dd>${ S.size } G <span class="muted"><small>${ _(" ( %s G available ) ") % current_user.profile.storage_remain }</small></span></dd>
+          <dd>${ S.size } G <span class="muted"><small>${ _(" ( %s G available ) ") % I.user.profile.storage_remain }</small></span></dd>
           <dt>${ _("Created") }</dt>
           <dd>${ ftime(S.created) }</dd>
           <dt>${ _("Updated") }</dt>
@@ -317,7 +317,7 @@
         </table>
         % endif
 
-        % if len(portmapping_list) < current_user.profile.port:
+        % if len(portmapping_list) < I.user.profile.port:
         <p><a class="btn" href="${ reverse_url('myun:instance:portmapping:add') }?id=${ I.id }"><i class="icon-plus-sign"></i> ${ _("New Port Mapping") }</a>  <span class="muted"><small>${ _(" ( %s ports mapping available ) ") % (I.user.profile.port - len(portmapping_list)) }</small></span></p>
         % else:
         <p class="text-warning"><i class="icon-warning-sign"></i> ${ _("Your can mapping %s ports, mapping %s ports already.") % (I.user.profile.port, len(portmapping_list)) }</p>
