@@ -1,5 +1,5 @@
 #appliance-catalog-menu {
-	margin-top: 15px;
+    margin: 5px 30px 15px;
 }
 
 #appliance-list {
@@ -15,7 +15,7 @@
     text-align: center;
 }
 #appliance-list .app-left img {
-	width: 118px;
+	width: 100px;
 	margin: 0px auto 10px;
 }
 #appliance-list .app-right {
