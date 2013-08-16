@@ -952,11 +952,13 @@ class EmailValidate(RequestHandler):
 
         body = self.render('account/email_validate_notice.html', **d)
 
-        e = Email( subject = subject, text = body,
-                   adr_to = email,
-                   adr_from = adr_from,
-                   mime_type = 'html' )
-        self.quemail.send( e )
+        response = self.sendmsg(
+            uri = 'mailto.address',
+            data = { 'to': email,
+                     'subject': subject,
+                     'body': body } )
+
+        return response
 
 
 
