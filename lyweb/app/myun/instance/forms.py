@@ -29,7 +29,7 @@ class StorageForm(Form):
     _pool = None
 
     pool = SelectField( _('Storage Pool') )
-    size = IntegerField( _('Size (GB)') )
+    size = IntegerField( _('Size (GB)'), [NumberRange( min = 1 )] )
 
 
     def validate_pool(form, field):
