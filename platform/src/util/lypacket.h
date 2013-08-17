@@ -9,7 +9,7 @@
 */
 
 /* LuoYun packet receive structure */
-#define LUOYUN_PACKET_SIZE_MAX 4096
+#define LUOYUN_PACKET_SIZE_MAX 40960
 
 typedef struct LYPacketRecv_t {
     /* packet header */
