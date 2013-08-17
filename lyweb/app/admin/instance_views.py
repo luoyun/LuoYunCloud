@@ -105,6 +105,10 @@ class Index(RequestHandler):
                       'like', 'unlike', 'visit']:
             by = 'id'
 
+        # TODO: Fix sqlalchemy column bug
+        if by == 'id':
+            by = Instance.id
+
         sort_by_obj = desc(by) if sort == 'DESC' else asc(by)
 
         instances = instances.order_by( sort_by_obj )

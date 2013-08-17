@@ -7,8 +7,6 @@ handlers = [
 
     url(r'/instance/view', I.View, name='instance:view'),
 
-    url(r'/instance/attr', I.InstanceAttrGet, name='instance:attr'),
-
     url(r'/instance/single_status', I.SingleInstanceStatus,
         name='instance:single_status'),
 

@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import datetime
+import base64
 
 from yweb.orm import ORMBase
 
@@ -342,6 +343,20 @@ class Instance(ORMBase):
     def set_root_password(self, password):
         root_passwd = enc_shadow_passwd( password )
         self.set('passwd_hash', root_passwd)
+
+    def set_libvirt_conf(self, conf):
+        conf = base64.encodestring( conf )
+        # TODO: compress for program
+        conf = conf.replace('\n', '')
+        self.set('libvirt_conf', conf)
+
+    @property
+    def libvirt_conf(self):
+        c = self.get('libvirt_conf', None)
+        if not c:
+            return ''
+        else:
+            return base64.decodestring( c )
 
 
     @property

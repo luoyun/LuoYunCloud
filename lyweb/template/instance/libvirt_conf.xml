@@ -4,7 +4,7 @@
     <type arch='x86_64' machine='pc'>hvm</type>
     <boot dev='hd'/>
   </os>
-  <memory>${ I.memory }</memory>
+  <memory>${ I.memory * 1024 }</memory>
   <vcpu>${ I.cpus }</vcpu>
   <features>
     <acpi/>
