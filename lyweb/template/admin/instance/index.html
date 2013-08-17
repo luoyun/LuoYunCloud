@@ -43,9 +43,22 @@
           <tr>
             <th><i class="icon-check-empty y-check-all"></i></th>
             <th>ID</th>
-            <th><i class="icon-exchange"></i></th>
             <th>${ _("Name") }</th>
             <th>${ _("Owner") }</th>
+            <th>
+              <i class="icon-exchange"></i>
+% if SORTBY == 'cpus':
+${ _("CPUS") }
+% elif SORTBY == 'memory':
+${ _("Memory") }
+% elif SORTBY == 'rx':
+${ _("RX") }
+% elif SORTBY == 'tx':
+${ _("TX") }
+% elif SORTBY == 'bandwidth':
+${ _("Bandwidth") }
+% endif
+            </th>
             <th>${ _("Updated") }</th>
           </tr>
         </thead>
@@ -54,8 +67,8 @@
           <tr class="y-check-line" id="i${ I.id }">
             <td><i class="icon-check-empty y-check"></i></td>
             <td class="y-id">${ I.id }</td>
-            <td>${ I.status_icon }</td>
             <td>
+              ${ I.status_icon }
               % if I.isprivate:
               <i class="icon-eye-close"></i>
               % else:
@@ -68,6 +81,21 @@
               <a href="${ reverse_url('admin:user:view') }?id=${ I.user.id }">${ I.user.username }</a>
               % endif
             </td>
+
+            <td>
+% if SORTBY == 'cpus':
+${ I.cpus } ${ _("core") }
+% elif SORTBY == 'memory':
+${ I.memory } M
+% elif SORTBY == 'rx':
+${ human_size(I.rx) }
+% elif SORTBY == 'tx':
+${ human_size(I.tx) }
+% elif SORTBY == 'bandwidth':
+${ I.bandwidth } M
+% endif
+            </td>
+
             <td>${ htime(I.updated) }</td>
           </tr>
           % endfor
@@ -123,10 +151,15 @@
     <h5><i class="icon-sort"></i> ${ _("Sort By") }</h5>
     <select id="sort-by-obj">
       <option value="all">${ _("All") }</option>
+      <option value="cpus">${ _("Cpus") }</option>
+      <option value="memory">${ _("Memory") }</option>
+      <option value="rx">${ _("RX") }</option>
+      <option value="tx">${ _("TX") }</option>
+      <option value="bandwidth">${ _("Bandwidth") }</option>
       <option value="name">${ _("Name") }</option>
       <option value="status">${ _("Status") }</option>
-      <option value="user">${ _("Owner") }</option>
-      <option value="appliance">${ _("Appliance") }</option>
+      <option value="user_id">${ _("Owner") }</option>
+      <option value="appliance_id">${ _("Appliance") }</option>
       <option value="created">${ _("Created") }</option>
       <option value="updated">${ _("Updated") }</option>
     </select>
@@ -147,10 +180,10 @@
       %endfor
     </select>
 
-    <h5><i class="icon-sort"></i> ${ _("Order") }</h5>
+    <h5><i class="icon-sort"></i> ${ _("Sort") }</h5>
     <select id="sort-by-order">
-      <option value="1">${ _("Descending") }</option>
-      <option value="0">${ _("Ascending") }</option>
+      <option value="DESC">${ _("Descending") }</option>
+      <option value="ASC">${ _("Ascending") }</option>
     </select>
   </div>
 
@@ -160,12 +193,12 @@
   $("#sort-by-obj").val("${ SORTBY }");
   $("#sort-by-status").val("${ STATUS }");
   $("#sort-by-user-group").val("${ USER_GROUP_ID }");
-  $("#sort-by-order").val("${ ORDER }");
+  $("#sort-by-order").val("${ SORT }");
 
   selected_reload("#sort-by-obj", "${ urlupdate({'by': 'REPLACEOBJ'}) }")
   selected_reload("#sort-by-status", "${ urlupdate({'status': 'REPLACEOBJ'}) }")
   selected_reload("#sort-by-user-group", "${ urlupdate({'user_group': 'REPLACEOBJ'}) }")
-  selected_reload("#sort-by-order", "${ urlupdate({'order': 'REPLACEOBJ'}) }")
+  selected_reload("#sort-by-order", "${ urlupdate({'sort': 'REPLACEOBJ'}) }")
 </script>
 
 <div style="display:none;" id="xsrf-cookie">${ xsrf_cookie }</div>
