@@ -2,152 +2,181 @@
 
 <%block name="submain">
 
-<div>
+<div class="ly-item-title">${ _("Base Information") }</div>
 
-  <h2>${ _("Base Information") }</h2>
-  
-  <p><i class="icon-edit"></i> <a href="${ reverse_url('account:baseinfo:edit') }">${ _("Edit") }</a></p>
+<div class="ly-item-body">
+  <p><a class="btn" href="${ reverse_url('account:baseinfo:edit') }"><i class="icon-edit"></i> ${ _("Edit") }</a></p>
 
   <table class="table table-striped">
-	<tbody>
-	  <tr>
-		<td>ID</td>
-		<td>${ current_user.id }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Username") }</td>
-		<td>${ current_user.username }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Email") }</td>
-		<td>
-		  % if current_user.email_valid:
-		  <i class="icon-ok"></i>
-		  % else:
-		  <i class="icon-exclamation-sign"></i>
-		  % endif
-		  % if current_user.email:
-		  ${ current_user.email }
-		  % endif
-		  <a href="${ reverse_url('account:email:validate') }"><i class="icon-edit"></i> ${ _("Change or Validate My Email") }</a>
-		</td>
-	  </tr>
-	  <tr>
-		<td>${ _("First Name") }</td>
-		<td>${ current_user.first_name }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Last Name") }</td>
-		<td>${ current_user.last_name }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Nickname") }</td>
-		<td>${ current_user.nickname }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Gender") }</td>
-		<td>${ current_user.gender }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Is Staff") }</td>
-		<td>${ current_user.is_staff }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Is Active") }</td>
-		<td>${ current_user.is_active }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Notice") }</td>
-		<td>${ current_user.notice }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Language") }</td>
-		<td>${ current_user.language.name }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Last Login") }</td>
-		<td>${ ftime(current_user.last_login) }</td>
-	  </tr>
-	  <tr>
-		<td>${ _("Date Joined") }</td>
-		<td>${ ftime(current_user.date_joined) }</td>
-	  </tr>
-	</tbody>
+    <tbody>
+      <tr>
+        <td>ID</td>
+        <td>${ current_user.id }</td>
+      </tr>
+      <tr>
+        <td>${ _("Username") }</td>
+        <td>${ current_user.username }</td>
+      </tr>
+      <tr>
+        <td>${ _("Email") }</td>
+        <td>
+          % if current_user.email_valid:
+          <i class="icon-ok"></i>
+          % else:
+          <i class="icon-exclamation-sign"></i>
+          % endif
+          % if current_user.email:
+          ${ current_user.email }
+          % endif
+          <a href="${ reverse_url('account:email:validate') }"><i class="icon-edit"></i> ${ _("Change or Validate My Email") }</a>
+        </td>
+      </tr>
+      <tr>
+        <td>${ _("First Name") }</td>
+        <td>${ current_user.first_name }</td>
+      </tr>
+      <tr>
+        <td>${ _("Last Name") }</td>
+        <td>${ current_user.last_name }</td>
+      </tr>
+      <tr>
+        <td>${ _("Nickname") }</td>
+        <td>${ current_user.nickname }</td>
+      </tr>
+      <tr>
+        <td>${ _("Gender") }</td>
+        <td>${ current_user.gender }</td>
+      </tr>
+      <tr>
+        <td>${ _("Is Staff") }</td>
+        <td>${ current_user.is_staff }</td>
+      </tr>
+      <tr>
+        <td>${ _("Is Active") }</td>
+        <td>${ current_user.is_active }</td>
+      </tr>
+      <tr>
+        <td>${ _("Notice") }</td>
+        <td>${ current_user.notice }</td>
+      </tr>
+      <tr>
+        <td>${ _("Language") }</td>
+        <td>${ current_user.language.name }</td>
+      </tr>
+      <tr>
+        <td>${ _("Last Login") }</td>
+        <td>${ ftime(current_user.last_login) }</td>
+      </tr>
+      <tr>
+        <td>${ _("Date Joined") }</td>
+        <td>${ ftime(current_user.date_joined) }</td>
+      </tr>
+    </tbody>
   </table>
+</div>
 
-  <h2>${ _("Groups") }</h2>
+
+<div class="ly-item-title">${ _("Groups") }</div>
+
+<div class="ly-item-body">
   % if current_user.groups:
   <ul>
-	% for G in current_user.groups:
-	<li>${ G.name }</li>
-	% endfor
+    % for G in current_user.groups:
+    <li>${ G.name }</li>
+    % endfor
   </ul>
   % else:
   <p>${ _("No groups yet.") }</p>
   % endif
+</div>
 
 
-  <h2>${ _("Resources") }</h2>
-  <table class="table table-condensed table-bordered">
-	<thead>
-	  <tr>
-		<th colspan="2">${ _("CPU") }</th>
-		<th colspan="2">${ _("Memory") }</th>
-		<th colspan="2">${ _("Storage") }</th>
-		<th colspan="2">${ _("Instance") }</th>
-	  </tr>
-	  <tr>
-		<th>${ _("Total") }</th>
-		<th>${ _("Used") }</th>
-		<th>${ _("Total") }</th>
-		<th>${ _("Used") }</th>
-		<th>${ _("Total") }</th>
-		<th>${ _("Used") }</th>
-		<th>${ _("Total") }</th>
-		<th>${ _("Used") }</th>
-	  </tr>
-	</thead>
-	<tbody>
-	  <% profile = current_user.profile %>
-	  <tr>
-		<td>${ profile.cpu_total } ${ _("core") }</td>
-		<td>${ profile.cpu_used } ${ _("core") }</td>
-		<td>${ profile.memory_total } M</td>
-		<td>${ profile.memory_used } M</td>
-		<td>${ profile.storage_total } G</td>
-		<td>${ profile.storage_used } G</td>
-		<td>${ profile.instance_total }</td>
-		<td>${ profile.instance_used }</td>
-	  </tr>
-	</tbody>
+<div class="ly-item-title">${ _("Resources") }</div>
+
+<div class="ly-item-body">
+
+  <h3>${ _("User Resource Used Information") }</h3>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th colspan="2">${ _("CPU") }</th>
+        <th colspan="2">${ _("Memory") }</th>
+        <th colspan="2">${ _("Storage") }</th>
+        <th colspan="2">${ _("Instance") }</th>
+        <th colspan="2">${ _("Bandwidth") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>${ resource_total["cpu"] } ${ _("core") }</td>
+        <td>${ resource_used["cpu"] } ${ _("core") }</td>
+        <td>${ resource_total["memory"] } M</td>
+        <td>${ resource_used["memory"] } M</td>
+        <td>${ resource_total["storage"] } G</td>
+        <td>${ resource_used["storage"] } G</td>
+        <td>${ resource_total["instance"] }</td>
+        <td>${ resource_used["instance"] }</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
   </table>
+
+  <h3>${ _("Static Resource") }</h3>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>${ _("CPU") }</th>
+        <th>${ _("Memory") }</th>
+        <th>${ _("Storage") }</th>
+        <th>${ _("Instance") }</th>
+        <th>${ _("Bandwidth") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>${ current_user.profile.cpu } ${ _("core") }</td>
+        <td>${ current_user.profile.memory } M</td>
+        <td>${ current_user.profile.storage } G</td>
+        <td>${ current_user.profile.instance }</td>
+        <td>
+          % if current_user.profile.bandwidth:
+          ${ current_user.profile.bandwidth }
+          % endif
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>${ _("Dynamic Resource") }</h3>
 
   % if current_user.resources:
-  <table class="table table-bordered">
-	<thead>
-	  <tr>
-		<th>ID</th>
-		<th>${ _("Type") }</th>
-		<th>${ _("Size") }</th>
-		<th>${ _("Effect Date") }</th>
-		<th>${ _("Expired Date") }</th>
-	  </tr>
-	</thead>
-	<tbody>
-	  % for R in current_user.resources:
-	  <tr class="${ R.contextual_class }">
-		<td>${ R.id }</td>
-		<td>${ R.type_str }</td>
-		<td>${ R.size_str }</td>
-		<td>${ ftime(R.effect_date) }</td>
-		<td>${ ftime(R.expired_date) }</td>
-	  </tr>
-	  % endfor
-	</tbody>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>${ _("Type") }</th>
+        <th>${ _("Size") }</th>
+        <th>${ _("Effect Date") }</th>
+        <th>${ _("Expired Date") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for R in current_user.resources:
+      <tr class="${ R.contextual_class }">
+        <td>${ R.id }</td>
+        <td>${ R.type_str }</td>
+        <td>${ R.size_str }</td>
+        <td>${ ftime(R.effect_date) }</td>
+        <td>${ ftime(R.expired_date) }</td>
+      </tr>
+      % endfor
+    </tbody>
   </table>
+  % else:
+  <p class="text-warning"><i class="icon-warning-sign"></i> ${ _("You have no dynamic resources.") }</p>
   % endif
 
 </div>
-
 
 </%block>

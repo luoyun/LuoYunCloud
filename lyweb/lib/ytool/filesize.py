@@ -100,7 +100,10 @@ def size(bytes, system=traditional):
     for factor, suffix in system:
         if bytes >= factor:
             break
-    amount = int(bytes/factor)
+
+#    amount = int(bytes/factor)
+    amount = float('%.2f'% (float(bytes) / factor))
+
     if isinstance(suffix, tuple):
         singular, multiple = suffix
         if amount == 1:

@@ -34,7 +34,7 @@ class Index(RequestHandler):
 
         view = self.get_argument('view', 'all')
         by = self.get_argument('by', 'id')
-        order = self.get_argument_int('order', 1)
+        sort = self.get_argument('sort', 'DESC')
         status = self.get_argument_int('status', -1)
         user_group = self.get_argument_int('user_group', -1)
         page_size = self.get_argument_int('sepa', 50)
@@ -98,25 +98,14 @@ class Index(RequestHandler):
                     Instance.user).join(User.groups).filter(
                     User.groups.contains(ug) )
 
-        if by == 'created':
-            by_obj = Instance.created
-        elif by == 'updated':
-            by_obj = Instance.updated
-        elif by == 'node':
-            by_obj = Instance.node_id
-        elif by == 'user':
-            by_obj = Instance.user_id
-        elif by == 'appliance':
-            by_obj = Instance.appliance_id
-        elif by == 'status':
-            by_obj = Instance.status
-        elif by == 'name':
-            by_obj = Instance.name
-        else:
-            by_obj = Instance.id
+        if by not in ['created', 'updated', 'node_id', 'user_id',
+                      'appliance_id', 'status', 'name', 'id',
+                      'tx', 'rx', 'bandwidth', 'extendsize',
+                      'memory', 'cpus', 'islocked', 'isprivate',
+                      'like', 'unlike', 'visit']:
+            by = 'id'
 
-
-        sort_by_obj = desc(by_obj) if order else asc(by_obj)
+        sort_by_obj = desc(by) if sort == 'DESC' else asc(by)
 
         instances = instances.order_by( sort_by_obj )
 
@@ -127,13 +116,11 @@ class Index(RequestHandler):
 
         page_html = pagination(self.request.uri, total, page_size, cur_page, sepa_range=[20, 50, 100])
 
-        def sort_by(by):
-            return self.urlupdate(
-                {'by': by, 'order': 1 if order == 0 else 0, 'p': 'dropthis'})
 
         d = { 'title': self.trans(_('Instance Management')),
+              'human_size': human_size,
               'urlupdate': self.urlupdate,
-              'sort_by': sort_by, 'SORTBY': by, 'ORDER': order,
+              'SORTBY': by, 'SORT': sort,
               'INSTANCE_LIST': instances, 'TOTAL_INSTANCE': total,
               'PAGE_HTML': page_html,
               'SORT_USER': U, 'SORT_APPLIANCE': APPLIANCE,

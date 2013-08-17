@@ -14,27 +14,27 @@
   <table class="ly-table">
     <thead>
       <tr>
-	<th>${ _("ID") }</th>
-	<th>${ _("Name") }</th>
-	<th>${ _("Start") }</th>
-	<th>${ _("End") }</th>
-	<th>${ _("Netmask") }</th>
-	<th>${ _("Gateway") }</th>
-	<th>${ _("Nameservers") }</th>
-	<th>${ _("IP") }</th>
+    <th>${ _("ID") }</th>
+    <th>${ _("Name") }</th>
+    <th>${ _("Start") }</th>
+    <th>${ _("End") }</th>
+    <th>${ _("Netmask") }</th>
+    <th>${ _("Gateway") }</th>
+    <th>${ _("Nameservers") }</th>
+    <th>${ _("IP") }</th>
       </tr>
     </thead>
     <tbody>
       %for N in NETWORKPOOL:
       <tr>
-	<td>${ N.id }</td>
-	<td><a href="${ reverse_url('system:networkpool:view', N.id) }">${ N.name }</a></td>
-	<td>${ N.start }</td>
-	<td>${ N.end }</td>
-	<td>${ N.netmask }</td>
-	<td>${ N.gateway }</td>
-	<td>${ N.nameservers }</td>
-	<td><a href="${ reverse_url('system:ippool') }?network=${ N.id }">${ len(N.ips) }</a></td>
+    <td>${ N.id }</td>
+    <td><a href="${ reverse_url('system:networkpool:view', N.id) }">${ N.name }</a></td>
+    <td>${ N.start }</td>
+    <td>${ N.end }</td>
+    <td>${ N.netmask }</td>
+    <td>${ N.gateway }</td>
+    <td>${ N.nameservers }</td>
+    <td><a href="${ reverse_url('system:ippool') }?network=${ N.id }">${ len(N.ips) }</a></td>
       </tr>
       %endfor
     </tbody>

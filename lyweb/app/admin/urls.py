@@ -26,7 +26,7 @@ handlers = [
 
     url(r'/admin/user/view', user.View, name='admin:user:view'),
 
-    url(r'/admin/user/([0-9]+)/resetpass', user.ResetPass,
+    url(r'/admin/user/resetpass', user.ResetPass,
         name='admin:user:resetpass'),
 
     url(r'/admin/user/group/edit', user.GroupEdit,
@@ -45,8 +45,34 @@ handlers = [
     url(r'/admin/group', group.GroupManagement, name='admin:group'),
     url(r'/admin/permission', permission.PermissionManagement, name='admin:permission'),
 
-    url(r'/admin/appliance', appliance.ApplianceManagement, name='admin:appliance'),
-    url(r'/admin/appliance/catalog', appliance.CatalogManagement, name='admin:appliance:catalog'),
+    # Appliance
+    url( r'/admin/appliance', appliance.Index,
+         name='admin:appliance' ),
+
+    url( r'/admin/appliance/view', appliance.ApplianceView,
+         name='admin:appliance:view' ),
+
+    url( r'/admin/appliance/edit', appliance.ApplianceEdit,
+         name='admin:appliance:edit' ),
+
+    url( r'/admin/appliance/change_user',
+         appliance.ApplianceChangeUser,
+         name='admin:appliance:change_user' ),
+
+    url( r'/admin/appliance/catalog', appliance.CatalogIndex,
+         name='admin:appliance:catalog' ),
+
+    url( r'/admin/appliance/catalog/view', appliance.CatalogView,
+         name='admin:appliance:catalog:view' ),
+
+    url( r'/admin/appliance/catalog/add', appliance.CatalogAdd,
+         name='admin:appliance:catalog:add' ),
+
+    url( r'/admin/appliance/catalog/edit', appliance.CatalogEdit,
+         name='admin:appliance:catalog:edit' ),
+
+    url( r'/admin/appliance/catalog/delete', appliance.CatalogDelete,
+         name='admin:appliance:catalog:delete' ),
 
     url(r'/admin/node', node.NodeManagement, name='admin:node'),
     url(r'/admin/job', job.JobManagement, name='admin:job'),

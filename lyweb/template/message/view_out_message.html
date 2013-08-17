@@ -7,19 +7,19 @@
   <table>
     <tbody>
       <tr>
-	<td>${ _("Subject") }</td>
-	<td class="subject">${ message.subject }</td>
+    <td>${ _("Subject") }</td>
+    <td class="subject">${ message.subject }</td>
       </tr>
       <tr>
-	<td>${ _("Send To") }</td>
-	<td class="to">
-	  <a href="/user/${ message.receiver_id }"><img src="${ message.receiver.avatar_url }" alt="${ message.receiver.username }" /></a>
-	  <a class="username" href="${ reverse_url('account:view', message.receiver_id) }" target="_blank">${ message.receiver.username }</a>
-	</td>
+    <td>${ _("Send To") }</td>
+    <td class="to">
+      <a href="/user/${ message.receiver_id }"><img src="${ message.receiver.avatar_url }" alt="${ message.receiver.username }" /></a>
+      <a class="username" href="${ reverse_url('account:view', message.receiver_id) }" target="_blank">${ message.receiver.username }</a>
+    </td>
       </tr>
       <tr>
-	<td>${ _("Body") }</td>
-	<td class="body markdown">${ message.content_html }</td>
+    <td>${ _("Body") }</td>
+    <td class="body markdown">${ message.content_html }</td>
       </tr>
     </tbody>
   </table>

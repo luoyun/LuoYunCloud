@@ -18,16 +18,16 @@
   <table class="baseinfo">
     <tbody>
       <tr>
-	<td>${ _("Sender") }</td>
-	<td class="sender"><a href="${ reverse_url('account:view', M.sender_id) }" target="_blank">${ M.sender.username }</a></td>
+    <td>${ _("Sender") }</td>
+    <td class="sender"><a href="${ reverse_url('account:view', M.sender_id) }" target="_blank">${ M.sender.username }</a></td>
       </tr>
       <tr>
-	<td>${ _("Send time") }</td>
-	<td class="sendtime">${ ftime(M.text.sendtime) } (${ htime(M.text.sendtime) })</td>
+    <td>${ _("Send time") }</td>
+    <td class="sendtime">${ ftime(M.text.sendtime) } (${ htime(M.text.sendtime) })</td>
       </tr>
       <tr>
-	<td>${ _("Subject") }</td>
-	<td class="subject">${ M.text.subject }</td>
+    <td>${ _("Subject") }</td>
+    <td class="subject">${ M.text.subject }</td>
       </tr>
     </tbody>
   </table>

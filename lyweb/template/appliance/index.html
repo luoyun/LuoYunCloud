@@ -9,50 +9,64 @@
 <%block name="submain">
 
 <div class="row-fluid">
-  <div class="span2">
+  <div class="span3">
     <ul id="appliance-catalog-menu" class="nav nav-list">
-	  <li class="nav-header">${ _("Catalog") }</li>
-	  <li class="active"><a href="${ reverse_url('appliance:index') }">${ _("All") }</a></li>
+      <li class="nav-header">${ _("Catalog") }</li>
+      <li class="active"><a href="${ reverse_url('appliance:index') }">${ _("All") }</a></li>
       % for c in catalogs:
-	  % if c.total:
+      % if c.total:
       <li id="catalog${ c.id }"><a href="${ reverse_url('appliance:index') }?c=${ c.id }">${ c.name }</a></li>
-	  % endif
+      % endif
       % endfor
     </ul>
 
-	<script type="text/javascript">
-	  var $cur = $("#catalog" + ${ cur_catalog });
-	  $cur.siblings().removeClass("active");
-	  $cur.addClass("active");
-	</script>
+    <script type="text/javascript">
+      var $cur = $("#catalog" + ${ cur_catalog });
+      $cur.siblings().removeClass("active");
+      $cur.addClass("active");
+    </script>
   </div>
 
-  <div class="span10">
+  <div class="span9">
 
-	<div id="appliance-list">
+    <div id="appliance-list">
 
-	  % if not appliances:
-	  <p>${ _("Have not any appliances yet !") }</p>
-	  % endif
+      % if not appliances:
+      <p>${ _("Have not any appliances yet !") }</p>
+      % endif
 
-	  <% count = 0 %>
-	  <div class="row-fluid">
-		% for app in appliances:
-		<div class="span2">
-		  <div class="logo"><a href="${ reverse_url('appliance:view') }?id=${ app.id }"><img src="${ app.logourl }" alt="Appliance Picture" /></a></div>
-		  <p class="text-center">${ app.name }</p>
-		</div>
+      <% count = 0 %>
+      <div class="row-fluid">
+        % for A in appliances:
+        <div class="span6 appliance">
+          <div class="row-fluid">
+            <div class="span4 app-left">
+              <a href="${ reverse_url('appliance:view') }?id=${ A.id }"><img src="${ A.logourl }" alt="Appliance Picture" /></a><br>
+              % if A.isuseable:
+              <a class="btn btn-mini" href="${ reverse_url('myun:instance:create') }?appliance_id=${ A.id }" title="${ _('You can create a new instance based on this appliance.') }"><i class="icon-plus"></i> ${ _("Create Instance") }</a>
+              % else:
+              <a class="btn btn-mini disabled"><i class="icon-plus"></i> ${ _("Create Instance") }</a>
+              % endif
+            </div>
+            <div class="span8 app-right">
+              <div><a class="name" href="${ reverse_url('appliance:view') }?id=${ A.id }">${ A.name }</a></div>
+              <div><i class="icon-user"></i>
+                <a href="${ reverse_url('user:view') }?id=${ A.user_id }">${ A.user.nickname }</a></div>
+              <div class="summary">${ A.summary }</div>
+            </div>
+          </div>
+        </div>
 
-		% if count % 6 == 5:
-	  </div>
-	  <div class="row-fluid">
-		% endif
-		<% count += 1 %>
-		% endfor
-	  </div>
-	</div>
+        % if count % 2 == 1:
+      </div>
+      <div class="row-fluid">
+        % endif
+        <% count += 1 %>
+        % endfor
+      </div>
+    </div>
 
-	${ page_html }
+    ${ page_html }
   </div>
 </div>
 

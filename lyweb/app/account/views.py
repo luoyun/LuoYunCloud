@@ -10,7 +10,7 @@ from hashlib import sha1, md5
 
 from sqlalchemy import and_
 
-from tornado.web import authenticated, asynchronous
+from tornado.web import authenticated, asynchronous, HTTPError
 from lycustom import RequestHandler
 
 from yweb.contrib.session.models import Session
@@ -18,7 +18,8 @@ from app.auth.models import User, Group, OpenID, AuthKey
 from app.auth.utils import enc_login_passwd
 from app.language.models import Language
 
-from .models import UserResetpass, PublicKey, UserProfile
+from .models import UserResetpass, PublicKey, UserProfile, \
+    Attachment
 from .forms import LoginForm, ResetPassForm, ResetPassApplyForm, \
     BaseInfoForm, AvatarForm, PublicKeyForm, EmailValidateForm, \
     OpenIDNewForm
@@ -107,7 +108,17 @@ class MyAccount(RequestHandler):
     @authenticated
     def get(self):
 
-        self.render( 'account/index.html' )
+        profile = self.current_user.profile
+        # TODO: profile is None
+
+        resource_total = profile.get_resource_total()
+        resource_used = profile.get_resource_used()
+
+        d = { 'title': _("My LuoYunCloud Account Information"),
+              'resource_total': resource_total,
+              'resource_used': resource_used }
+
+        self.render( 'account/index.html', **d )
 
 
 
@@ -518,7 +529,7 @@ class GoogleHandler(RequestHandler, GoogleMixin):
 
     def _on_auth(self, user):
         if not user:
-            raise tornado.web.HTTPError(500, "Google auth failed")
+            raise HTTPError(500, "Google auth failed")
 
         print 'user = ', user
         print 'type(user) = ', type(user)
@@ -597,7 +608,7 @@ class QQLogin(AccountRequestHandler, QQAuth2Minix):
 
     def _on_auth(self, session):
         if not session:
-            raise tornado.web.HTTPError(500, "QQ auth failed")
+            raise HTTPError(500, "QQ auth failed")
 
         openid = session.get('openid', None)
         if not openid:
@@ -941,8 +952,38 @@ class EmailValidate(RequestHandler):
 
         body = self.render('account/email_validate_notice.html', **d)
 
-        e = Email( subject = subject, text = body,
-                   adr_to = email,
-                   adr_from = adr_from,
-                   mime_type = 'html' )
-        self.quemail.send( e )
+        response = self.sendmsg(
+            uri = 'mailto.address',
+            data = { 'to': email,
+                     'subject': subject,
+                     'body': body } )
+
+        return response
+
+
+
+class UploadKindeditor(RequestHandler):
+
+    @authenticated
+    def post(self):
+        if self.request.files:
+            for f in self.request.files["imgFile"]:
+                try:
+                    # Size check
+                    if len(f['body']) > settings.ATTACHMENT_MAXSIZE:
+                        raise Exception(_('File is large than %s' % settings.ATTACHMENT_MAXSIZE))
+
+                    att = Attachment(self.current_user, f)
+                    att.description = self.trans(_('Upload from kindeditor'))
+                    self.db.add(att)
+                    self.db.commit()
+                    info = { "error" : 0, "url" : att.url }
+                except Exception, ex:
+                    info = { "error" : 1, "message" : str(ex) }
+
+        else:
+            info = {"error" : 1, "message": self.trans(_("You have not upload any file !"))}
+
+        info = json.dumps(info)
+        self.write(info)
+

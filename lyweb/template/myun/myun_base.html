@@ -8,47 +8,47 @@
 
 <div class="min-height600 doc4 wrapper container-fluid">
   <ul class="breadcrumb">
-	<li><a href="/"><i class="icon-home"></i> ${ _("Home") }</a> <span class="divider">/</span></li>
-	<li><a href="${ reverse_url('myun:index') }">${ _("My LuoYun") }</a> <span class="divider">/</span></li>
-	<%block name="innav" />
+    <li><a href="/"><i class="icon-home"></i> ${ _("Home") }</a> <span class="divider">/</span></li>
+    <li><a href="${ reverse_url('myun:index') }">${ _("My LuoYun") }</a> <span class="divider">/</span></li>
+    <%block name="innav" />
   </ul>
 
   <div id="myun">
 
-	<div class="row-fluid">
+    <div class="row-fluid">
 
-	  <div class="span3 sidebar">
-		<div id="account-info" class="row-fluid">
-		  <div class="span5"><a href="${ reverse_url('myun:index') }"><img class="avatar" src="${ current_user.avatar_url }"/></a></div>
-		  <div class="span7">
-			<div class="username"><a href="/account">${ current_user.username }</a></div>
-		  </div>
-		</div>
+      <div class="span3 sidebar">
+        <div id="account-info" class="row-fluid">
+          <div class="span5"><a href="${ reverse_url('myun:index') }"><img class="avatar" src="${ current_user.avatar_url }"/></a></div>
+          <div class="span7">
+            <div class="username"><a href="/account">${ current_user.username }</a></div>
+          </div>
+        </div>
 
-		<ul id="myun-entry-menu" class="nav nav-list">
+        <ul id="myun-entry-menu" class="nav nav-list">
           <li id="myun-index-entry" class="active"><a href="${ reverse_url('myun:index') }"><i class="icon-cloud"></i> ${ _("My Yun") }</a></li>
           <li id="myun-instance-entry"><a href="${ reverse_url('myun:instance') }"><i class="icon-hdd"></i> ${ _("My Instances") }</a></li>
           <li id="myun-appliance-entry"><a href="${ reverse_url('myun:appliance') }"><i class="icon-globe"></i> ${ _("My Appliances") }</a></li>
-		</ul>
+        </ul>
 
-		<br>
-		<p><a class="btn btn-primary" href="${ reverse_url('myun:instance:create') }"><i class="icon-leaf icon-large icon-spin"></i> ${ _("Create Instance") }</a></p>
+        <br>
+        <p><a class="btn btn-primary" href="${ reverse_url('myun:instance:create') }"><i class="icon-leaf icon-large icon-spin"></i> ${ _("Create Instance") }</a></p>
 
-		% if has_permission('upload.appliance'):
-		<p><a class="btn btn-primary" href="${ reverse_url('appliance:upload') }"><i class="icon-cloud-upload icon-large"></i> ${ _("Upload Appliance") }</a></p>
-		% endif
+        % if has_permission('upload.appliance'):
+        <p><a class="btn btn-primary" href="${ reverse_url('appliance:upload') }"><i class="icon-cloud-upload icon-large"></i> ${ _("Upload Appliance") }</a></p>
+        % endif
 
-	  </div>
+      </div>
 
-	  <div class="span9 submain ">
-		<%block name="submain"/>
-	  </div>
+      <div class="span9 submain ">
+        <%block name="submain"/>
+      </div>
 
-	  <script type="text/javascript">
-		menu_entry_active ( "/myun" );
-	  </script>
+      <script type="text/javascript">
+        menu_entry_active ( "/myun" );
+      </script>
 
-	</div>
+    </div>
   </div>
 </div>
 </%block>

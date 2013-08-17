@@ -267,7 +267,7 @@ msgstr "无此用户： %s"
 #: template/forum/index_posts.html:38 template/forum/topic/view.html:65
 #, fuzzy
 msgid "Reply Post"
-msgstr "回复:"
+msgstr "回复留言"
 
 #: app/forum/views.py:796 app/forum/views.py:886
 msgid "Give post id please."
@@ -1782,9 +1782,8 @@ msgid "[Attachment (%s)]"
 msgstr "[附件(%s)]"
 
 #: app/home/views.py:27
-#, fuzzy
 msgid "LuoYunCloud Home"
-msgstr "落云首页"
+msgstr "落云云计算平台首页 LuoYunCloud 公有云平台在线 天津落云科技有限公司"
 
 #: app/home/views.py:79
 msgid "Permission Denied"
@@ -2945,7 +2944,7 @@ msgstr "来自"
 
 #: template/message/inbox.html:30 template/message/view_message.html:8
 msgid "Reply"
-msgstr "回复:"
+msgstr "回复"
 
 #: template/message/inbox.html:41
 msgid "You have not receiverd any message yet !"
@@ -3272,7 +3271,7 @@ msgstr "添加新网络配置"
 #: template/myun/instance/storage_add.html:11
 #: template/myun/instance/view.html:204 template/admin/instance/view.html:228
 msgid "Add New Storage"
-msgstr "添加新网络配置"
+msgstr "添加新存储"
 
 #: template/myun/instance/create.html:7
 msgid "Create A New Instance"
@@ -5042,7 +5041,7 @@ msgid ""
 "LuoYunCloud is a open source software for cloud computing. It can help you "
 "to setup your own platform easily."
 msgstr "LuoYunCloud 是由落云科技开发的云计算平台软件，完全遵守 GPL 协议，"
-"开放源码，您可以用来部署 IaaS，SaaS， PaaS 等多种不同功能的计算平台，"
+"开放源码，您可以用来部署 IaaS， PaaS， SaaS 等多种不同功能的计算平台，"
 "帮助您快速部署自己的私有云、公有云或者混合云。"
 
 #: template/base.html:82

@@ -11,86 +11,86 @@
   <form method="POST">${ xsrf_form_html() }
     <table>
       <tbody>
-	<tr class="to">
-	  <td>
-	  % if TOTYPE == 'user':
-	  ${ _("To User") }
-	  % elif TOTYPE == 'group':
-	  ${ _("To Group") }
-	  % else:
-	  ${ _("To") }
-	  % endif
-	  </td>
-	  <td>
-	    % if TOTYPE == 'all':
-	    ${ _("ALL users in LuoYunCloud") }
-	    % else:
+    <tr class="to">
+      <td>
+      % if TOTYPE == 'user':
+      ${ _("To User") }
+      % elif TOTYPE == 'group':
+      ${ _("To Group") }
+      % else:
+      ${ _("To") }
+      % endif
+      </td>
+      <td>
+        % if TOTYPE == 'all':
+        ${ _("ALL users in LuoYunCloud") }
+        % else:
 
-	    % if USER_LIST or GROUP_LIST:
-	    <ul>
-	      % if USER_LIST:
-	      % for U in USER_LIST:
-	      <li><a href="${ reverse_url('admin:user') }?id=${ U.id }" target="_blank">${ U.username }</a> &lt;${ U.profile.email }&gt;,</li>
-	      % endfor
-	      % elif GROUP_LIST:
-	      % for G in GROUP_LIST:
-	      <li><a href="${ reverse_url('admin:group') }?id=${ G.id }" target="_blank">${ G.name }</a>,</li>
-	      % endfor
-	      % endif
-	    </ul>
-	    % endif
-	    % endif
-	    <p class="subtitle">${ _("Add more reciver") }</p>
-	    ${ form.to() }
-	    ${ form.html_errors(form.to.errors) }
-	  </td>
-	</tr>
-	<tr class="cc">
-	  <td>${ form.cc.label }</td>
-	  <td>
-	    ${ form.cc() }
-	    ${ form.html_errors(form.cc.errors) }
-	  </td>
-	</tr>
-	<tr class="bcc">
-	  <td>${ form.bcc.label }</td>
-	  <td>
-	    ${ form.bcc() }
-	    ${ form.html_errors(form.bcc.errors) }
-	  </td>
-	</tr>
-	<tr class="subject">
-	  <td>${ form.subject.label }</td>
-	  <td>
-	    ${ form.subject() }
-	    ${ form.html_errors(form.subject.errors) }
-	  </td>
-	</tr>
-	<tr class="body">
-	  <td>${ form.body.label }</td>
-	  <td>
-	    ${ form.body() }
-	    ${ form.html_errors(form.body.errors) }
-	  </td>
-	</tr>
-	% if INVALID_EMAIL:
-	<tr>
-	  <td>${ _("Invalid email") }</td>
-	  <td>
-	    <ul class="errors">
-	      % for e in INVALID_EMAIL:
-	      <li>${ e }</li>
-	      % endfor
-	    </ul>
-	  </td>
-	</tr>
-	% endif
+        % if USER_LIST or GROUP_LIST:
+        <ul>
+          % if USER_LIST:
+          % for U in USER_LIST:
+          <li><a href="${ reverse_url('admin:user') }?id=${ U.id }" target="_blank">${ U.username }</a> &lt;${ U.profile.email }&gt;,</li>
+          % endfor
+          % elif GROUP_LIST:
+          % for G in GROUP_LIST:
+          <li><a href="${ reverse_url('admin:group') }?id=${ G.id }" target="_blank">${ G.name }</a>,</li>
+          % endfor
+          % endif
+        </ul>
+        % endif
+        % endif
+        <p class="subtitle">${ _("Add more reciver") }</p>
+        ${ form.to() }
+        ${ form.html_errors(form.to.errors) }
+      </td>
+    </tr>
+    <tr class="cc">
+      <td>${ form.cc.label }</td>
+      <td>
+        ${ form.cc() }
+        ${ form.html_errors(form.cc.errors) }
+      </td>
+    </tr>
+    <tr class="bcc">
+      <td>${ form.bcc.label }</td>
+      <td>
+        ${ form.bcc() }
+        ${ form.html_errors(form.bcc.errors) }
+      </td>
+    </tr>
+    <tr class="subject">
+      <td>${ form.subject.label }</td>
+      <td>
+        ${ form.subject() }
+        ${ form.html_errors(form.subject.errors) }
+      </td>
+    </tr>
+    <tr class="body">
+      <td>${ form.body.label }</td>
+      <td>
+        ${ form.body() }
+        ${ form.html_errors(form.body.errors) }
+      </td>
+    </tr>
+    % if INVALID_EMAIL:
+    <tr>
+      <td>${ _("Invalid email") }</td>
+      <td>
+        <ul class="errors">
+          % for e in INVALID_EMAIL:
+          <li>${ e }</li>
+          % endfor
+        </ul>
+      </td>
+    </tr>
+    % endif
       </tbody>
       <tfoot>
-	<tr>
-	  <td></td>
-	  <td><input class="red-submit" type="submit" value="${ _('Send Mail') }"/></td>
-	</tr>
+    <tr>
+      <td></td>
+      <td><input class="red-submit" type="submit" value="${ _('Send Mail') }"/></td>
+    </tr>
       </tfoot>
     </table>
   </form>

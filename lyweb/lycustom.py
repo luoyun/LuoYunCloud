@@ -16,6 +16,7 @@ mako.runtime.UNDEFINED = ''
 from mako.exceptions import TemplateLookupException
 
 from tornado.web import RequestHandler as TornadoRequestHandler
+from tornado.web import HTTPError
 from tornado import escape
 
 from app.auth.models import User

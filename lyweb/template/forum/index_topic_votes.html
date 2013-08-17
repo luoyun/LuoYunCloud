@@ -11,23 +11,23 @@
 
 <div id="forum-topic-list">
   <table class="table table-striped">
-	<tbody>
-	  % for V in VOTE_LIST:
-	  <tr>
-		<td>${ htime(V.created) }</td>
-		<td><a href="${ reverse_url('user:view') }?id=${ V.user_id }">${ V.user.username }</a></td>
-		<td>
-		  % if V.value > 0:
-		  <i class="icon-thumbs-up"></i> ${ _("ding") }
-		  % else:
-		  <i class="icon-thumbs-down"></i> ${ _("cai") }
-		  % endif
-		</td>
-		<td><a href="${ reverse_url('user:view') }?id=${ V.topic.user_id }">${ V.topic.user.username }</a></td>
-		<td><a href="${ reverse_url('forum:topic:view') }?id=${ V.topic_id }">${ V.topic.name }</a></td>
-	  </tr>
-	  % endfor
-	</tbody>
+    <tbody>
+      % for V in VOTE_LIST:
+      <tr>
+        <td>${ htime(V.created) }</td>
+        <td><a href="${ reverse_url('user:view') }?id=${ V.user_id }">${ V.user.username }</a></td>
+        <td>
+          % if V.value > 0:
+          <i class="icon-thumbs-up"></i> ${ _("ding") }
+          % else:
+          <i class="icon-thumbs-down"></i> ${ _("cai") }
+          % endif
+        </td>
+        <td><a href="${ reverse_url('user:view') }?id=${ V.topic.user_id }">${ V.topic.user.username }</a></td>
+        <td><a href="${ reverse_url('forum:topic:view') }?id=${ V.topic_id }">${ V.topic.name }</a></td>
+      </tr>
+      % endfor
+    </tbody>
   </table>
   ${ page_html }
 </div>

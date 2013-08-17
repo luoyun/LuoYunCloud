@@ -5,16 +5,16 @@
 <div id="ly-notification-large">
   % if PERMS:
   <div class="notification-title">
-	<img src="${ theme_url('img/no_permission.png') }" />
+    <img src="${ theme_url('img/no_permission.png') }" />
     <span>${ _("NO PERMISSIONS !") }</span>
   </div>
 
   <div class="notification-body">
     <p class="text-warning">${ _("This action need permissions") }</p>
-	<ul>
-	  % for p in PERMS:
-	  <li>${ p.codename } ( ${ p.name } )</li>
-	  % endfor
+    <ul>
+      % for p in PERMS:
+      <li>${ p.codename } ( ${ p.name } )</li>
+      % endfor
     </ul>
   </div>
   % endif

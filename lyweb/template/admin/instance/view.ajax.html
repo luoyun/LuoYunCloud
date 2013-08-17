@@ -13,10 +13,10 @@
     <li><a class="blue-submit" href="${ reverse_url('admin:instance') }?id=${ I.id }&action=change_owner">${ _("Change Owner") }</a></li>
     <li>${ _("Islocked") }
       <input type="checkbox"
-	     % if I.islocked:
-	     checked="checked"
-	     % endif
-	     onclick="simpleToggleCheckbox( this, '${ reverse_url('instance:islocked', I.id) }', '#islocked-notify')" /></li>
+         % if I.islocked:
+         checked="checked"
+         % endif
+         onclick="simpleToggleCheckbox( this, '${ reverse_url('instance:islocked', I.id) }', '#islocked-notify')" /></li>
   </ul>
 </div>
 
@@ -31,64 +31,64 @@
   <div id="${ preid }-baseinfo" class="lytab-content">
     <table class="kv">
       <tbody>
-	<tr>
-	  <td>${ _("CPU numbers") }</td>
-	  <td>${ I.cpus }</td>
-	</tr>
-	<tr>
-	  <td>${ _("Memory") }</td>
-	  <td>${ I.memory }</td>
-	</tr>
-	<tr>
-	  <td>${ _("Domain") }</td>
-	  <td>
-	    <span id="i-domain">
-	      % if I.domain:
-	      % if I.is_running:
-	      <a href="${ I.home_url(current_user) }" target="_blank">${ I.domain }</a>
-	      % else:
-	      ${ I.domain }
-	      % endif
-	      % endif
-	    </span>
-	  </td>
-	</tr>
-	<tr>
-	  <td>${ _("IP") }</td>
-	  <td>
-	    <span id="i-ip">
-	      % if I.work_ip:
-	      <a href="${ I.home_url(current_user, useip=True) }" target="_blank"><span id="lyinst-ip">${ I.work_ip }</span></a>
-	      % endif
-	    </span>
-	  </td>
-	</tr>
-	<tr>
-	  <td>${ _("Node") }</td>
-	  <td>
-	    % if I.node:
-	    <a href="${ reverse_url('admin:node') }?id=${ I.node.id }" target="_blank">${ I.node.hostname }</a>
-	    /
-	    ${ I.node.ip }
-	    /
-	    <a href="${ reverse_url('admin:instance') }?node=${ I.node.id }" title="Instances count" target="_blank">${ len(I.node.instances) }</a>
-	    % else:
-	    ${ _("no node server found.") }
-	    % endif
-	  </td>
-	</tr>
+    <tr>
+      <td>${ _("CPU numbers") }</td>
+      <td>${ I.cpus }</td>
+    </tr>
+    <tr>
+      <td>${ _("Memory") }</td>
+      <td>${ I.memory }</td>
+    </tr>
+    <tr>
+      <td>${ _("Domain") }</td>
+      <td>
+        <span id="i-domain">
+          % if I.domain:
+          % if I.is_running:
+          <a href="${ I.home_url(current_user) }" target="_blank">${ I.domain }</a>
+          % else:
+          ${ I.domain }
+          % endif
+          % endif
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td>${ _("IP") }</td>
+      <td>
+        <span id="i-ip">
+          % if I.work_ip:
+          <a href="${ I.home_url(current_user, useip=True) }" target="_blank"><span id="lyinst-ip">${ I.work_ip }</span></a>
+          % endif
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td>${ _("Node") }</td>
+      <td>
+        % if I.node:
+        <a href="${ reverse_url('admin:node') }?id=${ I.node.id }" target="_blank">${ I.node.hostname }</a>
+        /
+        ${ I.node.ip }
+        /
+        <a href="${ reverse_url('admin:instance') }?node=${ I.node.id }" title="Instances count" target="_blank">${ len(I.node.instances) }</a>
+        % else:
+        ${ _("no node server found.") }
+        % endif
+      </td>
+    </tr>
       </tbody>
     </table>
 
     % for S in STORAGE_LIST:
     <table class="kv">
       <tr>
-	<td>${ _("Type") }</td>
-	<td>${ S.get('type') }</td>
+    <td>${ _("Type") }</td>
+    <td>${ S.get('type') }</td>
       </tr>
       <tr>
-	<td>${ _("Size") }</td>
-	<td>${ S.get('size') }</td>
+    <td>${ _("Size") }</td>
+    <td>${ S.get('size') }</td>
       </tr>
     </table>
     % endfor
@@ -117,26 +117,26 @@
     % for N in NETWORK_LIST:
     <table class="kv">
       <tbody>
-	<tr>
-	  <td>${ _("Type") }</td>
-	  <td>${ N.get('type') }</td>
-	</tr>
-	<tr>
-	  <td>${ _("IP") }</td>
-	  <td>${ N.get('ip') }</td>
-	</tr>
-	<tr>
-	  <td>${ _("Gateway") }</td>
-	  <td>${ N.get('gateway') }</td>
-	</tr>
-	<tr>
-	  <td>${ _("Netmask") }</td>
-	  <td>${ N.get('netmask') }</td>
-	</tr>
-	<tr>
-	  <td>${ _("MAC") }</td>
-	  <td>${ N.get('mac') }</td>
-	</tr>
+    <tr>
+      <td>${ _("Type") }</td>
+      <td>${ N.get('type') }</td>
+    </tr>
+    <tr>
+      <td>${ _("IP") }</td>
+      <td>${ N.get('ip') }</td>
+    </tr>
+    <tr>
+      <td>${ _("Gateway") }</td>
+      <td>${ N.get('gateway') }</td>
+    </tr>
+    <tr>
+      <td>${ _("Netmask") }</td>
+      <td>${ N.get('netmask') }</td>
+    </tr>
+    <tr>
+      <td>${ _("MAC") }</td>
+      <td>${ N.get('mac') }</td>
+    </tr>
       </tbody>
     </table>
     % endfor
@@ -151,24 +151,24 @@
     % if JOB_LIST.count():
     <table class="ly-table">
       <tbody>
-	<tr>
+    <tr>
           <th>${ _("Job ID") }</th>
           <th>${ _("User") }</th>
           <th>${ _("Action") }</th>
           <th>${ _("Result") }</th>
           <th>${ _("Start Time") }</th>
           <th>${ _("End Time") }</th>
-	</tr>
-	% for J in JOB_LIST:
-	<tr>
+    </tr>
+    % for J in JOB_LIST:
+    <tr>
           <td>${ J.id }</td>
           <td><a href="${ reverse_url('account:view', J.user.id) }">${ J.user.username }</a></td>
           <td>${ J.action_string }</td>
           <td>${ locale.translate(J.status_string) }</td>
           <td>${ ftime(J.started) }</td>
           <td>${ ftime(J.ended) }</td>
-	</tr>
-	% endfor
+    </tr>
+    % endfor
       </tbody>
     </table>
     % endif

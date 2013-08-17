@@ -1,31 +1,57 @@
 <%inherit file="../forum_base.html"/>
 
 <%block name="subhead">
+% if markup_language == 'markdown':
 <link rel="stylesheet" type="text/css" href="${ static_url('markitup/skins/simple/style.css') }" />
 <link rel="stylesheet" type="text/css" href="${ static_url('markitup/sets/markdown/style.css') }" />
+% endif
+</%block>
+
+<%block name="innav">
+% if REPLY_POST:
+<li><a href="reverse_url('forum:topic:view') + '?id=%s' % REPLY_POST.topic.id">${ REPLY_POST.topic.name }</a> <span class="divider">/</span></li>
+<li>${ _("Reply Post") }</li>
+% else:
+<li><a href="reverse_url('forum:topic:view') + '?id=%s' % POST.topic.id">${ POST.topic.name }</a> <span class="divider">/</span></li>
+<li>${ _("Edit My Post") }</li>
+% endif
 </%block>
 
 <%block name="submain">
 
-<script type="text/javascript" src="${ static_url('markitup/jquery.markitup.js') }"></script>
-<script type="text/javascript" src="${ static_url('markitup/sets/markdown/set.js') }"></script>
-
-<div>
+<div class="container-fluid">
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Update Post") }</legend>
-	  ${ form.body.label } ${ form.body() }
-	  ${ form.html_errors( form.body.errors ) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+    % if REPLY_POST:
+    <div class="well post-item">
+      <p>@ <a href="${ reverse_url('user:view') }?id=${ REPLY_POST.user_id }">${ REPLY_POST.user.username }</a></p>
+      <div>${ REPLY_POST.body_html }</div>
+    </div>
+    % endif
+
+    ${ form.body() }
+    ${ form.html_errors( form.body.errors ) }
+    <br>
+    <button type="submit" class="btn">${ _("Submit") }</button>
   </form>
 </div>
 
+<div style="display:none;" id="xsrf-cookie">${ xsrf_cookie }</div>
+
+% if markup_language == 'markdown':
+<script type="text/javascript" src="${ static_url('markitup/jquery.markitup.js') }"></script>
+<script type="text/javascript" src="${ static_url('markitup/sets/markdown/set.js') }"></script>
 <script type="text/javascript" >
    mySettings.previewParserPath = "/t/preview?markup_language=markdown&_xsrf=${ xsrf_cookie }";
    $(document).ready(function() {
       $("#body").markItUp(mySettings);
    });
 </script>
+
+% else:
+<script charset="utf-8" src="${ static_url('third/kindeditor/kindeditor-min.js') }"></script>
+<script charset="utf-8" src="${ static_url('third/kindeditor/lang/zh_CN.js') }"></script>
+<script>
+  load_kindeditor({ selector: '#body' });
+</script>
+% endif
 </%block>

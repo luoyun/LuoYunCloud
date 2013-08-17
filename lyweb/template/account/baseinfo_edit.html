@@ -4,22 +4,22 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${_("Edit My Base Information")}</legend>
-	  ${ form.nickname.label } ${ form.nickname() }
-	  ${ form.html_errors(form.nickname.errors) }
+    <fieldset>
+      <legend>${_("Edit My Base Information")}</legend>
+      ${ form.nickname.label } ${ form.nickname() }
+      ${ form.html_errors(form.nickname.errors) }
 
-	  ${ form.first_name.label } ${ form.first_name() }
-	  ${ form.html_errors(form.first_name.errors) }
+      ${ form.first_name.label } ${ form.first_name() }
+      ${ form.html_errors(form.first_name.errors) }
 
-	  ${ form.last_name.label } ${ form.last_name() }
-	  ${ form.html_errors(form.last_name.errors) }
+      ${ form.last_name.label } ${ form.last_name() }
+      ${ form.html_errors(form.last_name.errors) }
 
-	  ${ form.language.label } ${ form.language() }
-	  ${ form.html_errors(form.language.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      ${ form.language.label } ${ form.language() }
+      ${ form.html_errors(form.language.errors) }
+      <br>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 </div>
 

@@ -12,29 +12,29 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("New Article") }</legend>
-	  ${ form.entry.label } ${ form.entry() }
-	  ${ form.html_errors(form.entry.errors) }
+    <fieldset>
+      <legend>${ _("New Article") }</legend>
+      ${ form.entry.label } ${ form.entry() }
+      ${ form.html_errors(form.entry.errors) }
 
-	  ${ form.language.label } ${ form.language() }
-	  ${ form.html_errors(form.language.errors) }
+      ${ form.language.label } ${ form.language() }
+      ${ form.html_errors(form.language.errors) }
 
-	  ${ form.name.label } ${ form.name() }
-	  ${ form.html_errors(form.name.errors) }
+      ${ form.name.label } ${ form.name() }
+      ${ form.html_errors(form.name.errors) }
 
-	  ${ form.summary.label } ${ form.summary() }
-	  ${ form.html_errors(form.summary.errors) }
+      ${ form.summary.label } ${ form.summary() }
+      ${ form.html_errors(form.summary.errors) }
 
-	  ${ form.body.label } ${ form.body() }
-	  ${ form.html_errors(form.body.errors) }
+      ${ form.body.label } ${ form.body() }
+      ${ form.html_errors(form.body.errors) }
 
-	  <label for="is_visible">
-		<input id="is_visible" type="checkbox" name="is_visible">
-		${ _("Is it visible ?") }
-	  </label>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      <label for="is_visible">
+        <input id="is_visible" type="checkbox" name="is_visible">
+        ${ _("Is it visible ?") }
+      </label>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 
 </div>

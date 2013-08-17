@@ -9,9 +9,9 @@
 
 <div id="instance-view">
   <div id="instance-summary" class="row-fluid">
-	<div class="span3 text-center">
-	  <div class="logo"><a href="${ reverse_url('instance:view') }?id=${ instance.id }"><img src="${ instance.logourl }" /></a></div>
-	  <div>${ instance.status_icon }</div>
+    <div class="span3 text-center">
+      <div class="logo"><a href="${ reverse_url('instance:view') }?id=${ instance.id }"><img src="${ instance.logourl }" /></a></div>
+      <div>${ instance.status_icon }</div>
     </div>
 
     <div class="span9">
@@ -19,39 +19,39 @@
       <h2 class="name">${ instance.name }</h2>
 
       <div class="owner">${ _("Owner") }
-		<a href="${ reverse_url('user:view') }?id=${ instance.user_id }">${ instance.user.username }</a></div>
+        <a href="${ reverse_url('user:view') }?id=${ instance.user_id }">${ instance.user.username }</a></div>
 
       <div class="summary">
-		% if instance.summary:
-		${ instance.summary }
-		% else:
-		${ _("This is an instance of LuoYun Cloud platform.") }
-		% endif
+        % if instance.summary:
+        ${ instance.summary }
+        % else:
+        ${ _("This is an instance of LuoYun Cloud platform.") }
+        % endif
       </div>
 
       <table class="table table-bordered table-condensed">
-		<tbody>
+        <tbody>
           <tr>
             <td>${ _("Domain") }</td>
             <td>
-			  % if instance.domain:
-			  % if instance.is_running:
-			  <a href="${ instance.home_url(current_user) }" target="_blank">${ instance.domain }</a>
-			  % else:
-			  ${ instance.domain }
-			  % endif
-			  % endif
-			</td>
+              % if instance.domain:
+              % if instance.is_running:
+              <a href="${ instance.home_url(current_user) }" target="_blank">${ instance.domain }</a>
+              % else:
+              ${ instance.domain }
+              % endif
+              % endif
+            </td>
           </tr>
           <tr>
             <td>${ _("IP") }</td>
             <td>
-			  % if instance.work_ip:
-			  <a href="${ instance.home_url(current_user, useip=True) }" target="_blank"><span id="lyinst-ip">${ instance.work_ip }</span></a>
-			  % endif
+              % if instance.work_ip:
+              <a href="${ instance.home_url(current_user, useip=True) }" target="_blank"><span id="lyinst-ip">${ instance.work_ip }</span></a>
+              % endif
 
-			</td>
-		  </tr>
+            </td>
+          </tr>
           <tr>
             <td>${ _("Appliance") }</td>
             <td><a href="${ reverse_url('appliance:view') }?id=${ instance.appliance.id }">${ instance.appliance.name }</a></td>
@@ -64,19 +64,19 @@
             <td>${ _("Update Time") }</td>
             <td>${ ftime(instance.updated)}</td>
           </tr>
-		</tbody>
+        </tbody>
       </table>
 
       <h2>${ _("Description") }</h2>
-	  <div class="description">
-		% if instance.description:
-		${ instance.description_html }
-		% else:
-		${ _("No description.") }
-		% endif
-	  </div>
+      <div class="description">
+        % if instance.description:
+        ${ instance.description_html }
+        % else:
+        ${ _("No description.") }
+        % endif
+      </div>
 
-	</div>
+    </div>
 
   </div>
 </div>

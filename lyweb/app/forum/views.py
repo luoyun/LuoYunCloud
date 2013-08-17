@@ -43,24 +43,21 @@ class RequestHandler(OrigHandler):
 
     def can_view_topic(self, catalog):
 
-        if not (self.current_user and catalog):
+        if not catalog:
             return False
 
-        if self.current_user in catalog.managers:
+        if ( catalog.is_private or
+             not catalog.is_visible ):
+            if self.current_user:
+                if ( self.current_user in catalog.managers or
+                     self.current_user in catalog.allowed_users or
+                     self.has_permission('admin') ):
+                    return True
+
+        else:
             return True
 
-        u = self.db.query(ForumForbiddenUser).filter_by(
-            user_id = self.current_user.id ).first()
-        if u:
-            return False
-
-        if ( catalog.is_private and
-             not catalog.is_visible and
-             not self.has_permission('admin') and
-             not self.current_user in catalog.allowed_users ):
-            return False
-
-        return True
+        return False
 
 
     def get_post_parent(self, post):
@@ -75,14 +72,14 @@ class Index(RequestHandler):
     def prepare(self):
 
         tags = self.db.query(ForumTopicTag).order_by(
-            desc('hit') ).limit(30)
+            desc('hit') ).limit(12)
 
         self.prepare_kwargs['TAGS'] = tags
 
 
     def get(self):
 
-        tab = self.get_argument('tab', 'topics')
+        tab = self.get_argument('tab', 'catalogs')
 
         if tab == 'catalogs':
             self.get_catalogs()
@@ -364,8 +361,7 @@ class TopicHandler(RequestHandler):
 
 class TopicAdd(TopicHandler):
 
-    title = _('New Forum Topic')
-    template_path = 'forum/topic/add.html'
+    template_path = 'forum/topic/edit.html'
 
     @authenticated
     def prepare(self):
@@ -392,6 +388,10 @@ class TopicAdd(TopicHandler):
         self.prepare_kwargs['can_add_topic'] = self.can_add_topic
         self.prepare_kwargs['CATALOG'] = self.CATALOG
         self.prepare_kwargs['form'] = form
+        self.prepare_kwargs['markup_language'] = self.get_argument(
+            'markup_language', 'WYSIWYM')
+
+        self.prepare_kwargs['title'] = _('Post A New Topic')
 
 
     def get(self):
@@ -418,6 +418,10 @@ class TopicAdd(TopicHandler):
             else:
                 topic.catalog_id = form.catalog.data
 
+            ml = self.prepare_kwargs['markup_language']
+            if ml == 'WYSIWYM':
+                topic.markup_language = 2
+
             self.db.add(topic)
             self.db.commit()
             self.update_tag(form.tag.data, topic)
@@ -432,7 +436,6 @@ class TopicAdd(TopicHandler):
 
 class TopicEdit(TopicHandler):
 
-    title = _('Edit Forum Topic')
     template_path = 'forum/topic/edit.html'
 
     @authenticated
@@ -455,6 +458,9 @@ class TopicEdit(TopicHandler):
 
         self.prepare_kwargs['form'] = form
         self.prepare_kwargs['TOPIC'] = t
+        self.prepare_kwargs['title'] = _('Edit Topic: "%s"') % t.name
+        self.prepare_kwargs['markup_language'] = t.language
+
 
     def get(self):
 
@@ -672,11 +678,14 @@ class TopicReply(TopicHandler):
 
 class TopicVote(TopicHandler):
 
-    @authenticated
     def post(self):
 
         d = { 'ret_code': 1,
               'ret_string': _('Something is wrong.') }
+
+        if not self.current_user:
+            d['ret_string'] = _('Please login to vote again.')
+            return self.write( d )
 
         ID = self.get_argument_int('id', None)
         if not ID:
@@ -811,7 +820,7 @@ class PostVote(RequestHandler):
 class PostReply(RequestHandler):
 
     title = _('Reply Post')
-    template_path = 'forum/post/reply.html'
+    template_path = 'forum/post/edit.html'
 
     @authenticated
     def prepare(self):
@@ -840,7 +849,7 @@ class PostReply(RequestHandler):
             return self.finish( _('Your speech is too fast!') )
 
         self.prepare_kwargs['form'] = PostForm(self)
-        self.prepare_kwargs['POST'] = P
+        self.prepare_kwargs['REPLY_POST'] = P
 
 
     def get(self):
@@ -850,7 +859,7 @@ class PostReply(RequestHandler):
     def post(self):
 
         form = self.prepare_kwargs['form']
-        P = self.prepare_kwargs['POST']
+        P = self.prepare_kwargs['REPLY_POST']
 
         if form.validate():
 

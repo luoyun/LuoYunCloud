@@ -1,0 +1,37 @@
+<%inherit file="../forum_base.html"/>
+
+<%block name="innav">
+<li><a href="${ reverse_url('admin:forum:catalog') }?id=${ CATALOG.id }">${ CATALOG.name }</a></li>
+</%block>
+
+<%block name="submain">
+
+<div class="row-fluid">
+
+  <div class="span3">
+    <img src="${ CATALOG.logourl }" />
+
+    <br>
+    <p><a class="btn btn-primary" href="${ reverse_url('admin:forum:catalog:edit') }?id=${ CATALOG.id }"><i class="icon-edit"></i> ${ _("Edit Catalog") }</a></p>
+    <p><a class="btn" href="${ reverse_url('admin:forum:catalog:add') }?pid=${ CATALOG.id }"><i class="icon-plus"></i> ${ _("Add Sub Catalog") }</a></p>
+  </div>
+
+  <div class="span9">
+
+    <h2>${ _("Name") }</h2>
+    <p>${ CATALOG.name }</p>
+
+
+    % if SUB_CATALOG_LIST:
+    % for C in SUB_CATALOG_LIST:
+    <p><a href="${ reverse_url('admin:forum:catalog') }?id=${ C.id }">${ C.name }</a></p>
+    % endfor
+    % else:
+    <div class="hero-unit">
+      <h2>${ _("No catalog now.") }</h2>
+    </div>
+    % endif
+  </div>
+</div>
+
+</%block>

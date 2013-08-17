@@ -1,0 +1,52 @@
+<%inherit file="/admin/appliance/appliance_base.html" />
+
+<%block name="innav">
+% if CATALOG:
+<li><a href="${ reverse_url('admin:appliance:catalog:view') }?id=${ CATALOG.id }">${ CATALOG.name }</a> <span class="divider">/</span></li>
+<li>${ _("Edit Appliance Catalog") }</li>
+% else:
+<li>${ _("Add New Appliance Catalog") }</li>
+% endif
+</%block>
+
+<%block name="submain">
+
+<div class="container-fluid">
+  <form class="form-horizontal" method="POST">${ xsrf_form_html() }
+    <div class="control-group">
+      <label class="control-label" for="name">${ _("Name") }</label>
+      <div class="controls">
+        ${ form.name() }
+        ${ form.html_errors( form.name.errors ) }
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="summary">${ _("Summary") }</label>
+      <div class="controls">
+        ${ form.summary() }
+        ${ form.html_errors( form.summary.errors ) }
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="description">${ _("Description") }</label>
+      <div class="controls">
+        ${ form.description() }
+        ${ form.html_errors( form.description.errors ) }
+        <br>
+        <button type="submit" class="btn">${ _("Submit") }</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div style="display:none;" id="xsrf-cookie">${ xsrf_cookie }</div>
+
+<script charset="utf-8" src="${ static_url('third/kindeditor/kindeditor-min.js') }"></script>
+<script charset="utf-8" src="${ static_url('third/kindeditor/lang/zh_CN.js') }"></script>
+<script>
+  load_kindeditor({ selector: '#description' });
+</script>
+
+</%block>

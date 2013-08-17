@@ -54,6 +54,9 @@ handlers = [
     # user
     url( r'/user/view', user.View, name='user:view' ),
 
+    # attachment
+    url( r'/attachment/upload_kindeditor', views.UploadKindeditor,
+         name="attachment:upload_kindeditor" ),
 
     # admin
     url(r'/admin/account/mailto', admin.MailTo,

@@ -10,8 +10,8 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Add Resource") }</legend>
+    <fieldset>
+      <legend>${ _("Add Resource") }</legend>
       ${ form.cpu.label } ${ form.cpu() }
       ${ form.html_errors(form.cpu.errors) }
 
@@ -30,8 +30,8 @@
       ${ form.expired_date.label } ${ form.expired_date() }
       ${ form.html_errors(form.expired_date.errors) }
 
-	  <button type="submit" class="btn">${ _("Save") }</button>
-	</fieldset>
+      <button type="submit" class="btn">${ _("Save") }</button>
+    </fieldset>
   </form>
 </div>
 

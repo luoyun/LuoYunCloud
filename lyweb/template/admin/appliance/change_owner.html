@@ -1,32 +1,36 @@
-<%inherit file="/admin/appliance.html" />
+<%inherit file="appliance_base.html" />
 
 <%block name="innav">
-<li><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></li>
-<li><a href="${ reverse_url('admin:appliance') }?id=${ A.id }">${ A.name }</a></li>
-<li>${ _("Change appliance owner.") }</li>
+<li><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a>
+  <span class="divider">/</span></li>
+<li><a href="${ reverse_url('admin:appliance') }?id=${ APPLIANCE.id }">${ APPLIANCE.name }</a>
+  <span class="divider">/</span></li>
+<li>${ _("Change Appliance User") }</li>
 </%block>
 
-<%block name="main">
 
-<div class="a-view">
+<%block name="submain">
 
-  <div class="small-tbform">
-    <form method="POST">${ xsrf_form_html() }
-      <p>
-	<label for="user">${ _("User") }<span class="tips">${ _("Input a user name or user id.") }</span></label>
-	<input id="user" name="user" type="text">
-      </p>
-      <p>
-	<label for="reason">${ _("Reason") }<span class="tips">${ _("Why change the owner ?") }</span></label>
-	<textarea id="reason" name="reason"></textarea>
-      </p>
-      ${ show_error( ERROR ) }
-      <input class="red-submit" type="submit" value="Save"/>
-    </form>
-  </div>
+<div class="container-fluid">
+  <form class="form-horizontal" method="POST">${ xsrf_form_html() }
+    <div class="control-group">
+      <label class="control-label" for="user">${ _("User") }</label>
+      <div class="controls">
+        <input id="user" name="user" type="text">
+        <div class="muted">${ _("Input a user name or user id.") }</div>
+      </div>
+    </div>
 
-
+    <div class="control-group">
+      <label class="control-label" for="reason">${ _("Reason") }</label>
+      <div class="controls">
+        <textarea id="reason" name="reason"></textarea>
+        <div class="muted">${ _("Why change the owner ?") }</div>
+        <div class="text-error">${ show_error( ERROR ) }</div>
+        <button type="submit" class="btn">${ _("Submit") }</button>
+      </div>
+    </div>
+  </form>
 </div>
-
 
 </%block>

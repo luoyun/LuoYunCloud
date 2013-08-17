@@ -10,7 +10,10 @@ from sqlalchemy import Column, BigInteger, Integer, String, \
 
 from sqlalchemy.orm import backref,relationship
 
+from app.site.utils import get_site_config
+
 import settings
+from settings import runtime_data
 
 from lytool.filesize import size as human_size
 
@@ -66,8 +69,7 @@ class Appliance(ORMBase):
     description = Column( Text() )
 
     os = Column( Integer(), default = 1 ) # 1 is gnu/linux
-
-    logoname = Column( String(64) )
+    disksize = Column( BigInteger ) # disk size used by appliance
 
     user_id = Column( ForeignKey('auth_user.id') )
     user = relationship("User",backref=backref('appliances',order_by=id) )
@@ -78,10 +80,13 @@ class Appliance(ORMBase):
     filesize = Column( BigInteger )
     checksum = Column( String(32) ) # md5 value
 
-    islocked = Column( Boolean, default = False) # Used by admin
+    islocked  = Column( Boolean, default = False) # Used by admin
     isuseable = Column( Boolean, default = True)
     isprivate = Column( Boolean, default = True)
-    popularity = Column( Integer, default = 0 )
+
+    like   = Column(Integer, default=0)
+    unlike = Column(Integer, default=0)
+    visit  = Column(Integer, default=0) # view times
 
     created = Column( DateTime, default=datetime.now )
     updated = Column( DateTime, default=datetime.now )
@@ -93,19 +98,37 @@ class Appliance(ORMBase):
         self.filesize = filesize
         self.checksum = checksum
 
+
     def __unicode__(self):
         return "<Appliance(%s)>" % self.name
 
+
     @property
     def logourl(self):
+
+        base_url = runtime_data.get('appliance.logo.base_url')
+        if not base_url:
+            base_url = get_site_config(
+                'appliance.logo.baseurl', '/dl/appliance/' )
+            runtime_data['appliance.logo.baseurl'] = base_url
+
         if os.path.exists(self.p_logo):
-            return os.path.join(settings.STATIC_URL, 'appliance/%s/d.png' % self.id)
+            return '%s/%s/d.png' % ( base_url.rstrip('/'), self.id )
         else:
             return settings.APPLIANCE_LOGO_DEFAULT_URL
 
+
     @property
     def logodir(self):
-        return os.path.join(settings.STATIC_PATH, 'appliance/%s' % self.id)
+
+        base_dir = runtime_data.get('appliance.logo.basedir')
+        if not base_dir:
+            base_dir = get_site_config(
+                'appliance.logo.basedir', '/opt/LuoYun/data/appliance/' )
+            runtime_data['appliance.logo.basedir'] = base_dir
+
+        return os.path.join(base_dir, '%s' % self.id)
+
 
     @property
     def p_logo(self):

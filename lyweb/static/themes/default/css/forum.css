@@ -73,16 +73,14 @@
 .posts {
 	margin: 35px 0;
 	padding: 20px 0;
-	border-top: 1px solid #B3CEE1;
+/*	border-top: 1px solid #B3CEE1;*/
 }
 .post-item {
-	margin-bottom: 10px;
-	padding-bottom: 15px;
-	border-bottom: 1px solid #EAEAEA;
+	margin-top: 10px;
+	padding-top: 20px;
 }
 .post-item .vote-opt {
 	margin-bottom: 5px;
-	display: block;
 }
 .post-item .title {
 	border: 1px solid #EAEAEA;
@@ -101,4 +99,147 @@
 }
 .post-item h4, .post-item h5, .post-item h6 {
 	font-size: 14px;
+}
+
+.topic-edit-form {
+	width: 860px;
+}
+.topic-edit-form input {
+	width: 100%;
+}
+textarea#summary {
+	width: 100%;
+	height: 100px;
+}
+textarea#body {
+	height: 500px;
+	width: 100%;
+}
+textarea#reply-body {
+	height: 360px;
+	width: 100%;
+}
+
+.topic-title {
+    font-size: 20px;
+    line-height: 24px;
+    padding: 15px 0;
+}
+.topic-summary {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    border-color: #CACACA #CACACA #CACACA #0071BC;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px 1px 1px 5px;
+    padding: 10px 15px;
+	margin: 15px 0 20px;
+}
+
+.account-logo, .topic-time-info, .topic-statistics, .topic-actions, .topic-tags {
+	border: 1px solid #EAEAEA;
+	border-radius: 5px;
+	background-color: #FFF;
+	padding: 10px;
+	margin-bottom: 10px;
+	width: 100%;
+}
+.topic-tags {
+	padding-bottom: 25px;
+}
+.topic-statistic .divider {
+	border-right: 1px solid #EAEAEA;
+}
+
+.topic-reply-form {
+	margin-top: 80px;
+}
+
+.topic-view-sidemain, .post-view-sidemain {
+	border: 1px solid #EAEAEA;
+	border-radius: 5px;
+	padding: 15px 20px 50px;
+	background-color: #FFF;
+}
+.post-view-sidemain {
+	border: 1px solid #EAEAEA;
+	border-radius: 5px;
+	padding: 15px 20px 50px;
+	background-color: #FFF;
+}
+.topic-view-sidebar .account-logo {
+	text-align: center;
+	padding-bottom: 20px;
+}
+
+.breadcrumb {
+	background-color: transparent;
+    border-bottom: none;
+	margin-bottom: 0px;
+}
+.topic-footer-actions {
+	border-top: 1px solid #EAEAEA;
+	margin-top: 30px;
+	padding-top: 30px;
+}
+.topic-footer-actions .vote {
+	margin-right: 50px;
+}
+.topic-footer-actions .vote-opt {
+	margin-left: 10px;
+}
+.vote-opt {
+	cursor: pointer;
+	cursor: hand;
+	color: #FF9933;
+}
+#forum-topic-main .count {
+	color: #999;
+	font: italic bold 18px/14px Georgia,Serif;
+}
+.vote-opt:hover {
+	color: #3399CC;
+}
+
+.post-footer-actions .vote {
+	margin-right: 10px;
+}
+
+
+#forum-catalog-index .catalog-item {
+    margin: 0;
+    padding: 15px;
+    border: 1px solid #FFF;
+}
+/*
+#forum-catalog-index .catalog-item:hover {
+    border: 1px solid #EAEAEA;
+    border-radius: 5px;
+    background-color: #FEFEFE;
+}
+*/
+#forum-catalog-index .first {
+    border-right: 1px solid #EAEAEA;
+}
+#forum-catalog-index hr {
+    height:1px;
+    border:none;
+    border-top:1px dashed #EAEAEA;
+    margin: 20px;
+}
+#forum-catalog-index .summary {
+    margin: 10px 0 15px;
+}
+#forum-catalog-index .name {
+    font-weight: bold;
+    margin-top: 10px;
+}
+#forum-catalog-index img {
+    border-radius: 5px;
+    width: 88px;
+}
+#forum-catalog-index .logo {
+    height: 90px;
 }

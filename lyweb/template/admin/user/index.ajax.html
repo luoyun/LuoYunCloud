@@ -5,8 +5,8 @@
       <th>${ _("Name") }</th>
       <th>${ _("Appliance") }</th>
       <th>${ _("Instance") }</th>
-	  <th>${ _("Email") }</th>
-	  <th>${ _("Last Active") }</th>
+      <th>${ _("Email") }</th>
+      <th>${ _("Last Active") }</th>
     </tr>
   </thead>
   <tbody>
@@ -14,21 +14,21 @@
     <tr>
       <td>${ U.id }</td>
       <td class="username">
-		${ U.avatar_mini }
-		<a class="action" href="${ reverse_url('admin:user:view') }?id=${ U.id }">${ U.username }</a>
-	  </td>
-	  <td>
-		% if U.appliances:
-		<a href="${ reverse_url('admin:appliance') }?uid=${ U.id }">${ len(U.appliances) }</a>
-		% endif
-	  </td>
-	  <td>
-		% if U.instances:
-		<a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
-		% endif
-	  </td>
-	  <td>${ U.email }</td>
-	  <td class="time">${ htime(U.last_active) }</td>
+        ${ U.avatar_mini }
+        <a class="action" href="${ reverse_url('admin:user:view') }?id=${ U.id }">${ U.username }</a>
+      </td>
+      <td>
+        % if U.appliances:
+        <a href="${ reverse_url('admin:appliance') }?uid=${ U.id }">${ len(U.appliances) }</a>
+        % endif
+      </td>
+      <td>
+        % if U.instances:
+        <a href="${ reverse_url('admin:instance') }?uid=${ U.id }">${ len(U.instances) }</a>
+        % endif
+      </td>
+      <td>${ U.email }</td>
+      <td class="time">${ htime(U.last_active) }</td>
     </tr>
     % endfor
   </tbody>

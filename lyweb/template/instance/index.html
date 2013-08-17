@@ -7,78 +7,75 @@
 <%block name="submain">
 
 <div id="instance-list">
+  <div class="row-fluid">
+    <div class="span9">
+      <div class="the-list">
 
-  <div class="the-select">
-	<div class="row-fluid">
-      <ul class="span3 nav">
-		<li class="t">${ _("Instance Status") }</li>
-		<li><select id="sort-by-status">
-			<option value="all">${ _("All") }</option>
-			<option value="running">${ _("Running") }</option>
-			<option value="stoped">${ _("Stoped") }</option>
-		  </select>
-		</li>
-      </ul>
+        % if not INSTANCE_LIST.count():
+        <p>${ _("Have not any instance yet !") }</p>
+        % endif
 
-      % if current_user:
-      <ul class="select-module span3 nav">
-		<li class="t">${ _("View") }</li>
-		<li><select id="sort-by-view">
-			<option value="all">${ _("All Public") }</option>
-			<option value="self">${ _("My Public") }</option>
-		  </select>
-		</li>
-      </ul>
-      % endif
+        <% count = 0 %>
+        <div class="row-fluid">
+          % for I in INSTANCE_LIST:
+          <div class="span6 instance">
+            <div class="row-fluid">
+              <div class="span4">
+                <div class="logo"><a href="${ reverse_url('instance:view') }?id=${ I.id }"><img src="${ I.logourl }" /></a></div>
+              </div>
+              <div class="span8">
+                <div class="name"><a href="${ reverse_url('instance:view') }?id=${ I.id }">${ I.name }</a></div>
+                <div><i class="icon-user"></i>
+                  <a href="${ reverse_url('user:view') }?id=${ I.user_id }">${ I.user.username }</a></div>
+                <div class="summary">${ I.summary }</div>
+                <div class="status">${ I.status_icon }</div>
+              </div>
+            </div>
+          </div>
 
-      <ul class="select-module span3 nav">
-		<li class="t">${ _("Selection") }</li>
-		<li><select id="sort-by-what">
-			<option value="updated">${ _("Updated") }</option>
-			<option value="created">${ _("Created") }</option>
-			<option value="user">${ _("User") }</option>
-		</select></li>
-      </ul>
-
-      <ul class="select-module span3 nav">
-		<li>${ _("Order") }</li>
-		<li><select id="sort-order">
-			<option value="1">${ _("Descending") }</option>
-			<option value="0">${ _("Ascending") }</option>
-		</select></li>
-      </ul>
-	</div>
-  </div>
-
-  <div class="the-list">
-
-    % if not INSTANCE_LIST.count():
-    <p>${ _("Have not any instance yet !") }</p>
-    % endif
-
-    <% count = 0 %>
-	<div class="row-fluid">
-    % for I in INSTANCE_LIST:
-
-    <div class="span2 instance">
-      <div class="logo"><a href="${ reverse_url('instance:view') }?id=${ I.id }"><img src="${ I.logourl }" /></a></div>
-      <div class="name"><a href="${ reverse_url('instance:view') }?id=${ I.id }">${ I.name }</a></div>
-	  <dl class="dl-horizontal">
-		<dt>${ _("User") }</dt>
-		<dd><a href="${ reverse_url('user:view') }?id=${ I.user_id }">${ I.user.username }</a></dd>
-	  </dl>
-	  <div class="status">${ I.status_icon }</div>
+          % if count % 2 == 1:
+        </div>
+        <div class="row-fluid">
+          % endif
+          <% count += 1 %>
+          % endfor
+        </div>
+        ${ page_html }
+      </div>
     </div>
 
-    % if count % 6 == 5:
-    </div><div class="row-fluid">
-    % endif
-    <% count += 1 %>
-    % endfor
-	</div>
-    ${ page_html }
-  </div>
+    <div class="span3">
+      <div class="the-select">
+        <h5>${ _("Instance Status") }</h5>
+        <select id="sort-by-status">
+          <option value="all">${ _("All") }</option>
+          <option value="running">${ _("Running") }</option>
+          <option value="stoped">${ _("Stoped") }</option>
+        </select>
 
+        % if current_user:
+        <h5>${ _("View") }</h5>
+        <select id="sort-by-view">
+          <option value="all">${ _("All Public") }</option>
+          <option value="self">${ _("My Public") }</option>
+        </select>
+        % endif
+
+        <h5>${ _("Selection") }</h5>
+        <select id="sort-by-what">
+          <option value="updated">${ _("Updated") }</option>
+          <option value="created">${ _("Created") }</option>
+          <option value="user">${ _("User") }</option>
+        </select>
+
+        <h5>${ _("Order") }</h5>
+        <select id="sort-order">
+          <option value="1">${ _("Descending") }</option>
+          <option value="0">${ _("Ascending") }</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
 </div>
 

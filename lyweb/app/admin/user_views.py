@@ -173,52 +173,58 @@ class View(RequestHandler):
         if not user:
             return self.write( _('No such user: %s') % ID )
 
+        profile = user.profile
+        # TODO: profile is None
+
+        resource_total = profile.get_resource_total()
+        resource_used = profile.get_resource_used()
+
         d = { 'title': _('View User %s') % user.username,
+              'resource_total': resource_total,
+              'resource_used': resource_used,
               'USER': user }
 
         self.render( 'admin/user/view.html', **d)
 
 
+
 class ResetPass(RequestHandler):
 
+    title = _('Reset User Password')
     template_path = 'admin/user/reset_password.html'
 
     @has_permission('admin')
-    def get(self, ID):
+    def prepare(self):
+        ID = self.get_argument_int('id', None)
+        if not ID:
+            return self.finish( _('Give me user id please.') )
 
-        user = self.db.query(User).get(ID)
-        if not user:
-            return self.write( _('No such user: %s') % ID )
+        U = self.db.query(User).get(ID)
+        if not U:
+            return self.finish( _('Can not find user %s') % ID )
 
-        d = { 'title': _('Reset Password For "%s"') % user.username,
-              'USER': user, 'form': ResetPassForm(self) }
-
-        self.render( **d )
+        self.prepare_kwargs['USER'] = U
+        self.prepare_kwargs['form'] = ResetPassForm(self)
 
 
-    @has_permission('admin')
-    def post(self, ID):
+    def get(self):
+        self.render()
 
-        user = self.db.query(User).get(ID)
-        if not user:
-            return self.write( _('No such user: %s') % ID )
 
-        form = ResetPassForm(self)
+    def post(self):
+
+        form = self.prepare_kwargs['form']
+        U = self.prepare_kwargs['USER']
 
         if form.validate():
-            user.password = enc_login_passwd(form.password.data)
-            self.db.add( user )
+            U.password = enc_login_passwd(form.password.data)
             self.db.commit()
 
             url = self.reverse_url('admin:user:view')
-            url += '?id=%s' % user.id
+            url += '?id=%s' % U.id
             return self.redirect( url )
 
-
-        d = { 'title': _('Reset Password For "%s"') % user.username,
-              'U': user, 'form': form }
-
-        self.render( **d )
+        self.render()
 
 
 
@@ -324,9 +330,6 @@ class ResourceAdd(RequestHandler):
             self.db.add( new )
             self.db.commit()
 
-            user.profile.update_resource_total()
-            self.db.commit()
-
             # count be choices, email notice
             resource_mail_notice(self, user)
 
@@ -396,9 +399,6 @@ class ResourceSimpleAdd(ResourceHandler):
 
             self.db.commit()
 
-            U.profile.update_resource_total()
-            self.db.commit()
-
             # count be choices, email notice
             resource_mail_notice(self, U)
 
@@ -448,10 +448,6 @@ class AllUserResourceAdd(RequestHandler):
                                   expired_date = expired_date )
 
                     self.db.add(r)
-
-                self.db.commit()
-
-                U.profile.update_resource_total()
 
                 self.db.commit()
 

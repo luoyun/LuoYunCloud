@@ -45,11 +45,15 @@ class CatalogForm(Form):
     name = TextField( _('Name'), [
             validators.Length(min=2, max=128) ] )
 
+    logo = FileField( _('Logo') )
+
     summary = TextAreaField( _('Summary'), [
             validators.Length(min=2, max=1024) ] )
 
     description = TextAreaField( _('Description'), [
             validators.Length(max=1024*20) ] )
+
+class CatalogAddForm(CatalogForm):
 
     def validate_name(form, field):
         old = form._handler.db.query(ForumCatalog).filter_by(

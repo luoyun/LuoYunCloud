@@ -9,22 +9,22 @@
 <div class="min-height600 doc4 wrapper container-fluid">
   <div id="message-center" class="row-fluid">
 
-	<div id="message-center-sidebar" class="span3">
+    <div id="message-center-sidebar" class="span3">
 
       <div id="message-home-sidemenu" class="action">
-		<ul class="nav nav-list">
+        <ul class="nav nav-list">
           <li><a id="my-inbox-item" href="${ reverse_url('message:inbox') }">${ _("Inbox") }</a></li>
           <li><a id="my-outbox-item" href="${ reverse_url('message:outbox') }">${ _("Outbox") }</a></li>
-		</ul>
+        </ul>
       </div>
 
-	  <br>
+      <br>
       <div><a class="btn" href="${ reverse_url('message:new') }">${ _("New") }</a></div>
-	</div>
+    </div>
 
-	<div id="message-center-sidemain" class="span9">
+    <div id="message-center-sidemain" class="span9">
       <%block name="sidemain"/>
-	</div>
+    </div>
 
   </div>
 </div>

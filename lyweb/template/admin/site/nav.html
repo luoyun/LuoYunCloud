@@ -6,50 +6,50 @@
 
 <div>
   <select class="language-select">
-	<option value="all">${ _("All") }</option>
-	% for code in LANGUAGES:
-	<option value="${ code }" ${ b2s(code == cur_locale, 'selected="selected"') }>${ LANGUAGES[code] }</option>
-	% endfor
+    <option value="all">${ _("All") }</option>
+    % for code in LANGUAGES:
+    <option value="${ code }" ${ b2s(code == cur_locale, 'selected="selected"') }>${ LANGUAGES[code] }</option>
+    % endfor
   </select>
 </div>
 
 <table class="table table-hover" id="entry-list">
   <thead>
     <tr>
-	  <th></th>
+      <th></th>
       <th>ID</th>
       <th>${ _("Name") }</th>
       <th>${ _("URL") }</th>
       <th>${ _("Position") }</th>
-	  <th>${ _("Language") }</th>
+      <th>${ _("Language") }</th>
       <th>${ _("Type") }</th>
     </tr>
   </thead>
   <tbody>
-	% for I in navs:
+    % for I in navs:
     <tr class="item" id="item${ I.id }">
-	  <td><input type="checkbox" name="checkbox" id="checkbox${ I.id }"></td>
+      <td><input type="checkbox" name="checkbox" id="checkbox${ I.id }"></td>
       <td class="item-id">${ I.id }</td>
       <td>${ I.name }</td>
-	  <td>${ I.url }</td>
+      <td>${ I.url }</td>
       <td class="position">${ I.position }</td>
       <td>${ I.language.name }</td>
-	  <td>${ I.type_str }</td>
+      <td>${ I.type_str }</td>
     </tr>
-	% endfor
+    % endfor
   </tbody>
 </table>
 
 <div class="management">
   <div class="btn-group">
-	<a class="btn"><input type="checkbox" name="checkbox_all"></a>
-	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+    <a class="btn"><input type="checkbox" name="checkbox_all"></a>
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
       <span class="caret"></span>
-	</a>
-	<ul class="dropdown-menu">
-	  <li><a href="" class="select-all">${ _("Select All") }</a></li>
-	  <li><a href="" class="unselect-all">${ _("Unselect All") }</a></li>
-	</ul>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a href="" class="select-all">${ _("Select All") }</a></li>
+      <li><a href="" class="unselect-all">${ _("Unselect All") }</a></li>
+    </ul>
   </div>
   <a href="" role="button" class="btn action-edit support-one disabled"><i class="icon-pencil"></i> ${ _("Edit") }</a>
   <a href="" role="button" class="btn action-delete support-nonzero disabled"><i class="icon-trash"></i> ${ _("Delete") }</a>

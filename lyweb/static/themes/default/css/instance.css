@@ -1,24 +1,22 @@
+#instance-list .instance .row-fluid {
+/*    margin: 0;*/
+}
 #instance-list .the-select {
 	padding: 0px 12px;
+}
+#instance-list .the-select select {
+    width: 180px;
 }
 #instance-list .the-list {
 	padding: 15px 0 30px;
 }
 #instance-list .logo {
-	width: 100px;
-	margin: 10px auto;
+	width: 98px;
+	margin: 0 auto;
 }
 #instance-list .name {
-	text-align: center;
-	margin: 5px auto;
-	white-space:nowrap;
-}
-#instance-list .instance .dl-horizontal dt {
-	width: 50px;
-	color: gray;
-}
-#instance-list .instance .dl-horizontal dd {
-	margin-left: 55px;
+	margin: 2px 0;
+    font-weight: bold;
 }
 #instance-list .instance {
 	position: relative;
@@ -29,8 +27,12 @@
 }
 #instance-list .instance .status {
 	position: absolute;
-	top: 0px;
-	left: 10px;
+	top: -8px;
+	left: -3px;
+}
+#instance-list .summary {
+    color: #666;
+    margin: 10px 0;
 }
 
 #instance-view .name {

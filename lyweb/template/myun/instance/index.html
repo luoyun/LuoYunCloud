@@ -18,59 +18,59 @@
 <div id="instance-list">
 
   <div class="y-checkarea">
-	<table class="table table-hover">
+    <table class="table table-hover table-bordered table-striped">
       <thead>
-		<tr>
-		  <th><i class="icon-check-empty y-check-all"></i></th>
+        <tr>
+          <th><i class="icon-check-empty y-check-all"></i></th>
           <th>ID</th>
           <th><i class="icon-exchange"></i></th>
           <th>${ _("Name") }</th>
-		  <th>${ _("CPU") }</th>
-		  <th>${ _("Memory") }</th>
-		  <th>${ _("Storage") }</th>
-		  <th>${ _("Appliance") }</th>
-		</tr>
+          <th>${ _("CPU") }</th>
+          <th>${ _("Memory") }</th>
+          <th>${ _("Storage") }</th>
+          <th>${ _("Appliance") }</th>
+        </tr>
       </thead>
       <tbody>
-		% for I in INSTANCE_LIST:
-		<tr class="y-check-line" id="i${ I.id }">
-		  <td><i class="icon-check-empty y-check"></i></td>
+        % for I in INSTANCE_LIST:
+        <tr class="y-check-line" id="i${ I.id }">
+          <td><i class="icon-check-empty y-check"></i></td>
           <td class="y-id">${ I.id }</td>
           <td>${ I.status_icon }</td>
           <td>
-			<a href="${ reverse_url('myun:instance:view') }?id=${ I.id }">${ I.name }</a>
-			% if I.isprivate:
-			<i class="icon-eye-close"></i>
-			% endif
-		  </td>
-		  <td>${ I.cpus }</td>
-		  <td>${ I.memory }</td>
-		  <td>${ I.storage }</td>
-		  <td><a href="${ reverse_url('appliance:view') }?id=${ I.appliance_id }" target="_blank">${ I.appliance.name }</a></td>
-		</tr>
-		% endfor
+            <a href="${ reverse_url('myun:instance:view') }?id=${ I.id }">${ I.name }</a>
+            % if I.isprivate:
+            <i class="icon-eye-close"></i>
+            % endif
+          </td>
+          <td>${ I.cpus }</td>
+          <td>${ I.memory }</td>
+          <td>${ I.storage }</td>
+          <td><a href="${ reverse_url('appliance:view') }?id=${ I.appliance_id }" target="_blank">${ I.appliance.name }</a></td>
+        </tr>
+        % endfor
       </tbody>
-	  <tfoot>
-		<tr>
-		  <td><i class="icon-check-empty y-check-all"></i></td>
-		  <td colspan="4">
-			<a href="" class="y-select-all">${ _("Select All") }</a>
-			<span class="divider">/</span>
-			<a href="" class="y-unselect-all">${ _("Unselect All") }</a>
-			<span class="divider">/</span>
-			<a href="" class="y-select-reverse">${ _("Select Reverse") }</a>
-		  </td>
-		</tr>
-	  </tfoot>
-	</table>
-	${ page_html }
+      <tfoot>
+        <tr>
+          <td><i class="icon-check-empty y-check-all"></i></td>
+          <td colspan="7">
+            <a href="" class="y-select-all">${ _("Select All") }</a>
+            <span class="divider">/</span>
+            <a href="" class="y-unselect-all">${ _("Unselect All") }</a>
+            <span class="divider">/</span>
+            <a href="" class="y-select-reverse">${ _("Select Reverse") }</a>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    ${ page_html }
 
-	<div>
-	  <div class="btn-group">
-		<a class="btn y-action-nonzero disabled action-setattr" href="${ reverse_url('instance:attr_set') }?attr=isprivate&value=true"><i class="icon-eye-close"></i> ${ _("Private") }</a>
-		<a class="btn y-action-nonzero disabled action-setattr" href="${ reverse_url('instance:attr_set') }?attr=isprivate&value=false"><i class="icon-eye-open"></i> ${ _("Public") }</a>
-	  </div>
-	</div>
+    <div>
+      <div class="btn-group">
+        <a class="btn y-action-nonzero disabled action-setattr" href="${ reverse_url('instance:attr_set') }?attr=isprivate&value=true"><i class="icon-eye-close"></i> ${ _("Private") }</a>
+        <a class="btn y-action-nonzero disabled action-setattr" href="${ reverse_url('instance:attr_set') }?attr=isprivate&value=false"><i class="icon-eye-open"></i> ${ _("Public") }</a>
+      </div>
+    </div>
   </div>
 
 </div>

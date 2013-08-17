@@ -9,13 +9,13 @@
 % if key_count:
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Configure Public Key For Instance") }</legend>
+    <fieldset>
+      <legend>${ _("Configure Public Key For Instance") }</legend>
       ${ form.key.label } ${ form.key() }
       ${ form.html_errors(form.key.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      <br>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 </div>
 % else:

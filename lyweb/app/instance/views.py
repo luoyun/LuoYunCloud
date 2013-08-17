@@ -81,15 +81,34 @@ class RequestHandler(OrigRequestHandler):
         I.update_network()
 
 
+    def get_instance_lastjob(self, I):
+
+        lastjob = self.db.query(Job).filter(
+            and_( Job.target_type == JOB_TARGET['INSTANCE'],
+                  Job.target_id == I.id ) ).order_by(
+            desc( Job.id ) ).first()
+
+        return lastjob
+
+
     def run_job(self, I, action_id):
 
-        if I.lastjob and (not I.lastjob.completed):
-            if not ( action_id == JOB_ACTION['STOP_INSTANCE'] and
-                 I.lastjob.canstop ):
-                # TODO: status = 100, timeout > 60s
-                timeout = I.lastjob.created + relativedelta.relativedelta(seconds=+60)
+        lastjob = self.get_instance_lastjob(I)
+
+        if lastjob:
+
+            timeout = lastjob.created + relativedelta.relativedelta(seconds=+60)
+
+            if not lastjob.completed:
+                if not ( action_id == JOB_ACTION['STOP_INSTANCE'] and
+                         lastjob.canstop ):
+                    # TODO: status = 100, timeout > 60s
+                    if timeout > datetime.datetime.now():
+                        return self.trans(_("Previous task is not finished !"))
+
+            if lastjob.status == settings.JOB_S_FAILED:
                 if timeout > datetime.datetime.now():
-                    return self.trans(_("Previous task is not finished !"))
+                    return self.trans(_("Previous task was failed, wait a moment please."))
 
         # Create new job
         job = Job( user = self.current_user,
@@ -100,23 +119,21 @@ class RequestHandler(OrigRequestHandler):
         self.db.add(job)
         self.db.commit()
         
-        I.lastjob = job
-
         try:
             self._job_notify( job.id )
         except Exception, e:
             #[Errno 113] No route to host
             # TODO: should be a config value
             job.status = settings.JOB_S_FAILED
+            self.db.commit()
             return _("Connect to control server failed: %s") % e
-
-        self.db.commit()
 
         # notice user when instance controled by any other people
         if self.current_user.id != I.user_id:
             self.instance_control_notice( I.user, job )
 
-        return self.trans(_('Task starts successfully.'))
+        # No news is good news.
+        return None
 
 
     def myfinish(self, status=1, string=None):
@@ -170,6 +187,14 @@ class RequestHandler(OrigRequestHandler):
                      'body': body } )
         return response
 
+
+    def get_libvirt_conf(self, I):
+
+        d = { 'return_string': True, 'I': I }
+
+        conf = self.render('instance/libvirt_conf.xml', **d)
+
+        return conf
 
 
 class Index(RequestHandler):
@@ -240,8 +265,6 @@ class View(RequestHandler):
 
     def get(self):
 
-        self.I = None
-
         ID = self.get_argument_int('id', None)
         if not ID:
             return self.write( _('Give me instance id please.') )
@@ -259,9 +282,10 @@ class View(RequestHandler):
         if I.status == DELETED_S:
             return self.write( _('Instance %s is deleted !') % ID )
 
+        lastjob = self.get_instance_lastjob(I)
 
         d = { 'title': _('Baseinfo of instance %s') % I.id,
-              'instance': I }
+              'instance': I, 'lastjob': lastjob }
 
         self.render('instance/view.html', **d)
 
@@ -278,13 +302,12 @@ class SingleInstanceStatus(RequestHandler):
         self.set_header("Pragma", "no-cache")
         self.set_header("Expires", "-1")
 
-        ID = self.get_int( self.get_argument('id', 0) )
-        I = self.db.query(Instance).get(ID)
-        if I:
+        ID = self.get_argument_int('id', None)
+        if ID:
             self.check_status({
-                'instance': I,
-                'old_is': self.get_int(self.get_argument('is', 0)),
-                'old_js': self.get_int(self.get_argument('js', 0)) })
+                'ID': ID,
+                'old_is': self.get_argument_int('is', 0),
+                'old_js': self.get_argument_int('js', 0) })
         else:
             self.write( {'return_code': 1} )
             self.finish()
@@ -295,31 +318,27 @@ class SingleInstanceStatus(RequestHandler):
         if self.request.connection.stream.closed():
             return
 
-        self.db.commit() # TODO: need sync now
-
-        I = cs['instance']
+        ID = cs['ID']
         old_is = cs['old_is']
         old_js = cs['old_js']
 
-        # TODO: hack for test I is exists.
-        try:
-            I.id and I.vdi_port and I.vdi_ip
-        except:
-            logging.warn('Instance obj is deleted, can not check status.')
+        I = self.db.query(Instance).get(ID)
+        if not I:
+            logging.warn('Can not find instance %s, abort check status.' % ID)
             return
 
-        #print '[DD] ID: %s, is: [%s, %s], js: [%s, %s]' % (I.id, old_is, I.status, old_js, I.lastjob_status_id)
+        lastjob = self.get_instance_lastjob(I)
 
         if (
-            (old_is and old_is != I.status) or
-            (old_js and I.lastjob and old_js != I.lastjob.status) ):
+            (old_is != I.status) or
+            (lastjob and old_js != lastjob.status) ):
 
             self.write( self.get_json_data( I ) )
             self.finish()
 
         else:
             # Need sleep to wait change
-            if I.lastjob and not I.lastjob.completed:
+            if lastjob and not lastjob.completed:
                 time_interval = settings.INSTANCE_S_UP_INTER_1
             else:
                 time_interval = settings.INSTANCE_S_UP_INTER_2
@@ -332,39 +351,59 @@ class SingleInstanceStatus(RequestHandler):
 
     def get_json_data(self, I):
 
+        ip_link = I.home_url(self.current_user, useip=True)
+        domain_link = I.home_url(self.current_user)
+
         CS = { 'return_code' : 0,
                'id'          : I.id,
 
                'is'          : I.status,
                'is_str'      : self.trans(I.status_string),
 
-               'js'          : I.lastjob_status_id,
-               'js_str'      : self.trans(I.lastjob_status_string),
-               'lastjob'     : I.lastjob_id if I.lastjob_id else 0,
+               'js'          : 0,
+               'js_str'      : self.trans( _('unknown') ),
+               'lastjob'     : None,
+               'js_img'      : '<i style="color: #FFCC33;" class="icon-exclamation-sign"></i>',
+               'j_completed' : False,
 
                'vdi_ip'      : I.vdi_ip,
                'vdi_port'    : I.vdi_port,
 
-               'ip'          : '',
-               'ip_link'     : '',
-               'domain'      : '',
-               'domain_link' : '' }
+               'ip'          : I.work_ip,
+               'ip_link'     : I.work_ip,
+               'domain'      : I.domain,
+               'domain_link' : I.domain }
 
         CS['is_img'] = I.status_icon
-        CS['js_img'] = I.lastjob_status_icon
 
-        if I.work_ip:
-            CS['ip_link'] = I.home_url(self.current_user, useip=True)
-            CS['ip'] = I.work_ip
+        lastjob = self.get_instance_lastjob(I)
+        if lastjob:
+            CS['js'] = lastjob.status
+            CS['js_str'] = self.trans(lastjob.status_string)
+            CS['lastjob'] = lastjob.id
+            CS['js_img'] = lastjob.status_icon
+            CS['j_completed'] = lastjob.completed
 
-        if I.domain and I.is_running:
-            CS['domain_link'] = I.home_url(self.current_user)
-            CS['domain'] = I.domain
+        if I.is_running:
+            if I.work_ip:
+                CS['ip_link'] = self.get_link( ip_link, I.work_ip )
+
+            if I.domain:
+                CS['domain_link'] = self.get_link( domain_link, I.domain )
 
         CS['action'] = I.action
         CS['action_trans'] = self.trans( I.action )
 
+        if not CS['ip_link']:
+            CS['ip_link'] = self.trans( _("None") )
+        if not CS['domain_link']:
+            CS['domain_link'] = self.trans( _("None") )
+
         return CS
+
+
+    def get_link(self, url, text):
+        return '<a href="%s" target="_blank">%s</a>' % (url, text)
 
 
 
@@ -393,7 +432,7 @@ class LifeControl(RequestHandler):
             return self.myfinish(
                 string = _('Give me the action please.') )
 
-        if action not in ['run', 'stop', 'query', 'reboot', 'delete']:
+        if action not in ['run', 'stop', 'query', 'reboot']:
             return self.myfinish(
                 string = _('Just support run/stop/reboot/query action') )
 
@@ -437,22 +476,22 @@ class LifeControl(RequestHandler):
 
         d = { 'id': I.id, 'code': 1, 'data': '' }
 
-        profile = self.current_user.profile
+        profile = I.user.profile
 
-        # TODO: a temp hack for sync user resource
-        profile.update_resource_total()
-        profile.update_resource_used()
-        self.db.commit()
+        resource_total = profile.get_resource_total()
+        resource_used = profile.get_resource_used()
 
-        if not ( profile and
-                 profile.cpu_remain >= I.cpus and
-                 profile.memory_remain >= I.memory ):
+        cpu_remain = resource_total["cpu"] - resource_used["cpu"]
+        memory_remain = resource_total["memory"] - resource_used["memory"]
+
+        if not ( cpu_remain >= I.cpus and
+                 memory_remain >= I.memory ):
 
             d['data'] = _('Resource limit: need %(cpus)s CPU, \
 %(memory)s, but you have %(cpu_remain)s CPU, %(memory_remain)s.') % {
                 'cpus': I.cpus, 'memory': I.memory,
-                'cpu_remain': profile.cpu_remain,
-                'memory_remain': profile.memory_remain }
+                'cpu_remain': cpu_remain,
+                'memory_remain': memory_remain }
             return d
 
         if I.is_running:
@@ -462,9 +501,20 @@ class LifeControl(RequestHandler):
         # TODO: set passwd
         self.set_root_passwd(I)
 
-        d['data'] = self.run_job(I, JOB_ACTION['RUN_INSTANCE'])
-        d['code'] = 0
-        d['data'] += ' %s' % self.binding_domain( I )
+#        I.set('libvirt_conf', self.get_libvirt_conf(I))
+        I.set('libvirt_conf', '')
+
+        self.db.commit()
+
+        ret = self.run_job(I, JOB_ACTION['RUN_INSTANCE'])
+        if ret:
+            d['data'] = ret
+            d['code'] = 1
+        else:
+            d['data'] = self.trans(_('Task starts successfully.'))
+            d['code'] = 0
+
+        self.binding_domain( I )
 
         return d
 
@@ -477,8 +527,14 @@ class LifeControl(RequestHandler):
             d['data'] = _('Instance is stopped now.')
             return d
 
-        d['data'] = self.run_job(I, JOB_ACTION['STOP_INSTANCE'])
-        d['code'] = 0
+        ret = self.run_job(I, JOB_ACTION['STOP_INSTANCE'])
+        if ret:
+            d['data'] = ret
+            d['code'] = 1
+        else:
+            d['data'] = self.trans(_('Task starts successfully.'))
+            d['code'] = 0
+
         d['data'] += ' %s' % self.unbinding_domain( I )
 
         return d
@@ -492,51 +548,13 @@ class LifeControl(RequestHandler):
             d['data'] = _('Instance does not need query.')
             return d
 
-        d['data'] = self.run_job(I, JOB_ACTION['QUERY_INSTANCE'])
-        d['code'] = 0
-
-        return d
-
-
-    def delete(self, I):
-
-        d = {'code': 1, 'id': I.id, 'data': ''}
-            
-        # TODO: no running delete !
-        if I.is_running:
-            d['data'] = _('Can not delete a running instance!')
-            return d
-
-        # TODO: delete domain binding
-        d['data'] += ' %s' % self.unbinding_domain( I )
-
-        I.status = DELETED_S
-        I.name = '_notexist_%s_' % I.id
-        self.db.commit()
-
-        for x in I.ips:
-            for y in x.ports:
-                y.ip_id = None
-                y.ip_port = None
-            x.instance_id = None
-            x.updated = datetime.datetime.now()
-
-            T = self.lytrace(
-                ttype = LY_TARGET['IP'], tid = x.id,
-                do = _('release ip %(ip)s from instance %(id)s') % {
-                    'ip': x.ip, 'id': I.id } )
-
-        for x in I.domains:
-            self.db.delete(x)
-
-        for x in I.storages:
-            self.db.delete(x)
-
-        self.db.commit()
-        
-        # delete instance files
-        d['data'] += self.run_job(I, JOB_ACTION['DESTROY_INSTANCE'])
-        d['code'] = 0
+        ret = self.run_job(I, JOB_ACTION['QUERY_INSTANCE'])
+        if ret:
+            d['data'] = ret
+            d['code'] = 1
+        else:
+            d['data'] = self.trans(_('Task starts successfully.'))
+            d['code'] = 0
 
         return d
 
@@ -620,7 +638,6 @@ class AttrSet(RequestHandler):
 
 
 
-
 class InstanceDelete(RequestHandler):
 
     ''' Delete instance '''
@@ -629,14 +646,14 @@ class InstanceDelete(RequestHandler):
         self.write({'code': status, 'data': data})
 
     @authenticated
-    def get(self):
+    def post(self):
 
-        I, msg = self.get_instance_byid(ID)
+        I, msg = self.get_instance_byid()
         if not I:
             return self.myfinish( msg )
 
         if I.is_running:
-            return self.myfinish( _('Instance %s is running, can not delete it.') % ID )
+            return self.myfinish( _('Instance %s is running, can not delete it.') % I.id )
 
         # TODO: delete domain binding
         self.unbinding_domain( I )
@@ -667,5 +684,29 @@ class InstanceDelete(RequestHandler):
         
         # delete instance files
         ret = self.run_job(I, JOB_ACTION['DESTROY_INSTANCE'])
+        if ret:
+            code = 1
+        else:
+            ret = self.trans(_('Task starts successfully.'))
+            code = 0
 
-        self.myfinish( data = ret, status = 0 )
+        self.myfinish( data = ret, status = code )
+
+
+
+class InstanceAttrGet(RequestHandler):
+
+    def get(self):
+
+        I, msg = self.get_instance_byid()
+        if not I:
+            return self.myfinish( msg )
+
+        conf = self.get_libvirt_conf(I)
+#        print 'conf = ', conf
+
+#        I.set('libvirt_conf', self.get_libvirt_conf(I))
+        I.set('libvirt_conf', '')
+        self.db.commit()
+
+        self.write( conf )

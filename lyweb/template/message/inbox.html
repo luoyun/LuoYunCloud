@@ -10,7 +10,7 @@
       <tr>
         <th>${ _("From") }</th>
         <th>${ _("Subject") }</th>
-	<th></th>
+    <th></th>
       </tr>
     </thead>
     <tbody>
@@ -18,19 +18,19 @@
       <% newmsg = '' if M.isread else 'new-message' %>
       <tr class="${ newmsg }">
         <td class="sender user">
-	  <a href="${ reverse_url('user:view') }?id=${ M.sender_id }" target="_blank"><img src="${ M.sender.avatar_url }" /></a>
-	  <a href="${ reverse_url('user:view') }?id=${ M.sender_id }" target="_blank">${ M.sender.username }</a>
-	</td>
+      <a href="${ reverse_url('user:view') }?id=${ M.sender_id }" target="_blank"><img src="${ M.sender.avatar_url }" /></a>
+      <a href="${ reverse_url('user:view') }?id=${ M.sender_id }" target="_blank">${ M.sender.username }</a>
+    </td>
         <td class="subject">
-	  <div><a href="${ reverse_url('message:view', M.id) }">${ M.text.subject }</a></div>
-	  <div class="timestamp">${ htime(M.text.sendtime) }</div>
-	</td>
+      <div><a href="${ reverse_url('message:view', M.id) }">${ M.text.subject }</a></div>
+      <div class="timestamp">${ htime(M.text.sendtime) }</div>
+    </td>
         <td class="other">
-	  <div class="management hide" style="display: none;">
-	    <a class="green-submit" href="${ reverse_url('message:reply', M.id) }">${ _("Reply") }</a>
-	    <a class="delete-message red-submit" href="${ reverse_url('message:delete', M.id) }">${ _("Delete") }</a></div>
+      <div class="management hide" style="display: none;">
+        <a class="green-submit" href="${ reverse_url('message:reply', M.id) }">${ _("Reply") }</a>
+        <a class="delete-message red-submit" href="${ reverse_url('message:delete', M.id) }">${ _("Delete") }</a></div>
 
-	</td>
+    </td>
       </tr>
       % endfor
     </tbody>

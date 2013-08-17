@@ -6,47 +6,47 @@
 
   % if REASON:
   <div class="notification-title">
-	<img src="${ theme_url('img/error.png') }" />
+    <img src="${ theme_url('img/error.png') }" />
     <span>${ REASON }</span>
   </div>
   % endif
 
   <div class="notification-body">
-	<% profile = current_user.profile %>
+    <% profile = current_user.profile %>
 
-	% if profile:
-	<table class="table table-striped table-bordered">
+    % if profile:
+    <table class="table table-striped table-bordered">
       <thead>
-		<tr>
-		  <th>${ _("Resource Name") }</th>
-		  <th>${ _("Total") }</th>
-		  <th>${ _("Used") }</th>
-		</tr>
+        <tr>
+          <th>${ _("Resource Name") }</th>
+          <th>${ _("Total") }</th>
+          <th>${ _("Used") }</th>
+        </tr>
       </thead>
       <tbody>
-		<tr>
-		  <td>${ _("Memory") }</td>
-		  <td>${ profile.memory_total } M</td>
-		  <td>${ profile.memory_used } M</td>
-		</tr>
-		<tr>
-		  <td>${ _("CPUs") }</td>
-		  <td>${ profile.cpu_total } core</td>
-		  <td>${ profile.cpu_used } core</td>
-		</tr>
-		<tr>
-		  <td>${ _("Instances") }</td>
-		  <td>${ profile.instance_total }</td>
-		  <td>${ profile.instance_used }</td>
-		</tr>
-		<tr>
-		  <td>${ _("Storage") }</td>
-		  <td>${ profile.storage_total } G</td>
-		  <td>${ profile.storage_used } G</td>
-		</tr>
+        <tr>
+          <td>${ _("CPUs") }</td>
+          <td>${ resource_total["cpu"] } ${ _("core") }</td>
+          <td>${ resource_used["cpu"] } ${ _("core") }</td>
+        </tr>
+        <tr>
+          <td>${ _("Memory") }</td>
+          <td>${ resource_total["memory"] } M</td>
+          <td>${ resource_used["memory"] } M</td>
+        </tr>
+        <tr>
+          <td>${ _("Instances") }</td>
+          <td>${ resource_total["instance"] }</td>
+          <td>${ resource_used["instance"] }</td>
+        </tr>
+        <tr>
+          <td>${ _("Storage") }</td>
+          <td>${ resource_total["storage"] } G</td>
+          <td>${ resource_used["storage"] } G</td>
+        </tr>
       </tbody>
-	</table>
-	% endif
+    </table>
+    % endif
   </div>
 
 </div>

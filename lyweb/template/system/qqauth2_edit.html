@@ -9,28 +9,28 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("QQ Auth2 Configure") }</legend>
+    <fieldset>
+      <legend>${ _("QQ Auth2 Configure") }</legend>
       ${ form.app_id.label } ${ form.app_id() }
-	  <span class="muted"><strong>${ _("Example: ") }</strong> 100467842</span>
+      <span class="muted"><strong>${ _("Example: ") }</strong> 100467842</span>
       ${ form.html_errors(form.app_id.errors) }
 
       ${ form.app_key.label } ${ form.app_key() }
-	  <span class="muted"><strong>${ _("Example: ") }</strong> 81f380c92fb1a8eef45f2f8e113626ff</span>
+      <span class="muted"><strong>${ _("Example: ") }</strong> 81f380c92fb1a8eef45f2f8e113626ff</span>
       ${ form.html_errors(form.app_key.errors) }
 
       ${ form.redirect_uri.label } ${ form.redirect_uri() }
-	  <span class="muted"><strong>${ _("Example: ") }</strong> http://www.LuoYunCloud.com/openid/qq/login</span>
+      <span class="muted"><strong>${ _("Example: ") }</strong> http://www.LuoYunCloud.com/openid/qq/login</span>
       ${ form.html_errors(form.redirect_uri.errors) }
 
       ${ form.enabled.label } ${ form.enabled() }
       ${ form.html_errors(form.enabled.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	  % if saved:
-	  <span class="text-success">${ _("saved success") }</span>
-	  % endif
-	</fieldset>
+      <br>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+      % if saved:
+      <span class="text-success">${ _("saved success") }</span>
+      % endif
+    </fieldset>
   </form>
 </div>
 

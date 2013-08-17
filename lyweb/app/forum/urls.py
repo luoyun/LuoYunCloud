@@ -48,6 +48,12 @@ handlers = [
     url( r'/admin/forum/catalog', admin.CatalogIndex,
          name="admin:forum:catalog"),
 
+    url( r'/admin/forum/catalog/view', admin.CatalogView,
+         name="admin:forum:catalog:view"),
+
     url( r'/admin/forum/catalog/add', admin.CatalogAdd,
          name="admin:forum:catalog:add"),
+
+    url( r'/admin/forum/catalog/edit', admin.CatalogEdit,
+         name="admin:forum:catalog:edit"),
 ]

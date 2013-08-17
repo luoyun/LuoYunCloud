@@ -9,8 +9,8 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Configure Site Domain") }</legend>
+    <fieldset>
+      <legend>${ _("Configure Site Domain") }</legend>
       ${ form.topdomain.label } ${ form.topdomain() }
       ${ form.html_errors(form.topdomain.errors) }
 
@@ -19,9 +19,9 @@
 
       ${ form.suffix.label } ${ form.suffix() }
       ${ form.html_errors(form.suffix.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      <br>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 </div>
 

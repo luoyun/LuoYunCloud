@@ -17,34 +17,34 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Gateway Configure") }</legend>
-	  ${ form.name.label } ${ form.name() }
-	  ${ form.html_errors(form.name.errors) }
+    <fieldset>
+      <legend>${ _("Gateway Configure") }</legend>
+      ${ form.name.label } ${ form.name() }
+      ${ form.html_errors(form.name.errors) }
 
-	  ${ form.start.label } ${ form.start() }
-	  ${ form.html_errors(form.start.errors) }
+      ${ form.start.label } ${ form.start() }
+      ${ form.html_errors(form.start.errors) }
 
-	  ${ form.end.label } ${ form.end() }
-	  ${ form.html_errors(form.end.errors) }
+      ${ form.end.label } ${ form.end() }
+      ${ form.html_errors(form.end.errors) }
 
-	  ${ form.netmask.label } ${ form.netmask() }
-	  ${ form.html_errors(form.netmask.errors) }
+      ${ form.netmask.label } ${ form.netmask() }
+      ${ form.html_errors(form.netmask.errors) }
 
-	  ${ form.gateway.label } ${ form.gateway() }
-	  ${ form.html_errors(form.gateway.errors) }
+      ${ form.gateway.label } ${ form.gateway() }
+      ${ form.html_errors(form.gateway.errors) }
 
-	  ${ form.nameservers.label } ${ form.nameservers() }
-	  ${ form.html_errors(form.nameservers.errors) }
+      ${ form.nameservers.label } ${ form.nameservers() }
+      ${ form.html_errors(form.nameservers.errors) }
 
-	  ${ form.exclude_ips.label } ${ form.exclude_ips() }
-	  ${ form.html_errors(form.exclude_ips.errors) }
+      ${ form.exclude_ips.label } ${ form.exclude_ips() }
+      ${ form.html_errors(form.exclude_ips.errors) }
 
-	  ${ form.description.label } ${ form.description() }
-	  ${ form.html_errors(form.description.errors) }
+      ${ form.description.label } ${ form.description() }
+      ${ form.html_errors(form.description.errors) }
 
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 </div>
 

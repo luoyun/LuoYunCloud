@@ -1,6 +1,9 @@
 #/usr/bin/env python2.5
 
 import os, random, json, datetime
+import Image
+import tempfile
+import logging
 from hashlib import sha1
 
 from yweb.orm import ORMBase
@@ -8,6 +11,12 @@ from yweb.orm import ORMBase
 from sqlalchemy import Column, Integer, String, \
     Sequence, DateTime, Table, ForeignKey, Boolean, Text
 from sqlalchemy.orm import relationship, backref
+
+from yweb.utils.base import makesure_path_exist
+
+import settings
+from settings import runtime_data
+from app.site.utils import get_site_config
 
 from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'codehilite', 'tables'])
@@ -87,8 +96,81 @@ class ForumCatalog(ORMBase):
         self.summary     = summary
         self.description = description
 
+
     def __str__(self):
         return 'Catalog (%s)' % self.name
+
+
+    @property
+    def logourl(self):
+
+        dataurl = runtime_data.get('site.data.url')
+        if not dataurl:
+            dataurl = get_site_config( 'site.data.url', '/dl/' )
+            runtime_data['site.data.url'] = dataurl
+
+        thumb_file = os.path.join( self.logodir, 'thumb.png')
+
+        if os.path.exists( thumb_file ):
+            return '%s/forum/catalog/%s/thumb.png' % (
+                dataurl.rstrip('/'), self.id )
+        else:
+            return '/static/image/forum/catalog_logo.png'
+
+
+    @property
+    def logodir(self):
+
+        datapath = runtime_data.get('site.data.path')
+        if not datapath:
+            datapath = get_site_config(
+                'site.data.path', '/opt/LuoYun/data/' )
+            runtime_data['site.data.path'] = datapath
+
+        return os.path.join(datapath, 'forum/catalog/%s' % self.id)
+
+
+    def save_logo(self, request_files):
+        ''' save logo file
+        request_files = self.request.files['logo']
+        '''
+
+        logodir = self.logodir
+
+        if not makesure_path_exist( logodir ):
+            return _('Create logodir "%s" failed') % logodir
+
+        max_size = settings.APPLIANCE_LOGO_MAXSIZE
+
+        for f in request_files:
+
+            if len(f['body']) > max_size:
+                return _('Logo must smaller than %s !') % human_size(max_size)
+
+            save_raw_file = os.path.join(logodir, 'r.png')
+            save_raw_file = os.path.join(logodir, 'thumb.png')
+
+            tf = tempfile.NamedTemporaryFile()
+            tf.write(f['body'])
+            tf.seek(0)
+
+            try:
+                img = Image.open(tf.name)
+
+                # can convert image type
+                img.save( save_raw_file )
+
+                img.thumbnail((120, 120), Image.ANTIALIAS)
+                img.save( save_thumb_file )
+
+            except Exception, emsg:
+                e = _('Save %(filename)s failed: %(emsg)s') % {
+                    'filename': f.get('filename'), 'emsg': emsg }
+                logging.error( e )
+                return e
+
+            tf.close()
+
 
 
 TOPIC_STATUS = (
@@ -97,7 +179,7 @@ TOPIC_STATUS = (
 )
 MARKUP_LANGUAGE = (
     (1, _('markdown')),
-    (2, _('org-mode')),
+    (2, _('WYSIWYM')),
     )
 class ForumTopic(ORMBase):
     '''Forum Topic'''
@@ -169,6 +251,14 @@ class ForumTopic(ORMBase):
     @property
     def is_deleted(self):
         return self.status == 1
+
+    @property
+    def language(self):
+        if self.markup_language == 1:
+            return 'markdown'
+
+        else:
+            return None
             
 
 class ForumTopicTag(ORMBase):

@@ -10,27 +10,27 @@
 % if configs:
 <table class="table table-striped">
   <thead>
-	<tr>
-	  <th>ID</th>
-	  <th>${ _("Key") }</th>
-	  <th>${ _("Value") }</th>
-	  <th>${ _("Language") }</th>
-	  <th></th>
-	</tr>
+    <tr>
+      <th>ID</th>
+      <th>${ _("Key") }</th>
+      <th>${ _("Value") }</th>
+      <th>${ _("Language") }</th>
+      <th></th>
+    </tr>
   </thead>
   <tbody>
-	% for it in configs:
-	<tr>
-	  <td>${ it.id }</td>
-	  <td>${ it.key }</td>
-	  <td>${ it.value }</td>
-	  <td>${ it.language.name }</td>
-	  <td>
-		<i class="icon-edit"></i> <a href="${ reverse_url('admin:site:localeconfig:edit') }?ID=${ it.id }">${ _("Edit") }</a>
-		<i class="icon-trash"></i> <a href="${ reverse_url('admin:site:localeconfig:delete', it.id) }">${ _("Delete") }</a>
-	  </td>
-	</tr>
-	% endfor
+    % for it in configs:
+    <tr>
+      <td>${ it.id }</td>
+      <td>${ it.key }</td>
+      <td>${ it.value }</td>
+      <td>${ it.language.name }</td>
+      <td>
+        <i class="icon-edit"></i> <a href="${ reverse_url('admin:site:localeconfig:edit') }?ID=${ it.id }">${ _("Edit") }</a>
+        <i class="icon-trash"></i> <a href="${ reverse_url('admin:site:localeconfig:delete', it.id) }">${ _("Delete") }</a>
+      </td>
+    </tr>
+    % endfor
   </tbody>
 </table>
 % endif

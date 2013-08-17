@@ -1,7 +1,7 @@
 from yweb.forms import Form
 from wtforms import BooleanField, TextField, \
     validators, DateTimeField, TextAreaField, IntegerField, \
-    PasswordField, SelectMultipleField, SelectField
+    PasswordField, SelectMultipleField, SelectField, FileField
 
 from wtforms.validators import ValidationError
 
@@ -33,13 +33,6 @@ class GroupForm(Form):
     description = TextAreaField( _('Description') )
     perms = SelectMultipleField( _('Permissions') )
 
-
-# Support wiki catalog and appliance catalog
-class CatalogForm(Form):
-
-    name = TextField( _('Name'), [validators.Length(min=2, max=32)] )
-    summary = TextField( _('Summary'), [validators.Length(min=2, max=256)] )
-    description = TextAreaField( _('Description') )
 
 
 class UserGroupEditForm(Form):
@@ -75,4 +68,31 @@ class ResourceSimpleForm(Form):
     effect_date = DateTimeField( _('Effect Date') )
     expired_date = DateTimeField( _('Expired Date') )
 
+
+
+from app.appliance.models import OSType
+_new_OSType = [(str(x), y) for x, y in OSType]
+
+class ApplianceEditForm(Form):
+
+    name = TextField( _('Name'), [
+            validators.Length(min=2, max=64)] )
+
+    os = SelectField( _('OS'), choices=_new_OSType )
+
+    catalog     = SelectField( _('Catalog') )
+    summary     = TextField( _('Summary') )
+    logo        = FileField( _('Logo') )
+    description = TextAreaField( _('Description') )
+
+
+class ApplianceCatalogEditForm(Form):
+
+    name = TextField( _('Name'), [
+            validators.Length(min=2, max=32)] )
+
+    summary = TextAreaField( _('Summary'), [
+            validators.Length(min=2, max=256)] )
+
+    description = TextAreaField( _('Description') )
 

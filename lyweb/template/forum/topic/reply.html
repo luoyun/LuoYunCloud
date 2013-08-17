@@ -1,0 +1,45 @@
+<%inherit file="../forum_base.html"/>
+
+<%block name="subhead">
+% if markup_language == 'markdown':
+<link rel="stylesheet" type="text/css" href="${ static_url('markitup/skins/simple/style.css') }" />
+<link rel="stylesheet" type="text/css" href="${ static_url('markitup/sets/markdown/style.css') }" />
+% endif
+</%block>
+
+<%block name="innav">
+<li><a href="reverse_url('forum:topic:view') + '?id=%s' % TOPIC.id">${ TOPIC.name }</a> <span class="divider">/</span></li>
+<li>${ _("Reply Topic") }</li>
+</%block>
+
+<%block name="submain">
+
+<div class="container-fluid">
+  <form method="POST">${ xsrf_form_html() }
+    ${ form.body() }
+    ${ form.html_errors( form.body.errors ) }
+    <br>
+    <button type="submit" class="btn">${ _("Submit") }</button>
+  </form>
+</div>
+
+<div style="display:none;" id="xsrf-cookie">${ xsrf_cookie }</div>
+
+% if markup_language == 'markdown':
+<script type="text/javascript" src="${ static_url('markitup/jquery.markitup.js') }"></script>
+<script type="text/javascript" src="${ static_url('markitup/sets/markdown/set.js') }"></script>
+<script type="text/javascript" >
+   mySettings.previewParserPath = "/t/preview?markup_language=markdown&_xsrf=${ xsrf_cookie }";
+   $(document).ready(function() {
+      $("#body").markItUp(mySettings);
+   });
+</script>
+
+% else:
+<script charset="utf-8" src="${ static_url('third/kindeditor/kindeditor-min.js') }"></script>
+<script charset="utf-8" src="${ static_url('third/kindeditor/lang/zh_CN.js') }"></script>
+<script>
+  load_kindeditor({ selector: '#body' });
+</script>
+% endif
+</%block>

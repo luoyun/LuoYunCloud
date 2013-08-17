@@ -54,7 +54,7 @@ class ArticleEditForm(Form):
 class SiteConfigForm(Form):
 
     key = TextField(_('Key'), [validators.Length(min=2, max=256)])
-    value = TextField(_('value'), [validators.Length(max=1024)])
+    value = TextAreaField(_('value'), [validators.Length(max=1024)])
 
 
 class SiteLocaleConfigForm(Form):

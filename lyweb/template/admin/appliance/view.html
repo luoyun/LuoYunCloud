@@ -1,146 +1,106 @@
-<%inherit file="/admin/appliance.html" />
+<%inherit file="appliance_base.html" />
 
 <%block name="innav">
-<li><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></li>
-<li>${ _("View Appliance") } <a href="${ reverse_url('admin:appliance') }?id=${ APPLIANCE.id }">${ APPLIANCE.name }</a></li>
+<li><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a> <span class="divider">/</span></li>
+<li><a href="${ reverse_url('admin:appliance') }?id=${ APPLIANCE.id }">${ APPLIANCE.name }</a></li>
 </%block>
 
-<%block name="main">
+<%block name="submain">
 
-<div class="a-view">
+<div class="row-fluid">
 
-  <div id="a-logo">
-    <img class="logo" src="${ APPLIANCE.logourl }" alt="Logo" />
-  </div>
+  <div class="span3">
 
-  <p class="subtitle">${ _("Baseinfo") }</p>
-
-  <div class="c">
-    <table class="table table-bordered table-striped">
-      <tbody>
-	<tr>
-	  <td>${ _("ID") }</td>
-	  <td>${ APPLIANCE.id }</td>
-	</tr>
-	<tr>
-	  <td>${ _("Name") }</td>
-	  <td>${ APPLIANCE.name }</td>
-	</tr>
-	<tr>
-	  <td>${ _("Checksum") }</td>
-	  <td>${ APPLIANCE.checksum }</td>
-	</tr>
-	<tr>
-	  <td>${ _("Size") }</td>
-	  <td>${ human_size(APPLIANCE.filesize) }</td>
-	</tr>
-	<tr>
-	  <td>${ _("Owner") }</td>
-	  <td>
-	    <a href="${ reverse_url('admin:user') }?id=${ APPLIANCE.user.id }">${ APPLIANCE.user.username }</a>
-	    <a class="btn" href="${ reverse_url('admin:appliance') }?id=${ APPLIANCE.id }&action=change_owner">${ _("Change Owner") }</a>
-	  </td>
-	</tr>
-	<tr>
-	  <td>${ _("Catalog") }</td>
-	  <td>
-	    <a href="${ reverse_url('admin:appliance') }?catalog=${ APPLIANCE.catalog_id }" title="${ _("View all appliances in this catalog.") }" target="_blank">${ APPLIANCE.catalog_name }</a>
-	    <a class="btn" href="${ reverse_url('admin:appliance') }?id=${ APPLIANCE.id }&action=change_catalog">${ _("Change Catalog") }</a>
-	  </td>
-	</tr>
-	<tr>
-	  <td>${ _("Instance") }</td>
-	  <td>
-	    % if APPLIANCE.instances:
-	    <a href="${ reverse_url('admin:instance') }?aid=${ APPLIANCE.id }">${ len(APPLIANCE.instances) }</a>
-	    % endif
-	  </td>
-	</tr>
-	<tr>
-	  <td>${ _("Created") }</td>
-	  <td>${ ftime(APPLIANCE.created) }</td>
-	</tr>
-	<tr>
-	  <td>${ _("Updated") }</td>
-	  <td>${ ftime(APPLIANCE.updated) }</td>
-	</tr>
-      </tbody>
-    </table>
-  </div>
-
-
-  <p class="subtitle">${ _("Summary") }</p>
-  <p>
-    % if APPLIANCE.summary:
-    ${ APPLIANCE.summary }
-    % else:
-    ${ _("No summary yet !") }
-    % endif
-  </p>
-
-
-  <p class="subtitle">${ _("Description") }</p>
-  <p>
-    % if APPLIANCE.description:
-    ${ APPLIANCE.description_html }
-    % else:
-    ${ _("No description yet !") }
-    % endif
-  </p>
-
-  <p class="subtitle">${ _("Management") }</p>
-
-  <p><a class="blue-submit" href="${ APPLIANCE.download_url }" target="_blank">${ _("Download") }</a></p>
-
-  <div>
-    <a class="red-submit" href="${ reverse_url('appliance:delete', APPLIANCE.id) }" onclick="deleteApplianceConfirm( this ); return false;">${ _("Delete") }</a>
-    <div class="show" style="display:none;">
-      <p class="ywarn">${ _("Would you want to delete appliance %s") % APPLIANCE.id }</p>
+    <div>
+      <img class="ly-logo-large" src="${ APPLIANCE.logourl }"/>
     </div>
+
+    <br>
+    <div>
+      <a class="btn btn-primary" href="${ reverse_url('admin:appliance:edit') }?id=${ APPLIANCE.id }"><i class="icon-edit"></i> ${ _("Edit") }</a>
+      <a class="btn" href="${ APPLIANCE.download_url }" target="_blank">${ _("Download") }</a>
+      <a class="btn btn-danger" href="${ reverse_url('appliance:delete', APPLIANCE.id) }" onclick="deleteApplianceConfirm( this ); return false;">${ _("Delete") }</a>
+    </div>
+
+  </div>
+
+  <div class="span9">
+
+    <div class="ly-item-title">${ _("Base Information") }</div>
+
+    <div class="ly-item-body">
+      <table class="table table-bordered table-striped">
+        <tbody>
+          <tr>
+            <th>${ _("ID") }</th>
+            <td>${ APPLIANCE.id }</td>
+          </tr>
+          <tr>
+            <th>${ _("Name") }</th>
+            <td>${ APPLIANCE.name }</td>
+          </tr>
+          <tr>
+            <th>${ _("Checksum") }</th>
+            <td>${ APPLIANCE.checksum }</td>
+          </tr>
+          <tr>
+            <th>${ _("Size") }</th>
+            <td>${ human_size(APPLIANCE.filesize) }</td>
+          </tr>
+          <tr>
+            <th>${ _("Owner") }</th>
+            <td>
+              <a href="${ reverse_url('admin:user') }?id=${ APPLIANCE.user.id }">${ APPLIANCE.user.username }</a>
+              <a class="btn" href="${ reverse_url('admin:appliance:change_user') }?id=${ APPLIANCE.id }"><i class="icon-edit"></i> ${ _("Change User") }</a>
+            </td>
+          </tr>
+          <tr>
+            <th>${ _("Catalog") }</th>
+            <td>
+              <a href="${ reverse_url('admin:appliance') }?catalog=${ APPLIANCE.catalog_id }" title="${ _("View all appliances in this catalog.") }" target="_blank">${ APPLIANCE.catalog_name }</a>
+            </td>
+          </tr>
+          <tr>
+            <th>${ _("Instance") }</th>
+            <td>
+              % if APPLIANCE.instances:
+              <a class="ly-count" href="${ reverse_url('admin:instance') }?aid=${ APPLIANCE.id }">${ len(APPLIANCE.instances) }</a>
+              % endif
+            </td>
+          </tr>
+          <tr>
+            <th>${ _("Created") }</th>
+            <td>${ ftime(APPLIANCE.created) }</td>
+          </tr>
+          <tr>
+            <th>${ _("Updated") }</th>
+            <td>${ ftime(APPLIANCE.updated) }</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <div class="ly-item-title">${ _("Summary") }</div>
+    <div class="ly-item-body">
+      % if APPLIANCE.summary:
+      ${ APPLIANCE.summary }
+      % else:
+      ${ _("No summary yet !") }
+      % endif
+    </div>
+
+
+    <div class="ly-item-title">${ _("Description") }</div>
+    <div class="ly-item-body">
+      % if APPLIANCE.description:
+      ${ APPLIANCE.description_html }
+      % else:
+      ${ _("No description yet !") }
+      % endif
+    </div>
+
   </div>
 
 </div>
-
-<script type="text/javascript">
-function deleteApplianceConfirm( obj ) {
-
-    var $obj = $(obj);
-
-    $obj.parent().find('.show').dialog({
-	title: "${ _('Are you sure ?') }",
-	resizable: false,
-	height: "auto",
-	minWidth: 420,
-	modal: true,
-	buttons: {
-	    "${ _('Cancel') }": function() {
-		$( this ).dialog( "close" );
-	    },
-	    "${ _('Delete Appliance !') }": function() {
-		$.ajax({
-		    url: $obj.attr("href"),
-		    type: "GET",
-		    success: function(data) {
-			$(data).dialog({
-			    show: "slow",
-			    minWidth: 520,
-			    modal: true
-			});
-                        $obj.parents('tr').remove();
-		    }
-		});
-		$( this ).dialog( "close" );
-	    }
-	},
-        close:function(){
-            $( this ).dialog("destroy");
-        }
-    });
-
-    return false;
-
-}
-</script>
-
-
 </%block>

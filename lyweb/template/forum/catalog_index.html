@@ -8,60 +8,61 @@
 
 <div>
   <div class="row-fluid">
-	<div class="span9">
+    <div class="span9">
 
-	  % if TOPIC_LIST:
-	  <div id="forum-topic-list">
-		% for T in TOPIC_LIST:
-		<% LINK = reverse_url('forum:topic:view') + '?id=%s' % T.id %>
-		<div class="row-fluid topic">
+      % if TOPIC_LIST:
+      <div id="forum-topic-list">
+        % for T in TOPIC_LIST:
+        <% LINK = reverse_url('forum:topic:view') + '?id=%s' % T.id %>
+        <div class="row-fluid topic">
 
-		  <div class="span2 text-center status">
-			<div class="well">
-			  <div class="vote-count">${ T.like + T.unlike }<br>${ _("Votes") }</div>
-			  <div class="post-count">${ len(T.posts) }<br>${ _("Posts") }</div>
-			</div>
-			<div class="view-count">${ T.visit } ${ _("Views") }</div>
-		  </div>
+          <div class="span2 text-center status">
+            <div class="well">
+              <div class="vote-count">${ T.like + T.unlike }<br>${ _("Votes") }</div>
+              <div class="post-count">${ len(T.posts) }<br>${ _("Posts") }</div>
+            </div>
+            <div class="view-count">${ T.visit } ${ _("Views") }</div>
+          </div>
 
-		  <div class="span10 summary">
-			<h3><a href="${ LINK }">${ T.name }</a></h3>
-			<div>${ T.summary }</div>
+          <div class="span10 summary">
+            <h3><a href="${ LINK }">${ T.name }</a></h3>
+            <div>${ T.summary }</div>
 
-			<div class="row-fluid">
-			  <div class="span9 tags">
-				%for tag in T.tags:
-				<a class="tag" href="${ reverse_url('forum:tag:view') }?id=${ tag.id }">${ tag.name }</a>
-				%endfor
-			  </div>
-			  <div class="span3 started">
-				<div class="time" title="${ ftime(T.created) }">${ htime(T.created) }</div>
-				<div><i class="icon-user"></i> <a class="user" href="${ reverse_url('user:view') }?id=${ T.user_id }">${ T.user.username }</a></div>
-			  </div>
-			</div>
-		  </div>
-		</div>
-		% endfor
-		${ page_html }
-	  </div>
+            <div class="row-fluid">
+              <div class="span9 tags">
+                %for tag in T.tags:
+                <a class="tag" href="${ reverse_url('forum:tag:view') }?id=${ tag.id }">${ tag.name }</a>
+                %endfor
+              </div>
+              <div class="span3 started">
+                <div class="time" title="${ ftime(T.created) }">${ htime(T.created) }</div>
+                <div><i class="icon-user"></i> <a class="user" href="${ reverse_url('user:view') }?id=${ T.user_id }">${ T.user.username }</a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        % endfor
+        ${ page_html }
+      </div>
 
-	  % else:
-	  <div class="hero-unit">${ _("No topics yet.") }</div>
-	  % endif
+      % else:
+      <div class="hero-unit">${ _("No topics yet.") }</div>
+      % endif
 
-	</div>
+    </div>
 
-	<div class="span3">
+    <div class="span3">
 
-	  <div class="well">
-		<h3>${ CATALOG.name }</h3>
-		<p>${ CATALOG.summary }</p>
-		<p>${ _("Total Topic: ") } ${ TOPIC_TOTAL }</p>
-	  </div>
-	  % if can_add_topic(CATALOG):
-	  <p><a class="btn btn-primary" href="${ reverse_url('forum:topic:add') }?cid=${ CATALOG.id }"><i class="icon-plus"></i> ${ _("New Topic") }</a></p>
-	  % endif
-	</div>
+      <div class="well">
+        <img src="${ CATALOG.logourl }" />
+        <h3>${ CATALOG.name }</h3>
+        <p>${ CATALOG.summary }</p>
+        <p>${ _("Total Topic: ") } ${ TOPIC_TOTAL }</p>
+      </div>
+      % if can_add_topic(CATALOG):
+      <p><a class="btn btn-primary" href="${ reverse_url('forum:topic:add') }?cid=${ CATALOG.id }"><i class="icon-plus"></i> ${ _("New Topic") }</a></p>
+      % endif
+    </div>
 
   </div>
 </div>

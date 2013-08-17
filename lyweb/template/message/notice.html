@@ -18,20 +18,20 @@
       <tr>
         <th>${ _("Sender") }</th>
         <th>${ _("Subject") }</th>
-	<th>${ _("Send Time") }</th>
+    <th>${ _("Send Time") }</th>
       </tr>
     </thead>
     <tbody>
       % for M in MESSAGE_LIST:
       <tr>
         <td class="sender user">
-	  <img src="${ M.sender.avatar_url }" />
-	  <a href="${ reverse_url('account:view', M.sender_id) }">${ M.sender.username }</a>
-	</td>
+      <img src="${ M.sender.avatar_url }" />
+      <a href="${ reverse_url('account:view', M.sender_id) }">${ M.sender.username }</a>
+    </td>
         <td class="subject">
-	  <a href="${ reverse_url('message:notice') }?message=${ M.id }">${ M.text.subject }</a>
-	</td>
-	<td>${ htime(M.text.sendtime) }</td>
+      <a href="${ reverse_url('message:notice') }?message=${ M.id }">${ M.text.subject }</a>
+    </td>
+    <td>${ htime(M.text.sendtime) }</td>
       </tr>
       % endfor
     </tbody>

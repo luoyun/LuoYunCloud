@@ -38,6 +38,7 @@ def get_handlers():
 
     handlers.extend([
 #            (r'/([^/ ]+)', home_views.GlobalEntry ),
+            (r"/dl/(.*)", tornado.web.StaticFileHandler, {"path": "/opt/LuoYun/data/"}),
             (r"/robots.txt", tornado.web.RedirectHandler, {"url": "/static/robots.txt"}),
             (r'/404.html', NotFoundHandler),
             (r'/(.*)', NotFoundHandler),

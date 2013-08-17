@@ -8,8 +8,8 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _("Create New User") }</legend>
+    <fieldset>
+      <legend>${ _("Create New User") }</legend>
       ${ form.username.label } ${ form.username() }
       ${ form.html_errors(form.username.errors) }
 
@@ -20,9 +20,9 @@
       ${ form.password_confirm.label } ${ form.password_confirm() }
 
       ${ form.html_errors(form.password.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      <br>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 
 </div>

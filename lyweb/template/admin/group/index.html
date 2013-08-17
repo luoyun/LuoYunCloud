@@ -17,10 +17,10 @@
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
-	<th>${ _("ID") }</th>
-	<th>${ _("Name") }</th>
-	<th>${ _("Users") }</th>
-	<th></th>
+    <th>${ _("ID") }</th>
+    <th>${ _("Name") }</th>
+    <th>${ _("Users") }</th>
+    <th></th>
       </tr>
     </thead>
     <tbody>
@@ -28,20 +28,20 @@
       <tr>
         <td>${ G.id }</td>
         <td><a href="${ reverse_url('admin:group') }?id=${ G.id }" target="_blank">${ G.name }</a></td>
-	<td>
-	  % if G.users:
-	  <a href="${ reverse_url('admin:user') }?gid=${ G.id }" target="_blank">${ len(G.users) }</a>
-	  % endif
-	</td>
+    <td>
+      % if G.users:
+      <a href="${ reverse_url('admin:user') }?gid=${ G.id }" target="_blank">${ len(G.users) }</a>
+      % endif
+    </td>
 
-	<td>
-	  <a href="${ reverse_url('admin:group') }?id=${ G.id }&action=edit">${ _("Edit") }</a>
-	  % if G.islocked:
-	  ${ _("locked") }
-	  % else:
-	  <a href="${ reverse_url('admin:group') }?id=${ G.id }&action=delete">${ _("Delete") }</a>
-	  % endif
-	</td>
+    <td>
+      <a href="${ reverse_url('admin:group') }?id=${ G.id }&action=edit">${ _("Edit") }</a>
+      % if G.islocked:
+      ${ _("locked") }
+      % else:
+      <a href="${ reverse_url('admin:group') }?id=${ G.id }&action=delete">${ _("Delete") }</a>
+      % endif
+    </td>
       </tr>
       % endfor
     </tbody>

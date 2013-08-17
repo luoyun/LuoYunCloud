@@ -5,21 +5,21 @@
 
 <div>
   <form method="POST">${ xsrf_form_html() }
-	<fieldset>
-	  <legend>${ _(title) }</legend>
-	  ${ form.name.label } ${ form.name() }
-	  ${ form.html_errors(form.name.errors) }
+    <fieldset>
+      <legend>${ _(title) }</legend>
+      ${ form.name.label } ${ form.name() }
+      ${ form.html_errors(form.name.errors) }
 
-	  ${ form.key.label } ${ form.key() }
-	  ${ form.html_errors(form.key.errors) }
+      ${ form.key.label } ${ form.key() }
+      ${ form.html_errors(form.key.errors) }
 
-	  <label for="isdefault">
-		<input id="isdefault" type="checkbox" name="isdefault">${ _("Is Default") }</label>
-	  
-	  ${ form.html_errors(form.isdefault.errors) }
-	  <br>
-	  <button type="submit" class="btn">${ _("Submit") }</button>
-	</fieldset>
+      <label for="isdefault">
+        <input id="isdefault" type="checkbox" name="isdefault">${ _("Is Default") }</label>
+      
+      ${ form.html_errors(form.isdefault.errors) }
+      <br>
+      <button type="submit" class="btn">${ _("Submit") }</button>
+    </fieldset>
   </form>
 </div>
 
