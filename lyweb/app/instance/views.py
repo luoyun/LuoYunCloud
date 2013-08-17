@@ -476,19 +476,32 @@ class LifeControl(RequestHandler):
 
         d = { 'id': I.id, 'code': 1, 'data': '' }
 
+        # TODO: drop resource from running instance
+        cpu_wait = 0
+        mem_wait = 0
+        IL = self.db.query(Instance).filter_by( user_id = I.user_id )
+        for xi in IL:
+            j = self.db.query(Job).filter(
+                and_( Job.target_type == JOB_TARGET['INSTANCE'],
+                      Job.target_id == xi.id ) ).order_by(
+                    desc( Job.id ) ).first()
+            if j and not j.completed:
+                cpu_wait += xi.cpus
+                mem_wait += xi.memory
+
         profile = I.user.profile
 
         resource_total = profile.get_resource_total()
         resource_used = profile.get_resource_used()
 
-        cpu_remain = resource_total["cpu"] - resource_used["cpu"]
-        memory_remain = resource_total["memory"] - resource_used["memory"]
+        cpu_remain = resource_total["cpu"] - resource_used["cpu"] - cpu_wait
+        memory_remain = resource_total["memory"] - resource_used["memory"] - mem_wait
 
         if not ( cpu_remain >= I.cpus and
                  memory_remain >= I.memory ):
 
             d['data'] = _('Resource limit: need %(cpus)s CPU, \
-%(memory)s, but you have %(cpu_remain)s CPU, %(memory_remain)s.') % {
+%(memory)s, but you have %(cpu_remain)s CPU, %(memory_remain)s M memory.') % {
                 'cpus': I.cpus, 'memory': I.memory,
                 'cpu_remain': cpu_remain,
                 'memory_remain': memory_remain }
@@ -501,8 +514,15 @@ class LifeControl(RequestHandler):
         # TODO: set passwd
         self.set_root_passwd(I)
 
-#        I.set('libvirt_conf', self.get_libvirt_conf(I))
-        I.set('libvirt_conf', '')
+        # update storage
+        I.update_storage()
+
+        I.set_libvirt_conf( self.get_libvirt_conf( I ) )
+
+        # Test For lynode dev
+        f = open('/tmp/%s.conf' % I.id, 'w')
+        f.write( I.libvirt_conf )
+        f.close()
 
         self.db.commit()
 
@@ -693,20 +713,3 @@ class InstanceDelete(RequestHandler):
         self.myfinish( data = ret, status = code )
 
 
-
-class InstanceAttrGet(RequestHandler):
-
-    def get(self):
-
-        I, msg = self.get_instance_byid()
-        if not I:
-            return self.myfinish( msg )
-
-        conf = self.get_libvirt_conf(I)
-#        print 'conf = ', conf
-
-#        I.set('libvirt_conf', self.get_libvirt_conf(I))
-        I.set('libvirt_conf', '')
-        self.db.commit()
-
-        self.write( conf )
