@@ -375,3 +375,6 @@ a:active {
 	padding: 50px 80px 100px;
 }
 
+#ly-async-window form {
+    margin: 0;
+}

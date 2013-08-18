@@ -26,4 +26,14 @@ handlers = [
 
     url(r'/appliance/attr_set', appliance.AttrSet, name='appliance:attr_set'),
 
+    # screenshot
+    url( r'/appliance/screenshot/add', appliance.ScreenshotAdd,
+         name='appliance:screenshot:add' ),
+
+    url( r'/appliance/screenshot/management', appliance.ScreenshotManagement,
+         name='appliance:screenshot:management' ),
+
+    url( r'/appliance/screenshot/delete', appliance.ScreenshotDelete,
+         name='appliance:screenshot:delete' ),
+
 ]

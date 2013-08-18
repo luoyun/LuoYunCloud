@@ -918,3 +918,34 @@ function load_kindeditor( data ) {
 }
 
 
+
+function ly_async_opt() {
+
+    $(".ly-async-opt").click( function(event) {
+		event.preventDefault();
+
+        $this = $(this);
+
+        var $window = $('#ly-async-window');
+		$window.modal();
+
+		var URL = $this.attr('href');
+
+		$.ajax({
+			url: URL,
+			type: 'GET',
+
+			success: function(data) {
+				$window.html( data );
+			},
+
+            error: function(request, textStatus, errorThrown) {
+                $("#ly-async-500 .statusText").text( request.statusText);
+                msg = $("#ly-async-500").html();
+                $window.html(msg)
+            },
+
+        });
+
+    });
+}

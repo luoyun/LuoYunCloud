@@ -2,7 +2,8 @@ import os
 import logging
 import Image
 import tempfile
-from datetime import datetime
+import datetime
+from hashlib import sha1
 from yweb.orm import ORMBase
 
 from sqlalchemy import Column, BigInteger, Integer, String, \
@@ -13,9 +14,10 @@ from sqlalchemy.orm import backref,relationship
 from app.site.utils import get_site_config
 
 import settings
-from settings import runtime_data
+from app.system.utils import get_runtime_data
 
 from lytool.filesize import size as human_size
+from yweb.utils.base import makesure_path_exist
 
 from markdown import Markdown
 YMK = Markdown(extensions=['fenced_code', 'tables'])
@@ -36,8 +38,8 @@ class ApplianceCatalog(ORMBase):
 
     # TODO:  is self only ?! can used by myself !
 
-    created = Column( DateTime, default=datetime.now )
-    updated = Column( DateTime, default=datetime.now )
+    created = Column( DateTime, default=datetime.datetime.now )
+    updated = Column( DateTime, default=datetime.datetime.now )
 
 
     def __init__(self, name, summary='', description=''):
@@ -88,8 +90,8 @@ class Appliance(ORMBase):
     unlike = Column(Integer, default=0)
     visit  = Column(Integer, default=0) # view times
 
-    created = Column( DateTime, default=datetime.now )
-    updated = Column( DateTime, default=datetime.now )
+    created = Column( DateTime, default=datetime.datetime.now )
+    updated = Column( DateTime, default=datetime.datetime.now )
 
 
     def __init__(self, name, user, filesize, checksum):
@@ -106,28 +108,24 @@ class Appliance(ORMBase):
     @property
     def logourl(self):
 
-        base_url = runtime_data.get('appliance.logo.base_url')
-        if not base_url:
-            base_url = get_site_config(
-                'appliance.logo.baseurl', '/dl/appliance/' )
-            runtime_data['appliance.logo.baseurl'] = base_url
-
-        if os.path.exists(self.p_logo):
-            return '%s/%s/d.png' % ( base_url.rstrip('/'), self.id )
-        else:
+        if not os.path.exists(self.p_logo):
             return settings.APPLIANCE_LOGO_DEFAULT_URL
+
+        base_url = get_runtime_data('site.download.base_url', '/dl/')
+
+        return '%s/appliance/%s/d.png' % (
+            base_url.rstrip('/'), self.id )
 
 
     @property
     def logodir(self):
 
-        base_dir = runtime_data.get('appliance.logo.basedir')
-        if not base_dir:
-            base_dir = get_site_config(
-                'appliance.logo.basedir', '/opt/LuoYun/data/appliance/' )
-            runtime_data['appliance.logo.basedir'] = base_dir
+        upload_dir = get_runtime_data('site.upload.base_dir', '/opt/LuoYun/data/')
 
-        return os.path.join(base_dir, '%s' % self.id)
+        path = '%s/appliance/%s/' % (
+            upload_dir.rstrip('/'), self.id )
+
+        return path
 
 
     @property
@@ -173,12 +171,8 @@ class Appliance(ORMBase):
         request_files = self.request.files['logo']
         '''
 
-        if not os.path.exists(self.logodir):
-            try:
-                os.makedirs(self.logodir)
-            except Exception, e:
-                return _('create appliance logo dir "%(dir)s" failed: %(emsg)s') % {
-                    'dir': self.logodir, 'emsg': e }
+        if not makesure_path_exist( self.logodir ):
+            return _('create appliance logo dir "%s" failed') % self.logodir
 
         max_size = settings.APPLIANCE_LOGO_MAXSIZE
 
@@ -223,3 +217,100 @@ class Appliance(ORMBase):
     @property
     def download_url(self):
         return os.path.join(settings.appliance_top_url, 'appliance_%s' % self.checksum)
+
+
+
+class ApplianceScreenshot(ORMBase):
+
+    __tablename__ = 'appliance_screenshot'
+
+    id = Column(Integer, Sequence('appliance_screenshot_id_seq'), primary_key=True)
+
+    appliance_id = Column( Integer, ForeignKey('appliance.id') )
+    appliance = relationship("Appliance", backref=backref('screenshots'))
+
+    filename = Column( String(1024) )
+    size = Column( Integer )
+    checksum = Column( String(256) )
+
+    like   = Column( Integer, default=0 )
+    unlike = Column( Integer, default=0 )
+    visit  = Column( Integer, default=0 )
+
+    updated = Column( DateTime(), default=datetime.datetime.now )
+    created = Column( DateTime(), default=datetime.datetime.now )
+
+
+    def __init__(self, appliance, fileobj):
+        self.appliance_id = appliance.id
+        self.save_file(fileobj)
+
+
+    @property
+    def url(self):
+
+        savename = '%s-%s' % (self.checksum, self.filename)
+
+        base_url = get_runtime_data('site.download.base_url', '/dl/')
+
+        return '%s/appliance/%s/screenshot/%s' % (
+            base_url.rstrip('/'), self.appliance_id, savename )
+
+    @property
+    def thumb_url(self):
+
+        savename = '%s-thumb.png' % self.checksum
+
+        base_url = get_runtime_data('site.download.base_url', '/dl/')
+
+        return '%s/appliance/%s/screenshot/%s' % (
+            base_url.rstrip('/'), self.appliance_id, savename )
+
+
+    @property
+    def base_path(self):
+        upload_dir = get_runtime_data('site.upload.base_dir', '/opt/LuoYun/data/')
+        path = '%s/appliance/%s/screenshot/' % (
+            upload_dir.rstrip('/'), self.appliance_id )
+
+        return path
+
+
+    def save_file(self, fileobj):
+
+        upload_dir = get_runtime_data('site.upload.base_dir', '/opt/LuoYun/data/')
+
+        path = '%s/appliance/%s/screenshot/' % (
+            upload_dir.rstrip('/'), self.appliance_id )
+
+        if not makesure_path_exist( path ):
+            return _('makesure_path_exist failed.')
+
+        sha1_obj = sha1()
+        sha1_obj.update( fileobj['body'] )
+
+        checksum = sha1_obj.hexdigest()
+        filename = fileobj['filename']
+
+        savename = '%s-%s' % (checksum, filename)
+        fullname = os.path.join(path, savename)
+
+        f = open(fullname, 'wb')
+        f.write( fileobj['body'] )
+        f.close()
+
+        try:
+            thumbname = '%s-thumb.png' % checksum
+            fullthumb = os.path.join(path, thumbname)
+
+            img = Image.open(fullname)
+
+            img.thumbnail((800, 500), Image.ANTIALIAS)
+            img.save( fullthumb )
+        except:
+            pass
+
+        self.filename = filename
+        self.checksum = checksum
+        self.size     = os.path.getsize( fullname )
+

@@ -681,6 +681,16 @@ class DomainAdd(InstanceActionHandler):
         if not self.I:
             return self.finish()
 
+        # test domain count limit
+        used_domain = self.db.query(UserDomain).filter_by(
+            user_id = self.current_user.id).count()
+
+        profile = self.I.user.profile
+        if not ( profile and profile.domain > used_domain ):
+            return self.finish( _('You have not domain binding now. \
+used: %(used)s, total: %(total)s') % {
+                    'used': used_domain, 'total': profile.domain } )
+
         self.form = InstanceDomainForm(self)
         self.prepare_kwargs['form'] = self.form
 
@@ -999,6 +1009,23 @@ class PortMappingAdd(InstanceActionHandler):
 
         if not self.I:
             return self.finish()
+
+        # test port count limit
+        used_port = 0
+
+        IL = self.db.query(Instance).filter_by(
+            user_id = self.current_user.id )
+
+        for instance in IL:
+            for ip in instance.ips:
+                used_port += self.db.query(PortMapping).filter_by(
+                    ip_id = ip.id).count()
+
+        profile = self.I.user.profile
+        if not ( profile and profile.port > used_port ):
+            return self.finish( _('You have not port number now. \
+used: %(used)s, total: %(total)s') % {
+                    'used': used_port, 'total': profile.port } )
 
         ip_list = []
         for IP in self.I.ips:

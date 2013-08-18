@@ -1,14 +1,12 @@
 from .models import SiteConfig
 
-from yweb import orm
-from settings import runtime_data
+from yweb.orm import global_dbsession
 
 
 def get_site_config(key, default_value=None):
 
     db = global_dbsession()
     v = SiteConfig.get(db, key, default_value)
-    global_dbsession.remove()
 
     return v
 

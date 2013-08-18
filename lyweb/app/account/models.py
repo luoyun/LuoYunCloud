@@ -344,7 +344,7 @@ class Attachment(ORMBase):
     dtimes = Column( Integer, default=0 )
 
     created = Column( DateTime(), default=datetime.datetime.now )
-    updated = Column( DateTime() )
+    updated = Column( DateTime(), default=datetime.datetime.now )
 
 
     def __init__(self, user, fileobj):

@@ -42,7 +42,6 @@ def get_runtime_data(key, value=None):
 
     db = global_dbsession()
     v = SiteConfig.get(db, key, None)
-    global_dbsession.remove()
 
     if v:
         runtime_data[key] = v

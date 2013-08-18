@@ -46,6 +46,31 @@
 
     <div class="span9">
 
+      <h1>${ _("Screenshot") }</h1>
+
+      <p>
+        <a class="btn btn-primary ly-async-opt" href="${ reverse_url('appliance:screenshot:add') }?appliance_id=${ appliance.id }">${ _("Add Screenshot") }</a>
+        <a class="btn btn-primary ly-async-opt" href="${ reverse_url('appliance:screenshot:management') }?appliance_id=${ appliance.id }">${ _("Management") }</a>
+      </p>
+
+      <div id="appliance-thumnails" class="text-center">
+        <div class="carousel slide" id="myCarousel">
+          <div class="carousel-inner">
+            % for INDEX, S in enumerate(appliance.screenshots):
+            % if INDEX == 0:
+            <div class="item active">
+            % else:
+            <div class="item">
+            % endif
+              <a href="${ S.url }"><img src="${ S.thumb_url }"></a>
+            </div>
+            % endfor
+          </div>
+          <a data-slide="prev" href="#myCarousel" class="left carousel-control">‹</a>
+          <a data-slide="next" href="#myCarousel" class="right carousel-control">›</a>
+        </div>
+      </div>
+
       <dl class="dl-horizontal">
         <dt>${ _("Catalog") }</dt>
         <dd><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog_name }</a></dd>
@@ -72,4 +97,34 @@
 
   </div>
 </div>
+
+
+## Normal Ajax option
+<div style="display:none;" id="ly-async-window" class="modal hide fade">
+  <div class="text-center">
+    <p>${ _("Please waiting") }</p>
+    <img src="${ static_url('image/running.gif') }" />
+  </div>
+</div>
+<div style="display:none;" id="ly-async-500">
+  <div class="modal-header">
+    <h1>${ _("Internal Server Error") }</h1>
+  </div>
+  <div class="modal-body">
+    <p class="statusText"></p>
+    <div class="notification-help">
+      <p class="subtitle"><i class="icon-lightbulb"></i> ${ _("If you have any questions, you can contact the admin by following method:") }</p>
+   </div>
+  </div>
+  <div class="modal-footer">
+    <input type="button" class="btn" value="Close" data-dismiss="modal">
+  </div>
+</div>
+
+<script type="text/javascript">
+$( function() {
+  ly_async_opt()
+});
+</script>
+
 </%block>
