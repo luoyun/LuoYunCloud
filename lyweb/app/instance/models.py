@@ -14,6 +14,8 @@ from sqlalchemy.orm import backref,relationship
 from app.auth.utils import enc_shadow_passwd
 from app.site.models import SiteConfig
 
+from app.system.utils import get_runtime_data
+
 import settings
 
 
@@ -378,7 +380,7 @@ class Instance(ORMBase):
 
     @property
     def default_domain(self):
-        domain = settings.runtime_data.get('domain', None)
+        domain = get_runtime_data('domain', None)
         if not domain:
             return ''
 

@@ -33,6 +33,8 @@ from ytool.hstring import b2s
 from yweb.quemail import Email
 from app.site.models import SiteConfig
 
+from yweb.orm import global_dbsession
+
 
 class RequestHandler(TornadoRequestHandler):
 
@@ -180,7 +182,7 @@ class RequestHandler(TornadoRequestHandler):
 
     @property
     def db(self):
-        return self.application.dbsession()
+        return global_dbsession()
 
     def _job_notify(self, id):
         ''' Notify the new job signal to control server '''
@@ -293,7 +295,8 @@ class RequestHandler(TornadoRequestHandler):
 
 
     def on_finish(self):
-        self.application.dbsession.remove()
+        global_dbsession.remove()
+
 
 
 def show_error( E ):

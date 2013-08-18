@@ -6,15 +6,9 @@ from settings import runtime_data
 
 def get_site_config(key, default_value=None):
 
-    dbsession = runtime_data.get('dbsession')
-    if not dbsession:
-        dbsession = orm.create_session()
-        runtime_data['dbsession'] = dbsession
-
-    db = dbsession()
+    db = global_dbsession()
     v = SiteConfig.get(db, key, default_value)
-
-    dbsession.remove()
+    global_dbsession.remove()
 
     return v
 
