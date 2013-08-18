@@ -26,6 +26,8 @@ from ytool.pagination import pagination
 from lytool.filesize import size as human_size
 from tool.firewall import Prerouting
 
+from app.system.utils import add_trace
+
 import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import JOB_TARGET
@@ -508,6 +510,11 @@ class NetworkAdd(InstanceActionHandler):
                 I.update_network()
                 self.db.commit()
 
+                msg = _('get ip %(ip)s for instance %(id)s manually.') % {
+                    'ip': IP.ip, 'id': I.id }
+
+                add_trace(self, ttype='IP', tid=IP.id, do=msg)
+
                 url = self.reverse_url('myun:instance:view')
                 url += '?id=%s' % I.id
                 return self.redirect( url )
@@ -553,6 +560,10 @@ class NetworkDelete(NetworkActionHandler):
 
         IP.instance_id = None
         self.db.commit()
+
+        msg = _('free ip %(ip)s from instance %(id)s manually.') % {
+            'ip': IP.ip, 'id': I.id }
+        add_trace(self, ttype='IP', tid=IP.id, do=msg)
 
         I.update_network()
         self.db.commit()
@@ -946,7 +957,8 @@ class InstanceCreate(RequestHandler):
 
         msg = _('get ip %(ip)s for instance %(id)s') % {
             'ip': free_ip.ip, 'id': I.id }
-        self.lytrace( ttype='IP', tid=free_ip.id, do=msg )
+
+        add_trace(self, ttype='IP', tid=free_ip.id, do=msg)
         self.db.commit()
 
 

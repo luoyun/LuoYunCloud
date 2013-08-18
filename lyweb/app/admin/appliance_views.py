@@ -15,6 +15,8 @@ from lycustom import has_permission
 from lytool.filesize import size as human_size
 from ytool.pagination import pagination
 
+from app.system.utils import add_trace
+
 from settings import LY_TARGET
 
 
@@ -151,8 +153,7 @@ class ApplianceChangeUser(RequestHandler):
                 if reason:
                     do += ' : %s' % reason
 
-                T = self.lytrace( ttype = LY_TARGET['APPLIANCE'],
-                                  tid = A.id, do = do )
+                add_trace(self, ttype='APPLIANCE', tid=A.id, do=do)
 
                 # TODO: send reason to user
                 url = self.reverse_url('admin:appliance:view')

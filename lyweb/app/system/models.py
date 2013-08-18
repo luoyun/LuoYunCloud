@@ -45,8 +45,8 @@ class LyTrace(ORMBase):
     who = relationship("User", backref=backref('traces', order_by=id))
 
     when = Column( DateTime, default=datetime.now )
-    comefrom = Column( String(512) )    # ip
-    agent = Column( String(1024) )  # browser
+    comefrom = Column( String(512) ) # ip
+    agent = Column( String(1024) )   # browser
     visit = Column( String(1024) )
 
     target_type = Column( Integer )
@@ -66,7 +66,6 @@ class LyTrace(ORMBase):
         return '%s: %s come from %s do "%s" , %s' % (
             ftime(self.when), self.who.username, self.comefrom,
             self.do, self.isok)
-
 
     @property
     def whois(self):

@@ -21,8 +21,6 @@ from tornado import escape
 
 from app.auth.models import User
 from yweb.contrib.session.models import Session
-from app.system.models import LyTrace
-from settings import LY_TARGET
 from app.language.models import Language
 
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -221,27 +219,6 @@ class RequestHandler(TornadoRequestHandler):
         except:
             return default
 
-    def lytrace(self, ttype, tid, do, isok=True, result=None):
-
-        if isinstance(ttype, str):
-            ttype = LY_TARGET.get(ttype, 0)
-
-        ip = self.request.remote_ip
-        agent = self.request.headers.get('User-Agent')
-        visit = self.request.uri
-
-        T = LyTrace(self.current_user, ip, agent, visit)
-
-        T.target_type = ttype,
-        T.target_id = tid,
-        T.do = do
-        T.isok = isok
-        T.result = result
-
-        self.db.add(T)
-        self.db.commit()
-
-        return T
 
     # params is a dict: { 'key': value }
     def urlupdate(self, params):

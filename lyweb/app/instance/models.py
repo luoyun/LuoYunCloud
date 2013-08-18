@@ -144,6 +144,10 @@ class Instance(ORMBase):
         return self.status in [3, 4, 5]
 
     @property
+    def is_starting(self):
+        return 2 < self.status <= 5
+
+    @property
     def need_query(self):
         return self.status in [245, 255]
 

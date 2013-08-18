@@ -19,6 +19,8 @@ from app.network.models import IPPool
 
 from lycustom import has_permission
 
+from app.system.utils import add_trace
+
 import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
@@ -377,6 +379,8 @@ class SingleInstanceStatus(RequestHandler):
         CS['is_img'] = I.status_icon
 
         lastjob = self.get_instance_lastjob(I)
+        # TODO: add timeout judgement
+
         if lastjob:
             CS['js'] = lastjob.status
             CS['js_str'] = self.trans(lastjob.status_string)
@@ -678,6 +682,8 @@ class InstanceDelete(RequestHandler):
         # TODO: delete domain binding
         self.unbinding_domain( I )
 
+        instance_id = I.id
+
         I.status = DELETED_S
         I.name = '_deleted_%s_' % I.id
         self.db.commit()
@@ -688,11 +694,6 @@ class InstanceDelete(RequestHandler):
                 y.ip_port = None
             x.instance_id = None
             x.updated = datetime.datetime.now()
-
-            T = self.lytrace(
-                ttype = LY_TARGET['IP'], tid = x.id,
-                do = _('release ip %(ip)s from instance %(id)s') % {
-                    'ip': x.ip, 'id': I.id } )
 
         for x in I.domains:
             self.db.delete(x)
@@ -710,6 +711,9 @@ class InstanceDelete(RequestHandler):
             ret = self.trans(_('Task starts successfully.'))
             code = 0
 
-        self.myfinish( data = ret, status = code )
+        add_trace( self, ttype = 'INSTANCE',
+                   tid = instance_id,
+                   do = _('delete instance') )
 
+        self.myfinish( data = ret, status = code )
 
