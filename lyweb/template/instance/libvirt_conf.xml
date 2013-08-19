@@ -19,18 +19,30 @@
     <emulator>/usr/libexec/qemu-kvm</emulator>
     <disk type='file' device='floppy'>
       <driver name='qemu' type='raw' cache='none'/>
-      <source file='/data/lynode_data/instances/${ I.id }/floppy.img'/>
+      <source file='%s/instances/${ I.id }/floppy.img'/>
       <target dev='fda' bus='fdc'/>
       <address type='drive' controller='0' bus='0' unit='0'/>
     </disk>
 
     <disk type='file' device='disk'>
       <driver name='qemu' type='raw' cache='none' io='threads'/>
-      <source file='/data/lynode_data/instances/${ I.id }/os.img'/>
+      <source file='%s/instances/${ I.id }/os.img'/>
       <target dev='hda' bus='ide'/>
       <alias name='ide0-0-0'/>
       <address type='drive' controller='0' bus='0' target='0' unit='0'/>
     </disk>
+
+    % if len(I.storages):
+    % for INDEX, S in enumerate(I.storages):
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw' io='threads'/>
+      <source file='%s/instances/${ I.id }/disk${ INDEX + 1 }.img'/>
+      <target dev='hdb' bus='ide'/>
+      <alias name='ide0-0-${ INDEX + 1 }'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='${ INDEX + 1 }'/>
+    </disk>
+    % endfor
+    % endif
 
     <controller type='ide' index='0'>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x1'/>
