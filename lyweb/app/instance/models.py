@@ -385,7 +385,10 @@ class Instance(ORMBase):
             return ''
 
         if not isinstance(domain, dict):
-            return ''
+            try:
+                domain = json.loads( domain )
+            except:
+                return ''
 
         top = domain.get('topdomain')
         prefix = domain.get('prefix')
