@@ -26,6 +26,7 @@ typedef struct NodeConfig_t {
     char *node_data_dir;   /* compute node data directory */
     char *app_data_dir;    /* appliances sub-directory */
     char *ins_data_dir;    /* instances sub-directory */
+    char *trash_data_dir;  /* trash data sub-directory */
     char *conf_path;       /* config file path */
     char *sysconf_path;    /* sysconf file path */
     char *log_path;        /* log file path */

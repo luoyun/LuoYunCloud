@@ -1,0 +1,22 @@
+#!/bin/bash
+
+SAVETIME=36000
+conf=/opt/LuoYun/platform/etc/luoyun-cloud/lynode.conf
+[ -e $conf ] || exit 1
+
+trash=/opt/LuoYun/platform/node_data/trash
+nodedir=$(grep "^LYNODE_DATA_DIR" $conf)
+if [ $? == 0 ]
+then
+  nodedir=$(echo "$nodedir" | awk -F '=' '{print $2}')
+  nodedir=${nodedir# *}
+  trash=$nodedir/trash
+fi
+[ -d "$trash" ] || exit 0
+
+for f in $(find $trash -type f -a ! -cmin -$SAVETIME)
+do
+  n=$(basename $f)
+  [ "${n#os.img.[1-9]}" == "$n" ] && [ "${n#disk1.img.[1-9]}" == "$n" ] && [ "${n#floppy.img.[1-9]}" == "$n" ] && continue
+  rm -f $f
+done

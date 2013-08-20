@@ -184,10 +184,9 @@ static int __file_lock_put(char * lock_dir, char * lock_ext)
     return 0; /* lock released */
 }
 
-static int __domain_dir_clean(char * dir, int keepdir)
+static int __domain_instance_clean(int id, int keepdir)
 {
-    if (dir == NULL)
-        return -1;
+    char path[PATH_MAX], trash[PATH_MAX];
 
     char * files[] = { LUOYUN_INSTANCE_DISK_FILE,
                        LUOYUN_INSTANCE_CONF_FILE,
@@ -197,10 +196,10 @@ static int __domain_dir_clean(char * dir, int keepdir)
                        NULL };
     int i = 0;
     while (files[i]) {
-        char path[PATH_MAX];
-        snprintf(path, PATH_MAX, "%s/%s", dir, files[i]);
-        if (access(path, R_OK) == 0 && unlink(path) != 0) {
-            logerror(_("removing %s failed, %s.\n"), path, strerror(errno));
+        snprintf(path, PATH_MAX, "%s/%d/%s", g_c->config.ins_data_dir, id, files[i]);
+        snprintf(trash, PATH_MAX, "%s/%s.%d", g_c->config.trash_data_dir, files[i], id);
+        if (access(path, R_OK) == 0 && rename(path, trash) != 0) {
+            logerror(_("renaming %s to %s failed, %s.\n"), path, trash, strerror(errno));
             return -1;
         }
         i++;
@@ -209,8 +208,9 @@ static int __domain_dir_clean(char * dir, int keepdir)
     if (keepdir)
         return 0;
 
-    if (rmdir(dir) != 0) {
-        logerror(_("error removing %s, %s\n"), dir, strerror(errno));
+    snprintf(path, PATH_MAX, "%s/%d", g_c->config.ins_data_dir, id);
+    if (rmdir(path) != 0) {
+        logerror(_("error removing %s, %s\n"), path, strerror(errno));
         /* return -1; don't treat this as fatal error */
     }
 
@@ -1116,7 +1116,7 @@ static int __domain_run(NodeCtrlInstance * ci)
     snprintf(path, PATH_MAX, "%s/%d", g_c->config.ins_data_dir, ci->ins_id);
     if (ci->ins_status == DOMAIN_S_NEW && access(path, F_OK) == 0) {
         logwarn(_("instance %d exists, clean it first\n"), ci->ins_id);
-        if (__domain_dir_clean(path, 1) == -1) {
+        if (__domain_instance_clean(ci->ins_id, 1) == -1) {
             logerror(_("can not clean dir for instance %d\n"), ci->ins_id);
             goto out_unlock;
         }
@@ -1335,8 +1335,7 @@ out_umount:
     }
 out_insclean:
     if (ret < 0 && ins_create_new) {
-        snprintf(path, PATH_MAX, "%s/%d", g_c->config.ins_data_dir, ci->ins_id);
-        __domain_dir_clean(path, 0); 
+        __domain_instance_clean(ci->ins_id, 0); 
     }
 out_unlock:
     if (__file_lock_put(g_c->config.ins_data_dir, ins_idstr) < 0) {
@@ -1480,9 +1479,8 @@ static int __domain_destroy(NodeCtrlInstance * ci)
         return -1;
     }
     char path_clean[PATH_MAX];
-    if (snprintf(path_clean, PATH_MAX, "%s/%s/%d",
-                 g_c->config.node_data_dir, "instances",
-                 ci->ins_id) >= PATH_MAX) {
+    if (snprintf(path_clean, PATH_MAX, "%s/%d",
+                 g_c->config.ins_data_dir, ci->ins_id) >= PATH_MAX) {
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         return -1;
     }
@@ -1507,7 +1505,7 @@ static int __domain_destroy(NodeCtrlInstance * ci)
         ret = 0;
         goto out;
     }
-    ret = __domain_dir_clean(path_clean, 0);
+    ret = __domain_instance_clean(ci->ins_id, 0);
 
     ly_node_send_report_resource();
 out:
