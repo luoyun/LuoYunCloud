@@ -50,6 +50,9 @@ class UserProfile(ORMBase):
     created = Column( DateTime, default=datetime.datetime.now )
     updated = Column( DateTime, default=datetime.datetime.now )
 
+    # mark is used by admin to mark user, support simple search
+    mark = Column( Text() )
+
     # Other configure
     config = Column( Text() )
 
@@ -344,7 +347,7 @@ class Attachment(ORMBase):
     dtimes = Column( Integer, default=0 )
 
     created = Column( DateTime(), default=datetime.datetime.now )
-    updated = Column( DateTime() )
+    updated = Column( DateTime(), default=datetime.datetime.now )
 
 
     def __init__(self, user, fileobj):

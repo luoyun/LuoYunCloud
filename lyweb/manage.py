@@ -22,6 +22,13 @@ from app.auth.models import User
 from app.account.models import UserProfile
 
 
+def check_user_profile(db):
+
+    for U in db.query(User):
+        if db.query(UserProfile).filter_by( user_id = U.id ).count() > 1:
+            print '[E] user have more than 1 profile: %s' % U.username
+
+
 def update_user(db):
 
     # User
@@ -186,6 +193,7 @@ def syncdb():
     ORMBase.metadata.create_all(dbengine)
 
     default_value(db)
+#    check_user_profile(db)
 
 
 def i18n():

@@ -44,7 +44,28 @@
 
     <div class="span9">
 
-      <dl class="dl-horizontal">
+      % if len(appliance.screenshots):
+      <h1>${ _("Screenshot") }</h1>
+      <div id="appliance-thumnails">
+        <div class="carousel slide" id="myCarousel">
+          <div class="carousel-inner">
+            % for INDEX, S in enumerate(appliance.screenshots):
+            % if INDEX == 0:
+            <div class="item active">
+            % else:
+            <div class="item">
+            % endif
+              <a href="${ S.url }"><img src="${ S.thumb_url }"></a>
+            </div>
+            % endfor
+          </div>
+          <a data-slide="prev" href="#myCarousel" class="left carousel-control">‹</a>
+          <a data-slide="next" href="#myCarousel" class="right carousel-control">›</a>
+        </div>
+      </div>
+      % endif
+
+       <dl class="dl-horizontal">
         <dt>${ _("Catalog") }</dt>
         <dd><a href="${ reverse_url('appliance:index') }?c=${ appliance.catalog_id }">${ appliance.catalog_name }</a></dd>
 

@@ -26,6 +26,8 @@ from ytool.pagination import pagination
 from lytool.filesize import size as human_size
 from tool.firewall import Prerouting
 
+from app.system.utils import add_trace
+
 import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import JOB_TARGET
@@ -508,6 +510,11 @@ class NetworkAdd(InstanceActionHandler):
                 I.update_network()
                 self.db.commit()
 
+                msg = _('get ip %(ip)s for instance %(id)s manually.') % {
+                    'ip': IP.ip, 'id': I.id }
+
+                add_trace(self, ttype='IP', tid=IP.id, do=msg)
+
                 url = self.reverse_url('myun:instance:view')
                 url += '?id=%s' % I.id
                 return self.redirect( url )
@@ -553,6 +560,10 @@ class NetworkDelete(NetworkActionHandler):
 
         IP.instance_id = None
         self.db.commit()
+
+        msg = _('free ip %(ip)s from instance %(id)s manually.') % {
+            'ip': IP.ip, 'id': I.id }
+        add_trace(self, ttype='IP', tid=IP.id, do=msg)
 
         I.update_network()
         self.db.commit()
@@ -669,6 +680,16 @@ class DomainAdd(InstanceActionHandler):
 
         if not self.I:
             return self.finish()
+
+        # test domain count limit
+        used_domain = self.db.query(UserDomain).filter_by(
+            user_id = self.current_user.id).count()
+
+        profile = self.I.user.profile
+        if not ( profile and profile.domain > used_domain ):
+            return self.finish( _('You have not domain binding now. \
+used: %(used)s, total: %(total)s') % {
+                    'used': used_domain, 'total': profile.domain } )
 
         self.form = InstanceDomainForm(self)
         self.prepare_kwargs['form'] = self.form
@@ -946,7 +967,8 @@ class InstanceCreate(RequestHandler):
 
         msg = _('get ip %(ip)s for instance %(id)s') % {
             'ip': free_ip.ip, 'id': I.id }
-        self.lytrace( ttype='IP', tid=free_ip.id, do=msg )
+
+        add_trace(self, ttype='IP', tid=free_ip.id, do=msg)
         self.db.commit()
 
 
@@ -987,6 +1009,23 @@ class PortMappingAdd(InstanceActionHandler):
 
         if not self.I:
             return self.finish()
+
+        # test port count limit
+        used_port = 0
+
+        IL = self.db.query(Instance).filter_by(
+            user_id = self.current_user.id )
+
+        for instance in IL:
+            for ip in instance.ips:
+                used_port += self.db.query(PortMapping).filter_by(
+                    ip_id = ip.id).count()
+
+        profile = self.I.user.profile
+        if not ( profile and profile.port > used_port ):
+            return self.finish( _('You have not port number now. \
+used: %(used)s, total: %(total)s') % {
+                    'used': used_port, 'total': profile.port } )
 
         ip_list = []
         for IP in self.I.ips:

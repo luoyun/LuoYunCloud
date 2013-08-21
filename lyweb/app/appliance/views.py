@@ -9,12 +9,12 @@ from tornado.web import authenticated, HTTPError
 from sqlalchemy.sql.expression import asc, desc
 
 from app.instance.models import Instance
-from app.appliance.models import Appliance, ApplianceCatalog
+from app.appliance.models import Appliance, ApplianceCatalog, \
+    ApplianceScreenshot
 
 from lycustom import has_permission
 from lytool.filesize import size as human_size
 from ytool.pagination import pagination
-
 
 
 class AppRequestHandler(RequestHandler):
@@ -524,3 +524,133 @@ class AttrSet(RequestHandler):
                 _('Invalid value for attr "isuseable" : %s') % value )
 
 
+
+class ScreenshotHandler(RequestHandler):
+
+    def get_appliance(self):
+
+        ID = self.get_argument_int('appliance_id', None)
+        if not ID:
+            return None, _('Give me appliance_id please.')
+
+        A = self.db.query(Appliance).get( ID )
+        if not A:
+            return None, _('Can not find appliance %s') % ID
+
+        if not ( A.user_id == self.current_user.id or
+                 self.has_permission('admin') ):
+            return None, _('No permission to manage screenshot')
+
+        return A, None
+
+    def get_screenshot(self):
+
+        ID = self.get_argument_int('screenshot_id', None)
+
+        if not ID:
+            return None, _('Give me screenshot_id please.')
+
+        S = self.db.query(ApplianceScreenshot).get( ID )
+        if not S:
+            return None, _('Can not find screenshot %s') % ID
+
+        if not ( S.appliance.user_id != self.current_user.id or
+                 self.has_permission('admin') ):
+            return None, _('No permission to manage screenshot')
+
+        return S, None
+
+
+
+
+class ScreenshotManagement(ScreenshotHandler):
+
+    title = _('Add Screenshot For Appliance')
+    template_path = 'appliance/screenshot_management.html'
+
+    @authenticated
+    def get(self):
+
+        A, msg = self.get_appliance()
+        if not A:
+            return self.write( msg )
+
+        self.prepare_kwargs['A'] = A
+        self.prepare_kwargs['human_size'] = human_size
+
+        self.render()
+
+
+
+class ScreenshotAdd(ScreenshotHandler):
+
+    title = _('Add Screenshot For Appliance')
+    template_path = 'appliance/screenshot_add.html'
+
+    @authenticated
+    def prepare(self):
+
+        A, msg = self.get_appliance()
+        if not A:
+            return self.write( msg )
+
+        self.prepare_kwargs['A'] = A
+
+
+    def get(self):
+        self.render()
+
+    def post(self):
+
+        A = self.prepare_kwargs['A']
+
+        if self.request.files:
+            for f in self.request.files["logo"]:
+                try:
+                    # Size check
+                    if len(f['body']) > settings.ATTACHMENT_MAXSIZE:
+                        raise Exception(_('File is large than %s' % settings.ATTACHMENT_MAXSIZE))
+
+                    S = ApplianceScreenshot( A, f )
+                    self.db.add(S)
+                    self.db.commit()
+
+                except Exception, e:
+                    return self.write( _('Upload screenshot failed: %s') % e )
+
+        else:
+            return self.write( _('No file find') )
+
+        default_url = self.reverse_url('appliance:view') + '?id=%s' % A.id
+        url = self.get_argument('next_url', default_url)
+        self.redirect( url )
+
+
+
+class ScreenshotDelete(ScreenshotHandler):
+
+    @authenticated
+    def get(self):
+
+        S, msg = self.get_screenshot()
+        if not S:
+            return self.write( msg )
+
+        AID = S.appliance_id
+
+        try:
+            self.db.delete( S )
+            self.db.commit()
+
+            # delete files
+            for x in [ '%s-%s' % (S.checksum, S.filename),
+                       '%s-thumb.png' % S.checksum ]:
+                fn = os.path.join(S.base_path,  x)
+                if os.path.exists( fn ):
+                    os.unlink( fn )
+        except Exception, e:
+            logging.error('delete appliance screenshot failed: %s' % e)
+
+        url = self.reverse_url('appliance:screenshot:management')
+        url += '?appliance_id=%s' % AID
+        self.redirect( url )

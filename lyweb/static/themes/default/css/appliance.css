@@ -1,3 +1,22 @@
+#screenshot-management .screenshot-add {
+    margin: 30px 0;
+    font-weight: bold;
+    font-size: 16px;
+}
+#appliance-thumnails {
+}
+#appliance-thumnails .carousel {
+    padding: 1px;
+    border: 1px solid #DEDEDE;
+    border-radius: 3px;
+    width: 500px;
+    height: 380px;
+}
+#appliance-thumnails img {
+    height: 380px;
+    width: 500px;
+    border-radius: 3px;
+}
 #appliance-catalog-menu {
     margin: 5px 30px 15px;
 }

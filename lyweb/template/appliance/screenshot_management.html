@@ -1,0 +1,38 @@
+<div class="modal-header">
+  <h1>${ _("Appliance_Screenshot Management") }</h1>
+</div>
+<div class="modal-body">
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>${ _("Filename") }</th>
+        <th>${ _("Size") }</th>
+        <th>${ _("Updated") }</th>
+        <th>${ _("Delete") }</th>
+      </tr>
+    </thead>
+    <tbody>
+      % for S in A.screenshots:
+      <tr>
+        <td>
+          <img src="${ S.thumb_url }" style="height: 42px; width: 42px;" /><br>
+          ${ S.filename }
+        </td>
+        <td>${ human_size(S.size) }</td>
+        <td>${ ftime(S.updated) }</td>
+        <td><a class="ly-async-opt" href="${ reverse_url('appliance:screenshot:delete') }?screenshot_id=${ S.id }"><i class="icon-trash"></i></a></td>
+      </tr>
+      % endfor
+    </tbody>
+  </table>
+</div>
+<div class="modal-footer">
+  <input type="button" class="btn" value="Close" data-dismiss="modal">
+</div>
+
+
+<script type="text/javascript">
+$( function() {
+  ly_async_opt()
+});
+</script>

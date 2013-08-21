@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import datetime
+import base64
 
 from yweb.orm import ORMBase
 
@@ -12,6 +13,8 @@ from sqlalchemy.orm import backref,relationship
 
 from app.auth.utils import enc_shadow_passwd
 from app.site.models import SiteConfig
+
+from app.system.utils import get_runtime_data
 
 import settings
 
@@ -49,6 +52,7 @@ INSTANCE_STATUS_CLASS = {
 class Instance(ORMBase):
 
     _config_dict = {}
+    _secret_config_dict = {}
 
     __tablename__ = 'instance'
 
@@ -83,6 +87,7 @@ class Instance(ORMBase):
 
     status = Column( Integer, default=1 )
     config = Column( Text() ) # Other configure
+    secret_config = Column( Text() )  # TODO: fit lynode need now.
 
     islocked  = Column( Boolean, default = False) # Used by admin
     isprivate = Column( Boolean, default = True )
@@ -141,6 +146,10 @@ class Instance(ORMBase):
     @property
     def is_running(self):
         return self.status in [3, 4, 5]
+
+    @property
+    def is_starting(self):
+        return 2 < self.status <= 5
 
     @property
     def need_query(self):
@@ -262,6 +271,24 @@ class Instance(ORMBase):
             color, _class )
 
         
+    def secret_get(self, name, default=None):
+
+        if not self._secret_config_dict:
+            self._secret_config_dict = json.loads(self.secret_config) if self.secret_config else {}
+
+        return self._secret_config_dict.get(name, default)
+
+
+    def secret_set(self, item, value):
+
+        secret_config = json.loads(self.secret_config) if self.secret_config else {}
+        secret_config[item] = value
+
+        self.secret_config = json.dumps(secret_config)
+        self._secret_config_dict = secret_config
+        self.updated = datetime.datetime.now()
+
+
     def get(self, name, default=None):
 
         if not self._config_dict:
@@ -343,6 +370,20 @@ class Instance(ORMBase):
         root_passwd = enc_shadow_passwd( password )
         self.set('passwd_hash', root_passwd)
 
+    def set_libvirt_conf(self, conf):
+        conf = base64.encodestring( conf )
+        # TODO: compress for program
+        conf = conf.replace('\n', '')
+        self.secret_set('libvirt_conf', conf)
+
+    @property
+    def libvirt_conf(self):
+        c = self.secret_get('libvirt_conf', None)
+        if not c:
+            return ''
+        else:
+            return base64.decodestring( c )
+
 
     @property
     def storage(self):
@@ -359,12 +400,15 @@ class Instance(ORMBase):
 
     @property
     def default_domain(self):
-        domain = settings.runtime_data.get('domain', None)
+        domain = get_runtime_data('domain', None)
         if not domain:
             return ''
 
         if not isinstance(domain, dict):
-            return ''
+            try:
+                domain = json.loads( domain )
+            except:
+                return ''
 
         top = domain.get('topdomain')
         prefix = domain.get('prefix')

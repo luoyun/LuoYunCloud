@@ -18,6 +18,8 @@ from ytool.pagination import pagination
 from sqlalchemy.sql.expression import asc, desc, func
 from sqlalchemy import and_, or_
 
+from app.system.utils import add_trace
+
 import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import LY_TARGET
@@ -104,6 +106,10 @@ class Index(RequestHandler):
                       'memory', 'cpus', 'islocked', 'isprivate',
                       'like', 'unlike', 'visit']:
             by = 'id'
+
+        # TODO: Fix sqlalchemy column bug
+        if by == 'id':
+            by = Instance.id
 
         sort_by_obj = desc(by) if sort == 'DESC' else asc(by)
 
@@ -233,16 +239,15 @@ class InstanceManagement(RequestHandler):
 
             reason = self.get_argument('reason', '')
 
+            do = _('change instance owner %(old)s to %(new)s: \
+%(reason)') % {
+                'old': I.user.username, 'new': U.username,
+                'reason': reason }
+            add_trace(self, ttype='INSTANCE', tid=I.id, do=do)
+
             if E:
                 d['ERROR'] = E
             else:
-                T = self.lytrace(
-                    ttype = LY_TARGET['INSTANCE'], tid = I.id,
-                    do = self.trans(_('change instance owner %(old_owner)s to %(new_owner)s')) % {
-                        'old_owner': I.user.username, 'new_owner': U.username } )
-
-                I.user = U
-                self.db.commit()
                 # TODO: send reason to user
                 url = self.reverse_url('admin:instance')
                 url += '?id=%s' % I.id

@@ -50,8 +50,6 @@ def get_handlers():
 from tornado.options import define, options
 define("port", default=8888, help="given port", type=int)
 
-from yweb import orm
-
 
 tornado_settings = {
     'cookie_secret': 'MTMyNTMwNDc3OC40MjA3NjgKCg==',
@@ -87,13 +85,9 @@ class Application(tornado.web.Application):
 
     def __init__(self):
 
-        # SQLAlchemy connect
-        self.dbsession = orm.create_session()
-
         # TODO: TEST db connect
 
         site_handlers = get_handlers()
-        self.init_runtime_data()
 
         tornado.web.Application.__init__(
             self, site_handlers, **tornado_settings )
@@ -142,12 +136,6 @@ class Application(tornado.web.Application):
         f.write(ca)
         f.close()
         return ca_path
-
-    def init_runtime_data(self):
-        db = self.dbsession()
-        domain = SiteConfig.get(db, 'domain', '')
-        if domain:
-            settings.runtime_data['domain'] = json.loads(domain)
 
 
 

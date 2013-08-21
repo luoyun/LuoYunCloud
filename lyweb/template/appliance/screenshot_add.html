@@ -1,0 +1,15 @@
+<div id="screenshot-management">
+  <form id="appliance-screenshot-add" method="post" enctype="multipart/form-data" action="${ reverse_url('appliance:screenshot:add') }?appliance_id=${ A.id }">${ xsrf_form_html() }
+    <div class="modal-header">
+      <h1>${ _("Add Screenshot For Appliance") }</h1>
+    </div>
+    <div class="modal-body">
+      <label for="logo">${ _("Add New Screenshot") }</label>
+      <input type="file" name="logo" id="logo">
+    </div>
+    <div class="modal-footer">
+      <input  type="submit" class="btn btn-primary" value="Submit">
+      <input type="button" class="btn" value="Close" data-dismiss="modal">
+    </div>
+  </form>
+</div>

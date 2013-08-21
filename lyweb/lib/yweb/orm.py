@@ -67,3 +67,5 @@ def create_session():
 
     return Session
 
+
+global_dbsession = create_session()
