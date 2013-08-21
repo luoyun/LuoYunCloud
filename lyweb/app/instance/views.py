@@ -711,6 +711,9 @@ class InstanceDelete(RequestHandler):
             ret = self.trans(_('Task starts successfully.'))
             code = 0
 
+        # TODO:
+        ret += ' %s' % I.id
+
         add_trace( self, ttype = 'INSTANCE',
                    tid = instance_id,
                    do = _('delete instance') )

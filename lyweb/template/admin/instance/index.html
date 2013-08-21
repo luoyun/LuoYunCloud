@@ -121,25 +121,24 @@ ${ I.bandwidth } M
         </div>
 
         <div class="btn-group">
-          <a class="btn y-action-nonzero disabled action-lifecontrol" href="${ reverse_url('instance:lifecontrol') }?action=run"><i class="icon-refresh"></i> ${ _("Run") }</a>
-          <a class="btn y-action-nonzero disabled action-lifecontrol" href="${ reverse_url('instance:lifecontrol') }?action=stop"><i class="icon-off"></i> ${ _("Stop") }</a>
-          <a class="btn y-action-nonzero disabled action-lifecontrol" href="${ reverse_url('instance:lifecontrol') }?action=query"><i class="icon-question-sign"></i> ${ _("Query") }</a>
+          <a class="btn y-action-nonzero disabled multi-lifecontrol-opt" data-warning="${ _('This batch start has been selected instances.') }" title="${ _('Start the selected instances.') }" href="${ reverse_url('instance:lifecontrol') }?action=run"><i class="icon-refresh"></i> ${ _("Run") }</a>
+          <a class="btn y-action-nonzero disabled multi-lifecontrol-opt" data-warning="${ _('This batch stop has been selected instances.') }" title="${ _('Stop the selected instances.') }" href="${ reverse_url('instance:lifecontrol') }?action=stop"><i class="icon-off"></i> ${ _("Stop") }</a>
+          <a class="btn y-action-nonzero disabled multi-lifecontrol-opt" data-warning="${ _('This batch query has been selected instances.') }" title="${ _('Query the selected instances.') }" href="${ reverse_url('instance:lifecontrol') }?action=query"><i class="icon-question-sign"></i> ${ _("Query") }</a>
         </div>
 
         <div class="btn-group">
-          <a class="btn btn-danger y-action-nonzero disabled action-lifecontrol" href="${ reverse_url('instance:lifecontrol') }?action=delete"><i class="icon-trash"></i> ${ _("Delete") }</a>
+          <a class="btn btn-danger y-action-nonzero disabled multi-lifecontrol-opt" data-warning="${ _('Delete the instance is a very dangerous action, please be careful !') }" title="${ _('Delete the selected instances.') }" href="${ reverse_url('instance:delete') }"><i class="icon-trash"></i> ${ _("Delete") }</a>
         </div>
 
       </div>
 
       ${ PAGE_HTML }
 
-      <script type="text/javascript" src="${ theme_url('js/myun-instance.js') }"></script>
-      <script type="text/javascript" src="${ theme_url('js/instance-control.js') }"></script>
       <script type="text/javascript">
+      $( function() {
         y_checkarea_binding();
         instance_list_attr_set(".action-setattr");
-        multi_life_control( ".action-lifecontrol" );
+      })
       </script>
 
     </div>
@@ -189,50 +188,45 @@ ${ I.bandwidth } M
 
 </div>
 
-<script type="text/javascript">
-  $("#sort-by-obj").val("${ SORTBY }");
-  $("#sort-by-status").val("${ STATUS }");
-  $("#sort-by-user-group").val("${ USER_GROUP_ID }");
-  $("#sort-by-order").val("${ SORT }");
-
-  selected_reload("#sort-by-obj", "${ urlupdate({'by': 'REPLACEOBJ'}) }")
-  selected_reload("#sort-by-status", "${ urlupdate({'status': 'REPLACEOBJ'}) }")
-  selected_reload("#sort-by-user-group", "${ urlupdate({'user_group': 'REPLACEOBJ'}) }")
-  selected_reload("#sort-by-order", "${ urlupdate({'sort': 'REPLACEOBJ'}) }")
-</script>
 
 <div style="display:none;" id="xsrf-cookie">${ xsrf_cookie }</div>
 
-<script type="text/javascript">
-  admin_instance_search( "${ urlupdate({'search': 'REPLACEOBJ', 'p': 1, 'ajax': 'true' }) }" );
-</script>
-
-<!-- Instance LifeControl Modal Data -->
-<div style="display:none;">
-  <div id="instance-lifecontrol-title">${ _("Instance Life Control") }</div>
-  <div id="instance-lifecontrol-body">
-    <div style="display:none;" class="action-success">
-      <p class="text-success"><i class="icon-ok-sign"></i> ${ _("Action success") }</p>
-    </div>
-    <div style="display:none;" class="action-failed">
-      <p class="text-warning"><i class="icon-exclamation-sign"></i> ${ _("Something was wrong") }</p>
-    </div>
-    <table class="table table-bordered"><tbody class="detail"></tbody></table>
-  </div>
-</div>
-
-
-<!-- Action Return Modal -->
-<div id="action-return-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+## Normal Ajax option
+<div style="display:none;" id="multi-lifecontrol-window" class="modal hide fade">
   <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-    <h3 class="modal-title" id="myModalLabel">${ _("Action Is Return") }</h3>
+    <h2 class="title">${ _("Multi Instance LifeControl") }</h2>
   </div>
   <div class="modal-body"></div>
   <div class="modal-footer">
+    <button class="btn btn-danger ok-btn">${ _("I'm sure") }</button>
     <button class="btn" data-dismiss="modal" aria-hidden="true">${ _("Close") }</button>
   </div>
 </div>
+<div style="display:none;" id="multi-lifecontrol-window-body">
+  <div class="text-center text-warning">
+    <div class="warning well"></div>
+  </div>
+  <div><strong>${ _("Do you want to continue to do so ?") }</strong></div>
+</div>
 
+<script type="text/javascript" src="${ theme_url('js/myun-instance.js') }"></script>
+<script type="text/javascript" src="${ theme_url('js/instance-control.js') }"></script>
+
+<script type="text/javascript">
+$( function() {
+    admin_instance_search( "${ urlupdate({'search': 'REPLACEOBJ', 'p': 1, 'ajax': 'true' }) }" );
+    multi_instance_lifecontrol()
+
+    $("#sort-by-obj").val("${ SORTBY }");
+    $("#sort-by-status").val("${ STATUS }");
+    $("#sort-by-user-group").val("${ USER_GROUP_ID }");
+    $("#sort-by-order").val("${ SORT }");
+
+    selected_reload("#sort-by-obj", "${ urlupdate({'by': 'REPLACEOBJ'}) }")
+    selected_reload("#sort-by-status", "${ urlupdate({'status': 'REPLACEOBJ'}) }")
+    selected_reload("#sort-by-user-group", "${ urlupdate({'user_group': 'REPLACEOBJ'}) }")
+    selected_reload("#sort-by-order", "${ urlupdate({'sort': 'REPLACEOBJ'}) }")
+});
+</script>
 
 </%block>
