@@ -37,3 +37,26 @@ textarea#summary {
 form button {
 	margin-top: 20px;
 }
+
+
+/* Start Mulselect Style */
+.ms2side__select select {
+    height: 460px;
+}
+.ms2side__select, .ms2side__options {
+    float: left;
+}
+.ms2side__options {
+    width: 50px;
+    text-align: center;
+}
+.ms2side__options p {
+    border: 1px solid #EAEAEA;
+    background-color: #FAFAFA;
+    margin: 10px 5px;
+    border-radius: 5px;
+}
+.ms2side__options p:hover {
+    cursor: pointer; cursor: hand;
+}
+/* End Mulselect Style */

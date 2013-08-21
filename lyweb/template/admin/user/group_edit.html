@@ -15,23 +15,22 @@
 <script type="text/javascript" src="${ static_url('third/jquery.multiselect2side/js/jquery.multiselect2side.js') }"></script>
 
 <%
-   SELECT_HEIGHT = '%spx' % (len(form.groups.choices) * 20 + 60)
+   SELECT_HEIGHT = '%spx' % (len(form.groups.choices) * 20 + 20)
 %>
 <style type="text/css">    
-<!--
 .ms2side__select select {
     height: ${ SELECT_HEIGHT };
 }
--->
 </style>
 
 <div>
   <form method="POST">${ xsrf_form_html() }
     <fieldset>
       <legend>${ _("Edit User Groups") }</legend>
-      ${ form.groups() }<br/>
-      <button type="submit" class="btn">${ _("Save") }</button>
+      ${ form.groups() }
     </fieldset>
+    <br>
+    <button type="submit" class="btn">${ _("Save") }</button>
   </form>
 </div>
 

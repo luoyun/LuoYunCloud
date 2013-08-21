@@ -50,6 +50,9 @@ class UserProfile(ORMBase):
     created = Column( DateTime, default=datetime.datetime.now )
     updated = Column( DateTime, default=datetime.datetime.now )
 
+    # mark is used by admin to mark user, support simple search
+    mark = Column( Text() )
+
     # Other configure
     config = Column( Text() )
 
