@@ -381,7 +381,7 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
     if (ci == NULL || ci->osm_json == NULL || net == NULL || disk == NULL || g_c == NULL)
         return -1;
 
-    char path[1024], tmp[1024];
+    char path[PATH_MAX], tmp[PATH_MAX];
     json_settings settings;
     memset((void *)&settings, 0, sizeof(json_settings));
     char error[256];
@@ -396,6 +396,7 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
         goto out;
     }
 
+logsimple("dongwu json: %s\n", ci->osm_json);
     for (int i = 0; i < value->u.object.length; i++) {
         if (strcmp(value->u.object.values[i].name, "network") == 0) {
             net[0] = '\0';
@@ -438,11 +439,11 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
                 }
                 if (type == NULL || strcmp(type, "default") == 0 || strncmp(type, "virbr", 5) == 0) {
                     if (g_c->config.vm_xml_net_nat)
-                        snprintf(tmp, 1024, g_c->config.vm_xml_net_nat, mac);
+                        snprintf(tmp, PATH_MAX, g_c->config.vm_xml_net_nat, mac);
                     else if (hypervisor == HYPERVISOR_IS_XEN)
-                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_NET_NAT, mac);
+                        snprintf(tmp, PATH_MAX, LIBVIRT_XML_TMPL_XEN_NET_NAT, mac);
                     else if (hypervisor == HYPERVISOR_IS_KVM)
-                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_NET_NAT, mac);
+                        snprintf(tmp, PATH_MAX, LIBVIRT_XML_TMPL_KVM_NET_NAT, mac);
                     else {
                         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
                         goto out;
@@ -450,11 +451,11 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
                 }
                 else {
                     if (g_c->config.vm_xml_net_br)
-                        snprintf(tmp, 1024, g_c->config.vm_xml_net_br, type, mac);
+                        snprintf(tmp, PATH_MAX, g_c->config.vm_xml_net_br, type, mac);
                     else if (hypervisor == HYPERVISOR_IS_XEN)
-                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_NET_BRIDGE, type, mac);
+                        snprintf(tmp, PATH_MAX, LIBVIRT_XML_TMPL_XEN_NET_BRIDGE, type, mac);
                     else if (hypervisor == HYPERVISOR_IS_KVM)
-                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_NET_BRIDGE, type, mac);
+                        snprintf(tmp, PATH_MAX, LIBVIRT_XML_TMPL_KVM_NET_BRIDGE, type, mac);
                     else {
                         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
                         goto out;
@@ -514,18 +515,18 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
                         logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "no disk size");
                         goto out;
                     }
-                    if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
-                                 ci->ins_id, LUOYUN_INSTANCE_STORAGE1_FILE) >= 1024) {
+                    if (snprintf(path, PATH_MAX, "%s/%d/%s", g_c->config.ins_data_dir,
+                                 ci->ins_id, LUOYUN_INSTANCE_STORAGE1_FILE) >= PATH_MAX) {
                         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
                         goto out;
                     }
 
                     if (g_c->config.vm_xml_disk)
-                        snprintf(tmp, 1024, g_c->config.vm_xml_disk, path);
+                        snprintf(tmp, PATH_MAX, g_c->config.vm_xml_disk, path);
                     else if (hypervisor == HYPERVISOR_IS_XEN)
-                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_DISK, path, LUOYUN_INSTANCE_XEN_DISK2_NAME);
+                        snprintf(tmp, PATH_MAX, LIBVIRT_XML_TMPL_XEN_DISK, path, LUOYUN_INSTANCE_XEN_DISK2_NAME);
                     else if (hypervisor == HYPERVISOR_IS_KVM)
-                        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_DISK, path, LUOYUN_INSTANCE_KVM_DISK2_NAME);
+                        snprintf(tmp, PATH_MAX, LIBVIRT_XML_TMPL_KVM_DISK, path, LUOYUN_INSTANCE_KVM_DISK2_NAME);
                     else {
                         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
                         goto out;
@@ -545,7 +546,8 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
                             goto out;
                         }
                         int size_g = (int)(statbuf.st_size>>30);
-                        if (size_g == storage_size)
+                        if (size_g >= storage_size)
+                            /* can only get bigger */
                             need_truncate = 0;
                     }
                     else {
@@ -567,14 +569,20 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
                 }
             }
             if (disk_found == 0) {
+logsimple("dongwu here\n");
                 /* delete disk */
-                if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
-                             ci->ins_id, LUOYUN_INSTANCE_STORAGE1_FILE) >= 1024) {
+                if (snprintf(path, PATH_MAX, "%s/%d/%s", g_c->config.ins_data_dir,
+                             ci->ins_id, LUOYUN_INSTANCE_STORAGE1_FILE) >= PATH_MAX) {
+                    logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                    goto out;
+                }
+                if (snprintf(tmp, PATH_MAX, "%s/%s.%d", g_c->config.trash_data_dir,
+                             LUOYUN_INSTANCE_STORAGE1_FILE, ci->ins_id) >= PATH_MAX) {
                     logerror(_("error in %s(%d).\n"), __func__, __LINE__);
                     goto out;
                 }
                 if (access(path, F_OK) == 0) {
-                    if (unlink(path)) {
+                    if (rename(path, tmp)) {
                         logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
                                                                   strerror(errno), errno);
                         goto out;
