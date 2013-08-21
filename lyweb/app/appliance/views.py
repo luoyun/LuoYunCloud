@@ -13,8 +13,8 @@ from app.appliance.models import Appliance, ApplianceCatalog, \
     ApplianceScreenshot
 
 from lycustom import has_permission
-from lytool.filesize import size as human_size
-from ytool.pagination import pagination
+from yweb.utils.filesize import size as human_size
+from yweb.utils.pagination import pagination
 
 
 class AppRequestHandler(RequestHandler):

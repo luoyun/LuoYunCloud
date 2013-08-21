@@ -1,0 +1,469 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <title>
+            
+    
+                Table of Contents
+             &mdash; 
+    SQLAlchemy 0.8 Documentation
+
+        </title>
+        
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/docs.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '#',
+          VERSION:     '0.8.2',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/init.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+        <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="top" title="SQLAlchemy 0.8 Documentation" href="index.html" />
+        <link rel="next" title="Overview" href="intro.html" />
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+<div id="docs-header">
+    <h1>SQLAlchemy 0.8 Documentation</h1>
+
+    <div id="docs-search">
+    Search:
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+
+    <div id="docs-version-header">
+        Release: <span class="version-num">0.8.2</span> | Release Date: July 3, 2013
+
+
+    </div>
+
+</div>
+
+<div id="docs-top-navigation">
+    <div id="docs-top-page-control" class="docs-navigation-links">
+        <ul>
+            <li>Next:
+            <a href="intro.html" title="next chapter">Overview</a>
+            </li>
+
+        <li>
+            <a href="#">Table of Contents</a> |
+            <a href="genindex.html">Index</a>
+            | <a href="_sources/contents.txt">view source
+        </li>
+        </ul>
+    </div>
+
+    <div id="docs-navigation-banner">
+        <a href="index.html">SQLAlchemy 0.8 Documentation</a>
+        » 
+                Table of Contents
+             
+
+        <h2>
+            
+                Table of Contents
+            
+        </h2>
+    </div>
+
+</div>
+
+<div id="docs-body-container">
+
+    <div id="docs-sidebar">
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Table of Contents</a><ul>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+</ul>
+
+
+    <h4>Next Topic</h4>
+    <p>
+    <a href="intro.html" title="next chapter">Overview</a>
+    </p>
+
+
+    <h4>Quick Search</h4>
+    <p>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </p>
+
+    </div>
+
+    <div id="docs-body" class="withsidebar" >
+        
+<div class="section" id="table-of-contents">
+<span id="contents"></span><h1>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h1>
+<p>Full table of contents.  For a high level overview of all
+documentation, see <a class="reference internal" href="index.html"><em>SQLAlchemy Documentation</em></a>.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#id1">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#documentation-overview">Documentation Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#code-examples">Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#installation-guide">Installation Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#supported-platforms">Supported Platforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#supported-installation-methods">Supported Installation Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#install-via-easy-install-or-pip">Install via easy_install or pip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#installing-using-setup-py">Installing using setup.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#installing-the-c-extensions">Installing the C Extensions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#installing-on-python-3">Installing on Python 3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#installing-a-database-api">Installing a Database API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#checking-the-installed-sqlalchemy-version">Checking the Installed SQLAlchemy Version</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#to-0-8-migration">0.7 to 0.8 Migration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="orm/index.html">SQLAlchemy ORM</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orm/tutorial.html">Object Relational Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#version-check">Version Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#connecting">Connecting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#declare-a-mapping">Declare a Mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#create-an-instance-of-the-mapped-class">Create an Instance of the Mapped Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#creating-a-session">Creating a Session</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#adding-new-objects">Adding New Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#rolling-back">Rolling Back</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#querying">Querying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#building-a-relationship">Building a Relationship</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#working-with-related-objects">Working with Related Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#querying-with-joins">Querying with Joins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#eager-loading">Eager Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#deleting">Deleting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#building-a-many-to-many-relationship">Building a Many To Many Relationship</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/tutorial.html#further-reference">Further Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orm/mapper_config.html">Mapper Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orm/mapper_config.html#classical-mappings">Classical Mappings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/mapper_config.html#customizing-column-properties">Customizing Column Properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/mapper_config.html#deferred-column-loading">Deferred Column Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/mapper_config.html#sql-expressions-as-mapped-attributes">SQL Expressions as Mapped Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/mapper_config.html#changing-attribute-behavior">Changing Attribute Behavior</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/mapper_config.html#composite-column-types">Composite Column Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/mapper_config.html#mapping-a-class-against-multiple-tables">Mapping a Class against Multiple Tables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/mapper_config.html#mapping-a-class-against-arbitrary-selects">Mapping a Class against Arbitrary Selects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/mapper_config.html#multiple-mappers-for-one-class">Multiple Mappers for One Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/mapper_config.html#constructors-and-object-initialization">Constructors and Object Initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/mapper_config.html#class-mapping-api">Class Mapping API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orm/relationships.html">Relationship Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orm/relationships.html#basic-relational-patterns">Basic Relational Patterns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/relationships.html#adjacency-list-relationships">Adjacency List Relationships</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/relationships.html#linking-relationships-with-backref">Linking Relationships with Backref</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/relationships.html#configuring-how-relationship-joins">Configuring how Relationship Joins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/relationships.html#rows-that-point-to-themselves-mutually-dependent-rows">Rows that point to themselves / Mutually Dependent Rows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/relationships.html#mutable-primary-keys-update-cascades">Mutable Primary Keys / Update Cascades</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/relationships.html#relationships-api">Relationships API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orm/collections.html">Collection Configuration and Techniques</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orm/collections.html#working-with-large-collections">Working with Large Collections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/collections.html#customizing-collection-access">Customizing Collection Access</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/collections.html#custom-collection-implementations">Custom Collection Implementations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/collections.html#collection-internals">Collection Internals</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orm/inheritance.html">Mapping Class Inheritance Hierarchies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orm/inheritance.html#joined-table-inheritance">Joined Table Inheritance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/inheritance.html#single-table-inheritance">Single Table Inheritance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/inheritance.html#concrete-table-inheritance">Concrete Table Inheritance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/inheritance.html#using-relationships-with-inheritance">Using Relationships with Inheritance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/inheritance.html#using-inheritance-with-declarative">Using Inheritance with Declarative</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orm/session.html">Using the Session</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orm/session.html#what-does-the-session-do">What does the Session do ?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/session.html#getting-a-session">Getting a Session</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/session.html#id1">Using the Session</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/session.html#cascades">Cascades</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/session.html#managing-transactions">Managing Transactions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/session.html#embedding-sql-insert-update-expressions-into-a-flush">Embedding SQL Insert/Update Expressions into a Flush</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/session.html#using-sql-expressions-with-sessions">Using SQL Expressions with Sessions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/session.html#joining-a-session-into-an-external-transaction">Joining a Session into an External Transaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/session.html#contextual-thread-local-sessions">Contextual/Thread-local Sessions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/session.html#partitioning-strategies">Partitioning Strategies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/session.html#sessions-api">Sessions API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orm/query.html">Querying</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orm/query.html#the-query-object">The Query Object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/query.html#orm-specific-query-constructs">ORM-Specific Query Constructs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orm/loading.html">Relationship Loading Techniques</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orm/loading.html#using-loader-strategies-lazy-loading-eager-loading">Using Loader Strategies: Lazy Loading, Eager Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/loading.html#default-loading-strategies">Default Loading Strategies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/loading.html#the-zen-of-eager-loading">The Zen of Eager Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/loading.html#what-kind-of-loading-to-use">What Kind of Loading to Use ?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/loading.html#routing-explicit-joins-statements-into-eagerly-loaded-collections">Routing Explicit Joins/Statements into Eagerly Loaded Collections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/loading.html#relation-loader-api">Relation Loader API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orm/events.html">ORM Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orm/events.html#attribute-events">Attribute Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/events.html#mapper-events">Mapper Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/events.html#instance-events">Instance Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/events.html#session-events">Session Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/events.html#instrumentation-events">Instrumentation Events</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orm/extensions/index.html">ORM Extensions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orm/extensions/associationproxy.html">Association Proxy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/extensions/declarative.html">Declarative</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/extensions/mutable.html">Mutation Tracking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/extensions/orderinglist.html">Ordering List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/extensions/horizontal_shard.html">Horizontal Sharding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/extensions/hybrid.html">Hybrid Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/extensions/instrumentation.html">Alternate Class Instrumentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orm/examples.html">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#adjacency-list">Adjacency List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#associations">Associations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#attribute-instrumentation">Attribute Instrumentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#dogpile-caching">Dogpile Caching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#directed-graphs">Directed Graphs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#dynamic-relations-as-dictionaries">Dynamic Relations as Dictionaries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#generic-associations">Generic Associations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#horizontal-sharding">Horizontal Sharding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#inheritance-mappings">Inheritance Mappings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#large-collections">Large Collections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#nested-sets">Nested Sets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#polymorphic-associations">Polymorphic Associations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#postgis-integration">PostGIS Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#versioned-objects">Versioned Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#vertical-attribute-mapping">Vertical Attribute Mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orm/examples.html#xml-persistence">XML Persistence</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="orm/exceptions.html">ORM Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orm/internals.html">ORM Internals</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="core/index.html">SQLAlchemy Core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="core/tutorial.html">SQL Expression Language Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#version-check">Version Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#connecting">Connecting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#define-and-create-tables">Define and Create Tables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#insert-expressions">Insert Expressions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#executing">Executing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#executing-multiple-statements">Executing Multiple Statements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#selecting">Selecting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#operators">Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#conjunctions">Conjunctions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#using-text">Using Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#using-aliases">Using Aliases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#using-joins">Using Joins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#everything-else">Everything Else</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#inserts-updates-and-deletes">Inserts, Updates and Deletes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/tutorial.html#further-reference">Further Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core/expression_api.html">SQL Statements and Expressions API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core/expression_api.html#functions">Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/expression_api.html#classes">Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/expression_api.html#generic-functions">Generic Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core/engines.html">Engine Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core/engines.html#supported-databases">Supported Databases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/engines.html#engine-creation-api">Engine Creation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/engines.html#database-urls">Database Urls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/engines.html#pooling">Pooling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/engines.html#custom-dbapi-connect-arguments">Custom DBAPI connect() arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/engines.html#configuring-logging">Configuring Logging</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core/connections.html">Working with Engines and Connections</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core/connections.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/connections.html#using-transactions">Using Transactions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/connections.html#understanding-autocommit">Understanding Autocommit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/connections.html#connectionless-execution-implicit-execution">Connectionless Execution, Implicit Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/connections.html#using-the-threadlocal-execution-strategy">Using the Threadlocal Execution Strategy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/connections.html#registering-new-dialects">Registering New Dialects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/connections.html#connection-engine-api">Connection / Engine API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core/pooling.html">Connection Pooling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core/pooling.html#connection-pool-configuration">Connection Pool Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/pooling.html#switching-pool-implementations">Switching Pool Implementations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/pooling.html#using-a-custom-connection-function">Using a Custom Connection Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/pooling.html#constructing-a-pool">Constructing a Pool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/pooling.html#pool-events">Pool Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/pooling.html#dealing-with-disconnects">Dealing with Disconnects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/pooling.html#api-documentation-available-pool-implementations">API Documentation - Available Pool Implementations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/pooling.html#pooling-plain-db-api-connections">Pooling Plain DB-API Connections</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core/schema.html">Schema Definition Language</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core/schema.html#describing-databases-with-metadata">Describing Databases with MetaData</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/schema.html#reflecting-database-objects">Reflecting Database Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/schema.html#column-insert-update-defaults">Column Insert/Update Defaults</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/schema.html#defining-constraints-and-indexes">Defining Constraints and Indexes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/schema.html#customizing-ddl">Customizing DDL</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core/types.html">Column and Data Types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core/types.html#generic-types">Generic Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/types.html#sql-standard-types">SQL Standard Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/types.html#vendor-specific-types">Vendor-Specific Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/types.html#custom-types">Custom Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/types.html#base-type-api">Base Type API</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core/event.html">Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core/event.html#event-registration">Event Registration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/event.html#targets">Targets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/event.html#modifiers">Modifiers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/event.html#event-reference">Event Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/event.html#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core/events.html">Core Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core/events.html#connection-pool-events">Connection Pool Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/events.html#sql-execution-and-connection-events">SQL Execution and Connection Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/events.html#schema-events">Schema Events</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core/compiler.html">Custom SQL Constructs and Compilation Extension</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core/compiler.html#synopsis">Synopsis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/compiler.html#dialect-specific-compilation-rules">Dialect-specific compilation rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/compiler.html#compiling-sub-elements-of-a-custom-expression-construct">Compiling sub-elements of a custom expression construct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/compiler.html#enabling-autocommit-on-a-construct">Enabling Autocommit on a Construct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/compiler.html#changing-the-default-compilation-of-existing-constructs">Changing the default compilation of existing constructs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/compiler.html#changing-compilation-of-types">Changing Compilation of Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/compiler.html#subclassing-guidelines">Subclassing Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/compiler.html#further-examples">Further Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core/inspection.html">Runtime Inspection API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core/inspection.html#available-inspection-targets">Available Inspection Targets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core/serializer.html">Expression Serializer Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core/interfaces.html">Deprecated Event Interfaces</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core/interfaces.html#execution-connection-and-cursor-events">Execution, Connection and Cursor Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="core/interfaces.html#connection-pool-events">Connection Pool Events</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core/exceptions.html">Core Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core/internals.html">Core Internals</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dialects/index.html">Dialects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dialects/index.html#included-dialects">Included Dialects</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dialects/drizzle.html">Drizzle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dialects/firebird.html">Firebird</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dialects/informix.html">Informix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dialects/mssql.html">Microsoft SQL Server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dialects/mysql.html">MySQL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dialects/oracle.html">Oracle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dialects/postgresql.html">PostgreSQL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dialects/sqlite.html">SQLite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dialects/sybase.html">Sybase</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dialects/index.html#external-dialects">External Dialects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog/index.html">Changes and Migration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog/index.html#current-migration-guide">Current Migration Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog/migration_08.html">What&#8217;s New in SQLAlchemy 0.8?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog/index.html#change-logs">Change logs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog/changelog_08.html">0.8 Changelog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog/changelog_07.html">0.7 Changelog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog/changelog_06.html">0.6 Changelog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog/changelog_05.html">0.5 Changelog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog/changelog_04.html">0.4 Changelog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog/changelog_03.html">0.3 Changelog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog/changelog_02.html">0.2 Changelog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog/changelog_01.html">0.1 Changelog</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog/index.html#older-migration-guides">Older Migration Guides</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog/migration_07.html">What&#8217;s New in SQLAlchemy 0.7?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog/migration_06.html">What&#8217;s New in SQLAlchemy 0.6?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog/migration_05.html">What&#8217;s new in SQLAlchemy 0.5?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog/migration_04.html">What&#8217;s new in SQLAlchemy 0.4?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+</div>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links">
+        Next:
+        <a href="intro.html" title="next chapter">Overview</a>
+
+    <div id="docs-copyright">
+        &copy; <a href="copyright.html">Copyright</a> 2007-2013, the SQLAlchemy authors and contributors.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</div>
+
+</div>
+
+        
+    </body>
+</html>
+
+

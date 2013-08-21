@@ -1,0 +1,541 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <title>
+            
+    
+                Drizzle
+             &mdash; 
+    SQLAlchemy 0.8 Documentation
+
+        </title>
+        
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/docs.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.8.2',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/init.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+        <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="top" title="SQLAlchemy 0.8 Documentation" href="../index.html" />
+        <link rel="up" title="Dialects" href="index.html" />
+        <link rel="next" title="Firebird" href="firebird.html" />
+        <link rel="prev" title="Dialects" href="index.html" />
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+<div id="docs-header">
+    <h1>SQLAlchemy 0.8 Documentation</h1>
+
+    <div id="docs-search">
+    Search:
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+
+    <div id="docs-version-header">
+        Release: <span class="version-num">0.8.2</span> | Release Date: July 3, 2013
+
+
+    </div>
+
+</div>
+
+<div id="docs-top-navigation">
+    <div id="docs-top-page-control" class="docs-navigation-links">
+        <ul>
+            <li>Prev:
+            <a href="index.html" title="previous chapter">Dialects</a>
+            </li>
+            <li>Next:
+            <a href="firebird.html" title="next chapter">Firebird</a>
+            </li>
+
+        <li>
+            <a href="../contents.html">Table of Contents</a> |
+            <a href="../genindex.html">Index</a>
+            | <a href="../_sources/dialects/drizzle.txt">view source
+        </li>
+        </ul>
+    </div>
+
+    <div id="docs-navigation-banner">
+        <a href="../index.html">SQLAlchemy 0.8 Documentation</a>
+                » <a href="index.html" title="Dialects">Dialects</a>
+        » 
+                Drizzle
+             
+
+        <h2>
+            
+                Drizzle
+            
+        </h2>
+    </div>
+
+</div>
+
+<div id="docs-body-container">
+
+    <div id="docs-sidebar">
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Drizzle</a><ul>
+<li><a class="reference internal" href="#dialect-drizzle">Support for the Drizzle database.</a></li>
+<li><a class="reference internal" href="#drizzle-data-types">Drizzle Data Types</a></li>
+<li><a class="reference internal" href="#module-sqlalchemy.dialects.drizzle.mysqldb">MySQL-Python</a><ul>
+<li><a class="reference internal" href="#dialect-drizzle-mysqldb-url">DBAPI</a></li>
+<li><a class="reference internal" href="#dialect-drizzle-mysqldb-connect">Connecting</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+    <h4>Previous Topic</h4>
+    <p>
+    <a href="index.html" title="previous chapter">Dialects</a>
+    </p>
+    <h4>Next Topic</h4>
+    <p>
+    <a href="firebird.html" title="next chapter">Firebird</a>
+    </p>
+
+
+    <h4>Quick Search</h4>
+    <p>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </p>
+
+    </div>
+
+    <div id="docs-body" class="withsidebar" >
+        
+<div class="section" id="module-sqlalchemy.dialects.drizzle.base">
+<span id="drizzle"></span><span id="drizzle-toplevel"></span><h1>Drizzle<a class="headerlink" href="#module-sqlalchemy.dialects.drizzle.base" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="dialect-drizzle">
+<p>Support for the Drizzle database.</p>
+<h2>DBAPI Support<a class="headerlink" href="#dialect-drizzle" title="Permalink to this headline">¶</a></h2>
+<p>The following dialect/DBAPI options are available.  Please refer to individual DBAPI sections for connect information.<ul class="simple">
+<li><a class="reference external" href="#module-sqlalchemy.dialects.drizzle.mysqldb">MySQL-Python</a></li>
+</ul>
+</p>
+</div>
+<p>Drizzle is a variant of MySQL. Unlike MySQL, Drizzle&#8217;s default storage engine
+is InnoDB (transactions, foreign-keys) rather than MyISAM. For more
+<a class="reference external" href="http://docs.drizzle.org/mysql_differences.html">Notable Differences</a>, visit
+the <a class="reference external" href="http://docs.drizzle.org/index.html">Drizzle Documentation</a>.</p>
+<p>The SQLAlchemy Drizzle dialect leans heavily on the MySQL dialect, so much of
+the <a class="reference internal" href="mysql.html"><em>SQLAlchemy MySQL</em></a> documentation is also relevant.</p>
+<div class="section" id="drizzle-data-types">
+<h2>Drizzle Data Types<a class="headerlink" href="#drizzle-data-types" title="Permalink to this headline">¶</a></h2>
+<p>As with all SQLAlchemy dialects, all UPPERCASE types that are known to be
+valid with Drizzle are importable from the top level dialect:</p>
+<div class="highlight-python"><pre>from sqlalchemy.dialects.drizzle import \
+        BIGINT, BINARY, BLOB, BOOLEAN, CHAR, DATE, DATETIME,
+        DECIMAL, DOUBLE, ENUM, FLOAT, INT, INTEGER,
+        NUMERIC, TEXT, TIME, TIMESTAMP, VARBINARY, VARCHAR</pre>
+</div>
+<p>Types which are specific to Drizzle, or have Drizzle-specific
+construction arguments, are as follows:</p>
+<dl class="class">
+<dt id="sqlalchemy.dialects.drizzle.BIGINT">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.dialects.drizzle.</tt><tt class="descname">BIGINT</tt><big>(</big><em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.BIGINT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/types.html#sqlalchemy.types.BIGINT" title="sqlalchemy.types.BIGINT"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.types.BIGINT</span></tt></a></p>
+<p>Drizzle BIGINTEGER type.</p>
+<dl class="method">
+<dt id="sqlalchemy.dialects.drizzle.BIGINT.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.BIGINT.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a BIGINTEGER.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.dialects.drizzle.CHAR">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.dialects.drizzle.</tt><tt class="descname">CHAR</tt><big>(</big><em>length=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.CHAR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.dialects.drizzle.base._StringType</span></tt>, <a class="reference internal" href="../core/types.html#sqlalchemy.types.CHAR" title="sqlalchemy.types.CHAR"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.types.CHAR</span></tt></a></p>
+<p>Drizzle CHAR type, for fixed-length character data.</p>
+<dl class="method">
+<dt id="sqlalchemy.dialects.drizzle.CHAR.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>length=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.CHAR.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a CHAR.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>length</strong> &#8211; Maximum data length, in characters.</li>
+<li><strong>binary</strong> &#8211; Optional, use the default binary collation for the
+national character set.  This does not affect the type of data
+stored, use a BINARY type for binary data.</li>
+<li><strong>collation</strong> &#8211; Optional, request a particular collation.  Must be
+compatible with the national character set.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.dialects.drizzle.DECIMAL">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.dialects.drizzle.</tt><tt class="descname">DECIMAL</tt><big>(</big><em>precision=None</em>, <em>scale=None</em>, <em>asdecimal=True</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.DECIMAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.dialects.drizzle.base._NumericType</span></tt>, <a class="reference internal" href="../core/types.html#sqlalchemy.types.DECIMAL" title="sqlalchemy.types.DECIMAL"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.types.DECIMAL</span></tt></a></p>
+<p>Drizzle DECIMAL type.</p>
+<dl class="method">
+<dt id="sqlalchemy.dialects.drizzle.DECIMAL.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>precision=None</em>, <em>scale=None</em>, <em>asdecimal=True</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.DECIMAL.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a DECIMAL.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>precision</strong> &#8211; Total digits in this number.  If scale and precision
+are both None, values are stored to limits allowed by the server.</li>
+<li><strong>scale</strong> &#8211; The number of digits after the decimal point.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.dialects.drizzle.DOUBLE">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.dialects.drizzle.</tt><tt class="descname">DOUBLE</tt><big>(</big><em>precision=None</em>, <em>scale=None</em>, <em>asdecimal=True</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.DOUBLE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.dialects.drizzle.base._FloatType</span></tt></p>
+<p>Drizzle DOUBLE type.</p>
+<dl class="method">
+<dt id="sqlalchemy.dialects.drizzle.DOUBLE.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>precision=None</em>, <em>scale=None</em>, <em>asdecimal=True</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.DOUBLE.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a DOUBLE.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>precision</strong> &#8211; Total digits in this number.  If scale and precision
+are both None, values are stored to limits allowed by the server.</li>
+<li><strong>scale</strong> &#8211; The number of digits after the decimal point.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.dialects.drizzle.ENUM">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.dialects.drizzle.</tt><tt class="descname">ENUM</tt><big>(</big><em>*enums</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.ENUM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.dialects.mysql.base.ENUM</span></tt></p>
+<p>Drizzle ENUM type.</p>
+<dl class="method">
+<dt id="sqlalchemy.dialects.drizzle.ENUM.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>*enums</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.ENUM.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct an ENUM.</p>
+<p>Example:</p>
+<blockquote>
+<div>Column(&#8216;myenum&#8217;, ENUM(&#8220;foo&#8221;, &#8220;bar&#8221;, &#8220;baz&#8221;))</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>enums</strong> &#8211; The range of valid values for this ENUM.  Values will be
+quoted when generating the schema according to the quoting flag (see
+below).</li>
+<li><strong>strict</strong> &#8211; Defaults to False: ensure that a given value is in this
+ENUM&#8217;s range of permissible values when inserting or updating rows.
+Note that Drizzle will not raise a fatal error if you attempt to
+store an out of range value- an alternate value will be stored
+instead.
+(See Drizzle ENUM documentation.)</li>
+<li><strong>collation</strong> &#8211; Optional, a column-level collation for this string
+value.  Takes precedence to &#8216;binary&#8217; short-hand.</li>
+<li><strong>binary</strong> &#8211; Defaults to False: short-hand, pick the binary
+collation type that matches the column&#8217;s character set.  Generates
+BINARY in schema.  This does not affect the type of data stored,
+only the collation of character data.</li>
+<li><strong>quoting</strong> &#8211; <p>Defaults to &#8216;auto&#8217;: automatically determine enum value
+quoting.  If all enum values are surrounded by the same quoting
+character, then use &#8216;quoted&#8217; mode.  Otherwise, use &#8216;unquoted&#8217; mode.</p>
+<p>&#8216;quoted&#8217;: values in enums are already quoted, they will be used
+directly when generating the schema - this usage is deprecated.</p>
+<p>&#8216;unquoted&#8217;: values in enums are not quoted, they will be escaped and
+surrounded by single quotes when generating the schema.</p>
+<p>Previous versions of this type always required manually quoted
+values to be supplied; future versions will always quote the string
+literals for you.  This is a transitional option.</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.dialects.drizzle.FLOAT">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.dialects.drizzle.</tt><tt class="descname">FLOAT</tt><big>(</big><em>precision=None</em>, <em>scale=None</em>, <em>asdecimal=False</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.FLOAT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.dialects.drizzle.base._FloatType</span></tt>, <a class="reference internal" href="../core/types.html#sqlalchemy.types.FLOAT" title="sqlalchemy.types.FLOAT"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.types.FLOAT</span></tt></a></p>
+<p>Drizzle FLOAT type.</p>
+<dl class="method">
+<dt id="sqlalchemy.dialects.drizzle.FLOAT.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>precision=None</em>, <em>scale=None</em>, <em>asdecimal=False</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.FLOAT.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a FLOAT.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>precision</strong> &#8211; Total digits in this number.  If scale and precision
+are both None, values are stored to limits allowed by the server.</li>
+<li><strong>scale</strong> &#8211; The number of digits after the decimal point.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.dialects.drizzle.INTEGER">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.dialects.drizzle.</tt><tt class="descname">INTEGER</tt><big>(</big><em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.INTEGER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/types.html#sqlalchemy.types.INTEGER" title="sqlalchemy.types.INTEGER"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.types.INTEGER</span></tt></a></p>
+<p>Drizzle INTEGER type.</p>
+<dl class="method">
+<dt id="sqlalchemy.dialects.drizzle.INTEGER.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.INTEGER.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct an INTEGER.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.dialects.drizzle.NUMERIC">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.dialects.drizzle.</tt><tt class="descname">NUMERIC</tt><big>(</big><em>precision=None</em>, <em>scale=None</em>, <em>asdecimal=True</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.NUMERIC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.dialects.drizzle.base._NumericType</span></tt>, <a class="reference internal" href="../core/types.html#sqlalchemy.types.NUMERIC" title="sqlalchemy.types.NUMERIC"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.types.NUMERIC</span></tt></a></p>
+<p>Drizzle NUMERIC type.</p>
+<dl class="method">
+<dt id="sqlalchemy.dialects.drizzle.NUMERIC.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>precision=None</em>, <em>scale=None</em>, <em>asdecimal=True</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.NUMERIC.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a NUMERIC.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>precision</strong> &#8211; Total digits in this number.  If scale and precision
+are both None, values are stored to limits allowed by the server.</li>
+<li><strong>scale</strong> &#8211; The number of digits after the decimal point.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.dialects.drizzle.REAL">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.dialects.drizzle.</tt><tt class="descname">REAL</tt><big>(</big><em>precision=None</em>, <em>scale=None</em>, <em>asdecimal=True</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.REAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.dialects.drizzle.base._FloatType</span></tt>, <a class="reference internal" href="../core/types.html#sqlalchemy.types.REAL" title="sqlalchemy.types.REAL"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.types.REAL</span></tt></a></p>
+<p>Drizzle REAL type.</p>
+<dl class="method">
+<dt id="sqlalchemy.dialects.drizzle.REAL.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>precision=None</em>, <em>scale=None</em>, <em>asdecimal=True</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.REAL.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a REAL.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>precision</strong> &#8211; Total digits in this number.  If scale and precision
+are both None, values are stored to limits allowed by the server.</li>
+<li><strong>scale</strong> &#8211; The number of digits after the decimal point.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.dialects.drizzle.TEXT">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.dialects.drizzle.</tt><tt class="descname">TEXT</tt><big>(</big><em>length=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.TEXT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.dialects.drizzle.base._StringType</span></tt>, <a class="reference internal" href="../core/types.html#sqlalchemy.types.TEXT" title="sqlalchemy.types.TEXT"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.types.TEXT</span></tt></a></p>
+<p>Drizzle TEXT type, for text up to 2^16 characters.</p>
+<dl class="method">
+<dt id="sqlalchemy.dialects.drizzle.TEXT.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>length=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.TEXT.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a TEXT.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>length</strong> &#8211; Optional, if provided the server may optimize storage
+by substituting the smallest TEXT type sufficient to store
+<tt class="docutils literal"><span class="pre">length</span></tt> characters.</li>
+<li><strong>collation</strong> &#8211; Optional, a column-level collation for this string
+value.  Takes precedence to &#8216;binary&#8217; short-hand.</li>
+<li><strong>binary</strong> &#8211; Defaults to False: short-hand, pick the binary
+collation type that matches the column&#8217;s character set.  Generates
+BINARY in schema.  This does not affect the type of data stored,
+only the collation of character data.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.dialects.drizzle.TIMESTAMP">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.dialects.drizzle.</tt><tt class="descname">TIMESTAMP</tt><big>(</big><em>timezone=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.TIMESTAMP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/types.html#sqlalchemy.types.TIMESTAMP" title="sqlalchemy.types.TIMESTAMP"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.types.TIMESTAMP</span></tt></a></p>
+<p>Drizzle TIMESTAMP type.</p>
+<dl class="method">
+<dt id="sqlalchemy.dialects.drizzle.TIMESTAMP.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>timezone=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.TIMESTAMP.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a new <a class="reference internal" href="../core/types.html#sqlalchemy.types.DateTime" title="sqlalchemy.types.DateTime"><tt class="xref py py-class docutils literal"><span class="pre">DateTime</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>timezone</strong> &#8211; boolean.  If True, and supported by the</td>
+</tr>
+</tbody>
+</table>
+<p>backend, will produce &#8216;TIMESTAMP WITH TIMEZONE&#8217;. For backends
+that don&#8217;t support timezone aware timestamps, has no
+effect.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.dialects.drizzle.VARCHAR">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.dialects.drizzle.</tt><tt class="descname">VARCHAR</tt><big>(</big><em>length=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.VARCHAR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.dialects.drizzle.base._StringType</span></tt>, <a class="reference internal" href="../core/types.html#sqlalchemy.types.VARCHAR" title="sqlalchemy.types.VARCHAR"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.types.VARCHAR</span></tt></a></p>
+<p>Drizzle VARCHAR type, for variable-length character data.</p>
+<dl class="method">
+<dt id="sqlalchemy.dialects.drizzle.VARCHAR.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>length=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.dialects.drizzle.VARCHAR.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a VARCHAR.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>collation</strong> &#8211; Optional, a column-level collation for this string
+value.  Takes precedence to &#8216;binary&#8217; short-hand.</li>
+<li><strong>binary</strong> &#8211; Defaults to False: short-hand, pick the binary
+collation type that matches the column&#8217;s character set.  Generates
+BINARY in schema.  This does not affect the type of data stored,
+only the collation of character data.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-sqlalchemy.dialects.drizzle.mysqldb">
+<span id="mysql-python"></span><h2>MySQL-Python<a class="headerlink" href="#module-sqlalchemy.dialects.drizzle.mysqldb" title="Permalink to this headline">¶</a></h2>
+<p>Support for the Drizzle database via the MySQL-Python driver.</p>
+<div class="section" id="dialect-drizzle-mysqldb-url">
+<h3>DBAPI<a class="headerlink" href="#dialect-drizzle-mysqldb-url" title="Permalink to this headline">¶</a></h3>
+<p>Documentation and download information (if applicable) for MySQL-Python is available at:
+<a class="reference external" href="http://sourceforge.net/projects/mysql-python">http://sourceforge.net/projects/mysql-python</a></p>
+</div>
+<div class="section" id="dialect-drizzle-mysqldb-connect">
+<h3>Connecting<a class="headerlink" href="#dialect-drizzle-mysqldb-connect" title="Permalink to this headline">¶</a></h3>
+<p>Connect String:<div class="highlight-python"><pre>drizzle+mysqldb://&lt;user&gt;:&lt;password&gt;@&lt;host&gt;[:&lt;port&gt;]/&lt;dbname&gt;</pre>
+</div>
+</p>
+</div>
+</div>
+</div>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links">
+        Previous:
+        <a href="index.html" title="previous chapter">Dialects</a>
+        Next:
+        <a href="firebird.html" title="next chapter">Firebird</a>
+
+    <div id="docs-copyright">
+        &copy; <a href="../copyright.html">Copyright</a> 2007-2013, the SQLAlchemy authors and contributors.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</div>
+
+</div>
+
+        
+    </body>
+</html>
+
+

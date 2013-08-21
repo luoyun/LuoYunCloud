@@ -1,51 +1,56 @@
 import re, urlparse, urllib
 from mako.template import Template
 
-
 PAGE_TEMPLATE = '''<div class="pagination">
+<ul>
   % if cur_page > 1:
-  <a href="${ page_url(cur_page -1) }"><span class="endside">${ _("Prev") }<span></a>
+  <li><a href="${ page_url(cur_page -1) }"><i class="icon-double-angle-left"></i></a></li>
   % else:
-  <span class="endside">${ _("Prev") }</span>
+  <li class="disabled"><span><i class="icon-double-angle-left"></i></span></li>
   % endif
 
   % for p in plist:
   % if p == cur_page:
-  <span class="page current">${ p }</span>
+  <li class="active"><span>${ p }</span></li>
   % elif p == notexist_page:
-  <span>...</span>
+  <li><span>...</span></li>
   % else:
-  <a href="${ page_url(p) }"><span class="page">${ p }</span></a>
+  <li><a href="${ page_url(p) }">${ p }</a></li>
   % endif
   % endfor
 
   % if cur_page < page_sum:
-  <a href="${ page_url(cur_page + 1) }"><span class="endside">${ _("Next") }</span></a>
+  <li><a href="${ page_url(cur_page + 1) }"><i class="icon-double-angle-right"></i></a></li>
   % else:
-  <span class="endside">${ _("Next") }</span>
+  <li class="disabled"><span><i class="icon-double-angle-right"></i></span></li>
   % endif
+</ul>
 
-  % if ps_range:
-  <span class="psize-select">
-    %for s in ps_range:
-    <% current = 'current' if ps == s else '' %>
-    <a class="${ current }" href="${ psize_url(s) }">${ s }</a>
+
+  % if sepa_range:
+<ul>
+    %for s in sepa_range:
+    %if sepa == s:
+    <li class="active"><span>${ s }</span></li>
+    % else:
+    <li><a href="${ psize_url(s) }">${ s }</a></li>
+    % endif
     %endfor
-  </span>
+</ul>
   % endif
 </div>'''
 
 
-def pagination( url, total, ps, cur, list_size=5,
-                ps_range=[12, 24, 48] ):
+def pagination( url, total, sepa, cur, list_size=5,
+                sepa_range=[] ):
 
-    if total <= ps:
+    if total <= sepa:
         return ''
 
-    ps_range = [x for x in ps_range if x < total]
+    sepa_range = [x for x in sepa_range if x < total]
 
-    page_sum = total / ps
-    if ( total % ps ): page_sum += 1
+    page_sum = total / sepa
+    if ( total % sepa ): page_sum += 1
 
     notexist_p = page_sum + 1
 
@@ -67,16 +72,16 @@ def pagination( url, total, ps, cur, list_size=5,
     def _page_url(cur):
         return page_url(url, cur)
 
-    d = { 'total': total, 'plist': plist,  'ps': ps,
+    d = { 'total': total, 'plist': plist,  'sepa': sepa,
           'cur_page': cur, 'page_sum': page_sum,
           'notexist_page': notexist_p,
           'page_url': _page_url }
 
-    if ps_range:
+    if sepa_range:
         def _psize_url(cur):
             return psize_url(url, cur)
         d['psize_url'] = _psize_url
-        d['ps_range'] = ps_range
+        d['sepa_range'] = sepa_range
 
     t = Template( PAGE_TEMPLATE )
     return t.render(**d)
@@ -105,21 +110,21 @@ def page_url(uri, cur):
 def psize_url(uri, cur):
 
     if '?' not in uri:
-        return uri + '?ps=%s' % cur
+        return uri + '?sepa=%s' % cur
 
     path, params = uri.split('?')
     new = []
-    find_ps = False
+    find_sepa = False
     for k, v in urlparse.parse_qsl( params ):
-        if k == 'ps':
+        if k == 'sepa':
             v = cur
-            find_ps = True
+            find_sepa = True
         if k == 'p':
             v = 1
         new.append( (k, v) )
 
-    if not find_ps:
-        new.append( ('ps', cur) )
+    if not find_sepa:
+        new.append( ('sepa', cur) )
 
     return '?'.join([path, urllib.urlencode(new)])
 

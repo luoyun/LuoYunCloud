@@ -16,7 +16,7 @@ from app.site.utils import get_site_config
 import settings
 from app.system.utils import get_runtime_data
 
-from lytool.filesize import size as human_size
+from yweb.utils.filesize import size as human_size
 from yweb.utils.base import makesure_path_exist
 
 from markdown import Markdown

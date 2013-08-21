@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String, \
 
 from sqlalchemy.orm import backref,relationship
 
-from lytool.filesize import size as human_size
+from yweb.utils.filesize import size as human_size
 
 
 

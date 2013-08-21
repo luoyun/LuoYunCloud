@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <title>
+            
+    
+                ORM Exceptions
+             &mdash; 
+    SQLAlchemy 0.8 Documentation
+
+        </title>
+        
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/docs.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.8.2',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/init.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+        <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="top" title="SQLAlchemy 0.8 Documentation" href="../index.html" />
+        <link rel="up" title="SQLAlchemy ORM" href="index.html" />
+        <link rel="next" title="ORM Internals" href="internals.html" />
+        <link rel="prev" title="Examples" href="examples.html" />
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+<div id="docs-header">
+    <h1>SQLAlchemy 0.8 Documentation</h1>
+
+    <div id="docs-search">
+    Search:
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+
+    <div id="docs-version-header">
+        Release: <span class="version-num">0.8.2</span> | Release Date: July 3, 2013
+
+
+    </div>
+
+</div>
+
+<div id="docs-top-navigation">
+    <div id="docs-top-page-control" class="docs-navigation-links">
+        <ul>
+            <li>Prev:
+            <a href="examples.html" title="previous chapter">Examples</a>
+            </li>
+            <li>Next:
+            <a href="internals.html" title="next chapter">ORM Internals</a>
+            </li>
+
+        <li>
+            <a href="../contents.html">Table of Contents</a> |
+            <a href="../genindex.html">Index</a>
+            | <a href="../_sources/orm/exceptions.txt">view source
+        </li>
+        </ul>
+    </div>
+
+    <div id="docs-navigation-banner">
+        <a href="../index.html">SQLAlchemy 0.8 Documentation</a>
+                » <a href="index.html" title="SQLAlchemy ORM">SQLAlchemy ORM</a>
+        » 
+                ORM Exceptions
+             
+
+        <h2>
+            
+                ORM Exceptions
+            
+        </h2>
+    </div>
+
+</div>
+
+<div id="docs-body-container">
+
+    <div id="docs-sidebar">
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">ORM Exceptions</a></li>
+</ul>
+
+
+    <h4>Previous Topic</h4>
+    <p>
+    <a href="examples.html" title="previous chapter">Examples</a>
+    </p>
+    <h4>Next Topic</h4>
+    <p>
+    <a href="internals.html" title="next chapter">ORM Internals</a>
+    </p>
+
+
+    <h4>Quick Search</h4>
+    <p>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </p>
+
+    </div>
+
+    <div id="docs-body" class="withsidebar" >
+        
+<div class="section" id="module-sqlalchemy.orm.exc">
+<span id="orm-exceptions"></span><h1>ORM Exceptions<a class="headerlink" href="#module-sqlalchemy.orm.exc" title="Permalink to this headline">¶</a></h1>
+<p>SQLAlchemy ORM exceptions.</p>
+<dl class="attribute">
+<dt id="sqlalchemy.orm.exc.ConcurrentModificationError">
+<tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">ConcurrentModificationError</tt><a class="headerlink" href="#sqlalchemy.orm.exc.ConcurrentModificationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#sqlalchemy.orm.exc.StaleDataError" title="sqlalchemy.orm.exc.StaleDataError"><tt class="xref py py-class docutils literal"><span class="pre">StaleDataError</span></tt></a></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.orm.exc.DetachedInstanceError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">DetachedInstanceError</tt><a class="headerlink" href="#sqlalchemy.orm.exc.DetachedInstanceError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/exceptions.html#sqlalchemy.exc.SQLAlchemyError" title="sqlalchemy.exc.SQLAlchemyError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.SQLAlchemyError</span></tt></a></p>
+<p>An attempt to access unloaded attributes on a
+mapped instance that is detached.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.orm.exc.FlushError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">FlushError</tt><a class="headerlink" href="#sqlalchemy.orm.exc.FlushError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/exceptions.html#sqlalchemy.exc.SQLAlchemyError" title="sqlalchemy.exc.SQLAlchemyError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.SQLAlchemyError</span></tt></a></p>
+<p>A invalid condition was detected during flush().</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.orm.exc.MultipleResultsFound">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">MultipleResultsFound</tt><a class="headerlink" href="#sqlalchemy.orm.exc.MultipleResultsFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/exceptions.html#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.InvalidRequestError</span></tt></a></p>
+<p>A single database result was required but more than one were found.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="sqlalchemy.orm.exc.NO_STATE">
+<tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">NO_STATE</tt><em class="property"> = (&lt;type 'exceptions.AttributeError'&gt;, &lt;type 'exceptions.KeyError'&gt;)</em><a class="headerlink" href="#sqlalchemy.orm.exc.NO_STATE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception types that may be raised by instrumentation implementations.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.orm.exc.NoResultFound">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">NoResultFound</tt><a class="headerlink" href="#sqlalchemy.orm.exc.NoResultFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/exceptions.html#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.InvalidRequestError</span></tt></a></p>
+<p>A database result was required but none was found.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.orm.exc.ObjectDeletedError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">ObjectDeletedError</tt><big>(</big><em>state</em>, <em>msg=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.orm.exc.ObjectDeletedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/exceptions.html#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.InvalidRequestError</span></tt></a></p>
+<p>A refresh operation failed to retrieve the database
+row corresponding to an object&#8217;s known primary key identity.</p>
+<p>A refresh operation proceeds when an expired attribute is
+accessed on an object, or when <a class="reference internal" href="query.html#sqlalchemy.orm.query.Query.get" title="sqlalchemy.orm.query.Query.get"><tt class="xref py py-meth docutils literal"><span class="pre">Query.get()</span></tt></a> is
+used to retrieve an object which is, upon retrieval, detected
+as expired.   A SELECT is emitted for the target row
+based on primary key; if no row is returned, this
+exception is raised.</p>
+<p>The true meaning of this exception is simply that
+no row exists for the primary key identifier associated
+with a persistent object.   The row may have been
+deleted, or in some cases the primary key updated
+to a new value, outside of the ORM&#8217;s management of the target
+object.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.orm.exc.ObjectDereferencedError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">ObjectDereferencedError</tt><a class="headerlink" href="#sqlalchemy.orm.exc.ObjectDereferencedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/exceptions.html#sqlalchemy.exc.SQLAlchemyError" title="sqlalchemy.exc.SQLAlchemyError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.SQLAlchemyError</span></tt></a></p>
+<p>An operation cannot complete due to an object being garbage
+collected.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.orm.exc.StaleDataError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">StaleDataError</tt><a class="headerlink" href="#sqlalchemy.orm.exc.StaleDataError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/exceptions.html#sqlalchemy.exc.SQLAlchemyError" title="sqlalchemy.exc.SQLAlchemyError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.SQLAlchemyError</span></tt></a></p>
+<p>An operation encountered database state that is unaccounted for.</p>
+<p>Conditions which cause this to happen include:</p>
+<ul>
+<li><p class="first">A flush may have attempted to update or delete rows
+and an unexpected number of rows were matched during
+the UPDATE or DELETE statement.   Note that when
+version_id_col is used, rows in UPDATE or DELETE statements
+are also matched against the current known version
+identifier.</p>
+</li>
+<li><p class="first">A mapped object with version_id_col was refreshed,
+and the version number coming back from the database does
+not match that of the object itself.</p>
+</li>
+<li><p class="first">A object is detached from its parent object, however
+the object was previously attached to a different parent
+identity which was garbage collected, and a decision
+cannot be made if the new parent was really the most
+recent &#8220;parent&#8221;.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.7.4.</span></p>
+</li>
+</ul>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.orm.exc.UnmappedClassError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">UnmappedClassError</tt><big>(</big><em>cls</em>, <em>msg=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.orm.exc.UnmappedClassError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.orm.exc.UnmappedError" title="sqlalchemy.orm.exc.UnmappedError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.orm.exc.UnmappedError</span></tt></a></p>
+<p>An mapping operation was requested for an unknown class.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.orm.exc.UnmappedColumnError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">UnmappedColumnError</tt><a class="headerlink" href="#sqlalchemy.orm.exc.UnmappedColumnError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/exceptions.html#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.InvalidRequestError</span></tt></a></p>
+<p>Mapping operation was requested on an unknown column.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.orm.exc.UnmappedError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">UnmappedError</tt><a class="headerlink" href="#sqlalchemy.orm.exc.UnmappedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/exceptions.html#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.InvalidRequestError</span></tt></a></p>
+<p>Base for exceptions that involve expected mappings not present.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.orm.exc.UnmappedInstanceError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.orm.exc.</tt><tt class="descname">UnmappedInstanceError</tt><big>(</big><em>obj</em>, <em>msg=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.orm.exc.UnmappedInstanceError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.orm.exc.UnmappedError" title="sqlalchemy.orm.exc.UnmappedError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.orm.exc.UnmappedError</span></tt></a></p>
+<p>An mapping operation was requested for an unknown instance.</p>
+</dd></dl>
+
+</div>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links">
+        Previous:
+        <a href="examples.html" title="previous chapter">Examples</a>
+        Next:
+        <a href="internals.html" title="next chapter">ORM Internals</a>
+
+    <div id="docs-copyright">
+        &copy; <a href="../copyright.html">Copyright</a> 2007-2013, the SQLAlchemy authors and contributors.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</div>
+
+</div>
+
+        
+    </body>
+</html>
+
+

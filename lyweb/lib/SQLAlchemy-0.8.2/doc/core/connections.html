@@ -1,0 +1,1752 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <title>
+            
+    
+                Working with Engines and Connections
+             &mdash; 
+    SQLAlchemy 0.8 Documentation
+
+        </title>
+        
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/docs.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.8.2',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/init.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+        <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="top" title="SQLAlchemy 0.8 Documentation" href="../index.html" />
+        <link rel="up" title="SQLAlchemy Core" href="index.html" />
+        <link rel="next" title="Connection Pooling" href="pooling.html" />
+        <link rel="prev" title="Engine Configuration" href="engines.html" />
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+<div id="docs-header">
+    <h1>SQLAlchemy 0.8 Documentation</h1>
+
+    <div id="docs-search">
+    Search:
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+
+    <div id="docs-version-header">
+        Release: <span class="version-num">0.8.2</span> | Release Date: July 3, 2013
+
+
+    </div>
+
+</div>
+
+<div id="docs-top-navigation">
+    <div id="docs-top-page-control" class="docs-navigation-links">
+        <ul>
+            <li>Prev:
+            <a href="engines.html" title="previous chapter">Engine Configuration</a>
+            </li>
+            <li>Next:
+            <a href="pooling.html" title="next chapter">Connection Pooling</a>
+            </li>
+
+        <li>
+            <a href="../contents.html">Table of Contents</a> |
+            <a href="../genindex.html">Index</a>
+            | <a href="../_sources/core/connections.txt">view source
+        </li>
+        </ul>
+    </div>
+
+    <div id="docs-navigation-banner">
+        <a href="../index.html">SQLAlchemy 0.8 Documentation</a>
+                » <a href="index.html" title="SQLAlchemy Core">SQLAlchemy Core</a>
+        » 
+                Working with Engines and Connections
+             
+
+        <h2>
+            
+                Working with Engines and Connections
+            
+        </h2>
+    </div>
+
+</div>
+
+<div id="docs-body-container">
+
+    <div id="docs-sidebar">
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Working with Engines and Connections</a><ul>
+<li><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li><a class="reference internal" href="#using-transactions">Using Transactions</a><ul>
+<li><a class="reference internal" href="#nesting-of-transaction-blocks">Nesting of Transaction Blocks</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#understanding-autocommit">Understanding Autocommit</a></li>
+<li><a class="reference internal" href="#connectionless-execution-implicit-execution">Connectionless Execution, Implicit Execution</a></li>
+<li><a class="reference internal" href="#using-the-threadlocal-execution-strategy">Using the Threadlocal Execution Strategy</a></li>
+<li><a class="reference internal" href="#registering-new-dialects">Registering New Dialects</a><ul>
+<li><a class="reference internal" href="#registering-dialects-in-process">Registering Dialects In-Process</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#connection-engine-api">Connection / Engine API</a></li>
+</ul>
+</li>
+</ul>
+
+
+    <h4>Previous Topic</h4>
+    <p>
+    <a href="engines.html" title="previous chapter">Engine Configuration</a>
+    </p>
+    <h4>Next Topic</h4>
+    <p>
+    <a href="pooling.html" title="next chapter">Connection Pooling</a>
+    </p>
+
+
+    <h4>Quick Search</h4>
+    <p>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </p>
+
+    </div>
+
+    <div id="docs-body" class="withsidebar" >
+        
+<div class="section" id="module-sqlalchemy.engine">
+<span id="working-with-engines-and-connections"></span><span id="connections-toplevel"></span><h1>Working with Engines and Connections<a class="headerlink" href="#module-sqlalchemy.engine" title="Permalink to this headline">¶</a></h1>
+<p>This section details direct usage of the <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>,
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, and related objects. Its important to note that when
+using the SQLAlchemy ORM, these objects are not generally accessed; instead,
+the <a class="reference internal" href="../orm/session.html#sqlalchemy.orm.session.Session" title="sqlalchemy.orm.session.Session"><tt class="xref py py-class docutils literal"><span class="pre">Session</span></tt></a> object is used as the interface to the database.
+However, for applications that are built around direct usage of textual SQL
+statements and/or SQL expression constructs without involvement by the ORM&#8217;s
+higher level management services, the <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> and
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> are king (and queen?) - read on.</p>
+<div class="section" id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<p>Recall from <a class="reference internal" href="engines.html"><em>Engine Configuration</em></a> that an <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> is created via
+the <a class="reference internal" href="engines.html#sqlalchemy.create_engine" title="sqlalchemy.create_engine"><tt class="xref py py-func docutils literal"><span class="pre">create_engine()</span></tt></a> call:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s">&#39;mysql://scott:tiger@localhost/test&#39;</span><span class="p">)</span></pre></div>
+</div>
+<p>The typical usage of <a class="reference internal" href="engines.html#sqlalchemy.create_engine" title="sqlalchemy.create_engine"><tt class="xref py py-func docutils literal"><span class="pre">create_engine()</span></tt></a> is once per particular database
+URL, held globally for the lifetime of a single application process. A single
+<a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> manages many individual DBAPI connections on behalf of the
+process and is intended to be called upon in a concurrent fashion. The
+<a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> is <strong>not</strong> synonymous to the DBAPI <tt class="docutils literal"><span class="pre">connect</span></tt> function,
+which represents just one connection resource - the <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> is most
+efficient when created just once at the module level of an application, not
+per-object or per-function call.</p>
+<p>For a multiple-process application that uses the <tt class="docutils literal"><span class="pre">os.fork</span></tt> system call, or
+for example the Python <tt class="docutils literal"><span class="pre">multiprocessing</span></tt> module, it&#8217;s usually required that a
+separate <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> be used for each child process. This is because the
+<a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> maintains a reference to a connection pool that ultimately
+references DBAPI connections - these tend to not be portable across process
+boundaries. An <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> that is configured not to use pooling (which
+is achieved via the usage of <a class="reference internal" href="pooling.html#sqlalchemy.pool.NullPool" title="sqlalchemy.pool.NullPool"><tt class="xref py py-class docutils literal"><span class="pre">NullPool</span></tt></a>) does not have this
+requirement.</p>
+<p>The engine can be used directly to issue SQL to the database. The most generic
+way is first procure a connection resource, which you get via the
+<a class="reference internal" href="#sqlalchemy.engine.Engine.connect" title="sqlalchemy.engine.Engine.connect"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.connect()</span></tt></a> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">connection</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;select username from users&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&quot;username:&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;username&#39;</span><span class="p">]</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+</div>
+<p>The connection is an instance of <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>,
+which is a <strong>proxy</strong> object for an actual DBAPI connection.  The DBAPI
+connection is retrieved from the connection pool at the point at which
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> is created.</p>
+<p>The returned result is an instance of <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a>, which
+references a DBAPI cursor and provides a largely compatible interface
+with that of the DBAPI cursor.   The DBAPI cursor will be closed
+by the <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a> when all of its result rows (if any) are
+exhausted.  A <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a> that returns no rows, such as that of
+an UPDATE statement (without any returned rows),
+releases cursor resources immediately upon construction.</p>
+<p>When the <a class="reference internal" href="#sqlalchemy.engine.Connection.close" title="sqlalchemy.engine.Connection.close"><tt class="xref py py-meth docutils literal"><span class="pre">close()</span></tt></a> method is called, the referenced DBAPI
+connection is <a class="reference internal" href="../glossary.html#term-released"><em class="xref std std-term">released</em></a> to the connection pool.   From the perspective
+of the database itself, nothing is actually &#8220;closed&#8221;, assuming pooling is
+in use.  The pooling mechanism issues a <tt class="docutils literal"><span class="pre">rollback()</span></tt> call on the DBAPI
+connection so that any transactional state or locks are removed, and
+the connection is ready for its next usage.</p>
+<p>The above procedure can be performed in a shorthand way by using the
+<a class="reference internal" href="#sqlalchemy.engine.Engine.execute" title="sqlalchemy.engine.Engine.execute"><tt class="xref py py-meth docutils literal"><span class="pre">execute()</span></tt></a> method of <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> itself:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;select username from users&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&quot;username:&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;username&#39;</span><span class="p">]</span></pre></div>
+</div>
+<p>Where above, the <a class="reference internal" href="#sqlalchemy.engine.Engine.execute" title="sqlalchemy.engine.Engine.execute"><tt class="xref py py-meth docutils literal"><span class="pre">execute()</span></tt></a> method acquires a new
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> on its own, executes the statement with that object,
+and returns the <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a>.  In this case, the <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a>
+contains a special flag known as <tt class="docutils literal"><span class="pre">close_with_result</span></tt>, which indicates
+that when its underlying DBAPI cursor is closed, the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>
+object itself is also closed, which again returns the DBAPI connection
+to the connection pool, releasing transactional resources.</p>
+<p>If the <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a> potentially has rows remaining, it can be
+instructed to close out its resources explicitly:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+</div>
+<p>If the <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a> has pending rows remaining and is dereferenced by
+the application without being closed, Python garbage collection will
+ultimately close out the cursor as well as trigger a return of the pooled
+DBAPI connection resource to the pool (SQLAlchemy achieves this by the usage
+of weakref callbacks - <em>never</em> the <tt class="docutils literal"><span class="pre">__del__</span></tt> method) - however it&#8217;s never a
+good idea to rely upon Python garbage collection to manage resources.</p>
+<p>Our example above illustrated the execution of a textual SQL string.
+The <a class="reference internal" href="#sqlalchemy.engine.Connection.execute" title="sqlalchemy.engine.Connection.execute"><tt class="xref py py-meth docutils literal"><span class="pre">execute()</span></tt></a> method can of course accommodate more than
+that, including the variety of SQL expression constructs described
+in <a class="reference internal" href="tutorial.html"><em>SQL Expression Language Tutorial</em></a>.</p>
+</div>
+<div class="section" id="using-transactions">
+<h2>Using Transactions<a class="headerlink" href="#using-transactions" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This section describes how to use transactions when working directly
+with <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> and <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> objects. When using the
+SQLAlchemy ORM, the public API for transaction control is via the
+<a class="reference internal" href="../orm/session.html#sqlalchemy.orm.session.Session" title="sqlalchemy.orm.session.Session"><tt class="xref py py-class docutils literal"><span class="pre">Session</span></tt></a> object, which makes usage of the <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>
+object internally. See <a class="reference internal" href="../orm/session.html#unitofwork-transaction"><em>Managing Transactions</em></a> for further
+information.</p>
+</div>
+<p>The <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> object provides a <a class="reference internal" href="#sqlalchemy.engine.Connection.begin" title="sqlalchemy.engine.Connection.begin"><tt class="xref py py-meth docutils literal"><span class="pre">begin()</span></tt></a>
+method which returns a <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a> object.
+This object is usually used within a try/except clause so that it is
+guaranteed to invoke <a class="reference internal" href="#sqlalchemy.engine.Transaction.rollback" title="sqlalchemy.engine.Transaction.rollback"><tt class="xref py py-meth docutils literal"><span class="pre">Transaction.rollback()</span></tt></a> or <a class="reference internal" href="#sqlalchemy.engine.Transaction.commit" title="sqlalchemy.engine.Transaction.commit"><tt class="xref py py-meth docutils literal"><span class="pre">Transaction.commit()</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">connection</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">table1</span><span class="o">.</span><span class="n">select</span><span class="p">())</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">table1</span><span class="o">.</span><span class="n">insert</span><span class="p">(),</span> <span class="n">col1</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">col2</span><span class="o">=</span><span class="s">&#39;this is some data&#39;</span><span class="p">)</span>
+    <span class="n">trans</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">trans</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+    <span class="k">raise</span></pre></div>
+</div>
+<p>The above block can be created more succinctly using context
+managers, either given an <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># runs a transaction</span>
+<span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">table1</span><span class="o">.</span><span class="n">select</span><span class="p">())</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">table1</span><span class="o">.</span><span class="n">insert</span><span class="p">(),</span> <span class="n">col1</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">col2</span><span class="o">=</span><span class="s">&#39;this is some data&#39;</span><span class="p">)</span></pre></div>
+</div>
+<p>Or from the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, in which case the <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a> object
+is available as well:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">connection</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">trans</span><span class="p">:</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">table1</span><span class="o">.</span><span class="n">select</span><span class="p">())</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">table1</span><span class="o">.</span><span class="n">insert</span><span class="p">(),</span> <span class="n">col1</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">col2</span><span class="o">=</span><span class="s">&#39;this is some data&#39;</span><span class="p">)</span></pre></div>
+</div>
+<div class="section" id="nesting-of-transaction-blocks">
+<span id="connections-nested-transactions"></span><h3>Nesting of Transaction Blocks<a class="headerlink" href="#nesting-of-transaction-blocks" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a> object also handles &#8220;nested&#8221;
+behavior by keeping track of the outermost begin/commit pair. In this example,
+two functions both issue a transaction on a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, but only the outermost
+<a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a> object actually takes effect when it is committed.</p>
+<div class="highlight-python+sql"><div class="highlight"><pre><span class="c"># method_a starts a transaction and calls method_b</span>
+<span class="k">def</span> <span class="nf">method_a</span><span class="p">(</span><span class="n">connection</span><span class="p">):</span>
+    <span class="n">trans</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="c"># open a transaction</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">method_b</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+        <span class="n">trans</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c"># transaction is committed here</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">trans</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span> <span class="c"># this rolls back the transaction unconditionally</span>
+        <span class="k">raise</span>
+
+<span class="c"># method_b also starts a transaction</span>
+<span class="k">def</span> <span class="nf">method_b</span><span class="p">(</span><span class="n">connection</span><span class="p">):</span>
+    <span class="n">trans</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="c"># open a transaction - this runs in the context of method_a&#39;s transaction</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;insert into mytable values (&#39;bat&#39;, &#39;lala&#39;)&quot;</span><span class="p">)</span>
+        <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">mytable</span><span class="o">.</span><span class="n">insert</span><span class="p">(),</span> <span class="n">col1</span><span class="o">=</span><span class="s">&#39;bat&#39;</span><span class="p">,</span> <span class="n">col2</span><span class="o">=</span><span class="s">&#39;lala&#39;</span><span class="p">)</span>
+        <span class="n">trans</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>  <span class="c"># transaction is not committed yet</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">trans</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span> <span class="c"># this rolls back the transaction unconditionally</span>
+        <span class="k">raise</span>
+
+<span class="c"># open a Connection and call method_a</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">method_a</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+</div>
+<p>Above, <tt class="docutils literal"><span class="pre">method_a</span></tt> is called first, which calls <tt class="docutils literal"><span class="pre">connection.begin()</span></tt>. Then
+it calls <tt class="docutils literal"><span class="pre">method_b</span></tt>. When <tt class="docutils literal"><span class="pre">method_b</span></tt> calls <tt class="docutils literal"><span class="pre">connection.begin()</span></tt>, it just
+increments a counter that is decremented when it calls <tt class="docutils literal"><span class="pre">commit()</span></tt>. If either
+<tt class="docutils literal"><span class="pre">method_a</span></tt> or <tt class="docutils literal"><span class="pre">method_b</span></tt> calls <tt class="docutils literal"><span class="pre">rollback()</span></tt>, the whole transaction is
+rolled back. The transaction is not committed until <tt class="docutils literal"><span class="pre">method_a</span></tt> calls the
+<tt class="docutils literal"><span class="pre">commit()</span></tt> method. This &#8220;nesting&#8221; behavior allows the creation of functions
+which &#8220;guarantee&#8221; that a transaction will be used if one was not already
+available, but will automatically participate in an enclosing transaction if
+one exists.</p>
+</div>
+</div>
+<div class="section" id="understanding-autocommit">
+<span id="autocommit"></span><span id="index-0"></span><h2>Understanding Autocommit<a class="headerlink" href="#understanding-autocommit" title="Permalink to this headline">¶</a></h2>
+<p>The previous transaction example illustrates how to use <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>
+so that several executions can take part in the same transaction. What happens
+when we issue an INSERT, UPDATE or DELETE call without using
+<a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>?  While some DBAPI
+implementations provide various special &#8220;non-transactional&#8221; modes, the core
+behavior of DBAPI per PEP-0249 is that a <em>transaction is always in progress</em>,
+providing only <tt class="docutils literal"><span class="pre">rollback()</span></tt> and <tt class="docutils literal"><span class="pre">commit()</span></tt> methods but no <tt class="docutils literal"><span class="pre">begin()</span></tt>.
+SQLAlchemy assumes this is the case for any given DBAPI.</p>
+<p>Given this requirement, SQLAlchemy implements its own &#8220;autocommit&#8221; feature which
+works completely consistently across all backends. This is achieved by
+detecting statements which represent data-changing operations, i.e. INSERT,
+UPDATE, DELETE, as well as data definition language (DDL) statements such as
+CREATE TABLE, ALTER TABLE, and then issuing a COMMIT automatically if no
+transaction is in progress. The detection is based on the presence of the
+<tt class="docutils literal"><span class="pre">autocommit=True</span></tt> execution option on the statement.   If the statement
+is a text-only statement and the flag is not set, a regular expression is used
+to detect INSERT, UPDATE, DELETE, as well as a variety of other commands
+for a particular backend:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">conn</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;INSERT INTO users VALUES (1, &#39;john&#39;)&quot;</span><span class="p">)</span>  <span class="c"># autocommits</span></pre></div>
+</div>
+<p>The &#8220;autocommit&#8221; feature is only in effect when no <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a> has
+otherwise been declared.   This means the feature is not generally used with
+the ORM, as the <a class="reference internal" href="../orm/session.html#sqlalchemy.orm.session.Session" title="sqlalchemy.orm.session.Session"><tt class="xref py py-class docutils literal"><span class="pre">Session</span></tt></a> object by default always maintains an
+ongoing <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>.</p>
+<p>Full control of the &#8220;autocommit&#8221; behavior is available using the generative
+<a class="reference internal" href="#sqlalchemy.engine.Connection.execution_options" title="sqlalchemy.engine.Connection.execution_options"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.execution_options()</span></tt></a> method provided on <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>,
+<a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>, <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.Executable" title="sqlalchemy.sql.expression.Executable"><tt class="xref py py-class docutils literal"><span class="pre">Executable</span></tt></a>, using the &#8220;autocommit&#8221; flag which will
+turn on or off the autocommit for the selected scope. For example, a
+<a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.text" title="sqlalchemy.sql.expression.text"><tt class="xref py py-func docutils literal"><span class="pre">text()</span></tt></a> construct representing a stored procedure that commits might use
+it so that a SELECT statement will issue a COMMIT:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="s">&quot;SELECT my_mutating_procedure()&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">execution_options</span><span class="p">(</span><span class="n">autocommit</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span></pre></div>
+</div>
+</div>
+<div class="section" id="connectionless-execution-implicit-execution">
+<span id="dbengine-implicit"></span><h2>Connectionless Execution, Implicit Execution<a class="headerlink" href="#connectionless-execution-implicit-execution" title="Permalink to this headline">¶</a></h2>
+<p>Recall from the first section we mentioned executing with and without explicit
+usage of <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>. &#8220;Connectionless&#8221; execution
+refers to the usage of the <tt class="docutils literal"><span class="pre">execute()</span></tt> method on an object which is not a
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.  This was illustrated using the <a class="reference internal" href="#sqlalchemy.engine.Engine.execute" title="sqlalchemy.engine.Engine.execute"><tt class="xref py py-meth docutils literal"><span class="pre">execute()</span></tt></a> method
+of <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;select username from users&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&quot;username:&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;username&#39;</span><span class="p">]</span></pre></div>
+</div>
+<p>In addition to &#8220;connectionless&#8221; execution, it is also possible
+to use the <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.Executable.execute" title="sqlalchemy.sql.expression.Executable.execute"><tt class="xref py py-meth docutils literal"><span class="pre">execute()</span></tt></a> method of
+any <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.Executable" title="sqlalchemy.sql.expression.Executable"><tt class="xref py py-class docutils literal"><span class="pre">Executable</span></tt></a> construct, which is a marker for SQL expression objects
+that support execution.   The SQL expression object itself references an
+<a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> or <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> known as the <strong>bind</strong>, which it uses
+in order to provide so-called &#8220;implicit&#8221; execution services.</p>
+<p>Given a table as below:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">MetaData</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span>
+
+<span class="n">meta</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
+<span class="n">users_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="s">&#39;users&#39;</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">))</span>
+<span class="p">)</span></pre></div>
+</div>
+<p>Explicit execution delivers the SQL text or constructed SQL expression to the
+<a class="reference internal" href="#sqlalchemy.engine.Connection.execute" title="sqlalchemy.engine.Connection.execute"><tt class="xref py py-meth docutils literal"><span class="pre">execute()</span></tt></a> method of <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>:</p>
+<div class="highlight-python+sql"><div class="highlight"><pre><span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s">&#39;sqlite:///file.db&#39;</span><span class="p">)</span>
+<span class="n">connection</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">users_table</span><span class="o">.</span><span class="n">select</span><span class="p">())</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+    <span class="c"># ....</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+</div>
+<p>Explicit, connectionless execution delivers the expression to the
+<a class="reference internal" href="#sqlalchemy.engine.Engine.execute" title="sqlalchemy.engine.Engine.execute"><tt class="xref py py-meth docutils literal"><span class="pre">execute()</span></tt></a> method of <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>:</p>
+<div class="highlight-python+sql"><div class="highlight"><pre><span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s">&#39;sqlite:///file.db&#39;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">users_table</span><span class="o">.</span><span class="n">select</span><span class="p">())</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+    <span class="c"># ....</span>
+<span class="n">result</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+</div>
+<p>Implicit execution is also connectionless, and makes usage of the <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.Executable.execute" title="sqlalchemy.sql.expression.Executable.execute"><tt class="xref py py-meth docutils literal"><span class="pre">execute()</span></tt></a> method
+on the expression itself.   This method is provided as part of the
+<a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.Executable" title="sqlalchemy.sql.expression.Executable"><tt class="xref py py-class docutils literal"><span class="pre">Executable</span></tt></a> class, which refers to a SQL statement that is sufficient
+for being invoked against the database.    The method makes usage of
+the assumption that either an
+<a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> or
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> has been <strong>bound</strong> to the expression
+object.   By &#8220;bound&#8221; we mean that the special attribute <a class="reference internal" href="schema.html#sqlalchemy.schema.MetaData.bind" title="sqlalchemy.schema.MetaData.bind"><tt class="xref py py-attr docutils literal"><span class="pre">MetaData.bind</span></tt></a>
+has been used to associate a series of
+<a class="reference internal" href="schema.html#sqlalchemy.schema.Table" title="sqlalchemy.schema.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> objects and all SQL constructs derived from them with a specific
+engine:</p>
+<div class="highlight-python"><pre>engine = create_engine('sqlite:///file.db')
+meta.bind = engine
+result = users_table.select().execute()
+for row in result:
+    # ....
+result.close()</pre>
+</div>
+<p>Above, we associate an <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> with a <a class="reference internal" href="schema.html#sqlalchemy.schema.MetaData" title="sqlalchemy.schema.MetaData"><tt class="xref py py-class docutils literal"><span class="pre">MetaData</span></tt></a> object using
+the special attribute <a class="reference internal" href="schema.html#sqlalchemy.schema.MetaData.bind" title="sqlalchemy.schema.MetaData.bind"><tt class="xref py py-attr docutils literal"><span class="pre">MetaData.bind</span></tt></a>.  The <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.select" title="sqlalchemy.sql.expression.select"><tt class="xref py py-func docutils literal"><span class="pre">select()</span></tt></a> construct produced
+from the <a class="reference internal" href="schema.html#sqlalchemy.schema.Table" title="sqlalchemy.schema.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> object has a method <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.Executable.execute" title="sqlalchemy.sql.expression.Executable.execute"><tt class="xref py py-meth docutils literal"><span class="pre">execute()</span></tt></a>, which will
+search for an <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> that&#8217;s &#8220;bound&#8221; to the <a class="reference internal" href="schema.html#sqlalchemy.schema.Table" title="sqlalchemy.schema.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a>.</p>
+<p>Overall, the usage of &#8220;bound metadata&#8221; has three general effects:</p>
+<ul class="simple">
+<li>SQL statement objects gain an <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.Executable.execute" title="sqlalchemy.sql.expression.Executable.execute"><tt class="xref py py-meth docutils literal"><span class="pre">Executable.execute()</span></tt></a> method which automatically
+locates a &#8220;bind&#8221; with which to execute themselves.</li>
+<li>The ORM <a class="reference internal" href="../orm/session.html#sqlalchemy.orm.session.Session" title="sqlalchemy.orm.session.Session"><tt class="xref py py-class docutils literal"><span class="pre">Session</span></tt></a> object supports using &#8220;bound metadata&#8221; in order
+to establish which <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> should be used to invoke SQL statements
+on behalf of a particular mapped class, though the <a class="reference internal" href="../orm/session.html#sqlalchemy.orm.session.Session" title="sqlalchemy.orm.session.Session"><tt class="xref py py-class docutils literal"><span class="pre">Session</span></tt></a>
+also features its own explicit system of establishing complex <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>/
+mapped class configurations.</li>
+<li>The <a class="reference internal" href="schema.html#sqlalchemy.schema.MetaData.create_all" title="sqlalchemy.schema.MetaData.create_all"><tt class="xref py py-meth docutils literal"><span class="pre">MetaData.create_all()</span></tt></a>, <a class="reference internal" href="schema.html#sqlalchemy.schema.MetaData.drop_all" title="sqlalchemy.schema.MetaData.drop_all"><tt class="xref py py-meth docutils literal"><span class="pre">MetaData.drop_all()</span></tt></a>, <a class="reference internal" href="schema.html#sqlalchemy.schema.Table.create" title="sqlalchemy.schema.Table.create"><tt class="xref py py-meth docutils literal"><span class="pre">Table.create()</span></tt></a>,
+<a class="reference internal" href="schema.html#sqlalchemy.schema.Table.drop" title="sqlalchemy.schema.Table.drop"><tt class="xref py py-meth docutils literal"><span class="pre">Table.drop()</span></tt></a>, and &#8220;autoload&#8221; features all make usage of the bound
+<a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> automatically without the need to pass it explicitly.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The concepts of &#8220;bound metadata&#8221; and &#8220;implicit execution&#8221; are not emphasized in modern SQLAlchemy.
+While they offer some convenience, they are no longer required by any API and
+are never necessary.</p>
+<p>In applications where multiple <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> objects are present, each one logically associated
+with a certain set of tables (i.e. <em>vertical sharding</em>), the &#8220;bound metadata&#8221; technique can be used
+so that individual <a class="reference internal" href="schema.html#sqlalchemy.schema.Table" title="sqlalchemy.schema.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> can refer to the appropriate <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> automatically;
+in particular this is supported within the ORM via the <a class="reference internal" href="../orm/session.html#sqlalchemy.orm.session.Session" title="sqlalchemy.orm.session.Session"><tt class="xref py py-class docutils literal"><span class="pre">Session</span></tt></a> object
+as a means to associate <a class="reference internal" href="schema.html#sqlalchemy.schema.Table" title="sqlalchemy.schema.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> objects with an appropriate <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>,
+as an alternative to using the bind arguments accepted directly by the <a class="reference internal" href="../orm/session.html#sqlalchemy.orm.session.Session" title="sqlalchemy.orm.session.Session"><tt class="xref py py-class docutils literal"><span class="pre">Session</span></tt></a>.</p>
+<p>However, the &#8220;implicit execution&#8221; technique is not at all appropriate for use with the
+ORM, as it bypasses the transactional context maintained by the <a class="reference internal" href="../orm/session.html#sqlalchemy.orm.session.Session" title="sqlalchemy.orm.session.Session"><tt class="xref py py-class docutils literal"><span class="pre">Session</span></tt></a>.</p>
+<p>Overall, in the <em>vast majority</em> of cases, &#8220;bound metadata&#8221; and &#8220;implicit execution&#8221;
+are <strong>not useful</strong>.   While &#8220;bound metadata&#8221; has a marginal level of usefulness with regards to
+ORM configuration, &#8220;implicit execution&#8221; is a very old usage pattern that in most
+cases is more confusing than it is helpful, and its usage is discouraged.
+Both patterns seem to encourage the overuse of expedient &#8220;short cuts&#8221; in application design
+which lead to problems later on.</p>
+<p class="last">Modern SQLAlchemy usage, especially the ORM, places a heavy stress on working within the context
+of a transaction at all times; the &#8220;implicit execution&#8221; concept makes the job of
+associating statement execution with a particular transaction much more difficult.
+The <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.Executable.execute" title="sqlalchemy.sql.expression.Executable.execute"><tt class="xref py py-meth docutils literal"><span class="pre">Executable.execute()</span></tt></a> method on a particular SQL statement
+usually implies that the execution is not part of any particular transaction, which is
+usually not the desired effect.</p>
+</div>
+<p>In both &#8220;connectionless&#8221; examples, the
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> is created behind the scenes; the
+<a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a> returned by the <tt class="docutils literal"><span class="pre">execute()</span></tt>
+call references the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> used to issue
+the SQL statement. When the <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a> is closed, the underlying
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> is closed for us, resulting in the
+DBAPI connection being returned to the pool with transactional resources removed.</p>
+</div>
+<div class="section" id="using-the-threadlocal-execution-strategy">
+<span id="threadlocal-strategy"></span><h2>Using the Threadlocal Execution Strategy<a class="headerlink" href="#using-the-threadlocal-execution-strategy" title="Permalink to this headline">¶</a></h2>
+<p>The &#8220;threadlocal&#8221; engine strategy is an optional feature which
+can be used by non-ORM applications to associate transactions
+with the current thread, such that all parts of the
+application can participate in that transaction implicitly without the need to
+explicitly reference a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The &#8220;threadlocal&#8221; feature is generally discouraged.   It&#8217;s
+designed for a particular pattern of usage which is generally
+considered as a legacy pattern.  It has <strong>no impact</strong> on the &#8220;thread safety&#8221;
+of SQLAlchemy components
+or one&#8217;s application. It also should not be used when using an ORM
+<a class="reference internal" href="../orm/session.html#sqlalchemy.orm.session.Session" title="sqlalchemy.orm.session.Session"><tt class="xref py py-class docutils literal"><span class="pre">Session</span></tt></a> object, as the
+<a class="reference internal" href="../orm/session.html#sqlalchemy.orm.session.Session" title="sqlalchemy.orm.session.Session"><tt class="xref py py-class docutils literal"><span class="pre">Session</span></tt></a> itself represents an ongoing
+transaction and itself handles the job of maintaining connection and
+transactional resources.</p>
+</div>
+<p>Enabling <tt class="docutils literal"><span class="pre">threadlocal</span></tt> is achieved as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">db</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s">&#39;mysql://localhost/test&#39;</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="s">&#39;threadlocal&#39;</span><span class="p">)</span></pre></div>
+</div>
+<p>The above <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> will now acquire a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> using
+connection resources derived from a thread-local variable whenever
+<a class="reference internal" href="#sqlalchemy.engine.Engine.execute" title="sqlalchemy.engine.Engine.execute"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.execute()</span></tt></a> or <a class="reference internal" href="#sqlalchemy.engine.Engine.contextual_connect" title="sqlalchemy.engine.Engine.contextual_connect"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.contextual_connect()</span></tt></a> is called. This
+connection resource is maintained as long as it is referenced, which allows
+multiple points of an application to share a transaction while using
+connectionless execution:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">call_operation1</span><span class="p">():</span>
+    <span class="n">engine</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;insert into users values (?, ?)&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;john&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">call_operation2</span><span class="p">():</span>
+    <span class="n">users</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">users</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">user_id</span><span class="o">==</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;ed&#39;</span><span class="p">)</span>
+
+<span class="n">db</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">call_operation1</span><span class="p">()</span>
+    <span class="n">call_operation2</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span></pre></div>
+</div>
+<p>Explicit execution can be mixed with connectionless execution by
+using the <a class="reference internal" href="#sqlalchemy.engine.Engine.connect" title="sqlalchemy.engine.Engine.connect"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.connect()</span></tt></a> method to acquire a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>
+that is not part of the threadlocal scope:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">db</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">log_table</span><span class="o">.</span><span class="n">insert</span><span class="p">(),</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Operation started&quot;</span><span class="p">)</span>
+    <span class="n">call_operation1</span><span class="p">()</span>
+    <span class="n">call_operation2</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">log_table</span><span class="o">.</span><span class="n">insert</span><span class="p">(),</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Operation succeeded&quot;</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">log_table</span><span class="o">.</span><span class="n">insert</span><span class="p">(),</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Operation failed&quot;</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+</div>
+<p>To access the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> that is bound to the threadlocal scope,
+call <a class="reference internal" href="#sqlalchemy.engine.Engine.contextual_connect" title="sqlalchemy.engine.Engine.contextual_connect"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.contextual_connect()</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">conn</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">contextual_connect</span><span class="p">()</span>
+<span class="n">call_operation3</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></pre></div>
+</div>
+<p>Calling <a class="reference internal" href="#sqlalchemy.engine.Connection.close" title="sqlalchemy.engine.Connection.close"><tt class="xref py py-meth docutils literal"><span class="pre">close()</span></tt></a> on the &#8220;contextual&#8221; connection does not <a class="reference internal" href="../glossary.html#term-release"><em class="xref std std-term">release</em></a>
+its resources until all other usages of that resource are closed as well, including
+that any ongoing transactions are rolled back or committed.</p>
+</div>
+<div class="section" id="registering-new-dialects">
+<h2>Registering New Dialects<a class="headerlink" href="#registering-new-dialects" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="engines.html#sqlalchemy.create_engine" title="sqlalchemy.create_engine"><tt class="xref py py-func docutils literal"><span class="pre">create_engine()</span></tt></a> function call locates the given dialect
+using setuptools entrypoints.   These entry points can be established
+for third party dialects within the setup.py script.  For example,
+to create a new dialect &#8220;foodialect://&#8221;, the steps are as follows:</p>
+<ol class="arabic">
+<li><p class="first">Create a package called <tt class="docutils literal"><span class="pre">foodialect</span></tt>.</p>
+</li>
+<li><p class="first">The package should have a module containing the dialect class,
+which is typically a subclass of <a class="reference internal" href="internals.html#sqlalchemy.engine.default.DefaultDialect" title="sqlalchemy.engine.default.DefaultDialect"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.engine.default.DefaultDialect</span></tt></a>.
+In this example let&#8217;s say it&#8217;s called <tt class="docutils literal"><span class="pre">FooDialect</span></tt> and its module is accessed
+via <tt class="docutils literal"><span class="pre">foodialect.dialect</span></tt>.</p>
+</li>
+<li><p class="first">The entry point can be established in setup.py as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">entry_points</span><span class="o">=</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">[sqlalchemy.dialects]</span>
+<span class="s">foodialect = foodialect.dialect:FooDialect</span>
+<span class="s">&quot;&quot;&quot;</span></pre></div>
+</div>
+</li>
+</ol>
+<p>If the dialect is providing support for a particular DBAPI on top of
+an existing SQLAlchemy-supported database, the name can be given
+including a database-qualification.  For example, if <tt class="docutils literal"><span class="pre">FooDialect</span></tt>
+were in fact a MySQL dialect, the entry point could be established like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">entry_points</span><span class="o">=</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">[sqlalchemy.dialects]</span>
+<span class="s">mysql.foodialect = foodialect.dialect:FooDialect</span>
+<span class="s">&quot;&quot;&quot;</span></pre></div>
+</div>
+<p>The above entrypoint would then be accessed as <tt class="docutils literal"><span class="pre">create_engine(&quot;mysql+foodialect://&quot;)</span></tt>.</p>
+<div class="section" id="registering-dialects-in-process">
+<h3>Registering Dialects In-Process<a class="headerlink" href="#registering-dialects-in-process" title="Permalink to this headline">¶</a></h3>
+<p>SQLAlchemy also allows a dialect to be registered within the current process, bypassing
+the need for separate installation.   Use the <tt class="docutils literal"><span class="pre">register()</span></tt> function as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sqlalchemy.dialects</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s">&quot;mysql.foodialect&quot;</span><span class="p">,</span> <span class="s">&quot;myapp.dialect&quot;</span><span class="p">,</span> <span class="s">&quot;MyMySQLDialect&quot;</span><span class="p">)</span></pre></div>
+</div>
+<p>The above will respond to <tt class="docutils literal"><span class="pre">create_engine(&quot;mysql+foodialect://&quot;)</span></tt> and load the
+<tt class="docutils literal"><span class="pre">MyMySQLDialect</span></tt> class from the <tt class="docutils literal"><span class="pre">myapp.dialect</span></tt> module.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.8.</span></p>
+</div>
+</div>
+<div class="section" id="connection-engine-api">
+<h2>Connection / Engine API<a class="headerlink" href="#connection-engine-api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="sqlalchemy.engine.Connection">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.</tt><tt class="descname">Connection</tt><big>(</big><em>engine</em>, <em>connection=None</em>, <em>close_with_result=False</em>, <em>_branch=False</em>, <em>_execution_options=None</em>, <em>_dispatch=None</em>, <em>_has_events=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.engine.interfaces.Connectable</span></tt></p>
+<p>Provides high-level functionality for a wrapped DB-API connection.</p>
+<p>Provides execution support for string-based SQL statements as well as
+<a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.ClauseElement" title="sqlalchemy.sql.expression.ClauseElement"><tt class="xref py py-class docutils literal"><span class="pre">ClauseElement</span></tt></a>, <a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a> and <a class="reference internal" href="schema.html#sqlalchemy.schema.DefaultGenerator" title="sqlalchemy.schema.DefaultGenerator"><tt class="xref py py-class docutils literal"><span class="pre">DefaultGenerator</span></tt></a>
+objects. Provides a <a class="reference internal" href="#sqlalchemy.engine.Connection.begin" title="sqlalchemy.engine.Connection.begin"><tt class="xref py py-meth docutils literal"><span class="pre">begin()</span></tt></a> method to return <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>
+objects.</p>
+<p>The Connection object is <strong>not</strong> thread-safe.  While a Connection can be
+shared among threads using properly synchronized access, it is still
+possible that the underlying DBAPI connection may not support shared
+access between threads.  Check the DBAPI documentation for details.</p>
+<p>The Connection object represents a single dbapi connection checked out
+from the connection pool. In this state, the connection pool has no affect
+upon the connection, including its expiration or timeout state. For the
+connection pool to properly manage connections, connections should be
+returned to the connection pool (i.e. <tt class="docutils literal"><span class="pre">connection.close()</span></tt>) whenever the
+connection is not in use.</p>
+<span class="target" id="index-1"></span><dl class="method">
+<dt id="sqlalchemy.engine.Connection.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>engine</em>, <em>connection=None</em>, <em>close_with_result=False</em>, <em>_branch=False</em>, <em>_execution_options=None</em>, <em>_dispatch=None</em>, <em>_has_events=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a new Connection.</p>
+<p>The constructor here is not public and is only called only by an
+<a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>. See <a class="reference internal" href="#sqlalchemy.engine.Engine.connect" title="sqlalchemy.engine.Engine.connect"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.connect()</span></tt></a> and
+<a class="reference internal" href="#sqlalchemy.engine.Engine.contextual_connect" title="sqlalchemy.engine.Engine.contextual_connect"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.contextual_connect()</span></tt></a> methods.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.begin">
+<tt class="descname">begin</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.begin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begin a transaction and return a transaction handle.</p>
+<p>The returned object is an instance of <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>.
+This object represents the &#8220;scope&#8221; of the transaction,
+which completes when either the <a class="reference internal" href="#sqlalchemy.engine.Transaction.rollback" title="sqlalchemy.engine.Transaction.rollback"><tt class="xref py py-meth docutils literal"><span class="pre">Transaction.rollback()</span></tt></a>
+or <a class="reference internal" href="#sqlalchemy.engine.Transaction.commit" title="sqlalchemy.engine.Transaction.commit"><tt class="xref py py-meth docutils literal"><span class="pre">Transaction.commit()</span></tt></a> method is called.</p>
+<p>Nested calls to <a class="reference internal" href="#sqlalchemy.engine.Connection.begin" title="sqlalchemy.engine.Connection.begin"><tt class="xref py py-meth docutils literal"><span class="pre">begin()</span></tt></a> on the same <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>
+will return new <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a> objects that represent
+an emulated transaction within the scope of the enclosing
+transaction, that is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">trans</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span>   <span class="c"># outermost transaction</span>
+<span class="n">trans2</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span>  <span class="c"># &quot;nested&quot;</span>
+<span class="n">trans2</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>        <span class="c"># does nothing</span>
+<span class="n">trans</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>         <span class="c"># actually commits</span></pre></div>
+</div>
+<p>Calls to <a class="reference internal" href="#sqlalchemy.engine.Transaction.commit" title="sqlalchemy.engine.Transaction.commit"><tt class="xref py py-meth docutils literal"><span class="pre">Transaction.commit()</span></tt></a> only have an effect
+when invoked via the outermost <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a> object, though the
+<a class="reference internal" href="#sqlalchemy.engine.Transaction.rollback" title="sqlalchemy.engine.Transaction.rollback"><tt class="xref py py-meth docutils literal"><span class="pre">Transaction.rollback()</span></tt></a> method of any of the
+<a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a> objects will roll back the
+transaction.</p>
+<p>See also:</p>
+<p><a class="reference internal" href="#sqlalchemy.engine.Connection.begin_nested" title="sqlalchemy.engine.Connection.begin_nested"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin_nested()</span></tt></a> - use a SAVEPOINT</p>
+<p><a class="reference internal" href="#sqlalchemy.engine.Connection.begin_twophase" title="sqlalchemy.engine.Connection.begin_twophase"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin_twophase()</span></tt></a> - use a two phase /XID transaction</p>
+<p><a class="reference internal" href="#sqlalchemy.engine.Engine.begin" title="sqlalchemy.engine.Engine.begin"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.begin()</span></tt></a> - context manager available from
+<a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.begin_nested">
+<tt class="descname">begin_nested</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.begin_nested" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begin a nested transaction and return a transaction handle.</p>
+<p>The returned object is an instance of <a class="reference internal" href="#sqlalchemy.engine.NestedTransaction" title="sqlalchemy.engine.NestedTransaction"><tt class="xref py py-class docutils literal"><span class="pre">NestedTransaction</span></tt></a>.</p>
+<p>Nested transactions require SAVEPOINT support in the
+underlying database.  Any transaction in the hierarchy may
+<tt class="docutils literal"><span class="pre">commit</span></tt> and <tt class="docutils literal"><span class="pre">rollback</span></tt>, however the outermost transaction
+still controls the overall <tt class="docutils literal"><span class="pre">commit</span></tt> or <tt class="docutils literal"><span class="pre">rollback</span></tt> of the
+transaction of a whole.</p>
+<p>See also <a class="reference internal" href="#sqlalchemy.engine.Connection.begin" title="sqlalchemy.engine.Connection.begin"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin()</span></tt></a>,
+<a class="reference internal" href="#sqlalchemy.engine.Connection.begin_twophase" title="sqlalchemy.engine.Connection.begin_twophase"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin_twophase()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.begin_twophase">
+<tt class="descname">begin_twophase</tt><big>(</big><em>xid=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.begin_twophase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begin a two-phase or XA transaction and return a transaction
+handle.</p>
+<p>The returned object is an instance of <a class="reference internal" href="#sqlalchemy.engine.TwoPhaseTransaction" title="sqlalchemy.engine.TwoPhaseTransaction"><tt class="xref py py-class docutils literal"><span class="pre">TwoPhaseTransaction</span></tt></a>,
+which in addition to the methods provided by
+<a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>, also provides a
+<a class="reference internal" href="#sqlalchemy.engine.TwoPhaseTransaction.prepare" title="sqlalchemy.engine.TwoPhaseTransaction.prepare"><tt class="xref py py-meth docutils literal"><span class="pre">prepare()</span></tt></a> method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xid</strong> &#8211; the two phase transaction id.  If not supplied, a
+random id will be generated.</td>
+</tr>
+</tbody>
+</table>
+<p>See also <a class="reference internal" href="#sqlalchemy.engine.Connection.begin" title="sqlalchemy.engine.Connection.begin"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin()</span></tt></a>,
+<a class="reference internal" href="#sqlalchemy.engine.Connection.begin_twophase" title="sqlalchemy.engine.Connection.begin_twophase"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin_twophase()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close this <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</p>
+<p>This results in a release of the underlying database
+resources, that is, the DBAPI connection referenced
+internally. The DBAPI connection is typically restored
+back to the connection-holding <a class="reference internal" href="pooling.html#sqlalchemy.pool.Pool" title="sqlalchemy.pool.Pool"><tt class="xref py py-class docutils literal"><span class="pre">Pool</span></tt></a> referenced
+by the <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> that produced this
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>. Any transactional state present on
+the DBAPI connection is also unconditionally released via
+the DBAPI connection&#8217;s <tt class="docutils literal"><span class="pre">rollback()</span></tt> method, regardless
+of any <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a> object that may be
+outstanding with regards to this <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</p>
+<p>After <a class="reference internal" href="#sqlalchemy.engine.Connection.close" title="sqlalchemy.engine.Connection.close"><tt class="xref py py-meth docutils literal"><span class="pre">close()</span></tt></a> is called, the
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> is permanently in a closed state,
+and will allow no further operations.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.Connection.closed">
+<tt class="descname">closed</tt><a class="headerlink" href="#sqlalchemy.engine.Connection.closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if this connection is closed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.connect">
+<tt class="descname">connect</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a branched version of this <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</p>
+<p>The <a class="reference internal" href="#sqlalchemy.engine.Connection.close" title="sqlalchemy.engine.Connection.close"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.close()</span></tt></a> method on the returned
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> can be called and this
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> will remain open.</p>
+<p>This method provides usage symmetry with
+<a class="reference internal" href="#sqlalchemy.engine.Engine.connect" title="sqlalchemy.engine.Engine.connect"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.connect()</span></tt></a>, including for usage
+with context managers.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.Connection.connection">
+<tt class="descname">connection</tt><a class="headerlink" href="#sqlalchemy.engine.Connection.connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>The underlying DB-API connection managed by this Connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.contextual_connect">
+<tt class="descname">contextual_connect</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.contextual_connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a branched version of this <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</p>
+<p>The <a class="reference internal" href="#sqlalchemy.engine.Connection.close" title="sqlalchemy.engine.Connection.close"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.close()</span></tt></a> method on the returned
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> can be called and this
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> will remain open.</p>
+<p>This method provides usage symmetry with
+<a class="reference internal" href="#sqlalchemy.engine.Engine.contextual_connect" title="sqlalchemy.engine.Engine.contextual_connect"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.contextual_connect()</span></tt></a>, including for usage
+with context managers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.detach">
+<tt class="descname">detach</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.detach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detach the underlying DB-API connection from its connection pool.</p>
+<p>This Connection instance will remain usable.  When closed,
+the DB-API connection will be literally closed and not
+returned to its pool.  The pool will typically lazily create a
+new connection to replace the detached connection.</p>
+<p>This method can be used to insulate the rest of an application
+from a modified state on a connection (such as a transaction
+isolation level or similar).  Also see
+<a class="reference internal" href="interfaces.html#sqlalchemy.interfaces.PoolListener" title="sqlalchemy.interfaces.PoolListener"><tt class="xref py py-class docutils literal"><span class="pre">PoolListener</span></tt></a> for a mechanism to modify
+connection state when connections leave and return to their
+connection pool.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.execute">
+<tt class="descname">execute</tt><big>(</big><em>object</em>, <em>*multiparams</em>, <em>**params</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the a SQL statement construct and returns a
+<a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>object</strong> &#8211; <p>The statement to be executed.  May be
+one of:</p>
+<ul>
+<li>a plain string</li>
+<li>any <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.ClauseElement" title="sqlalchemy.sql.expression.ClauseElement"><tt class="xref py py-class docutils literal"><span class="pre">ClauseElement</span></tt></a> construct that is also
+a subclass of <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.Executable" title="sqlalchemy.sql.expression.Executable"><tt class="xref py py-class docutils literal"><span class="pre">Executable</span></tt></a>, such as a
+<a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.select" title="sqlalchemy.sql.expression.select"><tt class="xref py py-func docutils literal"><span class="pre">select()</span></tt></a> construct</li>
+<li>a <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.FunctionElement" title="sqlalchemy.sql.expression.FunctionElement"><tt class="xref py py-class docutils literal"><span class="pre">FunctionElement</span></tt></a>, such as that generated
+by <tt class="xref py py-attr docutils literal"><span class="pre">func</span></tt>, will be automatically wrapped in
+a SELECT statement, which is then executed.</li>
+<li>a <a class="reference internal" href="schema.html#sqlalchemy.schema.DDLElement" title="sqlalchemy.schema.DDLElement"><tt class="xref py py-class docutils literal"><span class="pre">DDLElement</span></tt></a> object</li>
+<li>a <a class="reference internal" href="schema.html#sqlalchemy.schema.DefaultGenerator" title="sqlalchemy.schema.DefaultGenerator"><tt class="xref py py-class docutils literal"><span class="pre">DefaultGenerator</span></tt></a> object</li>
+<li>a <a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a> object</li>
+</ul>
+</li>
+<li><strong>*multiparams/**params</strong> &#8211; <p>represent bound parameter
+values to be used in the execution.   Typically,
+the format is either a collection of one or more
+dictionaries passed to *multiparams:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">insert</span><span class="p">(),</span>
+    <span class="p">{</span><span class="s">&quot;id&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;value&quot;</span><span class="p">:</span><span class="s">&quot;v1&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&quot;id&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s">&quot;value&quot;</span><span class="p">:</span><span class="s">&quot;v2&quot;</span><span class="p">}</span>
+<span class="p">)</span></pre></div>
+</div>
+<p>...or individual key/values interpreted by **params:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">insert</span><span class="p">(),</span> <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s">&quot;v1&quot;</span>
+<span class="p">)</span></pre></div>
+</div>
+<p>In the case that a plain SQL string is passed, and the underlying
+DBAPI accepts positional bind parameters, a collection of tuples
+or individual values in *multiparams may be passed:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="s">&quot;INSERT INTO table (id, value) VALUES (?, ?)&quot;</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;v1&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&quot;v2&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="s">&quot;INSERT INTO table (id, value) VALUES (?, ?)&quot;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;v1&quot;</span>
+<span class="p">)</span></pre></div>
+</div>
+<p>Note above, the usage of a question mark &#8221;?&#8221; or other
+symbol is contingent upon the &#8220;paramstyle&#8221; accepted by the DBAPI
+in use, which may be any of &#8220;qmark&#8221;, &#8220;named&#8221;, &#8220;pyformat&#8221;, &#8220;format&#8221;,
+&#8220;numeric&#8221;.   See <a class="reference external" href="http://www.python.org/dev/peps/pep-0249/">pep-249</a>
+for details on paramstyle.</p>
+<p>To execute a textual SQL statement which uses bound parameters in a
+DBAPI-agnostic way, use the <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.text" title="sqlalchemy.sql.expression.text"><tt class="xref py py-func docutils literal"><span class="pre">text()</span></tt></a> construct.</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.execution_options">
+<tt class="descname">execution_options</tt><big>(</big><em>**opt</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.execution_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set non-SQL options for the connection which take effect
+during execution.</p>
+<p>The method returns a copy of this <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> which references
+the same underlying DBAPI connection, but also defines the given
+execution options which will take effect for a call to
+<a class="reference internal" href="#sqlalchemy.engine.Connection.execute" title="sqlalchemy.engine.Connection.execute"><tt class="xref py py-meth docutils literal"><span class="pre">execute()</span></tt></a>. As the new <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> references the same
+underlying resource, it&#8217;s usually a good idea to ensure that the copies
+would be discarded immediately, which is implicit if used as in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execution_options</span><span class="p">(</span><span class="n">stream_results</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span>\
+                    <span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">)</span></pre></div>
+</div>
+<p>Note that any key/value can be passed to
+<a class="reference internal" href="#sqlalchemy.engine.Connection.execution_options" title="sqlalchemy.engine.Connection.execution_options"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.execution_options()</span></tt></a>, and it will be stored in the
+<tt class="docutils literal"><span class="pre">_execution_options</span></tt> dictionary of the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.   It
+is suitable for usage by end-user schemes to communicate with
+event listeners, for example.</p>
+<p>The keywords that are currently recognized by SQLAlchemy itself
+include all those listed under <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.Executable.execution_options" title="sqlalchemy.sql.expression.Executable.execution_options"><tt class="xref py py-meth docutils literal"><span class="pre">Executable.execution_options()</span></tt></a>,
+as well as others that are specific to <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>autocommit</strong> &#8211; Available on: Connection, statement.
+When True, a COMMIT will be invoked after execution
+when executed in &#8216;autocommit&#8217; mode, i.e. when an explicit
+transaction is not begun on the connection. Note that DBAPI
+connections by default are always in a transaction - SQLAlchemy uses
+rules applied to different kinds of statements to determine if
+COMMIT will be invoked in order to provide its &#8220;autocommit&#8221; feature.
+Typically, all INSERT/UPDATE/DELETE statements as well as
+CREATE/DROP statements have autocommit behavior enabled; SELECT
+constructs do not. Use this option when invoking a SELECT or other
+specific SQL construct where COMMIT is desired (typically when
+calling stored procedures and such), and an explicit
+transaction is not in progress.</li>
+<li><strong>compiled_cache</strong> &#8211; <p>Available on: Connection.
+A dictionary where <a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a> objects
+will be cached when the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> compiles a clause
+expression into a <a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a> object.
+It is the user&#8217;s responsibility to
+manage the size of this dictionary, which will have keys
+corresponding to the dialect, clause element, the column
+names within the VALUES or SET clause of an INSERT or UPDATE,
+as well as the &#8220;batch&#8221; mode for an INSERT or UPDATE statement.
+The format of this dictionary is not guaranteed to stay the
+same in future releases.</p>
+<p>Note that the ORM makes use of its own &#8220;compiled&#8221; caches for
+some operations, including flush operations.  The caching
+used by the ORM internally supersedes a cache dictionary
+specified here.</p>
+</li>
+<li><strong>isolation_level</strong> &#8211; <p>Available on: Connection.
+Set the transaction isolation level for
+the lifespan of this connection.   Valid values include
+those string values accepted by the <tt class="docutils literal"><span class="pre">isolation_level</span></tt>
+parameter passed to <a class="reference internal" href="engines.html#sqlalchemy.create_engine" title="sqlalchemy.create_engine"><tt class="xref py py-func docutils literal"><span class="pre">create_engine()</span></tt></a>, and are
+database specific, including those for <a class="reference internal" href="../dialects/sqlite.html"><em>SQLite</em></a>,
+<a class="reference internal" href="../dialects/postgresql.html"><em>PostgreSQL</em></a> - see those dialect&#8217;s documentation
+for further info.</p>
+<p>Note that this option necessarily affects the underlying
+DBAPI connection for the lifespan of the originating
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, and is not per-execution. This
+setting is not removed until the underlying DBAPI connection
+is returned to the connection pool, i.e.
+the <a class="reference internal" href="#sqlalchemy.engine.Connection.close" title="sqlalchemy.engine.Connection.close"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.close()</span></tt></a> method is called.</p>
+</li>
+<li><strong>no_parameters</strong> &#8211; <p>When <tt class="docutils literal"><span class="pre">True</span></tt>, if the final parameter
+list or dictionary is totally empty, will invoke the
+statement on the cursor as <tt class="docutils literal"><span class="pre">cursor.execute(statement)</span></tt>,
+not passing the parameter collection at all.
+Some DBAPIs such as psycopg2 and mysql-python consider
+percent signs as significant only when parameters are
+present; this option allows code to generate SQL
+containing percent signs (and possibly other characters)
+that is neutral regarding whether it&#8217;s executed by the DBAPI
+or piped into a script that&#8217;s later invoked by
+command line tools.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.7.6.</span></p>
+</li>
+<li><strong>stream_results</strong> &#8211; Available on: Connection, statement.
+Indicate to the dialect that results should be
+&#8220;streamed&#8221; and not pre-buffered, if possible.  This is a limitation
+of many DBAPIs.  The flag is currently understood only by the
+psycopg2 dialect.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.in_transaction">
+<tt class="descname">in_transaction</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.in_transaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if a transaction is in progress.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.Connection.info">
+<tt class="descname">info</tt><a class="headerlink" href="#sqlalchemy.engine.Connection.info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Info dictionary associated with the underlying DBAPI connection
+referred to by this <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, allowing user-defined
+data to be associated with the connection.</p>
+<p>The data here will follow along with the DBAPI connection including
+after it is returned to the connection pool and used again
+in subsequent instances of <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.invalidate">
+<tt class="descname">invalidate</tt><big>(</big><em>exception=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.invalidate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invalidate the underlying DBAPI connection associated with
+this Connection.</p>
+<p>The underlying DB-API connection is literally closed (if
+possible), and is discarded.  Its source connection pool will
+typically lazily create a new connection to replace it.</p>
+<p>Upon the next usage, this Connection will attempt to reconnect
+to the pool with a new connection.</p>
+<p>Transactions in progress remain in an &#8220;opened&#8221; state (even though the
+actual transaction is gone); these must be explicitly rolled back
+before a reconnect on this Connection can proceed. This is to prevent
+applications from accidentally continuing their transactional
+operations in a non-transactional state.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.Connection.invalidated">
+<tt class="descname">invalidated</tt><a class="headerlink" href="#sqlalchemy.engine.Connection.invalidated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if this connection was invalidated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.run_callable">
+<tt class="descname">run_callable</tt><big>(</big><em>callable_</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.run_callable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a callable object or function, execute it, passing
+a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> as the first argument.</p>
+<p>The given *args and **kwargs are passed subsequent
+to the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> argument.</p>
+<p>This function, along with <a class="reference internal" href="#sqlalchemy.engine.Engine.run_callable" title="sqlalchemy.engine.Engine.run_callable"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.run_callable()</span></tt></a>,
+allows a function to be run with a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>
+or <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> object without the need to know
+which one is being dealt with.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.scalar">
+<tt class="descname">scalar</tt><big>(</big><em>object</em>, <em>*multiparams</em>, <em>**params</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.scalar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes and returns the first column of the first row.</p>
+<p>The underlying result/cursor is closed after execution.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connection.transaction">
+<tt class="descname">transaction</tt><big>(</big><em>callable_</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connection.transaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the given function within a transaction boundary.</p>
+<p>The function is passed this <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>
+as the first argument, followed by the given *args and **kwargs,
+e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">do_something</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;some statement&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span><span class="n">x</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">})</span>
+
+<span class="n">conn</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="n">do_something</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></pre></div>
+</div>
+<p>The operations inside the function are all invoked within the
+context of a single <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>.
+Upon success, the transaction is committed.  If an
+exception is raised, the transaction is rolled back
+before propagating the exception.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The <a class="reference internal" href="#sqlalchemy.engine.Connection.transaction" title="sqlalchemy.engine.Connection.transaction"><tt class="xref py py-meth docutils literal"><span class="pre">transaction()</span></tt></a> method is superseded by
+the usage of the Python <tt class="docutils literal"><span class="pre">with:</span></tt> statement, which can
+be used with <a class="reference internal" href="#sqlalchemy.engine.Connection.begin" title="sqlalchemy.engine.Connection.begin"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin()</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">conn</span><span class="o">.</span><span class="n">begin</span><span class="p">():</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;some statement&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">})</span></pre></div>
+</div>
+<p>As well as with <a class="reference internal" href="#sqlalchemy.engine.Engine.begin" title="sqlalchemy.engine.Engine.begin"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.begin()</span></tt></a>:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;some statement&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">})</span></pre></div>
+</div>
+</div>
+<p>See also:</p>
+<blockquote>
+<div><p><a class="reference internal" href="#sqlalchemy.engine.Engine.begin" title="sqlalchemy.engine.Engine.begin"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.begin()</span></tt></a> - engine-level transactional
+context</p>
+<p><a class="reference internal" href="#sqlalchemy.engine.Engine.transaction" title="sqlalchemy.engine.Engine.transaction"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.transaction()</span></tt></a> - engine-level version of
+<a class="reference internal" href="#sqlalchemy.engine.Connection.transaction" title="sqlalchemy.engine.Connection.transaction"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.transaction()</span></tt></a></p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.engine.Connectable">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.</tt><tt class="descname">Connectable</tt><a class="headerlink" href="#sqlalchemy.engine.Connectable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Interface for an object which supports execution of SQL constructs.</p>
+<p>The two implementations of <a class="reference internal" href="#sqlalchemy.engine.Connectable" title="sqlalchemy.engine.Connectable"><tt class="xref py py-class docutils literal"><span class="pre">Connectable</span></tt></a> are
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> and <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>.</p>
+<p>Connectable must also implement the &#8216;dialect&#8217; member which references a
+<a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a> instance.</p>
+<dl class="method">
+<dt id="sqlalchemy.engine.Connectable.connect">
+<tt class="descname">connect</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connectable.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> object.</p>
+<p>Depending on context, this may be <tt class="docutils literal"><span class="pre">self</span></tt> if this object
+is already an instance of <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, or a newly
+procured <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> if this object is an instance
+of <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connectable.contextual_connect">
+<tt class="descname">contextual_connect</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connectable.contextual_connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> object which may be part of an ongoing
+context.</p>
+<p>Depending on context, this may be <tt class="docutils literal"><span class="pre">self</span></tt> if this object
+is already an instance of <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, or a newly
+procured <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> if this object is an instance
+of <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connectable.create">
+<tt class="descname">create</tt><big>(</big><em>entity</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connectable.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Emit CREATE statements for the given schema entity.</p>
+<p class="deprecated">
+<span class="versionmodified">Deprecated since version 0.7: </span>Use the create() method on the given schema object directly, i.e. <a class="reference internal" href="schema.html#sqlalchemy.schema.Table.create" title="sqlalchemy.schema.Table.create"><tt class="xref py py-meth docutils literal"><span class="pre">Table.create()</span></tt></a>, <a class="reference internal" href="schema.html#sqlalchemy.schema.Index.create" title="sqlalchemy.schema.Index.create"><tt class="xref py py-meth docutils literal"><span class="pre">Index.create()</span></tt></a>, <a class="reference internal" href="schema.html#sqlalchemy.schema.MetaData.create_all" title="sqlalchemy.schema.MetaData.create_all"><tt class="xref py py-meth docutils literal"><span class="pre">MetaData.create_all()</span></tt></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connectable.drop">
+<tt class="descname">drop</tt><big>(</big><em>entity</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connectable.drop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Emit DROP statements for the given schema entity.</p>
+<p class="deprecated">
+<span class="versionmodified">Deprecated since version 0.7: </span>Use the drop() method on the given schema object directly, i.e. <a class="reference internal" href="schema.html#sqlalchemy.schema.Table.drop" title="sqlalchemy.schema.Table.drop"><tt class="xref py py-meth docutils literal"><span class="pre">Table.drop()</span></tt></a>, <a class="reference internal" href="schema.html#sqlalchemy.schema.Index.drop" title="sqlalchemy.schema.Index.drop"><tt class="xref py py-meth docutils literal"><span class="pre">Index.drop()</span></tt></a>, <a class="reference internal" href="schema.html#sqlalchemy.schema.MetaData.drop_all" title="sqlalchemy.schema.MetaData.drop_all"><tt class="xref py py-meth docutils literal"><span class="pre">MetaData.drop_all()</span></tt></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connectable.execute">
+<tt class="descname">execute</tt><big>(</big><em>object</em>, <em>*multiparams</em>, <em>**params</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connectable.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the given construct and returns a <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Connectable.scalar">
+<tt class="descname">scalar</tt><big>(</big><em>object</em>, <em>*multiparams</em>, <em>**params</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Connectable.scalar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes and returns the first column of the first row.</p>
+<p>The underlying cursor is closed after execution.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.engine.Engine">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.</tt><tt class="descname">Engine</tt><big>(</big><em>pool</em>, <em>dialect</em>, <em>url</em>, <em>logging_name=None</em>, <em>echo=None</em>, <em>proxy=None</em>, <em>execution_options=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.engine.interfaces.Connectable</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.log.Identified</span></tt></p>
+<p>Connects a <a class="reference internal" href="pooling.html#sqlalchemy.pool.Pool" title="sqlalchemy.pool.Pool"><tt class="xref py py-class docutils literal"><span class="pre">Pool</span></tt></a> and
+<a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a> together to provide a
+source of database connectivity and behavior.</p>
+<p>An <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> object is instantiated publicly using the
+<a class="reference internal" href="engines.html#sqlalchemy.create_engine" title="sqlalchemy.create_engine"><tt class="xref py py-func docutils literal"><span class="pre">create_engine()</span></tt></a> function.</p>
+<p>See also:</p>
+<p><a class="reference internal" href="engines.html"><em>Engine Configuration</em></a></p>
+<p><a class="reference internal" href="#"><em>Working with Engines and Connections</em></a></p>
+<dl class="method">
+<dt id="sqlalchemy.engine.Engine.begin">
+<tt class="descname">begin</tt><big>(</big><em>close_with_result=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Engine.begin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a context manager delivering a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>
+with a <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a> established.</p>
+<p>E.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;insert into table (x, y, z) values (1, 2, 3)&quot;</span><span class="p">)</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;my_special_procedure(5)&quot;</span><span class="p">)</span></pre></div>
+</div>
+<p>Upon successful operation, the <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>
+is committed.  If an error is raised, the <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>
+is rolled back.</p>
+<p>The <tt class="docutils literal"><span class="pre">close_with_result</span></tt> flag is normally <tt class="docutils literal"><span class="pre">False</span></tt>, and indicates
+that the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> will be closed when the operation
+is complete.   When set to <tt class="docutils literal"><span class="pre">True</span></tt>, it indicates the
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> is in &#8220;single use&#8221; mode, where the
+<a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a> returned by the first call to
+<a class="reference internal" href="#sqlalchemy.engine.Connection.execute" title="sqlalchemy.engine.Connection.execute"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.execute()</span></tt></a> will close the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> when
+that <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a> has exhausted all result rows.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.7.6.</span></p>
+<p>See also:</p>
+<p><a class="reference internal" href="#sqlalchemy.engine.Engine.connect" title="sqlalchemy.engine.Engine.connect"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.connect()</span></tt></a> - procure a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> from
+an <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>.</p>
+<p><a class="reference internal" href="#sqlalchemy.engine.Connection.begin" title="sqlalchemy.engine.Connection.begin"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin()</span></tt></a> - start a <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>
+for a particular <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Engine.connect">
+<tt class="descname">connect</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Engine.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> object.</p>
+<p>The <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> object is a facade that uses a DBAPI
+connection internally in order to communicate with the database.  This
+connection is procured from the connection-holding <a class="reference internal" href="pooling.html#sqlalchemy.pool.Pool" title="sqlalchemy.pool.Pool"><tt class="xref py py-class docutils literal"><span class="pre">Pool</span></tt></a>
+referenced by this <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>. When the
+<a class="reference internal" href="#sqlalchemy.engine.Connection.close" title="sqlalchemy.engine.Connection.close"><tt class="xref py py-meth docutils literal"><span class="pre">close()</span></tt></a> method of the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> object
+is called, the underlying DBAPI connection is then returned to the
+connection pool, where it may be used again in a subsequent call to
+<a class="reference internal" href="#sqlalchemy.engine.Engine.connect" title="sqlalchemy.engine.Engine.connect"><tt class="xref py py-meth docutils literal"><span class="pre">connect()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Engine.contextual_connect">
+<tt class="descname">contextual_connect</tt><big>(</big><em>close_with_result=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Engine.contextual_connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> object which may be part of some
+ongoing context.</p>
+<p>By default, this method does the same thing as <a class="reference internal" href="#sqlalchemy.engine.Engine.connect" title="sqlalchemy.engine.Engine.connect"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.connect()</span></tt></a>.
+Subclasses of <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> may override this method
+to provide contextual behavior.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>close_with_result</strong> &#8211; When True, the first <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a>
+created by the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> will call the
+<a class="reference internal" href="#sqlalchemy.engine.Connection.close" title="sqlalchemy.engine.Connection.close"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.close()</span></tt></a> method of that connection as soon as any
+pending result rows are exhausted. This is used to supply the
+&#8220;connectionless execution&#8221; behavior provided by the
+<a class="reference internal" href="#sqlalchemy.engine.Engine.execute" title="sqlalchemy.engine.Engine.execute"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.execute()</span></tt></a> method.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Engine.dispose">
+<tt class="descname">dispose</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Engine.dispose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dispose of the connection pool used by this <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>.</p>
+<p>A new connection pool is created immediately after the old one has
+been disposed.   This new pool, like all SQLAlchemy connection pools,
+does not make any actual connections to the database until one is
+first requested.</p>
+<p>This method has two general use cases:</p>
+<blockquote>
+<div><ul class="simple">
+<li>When a dropped connection is detected, it is assumed that all
+connections held by the pool are potentially dropped, and
+the entire pool is replaced.</li>
+<li>An application may want to use <a class="reference internal" href="#sqlalchemy.engine.Engine.dispose" title="sqlalchemy.engine.Engine.dispose"><tt class="xref py py-meth docutils literal"><span class="pre">dispose()</span></tt></a> within a test
+suite that is creating multiple engines.</li>
+</ul>
+</div></blockquote>
+<p>It is critical to note that <a class="reference internal" href="#sqlalchemy.engine.Engine.dispose" title="sqlalchemy.engine.Engine.dispose"><tt class="xref py py-meth docutils literal"><span class="pre">dispose()</span></tt></a> does <strong>not</strong> guarantee
+that the application will release all open database connections - only
+those connections that are checked into the pool are closed.
+Connections which remain checked out or have been detached from
+the engine are not affected.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.Engine.driver">
+<tt class="descname">driver</tt><a class="headerlink" href="#sqlalchemy.engine.Engine.driver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Driver name of the <a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a>
+in use by this <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Engine.execute">
+<tt class="descname">execute</tt><big>(</big><em>statement</em>, <em>*multiparams</em>, <em>**params</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Engine.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the given construct and returns a <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a>.</p>
+<p>The arguments are the same as those used by
+<a class="reference internal" href="#sqlalchemy.engine.Connection.execute" title="sqlalchemy.engine.Connection.execute"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.execute()</span></tt></a>.</p>
+<p>Here, a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> is acquired using the
+<a class="reference internal" href="#sqlalchemy.engine.Engine.contextual_connect" title="sqlalchemy.engine.Engine.contextual_connect"><tt class="xref py py-meth docutils literal"><span class="pre">contextual_connect()</span></tt></a> method, and the statement executed
+with that connection. The returned <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a> is flagged
+such that when the <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a> is exhausted and its
+underlying cursor is closed, the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> created here
+will also be closed, which allows its associated DBAPI connection
+resource to be returned to the connection pool.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Engine.execution_options">
+<tt class="descname">execution_options</tt><big>(</big><em>**opt</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Engine.execution_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> that will provide
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> objects with the given execution options.</p>
+<p>The returned <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> remains related to the original
+<a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> in that it shares the same connection pool and
+other state:</p>
+<ul class="simple">
+<li>The <a class="reference internal" href="pooling.html#sqlalchemy.pool.Pool" title="sqlalchemy.pool.Pool"><tt class="xref py py-class docutils literal"><span class="pre">Pool</span></tt></a> used by the new <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> is the
+same instance.  The <a class="reference internal" href="#sqlalchemy.engine.Engine.dispose" title="sqlalchemy.engine.Engine.dispose"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.dispose()</span></tt></a> method will replace
+the connection pool instance for the parent engine as well
+as this one.</li>
+<li>Event listeners are &#8220;cascaded&#8221; - meaning, the new <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>
+inherits the events of the parent, and new events can be associated
+with the new <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> individually.</li>
+<li>The logging configuration and logging_name is copied from the parent
+<a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>.</li>
+</ul>
+<p>The intent of the <a class="reference internal" href="#sqlalchemy.engine.Engine.execution_options" title="sqlalchemy.engine.Engine.execution_options"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.execution_options()</span></tt></a> method is
+to implement &#8220;sharding&#8221; schemes where multiple <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>
+objects refer to the same connection pool, but are differentiated
+by options that would be consumed by a custom event:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">primary_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s">&quot;mysql://&quot;</span><span class="p">)</span>
+<span class="n">shard1</span> <span class="o">=</span> <span class="n">primary_engine</span><span class="o">.</span><span class="n">execution_options</span><span class="p">(</span><span class="n">shard_id</span><span class="o">=</span><span class="s">&quot;shard1&quot;</span><span class="p">)</span>
+<span class="n">shard2</span> <span class="o">=</span> <span class="n">primary_engine</span><span class="o">.</span><span class="n">execution_options</span><span class="p">(</span><span class="n">shard_id</span><span class="o">=</span><span class="s">&quot;shard2&quot;</span><span class="p">)</span></pre></div>
+</div>
+<p>Above, the <tt class="docutils literal"><span class="pre">shard1</span></tt> engine serves as a factory for
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> objects that will contain the execution option
+<tt class="docutils literal"><span class="pre">shard_id=shard1</span></tt>, and <tt class="docutils literal"><span class="pre">shard2</span></tt> will produce <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>
+objects that contain the execution option <tt class="docutils literal"><span class="pre">shard_id=shard2</span></tt>.</p>
+<p>An event handler can consume the above execution option to perform
+a schema switch or other operation, given a connection.  Below
+we emit a MySQL <tt class="docutils literal"><span class="pre">use</span></tt> statement to switch databases, at the same
+time keeping track of which database we&#8217;ve established using the
+<a class="reference internal" href="#sqlalchemy.engine.Connection.info" title="sqlalchemy.engine.Connection.info"><tt class="xref py py-attr docutils literal"><span class="pre">Connection.info</span></tt></a> dictionary, which gives us a persistent
+storage space that follows the DBAPI connection:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">event</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.engine</span> <span class="kn">import</span> <span class="n">Engine</span>
+
+<span class="n">shards</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;default&quot;</span><span class="p">:</span> <span class="s">&quot;base&quot;</span><span class="p">,</span> <span class="n">shard_1</span><span class="p">:</span> <span class="s">&quot;db1&quot;</span><span class="p">,</span> <span class="s">&quot;shard_2&quot;</span><span class="p">:</span> <span class="s">&quot;db2&quot;</span><span class="p">}</span>
+
+<span class="nd">@event.listens_for</span><span class="p">(</span><span class="n">Engine</span><span class="p">,</span> <span class="s">&quot;before_cursor_execute&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_switch_shard</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">stmt</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">executemany</span><span class="p">):</span>
+    <span class="n">shard_id</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">_execution_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;shard_id&#39;</span><span class="p">,</span> <span class="s">&quot;default&quot;</span><span class="p">)</span>
+    <span class="n">current_shard</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;current_shard&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">current_shard</span> <span class="o">!=</span> <span class="n">shard_id</span><span class="p">:</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;use </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">shards</span><span class="p">[</span><span class="n">shard_id</span><span class="p">])</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s">&quot;current_shard&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">shard_id</span></pre></div>
+</div>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.8.</span></p>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p><a class="reference internal" href="#sqlalchemy.engine.Connection.execution_options" title="sqlalchemy.engine.Connection.execution_options"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.execution_options()</span></tt></a> - update execution options
+on a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> object.</p>
+<p class="last"><a class="reference internal" href="#sqlalchemy.engine.Engine.update_execution_options" title="sqlalchemy.engine.Engine.update_execution_options"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.update_execution_options()</span></tt></a> - update the execution
+options for a given <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> in place.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.Engine.name">
+<tt class="descname">name</tt><a class="headerlink" href="#sqlalchemy.engine.Engine.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>String name of the <a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a>
+in use by this <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Engine.raw_connection">
+<tt class="descname">raw_connection</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Engine.raw_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a &#8220;raw&#8221; DBAPI connection from the connection pool.</p>
+<p>The returned object is a proxied version of the DBAPI
+connection object used by the underlying driver in use.
+The object will have all the same behavior as the real DBAPI
+connection, except that its <tt class="docutils literal"><span class="pre">close()</span></tt> method will result in the
+connection being returned to the pool, rather than being closed
+for real.</p>
+<p>This method provides direct DBAPI connection access for
+special situations.  In most situations, the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>
+object should be used, which is procured using the
+<a class="reference internal" href="#sqlalchemy.engine.Engine.connect" title="sqlalchemy.engine.Engine.connect"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.connect()</span></tt></a> method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Engine.run_callable">
+<tt class="descname">run_callable</tt><big>(</big><em>callable_</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Engine.run_callable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a callable object or function, execute it, passing
+a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> as the first argument.</p>
+<p>The given *args and **kwargs are passed subsequent
+to the <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> argument.</p>
+<p>This function, along with <a class="reference internal" href="#sqlalchemy.engine.Connection.run_callable" title="sqlalchemy.engine.Connection.run_callable"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.run_callable()</span></tt></a>,
+allows a function to be run with a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>
+or <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> object without the need to know
+which one is being dealt with.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Engine.table_names">
+<tt class="descname">table_names</tt><big>(</big><em>schema=None</em>, <em>connection=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Engine.table_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all table names available in the database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>schema</strong> &#8211; Optional, retrieve names from a non-default schema.</li>
+<li><strong>connection</strong> &#8211; Optional, use a specified connection. Default is
+the <tt class="docutils literal"><span class="pre">contextual_connect</span></tt> for this <tt class="docutils literal"><span class="pre">Engine</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Engine.transaction">
+<tt class="descname">transaction</tt><big>(</big><em>callable_</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Engine.transaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the given function within a transaction boundary.</p>
+<p>The function is passed a <a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> newly procured
+from <a class="reference internal" href="#sqlalchemy.engine.Engine.contextual_connect" title="sqlalchemy.engine.Engine.contextual_connect"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.contextual_connect()</span></tt></a> as the first argument,
+followed by the given *args and **kwargs.</p>
+<p>e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">do_something</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;some statement&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span><span class="n">x</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">})</span>
+
+<span class="n">engine</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="n">do_something</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></pre></div>
+</div>
+<p>The operations inside the function are all invoked within the
+context of a single <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>.
+Upon success, the transaction is committed.  If an
+exception is raised, the transaction is rolled back
+before propagating the exception.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The <a class="reference internal" href="#sqlalchemy.engine.Engine.transaction" title="sqlalchemy.engine.Engine.transaction"><tt class="xref py py-meth docutils literal"><span class="pre">transaction()</span></tt></a> method is superseded by
+the usage of the Python <tt class="docutils literal"><span class="pre">with:</span></tt> statement, which can
+be used with <a class="reference internal" href="#sqlalchemy.engine.Engine.begin" title="sqlalchemy.engine.Engine.begin"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.begin()</span></tt></a>:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;some statement&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">})</span></pre></div>
+</div>
+</div>
+<p>See also:</p>
+<blockquote>
+<div><p><a class="reference internal" href="#sqlalchemy.engine.Engine.begin" title="sqlalchemy.engine.Engine.begin"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.begin()</span></tt></a> - engine-level transactional
+context</p>
+<p><a class="reference internal" href="#sqlalchemy.engine.Connection.transaction" title="sqlalchemy.engine.Connection.transaction"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.transaction()</span></tt></a> - connection-level version of
+<a class="reference internal" href="#sqlalchemy.engine.Engine.transaction" title="sqlalchemy.engine.Engine.transaction"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.transaction()</span></tt></a></p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Engine.update_execution_options">
+<tt class="descname">update_execution_options</tt><big>(</big><em>**opt</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Engine.update_execution_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the default execution_options dictionary
+of this <a class="reference internal" href="#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>.</p>
+<p>The given keys/values in **opt are added to the
+default execution options that will be used for
+all connections.  The initial contents of this dictionary
+can be sent via the <tt class="docutils literal"><span class="pre">execution_options</span></tt> parameter
+to <a class="reference internal" href="engines.html#sqlalchemy.create_engine" title="sqlalchemy.create_engine"><tt class="xref py py-func docutils literal"><span class="pre">create_engine()</span></tt></a>.</p>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p><a class="reference internal" href="#sqlalchemy.engine.Connection.execution_options" title="sqlalchemy.engine.Connection.execution_options"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.execution_options()</span></tt></a></p>
+<p class="last"><a class="reference internal" href="#sqlalchemy.engine.Engine.execution_options" title="sqlalchemy.engine.Engine.execution_options"><tt class="xref py py-meth docutils literal"><span class="pre">Engine.execution_options()</span></tt></a></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.engine.NestedTransaction">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.</tt><tt class="descname">NestedTransaction</tt><big>(</big><em>connection</em>, <em>parent</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.NestedTransaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.engine.base.Transaction</span></tt></p>
+<p>Represent a &#8216;nested&#8217;, or SAVEPOINT transaction.</p>
+<p>A new <a class="reference internal" href="#sqlalchemy.engine.NestedTransaction" title="sqlalchemy.engine.NestedTransaction"><tt class="xref py py-class docutils literal"><span class="pre">NestedTransaction</span></tt></a> object may be procured
+using the <a class="reference internal" href="#sqlalchemy.engine.Connection.begin_nested" title="sqlalchemy.engine.Connection.begin_nested"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin_nested()</span></tt></a> method.</p>
+<p>The interface is the same as that of <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.engine.ResultProxy">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.</tt><tt class="descname">ResultProxy</tt><big>(</big><em>context</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps a DB-API cursor object to provide easier access to row columns.</p>
+<p>Individual columns may be accessed by their integer position,
+case-insensitive column name, or by <tt class="docutils literal"><span class="pre">schema.Column</span></tt>
+object. e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">row</span> <span class="o">=</span> <span class="n">fetchone</span><span class="p">()</span>
+
+<span class="n">col1</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>    <span class="c"># access via integer position</span>
+
+<span class="n">col2</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;col2&#39;</span><span class="p">]</span>   <span class="c"># access via name</span>
+
+<span class="n">col3</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">mytable</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">mycol</span><span class="p">]</span> <span class="c"># access via Column object.</span></pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">ResultProxy</span></tt> also handles post-processing of result column
+data using <tt class="docutils literal"><span class="pre">TypeEngine</span></tt> objects, which are referenced from
+the originating SQL statement that produced this result set.</p>
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.close">
+<tt class="descname">close</tt><big>(</big><em>_autoclose_connection=True</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close this ResultProxy.</p>
+<p>Closes the underlying DBAPI cursor corresponding to the execution.</p>
+<p>Note that any data cached within this ResultProxy is still available.
+For some types of results, this may include buffered rows.</p>
+<p>If this ResultProxy was generated from an implicit execution,
+the underlying Connection will also be closed (returns the
+underlying DBAPI connection to the connection pool.)</p>
+<p>This method is called automatically when:</p>
+<ul class="simple">
+<li>all result rows are exhausted using the fetchXXX() methods.</li>
+<li>cursor.description is None.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.fetchall">
+<tt class="descname">fetchall</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.fetchall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch all rows, just like DB-API <tt class="docutils literal"><span class="pre">cursor.fetchall()</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.fetchmany">
+<tt class="descname">fetchmany</tt><big>(</big><em>size=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.fetchmany" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch many rows, just like DB-API
+<tt class="docutils literal"><span class="pre">cursor.fetchmany(size=cursor.arraysize)</span></tt>.</p>
+<p>If rows are present, the cursor remains open after this is called.
+Else the cursor is automatically closed and an empty list is returned.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.fetchone">
+<tt class="descname">fetchone</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.fetchone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch one row, just like DB-API <tt class="docutils literal"><span class="pre">cursor.fetchone()</span></tt>.</p>
+<p>If a row is present, the cursor remains open after this is called.
+Else the cursor is automatically closed and None is returned.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.first">
+<tt class="descname">first</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.first" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the first row and then close the result set unconditionally.</p>
+<p>Returns None if no row is present.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.ResultProxy.inserted_primary_key">
+<tt class="descname">inserted_primary_key</tt><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.inserted_primary_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the primary key for the row just inserted.</p>
+<p>The return value is a list of scalar values
+corresponding to the list of primary key columns
+in the target table.</p>
+<p>This only applies to single row <a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.insert" title="sqlalchemy.sql.expression.insert"><tt class="xref py py-func docutils literal"><span class="pre">insert()</span></tt></a>
+constructs which did not explicitly specify
+<a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.Insert.returning" title="sqlalchemy.sql.expression.Insert.returning"><tt class="xref py py-meth docutils literal"><span class="pre">Insert.returning()</span></tt></a>.</p>
+<p>Note that primary key columns which specify a
+server_default clause,
+or otherwise do not qualify as &#8220;autoincrement&#8221;
+columns (see the notes at <a class="reference internal" href="schema.html#sqlalchemy.schema.Column" title="sqlalchemy.schema.Column"><tt class="xref py py-class docutils literal"><span class="pre">Column</span></tt></a>), and were
+generated using the database-side default, will
+appear in this list as <tt class="docutils literal"><span class="pre">None</span></tt> unless the backend
+supports &#8220;returning&#8221; and the insert statement executed
+with the &#8220;implicit returning&#8221; enabled.</p>
+<p>Raises <a class="reference internal" href="exceptions.html#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">InvalidRequestError</span></tt></a> if the executed
+statement is not a compiled expression construct
+or is not an insert() construct.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.ResultProxy.is_insert">
+<tt class="descname">is_insert</tt><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.is_insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if this <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a> is the result
+of a executing an expression language compiled
+<a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.insert" title="sqlalchemy.sql.expression.insert"><tt class="xref py py-func docutils literal"><span class="pre">expression.insert()</span></tt></a> construct.</p>
+<p>When True, this implies that the
+<a class="reference internal" href="#sqlalchemy.engine.ResultProxy.inserted_primary_key" title="sqlalchemy.engine.ResultProxy.inserted_primary_key"><tt class="xref py py-attr docutils literal"><span class="pre">inserted_primary_key</span></tt></a> attribute is accessible,
+assuming the statement did not include
+a user defined &#8220;returning&#8221; construct.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.keys">
+<tt class="descname">keys</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current set of string keys for rows.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.last_inserted_params">
+<tt class="descname">last_inserted_params</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.last_inserted_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the collection of inserted parameters from this
+execution.</p>
+<p>Raises <a class="reference internal" href="exceptions.html#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">InvalidRequestError</span></tt></a> if the executed
+statement is not a compiled expression construct
+or is not an insert() construct.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.last_updated_params">
+<tt class="descname">last_updated_params</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.last_updated_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the collection of updated parameters from this
+execution.</p>
+<p>Raises <a class="reference internal" href="exceptions.html#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">InvalidRequestError</span></tt></a> if the executed
+statement is not a compiled expression construct
+or is not an update() construct.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.lastrow_has_defaults">
+<tt class="descname">lastrow_has_defaults</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.lastrow_has_defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <tt class="docutils literal"><span class="pre">lastrow_has_defaults()</span></tt> from the underlying
+<a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.ExecutionContext" title="sqlalchemy.engine.interfaces.ExecutionContext"><tt class="xref py py-class docutils literal"><span class="pre">ExecutionContext</span></tt></a>.</p>
+<p>See <a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.ExecutionContext" title="sqlalchemy.engine.interfaces.ExecutionContext"><tt class="xref py py-class docutils literal"><span class="pre">ExecutionContext</span></tt></a> for details.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.ResultProxy.lastrowid">
+<tt class="descname">lastrowid</tt><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.lastrowid" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the &#8216;lastrowid&#8217; accessor on the DBAPI cursor.</p>
+<p>This is a DBAPI specific method and is only functional
+for those backends which support it, for statements
+where it is appropriate.  It&#8217;s behavior is not
+consistent across backends.</p>
+<p>Usage of this method is normally unnecessary when
+using insert() expression constructs; the
+<a class="reference internal" href="#sqlalchemy.engine.ResultProxy.inserted_primary_key" title="sqlalchemy.engine.ResultProxy.inserted_primary_key"><tt class="xref py py-attr docutils literal"><span class="pre">inserted_primary_key</span></tt></a> attribute provides a
+tuple of primary key values for a newly inserted row,
+regardless of database backend.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.postfetch_cols">
+<tt class="descname">postfetch_cols</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.postfetch_cols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <tt class="docutils literal"><span class="pre">postfetch_cols()</span></tt> from the underlying
+<a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.ExecutionContext" title="sqlalchemy.engine.interfaces.ExecutionContext"><tt class="xref py py-class docutils literal"><span class="pre">ExecutionContext</span></tt></a>.</p>
+<p>See <a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.ExecutionContext" title="sqlalchemy.engine.interfaces.ExecutionContext"><tt class="xref py py-class docutils literal"><span class="pre">ExecutionContext</span></tt></a> for details.</p>
+<p>Raises <a class="reference internal" href="exceptions.html#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">InvalidRequestError</span></tt></a> if the executed
+statement is not a compiled expression construct
+or is not an insert() or update() construct.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.prefetch_cols">
+<tt class="descname">prefetch_cols</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.prefetch_cols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <tt class="docutils literal"><span class="pre">prefetch_cols()</span></tt> from the underlying
+<a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.ExecutionContext" title="sqlalchemy.engine.interfaces.ExecutionContext"><tt class="xref py py-class docutils literal"><span class="pre">ExecutionContext</span></tt></a>.</p>
+<p>See <a class="reference internal" href="internals.html#sqlalchemy.engine.interfaces.ExecutionContext" title="sqlalchemy.engine.interfaces.ExecutionContext"><tt class="xref py py-class docutils literal"><span class="pre">ExecutionContext</span></tt></a> for details.</p>
+<p>Raises <a class="reference internal" href="exceptions.html#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">InvalidRequestError</span></tt></a> if the executed
+statement is not a compiled expression construct
+or is not an insert() or update() construct.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.ResultProxy.returns_rows">
+<tt class="descname">returns_rows</tt><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.returns_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if this <a class="reference internal" href="#sqlalchemy.engine.ResultProxy" title="sqlalchemy.engine.ResultProxy"><tt class="xref py py-class docutils literal"><span class="pre">ResultProxy</span></tt></a> returns rows.</p>
+<p>I.e. if it is legal to call the methods
+<a class="reference internal" href="#sqlalchemy.engine.ResultProxy.fetchone" title="sqlalchemy.engine.ResultProxy.fetchone"><tt class="xref py py-meth docutils literal"><span class="pre">fetchone()</span></tt></a>,
+<a class="reference internal" href="#sqlalchemy.engine.ResultProxy.fetchmany" title="sqlalchemy.engine.ResultProxy.fetchmany"><tt class="xref py py-meth docutils literal"><span class="pre">fetchmany()</span></tt></a>
+<a class="reference internal" href="#sqlalchemy.engine.ResultProxy.fetchall" title="sqlalchemy.engine.ResultProxy.fetchall"><tt class="xref py py-meth docutils literal"><span class="pre">fetchall()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.ResultProxy.rowcount">
+<tt class="descname">rowcount</tt><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.rowcount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the &#8216;rowcount&#8217; for this result.</p>
+<p>The &#8216;rowcount&#8217; reports the number of rows <em>matched</em>
+by the WHERE criterion of an UPDATE or DELETE statement.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Notes regarding <a class="reference internal" href="#sqlalchemy.engine.ResultProxy.rowcount" title="sqlalchemy.engine.ResultProxy.rowcount"><tt class="xref py py-attr docutils literal"><span class="pre">ResultProxy.rowcount</span></tt></a>:</p>
+<ul class="last simple">
+<li>This attribute returns the number of rows <em>matched</em>,
+which is not necessarily the same as the number of rows
+that were actually <em>modified</em> - an UPDATE statement, for example,
+may have no net change on a given row if the SET values
+given are the same as those present in the row already.
+Such a row would be matched but not modified.
+On backends that feature both styles, such as MySQL,
+rowcount is configured by default to return the match
+count in all cases.</li>
+<li><a class="reference internal" href="#sqlalchemy.engine.ResultProxy.rowcount" title="sqlalchemy.engine.ResultProxy.rowcount"><tt class="xref py py-attr docutils literal"><span class="pre">ResultProxy.rowcount</span></tt></a> is <em>only</em> useful in conjunction
+with an UPDATE or DELETE statement.  Contrary to what the Python
+DBAPI says, it does <em>not</em> return the
+number of rows available from the results of a SELECT statement
+as DBAPIs cannot support this functionality when rows are
+unbuffered.</li>
+<li><a class="reference internal" href="#sqlalchemy.engine.ResultProxy.rowcount" title="sqlalchemy.engine.ResultProxy.rowcount"><tt class="xref py py-attr docutils literal"><span class="pre">ResultProxy.rowcount</span></tt></a> may not be fully implemented by
+all dialects.  In particular, most DBAPIs do not support an
+aggregate rowcount result from an executemany call.
+The <a class="reference internal" href="#sqlalchemy.engine.ResultProxy.supports_sane_rowcount" title="sqlalchemy.engine.ResultProxy.supports_sane_rowcount"><tt class="xref py py-meth docutils literal"><span class="pre">ResultProxy.supports_sane_rowcount()</span></tt></a> and
+<a class="reference internal" href="#sqlalchemy.engine.ResultProxy.supports_sane_multi_rowcount" title="sqlalchemy.engine.ResultProxy.supports_sane_multi_rowcount"><tt class="xref py py-meth docutils literal"><span class="pre">ResultProxy.supports_sane_multi_rowcount()</span></tt></a> methods
+will report from the dialect if each usage is known to be
+supported.</li>
+<li>Statements that use RETURNING may not return a correct
+rowcount.</li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.scalar">
+<tt class="descname">scalar</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.scalar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the first column of the first row, and close the result set.</p>
+<p>Returns None if no row is present.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.supports_sane_multi_rowcount">
+<tt class="descname">supports_sane_multi_rowcount</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.supports_sane_multi_rowcount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <tt class="docutils literal"><span class="pre">supports_sane_multi_rowcount</span></tt> from the dialect.</p>
+<p>See <a class="reference internal" href="#sqlalchemy.engine.ResultProxy.rowcount" title="sqlalchemy.engine.ResultProxy.rowcount"><tt class="xref py py-attr docutils literal"><span class="pre">ResultProxy.rowcount</span></tt></a> for background.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.ResultProxy.supports_sane_rowcount">
+<tt class="descname">supports_sane_rowcount</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.ResultProxy.supports_sane_rowcount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <tt class="docutils literal"><span class="pre">supports_sane_rowcount</span></tt> from the dialect.</p>
+<p>See <a class="reference internal" href="#sqlalchemy.engine.ResultProxy.rowcount" title="sqlalchemy.engine.ResultProxy.rowcount"><tt class="xref py py-attr docutils literal"><span class="pre">ResultProxy.rowcount</span></tt></a> for background.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.engine.RowProxy">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.</tt><tt class="descname">RowProxy</tt><big>(</big><em>parent</em>, <em>row</em>, <em>processors</em>, <em>keymap</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.RowProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy values from a single cursor row.</p>
+<p>Mostly follows &#8220;ordered dictionary&#8221; behavior, mapping result
+values to the string-based column name, the integer position of
+the result in the row, as well as Column instances which can be
+mapped to the original Columns that produced this result set (for
+results that correspond to constructed SQL expressions).</p>
+<dl class="method">
+<dt id="sqlalchemy.engine.RowProxy.has_key">
+<tt class="descname">has_key</tt><big>(</big><em>key</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.RowProxy.has_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if this RowProxy contains the given key.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.RowProxy.items">
+<tt class="descname">items</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.RowProxy.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of tuples, each tuple containing a key/value pair.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.RowProxy.keys">
+<tt class="descname">keys</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.RowProxy.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the list of keys as strings represented by this RowProxy.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.engine.Transaction">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.</tt><tt class="descname">Transaction</tt><big>(</big><em>connection</em>, <em>parent</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Transaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Represent a database transaction in progress.</p>
+<p>The <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a> object is procured by
+calling the <a class="reference internal" href="#sqlalchemy.engine.Connection.begin" title="sqlalchemy.engine.Connection.begin"><tt class="xref py py-meth docutils literal"><span class="pre">begin()</span></tt></a> method of
+<a class="reference internal" href="#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s">&quot;postgresql://scott:tiger@localhost/test&quot;</span><span class="p">)</span>
+<span class="n">connection</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;insert into x (a, b) values (1, 2)&quot;</span><span class="p">)</span>
+<span class="n">trans</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></pre></div>
+</div>
+<p>The object provides <a class="reference internal" href="#sqlalchemy.engine.Transaction.rollback" title="sqlalchemy.engine.Transaction.rollback"><tt class="xref py py-meth docutils literal"><span class="pre">rollback()</span></tt></a> and <a class="reference internal" href="#sqlalchemy.engine.Transaction.commit" title="sqlalchemy.engine.Transaction.commit"><tt class="xref py py-meth docutils literal"><span class="pre">commit()</span></tt></a>
+methods in order to control transaction boundaries.  It
+also implements a context manager interface so that
+the Python <tt class="docutils literal"><span class="pre">with</span></tt> statement can be used with the
+<a class="reference internal" href="#sqlalchemy.engine.Connection.begin" title="sqlalchemy.engine.Connection.begin"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin()</span></tt></a> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">connection</span><span class="o">.</span><span class="n">begin</span><span class="p">():</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;insert into x (a, b) values (1, 2)&quot;</span><span class="p">)</span></pre></div>
+</div>
+<p>The Transaction object is <strong>not</strong> threadsafe.</p>
+<p>See also:  <a class="reference internal" href="#sqlalchemy.engine.Connection.begin" title="sqlalchemy.engine.Connection.begin"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin()</span></tt></a>, <a class="reference internal" href="#sqlalchemy.engine.Connection.begin_twophase" title="sqlalchemy.engine.Connection.begin_twophase"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin_twophase()</span></tt></a>,
+<a class="reference internal" href="#sqlalchemy.engine.Connection.begin_nested" title="sqlalchemy.engine.Connection.begin_nested"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin_nested()</span></tt></a>.</p>
+<span class="target" id="index-2"></span><dl class="method">
+<dt id="sqlalchemy.engine.Transaction.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Transaction.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close this <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>.</p>
+<p>If this transaction is the base transaction in a begin/commit
+nesting, the transaction will rollback().  Otherwise, the
+method returns.</p>
+<p>This is used to cancel a Transaction without affecting the scope of
+an enclosing transaction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Transaction.commit">
+<tt class="descname">commit</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Transaction.commit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Commit this <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.Transaction.rollback">
+<tt class="descname">rollback</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.Transaction.rollback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Roll back this <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.engine.TwoPhaseTransaction">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.</tt><tt class="descname">TwoPhaseTransaction</tt><big>(</big><em>connection</em>, <em>xid</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.TwoPhaseTransaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.engine.base.Transaction</span></tt></p>
+<p>Represent a two-phase transaction.</p>
+<p>A new <a class="reference internal" href="#sqlalchemy.engine.TwoPhaseTransaction" title="sqlalchemy.engine.TwoPhaseTransaction"><tt class="xref py py-class docutils literal"><span class="pre">TwoPhaseTransaction</span></tt></a> object may be procured
+using the <a class="reference internal" href="#sqlalchemy.engine.Connection.begin_twophase" title="sqlalchemy.engine.Connection.begin_twophase"><tt class="xref py py-meth docutils literal"><span class="pre">Connection.begin_twophase()</span></tt></a> method.</p>
+<p>The interface is the same as that of <a class="reference internal" href="#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a>
+with the addition of the <a class="reference internal" href="#sqlalchemy.engine.TwoPhaseTransaction.prepare" title="sqlalchemy.engine.TwoPhaseTransaction.prepare"><tt class="xref py py-meth docutils literal"><span class="pre">prepare()</span></tt></a> method.</p>
+<dl class="method">
+<dt id="sqlalchemy.engine.TwoPhaseTransaction.prepare">
+<tt class="descname">prepare</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.TwoPhaseTransaction.prepare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare this <a class="reference internal" href="#sqlalchemy.engine.TwoPhaseTransaction" title="sqlalchemy.engine.TwoPhaseTransaction"><tt class="xref py py-class docutils literal"><span class="pre">TwoPhaseTransaction</span></tt></a>.</p>
+<p>After a PREPARE, the transaction can be committed.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links">
+        Previous:
+        <a href="engines.html" title="previous chapter">Engine Configuration</a>
+        Next:
+        <a href="pooling.html" title="next chapter">Connection Pooling</a>
+
+    <div id="docs-copyright">
+        &copy; <a href="../copyright.html">Copyright</a> 2007-2013, the SQLAlchemy authors and contributors.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</div>
+
+</div>
+
+        
+    </body>
+</html>
+
+

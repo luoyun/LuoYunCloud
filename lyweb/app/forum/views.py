@@ -15,7 +15,7 @@ from .models import ForumCatalog, ForumTopic, ForumPost, \
     ForumTopicVote, ForumPostVote
 from .forms import TopicForm, PostForm
 
-from ytool.pagination import pagination
+from yweb.utils.pagination import pagination
 
 
 class RequestHandler(OrigHandler):

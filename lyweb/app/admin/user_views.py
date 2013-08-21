@@ -32,7 +32,7 @@ from lycustom import has_permission
 from settings import ADMIN_USER_LIST_PAGE_SIZE as USER_PS
 import settings
 
-from ytool.pagination import pagination
+from yweb.utils.pagination import pagination
 from app.resource.utils import resource_mail_notice
 
 

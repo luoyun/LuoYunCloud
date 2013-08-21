@@ -5,8 +5,6 @@ from sqlalchemy import Column, Integer, String, \
     Sequence, DateTime, Table, ForeignKey, Boolean, Text
 from sqlalchemy.orm import relationship, backref
 
-from ytime import htime, ftime
-
 from app.auth.models import User
 from yweb.orm import db
 
@@ -61,11 +59,6 @@ class LyTrace(ORMBase):
         self.comefrom = comefrom
         self.agent = agent
         self.visit = visit
-
-    def __unicode__(self):
-        return '%s: %s come from %s do "%s" , %s' % (
-            ftime(self.when), self.who.username, self.comefrom,
-            self.do, self.isok)
 
     @property
     def whois(self):

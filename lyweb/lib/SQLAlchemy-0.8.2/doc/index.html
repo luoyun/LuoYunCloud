@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <title>
+            
+    SQLAlchemy 0.8 Documentation
+
+        </title>
+        
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/docs.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '#',
+          VERSION:     '0.8.2',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/init.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+        <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="top" title="SQLAlchemy 0.8 Documentation" href="#" />
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+<div id="docs-header">
+    <h1>SQLAlchemy 0.8 Documentation</h1>
+
+    <div id="docs-search">
+    Search:
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+
+    <div id="docs-version-header">
+        Release: <span class="version-num">0.8.2</span> | Release Date: July 3, 2013
+
+
+    </div>
+
+</div>
+
+<div id="docs-top-navigation">
+    <div id="docs-top-page-control" class="docs-navigation-links">
+        <ul>
+
+        <li>
+            <a href="contents.html">Table of Contents</a> |
+            <a href="genindex.html">Index</a>
+            | <a href="_sources/index.txt">view source
+        </li>
+        </ul>
+    </div>
+
+    <div id="docs-navigation-banner">
+        <a href="#">SQLAlchemy 0.8 Documentation</a>
+
+        <h2>
+            
+                SQLAlchemy Documentation
+            
+        </h2>
+    </div>
+
+</div>
+
+<div id="docs-body-container">
+
+
+    <div id="docs-body" class="" >
+        
+<div class="section" id="sqlalchemy-documentation">
+<span id="index-toplevel"></span><h1>SQLAlchemy Documentation<a class="headerlink" href="#sqlalchemy-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>A high level view and getting set up.</p>
+<p><a class="reference internal" href="intro.html#id1"><em>Overview</em></a> |
+<a class="reference internal" href="intro.html#installation"><em>Installation Guide</em></a> |
+<a class="reference internal" href="changelog/migration_08.html"><em>Migration from 0.7</em></a> |
+<a class="reference internal" href="glossary.html"><em>Glossary</em></a> |
+<a class="reference internal" href="changelog/index.html"><em>Changelog catalog</em></a></p>
+</div>
+<div class="section" id="sqlalchemy-orm">
+<h2>SQLAlchemy ORM<a class="headerlink" href="#sqlalchemy-orm" title="Permalink to this headline">¶</a></h2>
+<p>Here, the Object Relational Mapper is introduced and
+fully described. If you want to work with higher-level SQL which is
+constructed automatically for you, as well as automated persistence
+of Python objects, proceed first to the tutorial.</p>
+<ul class="simple">
+<li><strong>Read this first:</strong>
+<a class="reference internal" href="orm/tutorial.html"><em>Object Relational Tutorial</em></a></li>
+<li><strong>ORM Configuration:</strong>
+<a class="reference internal" href="orm/mapper_config.html"><em>Mapper Configuration</em></a> |
+<a class="reference internal" href="orm/relationships.html"><em>Relationship Configuration</em></a> |
+<a class="reference internal" href="orm/inheritance.html"><em>Inheritance Mapping</em></a> |
+<a class="reference internal" href="orm/collections.html"><em>Advanced Collection Configuration</em></a></li>
+<li><strong>Configuration Extensions:</strong>
+<a class="reference internal" href="orm/extensions/declarative.html"><em>Declarative Extension</em></a> |
+<a class="reference internal" href="orm/extensions/associationproxy.html"><em>Association Proxy</em></a> |
+<a class="reference internal" href="orm/extensions/hybrid.html"><em>Hybrid Attributes</em></a> |
+<a class="reference internal" href="orm/extensions/mutable.html"><em>Mutable Scalars</em></a> |
+<a class="reference internal" href="orm/extensions/orderinglist.html"><em>Ordered List</em></a></li>
+<li><strong>ORM Usage:</strong>
+<a class="reference internal" href="orm/session.html"><em>Session Usage and Guidelines</em></a> |
+<a class="reference internal" href="orm/query.html"><em>Query API reference</em></a> |
+<a class="reference internal" href="orm/loading.html"><em>Relationship Loading Techniques</em></a></li>
+<li><strong>Extending the ORM:</strong>
+<a class="reference internal" href="orm/events.html"><em>ORM Event Interfaces</em></a> |
+<a class="reference internal" href="orm/internals.html"><em>Internals API</em></a></li>
+<li><strong>Other:</strong>
+<a class="reference internal" href="orm/examples.html"><em>Introduction to Examples</em></a> |
+<a class="reference internal" href="orm/deprecated.html"><em>Deprecated Event Interfaces</em></a> |
+<a class="reference internal" href="orm/exceptions.html"><em>ORM Exceptions</em></a> |
+<a class="reference internal" href="orm/extensions/horizontal_shard.html"><em>Horizontal Sharding</em></a> |
+<a class="reference internal" href="orm/extensions/instrumentation.html"><em>Alternate Instrumentation</em></a></li>
+</ul>
+</div>
+<div class="section" id="sqlalchemy-core">
+<h2>SQLAlchemy Core<a class="headerlink" href="#sqlalchemy-core" title="Permalink to this headline">¶</a></h2>
+<p>The breadth of SQLAlchemy&#8217;s SQL rendering engine, DBAPI
+integration, transaction integration, and schema description services
+are documented here.  In contrast to the ORM&#8217;s domain-centric mode of usage, the SQL Expression Language provides a schema-centric usage paradigm.</p>
+<ul class="simple">
+<li><strong>Read this first:</strong>
+<a class="reference internal" href="core/tutorial.html"><em>SQL Expression Language Tutorial</em></a></li>
+<li><strong>All the Built In SQL:</strong>
+<a class="reference internal" href="core/expression_api.html"><em>SQL Expression API</em></a></li>
+<li><strong>Engines, Connections, Pools:</strong>
+<a class="reference internal" href="core/engines.html"><em>Engine Configuration</em></a> |
+<a class="reference internal" href="core/connections.html"><em>Connections, Transactions</em></a> |
+<a class="reference internal" href="core/pooling.html"><em>Connection Pooling</em></a></li>
+<li><strong>Schema Definition:</strong>
+<a class="reference internal" href="core/schema.html#metadata-describing"><em>Tables and Columns</em></a> |
+<a class="reference internal" href="core/schema.html#metadata-reflection"><em>Database Introspection (Reflection)</em></a> |
+<a class="reference internal" href="core/schema.html#metadata-defaults"><em>Insert/Update Defaults</em></a> |
+<a class="reference internal" href="core/schema.html#metadata-constraints"><em>Constraints and Indexes</em></a> |
+<a class="reference internal" href="core/schema.html#metadata-ddl"><em>Using Data Definition Language (DDL)</em></a></li>
+<li><strong>Datatypes:</strong>
+<a class="reference internal" href="core/types.html"><em>Overview</em></a> |
+<a class="reference internal" href="core/types.html#types-generic"><em>Generic Types</em></a> |
+<a class="reference internal" href="core/types.html#types-sqlstandard"><em>SQL Standard Types</em></a> |
+<a class="reference internal" href="core/types.html#types-vendor"><em>Vendor Specific Types</em></a> |
+<a class="reference internal" href="core/types.html#types-custom"><em>Building Custom Types</em></a> |
+<a class="reference internal" href="core/types.html#types-operators"><em>Defining New Operators</em></a> |
+<a class="reference internal" href="core/types.html#types-api"><em>API</em></a></li>
+<li><strong>Extending the Core:</strong>
+<a class="reference internal" href="core/event.html"><em>SQLAlchemy Events</em></a> |
+<a class="reference internal" href="core/events.html"><em>Core Event Interfaces</em></a> |
+<a class="reference internal" href="core/compiler.html"><em>Creating Custom SQL Constructs</em></a> |
+<a class="reference internal" href="core/internals.html"><em>Internals API</em></a></li>
+<li><strong>Other:</strong>
+<a class="reference internal" href="core/inspection.html"><em>Runtime Inspection API</em></a> |
+<a class="reference internal" href="core/interfaces.html"><em>Deprecated Event Interfaces</em></a> |
+<a class="reference internal" href="core/exceptions.html"><em>Core Exceptions</em></a></li>
+</ul>
+</div>
+<div class="section" id="dialect-documentation">
+<h2>Dialect Documentation<a class="headerlink" href="#dialect-documentation" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>dialect</strong> is the system SQLAlchemy uses to communicate with various types of DBAPIs and databases.
+This section describes notes, options, and usage patterns regarding individual dialects.</p>
+<p><a class="reference internal" href="dialects/index.html"><em>Index of all Dialects</em></a></p>
+</div>
+</div>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links">
+
+    <div id="docs-copyright">
+        &copy; <a href="copyright.html">Copyright</a> 2007-2013, the SQLAlchemy authors and contributors.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</div>
+
+</div>
+
+        
+    </body>
+</html>
+
+

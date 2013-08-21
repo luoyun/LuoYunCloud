@@ -19,8 +19,8 @@ from tornado.web import authenticated, asynchronous
 from sqlalchemy.sql.expression import asc, desc
 from sqlalchemy import and_
 
-from lytool.filesize import size as human_size
-from ytool.pagination import pagination
+from yweb.utils.filesize import size as human_size
+from yweb.utils.pagination import pagination
 
 
 from settings import INSTANCE_DELETED_STATUS as DELETED_S

@@ -4,7 +4,6 @@
 import logging, datetime, time, re
 import tornado
 from lycustom import RequestHandler, has_permission
-from ytime import ftime
 from tornado.web import authenticated, asynchronous
 
 from app.auth.models import User
@@ -13,7 +12,7 @@ from app.message.forms import MessageForm, NewMessageForm,ReplyMessageForm
 
 from sqlalchemy.sql.expression import asc, desc
 
-from ytool.pagination import pagination
+from yweb.utils.pagination import pagination
 
 import re
 reply_regex = re.compile(r'(\s*Re:\s*|\s*回复：\s*|\s*Re：\s*|\s*回复:\s*)', re.IGNORECASE)

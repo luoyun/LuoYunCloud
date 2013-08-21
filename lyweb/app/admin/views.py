@@ -15,7 +15,7 @@ from lycustom import has_permission
 
 from sqlalchemy.sql.expression import asc, desc
 
-from lytool.filesize import size as human_size
+from yweb.utils.filesize import size as human_size
 
 
 

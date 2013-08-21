@@ -1,0 +1,478 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <title>
+            
+    
+                Core Exceptions
+             &mdash; 
+    SQLAlchemy 0.8 Documentation
+
+        </title>
+        
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/docs.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.8.2',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/init.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+        <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="top" title="SQLAlchemy 0.8 Documentation" href="../index.html" />
+        <link rel="up" title="SQLAlchemy Core" href="index.html" />
+        <link rel="next" title="Core Internals" href="internals.html" />
+        <link rel="prev" title="Deprecated Event Interfaces" href="interfaces.html" />
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+<div id="docs-header">
+    <h1>SQLAlchemy 0.8 Documentation</h1>
+
+    <div id="docs-search">
+    Search:
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+
+    <div id="docs-version-header">
+        Release: <span class="version-num">0.8.2</span> | Release Date: July 3, 2013
+
+
+    </div>
+
+</div>
+
+<div id="docs-top-navigation">
+    <div id="docs-top-page-control" class="docs-navigation-links">
+        <ul>
+            <li>Prev:
+            <a href="interfaces.html" title="previous chapter">Deprecated Event Interfaces</a>
+            </li>
+            <li>Next:
+            <a href="internals.html" title="next chapter">Core Internals</a>
+            </li>
+
+        <li>
+            <a href="../contents.html">Table of Contents</a> |
+            <a href="../genindex.html">Index</a>
+            | <a href="../_sources/core/exceptions.txt">view source
+        </li>
+        </ul>
+    </div>
+
+    <div id="docs-navigation-banner">
+        <a href="../index.html">SQLAlchemy 0.8 Documentation</a>
+                » <a href="index.html" title="SQLAlchemy Core">SQLAlchemy Core</a>
+        » 
+                Core Exceptions
+             
+
+        <h2>
+            
+                Core Exceptions
+            
+        </h2>
+    </div>
+
+</div>
+
+<div id="docs-body-container">
+
+    <div id="docs-sidebar">
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Core Exceptions</a></li>
+</ul>
+
+
+    <h4>Previous Topic</h4>
+    <p>
+    <a href="interfaces.html" title="previous chapter">Deprecated Event Interfaces</a>
+    </p>
+    <h4>Next Topic</h4>
+    <p>
+    <a href="internals.html" title="next chapter">Core Internals</a>
+    </p>
+
+
+    <h4>Quick Search</h4>
+    <p>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </p>
+
+    </div>
+
+    <div id="docs-body" class="withsidebar" >
+        
+<div class="section" id="module-sqlalchemy.exc">
+<span id="core-exceptions"></span><h1>Core Exceptions<a class="headerlink" href="#module-sqlalchemy.exc" title="Permalink to this headline">¶</a></h1>
+<p>Exceptions used with SQLAlchemy.</p>
+<p>The base exception class is <tt class="xref py py-class docutils literal"><span class="pre">SQLAlchemyError</span></tt>.  Exceptions which are
+raised as a result of DBAPI exceptions are all subclasses of
+<tt class="xref py py-class docutils literal"><span class="pre">DBAPIError</span></tt>.</p>
+<dl class="exception">
+<dt id="sqlalchemy.exc.AmbiguousForeignKeysError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">AmbiguousForeignKeysError</tt><a class="headerlink" href="#sqlalchemy.exc.AmbiguousForeignKeysError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.ArgumentError" title="sqlalchemy.exc.ArgumentError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.ArgumentError</span></tt></a></p>
+<p>Raised when more than one foreign key matching can be located
+between two selectables during a join.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.ArgumentError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">ArgumentError</tt><a class="headerlink" href="#sqlalchemy.exc.ArgumentError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.SQLAlchemyError" title="sqlalchemy.exc.SQLAlchemyError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.SQLAlchemyError</span></tt></a></p>
+<p>Raised when an invalid or conflicting function argument is supplied.</p>
+<p>This error generally corresponds to construction time state errors.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.CircularDependencyError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">CircularDependencyError</tt><big>(</big><em>message</em>, <em>cycles</em>, <em>edges</em>, <em>msg=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.CircularDependencyError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.SQLAlchemyError" title="sqlalchemy.exc.SQLAlchemyError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.SQLAlchemyError</span></tt></a></p>
+<p>Raised by topological sorts when a circular dependency is detected.</p>
+<p>There are two scenarios where this error occurs:</p>
+<ul class="simple">
+<li>In a Session flush operation, if two objects are mutually dependent
+on each other, they can not be inserted or deleted via INSERT or
+DELETE statements alone; an UPDATE will be needed to post-associate
+or pre-deassociate one of the foreign key constrained values.
+The <tt class="docutils literal"><span class="pre">post_update</span></tt> flag described at <a class="reference internal" href="../orm/relationships.html#post-update"><em>Rows that point to themselves / Mutually Dependent Rows</em></a> can resolve
+this cycle.</li>
+<li>In a <a class="reference internal" href="schema.html#sqlalchemy.schema.MetaData.create_all" title="sqlalchemy.schema.MetaData.create_all"><tt class="xref py py-meth docutils literal"><span class="pre">MetaData.create_all()</span></tt></a>, <a class="reference internal" href="schema.html#sqlalchemy.schema.MetaData.drop_all" title="sqlalchemy.schema.MetaData.drop_all"><tt class="xref py py-meth docutils literal"><span class="pre">MetaData.drop_all()</span></tt></a>,
+<a class="reference internal" href="schema.html#sqlalchemy.schema.MetaData.sorted_tables" title="sqlalchemy.schema.MetaData.sorted_tables"><tt class="xref py py-attr docutils literal"><span class="pre">MetaData.sorted_tables</span></tt></a> operation, two <a class="reference internal" href="schema.html#sqlalchemy.schema.ForeignKey" title="sqlalchemy.schema.ForeignKey"><tt class="xref py py-class docutils literal"><span class="pre">ForeignKey</span></tt></a>
+or <a class="reference internal" href="schema.html#sqlalchemy.schema.ForeignKeyConstraint" title="sqlalchemy.schema.ForeignKeyConstraint"><tt class="xref py py-class docutils literal"><span class="pre">ForeignKeyConstraint</span></tt></a> objects mutually refer to each
+other.  Apply the <tt class="docutils literal"><span class="pre">use_alter=True</span></tt> flag to one or both,
+see <a class="reference internal" href="schema.html#use-alter"><em>Creating/Dropping Foreign Key Constraints via ALTER</em></a>.</li>
+</ul>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.CompileError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">CompileError</tt><a class="headerlink" href="#sqlalchemy.exc.CompileError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.SQLAlchemyError" title="sqlalchemy.exc.SQLAlchemyError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.SQLAlchemyError</span></tt></a></p>
+<p>Raised when an error occurs during SQL compilation</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.DBAPIError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">DBAPIError</tt><big>(</big><em>statement</em>, <em>params</em>, <em>orig</em>, <em>connection_invalidated=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.DBAPIError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.StatementError" title="sqlalchemy.exc.StatementError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.StatementError</span></tt></a></p>
+<p>Raised when the execution of a database operation fails.</p>
+<p>Wraps exceptions raised by the DB-API underlying the
+database operation.  Driver-specific implementations of the standard
+DB-API exception types are wrapped by matching sub-types of SQLAlchemy&#8217;s
+<a class="reference internal" href="#sqlalchemy.exc.DBAPIError" title="sqlalchemy.exc.DBAPIError"><tt class="xref py py-class docutils literal"><span class="pre">DBAPIError</span></tt></a> when possible.  DB-API&#8217;s <tt class="docutils literal"><span class="pre">Error</span></tt> type maps to
+<a class="reference internal" href="#sqlalchemy.exc.DBAPIError" title="sqlalchemy.exc.DBAPIError"><tt class="xref py py-class docutils literal"><span class="pre">DBAPIError</span></tt></a> in SQLAlchemy, otherwise the names are identical.  Note
+that there is no guarantee that different DB-API implementations will
+raise the same exception type for any given error condition.</p>
+<p><a class="reference internal" href="#sqlalchemy.exc.DBAPIError" title="sqlalchemy.exc.DBAPIError"><tt class="xref py py-class docutils literal"><span class="pre">DBAPIError</span></tt></a> features <a class="reference internal" href="#sqlalchemy.exc.StatementError.statement" title="sqlalchemy.exc.StatementError.statement"><tt class="xref py py-attr docutils literal"><span class="pre">statement</span></tt></a>
+and <a class="reference internal" href="#sqlalchemy.exc.StatementError.params" title="sqlalchemy.exc.StatementError.params"><tt class="xref py py-attr docutils literal"><span class="pre">params</span></tt></a> attributes which supply context
+regarding the specifics of the statement which had an issue, for the
+typical case when the error was raised within the context of
+emitting a SQL statement.</p>
+<p>The wrapped exception object is available in the
+<a class="reference internal" href="#sqlalchemy.exc.StatementError.orig" title="sqlalchemy.exc.StatementError.orig"><tt class="xref py py-attr docutils literal"><span class="pre">orig</span></tt></a> attribute. Its type and properties are
+DB-API implementation specific.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.DataError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">DataError</tt><big>(</big><em>statement</em>, <em>params</em>, <em>orig</em>, <em>connection_invalidated=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.DataError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.DatabaseError" title="sqlalchemy.exc.DatabaseError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.DatabaseError</span></tt></a></p>
+<p>Wraps a DB-API DataError.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.DatabaseError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">DatabaseError</tt><big>(</big><em>statement</em>, <em>params</em>, <em>orig</em>, <em>connection_invalidated=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.DatabaseError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.DBAPIError" title="sqlalchemy.exc.DBAPIError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.DBAPIError</span></tt></a></p>
+<p>Wraps a DB-API DatabaseError.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.DisconnectionError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">DisconnectionError</tt><a class="headerlink" href="#sqlalchemy.exc.DisconnectionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.SQLAlchemyError" title="sqlalchemy.exc.SQLAlchemyError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.SQLAlchemyError</span></tt></a></p>
+<p>A disconnect is detected on a raw DB-API connection.</p>
+<p>This error is raised and consumed internally by a connection pool.  It can
+be raised by the <a class="reference internal" href="events.html#sqlalchemy.events.PoolEvents.checkout" title="sqlalchemy.events.PoolEvents.checkout"><tt class="xref py py-meth docutils literal"><span class="pre">PoolEvents.checkout()</span></tt></a> event so that the host pool
+forces a retry; the exception will be caught three times in a row before
+the pool gives up and raises <a class="reference internal" href="#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">InvalidRequestError</span></tt></a>
+regarding the connection attempt.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.exc.DontWrapMixin">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">DontWrapMixin</tt><a class="headerlink" href="#sqlalchemy.exc.DontWrapMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A mixin class which, when applied to a user-defined Exception class,
+will not be wrapped inside of <tt class="xref py py-class docutils literal"><span class="pre">StatementError</span></tt> if the error is
+emitted within the process of executing a statement.</p>
+<p>E.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sqlalchemy.exc</span> <span class="kn">import</span> <span class="n">DontWrapMixin</span>
+
+<span class="k">class</span> <span class="nc">MyCustomException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">DontWrapMixin</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">MySpecialType</span><span class="p">(</span><span class="n">TypeDecorator</span><span class="p">):</span>
+    <span class="n">impl</span> <span class="o">=</span> <span class="n">String</span>
+
+    <span class="k">def</span> <span class="nf">process_bind_param</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s">&#39;invalid&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MyCustomException</span><span class="p">(</span><span class="s">&quot;invalid!&quot;</span><span class="p">)</span></pre></div>
+</div>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.IdentifierError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">IdentifierError</tt><a class="headerlink" href="#sqlalchemy.exc.IdentifierError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.SQLAlchemyError" title="sqlalchemy.exc.SQLAlchemyError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.SQLAlchemyError</span></tt></a></p>
+<p>Raised when a schema name is beyond the max character limit</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.IntegrityError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">IntegrityError</tt><big>(</big><em>statement</em>, <em>params</em>, <em>orig</em>, <em>connection_invalidated=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.IntegrityError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.DatabaseError" title="sqlalchemy.exc.DatabaseError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.DatabaseError</span></tt></a></p>
+<p>Wraps a DB-API IntegrityError.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.InterfaceError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">InterfaceError</tt><big>(</big><em>statement</em>, <em>params</em>, <em>orig</em>, <em>connection_invalidated=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.InterfaceError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.DBAPIError" title="sqlalchemy.exc.DBAPIError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.DBAPIError</span></tt></a></p>
+<p>Wraps a DB-API InterfaceError.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.InternalError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">InternalError</tt><big>(</big><em>statement</em>, <em>params</em>, <em>orig</em>, <em>connection_invalidated=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.InternalError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.DatabaseError" title="sqlalchemy.exc.DatabaseError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.DatabaseError</span></tt></a></p>
+<p>Wraps a DB-API InternalError.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.InvalidRequestError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">InvalidRequestError</tt><a class="headerlink" href="#sqlalchemy.exc.InvalidRequestError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.SQLAlchemyError" title="sqlalchemy.exc.SQLAlchemyError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.SQLAlchemyError</span></tt></a></p>
+<p>SQLAlchemy was asked to do something it can&#8217;t do.</p>
+<p>This error generally corresponds to runtime state errors.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.NoForeignKeysError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">NoForeignKeysError</tt><a class="headerlink" href="#sqlalchemy.exc.NoForeignKeysError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.ArgumentError" title="sqlalchemy.exc.ArgumentError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.ArgumentError</span></tt></a></p>
+<p>Raised when no foreign keys can be located between two selectables
+during a join.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.NoInspectionAvailable">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">NoInspectionAvailable</tt><a class="headerlink" href="#sqlalchemy.exc.NoInspectionAvailable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.InvalidRequestError</span></tt></a></p>
+<p>A subject passed to <a class="reference internal" href="inspection.html#sqlalchemy.inspection.inspect" title="sqlalchemy.inspection.inspect"><tt class="xref py py-func docutils literal"><span class="pre">sqlalchemy.inspection.inspect()</span></tt></a> produced
+no context for inspection.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.NoReferenceError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">NoReferenceError</tt><a class="headerlink" href="#sqlalchemy.exc.NoReferenceError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.InvalidRequestError</span></tt></a></p>
+<p>Raised by <tt class="docutils literal"><span class="pre">ForeignKey</span></tt> to indicate a reference cannot be resolved.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.NoReferencedColumnError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">NoReferencedColumnError</tt><big>(</big><em>message</em>, <em>tname</em>, <em>cname</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.NoReferencedColumnError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.NoReferenceError" title="sqlalchemy.exc.NoReferenceError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.NoReferenceError</span></tt></a></p>
+<p>Raised by <tt class="docutils literal"><span class="pre">ForeignKey</span></tt> when the referred <tt class="docutils literal"><span class="pre">Column</span></tt> cannot be
+located.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.NoReferencedTableError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">NoReferencedTableError</tt><big>(</big><em>message</em>, <em>tname</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.NoReferencedTableError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.NoReferenceError" title="sqlalchemy.exc.NoReferenceError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.NoReferenceError</span></tt></a></p>
+<p>Raised by <tt class="docutils literal"><span class="pre">ForeignKey</span></tt> when the referred <tt class="docutils literal"><span class="pre">Table</span></tt> cannot be
+located.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.NoSuchColumnError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">NoSuchColumnError</tt><a class="headerlink" href="#sqlalchemy.exc.NoSuchColumnError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.KeyError</span></tt>, <a class="reference internal" href="#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.InvalidRequestError</span></tt></a></p>
+<p>A nonexistent column is requested from a <tt class="docutils literal"><span class="pre">RowProxy</span></tt>.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.NoSuchTableError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">NoSuchTableError</tt><a class="headerlink" href="#sqlalchemy.exc.NoSuchTableError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.InvalidRequestError</span></tt></a></p>
+<p>Table does not exist or is not visible to a connection.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.NotSupportedError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">NotSupportedError</tt><big>(</big><em>statement</em>, <em>params</em>, <em>orig</em>, <em>connection_invalidated=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.NotSupportedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.DatabaseError" title="sqlalchemy.exc.DatabaseError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.DatabaseError</span></tt></a></p>
+<p>Wraps a DB-API NotSupportedError.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.OperationalError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">OperationalError</tt><big>(</big><em>statement</em>, <em>params</em>, <em>orig</em>, <em>connection_invalidated=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.OperationalError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.DatabaseError" title="sqlalchemy.exc.DatabaseError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.DatabaseError</span></tt></a></p>
+<p>Wraps a DB-API OperationalError.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.ProgrammingError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">ProgrammingError</tt><big>(</big><em>statement</em>, <em>params</em>, <em>orig</em>, <em>connection_invalidated=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.ProgrammingError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.DatabaseError" title="sqlalchemy.exc.DatabaseError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.DatabaseError</span></tt></a></p>
+<p>Wraps a DB-API ProgrammingError.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.ResourceClosedError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">ResourceClosedError</tt><a class="headerlink" href="#sqlalchemy.exc.ResourceClosedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.InvalidRequestError</span></tt></a></p>
+<p>An operation was requested from a connection, cursor, or other
+object that&#8217;s in a closed state.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.SADeprecationWarning">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">SADeprecationWarning</tt><a class="headerlink" href="#sqlalchemy.exc.SADeprecationWarning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.DeprecationWarning</span></tt></p>
+<p>Issued once per usage of a deprecated API.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.SAPendingDeprecationWarning">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">SAPendingDeprecationWarning</tt><a class="headerlink" href="#sqlalchemy.exc.SAPendingDeprecationWarning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.PendingDeprecationWarning</span></tt></p>
+<p>Issued once per usage of a deprecated API.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.SAWarning">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">SAWarning</tt><a class="headerlink" href="#sqlalchemy.exc.SAWarning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.RuntimeWarning</span></tt></p>
+<p>Issued at runtime.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.SQLAlchemyError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">SQLAlchemyError</tt><a class="headerlink" href="#sqlalchemy.exc.SQLAlchemyError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+<p>Generic error class.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.StatementError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">StatementError</tt><big>(</big><em>message</em>, <em>statement</em>, <em>params</em>, <em>orig</em><big>)</big><a class="headerlink" href="#sqlalchemy.exc.StatementError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.SQLAlchemyError" title="sqlalchemy.exc.SQLAlchemyError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.SQLAlchemyError</span></tt></a></p>
+<p>An error occurred during execution of a SQL statement.</p>
+<p><a class="reference internal" href="#sqlalchemy.exc.StatementError" title="sqlalchemy.exc.StatementError"><tt class="xref py py-class docutils literal"><span class="pre">StatementError</span></tt></a> wraps the exception raised
+during execution, and features <a class="reference internal" href="#sqlalchemy.exc.StatementError.statement" title="sqlalchemy.exc.StatementError.statement"><tt class="xref py py-attr docutils literal"><span class="pre">statement</span></tt></a>
+and <a class="reference internal" href="#sqlalchemy.exc.StatementError.params" title="sqlalchemy.exc.StatementError.params"><tt class="xref py py-attr docutils literal"><span class="pre">params</span></tt></a> attributes which supply context regarding
+the specifics of the statement which had an issue.</p>
+<p>The wrapped exception object is available in
+the <a class="reference internal" href="#sqlalchemy.exc.StatementError.orig" title="sqlalchemy.exc.StatementError.orig"><tt class="xref py py-attr docutils literal"><span class="pre">orig</span></tt></a> attribute.</p>
+<dl class="attribute">
+<dt id="sqlalchemy.exc.StatementError.orig">
+<tt class="descname">orig</tt><em class="property"> = None</em><a class="headerlink" href="#sqlalchemy.exc.StatementError.orig" title="Permalink to this definition">¶</a></dt>
+<dd><p>The DBAPI exception object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.exc.StatementError.params">
+<tt class="descname">params</tt><em class="property"> = None</em><a class="headerlink" href="#sqlalchemy.exc.StatementError.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>The parameter list being used when this exception occurred.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.exc.StatementError.statement">
+<tt class="descname">statement</tt><em class="property"> = None</em><a class="headerlink" href="#sqlalchemy.exc.StatementError.statement" title="Permalink to this definition">¶</a></dt>
+<dd><p>The string SQL statement being invoked when this exception occurred.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.TimeoutError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">TimeoutError</tt><a class="headerlink" href="#sqlalchemy.exc.TimeoutError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.SQLAlchemyError" title="sqlalchemy.exc.SQLAlchemyError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.SQLAlchemyError</span></tt></a></p>
+<p>Raised when a connection pool times out on getting a connection.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="sqlalchemy.exc.UnboundExecutionError">
+<em class="property">exception </em><tt class="descclassname">sqlalchemy.exc.</tt><tt class="descname">UnboundExecutionError</tt><a class="headerlink" href="#sqlalchemy.exc.UnboundExecutionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.exc.InvalidRequestError" title="sqlalchemy.exc.InvalidRequestError"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.InvalidRequestError</span></tt></a></p>
+<p>SQL was attempted without a database connection to execute it on.</p>
+</dd></dl>
+
+</div>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links">
+        Previous:
+        <a href="interfaces.html" title="previous chapter">Deprecated Event Interfaces</a>
+        Next:
+        <a href="internals.html" title="next chapter">Core Internals</a>
+
+    <div id="docs-copyright">
+        &copy; <a href="../copyright.html">Copyright</a> 2007-2013, the SQLAlchemy authors and contributors.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</div>
+
+</div>
+
+        
+    </body>
+</html>
+
+

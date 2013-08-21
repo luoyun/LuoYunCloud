@@ -1,0 +1,1651 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <title>
+            
+    
+                Core Internals
+             &mdash; 
+    SQLAlchemy 0.8 Documentation
+
+        </title>
+        
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/docs.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.8.2',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/init.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+        <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="top" title="SQLAlchemy 0.8 Documentation" href="../index.html" />
+        <link rel="up" title="SQLAlchemy Core" href="index.html" />
+        <link rel="next" title="Dialects" href="../dialects/index.html" />
+        <link rel="prev" title="Core Exceptions" href="exceptions.html" />
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+<div id="docs-header">
+    <h1>SQLAlchemy 0.8 Documentation</h1>
+
+    <div id="docs-search">
+    Search:
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+
+    <div id="docs-version-header">
+        Release: <span class="version-num">0.8.2</span> | Release Date: July 3, 2013
+
+
+    </div>
+
+</div>
+
+<div id="docs-top-navigation">
+    <div id="docs-top-page-control" class="docs-navigation-links">
+        <ul>
+            <li>Prev:
+            <a href="exceptions.html" title="previous chapter">Core Exceptions</a>
+            </li>
+            <li>Next:
+            <a href="../dialects/index.html" title="next chapter">Dialects</a>
+            </li>
+
+        <li>
+            <a href="../contents.html">Table of Contents</a> |
+            <a href="../genindex.html">Index</a>
+            | <a href="../_sources/core/internals.txt">view source
+        </li>
+        </ul>
+    </div>
+
+    <div id="docs-navigation-banner">
+        <a href="../index.html">SQLAlchemy 0.8 Documentation</a>
+                » <a href="index.html" title="SQLAlchemy Core">SQLAlchemy Core</a>
+        » 
+                Core Internals
+             
+
+        <h2>
+            
+                Core Internals
+            
+        </h2>
+    </div>
+
+</div>
+
+<div id="docs-body-container">
+
+    <div id="docs-sidebar">
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Core Internals</a></li>
+</ul>
+
+
+    <h4>Previous Topic</h4>
+    <p>
+    <a href="exceptions.html" title="previous chapter">Core Exceptions</a>
+    </p>
+    <h4>Next Topic</h4>
+    <p>
+    <a href="../dialects/index.html" title="next chapter">Dialects</a>
+    </p>
+
+
+    <h4>Quick Search</h4>
+    <p>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </p>
+
+    </div>
+
+    <div id="docs-body" class="withsidebar" >
+        
+<div class="section" id="core-internals">
+<span id="core-internal-toplevel"></span><h1>Core Internals<a class="headerlink" href="#core-internals" title="Permalink to this headline">¶</a></h1>
+<p>Some key internal constructs are listed here.</p>
+<dl class="class">
+<dt id="sqlalchemy.engine.interfaces.Compiled">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.interfaces.</tt><tt class="descname">Compiled</tt><big>(</big><em>dialect</em>, <em>statement</em>, <em>bind=None</em>, <em>compile_kwargs=immutabledict({})</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Compiled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represent a compiled SQL or DDL expression.</p>
+<p>The <tt class="docutils literal"><span class="pre">__str__</span></tt> method of the <tt class="docutils literal"><span class="pre">Compiled</span></tt> object should produce
+the actual text of the statement.  <tt class="docutils literal"><span class="pre">Compiled</span></tt> objects are
+specific to their underlying database dialect, and also may
+or may not be specific to the columns referenced within a
+particular set of bind parameters.  In no case should the
+<tt class="docutils literal"><span class="pre">Compiled</span></tt> object be dependent on the actual values of those
+bind parameters, even though it may reference those values as
+defaults.</p>
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Compiled.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>dialect</em>, <em>statement</em>, <em>bind=None</em>, <em>compile_kwargs=immutabledict({})</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Compiled.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a new <tt class="docutils literal"><span class="pre">Compiled</span></tt> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dialect</strong> &#8211; <tt class="docutils literal"><span class="pre">Dialect</span></tt> to compile against.</li>
+<li><strong>statement</strong> &#8211; <tt class="docutils literal"><span class="pre">ClauseElement</span></tt> to be compiled.</li>
+<li><strong>bind</strong> &#8211; Optional Engine or Connection to compile this
+statement against.</li>
+<li><strong>compile_kwargs</strong> &#8211; <p>additional kwargs that will be
+passed to the initial call to <tt class="xref py py-meth docutils literal"><span class="pre">Compiled.process()</span></tt>.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.8.</span></p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Compiled.compile">
+<tt class="descname">compile</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Compiled.compile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce the internal string representation of this element.</p>
+<p class="deprecated">
+<span class="versionmodified">Deprecated since version 0.7: </span><a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a> objects now compile within the constructor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Compiled.construct_params">
+<tt class="descname">construct_params</tt><big>(</big><em>params=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Compiled.construct_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the bind params for this compiled object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>params</strong> &#8211; a dict of string/object pairs whose values will
+override bind values compiled in to the
+statement.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Compiled.execute">
+<tt class="descname">execute</tt><big>(</big><em>*multiparams</em>, <em>**params</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Compiled.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute this compiled object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.interfaces.Compiled.params">
+<tt class="descname">params</tt><a class="headerlink" href="#sqlalchemy.engine.interfaces.Compiled.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the bind params for this compiled object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Compiled.scalar">
+<tt class="descname">scalar</tt><big>(</big><em>*multiparams</em>, <em>**params</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Compiled.scalar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute this compiled object and return the result&#8217;s
+scalar value.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.interfaces.Compiled.sql_compiler">
+<tt class="descname">sql_compiler</tt><a class="headerlink" href="#sqlalchemy.engine.interfaces.Compiled.sql_compiler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a Compiled that is capable of processing SQL expressions.</p>
+<p>If this compiler is one, it would likely just return &#8216;self&#8217;.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.sql.compiler.DDLCompiler">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.sql.compiler.</tt><tt class="descname">DDLCompiler</tt><big>(</big><em>dialect</em>, <em>statement</em>, <em>bind=None</em>, <em>compile_kwargs=immutabledict({})</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.DDLCompiler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.engine.interfaces.Compiled</span></tt></a></p>
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.DDLCompiler.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>dialect</em>, <em>statement</em>, <em>bind=None</em>, <em>compile_kwargs=immutabledict({})</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.DDLCompiler.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled.__init__" title="sqlalchemy.engine.interfaces.Compiled.__init__"><tt class="xref py py-meth docutils literal"><span class="pre">__init__()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a></div>
+<p>Construct a new <tt class="docutils literal"><span class="pre">Compiled</span></tt> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dialect</strong> &#8211; <tt class="docutils literal"><span class="pre">Dialect</span></tt> to compile against.</li>
+<li><strong>statement</strong> &#8211; <tt class="docutils literal"><span class="pre">ClauseElement</span></tt> to be compiled.</li>
+<li><strong>bind</strong> &#8211; Optional Engine or Connection to compile this
+statement against.</li>
+<li><strong>compile_kwargs</strong> &#8211; <p>additional kwargs that will be
+passed to the initial call to <tt class="xref py py-meth docutils literal"><span class="pre">Compiled.process()</span></tt>.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.8.</span></p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.DDLCompiler.compile">
+<tt class="descname">compile</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.DDLCompiler.compile" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled.compile" title="sqlalchemy.engine.interfaces.Compiled.compile"><tt class="xref py py-meth docutils literal"><span class="pre">compile()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a></div>
+<p>Produce the internal string representation of this element.</p>
+<p class="deprecated">
+<span class="versionmodified">Deprecated since version 0.7: </span><a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a> objects now compile within the constructor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.DDLCompiler.define_constraint_remote_table">
+<tt class="descname">define_constraint_remote_table</tt><big>(</big><em>constraint</em>, <em>table</em>, <em>preparer</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.DDLCompiler.define_constraint_remote_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format the remote table clause of a CREATE CONSTRAINT clause.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.DDLCompiler.execute">
+<tt class="descname">execute</tt><big>(</big><em>*multiparams</em>, <em>**params</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.DDLCompiler.execute" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled.execute" title="sqlalchemy.engine.interfaces.Compiled.execute"><tt class="xref py py-meth docutils literal"><span class="pre">execute()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a></div>
+<p>Execute this compiled object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.sql.compiler.DDLCompiler.params">
+<tt class="descname">params</tt><a class="headerlink" href="#sqlalchemy.sql.compiler.DDLCompiler.params" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled.params" title="sqlalchemy.engine.interfaces.Compiled.params"><tt class="xref py py-attr docutils literal"><span class="pre">params</span></tt></a> <em>attribute of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a></div>
+<p>Return the bind params for this compiled object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.DDLCompiler.scalar">
+<tt class="descname">scalar</tt><big>(</big><em>*multiparams</em>, <em>**params</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.DDLCompiler.scalar" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled.scalar" title="sqlalchemy.engine.interfaces.Compiled.scalar"><tt class="xref py py-meth docutils literal"><span class="pre">scalar()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a></div>
+<p>Execute this compiled object and return the result&#8217;s
+scalar value.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.engine.default.DefaultDialect">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.default.</tt><tt class="descname">DefaultDialect</tt><big>(</big><em>convert_unicode=False</em>, <em>encoding='utf-8'</em>, <em>paramstyle=None</em>, <em>dbapi=None</em>, <em>implicit_returning=None</em>, <em>case_sensitive=True</em>, <em>label_length=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.engine.interfaces.Dialect</span></tt></a></p>
+<p>Default implementation of Dialect</p>
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.create_xid">
+<tt class="descname">create_xid</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.create_xid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a random two-phase transaction ID.</p>
+<p>This id will be passed to do_begin_twophase(), do_rollback_twophase(),
+do_commit_twophase().  Its format is unspecified.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.denormalize_name">
+<tt class="descname">denormalize_name</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.denormalize_name" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.denormalize_name" title="sqlalchemy.engine.interfaces.Dialect.denormalize_name"><tt class="xref py py-meth docutils literal"><span class="pre">denormalize_name()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>convert the given name to a case insensitive identifier
+for the backend if it is an all-lowercase name.</p>
+<p>this method is only used if the dialect defines
+requires_name_normalize=True.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.do_begin_twophase">
+<tt class="descname">do_begin_twophase</tt><big>(</big><em>connection</em>, <em>xid</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.do_begin_twophase" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.do_begin_twophase" title="sqlalchemy.engine.interfaces.Dialect.do_begin_twophase"><tt class="xref py py-meth docutils literal"><span class="pre">do_begin_twophase()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Begin a two phase transaction on the given connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</li>
+<li><strong>xid</strong> &#8211; xid</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.do_commit_twophase">
+<tt class="descname">do_commit_twophase</tt><big>(</big><em>connection</em>, <em>xid</em>, <em>is_prepared=True</em>, <em>recover=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.do_commit_twophase" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.do_commit_twophase" title="sqlalchemy.engine.interfaces.Dialect.do_commit_twophase"><tt class="xref py py-meth docutils literal"><span class="pre">do_commit_twophase()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Commit a two phase transaction on the given connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</li>
+<li><strong>xid</strong> &#8211; xid</li>
+<li><strong>is_prepared</strong> &#8211; whether or not
+<a class="reference internal" href="connections.html#sqlalchemy.engine.TwoPhaseTransaction.prepare" title="sqlalchemy.engine.TwoPhaseTransaction.prepare"><tt class="xref py py-meth docutils literal"><span class="pre">TwoPhaseTransaction.prepare()</span></tt></a> was called.</li>
+<li><strong>recover</strong> &#8211; if the recover flag was passed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.do_prepare_twophase">
+<tt class="descname">do_prepare_twophase</tt><big>(</big><em>connection</em>, <em>xid</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.do_prepare_twophase" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.do_prepare_twophase" title="sqlalchemy.engine.interfaces.Dialect.do_prepare_twophase"><tt class="xref py py-meth docutils literal"><span class="pre">do_prepare_twophase()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Prepare a two phase transaction on the given connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</li>
+<li><strong>xid</strong> &#8211; xid</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.do_recover_twophase">
+<tt class="descname">do_recover_twophase</tt><big>(</big><em>connection</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.do_recover_twophase" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.do_recover_twophase" title="sqlalchemy.engine.interfaces.Dialect.do_recover_twophase"><tt class="xref py py-meth docutils literal"><span class="pre">do_recover_twophase()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Recover list of uncommited prepared two phase transaction
+identifiers on the given connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.do_rollback_twophase">
+<tt class="descname">do_rollback_twophase</tt><big>(</big><em>connection</em>, <em>xid</em>, <em>is_prepared=True</em>, <em>recover=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.do_rollback_twophase" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.do_rollback_twophase" title="sqlalchemy.engine.interfaces.Dialect.do_rollback_twophase"><tt class="xref py py-meth docutils literal"><span class="pre">do_rollback_twophase()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Rollback a two phase transaction on the given connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</li>
+<li><strong>xid</strong> &#8211; xid</li>
+<li><strong>is_prepared</strong> &#8211; whether or not
+<a class="reference internal" href="connections.html#sqlalchemy.engine.TwoPhaseTransaction.prepare" title="sqlalchemy.engine.TwoPhaseTransaction.prepare"><tt class="xref py py-meth docutils literal"><span class="pre">TwoPhaseTransaction.prepare()</span></tt></a> was called.</li>
+<li><strong>recover</strong> &#8211; if the recover flag was passed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.default.DefaultDialect.execute_sequence_format">
+<tt class="descname">execute_sequence_format</tt><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.execute_sequence_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.get_columns">
+<tt class="descname">get_columns</tt><big>(</big><em>connection</em>, <em>table_name</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.get_columns" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.get_columns" title="sqlalchemy.engine.interfaces.Dialect.get_columns"><tt class="xref py py-meth docutils literal"><span class="pre">get_columns()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Return information about columns in <cite>table_name</cite>.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, a string
+<cite>table_name</cite>, and an optional string <cite>schema</cite>, return column
+information as a list of dictionaries with these keys:</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>the column&#8217;s name</dd>
+<dt>type</dt>
+<dd>[sqlalchemy.types#TypeEngine]</dd>
+<dt>nullable</dt>
+<dd>boolean</dd>
+<dt>default</dt>
+<dd>the column&#8217;s default value</dd>
+<dt>autoincrement</dt>
+<dd>boolean</dd>
+<dt>sequence</dt>
+<dd><dl class="first last docutils">
+<dt>a dictionary of the form</dt>
+<dd>{&#8216;name&#8217; : str, &#8216;start&#8217; :int, &#8216;increment&#8217;: int}</dd>
+</dl>
+</dd>
+</dl>
+<p>Additional column attributes may be present.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.get_foreign_keys">
+<tt class="descname">get_foreign_keys</tt><big>(</big><em>connection</em>, <em>table_name</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.get_foreign_keys" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.get_foreign_keys" title="sqlalchemy.engine.interfaces.Dialect.get_foreign_keys"><tt class="xref py py-meth docutils literal"><span class="pre">get_foreign_keys()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Return information about foreign_keys in <cite>table_name</cite>.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, a string
+<cite>table_name</cite>, and an optional string <cite>schema</cite>, return foreign
+key information as a list of dicts with these keys:</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>the constraint&#8217;s name</dd>
+<dt>constrained_columns</dt>
+<dd>a list of column names that make up the foreign key</dd>
+<dt>referred_schema</dt>
+<dd>the name of the referred schema</dd>
+<dt>referred_table</dt>
+<dd>the name of the referred table</dd>
+<dt>referred_columns</dt>
+<dd>a list of column names in the referred table that correspond to
+constrained_columns</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.get_indexes">
+<tt class="descname">get_indexes</tt><big>(</big><em>connection</em>, <em>table_name</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.get_indexes" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.get_indexes" title="sqlalchemy.engine.interfaces.Dialect.get_indexes"><tt class="xref py py-meth docutils literal"><span class="pre">get_indexes()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Return information about indexes in <cite>table_name</cite>.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, a string
+<cite>table_name</cite> and an optional string <cite>schema</cite>, return index
+information as a list of dictionaries with these keys:</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>the index&#8217;s name</dd>
+<dt>column_names</dt>
+<dd>list of column names in order</dd>
+<dt>unique</dt>
+<dd>boolean</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.get_isolation_level">
+<tt class="descname">get_isolation_level</tt><big>(</big><em>dbapi_conn</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.get_isolation_level" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.get_isolation_level" title="sqlalchemy.engine.interfaces.Dialect.get_isolation_level"><tt class="xref py py-meth docutils literal"><span class="pre">get_isolation_level()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Given a DBAPI connection, return its isolation level.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.get_pk_constraint">
+<tt class="descname">get_pk_constraint</tt><big>(</big><em>conn</em>, <em>table_name</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.get_pk_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compatibility method, adapts the result of get_primary_keys()
+for those dialects which don&#8217;t implement get_pk_constraint().</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.get_primary_keys">
+<tt class="descname">get_primary_keys</tt><big>(</big><em>connection</em>, <em>table_name</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.get_primary_keys" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.get_primary_keys" title="sqlalchemy.engine.interfaces.Dialect.get_primary_keys"><tt class="xref py py-meth docutils literal"><span class="pre">get_primary_keys()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Return information about primary keys in <cite>table_name</cite>.</p>
+<p>Deprecated.  This method is only called by the default
+implementation of <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.get_pk_constraint" title="sqlalchemy.engine.interfaces.Dialect.get_pk_constraint"><tt class="xref py py-meth docutils literal"><span class="pre">Dialect.get_pk_constraint()</span></tt></a>.  Dialects should
+instead implement this method directly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.get_table_names">
+<tt class="descname">get_table_names</tt><big>(</big><em>connection</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.get_table_names" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.get_table_names" title="sqlalchemy.engine.interfaces.Dialect.get_table_names"><tt class="xref py py-meth docutils literal"><span class="pre">get_table_names()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Return a list of table names for <cite>schema</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.get_view_definition">
+<tt class="descname">get_view_definition</tt><big>(</big><em>connection</em>, <em>view_name</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.get_view_definition" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.get_view_definition" title="sqlalchemy.engine.interfaces.Dialect.get_view_definition"><tt class="xref py py-meth docutils literal"><span class="pre">get_view_definition()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Return view definition.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, a string
+<cite>view_name</cite>, and an optional string <cite>schema</cite>, return the view
+definition.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.get_view_names">
+<tt class="descname">get_view_names</tt><big>(</big><em>connection</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.get_view_names" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.get_view_names" title="sqlalchemy.engine.interfaces.Dialect.get_view_names"><tt class="xref py py-meth docutils literal"><span class="pre">get_view_names()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Return a list of all view names available in the database.</p>
+<dl class="docutils">
+<dt>schema:</dt>
+<dd>Optional, retrieve names from a non-default schema.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.has_sequence">
+<tt class="descname">has_sequence</tt><big>(</big><em>connection</em>, <em>sequence_name</em>, <em>schema=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.has_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.has_sequence" title="sqlalchemy.engine.interfaces.Dialect.has_sequence"><tt class="xref py py-meth docutils literal"><span class="pre">has_sequence()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Check the existence of a particular sequence in the database.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> object and a string
+<cite>sequence_name</cite>, return True if the given sequence exists in
+the database, False otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.has_table">
+<tt class="descname">has_table</tt><big>(</big><em>connection</em>, <em>table_name</em>, <em>schema=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.has_table" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.has_table" title="sqlalchemy.engine.interfaces.Dialect.has_table"><tt class="xref py py-meth docutils literal"><span class="pre">has_table()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Check the existence of a particular table in the database.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> object and a string
+<cite>table_name</cite>, return True if the given table (possibly within
+the specified <cite>schema</cite>) exists in the database, False
+otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.normalize_name">
+<tt class="descname">normalize_name</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.normalize_name" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.normalize_name" title="sqlalchemy.engine.interfaces.Dialect.normalize_name"><tt class="xref py py-meth docutils literal"><span class="pre">normalize_name()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>convert the given name to lowercase if it is detected as
+case insensitive.</p>
+<p>this method is only used if the dialect defines
+requires_name_normalize=True.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.on_connect">
+<tt class="descname">on_connect</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.on_connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>return a callable which sets up a newly created DBAPI connection.</p>
+<p>This is used to set dialect-wide per-connection options such as
+isolation modes, unicode modes, etc.</p>
+<p>If a callable is returned, it will be assembled into a pool listener
+that receives the direct DBAPI connection, with all wrappers removed.</p>
+<p>If None is returned, no listener will be generated.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.default.DefaultDialect.preparer">
+<tt class="descname">preparer</tt><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.preparer" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">IdentifierPreparer</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.set_isolation_level">
+<tt class="descname">set_isolation_level</tt><big>(</big><em>dbapi_conn</em>, <em>level</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.set_isolation_level" title="Permalink to this definition">¶</a></dt>
+<dd><div class="inherited-member container">
+<em>inherited from the</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.set_isolation_level" title="sqlalchemy.engine.interfaces.Dialect.set_isolation_level"><tt class="xref py py-meth docutils literal"><span class="pre">set_isolation_level()</span></tt></a> <em>method of</em> <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a></div>
+<p>Given a DBAPI connection, set its isolation level.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.engine.default.DefaultDialect.statement_compiler">
+<tt class="descname">statement_compiler</tt><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.statement_compiler" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">SQLCompiler</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultDialect.type_descriptor">
+<tt class="descname">type_descriptor</tt><big>(</big><em>typeobj</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultDialect.type_descriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide a database-specific <a class="reference internal" href="types.html#sqlalchemy.types.TypeEngine" title="sqlalchemy.types.TypeEngine"><tt class="xref py py-class docutils literal"><span class="pre">TypeEngine</span></tt></a> object, given
+the generic object which comes from the types module.</p>
+<p>This method looks for a dictionary called
+<tt class="docutils literal"><span class="pre">colspecs</span></tt> as a class or instance-level variable,
+and passes on to <tt class="xref py py-func docutils literal"><span class="pre">types.adapt_type()</span></tt>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.engine.interfaces.Dialect">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.interfaces.</tt><tt class="descname">Dialect</tt><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define the behavior of a specific database and DB-API combination.</p>
+<p>Any aspect of metadata definition, SQL query generation,
+execution, result-set handling, or anything else which varies
+between databases is defined under the general category of the
+Dialect.  The Dialect acts as a factory for other
+database-specific object implementations including
+ExecutionContext, Compiled, DefaultGenerator, and TypeEngine.</p>
+<p>All Dialects implement the following attributes:</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>identifying name for the dialect from a DBAPI-neutral point of view
+(i.e. &#8216;sqlite&#8217;)</dd>
+<dt>driver</dt>
+<dd>identifying name for the dialect&#8217;s DBAPI</dd>
+<dt>positional</dt>
+<dd>True if the paramstyle for this Dialect is positional.</dd>
+<dt>paramstyle</dt>
+<dd>the paramstyle to be used (some DB-APIs support multiple
+paramstyles).</dd>
+<dt>convert_unicode</dt>
+<dd>True if Unicode conversion should be applied to all <tt class="docutils literal"><span class="pre">str</span></tt>
+types.</dd>
+<dt>encoding</dt>
+<dd>type of encoding to use for unicode, usually defaults to
+&#8216;utf-8&#8217;.</dd>
+<dt>statement_compiler</dt>
+<dd>a <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a> class used to compile SQL statements</dd>
+<dt>ddl_compiler</dt>
+<dd>a <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">Compiled</span></tt></a> class used to compile DDL statements</dd>
+<dt>server_version_info</dt>
+<dd>a tuple containing a version number for the DB backend in use.
+This value is only available for supporting dialects, and is
+typically populated during the initial connection to the database.</dd>
+<dt>default_schema_name</dt>
+<dd>the name of the default schema.  This value is only available for
+supporting dialects, and is typically populated during the
+initial connection to the database.</dd>
+<dt>execution_ctx_cls</dt>
+<dd>a <a class="reference internal" href="#sqlalchemy.engine.interfaces.ExecutionContext" title="sqlalchemy.engine.interfaces.ExecutionContext"><tt class="xref py py-class docutils literal"><span class="pre">ExecutionContext</span></tt></a> class used to handle statement execution</dd>
+<dt>execute_sequence_format</dt>
+<dd>either the &#8216;tuple&#8217; or &#8216;list&#8217; type, depending on what cursor.execute()
+accepts for the second argument (they vary).</dd>
+<dt>preparer</dt>
+<dd>a <a class="reference internal" href="#sqlalchemy.sql.compiler.IdentifierPreparer" title="sqlalchemy.sql.compiler.IdentifierPreparer"><tt class="xref py py-class docutils literal"><span class="pre">IdentifierPreparer</span></tt></a> class used to
+quote identifiers.</dd>
+<dt>supports_alter</dt>
+<dd><tt class="docutils literal"><span class="pre">True</span></tt> if the database supports <tt class="docutils literal"><span class="pre">ALTER</span> <span class="pre">TABLE</span></tt>.</dd>
+<dt>max_identifier_length</dt>
+<dd>The maximum length of identifier names.</dd>
+<dt>supports_unicode_statements</dt>
+<dd>Indicate whether the DB-API can receive SQL statements as Python
+unicode strings</dd>
+<dt>supports_unicode_binds</dt>
+<dd>Indicate whether the DB-API can receive string bind parameters
+as Python unicode strings</dd>
+<dt>supports_sane_rowcount</dt>
+<dd>Indicate whether the dialect properly implements rowcount for
+<tt class="docutils literal"><span class="pre">UPDATE</span></tt> and <tt class="docutils literal"><span class="pre">DELETE</span></tt> statements.</dd>
+<dt>supports_sane_multi_rowcount</dt>
+<dd>Indicate whether the dialect properly implements rowcount for
+<tt class="docutils literal"><span class="pre">UPDATE</span></tt> and <tt class="docutils literal"><span class="pre">DELETE</span></tt> statements when executed via
+executemany.</dd>
+<dt>preexecute_autoincrement_sequences</dt>
+<dd>True if &#8216;implicit&#8217; primary key functions must be executed separately
+in order to get their value.   This is currently oriented towards
+Postgresql.</dd>
+<dt>implicit_returning</dt>
+<dd>use RETURNING or equivalent during INSERT execution in order to load
+newly generated primary keys and other column defaults in one execution,
+which are then available via inserted_primary_key.
+If an insert statement has returning() specified explicitly,
+the &#8220;implicit&#8221; functionality is not used and inserted_primary_key
+will not be available.</dd>
+<dt>dbapi_type_map</dt>
+<dd><p class="first">A mapping of DB-API type objects present in this Dialect&#8217;s
+DB-API implementation mapped to TypeEngine implementations used
+by the dialect.</p>
+<p class="last">This is used to apply types to result sets based on the DB-API
+types present in cursor.description; it only takes effect for
+result sets against textual statements where no explicit
+typemap was present.</p>
+</dd>
+<dt>colspecs</dt>
+<dd>A dictionary of TypeEngine classes from sqlalchemy.types mapped
+to subclasses that are specific to the dialect class.  This
+dictionary is class-level only and is not accessed from the
+dialect instance itself.</dd>
+<dt>supports_default_values</dt>
+<dd>Indicates if the construct <tt class="docutils literal"><span class="pre">INSERT</span> <span class="pre">INTO</span> <span class="pre">tablename</span> <span class="pre">DEFAULT</span>
+<span class="pre">VALUES</span></tt> is supported</dd>
+<dt>supports_sequences</dt>
+<dd>Indicates if the dialect supports CREATE SEQUENCE or similar.</dd>
+<dt>sequences_optional</dt>
+<dd>If True, indicates if the &#8220;optional&#8221; flag on the Sequence() construct
+should signal to not generate a CREATE SEQUENCE. Applies only to
+dialects that support sequences. Currently used only to allow Postgresql
+SERIAL to be used on a column that specifies Sequence() for usage on
+other backends.</dd>
+<dt>supports_native_enum</dt>
+<dd>Indicates if the dialect supports a native ENUM construct.
+This will prevent types.Enum from generating a CHECK
+constraint when that type is used.</dd>
+<dt>supports_native_boolean</dt>
+<dd>Indicates if the dialect supports a native boolean construct.
+This will prevent types.Boolean from generating a CHECK
+constraint when that type is used.</dd>
+</dl>
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.connect">
+<tt class="descname">connect</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>return a callable which sets up a newly created DBAPI connection.</p>
+<p>The callable accepts a single argument &#8220;conn&#8221; which is the
+DBAPI connection itself.  It has no return value.</p>
+<p>This is used to set dialect-wide per-connection options such as
+isolation modes, unicode modes, etc.</p>
+<p>If a callable is returned, it will be assembled into a pool listener
+that receives the direct DBAPI connection, with all wrappers removed.</p>
+<p>If None is returned, no listener will be generated.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.create_connect_args">
+<tt class="descname">create_connect_args</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.create_connect_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build DB-API compatible connection arguments.</p>
+<p>Given a <a class="reference internal" href="engines.html#sqlalchemy.engine.url.URL" title="sqlalchemy.engine.url.URL"><tt class="xref py py-class docutils literal"><span class="pre">URL</span></tt></a> object, returns a tuple
+consisting of a <cite>*args</cite>/<cite>**kwargs</cite> suitable to send directly
+to the dbapi&#8217;s connect function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.create_xid">
+<tt class="descname">create_xid</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.create_xid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a two-phase transaction ID.</p>
+<p>This id will be passed to do_begin_twophase(),
+do_rollback_twophase(), do_commit_twophase().  Its format is
+unspecified.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.denormalize_name">
+<tt class="descname">denormalize_name</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.denormalize_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert the given name to a case insensitive identifier
+for the backend if it is an all-lowercase name.</p>
+<p>this method is only used if the dialect defines
+requires_name_normalize=True.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_begin">
+<tt class="descname">do_begin</tt><big>(</big><em>dbapi_connection</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_begin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide an implementation of <tt class="docutils literal"><span class="pre">connection.begin()</span></tt>, given a
+DB-API connection.</p>
+<p>The DBAPI has no dedicated &#8220;begin&#8221; method and it is expected
+that transactions are implicit.  This hook is provided for those
+DBAPIs that might need additional help in this area.</p>
+<p>Note that <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.do_begin" title="sqlalchemy.engine.interfaces.Dialect.do_begin"><tt class="xref py py-meth docutils literal"><span class="pre">Dialect.do_begin()</span></tt></a> is not called unless a
+<a class="reference internal" href="connections.html#sqlalchemy.engine.Transaction" title="sqlalchemy.engine.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">Transaction</span></tt></a> object is in use.  The
+<tt class="xref py py-meth docutils literal"><span class="pre">Dialect.do_autocommit()</span></tt>
+hook is provided for DBAPIs that need some extra commands emitted
+after a commit in order to enter the next transaction, when the
+SQLAlchemy <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> is used in it&#8217;s default &#8220;autocommit&#8221;
+mode.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dbapi_connection</strong> &#8211; a DBAPI connection, typically
+proxied within a <tt class="xref py py-class docutils literal"><span class="pre">ConnectionFairy</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_begin_twophase">
+<tt class="descname">do_begin_twophase</tt><big>(</big><em>connection</em>, <em>xid</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_begin_twophase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begin a two phase transaction on the given connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</li>
+<li><strong>xid</strong> &#8211; xid</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_close">
+<tt class="descname">do_close</tt><big>(</big><em>dbapi_connection</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide an implementation of <tt class="docutils literal"><span class="pre">connection.close()</span></tt>, given a DBAPI
+connection.</p>
+<p>This hook is called by the <a class="reference internal" href="pooling.html#sqlalchemy.pool.Pool" title="sqlalchemy.pool.Pool"><tt class="xref py py-class docutils literal"><span class="pre">Pool</span></tt></a> when a connection has been
+detached from the pool, or is being returned beyond the normal
+capacity of the pool.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.8.</span></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_commit">
+<tt class="descname">do_commit</tt><big>(</big><em>dbapi_connection</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_commit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide an implementation of <tt class="docutils literal"><span class="pre">connection.commit()</span></tt>, given a
+DB-API connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dbapi_connection</strong> &#8211; a DBAPI connection, typically
+proxied within a <tt class="xref py py-class docutils literal"><span class="pre">ConnectionFairy</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_commit_twophase">
+<tt class="descname">do_commit_twophase</tt><big>(</big><em>connection</em>, <em>xid</em>, <em>is_prepared=True</em>, <em>recover=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_commit_twophase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Commit a two phase transaction on the given connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</li>
+<li><strong>xid</strong> &#8211; xid</li>
+<li><strong>is_prepared</strong> &#8211; whether or not
+<a class="reference internal" href="connections.html#sqlalchemy.engine.TwoPhaseTransaction.prepare" title="sqlalchemy.engine.TwoPhaseTransaction.prepare"><tt class="xref py py-meth docutils literal"><span class="pre">TwoPhaseTransaction.prepare()</span></tt></a> was called.</li>
+<li><strong>recover</strong> &#8211; if the recover flag was passed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_execute">
+<tt class="descname">do_execute</tt><big>(</big><em>cursor</em>, <em>statement</em>, <em>parameters</em>, <em>context=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide an implementation of <tt class="docutils literal"><span class="pre">cursor.execute(statement,</span>
+<span class="pre">parameters)</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_execute_no_params">
+<tt class="descname">do_execute_no_params</tt><big>(</big><em>cursor</em>, <em>statement</em>, <em>parameters</em>, <em>context=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_execute_no_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide an implementation of <tt class="docutils literal"><span class="pre">cursor.execute(statement)</span></tt>.</p>
+<p>The parameter collection should not be sent.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_executemany">
+<tt class="descname">do_executemany</tt><big>(</big><em>cursor</em>, <em>statement</em>, <em>parameters</em>, <em>context=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_executemany" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide an implementation of <tt class="docutils literal"><span class="pre">cursor.executemany(statement,</span>
+<span class="pre">parameters)</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_prepare_twophase">
+<tt class="descname">do_prepare_twophase</tt><big>(</big><em>connection</em>, <em>xid</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_prepare_twophase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare a two phase transaction on the given connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</li>
+<li><strong>xid</strong> &#8211; xid</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_recover_twophase">
+<tt class="descname">do_recover_twophase</tt><big>(</big><em>connection</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_recover_twophase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recover list of uncommited prepared two phase transaction
+identifiers on the given connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_release_savepoint">
+<tt class="descname">do_release_savepoint</tt><big>(</big><em>connection</em>, <em>name</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_release_savepoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Release the named savepoint on a connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</li>
+<li><strong>name</strong> &#8211; savepoint name.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_rollback">
+<tt class="descname">do_rollback</tt><big>(</big><em>dbapi_connection</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_rollback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide an implementation of <tt class="docutils literal"><span class="pre">connection.rollback()</span></tt>, given
+a DB-API connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dbapi_connection</strong> &#8211; a DBAPI connection, typically
+proxied within a <tt class="xref py py-class docutils literal"><span class="pre">ConnectionFairy</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_rollback_to_savepoint">
+<tt class="descname">do_rollback_to_savepoint</tt><big>(</big><em>connection</em>, <em>name</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_rollback_to_savepoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rollback a connection to the named savepoint.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</li>
+<li><strong>name</strong> &#8211; savepoint name.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_rollback_twophase">
+<tt class="descname">do_rollback_twophase</tt><big>(</big><em>connection</em>, <em>xid</em>, <em>is_prepared=True</em>, <em>recover=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_rollback_twophase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rollback a two phase transaction on the given connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</li>
+<li><strong>xid</strong> &#8211; xid</li>
+<li><strong>is_prepared</strong> &#8211; whether or not
+<a class="reference internal" href="connections.html#sqlalchemy.engine.TwoPhaseTransaction.prepare" title="sqlalchemy.engine.TwoPhaseTransaction.prepare"><tt class="xref py py-meth docutils literal"><span class="pre">TwoPhaseTransaction.prepare()</span></tt></a> was called.</li>
+<li><strong>recover</strong> &#8211; if the recover flag was passed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.do_savepoint">
+<tt class="descname">do_savepoint</tt><big>(</big><em>connection</em>, <em>name</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.do_savepoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a savepoint with the given name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>connection</strong> &#8211; a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>.</li>
+<li><strong>name</strong> &#8211; savepoint name.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.get_columns">
+<tt class="descname">get_columns</tt><big>(</big><em>connection</em>, <em>table_name</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.get_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return information about columns in <cite>table_name</cite>.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, a string
+<cite>table_name</cite>, and an optional string <cite>schema</cite>, return column
+information as a list of dictionaries with these keys:</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>the column&#8217;s name</dd>
+<dt>type</dt>
+<dd>[sqlalchemy.types#TypeEngine]</dd>
+<dt>nullable</dt>
+<dd>boolean</dd>
+<dt>default</dt>
+<dd>the column&#8217;s default value</dd>
+<dt>autoincrement</dt>
+<dd>boolean</dd>
+<dt>sequence</dt>
+<dd><dl class="first last docutils">
+<dt>a dictionary of the form</dt>
+<dd>{&#8216;name&#8217; : str, &#8216;start&#8217; :int, &#8216;increment&#8217;: int}</dd>
+</dl>
+</dd>
+</dl>
+<p>Additional column attributes may be present.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.get_foreign_keys">
+<tt class="descname">get_foreign_keys</tt><big>(</big><em>connection</em>, <em>table_name</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.get_foreign_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return information about foreign_keys in <cite>table_name</cite>.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, a string
+<cite>table_name</cite>, and an optional string <cite>schema</cite>, return foreign
+key information as a list of dicts with these keys:</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>the constraint&#8217;s name</dd>
+<dt>constrained_columns</dt>
+<dd>a list of column names that make up the foreign key</dd>
+<dt>referred_schema</dt>
+<dd>the name of the referred schema</dd>
+<dt>referred_table</dt>
+<dd>the name of the referred table</dd>
+<dt>referred_columns</dt>
+<dd>a list of column names in the referred table that correspond to
+constrained_columns</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.get_indexes">
+<tt class="descname">get_indexes</tt><big>(</big><em>connection</em>, <em>table_name</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.get_indexes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return information about indexes in <cite>table_name</cite>.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, a string
+<cite>table_name</cite> and an optional string <cite>schema</cite>, return index
+information as a list of dictionaries with these keys:</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>the index&#8217;s name</dd>
+<dt>column_names</dt>
+<dd>list of column names in order</dd>
+<dt>unique</dt>
+<dd>boolean</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.get_isolation_level">
+<tt class="descname">get_isolation_level</tt><big>(</big><em>dbapi_conn</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.get_isolation_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a DBAPI connection, return its isolation level.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.get_pk_constraint">
+<tt class="descname">get_pk_constraint</tt><big>(</big><em>connection</em>, <em>table_name</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.get_pk_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return information about the primary key constraint on
+table_name`.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, a string
+<cite>table_name</cite>, and an optional string <cite>schema</cite>, return primary
+key information as a dictionary with these keys:</p>
+<dl class="docutils">
+<dt>constrained_columns</dt>
+<dd>a list of column names that make up the primary key</dd>
+<dt>name</dt>
+<dd>optional name of the primary key constraint.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.get_primary_keys">
+<tt class="descname">get_primary_keys</tt><big>(</big><em>connection</em>, <em>table_name</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.get_primary_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return information about primary keys in <cite>table_name</cite>.</p>
+<p>Deprecated.  This method is only called by the default
+implementation of <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect.get_pk_constraint" title="sqlalchemy.engine.interfaces.Dialect.get_pk_constraint"><tt class="xref py py-meth docutils literal"><span class="pre">Dialect.get_pk_constraint()</span></tt></a>.  Dialects should
+instead implement this method directly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.get_table_names">
+<tt class="descname">get_table_names</tt><big>(</big><em>connection</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.get_table_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of table names for <cite>schema</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.get_view_definition">
+<tt class="descname">get_view_definition</tt><big>(</big><em>connection</em>, <em>view_name</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.get_view_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return view definition.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>, a string
+<cite>view_name</cite>, and an optional string <cite>schema</cite>, return the view
+definition.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.get_view_names">
+<tt class="descname">get_view_names</tt><big>(</big><em>connection</em>, <em>schema=None</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.get_view_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all view names available in the database.</p>
+<dl class="docutils">
+<dt>schema:</dt>
+<dd>Optional, retrieve names from a non-default schema.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.has_sequence">
+<tt class="descname">has_sequence</tt><big>(</big><em>connection</em>, <em>sequence_name</em>, <em>schema=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.has_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the existence of a particular sequence in the database.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> object and a string
+<cite>sequence_name</cite>, return True if the given sequence exists in
+the database, False otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.has_table">
+<tt class="descname">has_table</tt><big>(</big><em>connection</em>, <em>table_name</em>, <em>schema=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.has_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the existence of a particular table in the database.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> object and a string
+<cite>table_name</cite>, return True if the given table (possibly within
+the specified <cite>schema</cite>) exists in the database, False
+otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.initialize">
+<tt class="descname">initialize</tt><big>(</big><em>connection</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called during strategized creation of the dialect with a
+connection.</p>
+<p>Allows dialects to configure options based on server version info or
+other properties.</p>
+<p>The connection passed here is a SQLAlchemy Connection object,
+with full capabilities.</p>
+<p>The initalize() method of the base dialect should be called via
+super().</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.is_disconnect">
+<tt class="descname">is_disconnect</tt><big>(</big><em>e</em>, <em>connection</em>, <em>cursor</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.is_disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the given DB-API error indicates an invalid
+connection</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.normalize_name">
+<tt class="descname">normalize_name</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.normalize_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert the given name to lowercase if it is detected as
+case insensitive.</p>
+<p>this method is only used if the dialect defines
+requires_name_normalize=True.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.reflecttable">
+<tt class="descname">reflecttable</tt><big>(</big><em>connection</em>, <em>table</em>, <em>include_columns=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.reflecttable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load table description from the database.</p>
+<p>Given a <a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a> and a
+<a class="reference internal" href="schema.html#sqlalchemy.schema.Table" title="sqlalchemy.schema.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> object, reflect its columns and
+properties from the database.  If include_columns (a list or
+set) is specified, limit the autoload to the given column
+names.</p>
+<p>The default implementation uses the
+<a class="reference internal" href="schema.html#sqlalchemy.engine.reflection.Inspector" title="sqlalchemy.engine.reflection.Inspector"><tt class="xref py py-class docutils literal"><span class="pre">Inspector</span></tt></a> interface to
+provide the output, building upon the granular table/column/
+constraint etc. methods of <a class="reference internal" href="#sqlalchemy.engine.interfaces.Dialect" title="sqlalchemy.engine.interfaces.Dialect"><tt class="xref py py-class docutils literal"><span class="pre">Dialect</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.reset_isolation_level">
+<tt class="descname">reset_isolation_level</tt><big>(</big><em>dbapi_conn</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.reset_isolation_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a DBAPI connection, revert its isolation to the default.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.Dialect.set_isolation_level">
+<tt class="descname">set_isolation_level</tt><big>(</big><em>dbapi_conn</em>, <em>level</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.set_isolation_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a DBAPI connection, set its isolation level.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="sqlalchemy.engine.interfaces.Dialect.type_descriptor">
+<em class="property">classmethod </em><tt class="descname">type_descriptor</tt><big>(</big><em>typeobj</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.Dialect.type_descriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform a generic type to a dialect-specific type.</p>
+<p>Dialect classes will usually use the
+<tt class="xref py py-func docutils literal"><span class="pre">types.adapt_type()</span></tt> function in the types module to
+accomplish this.</p>
+<p>The returned result is cached <em>per dialect class</em> so can
+contain no dialect-instance state.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.engine.default.DefaultExecutionContext">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.default.</tt><tt class="descname">DefaultExecutionContext</tt><a class="headerlink" href="#sqlalchemy.engine.default.DefaultExecutionContext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.engine.interfaces.ExecutionContext" title="sqlalchemy.engine.interfaces.ExecutionContext"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.engine.interfaces.ExecutionContext</span></tt></a></p>
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultExecutionContext.get_lastrowid">
+<tt class="descname">get_lastrowid</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultExecutionContext.get_lastrowid" title="Permalink to this definition">¶</a></dt>
+<dd><p>return self.cursor.lastrowid, or equivalent, after an INSERT.</p>
+<p>This may involve calling special cursor functions,
+issuing a new SELECT on the cursor (or a new one),
+or returning a stored value that was
+calculated within post_exec().</p>
+<p>This function will only be called for dialects
+which support &#8220;implicit&#8221; primary key generation,
+keep preexecute_autoincrement_sequences set to False,
+and when no explicit id value was bound to the
+statement.</p>
+<p>The function is called once, directly after
+post_exec() and before the transaction is committed
+or ResultProxy is generated.   If the post_exec()
+method assigns a value to <cite>self._lastrowid</cite>, the
+value is used in place of calling get_lastrowid().</p>
+<p>Note that this method is <em>not</em> equivalent to the
+<tt class="docutils literal"><span class="pre">lastrowid</span></tt> method on <tt class="docutils literal"><span class="pre">ResultProxy</span></tt>, which is a
+direct proxy to the DBAPI <tt class="docutils literal"><span class="pre">lastrowid</span></tt> accessor
+in all cases.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultExecutionContext.get_result_processor">
+<tt class="descname">get_result_processor</tt><big>(</big><em>type_</em>, <em>colname</em>, <em>coltype</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultExecutionContext.get_result_processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a &#8216;result processor&#8217; for a given type as present in
+cursor.description.</p>
+<p>This has a default implementation that dialects can override
+for context-sensitive result type handling.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.default.DefaultExecutionContext.set_input_sizes">
+<tt class="descname">set_input_sizes</tt><big>(</big><em>translate=None</em>, <em>exclude_types=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.default.DefaultExecutionContext.set_input_sizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a cursor and ClauseParameters, call the appropriate
+style of <tt class="docutils literal"><span class="pre">setinputsizes()</span></tt> on the cursor, using DB-API types
+from the bind parameter&#8217;s <tt class="docutils literal"><span class="pre">TypeEngine</span></tt> objects.</p>
+<p>This method only called by those dialects which require it,
+currently cx_oracle.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.engine.interfaces.ExecutionContext">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.engine.interfaces.</tt><tt class="descname">ExecutionContext</tt><a class="headerlink" href="#sqlalchemy.engine.interfaces.ExecutionContext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A messenger object for a Dialect that corresponds to a single
+execution.</p>
+<p>ExecutionContext should have these data members:</p>
+<dl class="docutils">
+<dt>connection</dt>
+<dd>Connection object which can be freely used by default value
+generators to execute SQL.  This Connection should reference the
+same underlying connection/transactional resources of
+root_connection.</dd>
+<dt>root_connection</dt>
+<dd>Connection object which is the source of this ExecutionContext.  This
+Connection may have close_with_result=True set, in which case it can
+only be used once.</dd>
+<dt>dialect</dt>
+<dd>dialect which created this ExecutionContext.</dd>
+<dt>cursor</dt>
+<dd>DB-API cursor procured from the connection,</dd>
+<dt>compiled</dt>
+<dd>if passed to constructor, sqlalchemy.engine.base.Compiled object
+being executed,</dd>
+<dt>statement</dt>
+<dd>string version of the statement to be executed.  Is either
+passed to the constructor, or must be created from the
+sql.Compiled object by the time pre_exec() has completed.</dd>
+<dt>parameters</dt>
+<dd>bind parameters passed to the execute() method.  For compiled
+statements, this is a dictionary or list of dictionaries.  For
+textual statements, it should be in a format suitable for the
+dialect&#8217;s paramstyle (i.e. dict or list of dicts for non
+positional, list or list of lists/tuples for positional).</dd>
+<dt>isinsert</dt>
+<dd>True if the statement is an INSERT.</dd>
+<dt>isupdate</dt>
+<dd>True if the statement is an UPDATE.</dd>
+<dt>should_autocommit</dt>
+<dd>True if the statement is a &#8220;committable&#8221; statement.</dd>
+<dt>prefetch_cols</dt>
+<dd>a list of Column objects for which a client-side default
+was fired off.  Applies to inserts and updates.</dd>
+<dt>postfetch_cols</dt>
+<dd>a list of Column objects for which a server-side default or
+inline SQL expression value was fired off.  Applies to inserts
+and updates.</dd>
+</dl>
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.ExecutionContext.create_cursor">
+<tt class="descname">create_cursor</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.ExecutionContext.create_cursor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new cursor generated from this ExecutionContext&#8217;s
+connection.</p>
+<p>Some dialects may wish to change the behavior of
+connection.cursor(), such as postgresql which may return a PG
+&#8220;server side&#8221; cursor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.ExecutionContext.get_rowcount">
+<tt class="descname">get_rowcount</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.ExecutionContext.get_rowcount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the DBAPI <tt class="docutils literal"><span class="pre">cursor.rowcount</span></tt> value, or in some
+cases an interpreted value.</p>
+<p>See <a class="reference internal" href="connections.html#sqlalchemy.engine.ResultProxy.rowcount" title="sqlalchemy.engine.ResultProxy.rowcount"><tt class="xref py py-attr docutils literal"><span class="pre">ResultProxy.rowcount</span></tt></a> for details on this.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.ExecutionContext.handle_dbapi_exception">
+<tt class="descname">handle_dbapi_exception</tt><big>(</big><em>e</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.ExecutionContext.handle_dbapi_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receive a DBAPI exception which occurred upon execute, result
+fetch, etc.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.ExecutionContext.lastrow_has_defaults">
+<tt class="descname">lastrow_has_defaults</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.ExecutionContext.lastrow_has_defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the last INSERT or UPDATE row contained
+inlined or database-side defaults.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.ExecutionContext.post_exec">
+<tt class="descname">post_exec</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.ExecutionContext.post_exec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after the execution of a compiled statement.</p>
+<p>If a compiled statement was passed to this ExecutionContext,
+the <cite>last_insert_ids</cite>, <cite>last_inserted_params</cite>, etc.
+datamembers should be available after this method completes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.ExecutionContext.pre_exec">
+<tt class="descname">pre_exec</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.ExecutionContext.pre_exec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called before an execution of a compiled statement.</p>
+<p>If a compiled statement was passed to this ExecutionContext,
+the <cite>statement</cite> and <cite>parameters</cite> datamembers must be
+initialized after this statement is complete.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.ExecutionContext.result">
+<tt class="descname">result</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.ExecutionContext.result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a result object corresponding to this ExecutionContext.</p>
+<p>Returns a ResultProxy.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.engine.interfaces.ExecutionContext.should_autocommit_text">
+<tt class="descname">should_autocommit_text</tt><big>(</big><em>statement</em><big>)</big><a class="headerlink" href="#sqlalchemy.engine.interfaces.ExecutionContext.should_autocommit_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the given textual statement and return True if it refers to
+a &#8220;committable&#8221; statement</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.sql.compiler.IdentifierPreparer">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.sql.compiler.</tt><tt class="descname">IdentifierPreparer</tt><big>(</big><em>dialect</em>, <em>initial_quote='&quot;'</em>, <em>final_quote=None</em>, <em>escape_quote='&quot;'</em>, <em>omit_schema=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.IdentifierPreparer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Handle quoting and case-folding of identifiers based on options.</p>
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.IdentifierPreparer.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>dialect</em>, <em>initial_quote='&quot;'</em>, <em>final_quote=None</em>, <em>escape_quote='&quot;'</em>, <em>omit_schema=False</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.IdentifierPreparer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a new <tt class="docutils literal"><span class="pre">IdentifierPreparer</span></tt> object.</p>
+<dl class="docutils">
+<dt>initial_quote</dt>
+<dd>Character that begins a delimited identifier.</dd>
+<dt>final_quote</dt>
+<dd>Character that ends a delimited identifier. Defaults to
+<cite>initial_quote</cite>.</dd>
+<dt>omit_schema</dt>
+<dd>Prevent prepending schema name. Useful for databases that do
+not support schemae.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.IdentifierPreparer.format_column">
+<tt class="descname">format_column</tt><big>(</big><em>column</em>, <em>use_table=False</em>, <em>name=None</em>, <em>table_name=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.IdentifierPreparer.format_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare a quoted column name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.IdentifierPreparer.format_schema">
+<tt class="descname">format_schema</tt><big>(</big><em>name</em>, <em>quote</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.IdentifierPreparer.format_schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare a quoted schema name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.IdentifierPreparer.format_table">
+<tt class="descname">format_table</tt><big>(</big><em>table</em>, <em>use_schema=True</em>, <em>name=None</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.IdentifierPreparer.format_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare a quoted table and schema name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.IdentifierPreparer.format_table_seq">
+<tt class="descname">format_table_seq</tt><big>(</big><em>table</em>, <em>use_schema=True</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.IdentifierPreparer.format_table_seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format table name and schema as a tuple.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.IdentifierPreparer.quote_identifier">
+<tt class="descname">quote_identifier</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.IdentifierPreparer.quote_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quote an identifier.</p>
+<p>Subclasses should override this to provide database-dependent
+quoting behavior.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.IdentifierPreparer.quote_schema">
+<tt class="descname">quote_schema</tt><big>(</big><em>schema</em>, <em>force</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.IdentifierPreparer.quote_schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quote a schema.</p>
+<p>Subclasses should override this to provide database-dependent
+quoting behavior.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.IdentifierPreparer.unformat_identifiers">
+<tt class="descname">unformat_identifiers</tt><big>(</big><em>identifiers</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.IdentifierPreparer.unformat_identifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpack &#8216;schema.table.column&#8217;-like strings into components.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler">
+<em class="property">class </em><tt class="descclassname">sqlalchemy.sql.compiler.</tt><tt class="descname">SQLCompiler</tt><big>(</big><em>dialect</em>, <em>statement</em>, <em>column_keys=None</em>, <em>inline=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sqlalchemy.engine.interfaces.Compiled" title="sqlalchemy.engine.interfaces.Compiled"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.engine.interfaces.Compiled</span></tt></a></p>
+<p>Default implementation of Compiled.</p>
+<p>Compiles ClauseElements into SQL strings.   Uses a similar visit
+paradigm as visitors.ClauseVisitor but implements its own traversal.</p>
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>dialect</em>, <em>statement</em>, <em>column_keys=None</em>, <em>inline=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a new <tt class="docutils literal"><span class="pre">DefaultCompiler</span></tt> object.</p>
+<dl class="docutils">
+<dt>dialect</dt>
+<dd>Dialect to be used</dd>
+<dt>statement</dt>
+<dd>ClauseElement to be compiled</dd>
+<dt>column_keys</dt>
+<dd>a list of column names to be compiled into an INSERT or UPDATE
+statement.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.ansi_bind_rules">
+<tt class="descname">ansi_bind_rules</tt><em class="property"> = False</em><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.ansi_bind_rules" title="Permalink to this definition">¶</a></dt>
+<dd><p>SQL 92 doesn&#8217;t allow bind parameters to be used
+in the columns clause of a SELECT, nor does it allow
+ambiguous expressions like &#8221;? = ?&#8221;.  A compiler
+subclass can set this flag to False if the target
+driver/DB enforces this</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.construct_params">
+<tt class="descname">construct_params</tt><big>(</big><em>params=None</em>, <em>_group_number=None</em>, <em>_check=True</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.construct_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>return a dictionary of bind parameter keys and values</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.default_from">
+<tt class="descname">default_from</tt><big>(</big><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.default_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when a SELECT statement has no froms, and no FROM clause is
+to be appended.</p>
+<p>Gives Oracle a chance to tack on a <tt class="docutils literal"><span class="pre">FROM</span> <span class="pre">DUAL</span></tt> to the string output.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.escape_literal_column">
+<tt class="descname">escape_literal_column</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.escape_literal_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>provide escaping for the literal_column() construct.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.get_select_precolumns">
+<tt class="descname">get_select_precolumns</tt><big>(</big><em>select</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.get_select_precolumns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when building a <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement, position is just
+before column list.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.isdelete">
+<tt class="descname">isdelete</tt><em class="property"> = False</em><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.isdelete" title="Permalink to this definition">¶</a></dt>
+<dd><p>class-level defaults which can be set at the instance
+level to define if this Compiled instance represents
+INSERT/UPDATE/DELETE</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.isinsert">
+<tt class="descname">isinsert</tt><em class="property"> = False</em><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.isinsert" title="Permalink to this definition">¶</a></dt>
+<dd><p>class-level defaults which can be set at the instance
+level to define if this Compiled instance represents
+INSERT/UPDATE/DELETE</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.isupdate">
+<tt class="descname">isupdate</tt><em class="property"> = False</em><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.isupdate" title="Permalink to this definition">¶</a></dt>
+<dd><p>class-level defaults which can be set at the instance
+level to define if this Compiled instance represents
+INSERT/UPDATE/DELETE</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.params">
+<tt class="descname">params</tt><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the bind param dictionary embedded into this
+compiled object, for those values that are present.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.render_literal_value">
+<tt class="descname">render_literal_value</tt><big>(</big><em>value</em>, <em>type_</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.render_literal_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render the value of a bind parameter as a quoted literal.</p>
+<p>This is used for statement sections that do not accept bind parameters
+on the target driver/database.</p>
+<p>This should be implemented by subclasses using the quoting services
+of the DBAPI.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.render_table_with_column_in_update_from">
+<tt class="descname">render_table_with_column_in_update_from</tt><em class="property"> = False</em><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.render_table_with_column_in_update_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>set to True classwide to indicate the SET clause
+in a multi-table UPDATE statement should qualify
+columns with the table name (i.e. MySQL only)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.returning">
+<tt class="descname">returning</tt><em class="property"> = None</em><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.returning" title="Permalink to this definition">¶</a></dt>
+<dd><p>holds the &#8220;returning&#8221; collection of columns if
+the statement is CRUD and defines returning columns
+either implicitly or explicitly</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.returning_precedes_values">
+<tt class="descname">returning_precedes_values</tt><em class="property"> = False</em><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.returning_precedes_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>set to True classwide to generate RETURNING
+clauses before the VALUES or WHERE clause (i.e. MSSQL)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.update_from_clause">
+<tt class="descname">update_from_clause</tt><big>(</big><em>update_stmt</em>, <em>from_table</em>, <em>extra_froms</em>, <em>from_hints</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.update_from_clause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide a hook to override the generation of an
+UPDATE..FROM clause.</p>
+<p>MySQL and MSSQL override this.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.update_limit_clause">
+<tt class="descname">update_limit_clause</tt><big>(</big><em>update_stmt</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.update_limit_clause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide a hook for MySQL to add LIMIT to the UPDATE</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sqlalchemy.sql.compiler.SQLCompiler.update_tables_clause">
+<tt class="descname">update_tables_clause</tt><big>(</big><em>update_stmt</em>, <em>from_table</em>, <em>extra_froms</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.sql.compiler.SQLCompiler.update_tables_clause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide a hook to override the initial table clause
+in an UPDATE statement.</p>
+<p>MySQL overrides this.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links">
+        Previous:
+        <a href="exceptions.html" title="previous chapter">Core Exceptions</a>
+        Next:
+        <a href="../dialects/index.html" title="next chapter">Dialects</a>
+
+    <div id="docs-copyright">
+        &copy; <a href="../copyright.html">Copyright</a> 2007-2013, the SQLAlchemy authors and contributors.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</div>
+
+</div>
+
+        
+    </body>
+</html>
+
+

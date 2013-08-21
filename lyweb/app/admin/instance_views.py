@@ -13,7 +13,7 @@ from app.node.models import Node
 from settings import JOB_TARGET
 
 from lycustom import has_permission
-from ytool.pagination import pagination
+from yweb.utils.pagination import pagination
 
 from sqlalchemy.sql.expression import asc, desc, func
 from sqlalchemy import and_, or_
@@ -25,7 +25,7 @@ from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import LY_TARGET
 
 from app.instance.models import INSTANCE_STATUS_SHORT_STR
-from lytool.filesize import size as human_size
+from yweb.utils.filesize import size as human_size
 
 
 
