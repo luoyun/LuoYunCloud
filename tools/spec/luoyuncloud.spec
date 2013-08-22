@@ -2,7 +2,7 @@
 %define LUOYUN_PLATFORM %{LUOYUN_HOME}platform/
 
 Name: luoyuncloud
-Version: 0.6
+Version: 0.6.4
 Release: 1%{?dist}
 Summary: the Cloud Computing software that can be used to build IaaS, SaaS or PaaS platforms
 Group: Server/Cloud
@@ -118,9 +118,9 @@ popd
 # install web
 cp -rf lyweb %{buildroot}/opt/LuoYun/web
 ln -sf /opt/LuoYun/bin/luoyun-service %{buildroot}/etc/init.d/lyweb
-python %{buildroot}/opt/LuoYun/web/manage.py --i18n
-pushd %{buildroot}/opt/LuoYun/web/lib/
-chmod u+x ../site.py
+#python %{buildroot}/opt/LuoYun/web/manage.py --i18n
+pushd %{buildroot}/opt/LuoYun/web/
+chmod u+x site.py
 popd
 
 %clean
@@ -169,6 +169,9 @@ id luoyun &> /dev/null || useradd luoyun -s /sbin/nologin
 
 
 %changelog
+* Fri Aug 22 2013 Li Jian <lijian@luoyun.co> - 0.6.4-1
+- build for 0.6.4
+
 * Thu Aug 08 2013 Dongwu Zeng <dongwu@luoyun.co> - 0.6-1
 - remove ins_mac, use mac from the json config
 
