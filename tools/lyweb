@@ -16,6 +16,7 @@ OPTIONS=
 LYWEBD="python ${OPTIONS} ${LUOYUN_TOP_DIR}/web/site.py"
 LYWEBDLOG="${LUOYUN_TOP_DIR}/logs/luoyun.tornado.log"
 NGINX="$(which nginx)"
+PID_FILE="/var/run/lyweb.pid"
 
 failure()
 {
@@ -32,7 +33,7 @@ success()
 
 checkdb()
 {
-    su postgres -c "psql -l &> /dev/null"
+    su postgres -c "psql -l -U postgres &> /dev/null"
     if [ $? -ne 0 ]; then
         echo "query postgresql failed. Will check again in 10 seconds..."
         sleep 10
@@ -61,8 +62,27 @@ stopnginx()
 
 start()
 {
-    thispid=$(ps aux|grep 'python.*site.py'|grep -v grep| head -1 | awk '{print $2}')
-    [ -n "$thispid" ] && echo "$prog($thispid) is started already" && return 0
+    if [ -f $PID_FILE ]; then
+
+        num=0
+
+        for pid in $(cat $PID_FILE); do
+
+            kill -s 0 $pid > /dev/null 2>&1
+
+            if [ $? -eq 0 ]; then
+                echo "$prog($pid) is started already"
+                ((num+=1))
+            fi
+
+        done
+
+        if [ $num -gt 0 ]; then
+            echo "quit now"
+            return
+        fi
+
+    fi
 
     checkdb
     startnginx
@@ -75,30 +95,69 @@ start()
     return $RETVAL
 }
 
+
 stop()
 {
-    thispid=$(ps aux|grep 'python.*site.py'|grep -v grep| head -1 | awk '{print $2}')
-    [ -z "$thispid" ] && echo "$prog is stopped already" && return 0
+    if [ -f $PID_FILE ]; then
+
+        echo $"Stopping $prog: "
+
+        for pid in $(cat $PID_FILE); do
+
+            kill -s 0 $pid > /dev/null 2>&1
+
+            if [ $? -eq 0 ]; then
+                kill $pid && success || failure
+            else
+                echo "$prog($pid) was not exist"
+            fi
+
+        done
+
+        /bin/rm $PID_FILE
+
+        return 0
+
+    else
+
+        echo "$prog was not running now"
+
+    fi
 
     stopnginx
 
-    echo -n $"Stopping $prog: "
-    thispid=$(ps aux|grep 'python.*site.py'|grep -v grep| head -1 | awk '{print $2}')
-    if [ -n "$thispid" ] ; then
-        kill $thispid && success || failure
-    else
-        failure
-    fi
     RETVAL=$?
+
+    return $RETVAL
 }
+
 
 status()
 {
-    thispid=$(ps aux|grep 'python.*site.py'|grep -v grep| head -1 | awk '{print $2}')
-    [ -n "$thispid" ] && echo "$prog($thispid) is running..." && return 0
-    [ -z "$thispid" ] && echo "$prog is stopped" && return 0
-    return 1
+
+    if [ -f $PID_FILE ]; then
+
+        for pid in $(cat $PID_FILE); do
+
+            kill -s 0 $pid > /dev/null 2>&1
+
+            if [ $? -eq 0 ]; then
+                echo "$prog($pid) is running"
+            else
+                echo "$prog($pid) was not exist"
+            fi
+
+        done
+
+        return 0
+
+    else
+
+        echo "$prog was not running now"
+
+    fi
 }
+
 
 case "$1" in
     start)
@@ -120,4 +179,3 @@ case "$1" in
         RETVAL=1
 esac
 exit $RETVAL
-

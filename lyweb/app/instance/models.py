@@ -74,6 +74,9 @@ class Instance(ORMBase):
     rx = Column( BigInteger, default=0 )
     tx = Column( BigInteger, default=0 )
 
+    cputime   = Column( Integer, default=0 )
+    autostart = Column( Boolean, default=False )
+
     user_id = Column( ForeignKey('auth_user.id') )
     user = relationship("User", backref=backref('instances',order_by=id) )
 
