@@ -9,7 +9,7 @@ Group: Server/Cloud
 License: GPLv2+
 URL: http://www.luoyun.co            
 Vendor: LuoYun Co.
-Source0: luoyuncloud-0.6.tar.bz2
+Source0: luoyuncloud-0.6.4.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: zlib-devel,bzip2-devel,libcurl-devel,libvirt-devel,libxml2-devel,postgresql-devel,libuuid-devel,libgcrypt-devel
 
