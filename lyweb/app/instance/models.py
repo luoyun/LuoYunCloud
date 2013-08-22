@@ -343,6 +343,13 @@ class Instance(ORMBase):
             domain['ip'] = ip.ip
             domain['name'] = self.domain
 
+        # TODO: fix lynode bug now.
+        if len(self.ips) <=0:
+            network.append({
+                    "mac": self.mac,
+                    "type": "default",
+                    })
+
         self.set('network', network)
         self.set('nameservers', nameservers)
         self.set('domain', domain)

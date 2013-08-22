@@ -99,7 +99,7 @@ class Field(object):
         self.validators = validators or list(self.validators)
 
         self.id = id or self.name
-        self.label = Label(self.id, label if label is not None else self.gettext(_name.replace('_', ' ').title()))
+        self.label = Label(self.id, self.gettext(label) if label is not None else self.gettext(_name.replace('_', ' ').title()))
 
         if widget is not None:
             self.widget = widget

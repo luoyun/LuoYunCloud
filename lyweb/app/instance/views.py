@@ -70,6 +70,7 @@ class RequestHandler(OrigRequestHandler):
         # TODO: update config about domain
 
         I.update_network()
+        self.db.commit()
 
 
     def binding_domain(self, I):
@@ -81,6 +82,7 @@ class RequestHandler(OrigRequestHandler):
         # TODO: update config about domain
 
         I.update_network()
+        self.db.commit()
 
 
     def get_instance_lastjob(self, I):
