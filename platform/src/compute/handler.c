@@ -396,7 +396,6 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
         goto out;
     }
 
-logsimple("dongwu json: %s\n", ci->osm_json);
     for (int i = 0; i < value->u.object.length; i++) {
         if (strcmp(value->u.object.values[i].name, "network") == 0) {
             net[0] = '\0';
@@ -569,7 +568,6 @@ logsimple("dongwu json: %s\n", ci->osm_json);
                 }
             }
             if (disk_found == 0) {
-logsimple("dongwu here\n");
                 /* delete disk */
                 if (snprintf(path, PATH_MAX, "%s/%d/%s", g_c->config.ins_data_dir,
                              ci->ins_id, LUOYUN_INSTANCE_STORAGE1_FILE) >= PATH_MAX) {
@@ -720,13 +718,19 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
 
     if (disk_len == strlen(disk)) {
         /* delete disk */
+        char tmp[1024];
         if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
                      ci->ins_id, LUOYUN_INSTANCE_STORAGE1_FILE) >= 1024) {
             logerror(_("error in %s(%d).\n"), __func__, __LINE__);
             goto out;
         }
+        if (snprintf(tmp, 1024, "%s/%s.%d", g_c->config.trash_data_dir,
+                     LUOYUN_INSTANCE_STORAGE1_FILE, ci->ins_id) >= 1024) {
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+            goto out;
+        }
         if (access(path, F_OK) == 0) {
-            if (unlink(path)) {
+            if (rename(path, tmp)) {
                 logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
                            strerror(errno), errno);
                 goto out;
