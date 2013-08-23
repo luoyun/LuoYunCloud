@@ -48,6 +48,14 @@ INSTANCE_STATUS_CLASS = {
     255: ('#FF0000', 'icon-remove-sign'),
 }
 
+INSTANCE_HUMAN_STATUS = {
+    'stoped': [1, 2],
+    'running': [3, 4, 5],
+    'suspend': [9],
+    'query': [0, 245, 255],
+    'deleted': [settings.INSTANCE_DELETED_STATUS],
+}
+
 
 class Instance(ORMBase):
 

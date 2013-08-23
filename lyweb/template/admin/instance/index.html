@@ -165,10 +165,12 @@ ${ I.bandwidth } M
 
     <h5><i class="icon-sort"></i> ${ _("Instance Status") }</h5>
     <select id="sort-by-status">
-      <option value="all">${ _("All") }</option>
-      %for s, v in INSTANCE_STATUS:
-      <option value="${ s }">${ _(v) }</option>
-      %endfor
+      <option value="">${ _("Default") }</option>
+      <option value="stoped">${ _("Stoped") }</option>
+      <option value="running">${ _("Running") }</option>
+##      <option value="suspend">${ _("Suspend") }</option>
+      <option value="query">${ _("Query") }</option>
+      <option value="deleted">${ _("Deteled") }</option>
     </select>
 
     <h5><i class="icon-sort"></i> ${ _("User Group") }</h5>
