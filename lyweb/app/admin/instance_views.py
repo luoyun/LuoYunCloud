@@ -13,7 +13,7 @@ from app.node.models import Node
 from settings import JOB_TARGET
 
 from lycustom import has_permission
-from ytool.pagination import pagination
+from yweb.utils.pagination import pagination
 
 from sqlalchemy.sql.expression import asc, desc, func
 from sqlalchemy import and_, or_
@@ -24,8 +24,8 @@ import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import LY_TARGET
 
-from app.instance.models import INSTANCE_STATUS_SHORT_STR
-from lytool.filesize import size as human_size
+from app.instance.models import INSTANCE_HUMAN_STATUS
+from yweb.utils.filesize import size as human_size
 
 
 
@@ -37,7 +37,7 @@ class Index(RequestHandler):
         view = self.get_argument('view', 'all')
         by = self.get_argument('by', 'id')
         sort = self.get_argument('sort', 'DESC')
-        status = self.get_argument_int('status', -1)
+        status = self.get_argument('status', 'running')
         user_group = self.get_argument_int('user_group', -1)
         page_size = self.get_argument_int('sepa', 50)
         cur_page = self.get_argument_int('p', 1)
@@ -66,14 +66,11 @@ class Index(RequestHandler):
                     func.lower(Instance.name).like(search),
                     ) )
 
-        if status not in [k for k,v in INSTANCE_STATUS_SHORT_STR]:
-            status = -1
-
-        if status == -1:
-            instances = instances.filter(
-                Instance.status != DELETED_S )
+        status_range = INSTANCE_HUMAN_STATUS.get(status, None)
+        if status_range:
+            instances = instances.filter( Instance.status.in_( status_range ) )
         else:
-            instances = instances.filter(Instance.status==status)
+            instances = instances.filter( Instance.status != DELETED_S )
 
         U = None
         if (user_group <= 0) and uid:
@@ -131,7 +128,6 @@ class Index(RequestHandler):
               'PAGE_HTML': page_html,
               'SORT_USER': U, 'SORT_APPLIANCE': APPLIANCE,
               'SORT_NODE': NODE, 'STATUS': status,
-              'INSTANCE_STATUS': INSTANCE_STATUS_SHORT_STR,
               'USER_GROUP_ID': user_group, 'GROUP_LIST': self.db.query(Group) }
 
         if self.get_argument('ajax', None):

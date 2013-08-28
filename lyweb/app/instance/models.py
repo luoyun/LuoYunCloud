@@ -48,6 +48,14 @@ INSTANCE_STATUS_CLASS = {
     255: ('#FF0000', 'icon-remove-sign'),
 }
 
+INSTANCE_HUMAN_STATUS = {
+    'stoped': [1, 2],
+    'running': [3, 4, 5],
+    'suspend': [9],
+    'query': [0, 245, 255],
+    'deleted': [settings.INSTANCE_DELETED_STATUS],
+}
+
 
 class Instance(ORMBase):
 
@@ -73,6 +81,9 @@ class Instance(ORMBase):
 
     rx = Column( BigInteger, default=0 )
     tx = Column( BigInteger, default=0 )
+
+    cputime   = Column( Integer, default=0 )
+    autostart = Column( Boolean, default=False )
 
     user_id = Column( ForeignKey('auth_user.id') )
     user = relationship("User", backref=backref('instances',order_by=id) )
@@ -339,6 +350,13 @@ class Instance(ORMBase):
 
             domain['ip'] = ip.ip
             domain['name'] = self.domain
+
+        # TODO: fix lynode bug now.
+        if len(self.ips) <=0:
+            network.append({
+                    "mac": self.mac,
+                    "type": "default",
+                    })
 
         self.set('network', network)
         self.set('nameservers', nameservers)

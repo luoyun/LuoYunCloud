@@ -1,0 +1,500 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <title>
+            
+    
+                Glossary
+             &mdash; 
+    SQLAlchemy 0.8 Documentation
+
+        </title>
+        
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/docs.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '#',
+          VERSION:     '0.8.2',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/init.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+        <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="top" title="SQLAlchemy 0.8 Documentation" href="index.html" />
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+<div id="docs-header">
+    <h1>SQLAlchemy 0.8 Documentation</h1>
+
+    <div id="docs-search">
+    Search:
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+
+    <div id="docs-version-header">
+        Release: <span class="version-num">0.8.2</span> | Release Date: July 3, 2013
+
+
+    </div>
+
+</div>
+
+<div id="docs-top-navigation">
+    <div id="docs-top-page-control" class="docs-navigation-links">
+        <ul>
+
+        <li>
+            <a href="contents.html">Table of Contents</a> |
+            <a href="genindex.html">Index</a>
+            | <a href="_sources/glossary.txt">view source
+        </li>
+        </ul>
+    </div>
+
+    <div id="docs-navigation-banner">
+        <a href="index.html">SQLAlchemy 0.8 Documentation</a>
+        » 
+                Glossary
+             
+
+        <h2>
+            
+                Glossary
+            
+        </h2>
+    </div>
+
+</div>
+
+<div id="docs-body-container">
+
+    <div id="docs-sidebar">
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Glossary</a></li>
+</ul>
+
+
+
+
+    <h4>Quick Search</h4>
+    <p>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </p>
+
+    </div>
+
+    <div id="docs-body" class="withsidebar" >
+        
+<div class="section" id="glossary">
+<span id="id1"></span><h1>Glossary<a class="headerlink" href="#glossary" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Glossary is a brand new addition to the documentation.  While
+sparse at the moment we hope to fill it up with plenty of new
+terms soon!</p>
+</div>
+<dl class="glossary docutils">
+<dt id="term-annotations">annotations</dt>
+<dd><p class="first">Annotations are a concept used internally by SQLAlchemy in order to store
+additional information along with <a class="reference internal" href="core/expression_api.html#sqlalchemy.sql.expression.ClauseElement" title="sqlalchemy.sql.expression.ClauseElement"><tt class="xref py py-class docutils literal"><span class="pre">ClauseElement</span></tt></a> objects.  A Python
+dictionary is associated with a copy of the object, which contains key/value
+pairs significant to various internal systems, mostly within the ORM:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">some_column</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="s">&#39;some_column&#39;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">)</span>
+<span class="n">some_column_annotated</span> <span class="o">=</span> <span class="n">some_column</span><span class="o">.</span><span class="n">_annotate</span><span class="p">({</span><span class="s">&quot;entity&quot;</span><span class="p">:</span> <span class="n">User</span><span class="p">})</span></pre></div>
+</div>
+<p class="last">The annotation system differs from the public dictionary <a class="reference internal" href="core/schema.html#sqlalchemy.schema.Column.info" title="sqlalchemy.schema.Column.info"><tt class="xref py py-attr docutils literal"><span class="pre">Column.info</span></tt></a>
+in that the above annotation operation creates a <em>copy</em> of the new <a class="reference internal" href="core/schema.html#sqlalchemy.schema.Column" title="sqlalchemy.schema.Column"><tt class="xref py py-class docutils literal"><span class="pre">Column</span></tt></a>,
+rather than considering all annotation values to be part of a single
+unit.  The ORM creates copies of expression objects in order to
+apply annotations that are specific to their context, such as to differentiate
+columns that should render themselves as relative to a joined-inheritance
+entity versus those which should render relative to their immediate parent
+table alone, as well as to differentiate columns within the &#8220;join condition&#8221;
+of a relationship where the column in some cases needs to be expressed
+in terms of one particular table alias or another, based on its position
+within the join expression.</p>
+</dd>
+<dt id="term-columns-clause">columns clause</dt>
+<dd><p class="first">The portion of the <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement which enumerates the
+SQL expressions to be returned in the result set.  The expressions
+follow the <tt class="docutils literal"><span class="pre">SELECT</span></tt> keyword directly and are a comma-separated
+list of individual expressions.</p>
+<p>E.g.:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">user_account</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">user_account</span><span class="p">.</span><span class="n">email</span>
+<span class="k">FROM</span> <span class="n">user_account</span> <span class="k">WHERE</span> <span class="n">user_account</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;fred&#39;</span></pre></div>
+</div>
+<p class="last">Above, the list of columns <tt class="docutils literal"><span class="pre">user_acount.name</span></tt>,
+<tt class="docutils literal"><span class="pre">user_account.email</span></tt> is the columns clause of the <tt class="docutils literal"><span class="pre">SELECT</span></tt>.</p>
+</dd>
+<dt id="term-correlates"><span id="term-correlated-subquery"></span><span id="term-correlated-subqueries"></span>correlates<br />correlated subquery<br />correlated subqueries</dt>
+<dd><p class="first">A <a class="reference internal" href="#term-subquery"><em class="xref std std-term">subquery</em></a> is correlated if it depends on data in the
+enclosing <tt class="docutils literal"><span class="pre">SELECT</span></tt>.</p>
+<p>Below, a subquery selects the aggregate value <tt class="docutils literal"><span class="pre">MIN(a.id)</span></tt>
+from the <tt class="docutils literal"><span class="pre">email_address</span></tt> table, such that
+it will be invoked for each value of <tt class="docutils literal"><span class="pre">user_account.id</span></tt>, correlating
+the value of this column against the <tt class="docutils literal"><span class="pre">email_address.user_account_id</span></tt>
+column:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">user_account</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">email_address</span><span class="p">.</span><span class="n">email</span>
+ <span class="k">FROM</span> <span class="n">user_account</span>
+ <span class="k">JOIN</span> <span class="n">email_address</span> <span class="k">ON</span> <span class="n">user_account</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">email_address</span><span class="p">.</span><span class="n">user_account_id</span>
+ <span class="k">WHERE</span> <span class="n">email_address</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="k">SELECT</span> <span class="k">MIN</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">email_address</span> <span class="k">AS</span> <span class="n">a</span>
+    <span class="k">WHERE</span> <span class="n">a</span><span class="p">.</span><span class="n">user_account_id</span><span class="o">=</span><span class="n">user_account</span><span class="p">.</span><span class="n">id</span>
+ <span class="p">)</span></pre></div>
+</div>
+<p>The above subquery refers to the <tt class="docutils literal"><span class="pre">user_account</span></tt> table, which is not itself
+in the <tt class="docutils literal"><span class="pre">FROM</span></tt> clause of this nested query.   Instead, the <tt class="docutils literal"><span class="pre">user_account</span></tt>
+table is recieved from the enclosing query, where each row selected from
+<tt class="docutils literal"><span class="pre">user_account</span></tt> results in a distinct execution of the subquery.</p>
+<p>A correlated subquery is in most cases present in the <a class="reference internal" href="#term-where-clause"><em class="xref std std-term">WHERE clause</em></a>
+or <a class="reference internal" href="#term-columns-clause"><em class="xref std std-term">columns clause</em></a> of the immediately enclosing <tt class="docutils literal"><span class="pre">SELECT</span></tt>
+statement, as well as in the ORDER BY or HAVING clause.</p>
+<p>In less common cases, a correlated subquery may be present in the
+<a class="reference internal" href="#term-from-clause"><em class="xref std std-term">FROM clause</em></a> of an enclosing <tt class="docutils literal"><span class="pre">SELECT</span></tt>; in these cases the
+correlation is typically due to the enclosing <tt class="docutils literal"><span class="pre">SELECT</span></tt> itself being
+enclosed in the WHERE,
+ORDER BY, columns or HAVING clause of another <tt class="docutils literal"><span class="pre">SELECT</span></tt>, such as:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">parent</span><span class="p">.</span><span class="n">id</span> <span class="k">FROM</span> <span class="n">parent</span>
+<span class="k">WHERE</span> <span class="k">EXISTS</span> <span class="p">(</span>
+    <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="p">(</span>
+        <span class="k">SELECT</span> <span class="n">child</span><span class="p">.</span><span class="n">id</span> <span class="k">AS</span> <span class="n">id</span><span class="p">,</span> <span class="n">child</span><span class="p">.</span><span class="n">parent_id</span> <span class="k">AS</span> <span class="n">parent_id</span><span class="p">,</span> <span class="n">child</span><span class="p">.</span><span class="n">pos</span> <span class="k">AS</span> <span class="n">pos</span>
+        <span class="k">FROM</span> <span class="n">child</span>
+        <span class="k">WHERE</span> <span class="n">child</span><span class="p">.</span><span class="n">parent_id</span> <span class="o">=</span> <span class="n">parent</span><span class="p">.</span><span class="n">id</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">child</span><span class="p">.</span><span class="n">pos</span>
+    <span class="k">LIMIT</span> <span class="mi">3</span><span class="p">)</span>
+<span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span></pre></div>
+</div>
+<p class="last">Correlation from one <tt class="docutils literal"><span class="pre">SELECT</span></tt> directly to one which encloses the correlated
+query via its <tt class="docutils literal"><span class="pre">FROM</span></tt>
+clause is not possible, because the correlation can only proceed once the
+original source rows from the enclosing statement&#8217;s FROM clause are available.</p>
+</dd>
+<dt id="term-dbapi">DBAPI</dt>
+<dd><p class="first">DBAPI is shorthand for the phrase &#8220;Python Database API
+Specification&#8221;.  This is a widely used specification
+within Python to define common usage patterns for all
+database connection packages.   The DBAPI is a &#8220;low level&#8221;
+API which is typically the lowest level system used
+in a Python application to talk to a database.  SQLAlchemy&#8217;s
+<em class="xref std std-term">dialect</em> system is constructed around the
+operation of the DBAPI, providing individual dialect
+classes which service a specific DBAPI on top of a
+specific database engine; for example, the <a class="reference internal" href="core/engines.html#sqlalchemy.create_engine" title="sqlalchemy.create_engine"><tt class="xref py py-func docutils literal"><span class="pre">create_engine()</span></tt></a>
+URL <tt class="docutils literal"><span class="pre">postgresql+psycopg2://&#64;localhost/test</span></tt>
+refers to the <a class="reference internal" href="dialects/postgresql.html#module-sqlalchemy.dialects.postgresql.psycopg2" title="sqlalchemy.dialects.postgresql.psycopg2"><tt class="xref py py-mod docutils literal"><span class="pre">psycopg2</span></tt></a>
+DBAPI/dialect combination, whereas the URL <tt class="docutils literal"><span class="pre">mysql+mysqldb://&#64;localhost/test</span></tt>
+refers to the <a class="reference internal" href="dialects/mysql.html#module-sqlalchemy.dialects.mysql.mysqldb" title="sqlalchemy.dialects.mysql.mysqldb"><tt class="xref py py-mod docutils literal"><span class="pre">MySQL</span> <span class="pre">for</span> <span class="pre">Python</span></tt></a>
+DBAPI DBAPI/dialect combination.</p>
+<div class="admonition-see-also last admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="http://www.python.org/dev/peps/pep-0249/">PEP 249 - Python Database API Specification v2.0</a></p>
+</div>
+</dd>
+<dt id="term-descriptor"><span id="term-descriptors"></span>descriptor<br />descriptors</dt>
+<dd><p class="first">In Python, a descriptor is an object attribute with “binding behavior”, one whose attribute access has been overridden by methods in the <a class="reference external" href="http://docs.python.org/howto/descriptor.html">descriptor protocol</a>.
+Those methods are __get__(), __set__(), and __delete__(). If any of those methods are defined
+for an object, it is said to be a descriptor.</p>
+<p>In SQLAlchemy, descriptors are used heavily in order to provide attribute behavior
+on mapped classes.   When a class is mapped as such:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyClass</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s">&#39;foo&#39;</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span></pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">MyClass</span></tt> class will be <a class="reference internal" href="#term-mapped"><em class="xref std std-term">mapped</em></a> when its definition
+is complete, at which point the <tt class="docutils literal"><span class="pre">id</span></tt> and <tt class="docutils literal"><span class="pre">data</span></tt> attributes,
+starting out as <a class="reference internal" href="core/schema.html#sqlalchemy.schema.Column" title="sqlalchemy.schema.Column"><tt class="xref py py-class docutils literal"><span class="pre">Column</span></tt></a> objects, will be replaced
+by the <a class="reference internal" href="#term-instrumentation"><em class="xref std std-term">instrumentation</em></a> system with instances
+of <a class="reference internal" href="orm/internals.html#sqlalchemy.orm.attributes.InstrumentedAttribute" title="sqlalchemy.orm.attributes.InstrumentedAttribute"><tt class="xref py py-class docutils literal"><span class="pre">InstrumentedAttribute</span></tt></a>, which are descriptors that
+provide the above mentioned <tt class="docutils literal"><span class="pre">__get__()</span></tt>, <tt class="docutils literal"><span class="pre">__set__()</span></tt> and
+<tt class="docutils literal"><span class="pre">__delete__()</span></tt> methods.   The <a class="reference internal" href="orm/internals.html#sqlalchemy.orm.attributes.InstrumentedAttribute" title="sqlalchemy.orm.attributes.InstrumentedAttribute"><tt class="xref py py-class docutils literal"><span class="pre">InstrumentedAttribute</span></tt></a>
+will generate a SQL expression when used at the class level:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">MyClass</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="mi">5</span>
+<span class="go">data = :data_1</span></pre></div>
+</div>
+<p>and at the instance level, keeps track of changes to values,
+and also <a class="reference internal" href="#term-lazy-loads"><em class="xref std std-term">lazy loads</em></a> unloaded attributes
+from the database:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">m1</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m1</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m1</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s">&quot;some data&quot;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">inspect</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inspect</span><span class="p">(</span><span class="n">m1</span><span class="p">)</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">added</span>
+<span class="go">&quot;some data&quot;</span></pre></div>
+</div>
+</dd>
+<dt id="term-discriminator">discriminator</dt>
+<dd><p class="first">A result-set column which is used during <a class="reference internal" href="#term-polymorphic"><em class="xref std std-term">polymorphic</em></a> loading
+to determine what kind of mapped class should be applied to a particular
+incoming result row.   In SQLAlchemy, the classes are always part
+of a hierarchy mapping using inheritance mapping.</p>
+<div class="admonition-see-also last admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="orm/inheritance.html"><em>Mapping Class Inheritance Hierarchies</em></a></p>
+</div>
+</dd>
+<dt id="term-from-clause">FROM clause</dt>
+<dd><p class="first">The portion of the <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement which incicates the initial
+source of rows.</p>
+<p>A simple <tt class="docutils literal"><span class="pre">SELECT</span></tt> will feature one or more table names in its
+FROM clause.  Multiple sources are separated by a comma:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="k">user</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">address</span><span class="p">.</span><span class="n">email_address</span>
+<span class="k">FROM</span> <span class="k">user</span><span class="p">,</span> <span class="n">address</span>
+<span class="k">WHERE</span> <span class="k">user</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">address</span><span class="p">.</span><span class="n">user_id</span></pre></div>
+</div>
+<p>The FROM clause is also where explicit joins are specified.  We can
+rewrite the above <tt class="docutils literal"><span class="pre">SELECT</span></tt> using a single <tt class="docutils literal"><span class="pre">FROM</span></tt> element which consists
+of a <tt class="docutils literal"><span class="pre">JOIN</span></tt> of the two tables:</p>
+<div class="last highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="k">user</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">address</span><span class="p">.</span><span class="n">email_address</span>
+<span class="k">FROM</span> <span class="k">user</span> <span class="k">JOIN</span> <span class="n">address</span> <span class="k">ON</span> <span class="k">user</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">address</span><span class="p">.</span><span class="n">user_id</span></pre></div>
+</div>
+</dd>
+<dt id="term-generative">generative</dt>
+<dd>A term that SQLAlchemy uses to refer what&#8217;s normally known
+as <a class="reference internal" href="#term-method-chaining"><em class="xref std std-term">method chaining</em></a>; see that term for details.</dd>
+<dt id="term-instrumentation"><span id="term-instrumented"></span>instrumentation<br />instrumented</dt>
+<dd>Instrumentation refers to the process of augmenting the functionality
+and attribute set of a particular class.   Ideally, the
+behavior of the class should remain close to a regular
+class, except that additional behviors and features are
+made available.  The SQLAlchemy <a class="reference internal" href="#term-mapping"><em class="xref std std-term">mapping</em></a> process,
+among other things, adds database-enabled <a class="reference internal" href="#term-descriptors"><em class="xref std std-term">descriptors</em></a>
+to a mapped
+class which each represent a particular database column
+or relationship to a related class.</dd>
+<dt id="term-lazy-load"><span id="term-lazy-loads"></span>lazy load<br />lazy loads</dt>
+<dd><p class="first">In object relational mapping, a &#8220;lazy load&#8221; refers to an
+attribute that does not contain its database-side value
+for some period of time, typically when the object is
+first loaded.  Instead, the attribute receives a
+<em>memoization</em> that causes it to go out to the database
+and load its data when it&#8217;s first used.   Using this pattern,
+the complexity and time spent within object fetches can
+sometimes be reduced, in that
+attributes for related tables don&#8217;t need to be addressed
+immediately.</p>
+<div class="admonition-see-also last admonition seealso">
+<p class="first admonition-title">See also</p>
+<p><a class="reference external" href="http://martinfowler.com/eaaCatalog/lazyLoad.html">Lazy Load (on Martin Fowler)</a></p>
+<p><a class="reference internal" href="#term-n-plus-one-problem"><em class="xref std std-term">N plus one problem</em></a></p>
+<p class="last"><a class="reference internal" href="orm/loading.html"><em>Relationship Loading Techniques</em></a></p>
+</div>
+</dd>
+<dt id="term-mapping"><span id="term-mapped"></span>mapping<br />mapped</dt>
+<dd>We say a class is &#8220;mapped&#8221; when it has been passed through the
+<a class="reference internal" href="orm/mapper_config.html#sqlalchemy.orm.mapper" title="sqlalchemy.orm.mapper"><tt class="xref py py-func docutils literal"><span class="pre">orm.mapper()</span></tt></a> function.   This process associates the
+class with a database table or other <em class="xref std std-term">selectable</em>
+construct, so that instances of it can be persisted
+using a <a class="reference internal" href="orm/session.html#sqlalchemy.orm.session.Session" title="sqlalchemy.orm.session.Session"><tt class="xref py py-class docutils literal"><span class="pre">Session</span></tt></a> as well as loaded using a
+<a class="reference internal" href="orm/query.html#sqlalchemy.orm.query.Query" title="sqlalchemy.orm.query.Query"><tt class="xref py py-class docutils literal"><span class="pre">Query</span></tt></a>.</dd>
+<dt id="term-method-chaining">method chaining</dt>
+<dd><p class="first">An object-oriented technique whereby the state of an object
+is constructed by calling methods on the object.   The
+object features any number of methods, each of which return
+a new object (or in some cases the same object) with
+additional state added to the object.</p>
+<p>The two SQLAlchemy objects that make the most use of
+method chaining are the <a class="reference internal" href="core/expression_api.html#sqlalchemy.sql.expression.Select" title="sqlalchemy.sql.expression.Select"><tt class="xref py py-class docutils literal"><span class="pre">Select</span></tt></a>
+object and the <a class="reference internal" href="orm/query.html#sqlalchemy.orm.query.Query" title="sqlalchemy.orm.query.Query"><tt class="xref py py-class docutils literal"><span class="pre">Query</span></tt></a> object.
+For example, a <a class="reference internal" href="core/expression_api.html#sqlalchemy.sql.expression.Select" title="sqlalchemy.sql.expression.Select"><tt class="xref py py-class docutils literal"><span class="pre">Select</span></tt></a> object can
+be assigned two expressions to its WHERE clause as well
+as an ORDER BY clause by calling upon the <a class="reference internal" href="core/expression_api.html#sqlalchemy.sql.expression.Select.where" title="sqlalchemy.sql.expression.Select.where"><tt class="xref py py-meth docutils literal"><span class="pre">where()</span></tt></a>
+and <a class="reference internal" href="core/expression_api.html#sqlalchemy.sql.expression.Select.order_by" title="sqlalchemy.sql.expression.Select.order_by"><tt class="xref py py-meth docutils literal"><span class="pre">order_by()</span></tt></a> methods:</p>
+<div class="highlight-python"><pre>stmt = select([user.c.name]).\
+            where(user.c.id &gt; 5).\
+            where(user.c.name.like('e%').\
+            order_by(user.c.name)</pre>
+</div>
+<p>Each method call above returns a copy of the original
+<a class="reference internal" href="core/expression_api.html#sqlalchemy.sql.expression.Select" title="sqlalchemy.sql.expression.Select"><tt class="xref py py-class docutils literal"><span class="pre">Select</span></tt></a> object with additional qualifiers
+added.</p>
+<div class="admonition-see-also last admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#term-generative"><em class="xref std std-term">generative</em></a></p>
+</div>
+</dd>
+<dt id="term-n-plus-one-problem">N plus one problem</dt>
+<dd><p class="first">The N plus one problem is a common side effect of the
+<a class="reference internal" href="#term-lazy-load"><em class="xref std std-term">lazy load</em></a> pattern, whereby an application wishes
+to iterate through a related attribute or collection on
+each member of a result set of objects, where that
+attribute or collection is set to be loaded via the lazy
+load pattern.   The net result is that a SELECT statement
+is emitted to load the initial result set of parent objects;
+then, as the application iterates through each member,
+an additional SELECT statement is emitted for each member
+in order to load the related attribute or collection for
+that member.  The end result is that for a result set of
+N parent objects, there will be N + 1 SELECT statements emitted.</p>
+<p>The N plus one problem is alleviated using <em class="xref std std-term">eager loading</em>.</p>
+<div class="admonition-see-also last admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="orm/loading.html"><em>Relationship Loading Techniques</em></a></p>
+</div>
+</dd>
+<dt id="term-polymorphic"><span id="term-polymorphically"></span>polymorphic<br />polymorphically</dt>
+<dd><p class="first">Refers to a function that handles several types at once.  In SQLAlchemy,
+the term is usually applied to the concept of an ORM mapped class
+whereby a query operation will return different subclasses
+based on information in the result set, typically by checking the
+value of a particular column in the result known as the <a class="reference internal" href="#term-discriminator"><em class="xref std std-term">discriminator</em></a>.</p>
+<p class="last">Polymorphic loading in SQLAlchemy implies that a one or a
+combination of three different schemes are used to map a hierarchy
+of classes; &#8220;joined&#8221;, &#8220;single&#8221;, and &#8220;concrete&#8221;.   The section
+<a class="reference internal" href="orm/inheritance.html"><em>Mapping Class Inheritance Hierarchies</em></a> describes inheritance mapping fully.</p>
+</dd>
+<dt id="term-release"><span id="term-releases"></span><span id="term-released"></span>release<br />releases<br />released</dt>
+<dd><p class="first">In the context of SQLAlchemy, the term &#8220;released&#8221;
+refers to the process of ending the usage of a particular
+database connection.    SQLAlchemy features the usage
+of connection pools, which allows configurability as to
+the lifespan of database connections.   When using a pooled
+connection, the process of &#8220;closing&#8221; it, i.e. invoking
+a statement like <tt class="docutils literal"><span class="pre">connection.close()</span></tt>, may have the effect
+of the connection being returned to an existing pool,
+or it may have the effect of actually shutting down the
+underlying TCP/IP connection referred to by that connection -
+which one takes place depends on configuration as well
+as the current state of the pool.  So we used the term
+<em>released</em> instead, to mean &#8220;do whatever it is you do
+with connections when we&#8217;re done using them&#8221;.</p>
+<p>The term will sometimes be used in the phrase, &#8220;release
+transactional resources&#8221;, to indicate more explicitly that
+what we are actually &#8220;releasing&#8221; is any transactional
+state which as accumulated upon the connection.  In most
+situations, the proces of selecting from tables, emitting
+updates, etc. acquires <em class="xref std std-term">isolated</em> state upon
+that connection as well as potential row or table locks.
+This state is all local to a particular transaction
+on the connection, and is released when we emit a rollback.
+An important feature of the connection pool is that when
+we return a connection to the pool, the <tt class="docutils literal"><span class="pre">connection.rollback()</span></tt>
+method of the DBAPI is called as well, so that as the
+connection is set up to be used again, it&#8217;s in a &#8220;clean&#8221;
+state with no references held to the previous series
+of operations.</p>
+<div class="admonition-see-also last admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="core/pooling.html"><em>Connection Pooling</em></a></p>
+</div>
+</dd>
+<dt id="term-subquery">subquery</dt>
+<dd><p class="first">Refers to a <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement that is embedded within an enclosing
+<tt class="docutils literal"><span class="pre">SELECT</span></tt>.</p>
+<p>A subquery comes in two general flavors, one known as a &#8220;scalar select&#8221;
+which specifically must return exactly one row and one column, and the
+other form which acts as a &#8220;derived table&#8221; and serves as a source of
+rows for the FROM clause of another select.  A scalar select is eligble
+to be placed in the <a class="reference internal" href="#term-where-clause"><em class="xref std std-term">WHERE clause</em></a>, <a class="reference internal" href="#term-columns-clause"><em class="xref std std-term">columns clause</em></a>,
+ORDER BY clause or HAVING clause of the enclosing select, whereas the
+derived table form is eligible to be placed in the FROM clause of the
+enclosing <tt class="docutils literal"><span class="pre">SELECT</span></tt>.</p>
+<p>Examples:</p>
+<ol class="last arabic">
+<li><p class="first">a scalar subquery placed in the <a class="reference internal" href="#term-columns-clause"><em class="xref std std-term">columns clause</em></a> of an enclosing
+<tt class="docutils literal"><span class="pre">SELECT</span></tt>.  The subquery in this example is a <a class="reference internal" href="#term-correlated-subquery"><em class="xref std std-term">correlated subquery</em></a> because part
+of the rows which it selects from are given via the enclosing statement.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">name</span> <span class="k">FROM</span> <span class="n">address</span> <span class="k">WHERE</span> <span class="n">address</span><span class="p">.</span><span class="n">user_id</span><span class="o">=</span><span class="k">user</span><span class="p">.</span><span class="n">id</span><span class="p">)</span>
+<span class="k">FROM</span> <span class="k">user</span></pre></div>
+</div>
+</li>
+<li><p class="first">a scalar subquery placed in the <a class="reference internal" href="#term-where-clause"><em class="xref std std-term">WHERE clause</em></a> of an enclosing
+<tt class="docutils literal"><span class="pre">SELECT</span></tt>.  This subquery in this example is not correlated as it selects a fixed result.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">name</span> <span class="k">FROM</span> <span class="k">user</span>
+<span class="k">WHERE</span> <span class="n">status</span><span class="o">=</span><span class="p">(</span><span class="k">SELECT</span> <span class="n">status_id</span> <span class="k">FROM</span> <span class="n">status_code</span> <span class="k">WHERE</span> <span class="n">code</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">)</span></pre></div>
+</div>
+</li>
+<li><p class="first">a derived table subquery placed in the <a class="reference internal" href="#term-from-clause"><em class="xref std std-term">FROM clause</em></a> of an enclosing
+<tt class="docutils literal"><span class="pre">SELECT</span></tt>.   Such a subquery is almost always given an alias name.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="k">user</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="k">user</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">ad_subq</span><span class="p">.</span><span class="n">email_address</span>
+<span class="k">FROM</span>
+    <span class="k">user</span> <span class="k">JOIN</span>
+    <span class="p">(</span><span class="k">select</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">email_address</span> <span class="k">FROM</span> <span class="n">address</span> <span class="k">WHERE</span> <span class="n">address_type</span><span class="o">=</span><span class="s1">&#39;Q&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">ad_subq</span>
+    <span class="k">ON</span> <span class="k">user</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">ad_subq</span><span class="p">.</span><span class="n">user_id</span></pre></div>
+</div>
+</li>
+</ol>
+</dd>
+<dt id="term-unit-of-work">unit of work</dt>
+<dd><p class="first">This pattern is where the system transparently keeps
+track of changes to objects and periodically flushes all those
+pending changes out to the database. SQLAlchemy&#8217;s Session
+implements this pattern fully in a manner similar to that of
+Hibernate.</p>
+<div class="admonition-see-also last admonition seealso">
+<p class="first admonition-title">See also</p>
+<p><a class="reference external" href="http://martinfowler.com/eaaCatalog/unitOfWork.html">Unit of Work by Martin Fowler</a></p>
+<p class="last"><a class="reference internal" href="orm/session.html"><em>Using the Session</em></a></p>
+</div>
+</dd>
+<dt id="term-where-clause">WHERE clause</dt>
+<dd><p class="first">The portion of the <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement which indicates criteria
+by which rows should be filtered.   It is a single SQL expression
+which follows the keyword <tt class="docutils literal"><span class="pre">WHERE</span></tt>.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">user_account</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">user_account</span><span class="p">.</span><span class="n">email</span>
+<span class="k">FROM</span> <span class="n">user_account</span>
+<span class="k">WHERE</span> <span class="n">user_account</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;fred&#39;</span> <span class="k">AND</span> <span class="n">user_account</span><span class="p">.</span><span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;E&#39;</span></pre></div>
+</div>
+<p class="last">Above, the phrase <tt class="docutils literal"><span class="pre">WHERE</span> <span class="pre">user_account.name</span> <span class="pre">=</span> <span class="pre">'fred'</span> <span class="pre">AND</span> <span class="pre">user_account.status</span> <span class="pre">=</span> <span class="pre">'E'</span></tt>
+comprises the WHERE clause of the <tt class="docutils literal"><span class="pre">SELECT</span></tt>.</p>
+</dd>
+</dl>
+</div>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links">
+
+    <div id="docs-copyright">
+        &copy; <a href="copyright.html">Copyright</a> 2007-2013, the SQLAlchemy authors and contributors.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</div>
+
+</div>
+
+        
+    </body>
+</html>
+
+

@@ -19,14 +19,14 @@
     <emulator>/usr/libexec/qemu-kvm</emulator>
     <disk type='file' device='floppy'>
       <driver name='qemu' type='raw' cache='none'/>
-      <source file='%s/instances/${ I.id }/floppy.img'/>
+      <source file='FLOPPY_IMG'/>
       <target dev='fda' bus='fdc'/>
       <address type='drive' controller='0' bus='0' unit='0'/>
     </disk>
 
     <disk type='file' device='disk'>
       <driver name='qemu' type='raw' cache='none' io='threads'/>
-      <source file='%s/instances/${ I.id }/os.img'/>
+      <source file='OS_IMG'/>
       <target dev='hda' bus='ide'/>
       <alias name='ide0-0-0'/>
       <address type='drive' controller='0' bus='0' target='0' unit='0'/>
@@ -36,7 +36,7 @@
     % for INDEX, S in enumerate(I.storages):
     <disk type='file' device='disk'>
       <driver name='qemu' type='raw' io='threads'/>
-      <source file='%s/instances/${ I.id }/disk${ INDEX + 1 }.img'/>
+      <source file='DISK${ INDEX + 1 }_IMG'/>
       <target dev='hdb' bus='ide'/>
       <alias name='ide0-0-${ INDEX + 1 }'/>
       <address type='drive' controller='0' bus='0' target='0' unit='${ INDEX + 1 }'/>

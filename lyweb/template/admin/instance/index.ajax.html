@@ -95,10 +95,10 @@
 
 ${ PAGE_HTML }
 
-<script type="text/javascript" src="${ theme_url('js/myun-instance.js') }"></script>
-<script type="text/javascript" src="${ theme_url('js/instance-control.js') }"></script>
 <script type="text/javascript">
-  y_checkarea_binding();
-  instance_list_attr_set(".action-setattr");
-  multi_life_control( ".action-lifecontrol" );
+  $( function() {
+    y_checkarea_binding();
+    instance_list_attr_set(".action-setattr");
+    multi_life_control( ".action-lifecontrol" );
+  });
 </script>

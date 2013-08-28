@@ -8,7 +8,7 @@ from .models import Resource
 from .forms import ResourceForm
 from .utils import resource_mail_notice
 
-from ytool.pagination import pagination
+from yweb.utils.pagination import pagination
 
 
 

@@ -153,6 +153,11 @@ static int __process_xml_request(xmlDocPtr doc, xmlNodePtr node)
     if (str == NULL)
         goto out;
     ci.ins_domain = str;
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/request/parameters/instance/domxml");
+    if (str != NULL) {
+        ci.ins_json = str;
+    }
     str = xml_xpath_prop_from_ctx(xpathCtx,
                          "/" LYXML_ROOT "/request/parameters/instance", "status");
     if (str != NULL) {
@@ -169,6 +174,12 @@ static int __process_xml_request(xmlDocPtr doc, xmlNodePtr node)
                          "/" LYXML_ROOT "/request/parameters/instance/memory");
     if (str != NULL) {
         ci.ins_mem = atoi(str);
+        free(str);
+    }
+    str = xml_xpath_text_from_ctx(xpathCtx,
+                         "/" LYXML_ROOT "/request/parameters/instance/extsize");
+    if (str != NULL) {
+        ci.ins_extsize = atoi(str);
         free(str);
     }
     str = xml_xpath_text_from_ctx(xpathCtx,

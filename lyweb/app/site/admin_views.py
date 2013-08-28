@@ -16,7 +16,7 @@ from .models import SiteNav, SiteEntry, SiteArticle, SiteConfig, \
 from .forms import SiteNavForm, SiteEntryForm, ArticleForm, \
     ArticleEditForm, SiteConfigForm, SiteLocaleConfigForm
 
-from ytool.pagination import pagination
+from yweb.utils.pagination import pagination
 
 import settings
 

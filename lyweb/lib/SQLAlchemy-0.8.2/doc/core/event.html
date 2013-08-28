@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <title>
+            
+    
+                Events
+             &mdash; 
+    SQLAlchemy 0.8 Documentation
+
+        </title>
+        
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/docs.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.8.2',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/init.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+        <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="top" title="SQLAlchemy 0.8 Documentation" href="../index.html" />
+        <link rel="up" title="SQLAlchemy Core" href="index.html" />
+        <link rel="next" title="Core Events" href="events.html" />
+        <link rel="prev" title="Column and Data Types" href="types.html" />
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+<div id="docs-header">
+    <h1>SQLAlchemy 0.8 Documentation</h1>
+
+    <div id="docs-search">
+    Search:
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+
+    <div id="docs-version-header">
+        Release: <span class="version-num">0.8.2</span> | Release Date: July 3, 2013
+
+
+    </div>
+
+</div>
+
+<div id="docs-top-navigation">
+    <div id="docs-top-page-control" class="docs-navigation-links">
+        <ul>
+            <li>Prev:
+            <a href="types.html" title="previous chapter">Column and Data Types</a>
+            </li>
+            <li>Next:
+            <a href="events.html" title="next chapter">Core Events</a>
+            </li>
+
+        <li>
+            <a href="../contents.html">Table of Contents</a> |
+            <a href="../genindex.html">Index</a>
+            | <a href="../_sources/core/event.txt">view source
+        </li>
+        </ul>
+    </div>
+
+    <div id="docs-navigation-banner">
+        <a href="../index.html">SQLAlchemy 0.8 Documentation</a>
+                » <a href="index.html" title="SQLAlchemy Core">SQLAlchemy Core</a>
+        » 
+                Events
+             
+
+        <h2>
+            
+                Events
+            
+        </h2>
+    </div>
+
+</div>
+
+<div id="docs-body-container">
+
+    <div id="docs-sidebar">
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Events</a><ul>
+<li><a class="reference internal" href="#event-registration">Event Registration</a></li>
+<li><a class="reference internal" href="#targets">Targets</a></li>
+<li><a class="reference internal" href="#modifiers">Modifiers</a></li>
+<li><a class="reference internal" href="#event-reference">Event Reference</a></li>
+<li><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+</ul>
+
+
+    <h4>Previous Topic</h4>
+    <p>
+    <a href="types.html" title="previous chapter">Column and Data Types</a>
+    </p>
+    <h4>Next Topic</h4>
+    <p>
+    <a href="events.html" title="next chapter">Core Events</a>
+    </p>
+
+
+    <h4>Quick Search</h4>
+    <p>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </p>
+
+    </div>
+
+    <div id="docs-body" class="withsidebar" >
+        
+<div class="section" id="events">
+<span id="event-toplevel"></span><h1>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h1>
+<p>SQLAlchemy includes an event API which publishes a wide variety of hooks into
+the internals of both SQLAlchemy Core and ORM.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.7: </span>The system supercedes the previous system of &#8220;extension&#8221;, &#8220;proxy&#8221;,
+and &#8220;listener&#8221; classes.</p>
+<div class="section" id="event-registration">
+<h2>Event Registration<a class="headerlink" href="#event-registration" title="Permalink to this headline">¶</a></h2>
+<p>Subscribing to an event occurs through a single API point, the <a class="reference internal" href="#sqlalchemy.event.listen" title="sqlalchemy.event.listen"><tt class="xref py py-func docutils literal"><span class="pre">listen()</span></tt></a> function.   This function
+accepts a user-defined listening function, a string identifier which identifies the event to be
+intercepted, and a target.  Additional positional and keyword arguments may be supported by
+specific types of events, which may specify alternate interfaces for the given event function, or provide
+instructions regarding secondary event targets based on the given target.</p>
+<p>The name of an event and the argument signature of a corresponding listener function is derived from
+a class bound specification method, which exists bound to a marker class that&#8217;s described in the documentation.
+For example, the documentation for <a class="reference internal" href="events.html#sqlalchemy.events.PoolEvents.connect" title="sqlalchemy.events.PoolEvents.connect"><tt class="xref py py-meth docutils literal"><span class="pre">PoolEvents.connect()</span></tt></a> indicates that the event name is <tt class="docutils literal"><span class="pre">&quot;connect&quot;</span></tt>
+and that a user-defined listener function should receive two positional arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sqlalchemy.event</span> <span class="kn">import</span> <span class="n">listen</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.pool</span> <span class="kn">import</span> <span class="n">Pool</span>
+
+<span class="k">def</span> <span class="nf">my_on_connect</span><span class="p">(</span><span class="n">dbapi_con</span><span class="p">,</span> <span class="n">connection_record</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&quot;New DBAPI connection:&quot;</span><span class="p">,</span> <span class="n">dbapi_con</span>
+
+<span class="n">listen</span><span class="p">(</span><span class="n">Pool</span><span class="p">,</span> <span class="s">&#39;connect&#39;</span><span class="p">,</span> <span class="n">my_on_connect</span><span class="p">)</span></pre></div>
+</div>
+</div>
+<div class="section" id="targets">
+<h2>Targets<a class="headerlink" href="#targets" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="#sqlalchemy.event.listen" title="sqlalchemy.event.listen"><tt class="xref py py-func docutils literal"><span class="pre">listen()</span></tt></a> function is very flexible regarding targets.  It generally accepts classes, instances of those
+classes, and related classes or objects from which the appropriate target can be derived.  For example,
+the above mentioned <tt class="docutils literal"><span class="pre">&quot;connect&quot;</span></tt> event accepts <a class="reference internal" href="connections.html#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a> classes and objects as well as <a class="reference internal" href="pooling.html#sqlalchemy.pool.Pool" title="sqlalchemy.pool.Pool"><tt class="xref py py-class docutils literal"><span class="pre">Pool</span></tt></a>
+classes and objects:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sqlalchemy.event</span> <span class="kn">import</span> <span class="n">listen</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.pool</span> <span class="kn">import</span> <span class="n">Pool</span><span class="p">,</span> <span class="n">QueuePool</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.engine</span> <span class="kn">import</span> <span class="n">Engine</span>
+<span class="kn">import</span> <span class="nn">psycopg2</span>
+
+<span class="k">def</span> <span class="nf">connect</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s">&#39;ed&#39;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">dbname</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
+
+<span class="n">my_pool</span> <span class="o">=</span> <span class="n">QueuePool</span><span class="p">(</span><span class="n">connect</span><span class="p">)</span>
+<span class="n">my_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s">&#39;postgresql://ed@localhost/test&#39;</span><span class="p">)</span>
+
+<span class="c"># associate listener with all instances of Pool</span>
+<span class="n">listen</span><span class="p">(</span><span class="n">Pool</span><span class="p">,</span> <span class="s">&#39;connect&#39;</span><span class="p">,</span> <span class="n">my_on_connect</span><span class="p">)</span>
+
+<span class="c"># associate listener with all instances of Pool</span>
+<span class="c"># via the Engine class</span>
+<span class="n">listen</span><span class="p">(</span><span class="n">Engine</span><span class="p">,</span> <span class="s">&#39;connect&#39;</span><span class="p">,</span> <span class="n">my_on_connect</span><span class="p">)</span>
+
+<span class="c"># associate listener with my_pool</span>
+<span class="n">listen</span><span class="p">(</span><span class="n">my_pool</span><span class="p">,</span> <span class="s">&#39;connect&#39;</span><span class="p">,</span> <span class="n">my_on_connect</span><span class="p">)</span>
+
+<span class="c"># associate listener with my_engine.pool</span>
+<span class="n">listen</span><span class="p">(</span><span class="n">my_engine</span><span class="p">,</span> <span class="s">&#39;connect&#39;</span><span class="p">,</span> <span class="n">my_on_connect</span><span class="p">)</span></pre></div>
+</div>
+</div>
+<div class="section" id="modifiers">
+<h2>Modifiers<a class="headerlink" href="#modifiers" title="Permalink to this headline">¶</a></h2>
+<p>Some listeners allow modifiers to be passed to <a class="reference internal" href="#sqlalchemy.event.listen" title="sqlalchemy.event.listen"><tt class="xref py py-func docutils literal"><span class="pre">listen()</span></tt></a>.  These modifiers sometimes provide alternate
+calling signatures for listeners.  Such as with ORM events, some event listeners can have a return value
+which modifies the subsequent handling.   By default, no listener ever requires a return value, but by passing
+<tt class="docutils literal"><span class="pre">retval=True</span></tt> this value can be supported:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">validate_phone</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">oldvalue</span><span class="p">,</span> <span class="n">initiator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Strip non-numeric characters from a phone number&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&#39;(?![0-9])&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<span class="c"># setup listener on UserContact.phone attribute, instructing</span>
+<span class="c"># it to use the return value</span>
+<span class="n">listen</span><span class="p">(</span><span class="n">UserContact</span><span class="o">.</span><span class="n">phone</span><span class="p">,</span> <span class="s">&#39;set&#39;</span><span class="p">,</span> <span class="n">validate_phone</span><span class="p">,</span> <span class="n">retval</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span></pre></div>
+</div>
+</div>
+<div class="section" id="event-reference">
+<h2>Event Reference<a class="headerlink" href="#event-reference" title="Permalink to this headline">¶</a></h2>
+<p>Both SQLAlchemy Core and SQLAlchemy ORM feature a wide variety of event hooks:</p>
+<ul class="simple">
+<li><strong>Core Events</strong> - these are described in
+<a class="reference internal" href="events.html"><em>Core Events</em></a> and include event hooks specific to
+connection pool lifecycle, SQL statement execution,
+transaction lifecycle, and schema creation and teardown.</li>
+<li><strong>ORM Events</strong> - these are described in
+<a class="reference internal" href="../orm/events.html"><em>ORM Events</em></a>, and include event hooks specific to
+class and attribute instrumentation, object initialization
+hooks, attribute on-change hooks, session state, flush, and
+commit hooks, mapper initialization, object/result population,
+and per-instance persistence hooks.</li>
+</ul>
+</div>
+<div class="section" id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="sqlalchemy.event.listen">
+<tt class="descclassname">sqlalchemy.event.</tt><tt class="descname">listen</tt><big>(</big><em>target</em>, <em>identifier</em>, <em>fn</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.event.listen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a listener function for the given target.</p>
+<p>e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">event</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.schema</span> <span class="kn">import</span> <span class="n">UniqueConstraint</span>
+
+<span class="k">def</span> <span class="nf">unique_constraint_name</span><span class="p">(</span><span class="n">const</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+    <span class="n">const</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;uq_</span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="nb">list</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">columns</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+    <span class="p">)</span>
+<span class="n">event</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span>
+        <span class="n">UniqueConstraint</span><span class="p">,</span>
+        <span class="s">&quot;after_parent_attach&quot;</span><span class="p">,</span>
+        <span class="n">unique_constraint_name</span><span class="p">)</span></pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="sqlalchemy.event.listens_for">
+<tt class="descclassname">sqlalchemy.event.</tt><tt class="descname">listens_for</tt><big>(</big><em>target</em>, <em>identifier</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#sqlalchemy.event.listens_for" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorate a function as a listener for the given target + identifier.</p>
+<p>e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">event</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.schema</span> <span class="kn">import</span> <span class="n">UniqueConstraint</span>
+
+<span class="nd">@event.listens_for</span><span class="p">(</span><span class="n">UniqueConstraint</span><span class="p">,</span> <span class="s">&quot;after_parent_attach&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unique_constraint_name</span><span class="p">(</span><span class="n">const</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+    <span class="n">const</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;uq_</span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="nb">list</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">columns</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+    <span class="p">)</span></pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links">
+        Previous:
+        <a href="types.html" title="previous chapter">Column and Data Types</a>
+        Next:
+        <a href="events.html" title="next chapter">Core Events</a>
+
+    <div id="docs-copyright">
+        &copy; <a href="../copyright.html">Copyright</a> 2007-2013, the SQLAlchemy authors and contributors.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</div>
+
+</div>
+
+        
+    </body>
+</html>
+
+

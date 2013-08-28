@@ -7,6 +7,7 @@
 <![endif]-->
     <link rel="SHORTCUT ICON" href="/satic/favicon.ico?v=0.6" />
     <link href="/static/third/bootswatch/united/bootstrap.min.css?v=2.3.2" rel="stylesheet" media="screen">
+##    <link href="/static/third/bootstrap/css/bootstrap.min.css?v=2.3.2" rel="stylesheet" type="text/css">
     <link href="/static/third/bootstrap/css/bootstrap-responsive.min.css?v=2.3.2" rel="stylesheet" type="text/css">
     <link href="/static/third/font-awesome/css/font-awesome.min.css?v=3.1.0" rel="stylesheet" media="screen">
 <!--[if IE 7]>
@@ -24,18 +25,18 @@
     <script type="text/javascript" src="/static/third/bootstrap/js/bootstrap.min.js?v=2.3.2"></script>
     <script type="text/javascript" src="${ theme_url('js/site.js') }"></script>
 
-    <div class="navbar navbar-fixed-top">
+    <div id="header" class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a href="/admin" class="brand">${ _("Admin") }</a>
+          <a href="/admin" class="brand"><i class="icon-home"></i> ${ _("Admin") }</a>
           <ul role="navigation" class="nav">
-            <li><a href="${ reverse_url('admin:user') }">${ _("Account") }</a></li>
-            <li><a href="${ reverse_url('admin:appliance') }">${ _("Appliance") }</a></li>
-            <li><a href="${ reverse_url('admin:instance') }">${ _("Instance") }</a></li>
-            <li><a href="${ reverse_url('admin:node') }">${ _("Node") }</a></li>
-            <li><a href="${ reverse_url('admin:forum') }">${ _("Forum") }</a></li>
+            <li><a href="${ reverse_url('admin:user') }"><i class="icon-user"></i> ${ _("Account") }</a></li>
+            <li><a href="${ reverse_url('admin:appliance') }"><i class="icon-globe"></i> ${ _("Appliance") }</a></li>
+            <li><a href="${ reverse_url('admin:instance') }"><i class="icon-hdd"></i> ${ _("Instance") }</a></li>
+            <li><a href="${ reverse_url('admin:node') }"><i class="icon-sitemap"></i> ${ _("Node") }</a></li>
+            <li><a href="${ reverse_url('admin:forum') }"><i class="icon-group"></i> ${ _("Forum") }</a></li>
             <li class="dropdown">
-              <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop2" href="#">${ _("Other") } <b class="caret"></b></a>
+              <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop2" href="#"><i class="icon-reorder"></i> ${ _("Other") } <b class="caret"></b></a>
               <ul aria-labelledby="drop2" role="menu" class="dropdown-menu">
                 <li><a href="${ reverse_url('system') }">${ _("System") }</a></li>
                 <li><a href="/admin/site">${ _("Site") }</a></li>
@@ -46,7 +47,7 @@
               </ul>
             </li>
             <li class="dropdown">
-              <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop1" href="#">${ _("Visit Site") } <b class="caret"></b></a>
+              <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop1" href="#"><i class="icon-desktop"></i> ${ _("Visit Site") } <b class="caret"></b></a>
               <ul aria-labelledby="drop1" role="menu" class="dropdown-menu">
                 <li><a href="/">${ _("Home") }</a></li>
                 <li><a href="/appliance">${ _("Appliance") }</a></li>

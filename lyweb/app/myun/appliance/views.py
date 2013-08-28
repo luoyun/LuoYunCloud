@@ -5,7 +5,7 @@ from sqlalchemy import asc, desc, and_
 
 from app.appliance.models import Appliance, ApplianceCatalog
 
-from ytool.pagination import pagination
+from yweb.utils.pagination import pagination
 
 from .forms import ApplianceBaseinfoForm
 

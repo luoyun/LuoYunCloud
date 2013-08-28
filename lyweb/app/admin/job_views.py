@@ -11,7 +11,7 @@ from sqlalchemy.sql.expression import asc, desc
 
 from lycustom import has_permission
 
-from ytool.pagination import pagination
+from yweb.utils.pagination import pagination
 
 
 class JobManagement(RequestHandler):

@@ -13,8 +13,6 @@ from .models import ForumCatalog, ForumTopic, ForumPost, \
 from .forms import TopicForm, PostForm, \
     CatalogForm, CatalogAddForm
 
-from ytool.pagination import pagination
-
 
 
 class Index(RequestHandler):

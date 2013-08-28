@@ -159,6 +159,27 @@ from tornado.locale import load_gettext_translations, \
 
 from tornado.netutil import bind_sockets
 
+
+def save_pid( delete_exist=False ):
+
+    # Save the pid
+    for p in [ '/var/run/lyweb.pid', '/tmp/lyweb.pid' ]:
+
+        if delete_exist:
+            if os.path.exists( p ):
+                os.unlink( p )
+
+        PID = os.getpid()
+        try:
+            f = open(p, 'a')
+            f.write( '%s\n' % PID )
+            f.close()
+            logging.debug('PID %s, write to %s' % (PID, p))
+            break
+        except IOError, e:
+            logging.error('Write PID (%s) to %s failed: %s' % (PID, p, e))
+
+
 def main():
 
     # options
@@ -169,6 +190,8 @@ def main():
     set_default_locale('zh_CN')
 
     logging.info("starting torando web server")
+
+    save_pid( delete_exist=True )
 
     if settings.IPV4_ONLY:
         import socket
@@ -183,6 +206,9 @@ def main():
     application = Application()
     server = HTTPServer(application, xheaders=True)
     server.add_sockets(sockets)
+
+    save_pid()
+
     IOLoop.instance().start()
 
 

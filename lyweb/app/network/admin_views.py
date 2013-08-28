@@ -7,7 +7,7 @@ from app.network.models import NetworkPool, IPPool, \
 
 from .forms import GatewayForm, NetworkPoolForm
 
-from ytool.pagination import pagination
+from yweb.utils.pagination import pagination
 from sqlalchemy import and_, asc, desc
 
 from IPy import IP

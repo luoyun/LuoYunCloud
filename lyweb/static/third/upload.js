@@ -3,8 +3,8 @@ function Uploading() {
 
         $("form").uploadProgress({
             /* scripts locations for safari */
-            jqueryPath: "/static/js/jquery-1.7.min.js",
-            uploadProgressPath: "/static/js/jquery.uploadProgress.js",
+            jqueryPath: "/static/third/jquery-1.9.1.min.js",
+            uploadProgressPath: "/static/third/jquery.uploadProgress.js",
 
             start: function() {
                 var t = new Date();

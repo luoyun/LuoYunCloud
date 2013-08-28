@@ -19,6 +19,9 @@ body {
 
 }
 
+.navbar .brand {
+    font-size: 16px;
+}
 
 #admin-instance-view .view-body {
 	border-left: 1px solid #DEDEDE;

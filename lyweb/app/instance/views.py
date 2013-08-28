@@ -25,7 +25,7 @@ import settings
 from settings import INSTANCE_DELETED_STATUS as DELETED_S
 from settings import JOB_ACTION, JOB_TARGET, LY_TARGET
 
-from ytool.pagination import pagination
+from yweb.utils.pagination import pagination
 
 from tool.domain import instance_domain_binding, \
     instance_domain_unbinding
@@ -70,6 +70,7 @@ class RequestHandler(OrigRequestHandler):
         # TODO: update config about domain
 
         I.update_network()
+        self.db.commit()
 
 
     def binding_domain(self, I):
@@ -81,6 +82,7 @@ class RequestHandler(OrigRequestHandler):
         # TODO: update config about domain
 
         I.update_network()
+        self.db.commit()
 
 
     def get_instance_lastjob(self, I):
@@ -710,6 +712,9 @@ class InstanceDelete(RequestHandler):
         else:
             ret = self.trans(_('Task starts successfully.'))
             code = 0
+
+        # TODO:
+        ret += ' %s' % I.id
 
         add_trace( self, ttype = 'INSTANCE',
                    tid = instance_id,

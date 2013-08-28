@@ -263,7 +263,7 @@ default_site_config = [
 
     # notice , email
     # default smtp is localhost
-    ('notice.smtp.fromaddr', 'noreply@luoyuncloud.com'),
+    ('notice.smtp.fromaddr', 'noreply@localhost'),
     ('notice.smtp.server', '127.0.0.1'),
     ('notice.smtp.port', 25),
     ('notice.smtp.username', ''),

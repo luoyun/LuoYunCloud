@@ -43,6 +43,7 @@
 #include "../util/lyutil.h"
 #include "../util/disk.h"
 #include "../util/download.h"
+#include "../util/base64.h"
 #include "domain.h"
 #include "node.h"
 #include "handler.h"
@@ -373,7 +374,129 @@ static char *  __domain_xml_graphics_passwd_set(char *xml, char *password)
     xmlFreeDoc(doc);
     return xml;
 }
+
+static char * __domain_xml_json_template(NodeCtrlInstance * ci, char * xml)
+{
+    xmlDoc *doc = xml_doc_from_str(xml);
+    if (doc == NULL) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return NULL;
+    }
+    xmlNode * node = xmlDocGetRootElement(doc);
+    if (node == NULL || strcmp((char *)node->name, "domain") != 0) {
+        logwarn(_("error: xml string not for domain\n"));
+        goto out;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name); */
+            if (strcmp((char *)node->name, "devices") == 0 ) {
+                break;
+            }
+         }
+    }
+    if (node == NULL || strcmp((char *)node->name, "devices") != 0 ) {
+        logwarn(_("error: xml string not for domain\n"));
+        goto out;
+    }
+
+    node = node->children;
+    for (; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE) {
+            /* logdebug(_("xml node %s\n"), node->name);*/
+            if (strcmp((char *)node->name, "disk") == 0 ) {
+                xmlNode * disknode = node->children;
+                for (; disknode; disknode = disknode->next) {
+                    if (disknode->type == XML_ELEMENT_NODE) {
+                        if (strcmp((char *)disknode->name, "source") == 0 ) {
+                            char path[PATH_MAX];
+                            char * diskname;
+                            char * str = (char *)xmlGetProp(disknode, (const xmlChar *)"file");
+                            if (strcmp(str, "FLOPPY_IMG") == 0){
+                                diskname = LUOYUN_INSTANCE_CONF_FILE;
+                            }
+                            else if (strcmp(str, "OS_IMG") == 0){
+                                diskname = LUOYUN_INSTANCE_DISK_FILE;
+                            }
+                            else if (strcmp(str, "DISK1_IMG") == 0){
+                                diskname = LUOYUN_INSTANCE_STORAGE1_FILE;
+                            }
+                            else if (strcmp(str, "DISK2_IMG") == 0){
+                                diskname = LUOYUN_INSTANCE_STORAGE2_FILE;
+                            }
+                            else {
+                                logerror(_("unrecognized disk, in %s(%d).\n"), __func__, __LINE__);
+                                free(str);
+                                goto out;
+                            }
+                            free(str);
+                            if (snprintf(path, PATH_MAX, "%s/%d/%s", g_c->config.ins_data_dir,
+                                         ci->ins_id, diskname) >= PATH_MAX) {
+                                logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                                goto out;
+                            }
+                            str = (char *)xmlSetProp(disknode, (const xmlChar *)"file", (const xmlChar *)(BAD_CAST path));
+                            if (str == NULL) {
+                                logerror(_("domain sets FLOPPY_IMG error\n"));
+                                goto out;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    int len;
+    xmlDocDumpMemory(doc, (xmlChar **)&xml, &len);
+    logdebug("in %s, domain xml len %d\n%s\n", __func__, len, xml);
+out:
+    xmlFreeDoc(doc);
+    return xml;
+}
+
 #include <json.h>
+static char * __domain_xml_template(NodeCtrlInstance * ci)
+{
+    if (ci == NULL || ci->ins_json == NULL || g_c == NULL)
+        return NULL;
+
+    char * xml = NULL;
+    json_settings settings;
+    memset((void *)&settings, 0, sizeof(json_settings));
+    char error[256];
+    json_value * value = json_parse_ex(&settings, ci->ins_json, error);
+    if (value == NULL) {
+        logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, error);
+        return NULL;
+    }
+
+    if (value->type != json_object) {
+        logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "object");
+        goto out;
+    }
+
+    for (int i = 0; i < value->u.object.length; i++) {
+        if (strcmp(value->u.object.values[i].name, "libvirt_conf") == 0) {
+            json_value * conf_value = value->u.object.values[i].value;
+            if (conf_value->type != json_string) {
+                logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "libvirt_conf object");
+                goto out;
+            }
+            const char * str = (const char *)conf_value->u.string.ptr;
+            size_t len;
+            xml = (char *)base64_decode((const unsigned char *)str, (size_t)strlen(str), &len);
+            logdebug("in %s, xml len %d\n%s\n", __func__, len, xml);
+            break;
+        }
+    }
+
+out:
+    json_value_free(value);
+    return xml;
+}
+
 static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor, 
                              char * net, int net_size, 
                              char * disk, int disk_size)
@@ -386,7 +509,7 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
     memset((void *)&settings, 0, sizeof(json_settings));
     char error[256];
     json_value * value = json_parse_ex(&settings, ci->osm_json, error);
-    if (value == 0) {
+    if (value == NULL) {
         logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, error);
         return -1;
     }
@@ -396,8 +519,9 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
         goto out;
     }
 
+    int disk_found = 0;
     for (int i = 0; i < value->u.object.length; i++) {
-        if (strcmp(value->u.object.values[i].name, "network") == 0) {
+        if (strcmp(value->u.object.values[i].name, "network") == 0 && net_size > 0) {
             net[0] = '\0';
             json_value * net_array = value->u.object.values[i].value;
             if (net_array->type != json_array) {
@@ -469,7 +593,6 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
         }
         else if (strcmp(value->u.object.values[i].name, "storage") == 0) {
             int storage_size = -1;
-            int disk_found = 0;
             json_value * disk_array = value->u.object.values[i].value;
             if (disk_array->type != json_array) {
                 logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "storage");
@@ -483,12 +606,12 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
                 }
                 for (int k = 0; k < disk_value->u.object.length; k++) {
                     if (strcmp(disk_value->u.object.values[k].name, "type") == 0) {
-                        json_value * disk_type = disk_value->u.object.values[k].value;
-                        if (disk_type->type != json_string) {
+                        json_value * disk_t = disk_value->u.object.values[k].value;
+                        if (disk_t->type != json_string) {
                             logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "disk type");
                             goto out;
                         }
-                        if (strcmp(disk_type->u.string.ptr, "disk") == 0) {
+                        if (strcmp(disk_t->u.string.ptr, "disk") == 0) {
                             if (disk_found) {
                                 /* only support one disk for now */
                                 logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "dup disk");
@@ -501,12 +624,12 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
                             break;
                     }
                     else if (strcmp(disk_value->u.object.values[k].name, "size") == 0) {
-                        json_value * disk_size = disk_value->u.object.values[k].value;
-                        if (disk_size->type != json_integer || disk_size->u.integer <= 0) {
+                        json_value * disk_s = disk_value->u.object.values[k].value;
+                        if (disk_s->type != json_integer || disk_s->u.integer <= 0) {
                             logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, "disk size");
                             goto out;
                         }
-                        storage_size = disk_size->u.integer;
+                        storage_size = disk_s->u.integer;
                     }
                 }
                 if (disk_found) {
@@ -520,21 +643,23 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
                         goto out;
                     }
 
-                    if (g_c->config.vm_xml_disk)
-                        snprintf(tmp, PATH_MAX, g_c->config.vm_xml_disk, path);
-                    else if (hypervisor == HYPERVISOR_IS_XEN)
-                        snprintf(tmp, PATH_MAX, LIBVIRT_XML_TMPL_XEN_DISK, path, LUOYUN_INSTANCE_XEN_DISK2_NAME);
-                    else if (hypervisor == HYPERVISOR_IS_KVM)
-                        snprintf(tmp, PATH_MAX, LIBVIRT_XML_TMPL_KVM_DISK, path, LUOYUN_INSTANCE_KVM_DISK2_NAME);
-                    else {
-                        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-                        goto out;
+                    if (disk_size > 0) {
+                        if (g_c->config.vm_xml_disk)
+                            snprintf(tmp, PATH_MAX, g_c->config.vm_xml_disk, path);
+                        else if (hypervisor == HYPERVISOR_IS_XEN)
+                            snprintf(tmp, PATH_MAX, LIBVIRT_XML_TMPL_XEN_DISK, path, LUOYUN_INSTANCE_XEN_DISK2_NAME);
+                        else if (hypervisor == HYPERVISOR_IS_KVM)
+                            snprintf(tmp, PATH_MAX, LIBVIRT_XML_TMPL_KVM_DISK, path, LUOYUN_INSTANCE_KVM_DISK2_NAME);
+                        else {
+                            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                            goto out;
+                        }
+                        if (strlen(disk) + strlen(tmp) > disk_size) {
+                            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+                            goto out;
+                        }
+                        strcat(disk, tmp);
                     }
-                    if (strlen(disk) + strlen(tmp) > disk_size) {
-                        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-                        goto out;
-                    }
-                    strcat(disk, tmp);
 
                     int need_truncate = 1;
                     if (access(path, F_OK) == 0) {
@@ -567,25 +692,25 @@ static int __domain_xml_json(NodeCtrlInstance * ci, int hypervisor,
                     }
                 }
             }
-            if (disk_found == 0) {
-                /* delete disk */
-                if (snprintf(path, PATH_MAX, "%s/%d/%s", g_c->config.ins_data_dir,
-                             ci->ins_id, LUOYUN_INSTANCE_STORAGE1_FILE) >= PATH_MAX) {
-                    logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-                    goto out;
-                }
-                if (snprintf(tmp, PATH_MAX, "%s/%s.%d", g_c->config.trash_data_dir,
-                             LUOYUN_INSTANCE_STORAGE1_FILE, ci->ins_id) >= PATH_MAX) {
-                    logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-                    goto out;
-                }
-                if (access(path, F_OK) == 0) {
-                    if (rename(path, tmp)) {
-                        logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
-                                                                  strerror(errno), errno);
-                        goto out;
-                    }
-                }
+        }
+    }
+    if (disk_found == 0) {
+        /* delete disk */
+        if (snprintf(path, PATH_MAX, "%s/%d/%s", g_c->config.ins_data_dir,
+                     ci->ins_id, LUOYUN_INSTANCE_STORAGE1_FILE) >= PATH_MAX) {
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+            goto out;
+        }
+        if (snprintf(tmp, PATH_MAX, "%s/%s.%d", g_c->config.trash_data_dir,
+                     LUOYUN_INSTANCE_STORAGE1_FILE, ci->ins_id) >= PATH_MAX) {
+            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+            goto out;
+        }
+        if (access(path, F_OK) == 0) {
+            if (rename(path, tmp)) {
+                logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
+                           strerror(errno), errno);
+                goto out;
             }
         }
     }
@@ -607,7 +732,7 @@ static char *  __domain_xml_json_vdi(NodeCtrlInstance * ci, char * xml)
     memset((void *)&settings, 0, sizeof(json_settings));
     char error[256];
     json_value * value = json_parse_ex(&settings, ci->osm_json, error);
-    if (value == 0) {
+    if (value == NULL) {
         logerror(_("error parsing json in %s(%d), %s\n"), __func__, __LINE__, error);
         return NULL;
     }
@@ -654,9 +779,10 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
     if (ci == NULL || g_c == NULL)
         return NULL;
 
-    char net[1024], disk[1024];
+    char * xml = NULL;
+    char net[1024] = {'\0',}, disk[1024] = {'\0',};
+    int net_size = 1024, disk_size = 1024;
     char path[1024], conf_path[1024];
-    int disk_len;
 
     /* os disk */
     if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
@@ -664,7 +790,10 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         return NULL;
     }
-    if (g_c->config.vm_xml_disk)
+    if ((xml = __domain_xml_template(ci)) != NULL) {
+        net_size = disk_size = 0;
+    }
+    else if (g_c->config.vm_xml_disk)
         snprintf(disk, 1024, g_c->config.vm_xml_disk, path);
     else if (hypervisor == HYPERVISOR_IS_XEN)
         snprintf(disk, 1024, LIBVIRT_XML_TMPL_XEN_DISK, path, LUOYUN_INSTANCE_XEN_DISK1_NAME);
@@ -674,68 +803,37 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         logerror(_("error in %s(%d).\n"), __func__, __LINE__);
         return NULL;
     }
-    disk_len = strlen(disk);
 
-    /* config disk */
-    if (snprintf(conf_path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
-                 ci->ins_id, LUOYUN_INSTANCE_CONF_FILE) >= 1024) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-        return NULL;
-    }
-#if 0 /* use floppy disk instead */
-    if (g_c->config.vm_xml_disk)
-        snprintf(tmp, 1024, g_c->config.vm_xml_disk, conf_path);
-    else if (hypervisor == HYPERVISOR_IS_XEN)
-        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_DISK, conf_path, LUOYUN_INSTANCE_XEN_DISK2_NAME);
-    else if (hypervisor == HYPERVISOR_IS_KVM)
-        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_DISK, conf_path, LUOYUN_INSTANCE_KVM_DISK2_NAME);
-    else {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-        return NULL;
-    }
-    if (strlen(disk) + strlen(tmp) >= 1024) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-        return NULL;
-    }
-    strcat(disk, tmp);
-#endif
-
-    /* prepare space for the complete XML */
-    int size = LIBVIRT_XML_DATA_MAX;
-    char * buf = malloc(size);
-    if (buf == NULL) {
-        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-        return NULL;
+    /* extend os disk */
+    if (ci->ins_extsize > 0 && ci->ins_extsize < 1000) {
+        struct stat statbuf;
+        if (stat(path, &statbuf)) {
+            logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__, strerror(errno), errno);
+            goto out;
+        }
+        int size_g = (int)(statbuf.st_size>>30);
+        if (truncate(path, (off_t)(size_g+ci->ins_extsize)<<30)) {
+            logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__, strerror(errno), errno);
+            goto out;
+        }
     }
 
-    net[0] = '\0';
     if (ci->osm_json) {
-        if (__domain_xml_json(ci, hypervisor, net, 1024, disk, 1024) != 0) {
+        if (__domain_xml_json(ci, hypervisor, net, net_size, disk, disk_size) != 0) {
              logerror(_("error in %s(%d).\n"), __func__, __LINE__);
              goto out;
         }
     }
 
-    if (disk_len == strlen(disk)) {
-        /* delete disk */
-        char tmp[1024];
-        if (snprintf(path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
-                     ci->ins_id, LUOYUN_INSTANCE_STORAGE1_FILE) >= 1024) {
-            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-            goto out;
+    /* try to use domain template from CLC */
+    if (xml) {
+        /* modify xml for VDI password */
+        char * xmlnew = __domain_xml_json_template(ci, xml);
+        if (xmlnew && xmlnew != xml) {
+            free(xml);
+            xml = xmlnew;
         }
-        if (snprintf(tmp, 1024, "%s/%s.%d", g_c->config.trash_data_dir,
-                     LUOYUN_INSTANCE_STORAGE1_FILE, ci->ins_id) >= 1024) {
-            logerror(_("error in %s(%d).\n"), __func__, __LINE__);
-            goto out;
-        }
-        if (access(path, F_OK) == 0) {
-            if (rename(path, tmp)) {
-                logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__,
-                           strerror(errno), errno);
-                goto out;
-            }
-        }
+        return xml;
     }
 
     if (net[0] == '\0') {
@@ -767,18 +865,51 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
 
     }
 
+    /* prepare space for the complete XML */
+    int size = LIBVIRT_XML_DATA_MAX;
+    xml = malloc(size);
+    if (xml == NULL) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return NULL;
+    }
+
+    /* config disk */
+    if (snprintf(conf_path, 1024, "%s/%d/%s", g_c->config.ins_data_dir,
+                 ci->ins_id, LUOYUN_INSTANCE_CONF_FILE) >= 1024) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return NULL;
+    }
+#if 0 /* use floppy disk instead */
+    if (g_c->config.vm_xml_disk)
+        snprintf(tmp, 1024, g_c->config.vm_xml_disk, conf_path);
+    else if (hypervisor == HYPERVISOR_IS_XEN)
+        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_XEN_DISK, conf_path, LUOYUN_INSTANCE_XEN_DISK2_NAME);
+    else if (hypervisor == HYPERVISOR_IS_KVM)
+        snprintf(tmp, 1024, LIBVIRT_XML_TMPL_KVM_DISK, conf_path, LUOYUN_INSTANCE_KVM_DISK2_NAME);
+    else {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return NULL;
+    }
+    if (strlen(disk) + strlen(tmp) >= 1024) {
+        logerror(_("error in %s(%d).\n"), __func__, __LINE__);
+        return NULL;
+    }
+    strcat(disk, tmp);
+#endif
+
+    /* create dom xml */
     int len = -1;
     if (g_c->config.vm_xml) {
         char strid[20], strmem[20], strcpu[10];
         sprintf(strid, "%d", ci->ins_id);
         sprintf(strmem, "%d", ci->ins_mem);
         sprintf(strcpu, "%d", ci->ins_vcpu);
-        len =  snprintf(buf, size, g_c->config.vm_xml,
+        len =  snprintf(xml, size, g_c->config.vm_xml,
                         strid, ci->ins_domain,
                         strmem, strcpu, conf_path, disk, net);
     }
     else if (hypervisor == HYPERVISOR_IS_KVM) {
-        len = snprintf(buf, size, LIBVIRT_XML_TMPL_KVM,
+        len = snprintf(xml, size, LIBVIRT_XML_TMPL_KVM,
                        ci->ins_id, ci->ins_domain,
                        ci->ins_mem, ci->ins_vcpu, conf_path, disk, net);
     }
@@ -787,7 +918,7 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
     }
     else if (hypervisor == HYPERVISOR_IS_XEN && fullvirt == 0) {
         snprintf(path, 1024, "%s/%d", g_c->config.ins_data_dir, ci->ins_id);
-        len = snprintf(buf, size, LIBVIRT_XML_TMPL_XEN_PARA,
+        len = snprintf(xml, size, LIBVIRT_XML_TMPL_XEN_PARA,
                        ci->ins_id, ci->ins_domain, path, path,
                        ci->ins_mem, ci->ins_vcpu, conf_path, disk, net);
     }
@@ -801,17 +932,19 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
         goto out;
     }
 
-    char * bufnew = __domain_xml_json_vdi(ci, buf);
-    if (bufnew && bufnew != buf) {
-        free(buf);
-        buf = bufnew;
+    /* modify xml for VDI password */
+    char * xmlnew = __domain_xml_json_vdi(ci, xml);
+    if (xmlnew && xmlnew != xml) {
+        free(xml);
+        xml = xmlnew;
     }
-    logsimple("%s\n", buf);
+    logsimple("%s\n", xml);
 
-    return buf;
+    return xml;
 
 out:
-    free(buf);
+    if (xml)
+        free(xml);
     return NULL;
 }
 

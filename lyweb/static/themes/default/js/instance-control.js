@@ -204,62 +204,86 @@ function single_instance_delete() {
 }
 
 
-function multi_life_control( selector ) {
 
-	$(selector).click( function(event) {
-		event.preventDefault();
+function multi_instance_lifecontrol( ) {
 
-		if ( $(this).hasClass('disabled') )
-			return
+    $('.multi-lifecontrol-opt').click( function(event) {
+        event.preventDefault();
 
-		var ID = '';
-		$('.y-checkarea .icon-check').each( function() {
-			myid = $(this).parents('.y-check-line').find('.y-id').html();
-			if (myid) {
-				if (ID) {
-					ID = ID + ',' + myid;
-				} else {
-					ID = myid;
-				}
-			}
-		});
+        $this = $(this);
 
-		var URL = $(this).attr('href');
+        if ( $this.hasClass('disabled') )
+            return
 
-		$.ajax({
-			url: URL,
-			type: 'POST',
-			data: { 'id': ID },
-			dataType: 'json',
+        var URL   = $this.attr('href');
+        var warn  = $this.data('warning');
+        var title = $this.attr('title');
 
-			success: function(data) {
+        var $body = $('#multi-lifecontrol-window-body');
 
-				var title = $('#instance-lifecontrol-title').html();
-				var body = $('#instance-lifecontrol-body').html();
+        var $modalobj = $('#multi-lifecontrol-window');
+        var $okbtn = $modalobj.find('.ok-btn');
 
-				var $modal = $('#action-return-modal');
-				$modal.find('.modal-title').html(title);
-				$modal.find('.modal-body').html(body);
-				$modal.modal();
+        $modalobj.find('.title').text( title );
 
-				var detail_html = '';
-				$.each(data.data, function(k, v) {
-					detail_html += '<tr><td>' + v.id + '</td><td>' + v.data + '</td></tr>';
-				});
-				$modal.find('.detail').html( detail_html );
+        $okbtn.removeClass('disabled');
+        $okbtn.show();
 
-				if (data.code == 0) {
-					$modal.find('.action-success').show();
+        $body.find('.warning').text( warn );
 
-					// add disabled
-					$(this).addClass('disabled');
+        $return_area = $modalobj.find('.modal-body');
+        $return_area.html( $body.html() );
 
-				} else {
-					$modal.find('.action-failed').show();
-				};
+        // OK button
+        $okbtn.click( function(event) {
 
-			}
-		});
-	});
+            if ( $(this).hasClass('disabled') )
+                return
+
+            $(this).addClass('disabled');
+            $(this).hide();
+
+            $return_area.html('');
+
+            $('.y-checkarea .icon-check').each( function() {
+                ID = $(this).parents('.y-check-line').find('.y-id').html();
+                if ( ID ) {
+                    
+		            $.ajax({
+			            url: URL,
+			            type: 'POST',
+			            data: { 'id': ID },
+			            dataType: 'json',
+
+			            success: function(data) {
+
+                            // TODO: hack now
+                            if (typeof(data.data) == 'string')
+                                detail_html = data.data;
+                            else {
+				                var detail_html = '';
+				                $.each(data.data, function(k, v) {
+					                detail_html += '<strong>' + v.id + '</strong>, ' + v.data + '<br>';
+				                });
+                            }
+
+                            $return_area.append('<div>' + detail_html + '</div>');
+
+                        },
+
+                        error: function() {
+                            $return_area.append('<div class="text-error">Internal Server Error</div>');
+                        }
+                    });
+
+                }
+            });
+
+        });
+
+        $modalobj.modal();
+
+        return
+    });
 }
 

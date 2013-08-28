@@ -313,9 +313,11 @@ char * lyxml_data_reply_node_info(LYReply * reply, char * buf, unsigned int size
         "<name>%s</name>"\
         "<vcpu>%d</vcpu>"\
         "<memory>%d</memory>"\
+        "<extsize>%d</extsize>"\
         "<mac>%s</mac>"\
         "<ip>%s</ip>"\
         "<domain>%s</domain>"\
+        "<domxml>%s</domxml>"\
       "</instance>"\
       "<appliance id=\"%d\">"\
         "<name>%s</name>"\
@@ -346,28 +348,33 @@ char * lyxml_data_instance_run(NodeCtrlInstance * ii, char * buf, unsigned int s
         return NULL;
 
     int caller_buf_flag = 1;
-    int json_len = 0;
+    int json_len1 = 0, json_len2 = 0;
     if (ii->osm_json)
-        json_len = strlen(ii->osm_json);
-    if (json_len) {
-        if (buf == NULL || size < (json_len + LUOYUN_XML_DATA_MAX)) {
-            size = json_len + LUOYUN_XML_DATA_MAX;
+        json_len1 = strlen(ii->osm_json);
+    if (ii->ins_json)
+        json_len2 = strlen(ii->ins_json);
+    if (json_len1 || json_len2) {
+        if (buf == NULL || size < (json_len1 + json_len2 + LUOYUN_XML_DATA_MAX)) {
+            size = json_len1 + json_len2 + LUOYUN_XML_DATA_MAX;
             buf = malloc(size);
             if (buf == NULL)
                 return NULL;
             caller_buf_flag = 0;
         }
     }
+    else
+        __LUOYUN_XML_DATA_PREPARE(caller_buf_flag, buf, size)
 
     int len = snprintf(buf, size, LUOYUN_XML_DATA_INSTANCE_RUN,
                        LY_ENTITY_CLC, 
                        LY_ENTITY_NODE, 
                        ii->req_id, ii->req_action, ii->ins_id, ii->ins_status,
                        ii->ins_name ? (char *)(BAD_CAST ii->ins_name) : "",
-                       ii->ins_vcpu, ii->ins_mem,
+                       ii->ins_vcpu, ii->ins_mem, ii->ins_extsize,
                        ii->ins_mac ? (char *)(BAD_CAST ii->ins_mac) : "",
                        ii->ins_ip ? (char *)(BAD_CAST ii->ins_ip) : "",
                        ii->ins_domain ? (char *)(BAD_CAST ii->ins_domain) : "",
+                       ii->ins_json ? (char *)(BAD_CAST ii->ins_json) : "",
                        ii->app_id,
                        ii->app_name ? (char *)(BAD_CAST ii->app_name) : "",
                        ii->app_uri ? (char *)(BAD_CAST ii->app_uri) : "",

@@ -13,8 +13,8 @@ from app.appliance.models import Appliance, ApplianceCatalog, \
     ApplianceScreenshot
 
 from lycustom import has_permission
-from lytool.filesize import size as human_size
-from ytool.pagination import pagination
+from yweb.utils.filesize import size as human_size
+from yweb.utils.pagination import pagination
 
 
 class AppRequestHandler(RequestHandler):
@@ -130,26 +130,35 @@ class Upload(AppRequestHandler):
 
         # TODO: make sure upfile is correct !
 
-        # copy the upfile from fpath to LuoYun System
-        msg = self.save_upfile(fpath, fhash)
-        if msg:
-            d['error'] = msg
-            self.set_status(400)
-            return self.done(
-                self.trans(_('Save %(filename)s failed: %(emsg)s')) % {
-                    'filename': fname, 'emsg': msg } )
+        # Make sure appliance exists:
+        A = self.db.query(Appliance).filter_by(
+            checksum = fhash ).first()
 
-        newapp = Appliance( name=fname.replace('.', ' '),
-                            user=self.current_user,
-                            filesize=fsize,
-                            checksum=fhash )
-        self.db.add(newapp)
-        self.db.commit()
+        if not ( A.user_id == self.current_user.id or
+                 self.has_permission('admin') ):
+            return self.done( _('Appliance exists, but you have not any permission to management it.') )
+
+        if not A:
+            
+            # copy the upfile from fpath to LuoYun System
+            msg = self.save_upfile(fpath, fhash)
+            if msg:
+                d['error'] = msg
+                self.set_status(400)
+                return self.done(
+                    self.trans(_('Save %(filename)s failed: %(emsg)s')) % {
+                        'filename': fname, 'emsg': msg } )
+
+            A = Appliance( name=fname.replace('.', ' '),
+                           user=self.current_user,
+                           filesize=fsize,
+                           checksum=fhash )
+            self.db.add( A )
+            self.db.commit()
 
         url = self.reverse_url( 'myun:appliance:baseinfo:edit')
-        url += '?id=%s' % newapp.id
+        url += '?id=%s' % A.id
         self.redirect(url)
-
 
 
     def save_upfile(self, fpath, fhash):
@@ -168,7 +177,9 @@ class Upload(AppRequestHandler):
         # file exists ?
         dpath = "%sappliance_%s" % (appdir, fhash)
         if os.path.exists(dpath):
-            return "%s exists !" % dpath
+            #return "%s exists !" % dpath
+            # TODO: exists is ok! but should match db record.
+            return None
             # TODO: redirect to edit !
             #self.redirect('/appliance/%s/edit' % appliance.id)
 

@@ -13,12 +13,12 @@
 
   <form id="upload" enctype="multipart/form-data" action="/upload" method="post">${ xsrf_form_html() }
     <input name="upfile" type="file"/>
-    <input type="submit" value="${ _('Upload') }"/>
+    <button type="submit" class="btn">${ _('Upload Appliance') }</button>
   </form>
 
   <div id="uploading" style="display: none;">
     <div class="progress">
-      <div class="bar"> </div>
+      <div class="bar" id="progressbar"></div>
     </div>
     <div id="percents"></div>
   </div>

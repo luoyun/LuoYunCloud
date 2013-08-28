@@ -739,7 +739,8 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
                  "instance.ip, instance.node_id, "
                  "instance.appliance_id, appliance.name, "
                  "appliance.checksum, instance.status, instance.key, "
-                 "instance.config "
+                 "instance.extendsize, "
+                 "instance.secret_config, instance.config "
                  "from instance, appliance "
                  "where instance.id = %d and "
                  "appliance.id = instance.appliance_id;",
@@ -785,7 +786,11 @@ int db_node_instance_control_get(NodeCtrlInstance * ci, int * node_id)
             free(str);
         }
         ci->osm_tag = ci->ins_id;
-        s = PQgetvalue(res, 0, 10);
+        ci->ins_extsize = atoi(PQgetvalue(res, 0, 10));
+        s = PQgetvalue(res, 0, 11);
+        if (s && strlen(s))
+            ci->ins_json = strdup(s);
+        s = PQgetvalue(res, 0, 12);
         if (s && strlen(s))
             ci->osm_json = strdup(s);
         char ins_domain[21];

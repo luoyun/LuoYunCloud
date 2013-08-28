@@ -22,8 +22,8 @@ from .forms import PublicKeyForm, BaseinfoForm, StorageForm, \
     PortMappingForm
 
 from lycustom import RequestHandler, has_permission
-from ytool.pagination import pagination
-from lytool.filesize import size as human_size
+from yweb.utils.pagination import pagination
+from yweb.utils.filesize import size as human_size
 from tool.firewall import Prerouting
 
 from app.system.utils import add_trace

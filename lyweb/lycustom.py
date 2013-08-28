@@ -28,8 +28,8 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from settings import JOB_ACTION, JOB_TARGET, LY_TARGET, TEMPLATE_DIR
 
 
-from ytime import htime, ftime
-from ytool.hstring import b2s
+from yweb.utils.ytime import htime, ftime
+from yweb.utils.hstring import b2s
 from yweb.quemail import Email
 from app.site.models import SiteConfig
 

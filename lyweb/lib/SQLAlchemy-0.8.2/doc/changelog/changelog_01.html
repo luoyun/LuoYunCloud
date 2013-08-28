@@ -1,0 +1,768 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <title>
+            
+    
+                0.1 Changelog
+             &mdash; 
+    SQLAlchemy 0.8 Documentation
+
+        </title>
+        
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/docs.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.8.2',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/init.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+        <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="top" title="SQLAlchemy 0.8 Documentation" href="../index.html" />
+        <link rel="up" title="Changes and Migration" href="index.html" />
+        <link rel="next" title="What&#8217;s New in SQLAlchemy 0.7?" href="migration_07.html" />
+        <link rel="prev" title="0.2 Changelog" href="changelog_02.html" />
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+<div id="docs-header">
+    <h1>SQLAlchemy 0.8 Documentation</h1>
+
+    <div id="docs-search">
+    Search:
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+
+    <div id="docs-version-header">
+        Release: <span class="version-num">0.8.2</span> | Release Date: July 3, 2013
+
+
+    </div>
+
+</div>
+
+<div id="docs-top-navigation">
+    <div id="docs-top-page-control" class="docs-navigation-links">
+        <ul>
+            <li>Prev:
+            <a href="changelog_02.html" title="previous chapter">0.2 Changelog</a>
+            </li>
+            <li>Next:
+            <a href="migration_07.html" title="next chapter">What&#8217;s New in SQLAlchemy 0.7?</a>
+            </li>
+
+        <li>
+            <a href="../contents.html">Table of Contents</a> |
+            <a href="../genindex.html">Index</a>
+            | <a href="../_sources/changelog/changelog_01.txt">view source
+        </li>
+        </ul>
+    </div>
+
+    <div id="docs-navigation-banner">
+        <a href="../index.html">SQLAlchemy 0.8 Documentation</a>
+                » <a href="index.html" title="Changes and Migration">Changes and Migration</a>
+        » 
+                0.1 Changelog
+             
+
+        <h2>
+            
+                0.1 Changelog
+            
+        </h2>
+    </div>
+
+</div>
+
+<div id="docs-body-container">
+
+    <div id="docs-sidebar">
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">0.1 Changelog</a><ul>
+<li><a class="reference internal" href="#change-0.1.7">0.1.7</a></li>
+<li><a class="reference internal" href="#change-0.1.6">0.1.6</a></li>
+<li><a class="reference internal" href="#change-0.1.5">0.1.5</a></li>
+<li><a class="reference internal" href="#change-0.1.4">0.1.4</a></li>
+<li><a class="reference internal" href="#change-0.1.3">0.1.3</a></li>
+<li><a class="reference internal" href="#change-0.1.2">0.1.2</a></li>
+<li><a class="reference internal" href="#change-0.1.1">0.1.1</a></li>
+</ul>
+</li>
+</ul>
+
+
+    <h4>Previous Topic</h4>
+    <p>
+    <a href="changelog_02.html" title="previous chapter">0.2 Changelog</a>
+    </p>
+    <h4>Next Topic</h4>
+    <p>
+    <a href="migration_07.html" title="next chapter">What&#8217;s New in SQLAlchemy 0.7?</a>
+    </p>
+
+
+    <h4>Quick Search</h4>
+    <p>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </p>
+
+    </div>
+
+    <div id="docs-body" class="withsidebar" >
+        
+<div class="section" id="changelog">
+<h1>0.1 Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="change-0.1.7">
+<h2>0.1.7<a class="headerlink" href="#change-0.1.7" title="Permalink to this headline">¶</a></h2>
+Released: Fri May 05 2006<ul class="simple">
+<li><p id="change-0.1.7-0"><span class="target" id="change-328a512e45ff41563954cf735897ee07"></span>some fixes to topological sort algorithm<a class="changeset-link reference internal" href="#change-328a512e45ff41563954cf735897ee07">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-1"><span class="target" id="change-5325a0bce730c2af7c68b1e8b502c515"></span>added DISTINCT ON support to Postgres (just supply distinct=[col1,col2..])<a class="changeset-link reference internal" href="#change-5325a0bce730c2af7c68b1e8b502c515">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-2"><span class="target" id="change-accc87ebae193a33b61db683b6fec8cc"></span>added __mod__ (% operator) to sql expressions<a class="changeset-link reference internal" href="#change-accc87ebae193a33b61db683b6fec8cc">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-3"><span class="target" id="change-bc8de29156fa01e13acccf2275546f2c"></span>&#8220;order_by&#8221; mapper property inherited from inheriting mapper<a class="changeset-link reference internal" href="#change-bc8de29156fa01e13acccf2275546f2c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-4"><span class="target" id="change-f19ea4a4ac8a900c9dc69f593a0e6900"></span>fix to column type used when mapper UPDATES/DELETEs<a class="changeset-link reference internal" href="#change-f19ea4a4ac8a900c9dc69f593a0e6900">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-5"><span class="target" id="change-a83c4b8c4929f00119792aaa1c7eaad0"></span>with convert_unicode=True, reflection was failing, has been fixed<a class="changeset-link reference internal" href="#change-a83c4b8c4929f00119792aaa1c7eaad0">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-6"><span class="target" id="change-05c25cbd078b2189f6edd43949f26d53"></span>types types types!  still werent working....have to use TypeDecorator again :(<a class="changeset-link reference internal" href="#change-05c25cbd078b2189f6edd43949f26d53">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-7"><span class="target" id="change-f786fe476a97d9670225bd23f8ba525c"></span>mysql binary type converts array output to buffer, fixes PickleType<a class="changeset-link reference internal" href="#change-f786fe476a97d9670225bd23f8ba525c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-8"><span class="target" id="change-521e5583e06309364169c17d38eb7f4c"></span>fixed the attributes.py memory leak once and for all<a class="changeset-link reference internal" href="#change-521e5583e06309364169c17d38eb7f4c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-9"><span class="target" id="change-d68c77086376391b4445c79edfb06222"></span>unittests are qualified based on the databases that support each one<a class="changeset-link reference internal" href="#change-d68c77086376391b4445c79edfb06222">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-10"><span class="target" id="change-242dbb58a59fc700cebb1daa2705e5c3"></span>fixed bug where column defaults would clobber VALUES clause of insert objects<a class="changeset-link reference internal" href="#change-242dbb58a59fc700cebb1daa2705e5c3">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-11"><span class="target" id="change-c9e53eccf51d7613c97843b27f3a7c82"></span>fixed bug where table def w/ schema name would force engine connection<a class="changeset-link reference internal" href="#change-c9e53eccf51d7613c97843b27f3a7c82">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-12"><span class="target" id="change-b6a168bf0634a9bcda214e61709a7525"></span>fix for parenthesis to work correctly with subqueries in INSERT/UPDATE<a class="changeset-link reference internal" href="#change-b6a168bf0634a9bcda214e61709a7525">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-13"><span class="target" id="change-de1f7d90ee947b184fd95d1d18936c18"></span>HistoryArraySet gets extend() method<a class="changeset-link reference internal" href="#change-de1f7d90ee947b184fd95d1d18936c18">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-14"><span class="target" id="change-3712b8eaa2628230b682529674bc06c7"></span>fixed lazyload support for other comparison operators besides =<a class="changeset-link reference internal" href="#change-3712b8eaa2628230b682529674bc06c7">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-15"><span class="target" id="change-703437eb9f40d509b86cd1e57be00e21"></span>lazyload fix where two comparisons in the join condition point to the
+samem column<a class="changeset-link reference internal" href="#change-703437eb9f40d509b86cd1e57be00e21">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-16"><span class="target" id="change-2c543f7f6cc73846553be1de46163f44"></span>added &#8220;construct_new&#8221; flag to mapper, will use __new__ to create instances
+instead of __init__ (standard in 0.2)<a class="changeset-link reference internal" href="#change-2c543f7f6cc73846553be1de46163f44">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-17"><span class="target" id="change-f9fa9d970a5c396e116d1950c9607944"></span>added selectresults.py to SVN, missed it last time<a class="changeset-link reference internal" href="#change-f9fa9d970a5c396e116d1950c9607944">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-18"><span class="target" id="change-3c36fc2b9bfcd27a4dda5ecb69d6f689"></span>tweak to allow a many-to-many relationship from a table to itself via
+an association table<a class="changeset-link reference internal" href="#change-3c36fc2b9bfcd27a4dda5ecb69d6f689">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-19"><span class="target" id="change-7efce648859a52b729d3ce36573a8ea4"></span>small fix to &#8220;translate_row&#8221; function used by polymorphic example<a class="changeset-link reference internal" href="#change-7efce648859a52b729d3ce36573a8ea4">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-20"><span class="target" id="change-0a39188910ba4ac441e56b3f097f808c"></span>create_engine uses cgi.parse_qsl to read query string (out the window in 0.2)<a class="changeset-link reference internal" href="#change-0a39188910ba4ac441e56b3f097f808c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-21"><span class="target" id="change-cda9b4e506598541c59a57ac145a70cb"></span>tweaks to CAST operator<a class="changeset-link reference internal" href="#change-cda9b4e506598541c59a57ac145a70cb">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-22"><span class="target" id="change-223883de925fbd8a3a667c76b3a64e02"></span>fixed function names LOCAL_TIME/LOCAL_TIMESTAMP -&gt; LOCALTIME/LOCALTIMESTAMP<a class="changeset-link reference internal" href="#change-223883de925fbd8a3a667c76b3a64e02">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.7-23"><span class="target" id="change-2a14156f0b25e17fb67f48a17b96f1d8"></span>fixed order of ORDER BY/HAVING in compile<a class="changeset-link reference internal" href="#change-2a14156f0b25e17fb67f48a17b96f1d8">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.1.6">
+<h2>0.1.6<a class="headerlink" href="#change-0.1.6" title="Permalink to this headline">¶</a></h2>
+Released: Wed Apr 12 2006<ul class="simple">
+<li><p id="change-0.1.6-0"><span class="target" id="change-5ba2973cedb4a955806631a79704e24a"></span>support for MS-SQL added courtesy Rick Morrison, Runar Petursson<a class="changeset-link reference internal" href="#change-5ba2973cedb4a955806631a79704e24a">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-1"><span class="target" id="change-11c6b02ceaba6cbd60d96b1201312fbd"></span>the latest SQLSoup from J. Ellis<a class="changeset-link reference internal" href="#change-11c6b02ceaba6cbd60d96b1201312fbd">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-2"><span class="target" id="change-b11804c4b34c595ddd5655238d973fd0"></span>ActiveMapper has preliminary support for inheritance (Jeff Watkins)<a class="changeset-link reference internal" href="#change-b11804c4b34c595ddd5655238d973fd0">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-3"><span class="target" id="change-0c8a7b899b662206ff1d772c2b4f3c32"></span>added a &#8220;mods&#8221; system which allows pluggable modules that modify/augment
+core functionality, using the function &#8220;install_mods(<a href="#id1"><span class="problematic" id="id2">*</span></a>modnames)&#8221;.<a class="changeset-link reference internal" href="#change-0c8a7b899b662206ff1d772c2b4f3c32">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-4"><span class="target" id="change-5165cff42fd7bc0985c9ee41224ef11d"></span>added the first &#8220;mod&#8221;, SelectResults, which modifies mapper selects to
+return generators that turn ranges into LIMIT/OFFSET queries
+(Jonas Borgstr?<a class="changeset-link reference internal" href="#change-5165cff42fd7bc0985c9ee41224ef11d">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-5"><span class="target" id="change-149fa05e8a8b6549f870b65a4fb28173"></span>factored out querying capabilities of Mapper into a separate Query object
+which is Session-centric.  this improves the performance of mapper.using(session)
+and makes other things possible.<a class="changeset-link reference internal" href="#change-149fa05e8a8b6549f870b65a4fb28173">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-6"><span class="target" id="change-a36fb99cd24021ad222613215b456353"></span>objectstore/Session refactored, the official way to save objects is now
+via the flush() method.  The begin/commit functionality of Session is factored
+into LegacySession which is still established as the default behavior, until
+the 0.2 series.<a class="changeset-link reference internal" href="#change-a36fb99cd24021ad222613215b456353">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-7"><span class="target" id="change-a65412891901f69c41b8cdc59c8bb36b"></span>types system is bound to an engine at query compile time, not schema
+construction time.  this simplifies the types system as well as the ProxyEngine.<a class="changeset-link reference internal" href="#change-a65412891901f69c41b8cdc59c8bb36b">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-8"><span class="target" id="change-e26b0f7145354b8b0b48218c57239ae8"></span>added &#8216;version_id&#8217; keyword argument to mapper. this keyword should reference a
+Column object with type Integer, preferably non-nullable, which will be used on
+the mapped table to track version numbers. this number is incremented on each
+save operation and is specifed in the UPDATE/DELETE conditions so that it
+factors into the returned row count, which results in a ConcurrencyError if the
+value received is not the expected count.<a class="changeset-link reference internal" href="#change-e26b0f7145354b8b0b48218c57239ae8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-9"><span class="target" id="change-b20c12e6962a35663f9e7907d3f36082"></span>added &#8216;entity_name&#8217; keyword argument to mapper. a mapper is now associated
+with a class via the class object as well as an optional entity_name parameter,
+which is a string defaulting to None. any number of primary mappers can be
+created for a class, qualified by the entity name. instances of those classes
+will issue all of their load and save operations through their
+entity_name-qualified mapper, and maintain separate a identity in the identity
+map for an otherwise equilvalent object.<a class="changeset-link reference internal" href="#change-b20c12e6962a35663f9e7907d3f36082">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-10"><span class="target" id="change-ae9d5b1b522edb1aaf5f83ae171fad0c"></span>overhaul to the attributes system. code has been clarified, and also fixed to
+support proper polymorphic behavior on object attributes.<a class="changeset-link reference internal" href="#change-ae9d5b1b522edb1aaf5f83ae171fad0c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-11"><span class="target" id="change-94d35e9f98ca35211995921004df4b48"></span>added &#8220;for_update&#8221; flag to Select objects<a class="changeset-link reference internal" href="#change-94d35e9f98ca35211995921004df4b48">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-12"><span class="target" id="change-84dbe2494396013264b0e9418f3a4312"></span>some fixes for backrefs<a class="changeset-link reference internal" href="#change-84dbe2494396013264b0e9418f3a4312">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-13"><span class="target" id="change-0118b76318e46eb69356b600e29d3fe4"></span>fix for postgres1 DateTime type<a class="changeset-link reference internal" href="#change-0118b76318e46eb69356b600e29d3fe4">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.6-14"><span class="target" id="change-36e8bef9adbc229c3632abf04f039a3f"></span>documentation pages mostly switched over to Markdown syntax<a class="changeset-link reference internal" href="#change-36e8bef9adbc229c3632abf04f039a3f">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.1.5">
+<h2>0.1.5<a class="headerlink" href="#change-0.1.5" title="Permalink to this headline">¶</a></h2>
+Released: Mon Mar 27 2006<ul class="simple">
+<li><p id="change-0.1.5-0"><span class="target" id="change-2ca8013d56b6dab07a13fa06df401dc9"></span>added SQLSession concept to SQLEngine. this object keeps track of retrieving a
+connection from the connection pool as well as an in-progress transaction.
+methods push_session() and pop_session() added to SQLEngine which push/pop a new
+SQLSession onto the engine, allowing operation upon a second connection &#8220;nested&#8221;
+within the previous one, allowing nested transactions. Other tricks are sure to
+come later regarding SQLSession.<a class="changeset-link reference internal" href="#change-2ca8013d56b6dab07a13fa06df401dc9">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-1"><span class="target" id="change-f4045660fffd963a8410ee98d837ef82"></span>added nest_on argument to objectstore.Session. This is a single SQLEngine or
+list of engines for which push_session()/pop_session() will be called each time
+this Session becomes the active session (via objectstore.push_session() or
+equivalent). This allows a unit of work Session to take advantage of the nested
+transaction feature without explicitly calling push_session/pop_session on the
+engine.<a class="changeset-link reference internal" href="#change-f4045660fffd963a8410ee98d837ef82">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-2"><span class="target" id="change-5195877eb353a245cb1854f472e25a63"></span>factored apart objectstore/unitofwork to separate &#8220;Session scoping&#8221; from
+&#8220;uow commit heavy lifting&#8221;<a class="changeset-link reference internal" href="#change-5195877eb353a245cb1854f472e25a63">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-3"><span class="target" id="change-4de8a4632f7933b1084adb014d374356"></span>added populate_instance() method to MapperExtension. allows an extension to
+modify the population of object attributes. this method can call the
+populate_instance() method on another mapper to proxy the attribute population
+from one mapper to another; some row translation logic is also built in to help
+with this.<a class="changeset-link reference internal" href="#change-4de8a4632f7933b1084adb014d374356">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-4"><span class="target" id="change-6fdb3140293afd1a90f4b57c169b4faf"></span>fixed Oracle8-compatibility &#8220;use_ansi&#8221; flag which converts JOINs to
+comparisons with the = and (+) operators, passes basic unittests<a class="changeset-link reference internal" href="#change-6fdb3140293afd1a90f4b57c169b4faf">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-5"><span class="target" id="change-35a4fde8bed4d24e939847f1e5956647"></span>tweaks to Oracle LIMIT/OFFSET support<a class="changeset-link reference internal" href="#change-35a4fde8bed4d24e939847f1e5956647">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-6"><span class="target" id="change-f3dc289f3cbd1248846531a503f99d73"></span>Oracle reflection uses ALL_** views instead of USER_** to get larger
+list of stuff to reflect from<a class="changeset-link reference internal" href="#change-f3dc289f3cbd1248846531a503f99d73">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-7"><span class="target" id="change-9b3cdcc692c2b2debfc10c3e578f4c8b"></span>fixes to Oracle foreign key reflection<a class="changeset-link reference internal" href="#change-9b3cdcc692c2b2debfc10c3e578f4c8b">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/105">#105</a></p>
+</p>
+</li>
+<li><p id="change-0.1.5-8"><span class="target" id="change-1f061b72173f923556b4eb90801185fc"></span>objectstore.commit(obj1, obj2,...) adds an extra step to seek out private
+relations on properties and delete child objects, even though its not a global
+commit<a class="changeset-link reference internal" href="#change-1f061b72173f923556b4eb90801185fc">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-9"><span class="target" id="change-951f39b628de9b3af7d07279141ef619"></span>lots and lots of fixes to mappers which use inheritance, strengthened the
+concept of relations on a mapper being made towards the &#8220;local&#8221; table for that
+mapper, not the tables it inherits.  allows more complex compositional patterns
+to work with lazy/eager loading.<a class="changeset-link reference internal" href="#change-951f39b628de9b3af7d07279141ef619">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-10"><span class="target" id="change-03ed46790e5851818fe1ba8ca7e8919f"></span>added support for mappers to inherit from others based on the same table,
+just specify the same table as that of both parent/child mapper.<a class="changeset-link reference internal" href="#change-03ed46790e5851818fe1ba8ca7e8919f">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-11"><span class="target" id="change-956758d0c5a9f020f9b5ea643cfd900f"></span>some minor speed improvements to the attributes system with regards to
+instantiating and populating new objects.<a class="changeset-link reference internal" href="#change-956758d0c5a9f020f9b5ea643cfd900f">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-12"><span class="target" id="change-2834e9ac8a3454fdf8a876db8f4a8812"></span>fixed MySQL binary unit test<a class="changeset-link reference internal" href="#change-2834e9ac8a3454fdf8a876db8f4a8812">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-13"><span class="target" id="change-877341d248eb486358fba969a82e689f"></span>INSERTs can receive clause elements as VALUES arguments, not just literal
+values<a class="changeset-link reference internal" href="#change-877341d248eb486358fba969a82e689f">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-14"><span class="target" id="change-417b8c0342e2cb2d037d55d3b3f6935b"></span>support for calling multi-tokened functions, i.e. schema.mypkg.func()<a class="changeset-link reference internal" href="#change-417b8c0342e2cb2d037d55d3b3f6935b">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-15"><span class="target" id="change-14b5686246058f8826cfe6748f8e2f4f"></span>added J. Ellis&#8217; SQLSoup module to extensions package<a class="changeset-link reference internal" href="#change-14b5686246058f8826cfe6748f8e2f4f">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-16"><span class="target" id="change-e501c9a6894ed384ec9cf53c45384564"></span>added &#8220;polymorphic&#8221; examples illustrating methods to load multiple object types
+from one mapper, the second of which uses the new populate_instance() method.
+small improvements to mapper, UNION construct to help the examples along<a class="changeset-link reference internal" href="#change-e501c9a6894ed384ec9cf53c45384564">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-17"><span class="target" id="change-98a2bd42701dd1dc96285849497a3bdd"></span>improvements/fixes to session.refresh()/session.expire() (which may have
+been called &#8220;invalidate&#8221; earlier..)<a class="changeset-link reference internal" href="#change-98a2bd42701dd1dc96285849497a3bdd">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-18"><span class="target" id="change-247e750522dc1abf187cc9ebe7c07392"></span>added session.expunge() which totally removes an object from the current
+session<a class="changeset-link reference internal" href="#change-247e750522dc1abf187cc9ebe7c07392">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-19"><span class="target" id="change-312a7f1009545c9e3baae04238d7f537"></span>added <a href="#id3"><span class="problematic" id="id4">*</span></a>args, <a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs pass-thru to engine.transaction(func) allowing easier
+creation of transactionalizing decorator functions<a class="changeset-link reference internal" href="#change-312a7f1009545c9e3baae04238d7f537">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-20"><span class="target" id="change-781ae8e0605a3c7c090b6482c29b3a81"></span>added iterator interface to ResultProxy:  &#8220;for row in result:...&#8221;<a class="changeset-link reference internal" href="#change-781ae8e0605a3c7c090b6482c29b3a81">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-21"><span class="target" id="change-4383a6acbab6661ad2ea81bfac935cee"></span>added assertion to tx = session.begin(); tx.rollback(); tx.begin(), i.e. cant
+use it after a rollback()<a class="changeset-link reference internal" href="#change-4383a6acbab6661ad2ea81bfac935cee">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-22"><span class="target" id="change-654f4afac5ca2f8a18cae6ddecd15869"></span>added date conversion on bind parameter fix to SQLite enabling dates to
+work with pysqlite1<a class="changeset-link reference internal" href="#change-654f4afac5ca2f8a18cae6ddecd15869">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-23"><span class="target" id="change-f82409dbff86d8cb28b246262e5c7257"></span>improvements to subqueries to more intelligently construct their FROM
+clauses<a class="changeset-link reference internal" href="#change-f82409dbff86d8cb28b246262e5c7257">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/116">#116</a></p>
+</p>
+</li>
+<li><p id="change-0.1.5-24"><span class="target" id="change-a2b5d7a407c4983f40c959349c8e29a6"></span>added PickleType to types.<a class="changeset-link reference internal" href="#change-a2b5d7a407c4983f40c959349c8e29a6">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-25"><span class="target" id="change-da20f02923aa0e9ce14a56b9dc980596"></span>fixed two bugs with column labels with regards to bind parameters: bind param
+keynames they are now generated from a column &#8220;label&#8221; in all relevant cases to
+take advantage of excess-name-length rules, and checks for a peculiar collision
+against a column named the same as &#8220;tablename_colname&#8221; added<a class="changeset-link reference internal" href="#change-da20f02923aa0e9ce14a56b9dc980596">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-26"><span class="target" id="change-e13c93c92e346b4f9dabda454ec44f8c"></span>major overhaul to unit of work documentation, other documentation sections.<a class="changeset-link reference internal" href="#change-e13c93c92e346b4f9dabda454ec44f8c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-27"><span class="target" id="change-43809b3535863fd4ce975b2ea873a830"></span>fixed attributes bug where if an object is committed, its lazy-loaded list got
+blown away if it hadnt been loaded<a class="changeset-link reference internal" href="#change-43809b3535863fd4ce975b2ea873a830">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-28"><span class="target" id="change-7e3df3d4f8a185e894a5aeb68a8ec08c"></span>added unique_connection() method to engine, connection pool to return a
+connection that is not part of the thread-local context or any current
+transaction<a class="changeset-link reference internal" href="#change-7e3df3d4f8a185e894a5aeb68a8ec08c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-29"><span class="target" id="change-9356a87824679508ce4c592e428336c0"></span>added invalidate() function to pooled connection.  will remove the connection
+from the pool.  still need work for engines to auto-reconnect to a stale DB
+though.<a class="changeset-link reference internal" href="#change-9356a87824679508ce4c592e428336c0">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-30"><span class="target" id="change-fc80d40f50270b028517b3bba2199a42"></span>added distinct() function to column elements so you can do
+func.count(mycol.distinct())<a class="changeset-link reference internal" href="#change-fc80d40f50270b028517b3bba2199a42">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.5-31"><span class="target" id="change-e5d60d8a3cf463409e92d11d1384f766"></span>added &#8220;always_refresh&#8221; flag to Mapper, creates a mapper that will always
+refresh the attributes of objects it gets/selects from the DB, overwriting any
+changes made.<a class="changeset-link reference internal" href="#change-e5d60d8a3cf463409e92d11d1384f766">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.1.4">
+<h2>0.1.4<a class="headerlink" href="#change-0.1.4" title="Permalink to this headline">¶</a></h2>
+Released: Mon Mar 13 2006<ul class="simple">
+<li><p id="change-0.1.4-0"><span class="target" id="change-0ef266ab794fd1853decd9620edf8427"></span>create_engine() now uses genericized parameters; host/hostname,
+db/dbname/database, password/passwd, etc. for all engine connections. makes<blockquote>
+<div>engine URIs much more &#8220;universal&#8221;</div></blockquote>
+<a class="changeset-link reference internal" href="#change-0ef266ab794fd1853decd9620edf8427">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-1"><span class="target" id="change-ec2dc23024bd40e1ace566b16a735d09"></span>added support for SELECT statements embedded into a column clause, using the
+flag &#8220;scalar=True&#8221;<a class="changeset-link reference internal" href="#change-ec2dc23024bd40e1ace566b16a735d09">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-2"><span class="target" id="change-7b51c32cece61a2a7d06a4c224da9443"></span>another overhaul to EagerLoading when used in conjunction with mappers that
+inherit; improvements to eager loads figuring out their aliased queries
+correctly, also relations set up against a mapper with inherited mappers will
+create joins against the table that is specific to the mapper itself (i.e. and
+not any tables that are inherited/are further down the inheritance chain),
+this can be overridden by using custom primary/secondary joins.<a class="changeset-link reference internal" href="#change-7b51c32cece61a2a7d06a4c224da9443">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-3"><span class="target" id="change-8fc4b9aa1cf9744a7669d0be1df63c87"></span>added J.Ellis patch to mapper.py so that selectone() throws an exception
+if query returns more than one object row, selectfirst() to not throw the
+exception. also adds selectfirst_by (synonymous with get_by) and selectone_by<a class="changeset-link reference internal" href="#change-8fc4b9aa1cf9744a7669d0be1df63c87">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-4"><span class="target" id="change-6ef2eeb2099404f773c18996c5252732"></span>added onupdate parameter to Column, will exec SQL/python upon an update
+statement.Also adds &#8220;for_update=True&#8221; to all DefaultGenerator subclasses<a class="changeset-link reference internal" href="#change-6ef2eeb2099404f773c18996c5252732">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-5"><span class="target" id="change-0f736b992aafe1dc76f1529c795c4289"></span>added support for Oracle table reflection contributed by Andrija Zaric;
+still some bugs to work out regarding composite primary keys/dictionary selection<a class="changeset-link reference internal" href="#change-0f736b992aafe1dc76f1529c795c4289">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-6"><span class="target" id="change-db02019010d352feae175b0ddc9ece30"></span>checked in an initial Firebird module, awaiting testing.<a class="changeset-link reference internal" href="#change-db02019010d352feae175b0ddc9ece30">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-7"><span class="target" id="change-7d2152ee7c8c6d195f7a1cf43dda5448"></span>added sql.ClauseParameters dictionary object as the result for
+compiled.get_params(), does late-typeprocessing of bind parameters so
+that the original values are easier to access<a class="changeset-link reference internal" href="#change-7d2152ee7c8c6d195f7a1cf43dda5448">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-8"><span class="target" id="change-d46502682e7dca9e36bd65c316e79420"></span>more docs for indexes, column defaults, connection pooling, engine construction<a class="changeset-link reference internal" href="#change-d46502682e7dca9e36bd65c316e79420">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-9"><span class="target" id="change-885f2250c263e6d9bbd939e640ce6639"></span>overhaul to the construction of the types system. uses a simpler inheritance
+pattern so that any of the generic types can be easily subclassed, with no need
+for TypeDecorator.<a class="changeset-link reference internal" href="#change-885f2250c263e6d9bbd939e640ce6639">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-10"><span class="target" id="change-b8964cd08bf4a630173df252e9bb1acd"></span>added &#8220;convert_unicode=False&#8221; parameter to SQLEngine, will cause all String
+types to perform unicode encoding/decoding (makes Strings act like Unicodes)<a class="changeset-link reference internal" href="#change-b8964cd08bf4a630173df252e9bb1acd">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-11"><span class="target" id="change-6fd5c8f4796179aa0b657cc3c9a877f8"></span>added &#8216;encoding=&#8221;utf8&#8221;&#8217; parameter to engine.  the given encoding will be
+used for all encode/decode calls within Unicode types as well as Strings
+when convert_unicode=True.<a class="changeset-link reference internal" href="#change-6fd5c8f4796179aa0b657cc3c9a877f8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-12"><span class="target" id="change-b7a870e7cbd43542f1e67acfcfd6e1bf"></span>improved support for mapping against UNIONs, added polymorph.py example
+to illustrate multi-class mapping against a UNION<a class="changeset-link reference internal" href="#change-b7a870e7cbd43542f1e67acfcfd6e1bf">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-13"><span class="target" id="change-9ed214af739377d4d1a07991af151ccb"></span>fix to SQLite LIMIT/OFFSET syntax<a class="changeset-link reference internal" href="#change-9ed214af739377d4d1a07991af151ccb">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-14"><span class="target" id="change-456f1a13c73c2c11c84433cb277ee4dc"></span>fix to Oracle LIMIT syntax<a class="changeset-link reference internal" href="#change-456f1a13c73c2c11c84433cb277ee4dc">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-15"><span class="target" id="change-b8d7baa9db640a9923d3325eb440d135"></span>added backref() function, allows backreferences to have keyword arguments
+that will be passed to the backref.<a class="changeset-link reference internal" href="#change-b8d7baa9db640a9923d3325eb440d135">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-16"><span class="target" id="change-7168d352c4956bf69f8626864e3193c5"></span>Sequences and ColumnDefault objects can do execute()/scalar() standalone<a class="changeset-link reference internal" href="#change-7168d352c4956bf69f8626864e3193c5">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-17"><span class="target" id="change-6b05633188ef87464a8ddb4d1273715f"></span>SQL functions (i.e. func.foo()) can do execute()/scalar() standalone<a class="changeset-link reference internal" href="#change-6b05633188ef87464a8ddb4d1273715f">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-18"><span class="target" id="change-0f45a37a74b083bfff321b728c4d1bf5"></span>fix to SQL functions so that the ANSI-standard functions, i.e. current_timestamp
+etc., do not specify parenthesis.  all other functions do.<a class="changeset-link reference internal" href="#change-0f45a37a74b083bfff321b728c4d1bf5">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-19"><span class="target" id="change-d00d8ba1f11adb154262526c7414e593"></span>added settattr_clean and append_clean to SmartProperty, which set
+attributes without triggering a &#8220;dirty&#8221; event or any history. used as:
+myclass.prop1.setattr_clean(myobject, &#8216;hi&#8217;)<a class="changeset-link reference internal" href="#change-d00d8ba1f11adb154262526c7414e593">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-20"><span class="target" id="change-30d3737ba988bebaa33f655c7900bb01"></span>improved support to column defaults when used by mappers; mappers will pull
+pre-executed defaults from statement&#8217;s executed bind parameters
+(pre-conversion) to populate them into a saved object&#8217;s attributes; if any
+PassiveDefaults have fired off, will instead post-fetch the row from the DB to
+populate the object.<a class="changeset-link reference internal" href="#change-30d3737ba988bebaa33f655c7900bb01">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-21"><span class="target" id="change-964498f680c779999121e64ad5cc56c1"></span>added &#8216;get_session().invalidate(<a href="#id7"><span class="problematic" id="id8">*</span></a>obj)&#8217; method to objectstore, instances will
+refresh() themselves upon the next attribute access.<a class="changeset-link reference internal" href="#change-964498f680c779999121e64ad5cc56c1">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-22"><span class="target" id="change-ef790669fa10bf7baaa122ee21865a04"></span>improvements to SQL func calls including an &#8220;engine&#8221; keyword argument so
+they can be execute()d or scalar()ed standalone, also added func accessor to
+SQLEngine<a class="changeset-link reference internal" href="#change-ef790669fa10bf7baaa122ee21865a04">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-23"><span class="target" id="change-6516c2f2245e5e1b90117cd2b3a9a482"></span>fix to MySQL4 custom table engines, i.e. TYPE instead of ENGINE<a class="changeset-link reference internal" href="#change-6516c2f2245e5e1b90117cd2b3a9a482">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-24"><span class="target" id="change-b6ed1a0198df68545ae484c874554bf5"></span>slightly enhanced logging, includes timestamps and a somewhat configurable
+formatting system, in lieu of a full-blown logging system<a class="changeset-link reference internal" href="#change-b6ed1a0198df68545ae484c874554bf5">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-25"><span class="target" id="change-5937e5795d6d62109125d68a9a2bca0d"></span>improvements to the ActiveMapper class from the TG gang, including
+many-to-many relationships<a class="changeset-link reference internal" href="#change-5937e5795d6d62109125d68a9a2bca0d">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.4-26"><span class="target" id="change-5d7bdbcddc8bf662974b56f494fe2cc8"></span>added Double and TinyInt support to mysql<a class="changeset-link reference internal" href="#change-5d7bdbcddc8bf662974b56f494fe2cc8">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.1.3">
+<h2>0.1.3<a class="headerlink" href="#change-0.1.3" title="Permalink to this headline">¶</a></h2>
+Released: Thu Mar 02 2006<ul class="simple">
+<li><p id="change-0.1.3-0"><span class="target" id="change-1f5f4367f904484de584c3bb891e66da"></span>completed &#8220;post_update&#8221; feature, will add a second update statement before
+inserts and after deletes in order to reconcile a relationship without any
+dependencies being created; used when persisting two rows that are dependent
+on each other<a class="changeset-link reference internal" href="#change-1f5f4367f904484de584c3bb891e66da">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.3-1"><span class="target" id="change-0e1e1316e6f3a827735afefe31aac485"></span>completed mapper.using(session) function, localized per-object Session
+functionality; objects can be declared and manipulated as local to any
+user-defined Session<a class="changeset-link reference internal" href="#change-0e1e1316e6f3a827735afefe31aac485">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.3-2"><span class="target" id="change-766fa5aa35e254d9b460f774da134307"></span>fix to Oracle &#8220;row_number over&#8221; clause with multiple tables<a class="changeset-link reference internal" href="#change-766fa5aa35e254d9b460f774da134307">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.3-3"><span class="target" id="change-5a1a16a4b71e3d136d92292a14c57cfd"></span>mapper.get() was not selecting multiple-keyed objects if the mapper&#8217;s table was a join,
+such as in an inheritance relationship, this is fixed.<a class="changeset-link reference internal" href="#change-5a1a16a4b71e3d136d92292a14c57cfd">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.3-4"><span class="target" id="change-0017cfe2ab4cc37d9c78c82014884f4c"></span>overhaul to sql/schema packages so that the sql package can run all on its own,
+producing selects, inserts, etc. without any engine dependencies.  builds upon
+new TableClause/ColumnClause lexical objects.  Schema&#8217;s Table/Column objects
+are the &#8220;physical&#8221; subclasses of them.  simplifies schema/sql relationship,
+extensions (like proxyengine), and speeds overall performance by a large margin.
+removes the entire getattr() behavior that plagued 0.1.1.<a class="changeset-link reference internal" href="#change-0017cfe2ab4cc37d9c78c82014884f4c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.3-5"><span class="target" id="change-77a4af6cff5ccb1dc76b81e3a2d1a1f8"></span>refactoring of how the mapper &#8220;synchronizes&#8221; data between two objects into a
+separate module, works better with properties attached to a mapper that has an
+additional inheritance relationship to one of the related tables, also the same
+methodology used to synchronize parent/child objects now used by mapper to
+synchronize between inherited and inheriting mappers.<a class="changeset-link reference internal" href="#change-77a4af6cff5ccb1dc76b81e3a2d1a1f8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.3-6"><span class="target" id="change-25a1b5bf971aeb34c95a82f6515686a1"></span>made objectstore &#8220;check for out-of-identitymap&#8221; more aggressive, will perform the
+check when object attributes are modified or the object is deleted<a class="changeset-link reference internal" href="#change-25a1b5bf971aeb34c95a82f6515686a1">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.3-7"><span class="target" id="change-e0e0f804057928ca3c17339825043f53"></span>Index object fully implemented, can be constructed standalone, or via
+&#8220;index&#8221; and &#8220;unique&#8221; arguments on Columns.<a class="changeset-link reference internal" href="#change-e0e0f804057928ca3c17339825043f53">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.3-8"><span class="target" id="change-52570199946b60064a46eee53050539a"></span>added &#8220;convert_unicode&#8221; flag to SQLEngine, will treat all String/CHAR types
+as Unicode types, with raw-byte/utf-8 translation on the bind parameter and
+result set side.<a class="changeset-link reference internal" href="#change-52570199946b60064a46eee53050539a">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.3-9"><span class="target" id="change-2ca432b76e40ac51ae3326a7cecaaa68"></span>postgres maintains a list of ANSI functions that must have no parenthesis so
+function calls with no arguments work consistently<a class="changeset-link reference internal" href="#change-2ca432b76e40ac51ae3326a7cecaaa68">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.3-10"><span class="target" id="change-02f8ebdd1e633c6e8c28681a25a6f754"></span>tables can be created with no engine specified.  this will default their engine
+to a module-scoped &#8220;default engine&#8221; which is a ProxyEngine.  this engine can
+be connected via the function &#8220;global_connect&#8221;.<a class="changeset-link reference internal" href="#change-02f8ebdd1e633c6e8c28681a25a6f754">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.3-11"><span class="target" id="change-9f9ea856fbdf0f5dfe021df934a3a1df"></span>added &#8220;refresh(<a href="#id9"><span class="problematic" id="id10">*</span></a>obj)&#8221; method to objectstore / Session to reload the attributes of
+any set of objects from the database unconditionally<a class="changeset-link reference internal" href="#change-9f9ea856fbdf0f5dfe021df934a3a1df">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.1.2">
+<h2>0.1.2<a class="headerlink" href="#change-0.1.2" title="Permalink to this headline">¶</a></h2>
+Released: Fri Feb 24 2006<ul class="simple">
+<li><p id="change-0.1.2-0"><span class="target" id="change-de1fc1982f3062522c70b3e35238622d"></span>fixed a recursive call in schema that was somehow running 994 times then returning
+normally.  broke nothing, slowed down everything.  thanks to jpellerin for finding this.<a class="changeset-link reference internal" href="#change-de1fc1982f3062522c70b3e35238622d">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.1.1">
+<h2>0.1.1<a class="headerlink" href="#change-0.1.1" title="Permalink to this headline">¶</a></h2>
+Released: Thu Feb 23 2006<ul class="simple">
+<li><p id="change-0.1.1-0"><span class="target" id="change-e16c39be323fea2f73db352513a5940b"></span>small fix to Function class so that expressions with a func.foo() use the type of the
+Function object (i.e. the left side) as the type of the boolean expression, not the
+other side which is more of a moving target (changeset 1020).<a class="changeset-link reference internal" href="#change-e16c39be323fea2f73db352513a5940b">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-1"><span class="target" id="change-e70d118b07b49de55d82c23d91e9081b"></span>creating self-referring mappers with backrefs slightly easier (but still not that easy -
+changeset 1019)<a class="changeset-link reference internal" href="#change-e70d118b07b49de55d82c23d91e9081b">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-2"><span class="target" id="change-5eb55c9b7fb9b46fe9743042c5c197b8"></span>fixes to one-to-one mappings (changeset 1015)<a class="changeset-link reference internal" href="#change-5eb55c9b7fb9b46fe9743042c5c197b8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-3"><span class="target" id="change-9d8b445291ec495ae301791eabf26ce9"></span>psycopg1 date/time issue with None fixed (changeset 1005)<a class="changeset-link reference internal" href="#change-9d8b445291ec495ae301791eabf26ce9">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-4"><span class="target" id="change-5d0280d06f52e25177cfdb38d7c05d87"></span>two issues related to postgres, which doesnt want to give you the &#8220;lastrowid&#8221;
+since oids are deprecated:<blockquote>
+<div><ul>
+<li>postgres database-side defaults that are on primary key cols <em>do</em> execute</li>
+</ul>
+</div></blockquote>
+<p>explicitly beforehand, even though thats not the idea of a PassiveDefault.  this is
+because sequences on columns get reflected as PassiveDefaults, but need to be explicitly
+executed on a primary key col so we know what we just inserted.</p>
+<blockquote>
+<div><ul>
+<li>if you did add a row that has a bunch of database-side defaults on it,</li>
+</ul>
+</div></blockquote>
+<p>and the PassiveDefault thing was working the old way, i.e. they just execute on
+the DB side, the &#8220;cant get the row back without an OID&#8221; exception that occurred
+also will not happen unless someone (usually the ORM) explicitly asks for it.</p>
+<a class="changeset-link reference internal" href="#change-5d0280d06f52e25177cfdb38d7c05d87">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-5"><span class="target" id="change-2c3fc20743a99145b4a0ecf183bce3b5"></span>fixed a glitch with engine.execute_compiled where it was making a second
+ResultProxy that just got thrown away.<a class="changeset-link reference internal" href="#change-2c3fc20743a99145b4a0ecf183bce3b5">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-6"><span class="target" id="change-c4c2e167af71097505892fe6c0f9ea0c"></span>began to implement newer logic in object properities.  you can now say
+myclass.attr.property, which will give you the PropertyLoader corresponding to that
+attribute, i.e. myclass.mapper.props[&#8216;attr&#8217;]<a class="changeset-link reference internal" href="#change-c4c2e167af71097505892fe6c0f9ea0c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-7"><span class="target" id="change-8b0556e1a808353012875095c53a252b"></span>eager loading has been internally overhauled to use aliases at all times.  more
+complicated chains of eager loads can now be created without any need for explicit
+&#8220;use aliases&#8221;-type instructions.  EagerLoader code is also much simpler now.<a class="changeset-link reference internal" href="#change-8b0556e1a808353012875095c53a252b">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-8"><span class="target" id="change-bb14c5b9872156d48ab505a3a77430f8"></span>a new somewhat experimental flag &#8220;use_update&#8221; added to relations, indicates that
+this relationship should be handled by a second UPDATE statement, either after a
+primary INSERT or before a primary DELETE.  handles circular row dependencies.<a class="changeset-link reference internal" href="#change-bb14c5b9872156d48ab505a3a77430f8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-9"><span class="target" id="change-45952d04eaa88500b66049d3f8dc7db2"></span>added exceptions module, all raised exceptions (except for some
+KeyError/AttributeError exceptions) descend from these classes.<a class="changeset-link reference internal" href="#change-45952d04eaa88500b66049d3f8dc7db2">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-10"><span class="target" id="change-a5536a9bfa01004daf66ff7818a21370"></span>fix to date types with MySQL, returned timedelta converted to datetime.time<a class="changeset-link reference internal" href="#change-a5536a9bfa01004daf66ff7818a21370">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-11"><span class="target" id="change-3bf53f3d367aba55d5ec4bc69c85692b"></span>two-phase objectstore.commit operations (i.e. begin/commit) now return a
+transactional object (SessionTrans), to more clearly indicate transaction boundaries.<a class="changeset-link reference internal" href="#change-3bf53f3d367aba55d5ec4bc69c85692b">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-12"><span class="target" id="change-b54bcb6dbe46538531b8e1d16ddb6123"></span>Index object with create/drop support added to schema<a class="changeset-link reference internal" href="#change-b54bcb6dbe46538531b8e1d16ddb6123">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-13"><span class="target" id="change-3d429f8d0ca014abee1ff15fb990d3ef"></span>fix to postgres, where it will explicitly pre-execute a PassiveDefault on a table
+if it is a primary key column, pursuant to the ongoing &#8220;we cant get inserted rows
+back from postgres&#8221; issue<a class="changeset-link reference internal" href="#change-3d429f8d0ca014abee1ff15fb990d3ef">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-14"><span class="target" id="change-b4f51eecebde449095403049763c55a9"></span>change to information_schema query that gets back postgres table defs, now
+uses explicit JOIN keyword, since one user had faster performance with 8.1<a class="changeset-link reference internal" href="#change-b4f51eecebde449095403049763c55a9">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-15"><span class="target" id="change-48ba3c876c69946297ad8dd5406e9240"></span>fix to engine.process_defaults so it works correctly with a table that has
+different column name/column keys (changset 982)<a class="changeset-link reference internal" href="#change-48ba3c876c69946297ad8dd5406e9240">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-16"><span class="target" id="change-6a46cd8778aaefd256df83b635921814"></span>a column can only be attached to one table - this is now asserted<a class="changeset-link reference internal" href="#change-6a46cd8778aaefd256df83b635921814">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-17"><span class="target" id="change-8d68036be554ddac542f03734315f82f"></span>postgres time types descend from Time type<a class="changeset-link reference internal" href="#change-8d68036be554ddac542f03734315f82f">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-18"><span class="target" id="change-8eeb4551410be5ee01d94698e94ca5c5"></span>fix to alltests so that it runs types test (now named testtypes)<a class="changeset-link reference internal" href="#change-8eeb4551410be5ee01d94698e94ca5c5">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-19"><span class="target" id="change-8e34508d624949e6fd5f920ae0e68a91"></span>fix to Join object so that it correctly exports its foreign keys (cs 973)<a class="changeset-link reference internal" href="#change-8e34508d624949e6fd5f920ae0e68a91">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.1.1-20"><span class="target" id="change-fd3d78d00d70c3e12464e5610e3dcb63"></span>creating relationships against mappers that use inheritance fixed (cs 973)<a class="changeset-link reference internal" href="#change-fd3d78d00d70c3e12464e5610e3dcb63">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links">
+        Previous:
+        <a href="changelog_02.html" title="previous chapter">0.2 Changelog</a>
+        Next:
+        <a href="migration_07.html" title="next chapter">What&#8217;s New in SQLAlchemy 0.7?</a>
+
+    <div id="docs-copyright">
+        &copy; <a href="../copyright.html">Copyright</a> 2007-2013, the SQLAlchemy authors and contributors.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</div>
+
+</div>
+
+        
+    </body>
+</html>
+
+

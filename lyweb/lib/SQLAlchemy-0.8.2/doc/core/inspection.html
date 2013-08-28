@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <title>
+            
+    
+                Runtime Inspection API
+             &mdash; 
+    SQLAlchemy 0.8 Documentation
+
+        </title>
+        
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/docs.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.8.2',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/init.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+        <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="top" title="SQLAlchemy 0.8 Documentation" href="../index.html" />
+        <link rel="up" title="SQLAlchemy Core" href="index.html" />
+        <link rel="next" title="Expression Serializer Extension" href="serializer.html" />
+        <link rel="prev" title="Custom SQL Constructs and Compilation Extension" href="compiler.html" />
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+<div id="docs-header">
+    <h1>SQLAlchemy 0.8 Documentation</h1>
+
+    <div id="docs-search">
+    Search:
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+
+    <div id="docs-version-header">
+        Release: <span class="version-num">0.8.2</span> | Release Date: July 3, 2013
+
+
+    </div>
+
+</div>
+
+<div id="docs-top-navigation">
+    <div id="docs-top-page-control" class="docs-navigation-links">
+        <ul>
+            <li>Prev:
+            <a href="compiler.html" title="previous chapter">Custom SQL Constructs and Compilation Extension</a>
+            </li>
+            <li>Next:
+            <a href="serializer.html" title="next chapter">Expression Serializer Extension</a>
+            </li>
+
+        <li>
+            <a href="../contents.html">Table of Contents</a> |
+            <a href="../genindex.html">Index</a>
+            | <a href="../_sources/core/inspection.txt">view source
+        </li>
+        </ul>
+    </div>
+
+    <div id="docs-navigation-banner">
+        <a href="../index.html">SQLAlchemy 0.8 Documentation</a>
+                » <a href="index.html" title="SQLAlchemy Core">SQLAlchemy Core</a>
+        » 
+                Runtime Inspection API
+             
+
+        <h2>
+            
+                Runtime Inspection API
+            
+        </h2>
+    </div>
+
+</div>
+
+<div id="docs-body-container">
+
+    <div id="docs-sidebar">
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Runtime Inspection API</a><ul>
+<li><a class="reference internal" href="#available-inspection-targets">Available Inspection Targets</a></li>
+</ul>
+</li>
+</ul>
+
+
+    <h4>Previous Topic</h4>
+    <p>
+    <a href="compiler.html" title="previous chapter">Custom SQL Constructs and Compilation Extension</a>
+    </p>
+    <h4>Next Topic</h4>
+    <p>
+    <a href="serializer.html" title="next chapter">Expression Serializer Extension</a>
+    </p>
+
+
+    <h4>Quick Search</h4>
+    <p>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </p>
+
+    </div>
+
+    <div id="docs-body" class="withsidebar" >
+        
+<div class="section" id="module-sqlalchemy.inspection">
+<span id="runtime-inspection-api"></span><span id="inspection-toplevel"></span><span id="core-inspection-toplevel"></span><h1>Runtime Inspection API<a class="headerlink" href="#module-sqlalchemy.inspection" title="Permalink to this headline">¶</a></h1>
+<p>The inspection module provides the <a class="reference internal" href="#sqlalchemy.inspection.inspect" title="sqlalchemy.inspection.inspect"><tt class="xref py py-func docutils literal"><span class="pre">inspect()</span></tt></a> function,
+which delivers runtime information about a wide variety
+of SQLAlchemy objects, both within the Core as well as the
+ORM.</p>
+<p>The <a class="reference internal" href="#sqlalchemy.inspection.inspect" title="sqlalchemy.inspection.inspect"><tt class="xref py py-func docutils literal"><span class="pre">inspect()</span></tt></a> function is the entry point to SQLAlchemy&#8217;s
+public API for viewing the configuration and construction
+of in-memory objects.   Depending on the type of object
+passed to <a class="reference internal" href="#sqlalchemy.inspection.inspect" title="sqlalchemy.inspection.inspect"><tt class="xref py py-func docutils literal"><span class="pre">inspect()</span></tt></a>, the return value will either be
+a related object which provides a known interface, or in many
+cases it will return the object itself.</p>
+<p>The rationale for <a class="reference internal" href="#sqlalchemy.inspection.inspect" title="sqlalchemy.inspection.inspect"><tt class="xref py py-func docutils literal"><span class="pre">inspect()</span></tt></a> is twofold.  One is that
+it replaces the need to be aware of a large variety of &#8220;information
+getting&#8221; functions in SQLAlchemy, such as <a class="reference internal" href="schema.html#sqlalchemy.engine.reflection.Inspector.from_engine" title="sqlalchemy.engine.reflection.Inspector.from_engine"><tt class="xref py py-meth docutils literal"><span class="pre">Inspector.from_engine()</span></tt></a>,
+<a class="reference internal" href="../orm/session.html#sqlalchemy.orm.attributes.instance_state" title="sqlalchemy.orm.attributes.instance_state"><tt class="xref py py-func docutils literal"><span class="pre">orm.attributes.instance_state()</span></tt></a>, <a class="reference internal" href="../orm/mapper_config.html#sqlalchemy.orm.class_mapper" title="sqlalchemy.orm.class_mapper"><tt class="xref py py-func docutils literal"><span class="pre">orm.class_mapper()</span></tt></a>,
+and others.    The other is that the return value of <a class="reference internal" href="#sqlalchemy.inspection.inspect" title="sqlalchemy.inspection.inspect"><tt class="xref py py-func docutils literal"><span class="pre">inspect()</span></tt></a>
+is guaranteed to obey a documented API, thus allowing third party
+tools which build on top of SQLAlchemy configurations to be constructed
+in a forwards-compatible way.</p>
+<p class="versionadded">
+<span class="versionmodified">New in version 0.8: </span>The <a class="reference internal" href="#sqlalchemy.inspection.inspect" title="sqlalchemy.inspection.inspect"><tt class="xref py py-func docutils literal"><span class="pre">inspect()</span></tt></a> system is introduced
+as of version 0.8.</p>
+<dl class="function">
+<dt id="sqlalchemy.inspection.inspect">
+<tt class="descclassname">sqlalchemy.inspection.</tt><tt class="descname">inspect</tt><big>(</big><em>subject</em>, <em>raiseerr=True</em><big>)</big><a class="headerlink" href="#sqlalchemy.inspection.inspect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce an inspection object for the given target.</p>
+<p>The returned value in some cases may be the
+same object as the one given, such as if a
+<tt class="xref py py-class docutils literal"><span class="pre">orm.Mapper</span></tt> object is passed.   In other
+cases, it will be an instance of the registered
+inspection type for the given object, such as
+if a <a class="reference internal" href="connections.html#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">engine.Engine</span></tt></a> is passed, an
+<tt class="xref py py-class docutils literal"><span class="pre">engine.Inspector</span></tt> object is returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subject</strong> &#8211; the subject to be inspected.</li>
+<li><strong>raiseerr</strong> &#8211; When <tt class="docutils literal"><span class="pre">True</span></tt>, if the given subject
+does not
+correspond to a known SQLAlchemy inspected type,
+<a class="reference internal" href="exceptions.html#sqlalchemy.exc.NoInspectionAvailable" title="sqlalchemy.exc.NoInspectionAvailable"><tt class="xref py py-class docutils literal"><span class="pre">sqlalchemy.exc.NoInspectionAvailable</span></tt></a>
+is raised.  If <tt class="docutils literal"><span class="pre">False</span></tt>, <tt class="docutils literal"><span class="pre">None</span></tt> is returned.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="section" id="available-inspection-targets">
+<h2>Available Inspection Targets<a class="headerlink" href="#available-inspection-targets" title="Permalink to this headline">¶</a></h2>
+<p>Below is a listing of many of the most common inspection targets.</p>
+<ul class="simple">
+<li><a class="reference internal" href="connections.html#sqlalchemy.engine.Connectable" title="sqlalchemy.engine.Connectable"><tt class="xref py py-class docutils literal"><span class="pre">Connectable</span></tt></a> (i.e. <a class="reference internal" href="connections.html#sqlalchemy.engine.Engine" title="sqlalchemy.engine.Engine"><tt class="xref py py-class docutils literal"><span class="pre">Engine</span></tt></a>,
+<a class="reference internal" href="connections.html#sqlalchemy.engine.Connection" title="sqlalchemy.engine.Connection"><tt class="xref py py-class docutils literal"><span class="pre">Connection</span></tt></a>) - returns an <a class="reference internal" href="schema.html#sqlalchemy.engine.reflection.Inspector" title="sqlalchemy.engine.reflection.Inspector"><tt class="xref py py-class docutils literal"><span class="pre">Inspector</span></tt></a> object.</li>
+<li><a class="reference internal" href="expression_api.html#sqlalchemy.sql.expression.ClauseElement" title="sqlalchemy.sql.expression.ClauseElement"><tt class="xref py py-class docutils literal"><span class="pre">ClauseElement</span></tt></a> - all SQL expression components, including
+<a class="reference internal" href="schema.html#sqlalchemy.schema.Table" title="sqlalchemy.schema.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a>, <a class="reference internal" href="schema.html#sqlalchemy.schema.Column" title="sqlalchemy.schema.Column"><tt class="xref py py-class docutils literal"><span class="pre">Column</span></tt></a>, serve as their own inspection objects,
+meaning any of these objects passed to <a class="reference internal" href="#sqlalchemy.inspection.inspect" title="sqlalchemy.inspection.inspect"><tt class="xref py py-func docutils literal"><span class="pre">inspect()</span></tt></a> return themselves.</li>
+<li><tt class="docutils literal"><span class="pre">object</span></tt> - an object given will be checked by the ORM for a mapping -
+if so, an <a class="reference internal" href="../orm/internals.html#sqlalchemy.orm.state.InstanceState" title="sqlalchemy.orm.state.InstanceState"><tt class="xref py py-class docutils literal"><span class="pre">InstanceState</span></tt></a> is returned representing the mapped
+state of the object.  The <a class="reference internal" href="../orm/internals.html#sqlalchemy.orm.state.InstanceState" title="sqlalchemy.orm.state.InstanceState"><tt class="xref py py-class docutils literal"><span class="pre">InstanceState</span></tt></a> also provides access
+to per attribute state via the <a class="reference internal" href="../orm/internals.html#sqlalchemy.orm.state.AttributeState" title="sqlalchemy.orm.state.AttributeState"><tt class="xref py py-class docutils literal"><span class="pre">AttributeState</span></tt></a> interface as well
+as the per-flush &#8220;history&#8221; of any attribute via the <a class="reference internal" href="../orm/session.html#sqlalchemy.orm.attributes.History" title="sqlalchemy.orm.attributes.History"><tt class="xref py py-class docutils literal"><span class="pre">History</span></tt></a>
+object.</li>
+<li><tt class="docutils literal"><span class="pre">type</span></tt> (i.e. a class) - a class given will be checked by the ORM for a
+mapping - if so, a <a class="reference internal" href="../orm/mapper_config.html#sqlalchemy.orm.mapper.Mapper" title="sqlalchemy.orm.mapper.Mapper"><tt class="xref py py-class docutils literal"><span class="pre">Mapper</span></tt></a> for that class is returned.</li>
+<li>mapped attribute - passing a mapped attribute to <a class="reference internal" href="#sqlalchemy.inspection.inspect" title="sqlalchemy.inspection.inspect"><tt class="xref py py-func docutils literal"><span class="pre">inspect()</span></tt></a>, such
+as <tt class="docutils literal"><span class="pre">inspect(MyClass.some_attribute)</span></tt>, returns a <a class="reference internal" href="../orm/internals.html#sqlalchemy.orm.attributes.QueryableAttribute" title="sqlalchemy.orm.attributes.QueryableAttribute"><tt class="xref py py-class docutils literal"><span class="pre">QueryableAttribute</span></tt></a>
+object, which is the <a class="reference internal" href="../glossary.html#term-descriptor"><em class="xref std std-term">descriptor</em></a> associated with a mapped class.
+This descriptor refers to a <a class="reference internal" href="../orm/internals.html#sqlalchemy.orm.interfaces.MapperProperty" title="sqlalchemy.orm.interfaces.MapperProperty"><tt class="xref py py-class docutils literal"><span class="pre">MapperProperty</span></tt></a>, which is usually
+an instance of <a class="reference internal" href="../orm/internals.html#sqlalchemy.orm.properties.ColumnProperty" title="sqlalchemy.orm.properties.ColumnProperty"><tt class="xref py py-class docutils literal"><span class="pre">ColumnProperty</span></tt></a>
+or <a class="reference internal" href="../orm/internals.html#sqlalchemy.orm.properties.RelationshipProperty" title="sqlalchemy.orm.properties.RelationshipProperty"><tt class="xref py py-class docutils literal"><span class="pre">RelationshipProperty</span></tt></a>, via its <a class="reference internal" href="../orm/internals.html#sqlalchemy.orm.attributes.QueryableAttribute.property" title="sqlalchemy.orm.attributes.QueryableAttribute.property"><tt class="xref py py-attr docutils literal"><span class="pre">QueryableAttribute.property</span></tt></a>
+attribute.</li>
+<li><a class="reference internal" href="../orm/query.html#sqlalchemy.orm.util.AliasedClass" title="sqlalchemy.orm.util.AliasedClass"><tt class="xref py py-class docutils literal"><span class="pre">AliasedClass</span></tt></a> - returns an <a class="reference internal" href="../orm/query.html#sqlalchemy.orm.util.AliasedInsp" title="sqlalchemy.orm.util.AliasedInsp"><tt class="xref py py-class docutils literal"><span class="pre">AliasedInsp</span></tt></a> object.</li>
+</ul>
+</div>
+</div>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links">
+        Previous:
+        <a href="compiler.html" title="previous chapter">Custom SQL Constructs and Compilation Extension</a>
+        Next:
+        <a href="serializer.html" title="next chapter">Expression Serializer Extension</a>
+
+    <div id="docs-copyright">
+        &copy; <a href="../copyright.html">Copyright</a> 2007-2013, the SQLAlchemy authors and contributors.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</div>
+
+</div>
+
+        
+    </body>
+</html>
+
+

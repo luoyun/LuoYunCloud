@@ -1,0 +1,2346 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        
+        <title>
+            
+    
+                0.3 Changelog
+             &mdash; 
+    SQLAlchemy 0.8 Documentation
+
+        </title>
+        
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/docs.css" type="text/css" />
+
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../',
+          VERSION:     '0.8.2',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/init.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+        <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="top" title="SQLAlchemy 0.8 Documentation" href="../index.html" />
+        <link rel="up" title="Changes and Migration" href="index.html" />
+        <link rel="next" title="0.2 Changelog" href="changelog_02.html" />
+        <link rel="prev" title="0.4 Changelog" href="changelog_04.html" />
+
+    </head>
+    <body>
+        
+
+
+
+
+
+
+
+
+
+
+<div id="docs-container">
+
+
+
+<div id="docs-header">
+    <h1>SQLAlchemy 0.8 Documentation</h1>
+
+    <div id="docs-search">
+    Search:
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+
+    <div id="docs-version-header">
+        Release: <span class="version-num">0.8.2</span> | Release Date: July 3, 2013
+
+
+    </div>
+
+</div>
+
+<div id="docs-top-navigation">
+    <div id="docs-top-page-control" class="docs-navigation-links">
+        <ul>
+            <li>Prev:
+            <a href="changelog_04.html" title="previous chapter">0.4 Changelog</a>
+            </li>
+            <li>Next:
+            <a href="changelog_02.html" title="next chapter">0.2 Changelog</a>
+            </li>
+
+        <li>
+            <a href="../contents.html">Table of Contents</a> |
+            <a href="../genindex.html">Index</a>
+            | <a href="../_sources/changelog/changelog_03.txt">view source
+        </li>
+        </ul>
+    </div>
+
+    <div id="docs-navigation-banner">
+        <a href="../index.html">SQLAlchemy 0.8 Documentation</a>
+                » <a href="index.html" title="Changes and Migration">Changes and Migration</a>
+        » 
+                0.3 Changelog
+             
+
+        <h2>
+            
+                0.3 Changelog
+            
+        </h2>
+    </div>
+
+</div>
+
+<div id="docs-body-container">
+
+    <div id="docs-sidebar">
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">0.3 Changelog</a><ul>
+<li><a class="reference internal" href="#change-0.3.11">0.3.11</a><ul>
+<li><a class="reference internal" href="#change-0.3.11-orm">orm</a></li>
+<li><a class="reference internal" href="#change-0.3.11-engine">engine</a></li>
+<li><a class="reference internal" href="#change-0.3.11-sql">sql</a></li>
+<li><a class="reference internal" href="#change-0.3.11-mysql">mysql</a></li>
+<li><a class="reference internal" href="#change-0.3.11-sqlite">sqlite</a></li>
+<li><a class="reference internal" href="#change-0.3.11-mssql">mssql</a></li>
+<li><a class="reference internal" href="#change-0.3.11-oracle">oracle</a></li>
+<li><a class="reference internal" href="#change-0.3.11-firebird">firebird</a></li>
+<li><a class="reference internal" href="#change-0.3.11-misc">misc</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#change-0.3.10">0.3.10</a><ul>
+<li><a class="reference internal" href="#change-0.3.10-general">general</a></li>
+<li><a class="reference internal" href="#change-0.3.10-orm">orm</a></li>
+<li><a class="reference internal" href="#change-0.3.10-sql">sql</a></li>
+<li><a class="reference internal" href="#change-0.3.10-misc">misc</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#change-0.3.9">0.3.9</a><ul>
+<li><a class="reference internal" href="#change-0.3.9-general">general</a></li>
+<li><a class="reference internal" href="#change-0.3.9-orm">orm</a></li>
+<li><a class="reference internal" href="#change-0.3.9-sql">sql</a></li>
+<li><a class="reference internal" href="#change-0.3.9-mysql">mysql</a></li>
+<li><a class="reference internal" href="#change-0.3.9-sqlite">sqlite</a></li>
+<li><a class="reference internal" href="#change-0.3.9-mssql">mssql</a></li>
+<li><a class="reference internal" href="#change-0.3.9-oracle">oracle</a></li>
+<li><a class="reference internal" href="#change-0.3.9-misc">misc</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#change-0.3.8">0.3.8</a><ul>
+<li><a class="reference internal" href="#change-0.3.8-orm">orm</a></li>
+<li><a class="reference internal" href="#change-0.3.8-sql">sql</a></li>
+<li><a class="reference internal" href="#change-0.3.8-mysql">mysql</a></li>
+<li><a class="reference internal" href="#change-0.3.8-firebird">firebird</a></li>
+<li><a class="reference internal" href="#change-0.3.8-misc">misc</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#change-0.3.7">0.3.7</a><ul>
+<li><a class="reference internal" href="#change-0.3.7-orm">orm</a></li>
+<li><a class="reference internal" href="#change-0.3.7-sql">sql</a></li>
+<li><a class="reference internal" href="#change-0.3.7-mysql">mysql</a></li>
+<li><a class="reference internal" href="#change-0.3.7-sqlite">sqlite</a></li>
+<li><a class="reference internal" href="#change-0.3.7-mssql">mssql</a></li>
+<li><a class="reference internal" href="#change-0.3.7-oracle">oracle</a></li>
+<li><a class="reference internal" href="#change-0.3.7-misc">misc</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#change-0.3.6">0.3.6</a><ul>
+<li><a class="reference internal" href="#change-0.3.6-orm">orm</a></li>
+<li><a class="reference internal" href="#change-0.3.6-sql">sql</a></li>
+<li><a class="reference internal" href="#change-0.3.6-mysql">mysql</a></li>
+<li><a class="reference internal" href="#change-0.3.6-oracle">oracle</a></li>
+<li><a class="reference internal" href="#change-0.3.6-misc">misc</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#change-0.3.5">0.3.5</a><ul>
+<li><a class="reference internal" href="#change-0.3.5-orm">orm</a></li>
+<li><a class="reference internal" href="#change-0.3.5-sql">sql</a></li>
+<li><a class="reference internal" href="#change-0.3.5-mysql">mysql</a></li>
+<li><a class="reference internal" href="#change-0.3.5-mssql">mssql</a></li>
+<li><a class="reference internal" href="#change-0.3.5-oracle">oracle</a></li>
+<li><a class="reference internal" href="#change-0.3.5-misc">misc</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#change-0.3.4">0.3.4</a><ul>
+<li><a class="reference internal" href="#change-0.3.4-general">general</a></li>
+<li><a class="reference internal" href="#change-0.3.4-orm">orm</a></li>
+<li><a class="reference internal" href="#change-0.3.4-sql">sql</a></li>
+<li><a class="reference internal" href="#change-0.3.4-mysql">mysql</a></li>
+<li><a class="reference internal" href="#change-0.3.4-mssql">mssql</a></li>
+<li><a class="reference internal" href="#change-0.3.4-oracle">oracle</a></li>
+<li><a class="reference internal" href="#change-0.3.4-firebird">firebird</a></li>
+<li><a class="reference internal" href="#change-0.3.4-misc">misc</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#change-0.3.3">0.3.3</a></li>
+<li><a class="reference internal" href="#change-0.3.2">0.3.2</a></li>
+<li><a class="reference internal" href="#change-0.3.1">0.3.1</a><ul>
+<li><a class="reference internal" href="#change-0.3.1-orm">orm</a></li>
+<li><a class="reference internal" href="#change-0.3.1-misc">misc</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#change-0.3.0">0.3.0</a><ul>
+<li><a class="reference internal" href="#change-0.3.0-general">general</a></li>
+<li><a class="reference internal" href="#change-0.3.0-orm">orm</a></li>
+<li><a class="reference internal" href="#change-0.3.0-sql">sql</a></li>
+<li><a class="reference internal" href="#change-0.3.0-schema">schema</a></li>
+<li><a class="reference internal" href="#change-0.3.0-sqlite">sqlite</a></li>
+<li><a class="reference internal" href="#change-0.3.0-oracle">oracle</a></li>
+<li><a class="reference internal" href="#change-0.3.0-firebird">firebird</a></li>
+<li><a class="reference internal" href="#change-0.3.0-misc">misc</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+    <h4>Previous Topic</h4>
+    <p>
+    <a href="changelog_04.html" title="previous chapter">0.4 Changelog</a>
+    </p>
+    <h4>Next Topic</h4>
+    <p>
+    <a href="changelog_02.html" title="next chapter">0.2 Changelog</a>
+    </p>
+
+
+    <h4>Quick Search</h4>
+    <p>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" /> <input type="submit" value="Search" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </p>
+
+    </div>
+
+    <div id="docs-body" class="withsidebar" >
+        
+<div class="section" id="changelog">
+<h1>0.3 Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="change-0.3.11">
+<h2>0.3.11<a class="headerlink" href="#change-0.3.11" title="Permalink to this headline">¶</a></h2>
+Released: Sun Oct 14 2007<div class="section" id="change-0.3.11-orm">
+<h3>orm<a class="headerlink" href="#change-0.3.11-orm" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.11-0"><span class="target" id="change-795ef475f7d4b812b08e3c6d684d0937"><strong>[orm] </strong></span>added a check for joining from A-&gt;B using join(), along two
+different m2m tables.  this raises an error in 0.3 but is
+possible in 0.4 when aliases are used.<a class="changeset-link reference internal" href="#change-795ef475f7d4b812b08e3c6d684d0937">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/687">#687</a></p>
+</p>
+</li>
+<li><p id="change-0.3.11-1"><span class="target" id="change-88ee862c631f69b98c54fa871a991656"><strong>[orm] </strong></span>fixed small exception throw bug in Session.merge()<a class="changeset-link reference internal" href="#change-88ee862c631f69b98c54fa871a991656">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.11-2"><span class="target" id="change-bd9e04477cd60c6d6a7a4cebb7f0913a"><strong>[orm] </strong></span>fixed bug where mapper, being linked to a join where one table had
+no PK columns, would not detect that the joined table had no PK.<a class="changeset-link reference internal" href="#change-bd9e04477cd60c6d6a7a4cebb7f0913a">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.11-3"><span class="target" id="change-1e038d2dbcdd2153030e7394dfd58f3d"><strong>[orm] </strong></span>fixed bugs in determining proper sync clauses from custom inherit
+conditions<a class="changeset-link reference internal" href="#change-1e038d2dbcdd2153030e7394dfd58f3d">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/769">#769</a></p>
+</p>
+</li>
+<li><p id="change-0.3.11-4"><span class="target" id="change-0e43e8232535b10db727543c77f728bd"><strong>[orm] </strong></span>backref remove object operation doesn&#8217;t fail if the other-side
+collection doesn&#8217;t contain the item, supports noload collections<a class="changeset-link reference internal" href="#change-0e43e8232535b10db727543c77f728bd">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/813">#813</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.11-engine">
+<h3>engine<a class="headerlink" href="#change-0.3.11-engine" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.11-5"><span class="target" id="change-a8031639e187f84e4aa5334fd71c2098"><strong>[engine] </strong></span>fixed another occasional race condition which could occur
+when using pool with threadlocal setting<a class="changeset-link reference internal" href="#change-a8031639e187f84e4aa5334fd71c2098">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.11-sql">
+<h3>sql<a class="headerlink" href="#change-0.3.11-sql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.11-6"><span class="target" id="change-606aa4f88278c9f53504856ea6950d76"><strong>[sql] </strong></span>tweak DISTINCT precedence for clauses like
+<cite>func.count(t.c.col.distinct())</cite><a class="changeset-link reference internal" href="#change-606aa4f88278c9f53504856ea6950d76">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.11-7"><span class="target" id="change-d8d45d29d80bd66d00ef851e04a3f82b"><strong>[sql] </strong></span>Fixed detection of internal &#8216;$&#8217; characters in :bind$params<a class="changeset-link reference internal" href="#change-d8d45d29d80bd66d00ef851e04a3f82b">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/719">#719</a></p>
+</p>
+</li>
+<li><p id="change-0.3.11-8"><span class="target" id="change-c775c555253217a9fec895e46da53374"><strong>[sql] </strong></span>dont assume join criterion consists only of column objects<a class="changeset-link reference internal" href="#change-c775c555253217a9fec895e46da53374">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/768">#768</a></p>
+</p>
+</li>
+<li><p id="change-0.3.11-9"><span class="target" id="change-adee1f3a5bf6063740c4e5d0d8759576"><strong>[sql] </strong></span>adjusted operator precedence of NOT to match &#8216;==&#8217; and others, so that
+~(x==y) produces NOT (x=y), which is compatible with MySQL &lt; 5.0
+(doesn&#8217;t like &#8220;NOT x=y&#8221;)<a class="changeset-link reference internal" href="#change-adee1f3a5bf6063740c4e5d0d8759576">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/764">#764</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.11-mysql">
+<h3>mysql<a class="headerlink" href="#change-0.3.11-mysql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.11-10"><span class="target" id="change-0925c07610677ed2716dea213bbd0a75"><strong>[mysql] </strong></span>fixed specification of YEAR columns when generating schema<a class="changeset-link reference internal" href="#change-0925c07610677ed2716dea213bbd0a75">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.11-sqlite">
+<h3>sqlite<a class="headerlink" href="#change-0.3.11-sqlite" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.11-11"><span class="target" id="change-cb3f35b104dcbe7a26298edfc829c240"><strong>[sqlite] </strong></span>passthrough for stringified dates<a class="changeset-link reference internal" href="#change-cb3f35b104dcbe7a26298edfc829c240">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.11-mssql">
+<h3>mssql<a class="headerlink" href="#change-0.3.11-mssql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.11-12"><span class="target" id="change-9ae1839db8b6431a7d9a951df9db226f"><strong>[mssql] </strong></span>added support for TIME columns (simulated using DATETIME)<a class="changeset-link reference internal" href="#change-9ae1839db8b6431a7d9a951df9db226f">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/679">#679</a></p>
+</p>
+</li>
+<li><p id="change-0.3.11-13"><span class="target" id="change-22d1b8a85d2e3fad306665d645da0f78"><strong>[mssql] </strong></span>added support for BIGINT, MONEY, SMALLMONEY, UNIQUEIDENTIFIER and
+SQL_VARIANT<a class="changeset-link reference internal" href="#change-22d1b8a85d2e3fad306665d645da0f78">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/721">#721</a></p>
+</p>
+</li>
+<li><p id="change-0.3.11-14"><span class="target" id="change-b1949f314913ce8e14c5552e9e90e924"><strong>[mssql] </strong></span>index names are now quoted when dropping from reflected tables<a class="changeset-link reference internal" href="#change-b1949f314913ce8e14c5552e9e90e924">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/684">#684</a></p>
+</p>
+</li>
+<li><p id="change-0.3.11-15"><span class="target" id="change-dc27077ba3230cb424fcf4b4b8185ac1"><strong>[mssql] </strong></span>can now specify a DSN for PyODBC, using a URI like mssql:///?dsn=bob<a class="changeset-link reference internal" href="#change-dc27077ba3230cb424fcf4b4b8185ac1">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.11-oracle">
+<h3>oracle<a class="headerlink" href="#change-0.3.11-oracle" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.11-16"><span class="target" id="change-5f0bd7c8398c9a49d384e169dded9299"><strong>[oracle] </strong></span>removed LONG_STRING, LONG_BINARY from &#8220;binary&#8221; types, so type objects
+don&#8217;t try to read their values as LOB.<a class="changeset-link reference internal" href="#change-5f0bd7c8398c9a49d384e169dded9299">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/622">#622</a>, <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/751">#751</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.11-firebird">
+<h3>firebird<a class="headerlink" href="#change-0.3.11-firebird" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.11-17"><span class="target" id="change-68a13c0986d622612ea9b90a1e732d21"><strong>[firebird] </strong></span>supports_sane_rowcount() set to False due to ticket #370 (right way).<a class="changeset-link reference internal" href="#change-68a13c0986d622612ea9b90a1e732d21">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.11-18"><span class="target" id="change-6d153f889ecfbaa34265a173aef5720d"><strong>[firebird] </strong></span>fixed reflection of Column&#8217;s nullable property.<a class="changeset-link reference internal" href="#change-6d153f889ecfbaa34265a173aef5720d">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.11-misc">
+<h3>misc<a class="headerlink" href="#change-0.3.11-misc" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.11-19"><span class="target" id="change-c26caf7b92713b64413c6519ddfa159a"><strong>[postgres] </strong></span>when reflecting tables from alternate schemas, the &#8220;default&#8221; placed upon
+the primary key, i.e. usually a sequence name, has the &#8220;schema&#8221; name
+unconditionally quoted, so that schema names which need quoting are fine.
+its slightly unnecessary for schema names which don&#8217;t need quoting
+but not harmful.<a class="changeset-link reference internal" href="#change-c26caf7b92713b64413c6519ddfa159a">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="change-0.3.10">
+<h2>0.3.10<a class="headerlink" href="#change-0.3.10" title="Permalink to this headline">¶</a></h2>
+Released: Fri Jul 20 2007<div class="section" id="change-0.3.10-general">
+<h3>general<a class="headerlink" href="#change-0.3.10-general" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.10-0"><span class="target" id="change-d21e68c9886bf315a5224f8aedf8c2f0"><strong>[general] </strong></span>a new mutex that was added in 0.3.9 causes the pool_timeout
+feature to fail during a race condition; threads would
+raise TimeoutError immediately with no delay if many threads
+push the pool into overflow at the same time.  this issue has been
+fixed.<a class="changeset-link reference internal" href="#change-d21e68c9886bf315a5224f8aedf8c2f0">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.10-orm">
+<h3>orm<a class="headerlink" href="#change-0.3.10-orm" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.10-1"><span class="target" id="change-abc5c622ebf7f48299346d88e835234a"><strong>[orm] </strong></span>cleanup to connection-bound sessions, SessionTransaction<a class="changeset-link reference internal" href="#change-abc5c622ebf7f48299346d88e835234a">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.10-sql">
+<h3>sql<a class="headerlink" href="#change-0.3.10-sql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.10-2"><span class="target" id="change-f1f6a898d9d4aad0cfea3d441d7da52c"><strong>[sql] </strong></span>got connection-bound metadata to work with implicit execution<a class="changeset-link reference internal" href="#change-f1f6a898d9d4aad0cfea3d441d7da52c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.10-3"><span class="target" id="change-513834dddb580f41af0e07c8084eedb6"><strong>[sql] </strong></span>foreign key specs can have any chararcter in their identifiers<a class="changeset-link reference internal" href="#change-513834dddb580f41af0e07c8084eedb6">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/667">#667</a></p>
+</p>
+</li>
+<li><p id="change-0.3.10-4"><span class="target" id="change-2b2c84c6ab73af1cb0a95c1ef7da18e8"><strong>[sql] </strong></span>added commutativity-awareness to binary clause comparisons to
+each other, improves ORM lazy load optimization<a class="changeset-link reference internal" href="#change-2b2c84c6ab73af1cb0a95c1ef7da18e8">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/664">#664</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.10-misc">
+<h3>misc<a class="headerlink" href="#change-0.3.10-misc" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.10-5"><span class="target" id="change-ad87700ec6114efcef15a751769a83f7"><strong>[postgres] </strong></span>fixed max identifier length (63)<a class="changeset-link reference internal" href="#change-ad87700ec6114efcef15a751769a83f7">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/571">#571</a></p>
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="change-0.3.9">
+<h2>0.3.9<a class="headerlink" href="#change-0.3.9" title="Permalink to this headline">¶</a></h2>
+Released: Sun Jul 15 2007<div class="section" id="change-0.3.9-general">
+<h3>general<a class="headerlink" href="#change-0.3.9-general" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.9-0"><span class="target" id="change-15b74e04e779630532bed8eb2cb6e6c1"><strong>[general] </strong></span>better error message for NoSuchColumnError<a class="changeset-link reference internal" href="#change-15b74e04e779630532bed8eb2cb6e6c1">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/607">#607</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-1"><span class="target" id="change-1a63992eb7fa15d2defa97764255fbc0"><strong>[general] </strong></span>finally figured out how to get setuptools version in, available
+as sqlalchemy.__version__<a class="changeset-link reference internal" href="#change-1a63992eb7fa15d2defa97764255fbc0">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/428">#428</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-2"><span class="target" id="change-a914144f1b4a77794f443fe172406549"><strong>[general] </strong></span>the various &#8220;engine&#8221; arguments, such as &#8220;engine&#8221;, &#8220;connectable&#8221;,
+&#8220;engine_or_url&#8221;, &#8220;bind_to&#8221;, etc. are all present, but deprecated.
+they all get replaced by the single term &#8220;bind&#8221;.  you also
+set the &#8220;bind&#8221; of MetaData using
+metadata.bind = &lt;engine or connection&gt;<a class="changeset-link reference internal" href="#change-a914144f1b4a77794f443fe172406549">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.9-orm">
+<h3>orm<a class="headerlink" href="#change-0.3.9-orm" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.9-3"><span class="target" id="change-301449c29e0fd8c8dbf2a0cbf6bbb0a7"><strong>[orm] </strong></span>forwards-compatibility with 0.4: added one(), first(), and
+all() to Query.  almost all Query functionality from 0.4 is
+present in 0.3.9 for forwards-compat purposes.<a class="changeset-link reference internal" href="#change-301449c29e0fd8c8dbf2a0cbf6bbb0a7">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-4"><span class="target" id="change-3d04848b5b90892e4896d27e42104550"><strong>[orm] </strong></span>reset_joinpoint() really really works this time, promise ! lets
+you re-join from the root:
+query.join([&#8216;a&#8217;, &#8216;b&#8217;]).filter(&lt;crit&gt;).reset_joinpoint().join([&#8216;a&#8217;, &#8216;c&#8217;]).filter(&lt;some other crit&gt;).all()
+in 0.4 all join() calls start from the &#8220;root&#8221;<a class="changeset-link reference internal" href="#change-3d04848b5b90892e4896d27e42104550">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-5"><span class="target" id="change-a0eabad47f40a8f2c05402d784e913e5"><strong>[orm] </strong></span>added synchronization to the mapper() construction step, to avoid
+thread collisions when pre-existing mappers are compiling in a
+different thread<a class="changeset-link reference internal" href="#change-a0eabad47f40a8f2c05402d784e913e5">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/613">#613</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-6"><span class="target" id="change-7511ce30f30748be291cfdd03fd2985c"><strong>[orm] </strong></span>a warning is issued by Mapper when two primary key columns of the
+same name are munged into a single attribute.  this happens frequently
+when mapping to joins (or inheritance).<a class="changeset-link reference internal" href="#change-7511ce30f30748be291cfdd03fd2985c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-7"><span class="target" id="change-2b84bfaaf17d2ee58aef7c2087b5d1a2"><strong>[orm] </strong></span>synonym() properties are fully supported by all Query joining/
+with_parent operations<a class="changeset-link reference internal" href="#change-2b84bfaaf17d2ee58aef7c2087b5d1a2">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/598">#598</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-8"><span class="target" id="change-29072b60d67f065003dc3d3c58fc4f41"><strong>[orm] </strong></span>fixed very stupid bug when deleting items with many-to-many
+uselist=False relations<a class="changeset-link reference internal" href="#change-29072b60d67f065003dc3d3c58fc4f41">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-9"><span class="target" id="change-7c527faac0be51d0670878009672f72e"><strong>[orm] </strong></span>remember all that stuff about polymorphic_union ?  for
+joined table inheritance ?  Funny thing...
+You sort of don&#8217;t need it for joined table inheritance, you
+can just string all the tables together via outerjoin().
+The UNION still applies if concrete tables are involved,
+though (since nothing to join them on).<a class="changeset-link reference internal" href="#change-7c527faac0be51d0670878009672f72e">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-10"><span class="target" id="change-fe5f2850304952163433155f047967b3"><strong>[orm] </strong></span>small fix to eager loading to better work with eager loads
+to polymorphic mappers that are using a straight &#8220;outerjoin&#8221;
+clause<a class="changeset-link reference internal" href="#change-fe5f2850304952163433155f047967b3">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.9-sql">
+<h3>sql<a class="headerlink" href="#change-0.3.9-sql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.9-11"><span class="target" id="change-0b5f014d547ff11e6e2feb807334a210"><strong>[sql] </strong></span>ForeignKey to a table in a schema thats not the default schema
+requires the schema to be explicit; i.e. ForeignKey(&#8216;alt_schema.users.id&#8217;)<a class="changeset-link reference internal" href="#change-0b5f014d547ff11e6e2feb807334a210">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-12"><span class="target" id="change-cf52683aa8efacf1647755b6e2f1acf9"><strong>[sql] </strong></span>MetaData can now be constructed with an engine or url as the first
+argument, just like BoundMetaData<a class="changeset-link reference internal" href="#change-cf52683aa8efacf1647755b6e2f1acf9">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-13"><span class="target" id="change-2539cd0d61dd58d959c61c6876dc1209"><strong>[sql] </strong></span>BoundMetaData is now deprecated, and MetaData is a direct substitute.<a class="changeset-link reference internal" href="#change-2539cd0d61dd58d959c61c6876dc1209">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-14"><span class="target" id="change-10f3b9882e40dd9a45d7188ae6a8237c"><strong>[sql] </strong></span>DynamicMetaData has been renamed to ThreadLocalMetaData.  the
+DynamicMetaData name is deprecated and is an alias for ThreadLocalMetaData
+or a regular MetaData if threadlocal=False<a class="changeset-link reference internal" href="#change-10f3b9882e40dd9a45d7188ae6a8237c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-15"><span class="target" id="change-03586a372d9beeedd862f01e0addc777"><strong>[sql] </strong></span>composite primary key is represented as a non-keyed set to allow for
+composite keys consisting of cols with the same name; occurs within a
+Join.  helps inheritance scenarios formulate correct PK.<a class="changeset-link reference internal" href="#change-03586a372d9beeedd862f01e0addc777">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-16"><span class="target" id="change-afa1167f3e5743e5abd5356d62de6046"><strong>[sql] </strong></span>improved ability to get the &#8220;correct&#8221; and most minimal set of primary key
+columns from a join, equating foreign keys and otherwise equated columns.
+this is also mostly to help inheritance scenarios formulate the best
+choice of primary key columns.<a class="changeset-link reference internal" href="#change-afa1167f3e5743e5abd5356d62de6046">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/185">#185</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-17"><span class="target" id="change-9c7cdd3f8030a2d57cf94f1f1f892b4c"><strong>[sql] </strong></span>added &#8216;bind&#8217; argument to Sequence.create()/drop(), ColumnDefault.execute()<a class="changeset-link reference internal" href="#change-9c7cdd3f8030a2d57cf94f1f1f892b4c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-18"><span class="target" id="change-81ad0a30acb500499415014b6aefd421"><strong>[sql] </strong></span>columns can be overridden in a reflected table with a &#8220;key&#8221;
+attribute different than the column&#8217;s name, including for primary key
+columns<a class="changeset-link reference internal" href="#change-81ad0a30acb500499415014b6aefd421">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/650">#650</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-19"><span class="target" id="change-4b5d1e9e40c66d1b53a831c30e88292a"><strong>[sql] </strong></span>fixed &#8220;ambiguous column&#8221; result detection, when dupe col names exist
+in a result<a class="changeset-link reference internal" href="#change-4b5d1e9e40c66d1b53a831c30e88292a">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/657">#657</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-20"><span class="target" id="change-dc154cb277d63d3f13716fab650411d5"><strong>[sql] </strong></span>some enhancements to &#8220;column targeting&#8221;, the ability to match a column
+to a &#8220;corresponding&#8221; column in another selectable.  this affects mostly
+ORM ability to map to complex joins<a class="changeset-link reference internal" href="#change-dc154cb277d63d3f13716fab650411d5">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-21"><span class="target" id="change-a0f1f7110e545dcbde1e4a60d9b028cc"><strong>[sql] </strong></span>MetaData and all SchemaItems are safe to use with pickle.  slow
+table reflections can be dumped into a pickled file to be reused later.
+Just reconnect the engine to the metadata after unpickling.<a class="changeset-link reference internal" href="#change-a0f1f7110e545dcbde1e4a60d9b028cc">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/619">#619</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-22"><span class="target" id="change-c1578db6e36277a7adc101ca74177397"><strong>[sql] </strong></span>added a mutex to QueuePool&#8217;s &#8220;overflow&#8221; calculation to prevent a race
+condition that can bypass max_overflow<a class="changeset-link reference internal" href="#change-c1578db6e36277a7adc101ca74177397">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-23"><span class="target" id="change-3b19729cd27655192e7f677db9437a75"><strong>[sql] </strong></span>fixed grouping of compound selects to give correct results. will break
+on sqlite in some cases, but those cases were producing incorrect
+results anyway, sqlite doesn&#8217;t support grouped compound selects<a class="changeset-link reference internal" href="#change-3b19729cd27655192e7f677db9437a75">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/623">#623</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-24"><span class="target" id="change-1a5573250745da4cc296c5478a905559"><strong>[sql] </strong></span>fixed precedence of operators so that parenthesis are correctly applied<a class="changeset-link reference internal" href="#change-1a5573250745da4cc296c5478a905559">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/620">#620</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-25"><span class="target" id="change-f3c83d18250d490e0c0e719048bb5c78"><strong>[sql] </strong></span>calling &lt;column&gt;.in_() (i.e. with no arguments) will return
+&#8220;CASE WHEN (&lt;column&gt; IS NULL) THEN NULL ELSE 0 END = 1)&#8221;, so that
+NULL or False is returned in all cases, rather than throwing an error<a class="changeset-link reference internal" href="#change-f3c83d18250d490e0c0e719048bb5c78">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/545">#545</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-26"><span class="target" id="change-29d36e2ae856641782a99036963ac096"><strong>[sql] </strong></span>fixed &#8220;where&#8221;/&#8221;from&#8221; criterion of select() to accept a unicode string
+in addition to regular string - both convert to text()<a class="changeset-link reference internal" href="#change-29d36e2ae856641782a99036963ac096">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-27"><span class="target" id="change-d5193859e2955a59dd9b9689c9c46766"><strong>[sql] </strong></span>added standalone distinct() function in addition to column.distinct()<a class="changeset-link reference internal" href="#change-d5193859e2955a59dd9b9689c9c46766">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/558">#558</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-28"><span class="target" id="change-22737e38569c4710d50bad784dc3c2f6"><strong>[sql] </strong></span>result.last_inserted_ids() should return a list that is identically
+sized to the primary key constraint of the table.  values that were
+&#8220;passively&#8221; created and not available via cursor.lastrowid will be None.<a class="changeset-link reference internal" href="#change-22737e38569c4710d50bad784dc3c2f6">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-29"><span class="target" id="change-133fed2970fe02b19469b87df37569d2"><strong>[sql] </strong></span>long-identifier detection fixed to use &gt; rather than &gt;= for
+max ident length<a class="changeset-link reference internal" href="#change-133fed2970fe02b19469b87df37569d2">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/589">#589</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-30"><span class="target" id="change-4b796f178bce68c33756958792addb5e"><strong>[sql] </strong></span>fixed bug where selectable.corresponding_column(selectable.c.col)
+would not return selectable.c.col, if the selectable is a join
+of a table and another join involving the same table.  messed
+up ORM decision making<a class="changeset-link reference internal" href="#change-4b796f178bce68c33756958792addb5e">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/593">#593</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-31"><span class="target" id="change-01be6714d969a9a05321795a1a05462e"><strong>[sql] </strong></span>added Interval type to types.py<a class="changeset-link reference internal" href="#change-01be6714d969a9a05321795a1a05462e">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/595">#595</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.9-mysql">
+<h3>mysql<a class="headerlink" href="#change-0.3.9-mysql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.9-32"><span class="target" id="change-a2ea4c40b80240eda48ac840435d5023"><strong>[mysql] </strong></span>fixed catching of some errors that imply a dropped connection<a class="changeset-link reference internal" href="#change-a2ea4c40b80240eda48ac840435d5023">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/625">#625</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-33"><span class="target" id="change-d2c713d82a5cc3352589d3b97a4f1a75"><strong>[mysql] </strong></span>fixed escaping of the modulo operator<a class="changeset-link reference internal" href="#change-d2c713d82a5cc3352589d3b97a4f1a75">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/624">#624</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-34"><span class="target" id="change-ccc1148a1c82ef495cc71ca9962442b9"><strong>[mysql] </strong></span>added &#8216;fields&#8217; to reserved words<a class="changeset-link reference internal" href="#change-ccc1148a1c82ef495cc71ca9962442b9">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/590">#590</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-35"><span class="target" id="change-706aff419d104524d8aee408e01fca4b"><strong>[mysql] </strong></span>various reflection enhancement/fixes<a class="changeset-link reference internal" href="#change-706aff419d104524d8aee408e01fca4b">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.9-sqlite">
+<h3>sqlite<a class="headerlink" href="#change-0.3.9-sqlite" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.9-36"><span class="target" id="change-cda34421fe7120853f316f8e8cfbc11b"><strong>[sqlite] </strong></span>rearranged dialect initialization so it has time to warn about pysqlite1
+being too old.<a class="changeset-link reference internal" href="#change-cda34421fe7120853f316f8e8cfbc11b">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-37"><span class="target" id="change-123da4b941ba10797888a9215510d452"><strong>[sqlite] </strong></span>sqlite better handles datetime/date/time objects mixed and matched
+with various Date/Time/DateTime columns<a class="changeset-link reference internal" href="#change-123da4b941ba10797888a9215510d452">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-38"><span class="target" id="change-2f48b0ceb4390d914ffb3fb359408074"><strong>[sqlite] </strong></span>string PK column inserts dont get overwritten with OID<a class="changeset-link reference internal" href="#change-2f48b0ceb4390d914ffb3fb359408074">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/603">#603</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.9-mssql">
+<h3>mssql<a class="headerlink" href="#change-0.3.9-mssql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.9-39"><span class="target" id="change-2bfbe63bd44f73945555c6ffb24c094e"><strong>[mssql] </strong></span>fix port option handling for pyodbc<a class="changeset-link reference internal" href="#change-2bfbe63bd44f73945555c6ffb24c094e">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/634">#634</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-40"><span class="target" id="change-1e148d4d69c64d022729a0015335e1e8"><strong>[mssql] </strong></span>now able to reflect start and increment values for identity columns<a class="changeset-link reference internal" href="#change-1e148d4d69c64d022729a0015335e1e8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-41"><span class="target" id="change-439f3b4aba1eb4036d66b94a0f22614d"><strong>[mssql] </strong></span>preliminary support for using scope_identity() with pyodbc<a class="changeset-link reference internal" href="#change-439f3b4aba1eb4036d66b94a0f22614d">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.9-oracle">
+<h3>oracle<a class="headerlink" href="#change-0.3.9-oracle" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.9-42"><span class="target" id="change-7c280ed8cae1ff8178c595a4ad188950"><strong>[oracle] </strong></span>datetime fixes: got subsecond TIMESTAMP to work,
+added OracleDate which supports types.Date with only year/month/day<a class="changeset-link reference internal" href="#change-7c280ed8cae1ff8178c595a4ad188950">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/604">#604</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-43"><span class="target" id="change-fe2a41d1863a635eb6874cd35fb20b48"><strong>[oracle] </strong></span>added dialect flag &#8220;auto_convert_lobs&#8221;, defaults to True; will cause any
+LOB objects detected in a result set to be forced into OracleBinary
+so that the LOB is read() automatically, if no typemap was present
+(i.e., if a textual execute() was issued).<a class="changeset-link reference internal" href="#change-fe2a41d1863a635eb6874cd35fb20b48">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-44"><span class="target" id="change-1785061d703c74bd4913416cc528e437"><strong>[oracle] </strong></span>mod operator &#8216;%&#8217; produces MOD<a class="changeset-link reference internal" href="#change-1785061d703c74bd4913416cc528e437">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/624">#624</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-45"><span class="target" id="change-ae5989d376a6e417a66cf93a4214f7d1"><strong>[oracle] </strong></span>converts cx_oracle datetime objects to Python datetime.datetime when
+Python 2.3 used<a class="changeset-link reference internal" href="#change-ae5989d376a6e417a66cf93a4214f7d1">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/542">#542</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-46"><span class="target" id="change-2cdcc2d95fcff22d45cbf69a4828bb78"><strong>[oracle] </strong></span>fixed unicode conversion in Oracle TEXT type<a class="changeset-link reference internal" href="#change-2cdcc2d95fcff22d45cbf69a4828bb78">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.9-misc">
+<h3>misc<a class="headerlink" href="#change-0.3.9-misc" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.9-47"><span class="target" id="change-eb702c9d953f71913b8f13239bd1ace3"><strong>[ext] </strong></span>iteration over dict association proxies is now dict-like, not
+InstrumentedList-like (e.g. over keys instead of values)<a class="changeset-link reference internal" href="#change-eb702c9d953f71913b8f13239bd1ace3">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-48"><span class="target" id="change-00e6c94fbb4056e8fd8396d98317361e"><strong>[ext] </strong></span>association proxies no longer bind tightly to source collections, and are constructed with a thunk instead<a class="changeset-link reference internal" href="#change-00e6c94fbb4056e8fd8396d98317361e">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/597">#597</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-49"><span class="target" id="change-2e4b108cd893d88498c7604cffd62078"><strong>[ext] </strong></span>added selectone_by() to assignmapper<a class="changeset-link reference internal" href="#change-2e4b108cd893d88498c7604cffd62078">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-50"><span class="target" id="change-d2c713d82a5cc3352589d3b97a4f1a75"><strong>[postgres] </strong></span>fixed escaping of the modulo operator<a class="changeset-link reference internal" href="#change-d2c713d82a5cc3352589d3b97a4f1a75">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/624">#624</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-51"><span class="target" id="change-64c391579ec741ebb893bf0eda8954dd"><strong>[postgres] </strong></span>added support for reflection of domains<a class="changeset-link reference internal" href="#change-64c391579ec741ebb893bf0eda8954dd">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/570">#570</a></p>
+</p>
+</li>
+<li><p id="change-0.3.9-52"><span class="target" id="change-7155ff564edfbf3f017269ef87e325b1"><strong>[postgres] </strong></span>types which are missing during reflection resolve to Null type
+instead of raising an error<a class="changeset-link reference internal" href="#change-7155ff564edfbf3f017269ef87e325b1">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.9-53"><span class="target" id="change-059d6872923fb7b2dd4dbe3e1b480fa1"><strong>[postgres] </strong></span>the fix in &#8220;schema&#8221; above fixes reflection of foreign keys from an
+alt-schema table to a public schema table<a class="changeset-link reference internal" href="#change-059d6872923fb7b2dd4dbe3e1b480fa1">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="change-0.3.8">
+<h2>0.3.8<a class="headerlink" href="#change-0.3.8" title="Permalink to this headline">¶</a></h2>
+Released: Sat Jun 02 2007<div class="section" id="change-0.3.8-orm">
+<h3>orm<a class="headerlink" href="#change-0.3.8-orm" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.8-0"><span class="target" id="change-220bb837574d279c29a38a113e5fe6cc"><strong>[orm] </strong></span>added reset_joinpoint() method to Query, moves the &#8220;join point&#8221;
+back to the starting mapper. 0.4 will change the behavior of
+join() to reset the &#8220;join point&#8221; in all cases so this is an
+interim method. for forwards compatibility, ensure joins across
+multiple relations are specified using a single join(), i.e.
+join([&#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;]).<a class="changeset-link reference internal" href="#change-220bb837574d279c29a38a113e5fe6cc">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-1"><span class="target" id="change-c661fbef6dccf55ecb37aa3a399460ca"><strong>[orm] </strong></span>fixed bug in query.instances() that wouldnt handle more than
+on additional mapper or one additional column.<a class="changeset-link reference internal" href="#change-c661fbef6dccf55ecb37aa3a399460ca">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-2"><span class="target" id="change-0a134f37a0801fcebac51e263334c46e"><strong>[orm] </strong></span>&#8220;delete-orphan&#8221; no longer implies &#8220;delete&#8221;. ongoing effort to
+separate the behavior of these two operations.<a class="changeset-link reference internal" href="#change-0a134f37a0801fcebac51e263334c46e">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-3"><span class="target" id="change-a7c0ffc4d0d71da2376e9be63199b048"><strong>[orm] </strong></span>many-to-many relationships properly set the type of bind params
+for delete operations on the association table<a class="changeset-link reference internal" href="#change-a7c0ffc4d0d71da2376e9be63199b048">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-4"><span class="target" id="change-cb313a2a343c37587dcb6a44a61e9cd5"><strong>[orm] </strong></span>many-to-many relationships check that the number of rows deleted
+from the association table by a delete operation matches the
+expected results<a class="changeset-link reference internal" href="#change-cb313a2a343c37587dcb6a44a61e9cd5">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-5"><span class="target" id="change-54897ff1003859d627b70ac40c8e9c58"><strong>[orm] </strong></span>session.get() and session.load() propagate <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs through to
+query<a class="changeset-link reference internal" href="#change-54897ff1003859d627b70ac40c8e9c58">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-6"><span class="target" id="change-4900a187a33ec9e4b25fecb93f373349"><strong>[orm] </strong></span>fix to polymorphic query which allows the original
+polymorphic_union to be embedded into a correlated subquery<a class="changeset-link reference internal" href="#change-4900a187a33ec9e4b25fecb93f373349">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/577">#577</a></p>
+</p>
+</li>
+<li><p id="change-0.3.8-7"><span class="target" id="change-8a65a9ccd3b899be79463c57097742a8"><strong>[orm] </strong></span>fix to select_by(&lt;propname&gt;=&lt;object instance&gt;) -style joins in
+conjunction with many-to-many relationships, bug introduced in
+r2556<a class="changeset-link reference internal" href="#change-8a65a9ccd3b899be79463c57097742a8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-8"><span class="target" id="change-364da54ef89796ce592a65df9986c2de"><strong>[orm] </strong></span>the &#8220;primary_key&#8221; argument to mapper() is propagated to the
+&#8220;polymorphic&#8221; mapper. primary key columns in this list get
+normalized to that of the mapper&#8217;s local table.<a class="changeset-link reference internal" href="#change-364da54ef89796ce592a65df9986c2de">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-9"><span class="target" id="change-49c52ba1ca54032ac76f17ea1ac98f39"><strong>[orm] </strong></span>restored logging of &#8220;lazy loading clause&#8221; under
+sa.orm.strategies logger, got removed in 0.3.7<a class="changeset-link reference internal" href="#change-49c52ba1ca54032ac76f17ea1ac98f39">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-10"><span class="target" id="change-c4c11ecc4b62a615e38a3a2aa51ea362"><strong>[orm] </strong></span>improved support for eagerloading of properties off of mappers
+that are mapped to select() statements; i.e. eagerloader is
+better at locating the correct selectable with which to attach
+its LEFT OUTER JOIN.<a class="changeset-link reference internal" href="#change-c4c11ecc4b62a615e38a3a2aa51ea362">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.8-sql">
+<h3>sql<a class="headerlink" href="#change-0.3.8-sql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.8-11"><span class="target" id="change-b633ad04bf23c91721ac0943b6db5eca"><strong>[sql] </strong></span>_Label class overrides compare_self to return its ultimate
+object. meaning, if you say someexpr.label(&#8216;foo&#8217;) == 5, it
+produces the correct &#8220;someexpr == 5&#8221;.<a class="changeset-link reference internal" href="#change-b633ad04bf23c91721ac0943b6db5eca">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-12"><span class="target" id="change-2f98e49a9c61f9fdc7c291653364afe9"><strong>[sql] </strong></span>_Label propagates &#8220;_hide_froms()&#8221; so that scalar selects
+behave more properly with regards to FROM clause #574<a class="changeset-link reference internal" href="#change-2f98e49a9c61f9fdc7c291653364afe9">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-13"><span class="target" id="change-e7872b2b2a3bbd38c13e8950a8e540bf"><strong>[sql] </strong></span>fix to long name generation when using oid_column as an order by
+(oids used heavily in mapper queries)<a class="changeset-link reference internal" href="#change-e7872b2b2a3bbd38c13e8950a8e540bf">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-14"><span class="target" id="change-936ba4bd4f829a2f737cd53def3e14fc"><strong>[sql] </strong></span>significant speed improvement to ResultProxy, pre-caches
+TypeEngine dialect implementations and saves on function calls
+per column<a class="changeset-link reference internal" href="#change-936ba4bd4f829a2f737cd53def3e14fc">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-15"><span class="target" id="change-fc92e69994fc285cf4e0fd2f1f78cec5"><strong>[sql] </strong></span>parenthesis are applied to clauses via a new _Grouping
+construct. uses operator precedence to more intelligently apply
+parenthesis to clauses, provides cleaner nesting of clauses
+(doesnt mutate clauses placed in other clauses, i.e. no &#8216;parens&#8217;
+flag)<a class="changeset-link reference internal" href="#change-fc92e69994fc285cf4e0fd2f1f78cec5">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-16"><span class="target" id="change-bb4e8c5c4e8e15649157fd777ceefdc2"><strong>[sql] </strong></span>added &#8216;modifier&#8217; keyword, works like func.&lt;foo&gt; except does not
+add parenthesis.  e.g. select([modifier.DISTINCT(...)]) etc.<a class="changeset-link reference internal" href="#change-bb4e8c5c4e8e15649157fd777ceefdc2">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-17"><span class="target" id="change-430e33426127bd0c4c9394472a0c2590"><strong>[sql] </strong></span>removed &#8220;no group by&#8217;s in a select thats part of a UNION&#8221;
+restriction<a class="changeset-link reference internal" href="#change-430e33426127bd0c4c9394472a0c2590">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/578">#578</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.8-mysql">
+<h3>mysql<a class="headerlink" href="#change-0.3.8-mysql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.8-18"><span class="target" id="change-9641b6abc326362d6deac112eace4afb"><strong>[mysql] </strong></span>Nearly all MySQL column types are now supported for declaration
+and reflection. Added NCHAR, NVARCHAR, VARBINARY, TINYBLOB,
+LONGBLOB, YEAR<a class="changeset-link reference internal" href="#change-9641b6abc326362d6deac112eace4afb">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-19"><span class="target" id="change-18085e3f56d8b900bc96c38dd5a26b45"><strong>[mysql] </strong></span>The sqltypes.Binary passthrough now always builds a BLOB,
+avoiding problems with very old database versions<a class="changeset-link reference internal" href="#change-18085e3f56d8b900bc96c38dd5a26b45">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-20"><span class="target" id="change-9724aa42d8520597d817509db4f12ea8"><strong>[mysql] </strong></span>support for column-level CHARACTER SET and COLLATE declarations,
+as well as ASCII, UNICODE, NATIONAL and BINARY shorthand.<a class="changeset-link reference internal" href="#change-9724aa42d8520597d817509db4f12ea8">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.8-firebird">
+<h3>firebird<a class="headerlink" href="#change-0.3.8-firebird" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.8-21"><span class="target" id="change-0a0b981a70a945c67ba5720e526c1f3c"><strong>[firebird] </strong></span>set max identifier length to 31<a class="changeset-link reference internal" href="#change-0a0b981a70a945c67ba5720e526c1f3c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-22"><span class="target" id="change-ee8ef044cfb4e438086a05caa7914ae7"><strong>[firebird] </strong></span>supports_sane_rowcount() set to False due to ticket #370.
+versioned_id_col feature wont work in FB.<a class="changeset-link reference internal" href="#change-ee8ef044cfb4e438086a05caa7914ae7">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-23"><span class="target" id="change-4caef4c969ab8a7577cc51fc60890d5e"><strong>[firebird] </strong></span>some execution fixes<a class="changeset-link reference internal" href="#change-4caef4c969ab8a7577cc51fc60890d5e">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-24"><span class="target" id="change-794981a4b2ff6f2c7dd837ecebbc73c5"><strong>[firebird] </strong></span>new association proxy implementation, implementing complete
+proxies to list, dict and set-based relation collections<a class="changeset-link reference internal" href="#change-794981a4b2ff6f2c7dd837ecebbc73c5">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-25"><span class="target" id="change-63cb2d366f99e745287c162781638285"><strong>[firebird] </strong></span>added orderinglist, a custom list class that synchronizes an
+object attribute with that object&#8217;s position in the list<a class="changeset-link reference internal" href="#change-63cb2d366f99e745287c162781638285">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-26"><span class="target" id="change-26aa9970c7ff168af29ed9bc9c0eed85"><strong>[firebird] </strong></span>small fix to SelectResultsExt to not bypass itself during
+select().<a class="changeset-link reference internal" href="#change-26aa9970c7ff168af29ed9bc9c0eed85">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-27"><span class="target" id="change-59a547b4472cbf0c7ab99ad2df75dfd1"><strong>[firebird] </strong></span>added filter(), filter_by() to assignmapper<a class="changeset-link reference internal" href="#change-59a547b4472cbf0c7ab99ad2df75dfd1">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.8-misc">
+<h3>misc<a class="headerlink" href="#change-0.3.8-misc" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.8-28"><span class="target" id="change-dac5031c19faee84b91961d912ecba94"><strong>[engines] </strong></span>added detach() to Connection, allows underlying DBAPI connection
+to be detached from its pool, closing on dereference/close()
+instead of being reused by the pool.<a class="changeset-link reference internal" href="#change-dac5031c19faee84b91961d912ecba94">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.8-29"><span class="target" id="change-4f0f262d9c14896c7b7e1477cfee8d6e"><strong>[engines] </strong></span>added invalidate() to Connection, immediately invalidates the
+Connection and its underlying DBAPI connection.<a class="changeset-link reference internal" href="#change-4f0f262d9c14896c7b7e1477cfee8d6e">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="change-0.3.7">
+<h2>0.3.7<a class="headerlink" href="#change-0.3.7" title="Permalink to this headline">¶</a></h2>
+Released: Sun Apr 29 2007<div class="section" id="change-0.3.7-orm">
+<h3>orm<a class="headerlink" href="#change-0.3.7-orm" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.7-0"><span class="target" id="change-b70a16716f8cf919b358494b261c6e83"><strong>[orm] </strong></span>fixed critical issue when, after options(eagerload()) is used,
+the mapper would then always apply query &#8220;wrapping&#8221; behavior
+for all subsequent LIMIT/OFFSET/DISTINCT queries, even if no
+eager loading was applied on those subsequent queries.<a class="changeset-link reference internal" href="#change-b70a16716f8cf919b358494b261c6e83">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-1"><span class="target" id="change-7861d96f724ca34ac55a3d701575ffac"><strong>[orm] </strong></span>added query.with_parent(someinstance) method.  searches for
+target instance using lazy join criterion from parent instance.
+takes optional string &#8220;property&#8221; to isolate the desired relation.
+also adds static Query.query_from_parent(instance, property)
+version.<a class="changeset-link reference internal" href="#change-7861d96f724ca34ac55a3d701575ffac">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/541">#541</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-2"><span class="target" id="change-3a8b0fc4795043a6b42596d769387cb9"><strong>[orm] </strong></span>improved query.XXX_by(someprop=someinstance) querying to use
+similar methodology to with_parent, i.e. using the &#8220;lazy&#8221; clause
+which prevents adding the remote instance&#8217;s table to the SQL,
+thereby making more complex conditions possible<a class="changeset-link reference internal" href="#change-3a8b0fc4795043a6b42596d769387cb9">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/554">#554</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-3"><span class="target" id="change-0a56acf715d490dcc5adea669d5277ac"><strong>[orm] </strong></span>added generative versions of aggregates, i.e. sum(), avg(), etc.
+to query. used via query.apply_max(), apply_sum(), etc.
+#552<a class="changeset-link reference internal" href="#change-0a56acf715d490dcc5adea669d5277ac">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-4"><span class="target" id="change-007141aca01632f5db21be3524e7e4b1"><strong>[orm] </strong></span>fix to using distinct() or distinct=True in combination with
+join() and similar<a class="changeset-link reference internal" href="#change-007141aca01632f5db21be3524e7e4b1">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-5"><span class="target" id="change-cc8527d248fb3499b4a18f6718a08f7c"><strong>[orm] </strong></span>corresponding to label/bindparam name generation, eager loaders
+generate deterministic names for the aliases they create using
+md5 hashes.<a class="changeset-link reference internal" href="#change-cc8527d248fb3499b4a18f6718a08f7c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-6"><span class="target" id="change-5519681da8ec6c0511745ace0e07a5e5"><strong>[orm] </strong></span>improved/fixed custom collection classes when giving it &#8220;set&#8221;/
+&#8220;sets.Set&#8221; classes or subclasses (was still looking for append()
+methods on them during lazy loads)<a class="changeset-link reference internal" href="#change-5519681da8ec6c0511745ace0e07a5e5">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-7"><span class="target" id="change-2352eeb7d6a38352d971f1ff1053808f"><strong>[orm] </strong></span>restored old &#8220;column_property()&#8221; ORM function (used to be called
+&#8220;column()&#8221;) to force any column expression to be added as a property
+on a mapper, particularly those that aren&#8217;t present in the mapped
+selectable.  this allows &#8220;scalar expressions&#8221; of any kind to be
+added as relations (though they have issues with eager loads).<a class="changeset-link reference internal" href="#change-2352eeb7d6a38352d971f1ff1053808f">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-8"><span class="target" id="change-af6355eefc1aad1a89924b3f68f75920"><strong>[orm] </strong></span>fix to many-to-many relationships targeting polymorphic mappers<a class="changeset-link reference internal" href="#change-af6355eefc1aad1a89924b3f68f75920">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/533">#533</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-9"><span class="target" id="change-9f1f52abb6da3c56fff913386ceb7882"><strong>[orm] </strong></span>making progress with session.merge() as well as combining its
+usage with entity_name<a class="changeset-link reference internal" href="#change-9f1f52abb6da3c56fff913386ceb7882">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/543">#543</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-10"><span class="target" id="change-065b2f4a27d4207c1c01b7aaade4db8a"><strong>[orm] </strong></span>the usual adjustments to relationships between inheriting mappers,
+in this case establishing relation()s to subclass mappers where
+the join conditions come from the superclass&#8217; table<a class="changeset-link reference internal" href="#change-065b2f4a27d4207c1c01b7aaade4db8a">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.7-sql">
+<h3>sql<a class="headerlink" href="#change-0.3.7-sql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.7-11"><span class="target" id="change-73d7e6b1e7916be07e30cac965961ce9"><strong>[sql] </strong></span>keys() of result set columns are not lowercased, come back
+exactly as they&#8217;re expressed in cursor.description.  note this
+causes colnames to be all caps in oracle.<a class="changeset-link reference internal" href="#change-73d7e6b1e7916be07e30cac965961ce9">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-12"><span class="target" id="change-c37360d8b51c05ae857e5b9716bddbcb"><strong>[sql] </strong></span>preliminary support for unicode table names, column names and
+SQL statements added, for databases which can support them.
+Works with sqlite and postgres so far.  Mysql <em>mostly</em> works
+except the has_table() function does not work.  Reflection
+works too.<a class="changeset-link reference internal" href="#change-c37360d8b51c05ae857e5b9716bddbcb">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-13"><span class="target" id="change-fffe5705a0f33aa08fa8f28f1ec39a83"><strong>[sql] </strong></span>the Unicode type is now a direct subclass of String, which now
+contains all the &#8220;convert_unicode&#8221; logic.  This helps the variety
+of unicode situations that occur in db&#8217;s such as MS-SQL to be
+better handled and allows subclassing of the Unicode datatype.<a class="changeset-link reference internal" href="#change-fffe5705a0f33aa08fa8f28f1ec39a83">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/522">#522</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-14"><span class="target" id="change-801d06dffa1b17f7712f296ca71f5a79"><strong>[sql] </strong></span>ClauseElements can be used in in_() clauses now, such as bind
+parameters, etc. #476<a class="changeset-link reference internal" href="#change-801d06dffa1b17f7712f296ca71f5a79">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-15"><span class="target" id="change-2fdb206fa85f07e5f47bba08e0c06013"><strong>[sql] </strong></span>reverse operators implemented for <cite>CompareMixin</cite> elements,
+allows expressions like &#8220;5 + somecolumn&#8221; etc. #474<a class="changeset-link reference internal" href="#change-2fdb206fa85f07e5f47bba08e0c06013">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-16"><span class="target" id="change-ff895df76dd194eb810e5ca68bd903dd"><strong>[sql] </strong></span>the &#8220;where&#8221; criterion of an update() and delete() now correlates
+embedded select() statements against the table being updated or
+deleted.  this works the same as nested select() statement
+correlation, and can be disabled via the correlate=False flag on
+the embedded select().<a class="changeset-link reference internal" href="#change-ff895df76dd194eb810e5ca68bd903dd">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-17"><span class="target" id="change-88d7569964a508ab2262f1926b13c92d"><strong>[sql] </strong></span>column labels are now generated in the compilation phase, which
+means their lengths are dialect-dependent.  So on oracle a label
+that gets truncated to 30 chars will go out to 63 characters
+on postgres.  Also, the true labelname is always attached as the
+accessor on the parent Selectable so theres no need to be aware
+of the &#8220;truncated&#8221; label names.<a class="changeset-link reference internal" href="#change-88d7569964a508ab2262f1926b13c92d">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/512">#512</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-18"><span class="target" id="change-3a29e9cb61a8969eac7d12324eb44f91"><strong>[sql] </strong></span>column label and bind param &#8220;truncation&#8221; also generate
+deterministic names now, based on their ordering within the
+full statement being compiled.  this means the same statement
+will produce the same string across application restarts and
+allowing DB query plan caching to work better.<a class="changeset-link reference internal" href="#change-3a29e9cb61a8969eac7d12324eb44f91">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-19"><span class="target" id="change-07643dfce558c48c88fcd3c0dbbc207c"><strong>[sql] </strong></span>the &#8220;mini&#8221; column labels generated when using subqueries, which
+are to work around glitchy SQLite behavior that doesnt understand
+&#8220;foo.id&#8221; as equivalent to &#8220;id&#8221;, are now only generated in the case
+that those named columns are selected from (part of)<a class="changeset-link reference internal" href="#change-07643dfce558c48c88fcd3c0dbbc207c">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/513">#513</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-20"><span class="target" id="change-6db4c8aa79f09bcab6c7161873c65f93"><strong>[sql] </strong></span>the label() method on ColumnElement will properly propagate the
+TypeEngine of the base element out to the label, including a label()
+created from a scalar=True select() statement.<a class="changeset-link reference internal" href="#change-6db4c8aa79f09bcab6c7161873c65f93">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-21"><span class="target" id="change-c987bd1aeea789b13f68c82c9c4a4ff7"><strong>[sql] </strong></span>MS-SQL better detects when a query is a subquery and knows not to
+generate ORDER BY phrases for those<a class="changeset-link reference internal" href="#change-c987bd1aeea789b13f68c82c9c4a4ff7">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/513">#513</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-22"><span class="target" id="change-6f431b2f1da5df6d8744478e753a48e3"><strong>[sql] </strong></span>fix for fetchmany() &#8220;size&#8221; argument being positional in most
+dbapis<a class="changeset-link reference internal" href="#change-6f431b2f1da5df6d8744478e753a48e3">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/505">#505</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-23"><span class="target" id="change-62f64e15e5caee27d5fdb304138a3d64"><strong>[sql] </strong></span>sending None as an argument to func.&lt;something&gt; will produce
+an argument of NULL<a class="changeset-link reference internal" href="#change-62f64e15e5caee27d5fdb304138a3d64">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-24"><span class="target" id="change-0a8f61fa87fa2100ea72c52733d4d2da"><strong>[sql] </strong></span>query strings in unicode URLs get keys encoded to ascii
+for <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs compat<a class="changeset-link reference internal" href="#change-0a8f61fa87fa2100ea72c52733d4d2da">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-25"><span class="target" id="change-d6bccf2e2942ba9e7fc42b6359f5e1c5"><strong>[sql] </strong></span>slight tweak to raw execute() change to also support tuples
+for positional parameters, not just lists<a class="changeset-link reference internal" href="#change-d6bccf2e2942ba9e7fc42b6359f5e1c5">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/523">#523</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-26"><span class="target" id="change-e896659511f05a46c43f0bbb4a6ce393"><strong>[sql] </strong></span>fix to case() construct to propagate the type of the first
+WHEN condition as the return type of the case statement<a class="changeset-link reference internal" href="#change-e896659511f05a46c43f0bbb4a6ce393">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.7-mysql">
+<h3>mysql<a class="headerlink" href="#change-0.3.7-mysql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.7-27"><span class="target" id="change-692e1565645dbe8b9ef8164203b1c946"><strong>[mysql] </strong></span>support for SSL arguments given as inline within URL query string,
+prefixed with &#8220;<a href="#id15"><span class="problematic" id="id16">ssl_</span></a>&#8221;, courtesy <a class="reference external" href="mailto:terjeros&#37;&#52;&#48;gmail&#46;com">terjeros<span>&#64;</span>gmail<span>&#46;</span>com</a>.<a class="changeset-link reference internal" href="#change-692e1565645dbe8b9ef8164203b1c946">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-28"><span class="target" id="change-40376dca5b9584c8cc73f958c6409a48"><strong>[mysql] [&lt;schemaname&gt;] </strong></span>mysql uses &#8220;DESCRIBE.&lt;tablename&gt;&#8221;, catching exceptions
+if table doesnt exist, in order to determine if a table exists.
+this supports unicode table names as well as schema names. tested
+with MySQL5 but should work with 4.1 series as well. (#557)<a class="changeset-link reference internal" href="#change-40376dca5b9584c8cc73f958c6409a48">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.7-sqlite">
+<h3>sqlite<a class="headerlink" href="#change-0.3.7-sqlite" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.7-29"><span class="target" id="change-cf170dcbc751945cb3050b2aba47a7fc"><strong>[sqlite] </strong></span>removed silly behavior where sqlite would reflect UNIQUE indexes
+as part of the primary key (?!)<a class="changeset-link reference internal" href="#change-cf170dcbc751945cb3050b2aba47a7fc">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.7-mssql">
+<h3>mssql<a class="headerlink" href="#change-0.3.7-mssql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.7-30"><span class="target" id="change-cd069bfe49e81ecb1723ce2f455629d9"><strong>[mssql] </strong></span>pyodbc is now the preferred DB-API for MSSQL, and if no module is
+specifically requested, will be loaded first on a module probe.<a class="changeset-link reference internal" href="#change-cd069bfe49e81ecb1723ce2f455629d9">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-31"><span class="target" id="change-98f166632883a1f0f0e9b5551435f1e4"><strong>[mssql] </strong></span>The &#64;&#64;SCOPE_IDENTITY is now used instead of &#64;&#64;IDENTITY. This
+behavior may be overridden with the engine_connect
+&#8220;use_scope_identity&#8221; keyword parameter, which may also be specified
+in the dburi.<a class="changeset-link reference internal" href="#change-98f166632883a1f0f0e9b5551435f1e4">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.7-oracle">
+<h3>oracle<a class="headerlink" href="#change-0.3.7-oracle" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.7-32"><span class="target" id="change-00f079e3efc304a332a86ad53163494c"><strong>[oracle] </strong></span>small fix to allow successive compiles of the same SELECT object
+which features LIMIT/OFFSET.  oracle dialect needs to modify
+the object to have ROW_NUMBER OVER and wasn&#8217;t performing
+the full series of steps on successive compiles.<a class="changeset-link reference internal" href="#change-00f079e3efc304a332a86ad53163494c">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.7-misc">
+<h3>misc<a class="headerlink" href="#change-0.3.7-misc" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.7-33"><span class="target" id="change-5769c29329bd92d3e0d54145d3c84967"><strong>[engines] </strong></span>warnings module used for issuing warnings (instead of logging)<a class="changeset-link reference internal" href="#change-5769c29329bd92d3e0d54145d3c84967">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-34"><span class="target" id="change-7d24501b7c507a99a005fca1ced19d34"><strong>[engines] </strong></span>cleanup of DBAPI import strategies across all engines<a class="changeset-link reference internal" href="#change-7d24501b7c507a99a005fca1ced19d34">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/480">#480</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-35"><span class="target" id="change-093f6563bc1d6302a6c65091f189c417"><strong>[engines] </strong></span>refactoring of engine internals which reduces complexity,
+number of codepaths; places more state inside of ExecutionContext
+to allow more dialect control of cursor handling, result sets.
+ResultProxy totally refactored and also has two versions of
+&#8220;buffered&#8221; result sets used for different purposes.<a class="changeset-link reference internal" href="#change-093f6563bc1d6302a6c65091f189c417">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-36"><span class="target" id="change-7563427af9a2dbabdc41b671f9119253"><strong>[engines] </strong></span>server side cursor support fully functional in postgres.<a class="changeset-link reference internal" href="#change-7563427af9a2dbabdc41b671f9119253">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/514">#514</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-37"><span class="target" id="change-de2734d32f9f75ca5bf6decc1c56eb11"><strong>[engines] </strong></span>improved framework for auto-invalidation of connections that have
+lost their underlying database, via dialect-specific detection
+of exceptions corresponding to that database&#8217;s disconnect
+related error messages.  Additionally, when a &#8220;connection no
+longer open&#8221; condition is detected, the entire connection pool
+is discarded and replaced with a new instance.  #516<a class="changeset-link reference internal" href="#change-de2734d32f9f75ca5bf6decc1c56eb11">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-38"><span class="target" id="change-f7455a9f34d7db0039194c7cdeef8441"><strong>[engines] </strong></span>the dialects within sqlalchemy.databases become a setuptools
+entry points. loading the built-in database dialects works the
+same as always, but if none found will fall back to trying
+pkg_resources to load an external module<a class="changeset-link reference internal" href="#change-f7455a9f34d7db0039194c7cdeef8441">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/521">#521</a></p>
+</p>
+</li>
+<li><p id="change-0.3.7-39"><span class="target" id="change-b231bc2f156428e9dc2d3013d285ace8"><strong>[engines] </strong></span>Engine contains a &#8220;url&#8221; attribute referencing the url.URL object
+used by create_engine().<a class="changeset-link reference internal" href="#change-b231bc2f156428e9dc2d3013d285ace8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-40"><span class="target" id="change-ad45e2908330aaa751332d0c9d866f98"><strong>[informix] </strong></span>informix support added !  courtesy James Zhang, who put a ton
+of effort in.<a class="changeset-link reference internal" href="#change-ad45e2908330aaa751332d0c9d866f98">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-41"><span class="target" id="change-a5ce4383d5826666ad4659e0d0d1b1f0"><strong>[extensions] </strong></span>big fix to AssociationProxy so that multiple AssociationProxy
+objects can be associated with a single association collection.<a class="changeset-link reference internal" href="#change-a5ce4383d5826666ad4659e0d0d1b1f0">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.7-42"><span class="target" id="change-7d3dab36a8f8dd803d9be9c4c038dd9e"><strong>[extensions] </strong></span>assign_mapper names methods according to their keys (i.e. __name__)
+#551<a class="changeset-link reference internal" href="#change-7d3dab36a8f8dd803d9be9c4c038dd9e">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="change-0.3.6">
+<h2>0.3.6<a class="headerlink" href="#change-0.3.6" title="Permalink to this headline">¶</a></h2>
+Released: Fri Mar 23 2007<div class="section" id="change-0.3.6-orm">
+<h3>orm<a class="headerlink" href="#change-0.3.6-orm" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.6-0"><span class="target" id="change-7ab6dfcb95c397cb1aaadd385c779659"><strong>[orm] </strong></span>the full featureset of the SelectResults extension has been merged
+into a new set of methods available off of Query.  These methods
+all provide &#8220;generative&#8221; behavior, whereby the Query is copied
+and a new one returned with additional criterion added.
+The new methods include:<blockquote>
+<div>filter() - applies select criterion to the query
+filter_by() - applies &#8220;by&#8221;-style criterion to the query
+avg() - return the avg() function on the given column
+join() - join to a property (or across a list of properties)
+outerjoin() - like join() but uses LEFT OUTER JOIN
+limit()/offset() - apply LIMIT/OFFSET
+range-based access which applies limit/offset:<blockquote>
+<div>session.query(Foo)[3:5]</div></blockquote>
+<p>distinct() - apply DISTINCT
+list() - evaluate the criterion and return results</p>
+</div></blockquote>
+<p>no incompatible changes have been made to Query&#8217;s API and no methods
+have been deprecated.  Existing methods like select(), select_by(),
+get(), get_by() all execute the query at once and return results
+like they always did.  join_to()/join_via() are still there although
+the generative join()/outerjoin() methods are easier to use.</p>
+<a class="changeset-link reference internal" href="#change-7ab6dfcb95c397cb1aaadd385c779659">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-1"><span class="target" id="change-346e841422c49f67aa893590d3f7a8e9"><strong>[orm] </strong></span>the return value for multiple mappers used with instances() now
+returns a cartesian product of the requested list of mappers,
+represented as a list of tuples. this corresponds to the documented
+behavior. So that instances match up properly, the &#8220;uniquing&#8221; is
+disabled when this feature is used.<a class="changeset-link reference internal" href="#change-346e841422c49f67aa893590d3f7a8e9">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-2"><span class="target" id="change-2795377646e93c3cb6cd134003d5dbe1"><strong>[orm] </strong></span>Query has add_entity() and add_column() generative methods. these
+will add the given mapper/class or ColumnElement to the query at
+compile time, and apply them to the instances() method. the user is
+responsible for constructing reasonable join conditions (otherwise
+you can get full cartesian products). result set is the list of
+tuples, non-uniqued.<a class="changeset-link reference internal" href="#change-2795377646e93c3cb6cd134003d5dbe1">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-3"><span class="target" id="change-9075bb25cf6ce0ef7196609ee5a05d53"><strong>[orm] </strong></span>strings and columns can also be sent to the <a href="#id5"><span class="problematic" id="id6">*</span></a>args of instances()
+where those exact result columns will be part of the result tuples.<a class="changeset-link reference internal" href="#change-9075bb25cf6ce0ef7196609ee5a05d53">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-4"><span class="target" id="change-1dc867b13e1759c636e371363f6ce297"><strong>[orm] </strong></span>a full select() construct can be passed to query.select() (which
+worked anyway), but also query.selectfirst(), query.selectone()
+which will be used as is (i.e. no query is compiled). works
+similarly to sending the results to instances().<a class="changeset-link reference internal" href="#change-1dc867b13e1759c636e371363f6ce297">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-5"><span class="target" id="change-074438c0a67e60bc48e5420c5f490210"><strong>[orm] </strong></span>eager loading will not &#8220;aliasize&#8221; &#8220;order by&#8221; clauses that were
+placed in the select statement by something other than the eager
+loader itself, to fix possibility of dupe columns as illustrated in. however, this means you have to be more careful with
+the columns placed in the &#8220;order by&#8221; of Query.select(), that you
+have explicitly named them in your criterion (i.e. you cant rely on
+the eager loader adding them in for you)<a class="changeset-link reference internal" href="#change-074438c0a67e60bc48e5420c5f490210">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/495">#495</a></p>
+</p>
+</li>
+<li><p id="change-0.3.6-6"><span class="target" id="change-8b4f380caf9d0a368e04cc060655abf0"><strong>[orm] </strong></span>added a handy multi-use &#8220;identity_key()&#8221; method to Session, allowing
+the generation of identity keys for primary key values, instances,
+and rows, courtesy Daniel Miller<a class="changeset-link reference internal" href="#change-8b4f380caf9d0a368e04cc060655abf0">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-7"><span class="target" id="change-87bb32d802de386360e5e46f791cdc52"><strong>[orm] </strong></span>many-to-many table will be properly handled even for operations that
+occur on the &#8220;backref&#8221; side of the operation<a class="changeset-link reference internal" href="#change-87bb32d802de386360e5e46f791cdc52">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/249">#249</a></p>
+</p>
+</li>
+<li><p id="change-0.3.6-8"><span class="target" id="change-f1fbd06064c54bcac62f1348d7009f7a"><strong>[orm] </strong></span>added &#8220;refresh-expire&#8221; cascade.  allows refresh() and
+expire() calls to propagate along relationships.<a class="changeset-link reference internal" href="#change-f1fbd06064c54bcac62f1348d7009f7a">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/492">#492</a></p>
+</p>
+</li>
+<li><p id="change-0.3.6-9"><span class="target" id="change-a975d6c5aa852fe9f1abe18ab4632941"><strong>[orm] </strong></span>more fixes to polymorphic relations, involving proper lazy-clause
+generation on many-to-one relationships to polymorphic mappers. also fixes to detection of &#8220;direction&#8221;, more specific
+targeting of columns that belong to the polymorphic union vs. those
+that dont.<a class="changeset-link reference internal" href="#change-a975d6c5aa852fe9f1abe18ab4632941">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/493">#493</a></p>
+</p>
+</li>
+<li><p id="change-0.3.6-10"><span class="target" id="change-e60d7d1fb1e21d20e22cc7ee0a48e8cd"><strong>[orm] </strong></span>some fixes to relationship calcs when using &#8220;viewonly=True&#8221; to pull
+in other tables into the join condition which arent parent of the
+relationship&#8217;s parent/child mappings<a class="changeset-link reference internal" href="#change-e60d7d1fb1e21d20e22cc7ee0a48e8cd">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-11"><span class="target" id="change-0799b08072f174223f5a177a14fe3f19"><strong>[orm] </strong></span>flush fixes on cyclical-referential relationships that contain
+references to other instances outside of the cyclical chain, when
+some of the objects in the cycle are not actually part of the flush<a class="changeset-link reference internal" href="#change-0799b08072f174223f5a177a14fe3f19">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-12"><span class="target" id="change-2dd0c0ba2f51627186f0e3ca255e8679"><strong>[orm] </strong></span>put an aggressive check for &#8220;flushing object A with a collection of
+B&#8217;s, but you put a C in the collection&#8221; error condition - <strong>even if
+C is a subclass of B</strong>, unless B&#8217;s mapper loads polymorphically.
+Otherwise, the collection will later load a &#8220;B&#8221; which should be a
+&#8220;C&#8221; (since its not polymorphic) which breaks in bi-directional
+relationships (i.e. C has its A, but A&#8217;s backref will lazyload it as
+a different instance of type &#8220;B&#8221;) This check is going
+to bite some of you who do this without issues, so the error message
+will also document a flag &#8220;enable_typechecks=False&#8221; to disable this
+checking. But be aware that bi-directional relationships in
+particular become fragile without this check.<a class="changeset-link reference internal" href="#change-2dd0c0ba2f51627186f0e3ca255e8679">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/500">#500</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.6-sql">
+<h3>sql<a class="headerlink" href="#change-0.3.6-sql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.6-13"><span class="target" id="change-44ab18885b5fa9a7f599390ae9397c22"><strong>[sql] </strong></span>bindparam() names are now repeatable!  specify two
+distinct bindparam()s with the same name in a single statement,
+and the key will be shared.  proper positional/named args translate
+at compile time.  for the old behavior of &#8220;aliasing&#8221; bind parameters
+with conflicting names, specify &#8220;unique=True&#8221; - this option is
+still used internally for all the auto-genererated (value-based)
+bind parameters.<a class="changeset-link reference internal" href="#change-44ab18885b5fa9a7f599390ae9397c22">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-14"><span class="target" id="change-32d223314680c88fa9ba080f5f3ce580"><strong>[sql] </strong></span>slightly better support for bind params as column clauses, either
+via bindparam() or via literal(), i.e. select([literal(&#8216;foo&#8217;)])<a class="changeset-link reference internal" href="#change-32d223314680c88fa9ba080f5f3ce580">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-15"><span class="target" id="change-cb1ef430a2696531f4258c7a228b6cd8"><strong>[sql] </strong></span>MetaData can bind to an engine either via &#8220;url&#8221; or &#8220;engine&#8221; kwargs
+to constructor, or by using connect() method. BoundMetaData is
+identical to MetaData except engine_or_url param is required.
+DynamicMetaData is the same and provides thread-local connections be
+default.<a class="changeset-link reference internal" href="#change-cb1ef430a2696531f4258c7a228b6cd8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-16"><span class="target" id="change-ff3d112668eb0765f0cea567cbea6a17"><strong>[sql] </strong></span>exists() becomes useable as a standalone selectable, not just in a
+WHERE clause, i.e. exists([columns], criterion).select()<a class="changeset-link reference internal" href="#change-ff3d112668eb0765f0cea567cbea6a17">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-17"><span class="target" id="change-f69f079d1a2ab1a6dcbf3d7ad218bba7"><strong>[sql] </strong></span>correlated subqueries work inside of ORDER BY, GROUP BY<a class="changeset-link reference internal" href="#change-f69f079d1a2ab1a6dcbf3d7ad218bba7">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-18"><span class="target" id="change-2d6765ed8f52d6039f3ff327871651fe"><strong>[sql] </strong></span>fixed function execution with explicit connections, i.e.
+conn.execute(func.dosomething())<a class="changeset-link reference internal" href="#change-2d6765ed8f52d6039f3ff327871651fe">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-19"><span class="target" id="change-a317e39c8ef05de7ec3007795cc6461d"><strong>[sql] </strong></span>use_labels flag on select() wont auto-create labels for literal text
+column elements, since we can make no assumptions about the text. to
+create labels for literal columns, you can say &#8220;somecol AS
+somelabel&#8221;, or use literal_column(&#8220;somecol&#8221;).label(&#8220;somelabel&#8221;)<a class="changeset-link reference internal" href="#change-a317e39c8ef05de7ec3007795cc6461d">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-20"><span class="target" id="change-e3edeb29a5666be8fcc4ca01511c4215"><strong>[sql] </strong></span>quoting wont occur for literal columns when they are &#8220;proxied&#8221; into
+the column collection for their selectable (is_literal flag is
+propagated). literal columns are specified via
+literal_column(&#8220;somestring&#8221;).<a class="changeset-link reference internal" href="#change-e3edeb29a5666be8fcc4ca01511c4215">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-21"><span class="target" id="change-f7c741c099c30418beeb3e590e129726"><strong>[sql] </strong></span>added &#8220;fold_equivalents&#8221; boolean argument to Join.select(), which
+removes &#8216;duplicate&#8217; columns from the resulting column clause that
+are known to be equivalent based on the join condition. this is of
+great usage when constructing subqueries of joins which Postgres
+complains about if duplicate column names are present.<a class="changeset-link reference internal" href="#change-f7c741c099c30418beeb3e590e129726">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-22"><span class="target" id="change-1b52c0cfb8178249dbfa27198e657e37"><strong>[sql] </strong></span>fixed use_alter flag on ForeignKeyConstraint<a class="changeset-link reference internal" href="#change-1b52c0cfb8178249dbfa27198e657e37">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/503">#503</a></p>
+</p>
+</li>
+<li><p id="change-0.3.6-23"><span class="target" id="change-d6c64a3f6d7c0271de26273d1888c095"><strong>[sql] </strong></span>fixed usage of 2.4-only &#8220;reversed&#8221; in topological.py<a class="changeset-link reference internal" href="#change-d6c64a3f6d7c0271de26273d1888c095">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/506">#506</a></p>
+</p>
+</li>
+<li><p id="change-0.3.6-24"><span class="target" id="change-11779379f1cac1ecc01fc15ac543b303"><strong>[sql] </strong></span>for hackers, refactored the &#8220;visitor&#8221; system of ClauseElement and
+SchemaItem so that the traversal of items is controlled by the
+ClauseVisitor itself, using the method visitor.traverse(item).
+accept_visitor() methods can still be called directly but will not
+do any traversal of child items. ClauseElement/SchemaItem now have a
+configurable get_children() method to return the collection of child
+elements for each parent object. This allows the full traversal of
+items to be clear and unambiguous (as well as loggable), with an
+easy method of limiting a traversal (just pass flags which are
+picked up by appropriate get_children() methods).<a class="changeset-link reference internal" href="#change-11779379f1cac1ecc01fc15ac543b303">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/501">#501</a></p>
+</p>
+</li>
+<li><p id="change-0.3.6-25"><span class="target" id="change-d0eb64e664c7f936e458f5f319b4fc50"><strong>[sql] </strong></span>the &#8220;<a href="#id17"><span class="problematic" id="id18">else_</span></a>&#8221; parameter to the case statement now properly works when
+set to zero.<a class="changeset-link reference internal" href="#change-d0eb64e664c7f936e458f5f319b4fc50">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.6-mysql">
+<h3>mysql<a class="headerlink" href="#change-0.3.6-mysql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.6-26"><span class="target" id="change-43de82f16ecdf78ba1849a1f444b2345"><strong>[mysql] </strong></span>added a catchall <a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs to MSString, to help reflection of
+obscure types (like &#8220;varchar() binary&#8221; in MS 4.0)<a class="changeset-link reference internal" href="#change-43de82f16ecdf78ba1849a1f444b2345">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-27"><span class="target" id="change-1af85a8922781c43c7653e350c30801f"><strong>[mysql] </strong></span>added explicit MSTimeStamp type which takes effect when using
+types.TIMESTAMP.<a class="changeset-link reference internal" href="#change-1af85a8922781c43c7653e350c30801f">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.6-oracle">
+<h3>oracle<a class="headerlink" href="#change-0.3.6-oracle" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.6-28"><span class="target" id="change-1de005425b678cd46ecc85ed5837c9c7"><strong>[oracle] </strong></span>got binary working for any size input !  cx_oracle works fine,
+it was my fault as BINARY was being passed and not BLOB for
+setinputsizes (also unit tests werent even setting input sizes).<a class="changeset-link reference internal" href="#change-1de005425b678cd46ecc85ed5837c9c7">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-29"><span class="target" id="change-12bd1d4f70a00eb5aa27999038a0d684"><strong>[oracle] </strong></span>also fixed CLOB read/write on a separate changeset.<a class="changeset-link reference internal" href="#change-12bd1d4f70a00eb5aa27999038a0d684">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-30"><span class="target" id="change-22b00f0def3ec2ee49bb7d7a5b878466"><strong>[oracle] </strong></span>auto_setinputsizes defaults to True for Oracle, fixed cases where
+it improperly propagated bad types.<a class="changeset-link reference internal" href="#change-22b00f0def3ec2ee49bb7d7a5b878466">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.6-misc">
+<h3>misc<a class="headerlink" href="#change-0.3.6-misc" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.6-31"><span class="target" id="change-898f3d31d769657a997316a0a2a1b0ac"><strong>[extensions] </strong></span>options() method on SelectResults now implemented &#8220;generatively&#8221;
+like the rest of the SelectResults methods.  But
+you&#8217;re going to just use Query now anyway.<a class="changeset-link reference internal" href="#change-898f3d31d769657a997316a0a2a1b0ac">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/472">#472</a></p>
+</p>
+</li>
+<li><p id="change-0.3.6-32"><span class="target" id="change-1eab2a69f89dd1f24faab811e0b58da3"><strong>[extensions] </strong></span>query() method is added by assignmapper.  this helps with
+navigating to all the new generative methods on Query.<a class="changeset-link reference internal" href="#change-1eab2a69f89dd1f24faab811e0b58da3">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-33"><span class="target" id="change-b87c523c857426c8d8b677b3058f15b5"><strong>[ms-sql] </strong></span><dl class="docutils">
+<dt>removed seconds input on DATE column types (probably</dt>
+<dd>should remove the time altogether)</dd>
+</dl>
+<a class="changeset-link reference internal" href="#change-b87c523c857426c8d8b677b3058f15b5">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-34"><span class="target" id="change-77ff33ca3510c4330712ef7ecea18a8d"><strong>[ms-sql] </strong></span>null values in float fields no longer raise errors<a class="changeset-link reference internal" href="#change-77ff33ca3510c4330712ef7ecea18a8d">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-35"><span class="target" id="change-542131c8c49c9372085c52a8c0cb56db"><strong>[ms-sql] </strong></span>LIMIT with OFFSET now raises an error (MS-SQL has no OFFSET support)<a class="changeset-link reference internal" href="#change-542131c8c49c9372085c52a8c0cb56db">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-36"><span class="target" id="change-92fb4300cf566200775defe777003a51"><strong>[ms-sql] </strong></span>added an facility to use the MSSQL type VARCHAR(max) instead of TEXT
+for large unsized string fields. Use the new &#8220;text_as_varchar&#8221; to
+turn it on.<a class="changeset-link reference internal" href="#change-92fb4300cf566200775defe777003a51">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/509">#509</a></p>
+</p>
+</li>
+<li><p id="change-0.3.6-37"><span class="target" id="change-91f921f0eaffcbb7dcbb4e655c3787de"><strong>[ms-sql] </strong></span>ORDER BY clauses without a LIMIT are now stripped in subqueries, as
+MS-SQL forbids this usage<a class="changeset-link reference internal" href="#change-91f921f0eaffcbb7dcbb4e655c3787de">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.6-38"><span class="target" id="change-4ac23e6c9087d3b35a82c00543826730"><strong>[ms-sql] </strong></span>cleanup of module importing code; specifiable DB-API module; more
+explicit ordering of module preferences.<a class="changeset-link reference internal" href="#change-4ac23e6c9087d3b35a82c00543826730">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/480">#480</a></p>
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="change-0.3.5">
+<h2>0.3.5<a class="headerlink" href="#change-0.3.5" title="Permalink to this headline">¶</a></h2>
+Released: Thu Feb 22 2007<div class="section" id="change-0.3.5-orm">
+<h3>orm<a class="headerlink" href="#change-0.3.5-orm" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.5-0"><span class="target" id="change-8632b00faff5848753f92a330f517c03"><strong>[orm] [bugs] </strong></span>another refactoring to relationship calculation. Allows more accurate
+ORM behavior with relationships from/to/between mappers, particularly
+polymorphic mappers, also their usage with Query, SelectResults. tickets
+include,,.<a class="changeset-link reference internal" href="#change-8632b00faff5848753f92a330f517c03">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/441">#441</a>, <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/448">#448</a>, <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/439">#439</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-1"><span class="target" id="change-420a8dde82328a1c84d68b07f0f008e2"><strong>[orm] [bugs] </strong></span>removed deprecated method of specifying custom collections on classes;
+you must now use the &#8220;collection_class&#8221; option. the old way was
+beginning to produce conflicts when people used assign_mapper(), which
+now patches an &#8220;options&#8221; method, in conjunction with a relationship
+named &#8220;options&#8221;. (relationships take precedence over monkeypatched
+assign_mapper methods).<a class="changeset-link reference internal" href="#change-420a8dde82328a1c84d68b07f0f008e2">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-2"><span class="target" id="change-b4ea85a697ce2e8a5476e0447b77ccf5"><strong>[orm] [bugs] </strong></span>extension() query option propagates to Mapper._instance() method so that
+all loading-related methods get called<a class="changeset-link reference internal" href="#change-b4ea85a697ce2e8a5476e0447b77ccf5">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/454">#454</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-3"><span class="target" id="change-a75844e9e51b998af08e42d79b17d007"><strong>[orm] [bugs] </strong></span>eager relation to an inheriting mapper wont fail if no rows returned for
+the relationship.<a class="changeset-link reference internal" href="#change-a75844e9e51b998af08e42d79b17d007">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-4"><span class="target" id="change-ac80398579a4fcbae21783cc62160e08"><strong>[orm] [bugs] </strong></span>eager relation loading bug fixed for eager relation on multiple
+descendant classes<a class="changeset-link reference internal" href="#change-ac80398579a4fcbae21783cc62160e08">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/486">#486</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-5"><span class="target" id="change-c165d9646437c3f933401899647483cb"><strong>[orm] [bugs] </strong></span>fix for very large topological sorts, courtesy ants.aasma at gmail<a class="changeset-link reference internal" href="#change-c165d9646437c3f933401899647483cb">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/423">#423</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-6"><span class="target" id="change-39ce034d909d6179f0e57da79c888648"><strong>[orm] [bugs] </strong></span>eager loading is slightly more strict about detecting &#8220;self-referential&#8221;
+relationships, specifically between polymorphic mappers. this results in
+an &#8220;eager degrade&#8221; to lazy loading.<a class="changeset-link reference internal" href="#change-39ce034d909d6179f0e57da79c888648">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-7"><span class="target" id="change-77cfca11a557e706eafddf5289843a1a"><strong>[orm] [bugs] </strong></span>improved support for complex queries embedded into &#8220;where&#8221; criterion for
+query.select()<a class="changeset-link reference internal" href="#change-77cfca11a557e706eafddf5289843a1a">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/449">#449</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-8"><span class="target" id="change-a86a3aad19cf61adc26984764ce96a8b"><strong>[orm] [bugs] </strong></span>mapper options like eagerload(), lazyload(), deferred(), will work for
+&#8220;synonym()&#8221; relationships<a class="changeset-link reference internal" href="#change-a86a3aad19cf61adc26984764ce96a8b">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/485">#485</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-9"><span class="target" id="change-b8e4711961e2f380e6a7714230498042"><strong>[orm] [bugs] </strong></span>fixed bug where cascade operations incorrectly included deleted
+collection items in the cascade<a class="changeset-link reference internal" href="#change-b8e4711961e2f380e6a7714230498042">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/445">#445</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-10"><span class="target" id="change-22e5b7ae7b767a70ea7e0f53ad7e8248"><strong>[orm] [bugs] </strong></span>fixed relationship deletion error when one-to-many child item is moved
+to a new parent in a single unit of work<a class="changeset-link reference internal" href="#change-22e5b7ae7b767a70ea7e0f53ad7e8248">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/478">#478</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-11"><span class="target" id="change-226133d12414c7bceb0d870564d2db9e"><strong>[orm] [bugs] </strong></span>fixed relationship deletion error where parent/child with a single
+column as PK/FK on the child would raise a &#8220;blank out the primary key&#8221;
+error, if manually deleted or &#8220;delete&#8221; cascade without &#8220;delete-orphan&#8221;
+was used<a class="changeset-link reference internal" href="#change-226133d12414c7bceb0d870564d2db9e">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-12"><span class="target" id="change-6d909d1f169be682d0134530ffe305f4"><strong>[orm] [bugs] </strong></span>fix to deferred so that load operation doesnt mistakenly occur when only
+PK col attributes are set<a class="changeset-link reference internal" href="#change-6d909d1f169be682d0134530ffe305f4">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-13"><span class="target" id="change-6c4ac23619895aa1814ccc031d40da8a"><strong>[orm] [enhancements] </strong></span>implemented foreign_keys argument to mapper. use in
+conjunction with primaryjoin/secondaryjoin arguments to specify/override
+foreign keys defined on the Table instance.<a class="changeset-link reference internal" href="#change-6c4ac23619895aa1814ccc031d40da8a">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/385">#385</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-14"><span class="target" id="change-0755a972913cdf4f3d3ea28113aad132"><strong>[orm] [enhancements] </strong></span>contains_eager(&#8216;foo&#8217;) automatically implies eagerload(&#8216;foo&#8217;)<a class="changeset-link reference internal" href="#change-0755a972913cdf4f3d3ea28113aad132">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-15"><span class="target" id="change-9559eca8c71abf14afd98ee3ccfd4f01"><strong>[orm] [enhancements] </strong></span>added &#8220;alias&#8221; argument to contains_eager(). use it to specify the string
+name or Alias instance of an alias used in the query for the eagerly
+loaded child items. easier to use than &#8220;decorator&#8221;<a class="changeset-link reference internal" href="#change-9559eca8c71abf14afd98ee3ccfd4f01">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-16"><span class="target" id="change-290a67bd31b7240bb829d5f3a1a8b913"><strong>[orm] [enhancements] </strong></span>added &#8220;contains_alias()&#8221; option for result set mapping to an alias of
+the mapped table<a class="changeset-link reference internal" href="#change-290a67bd31b7240bb829d5f3a1a8b913">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-17"><span class="target" id="change-4df85d62086609340f9ec07957b97137"><strong>[orm] [enhancements] </strong></span>added support for py2.5 &#8220;with&#8221; statement with SessionTransaction<a class="changeset-link reference internal" href="#change-4df85d62086609340f9ec07957b97137">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/468">#468</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.5-sql">
+<h3>sql<a class="headerlink" href="#change-0.3.5-sql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.5-18"><span class="target" id="change-0fe6675045936336cf076722fc9f4258"><strong>[sql] </strong></span>the value of &#8220;case_sensitive&#8221; defaults to True now, regardless of the
+casing of the identifier, unless specifically set to False. this is
+because the object might be label&#8217;ed as something else which does
+contain mixed case, and propigating &#8220;case_sensitive=False&#8221; breaks that.
+Other fixes to quoting when using labels and &#8220;fake&#8221; column objects<a class="changeset-link reference internal" href="#change-0fe6675045936336cf076722fc9f4258">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-19"><span class="target" id="change-6c984550b02caf3742ce38d0ea98e80f"><strong>[sql] </strong></span>added a &#8220;supports_execution()&#8221; method to ClauseElement, so that
+individual kinds of clauses can express if they are appropriate for
+executing...such as, you can execute a &#8220;select&#8221;, but not a &#8220;Table&#8221; or a
+&#8220;Join&#8221;.<a class="changeset-link reference internal" href="#change-6c984550b02caf3742ce38d0ea98e80f">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-20"><span class="target" id="change-9b9ffe3d4441e568d85ecf8bf0a912dd"><strong>[sql] </strong></span>fixed argument passing to straight textual execute() on engine,
+connection. can handle <a href="#id9"><span class="problematic" id="id10">*</span></a>args or a list instance for positional, <a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs
+or a dict instance for named args, or a list of list or dicts to invoke
+executemany()<a class="changeset-link reference internal" href="#change-9b9ffe3d4441e568d85ecf8bf0a912dd">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-21"><span class="target" id="change-799305b1c45d8b2c0b35daf24d651579"><strong>[sql] </strong></span>small fix to BoundMetaData to accept unicode or string URLs<a class="changeset-link reference internal" href="#change-799305b1c45d8b2c0b35daf24d651579">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-22"><span class="target" id="change-098b0d8af7d1d8c4ac68ce0f0d1ab760"><strong>[sql] </strong></span>fixed named PrimaryKeyConstraint generation courtesy
+andrija at gmail<a class="changeset-link reference internal" href="#change-098b0d8af7d1d8c4ac68ce0f0d1ab760">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/466">#466</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-23"><span class="target" id="change-70b974d0c4113b161566331bfc78053f"><strong>[sql] </strong></span>fixed generation of CHECK constraints on columns<a class="changeset-link reference internal" href="#change-70b974d0c4113b161566331bfc78053f">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/464">#464</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-24"><span class="target" id="change-d49ca559d4c734d1aaa61ba5a98e8a44"><strong>[sql] </strong></span>fixes to tometadata() operation to propagate Constraints at column and
+table level<a class="changeset-link reference internal" href="#change-d49ca559d4c734d1aaa61ba5a98e8a44">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.5-mysql">
+<h3>mysql<a class="headerlink" href="#change-0.3.5-mysql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.5-25"><span class="target" id="change-23cbc502382175b57e3d21030a2373c2"><strong>[mysql] </strong></span>fix to reflection on older DB&#8217;s that might return array() type for
+&#8220;show variables like&#8221; statements<a class="changeset-link reference internal" href="#change-23cbc502382175b57e3d21030a2373c2">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.5-mssql">
+<h3>mssql<a class="headerlink" href="#change-0.3.5-mssql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.5-26"><span class="target" id="change-2c2ff52404aa9423f3b197ef8d064c57"><strong>[mssql] </strong></span>preliminary support for pyodbc (Yay!)<a class="changeset-link reference internal" href="#change-2c2ff52404aa9423f3b197ef8d064c57">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/419">#419</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-27"><span class="target" id="change-7e0d0b6aa2b56dd8a2643a2a996c1ce6"><strong>[mssql] </strong></span>better support for NVARCHAR types added<a class="changeset-link reference internal" href="#change-7e0d0b6aa2b56dd8a2643a2a996c1ce6">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/298">#298</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-28"><span class="target" id="change-5456de0e05ace2611637223ef9c3b1a3"><strong>[mssql] </strong></span>fix for commit logic on pymssql<a class="changeset-link reference internal" href="#change-5456de0e05ace2611637223ef9c3b1a3">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-29"><span class="target" id="change-dd705f65a8f579d9f21e357b630ce0e1"><strong>[mssql] </strong></span>fix for query.get() with schema<a class="changeset-link reference internal" href="#change-dd705f65a8f579d9f21e357b630ce0e1">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/456">#456</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-30"><span class="target" id="change-911cdebc2d34a378435f400bf0cf630e"><strong>[mssql] </strong></span>fix for non-integer relationships<a class="changeset-link reference internal" href="#change-911cdebc2d34a378435f400bf0cf630e">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/473">#473</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-31"><span class="target" id="change-539d4ad681f7456880dabe1620b68588"><strong>[mssql] </strong></span>DB-API module now selectable at run-time<a class="changeset-link reference internal" href="#change-539d4ad681f7456880dabe1620b68588">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/419">#419</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-32"><span class="target" id="change-59dc7293d796646a217909587ba56fb7"><strong>[mssql] [415] [tickets:422] [481] </strong></span>now passes many more unit tests<a class="changeset-link reference internal" href="#change-59dc7293d796646a217909587ba56fb7">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-33"><span class="target" id="change-9f0b045815840276afd66940cbba759c"><strong>[mssql] </strong></span>better unittest compatibility with ANSI functions<a class="changeset-link reference internal" href="#change-9f0b045815840276afd66940cbba759c">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/479">#479</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-34"><span class="target" id="change-381a1076dd1ae05a9d9d968cdf1c5bc9"><strong>[mssql] </strong></span>improved support for implicit sequence PK columns with auto-insert<a class="changeset-link reference internal" href="#change-381a1076dd1ae05a9d9d968cdf1c5bc9">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/415">#415</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-35"><span class="target" id="change-dcdda808c45d24c958d8be769f83003f"><strong>[mssql] </strong></span>fix for blank password in adodbapi<a class="changeset-link reference internal" href="#change-dcdda808c45d24c958d8be769f83003f">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/371">#371</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-36"><span class="target" id="change-1075fe6db448bd584e19ab492e5f8c5c"><strong>[mssql] </strong></span>fixes to get unit tests working with pyodbc<a class="changeset-link reference internal" href="#change-1075fe6db448bd584e19ab492e5f8c5c">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/481">#481</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-37"><span class="target" id="change-5bdb627a7d2ed7ec5bc84c7ebf111216"><strong>[mssql] </strong></span>fix to auto_identity_insert on db-url query<a class="changeset-link reference internal" href="#change-5bdb627a7d2ed7ec5bc84c7ebf111216">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-38"><span class="target" id="change-b8f7e80d560caa5ae3aec32c6e922ef6"><strong>[mssql] </strong></span>added query_timeout to db-url query parms. currently works only for
+pymssql<a class="changeset-link reference internal" href="#change-b8f7e80d560caa5ae3aec32c6e922ef6">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-39"><span class="target" id="change-2cea7ef341a84d5cc0ea53fd071ce1af"><strong>[mssql] </strong></span>tested with pymssql 0.8.0 (which is now LGPL)<a class="changeset-link reference internal" href="#change-2cea7ef341a84d5cc0ea53fd071ce1af">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.5-oracle">
+<h3>oracle<a class="headerlink" href="#change-0.3.5-oracle" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.5-40"><span class="target" id="change-f2964e13050167fa913d5346579ed93a"><strong>[oracle] </strong></span>when returning &#8220;rowid&#8221; as the ORDER BY column or in use with ROW_NUMBER
+OVER, oracle dialect checks the selectable its being applied to and will
+switch to table PK if not applicable, i.e. for a UNION. checking for
+DISTINCT, GROUP BY (other places that rowid is invalid) still a TODO.
+allows polymorphic mappings to function.<a class="changeset-link reference internal" href="#change-f2964e13050167fa913d5346579ed93a">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/436">#436</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-41"><span class="target" id="change-997cdb0c8e4db76469d84ce1e36ff870"><strong>[oracle] </strong></span>sequences on a non-pk column will properly fire off on INSERT<a class="changeset-link reference internal" href="#change-997cdb0c8e4db76469d84ce1e36ff870">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-42"><span class="target" id="change-41b33afb60cf82b8b6a4a0bb859562bf"><strong>[oracle] </strong></span>added PrefetchingResultProxy support to pre-fetch LOB columns when they
+are known to be present, fixes<a class="changeset-link reference internal" href="#change-41b33afb60cf82b8b6a4a0bb859562bf">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/435">#435</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-43"><span class="target" id="change-a87a4c61e30aa01276449a37779f7083"><strong>[oracle] </strong></span>implemented reflection of tables based on synonyms, including across
+dblinks<a class="changeset-link reference internal" href="#change-a87a4c61e30aa01276449a37779f7083">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/379">#379</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-44"><span class="target" id="change-b8639b7a31e537e7f11dcd8f241550b6"><strong>[oracle] </strong></span>issues a log warning when a related table cant be reflected due to
+certain permission errors<a class="changeset-link reference internal" href="#change-b8639b7a31e537e7f11dcd8f241550b6">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/363">#363</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.5-misc">
+<h3>misc<a class="headerlink" href="#change-0.3.5-misc" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.5-45"><span class="target" id="change-cc97a0bde59a0e25d2d0180cee1209a0"><strong>[postgres] </strong></span>better reflection of sequences for alternate-schema Tables<a class="changeset-link reference internal" href="#change-cc97a0bde59a0e25d2d0180cee1209a0">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/442">#442</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-46"><span class="target" id="change-997cdb0c8e4db76469d84ce1e36ff870"><strong>[postgres] </strong></span>sequences on a non-pk column will properly fire off on INSERT<a class="changeset-link reference internal" href="#change-997cdb0c8e4db76469d84ce1e36ff870">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-47"><span class="target" id="change-848a61af4172ae1b5f0fc0247de36987"><strong>[postgres] </strong></span>added PGInterval type, PGInet type<a class="changeset-link reference internal" href="#change-848a61af4172ae1b5f0fc0247de36987">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/460">#460</a>, <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/444">#444</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-48"><span class="target" id="change-bd2bb531eaffdeab9654a4cd07ef2c2b"><strong>[extensions] </strong></span>added distinct() method to SelectResults. generally should only make a
+difference when using count().<a class="changeset-link reference internal" href="#change-bd2bb531eaffdeab9654a4cd07ef2c2b">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.5-49"><span class="target" id="change-e49cd2a7ca945f2421ae6902f52f8f37"><strong>[extensions] </strong></span>added options() method to SelectResults, equivalent to query.options()<a class="changeset-link reference internal" href="#change-e49cd2a7ca945f2421ae6902f52f8f37">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/472">#472</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-50"><span class="target" id="change-cdde06072236d420f2b8e3603362354e"><strong>[extensions] </strong></span>added optional __table_opts__ dictionary to ActiveMapper, will send kw
+options to Table objects<a class="changeset-link reference internal" href="#change-cdde06072236d420f2b8e3603362354e">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/462">#462</a></p>
+</p>
+</li>
+<li><p id="change-0.3.5-51"><span class="target" id="change-a43a8ee036b96770b37d4e02ab37b4c0"><strong>[extensions] </strong></span>added selectfirst(), selectfirst_by() to assign_mapper<a class="changeset-link reference internal" href="#change-a43a8ee036b96770b37d4e02ab37b4c0">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/467">#467</a></p>
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="change-0.3.4">
+<h2>0.3.4<a class="headerlink" href="#change-0.3.4" title="Permalink to this headline">¶</a></h2>
+Released: Tue Jan 23 2007<div class="section" id="change-0.3.4-general">
+<h3>general<a class="headerlink" href="#change-0.3.4-general" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.4-0"><span class="target" id="change-ea7ee482db28ede59ac4bcfe7508bb68"><strong>[general] </strong></span>global &#8220;insure&#8221;-&gt;&#8221;ensure&#8221; change. in US english &#8220;insure&#8221; is actually
+largely interchangeable with &#8220;ensure&#8221; (so says the dictionary), so I&#8217;m not
+completely illiterate, but its definitely sub-optimal to &#8220;ensure&#8221; which is
+non-ambiguous.<a class="changeset-link reference internal" href="#change-ea7ee482db28ede59ac4bcfe7508bb68">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.4-orm">
+<h3>orm<a class="headerlink" href="#change-0.3.4-orm" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.4-1"><span class="target" id="change-3d028e23313c343b88f683148079f6d8"><strong>[orm] </strong></span>poked the first hole in the can of worms: saying
+query.select_by(somerelationname=someinstance) will create the join of the
+primary key columns represented by &#8220;somerelationname&#8220;&#8216;s mapper to the
+actual primary key in &#8220;someinstance&#8221;.<a class="changeset-link reference internal" href="#change-3d028e23313c343b88f683148079f6d8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-2"><span class="target" id="change-5601e1cae87763b3397a1dff4dc3479c"><strong>[orm] </strong></span>reworked how relations interact with &#8220;polymorphic&#8221; mappers, i.e. mappers
+that have a select_table as well as polymorphic flags. better determination
+of proper join conditions, interaction with user- defined join conditions,
+and support for self-referential polymorphic mappers.<a class="changeset-link reference internal" href="#change-5601e1cae87763b3397a1dff4dc3479c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-3"><span class="target" id="change-77a27e5fc8a0403c05553cd6268b57ce"><strong>[orm] </strong></span>related to polymorphic mapping relations, some deeper error checking when
+compiling relations, to detect an ambiguous &#8220;primaryjoin&#8221; in the case that
+both sides of the relationship have foreign key references in the primary
+join condition. also tightened down conditions used to locate &#8220;relation
+direction&#8221;, associating the &#8220;foreignkey&#8221; of the relationship with the
+&#8220;primaryjoin&#8221;<a class="changeset-link reference internal" href="#change-77a27e5fc8a0403c05553cd6268b57ce">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-4"><span class="target" id="change-b68e439ba854a97afc57d071074809ec"><strong>[orm] </strong></span>a little bit of improvement to the concept of a &#8220;concrete&#8221; inheritance
+mapping, though that concept is not well fleshed out yet (added test case
+to support concrete mappers on top of a polymorphic base).<a class="changeset-link reference internal" href="#change-b68e439ba854a97afc57d071074809ec">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-5"><span class="target" id="change-fc43ebe81ca938a541f0089c23bfb7a8"><strong>[orm] </strong></span>fix to &#8220;proxy=True&#8221; behavior on synonym()<a class="changeset-link reference internal" href="#change-fc43ebe81ca938a541f0089c23bfb7a8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-6"><span class="target" id="change-351dd3d3f2b53af4c434ce66c226cef5"><strong>[orm] </strong></span>fixed bug where delete-orphan basically didn&#8217;t work with many-to-many
+relationships, backref presence generally hid the symptom<a class="changeset-link reference internal" href="#change-351dd3d3f2b53af4c434ce66c226cef5">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/427">#427</a></p>
+</p>
+</li>
+<li><p id="change-0.3.4-7"><span class="target" id="change-231c94f2c6414edd8ef94f7de383d349"><strong>[orm] </strong></span>added a mutex to the mapper compilation step. ive been reluctant to add any
+kind of threading anything to SA but this is one spot that its really
+needed since mappers are typically &#8220;global&#8221;, and while their state does not
+change during normal operation, the initial compilation step does modify
+internal state significantly, and this step usually occurs not at
+module-level initialization time (unless you call compile()) but at
+first-request time<a class="changeset-link reference internal" href="#change-231c94f2c6414edd8ef94f7de383d349">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-8"><span class="target" id="change-40191965cf8a1fffbd5f3f7c476c442e"><strong>[orm] </strong></span>basic idea of &#8220;session.merge()&#8221; actually implemented.  needs more testing.<a class="changeset-link reference internal" href="#change-40191965cf8a1fffbd5f3f7c476c442e">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-9"><span class="target" id="change-1fcc21636195b3b7a6c4751ded7aacc7"><strong>[orm] </strong></span>added &#8220;compile_mappers()&#8221; function as a shortcut to compiling all mappers<a class="changeset-link reference internal" href="#change-1fcc21636195b3b7a6c4751ded7aacc7">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-10"><span class="target" id="change-a564633ea1853007aeaac37573a81ee6"><strong>[orm] </strong></span>fix to MapperExtension create_instance so that entity_name properly
+associated with new instance<a class="changeset-link reference internal" href="#change-a564633ea1853007aeaac37573a81ee6">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-11"><span class="target" id="change-9eccc99856ce597d36eae3266f7614b6"><strong>[orm] </strong></span>speed enhancements to ORM object instantiation, eager loading of rows<a class="changeset-link reference internal" href="#change-9eccc99856ce597d36eae3266f7614b6">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-12"><span class="target" id="change-dd4031a82befed9119e377543328f8c0"><strong>[orm] </strong></span>invalid options sent to &#8216;cascade&#8217; string will raise an exception<a class="changeset-link reference internal" href="#change-dd4031a82befed9119e377543328f8c0">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/406">#406</a></p>
+</p>
+</li>
+<li><p id="change-0.3.4-13"><span class="target" id="change-4ede84bba68610b55d29986d10fe0d62"><strong>[orm] </strong></span>fixed bug in mapper refresh/expire whereby eager loaders didnt properly
+re-populate item lists<a class="changeset-link reference internal" href="#change-4ede84bba68610b55d29986d10fe0d62">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/407">#407</a></p>
+</p>
+</li>
+<li><p id="change-0.3.4-14"><span class="target" id="change-4c9bf70f421052228204cfd54e3196b0"><strong>[orm] </strong></span>fix to post_update to ensure rows are updated even for non insert/delete
+scenarios<a class="changeset-link reference internal" href="#change-4c9bf70f421052228204cfd54e3196b0">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/413">#413</a></p>
+</p>
+</li>
+<li><p id="change-0.3.4-15"><span class="target" id="change-003b8a29b4cd8dc41607198658523317"><strong>[orm] </strong></span>added an error message if you actually try to modify primary key values on
+an entity and then flush it<a class="changeset-link reference internal" href="#change-003b8a29b4cd8dc41607198658523317">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/412">#412</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.4-sql">
+<h3>sql<a class="headerlink" href="#change-0.3.4-sql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.4-16"><span class="target" id="change-e485ef1aa25a4c1e54a8d7a9afa8749e"><strong>[sql] </strong></span>added &#8220;fetchmany()&#8221; support to ResultProxy<a class="changeset-link reference internal" href="#change-e485ef1aa25a4c1e54a8d7a9afa8749e">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-17"><span class="target" id="change-594afe1f5a9a758e9428229d6e156f32"><strong>[sql] </strong></span>added support for column &#8220;key&#8221; attribute to be useable in
+row[&lt;key&gt;]/row.&lt;key&gt;<a class="changeset-link reference internal" href="#change-594afe1f5a9a758e9428229d6e156f32">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-18"><span class="target" id="change-36de194453369736e2c6d36951589a57"><strong>[sql] </strong></span>changed &#8220;BooleanExpression&#8221; to subclass from &#8220;BinaryExpression&#8221;, so that
+boolean expressions can also follow column-clause behaviors (i.e. label(),
+etc).<a class="changeset-link reference internal" href="#change-36de194453369736e2c6d36951589a57">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-19"><span class="target" id="change-fd647f39d01615d6a2c872791f220b3d"><strong>[sql] </strong></span>trailing underscores are trimmed from func.&lt;xxx&gt; calls, such as func.if_()<a class="changeset-link reference internal" href="#change-fd647f39d01615d6a2c872791f220b3d">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-20"><span class="target" id="change-7c82a8fe27927597ae6beb2b46eaaa4e"><strong>[sql] </strong></span>fix to correlation of subqueries when the column list of the select
+statement is constructed with individual calls to append_column(); this
+fixes an ORM bug whereby nested select statements were not getting
+correlated with the main select generated by the Query object.<a class="changeset-link reference internal" href="#change-7c82a8fe27927597ae6beb2b46eaaa4e">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-21"><span class="target" id="change-9e9c62f87ee18fefb379e8a4754ae2f8"><strong>[sql] </strong></span>another fix to subquery correlation so that a subquery which has only one
+FROM element will <em>not</em> correlate that single element, since at least one
+FROM element is required in a query.<a class="changeset-link reference internal" href="#change-9e9c62f87ee18fefb379e8a4754ae2f8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-22"><span class="target" id="change-5f52342a7f4ca2f210861d452dec505a"><strong>[sql] </strong></span>default &#8220;timezone&#8221; setting is now False. this corresponds to Python&#8217;s
+datetime behavior as well as Postgres&#8217; timestamp/time types (which is the
+only timezone-sensitive dialect at the moment)<a class="changeset-link reference internal" href="#change-5f52342a7f4ca2f210861d452dec505a">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/414">#414</a></p>
+</p>
+</li>
+<li><p id="change-0.3.4-23"><span class="target" id="change-66229214f0f9e03fc7dee45d95c8e67c"><strong>[sql] </strong></span>the &#8220;op()&#8221; function is now treated as an &#8220;operation&#8221;, rather than a
+&#8220;comparison&#8221;. the difference is, an operation produces a BinaryExpression
+from which further operations can occur whereas comparison produces the
+more restrictive BooleanExpression<a class="changeset-link reference internal" href="#change-66229214f0f9e03fc7dee45d95c8e67c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-24"><span class="target" id="change-d41715babcf6b70d6f88adf677313ea8"><strong>[sql] </strong></span>trying to redefine a reflected primary key column as non-primary key raises
+an error<a class="changeset-link reference internal" href="#change-d41715babcf6b70d6f88adf677313ea8">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-25"><span class="target" id="change-a8e520f2f077ca90381491c36493fe9d"><strong>[sql] </strong></span>type system slightly modified to support TypeDecorators that can be
+overridden by the dialect (ok, thats not very clear, it allows the mssql
+tweak below to be possible)<a class="changeset-link reference internal" href="#change-a8e520f2f077ca90381491c36493fe9d">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.4-mysql">
+<h3>mysql<a class="headerlink" href="#change-0.3.4-mysql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.4-26"><span class="target" id="change-5398fcc75e1c898762a840d5476e9802"><strong>[mysql] </strong></span>mysql is inconsistent with what kinds of quotes it uses in foreign keys
+during a SHOW CREATE TABLE, reflection updated to accomodate for all three
+styles<a class="changeset-link reference internal" href="#change-5398fcc75e1c898762a840d5476e9802">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/420">#420</a></p>
+</p>
+</li>
+<li><p id="change-0.3.4-27"><span class="target" id="change-93636efc4d02d5b5e25f763da5f6dbb6"><strong>[mysql] </strong></span>mysql table create options work on a generic passthru now, i.e. Table(...,
+mysql_engine=&#8217;InnoDB&#8217;, mysql_collate=&#8221;latin1_german2_ci&#8221;,
+mysql_auto_increment=&#8221;5&#8221;, mysql_&lt;somearg&gt;...), helps<a class="changeset-link reference internal" href="#change-93636efc4d02d5b5e25f763da5f6dbb6">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/418">#418</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.4-mssql">
+<h3>mssql<a class="headerlink" href="#change-0.3.4-mssql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.4-28"><span class="target" id="change-71800340e8b8eaf7f5bbfeb1bb7fa8fa"><strong>[mssql] </strong></span>added an NVarchar type (produces NVARCHAR), also MSUnicode which provides
+Unicode-translation for the NVarchar regardless of dialect convert_unicode
+setting.<a class="changeset-link reference internal" href="#change-71800340e8b8eaf7f5bbfeb1bb7fa8fa">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.4-oracle">
+<h3>oracle<a class="headerlink" href="#change-0.3.4-oracle" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.4-29"><span class="target" id="change-7e37b511a75dea4c081f6e861d2577d9"><strong>[oracle] </strong></span><em>slight</em> support for binary, but still need to figure out how to insert
+reasonably large values (over 4K). requires auto_setinputsizes=True sent to
+create_engine(), rows must be fully fetched individually, etc.<a class="changeset-link reference internal" href="#change-7e37b511a75dea4c081f6e861d2577d9">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.4-firebird">
+<h3>firebird<a class="headerlink" href="#change-0.3.4-firebird" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.4-30"><span class="target" id="change-f5553b26f95beaede1e3993d72351403"><strong>[firebird] </strong></span>order of constraint creation puts primary key first before all other
+constraints; required for firebird, not a bad idea for others<a class="changeset-link reference internal" href="#change-f5553b26f95beaede1e3993d72351403">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/408">#408</a></p>
+</p>
+</li>
+<li><p id="change-0.3.4-31"><span class="target" id="change-7d0941d7be1eff286a79a26140dbec40"><strong>[firebird] </strong></span>Firebird fix to autoload multifield foreign keys<a class="changeset-link reference internal" href="#change-7d0941d7be1eff286a79a26140dbec40">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/409">#409</a></p>
+</p>
+</li>
+<li><p id="change-0.3.4-32"><span class="target" id="change-1dd0655cdeb215bba70f97a6144d2d79"><strong>[firebird] </strong></span>Firebird NUMERIC type properly handles a type without precision<a class="changeset-link reference internal" href="#change-1dd0655cdeb215bba70f97a6144d2d79">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/409">#409</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.4-misc">
+<h3>misc<a class="headerlink" href="#change-0.3.4-misc" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.4-33"><span class="target" id="change-fa53dae6bfd7b7e8b384d216ee8ba515"><strong>[postgres] </strong></span>fix to the initial checkfirst for tables to take current schema into
+account<a class="changeset-link reference internal" href="#change-fa53dae6bfd7b7e8b384d216ee8ba515">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/424">#424</a></p>
+</p>
+</li>
+<li><p id="change-0.3.4-34"><span class="target" id="change-1cd224ad7dc6c4a22f02a844273d939f"><strong>[postgres] </strong></span>postgres has an optional &#8220;server_side_cursors=True&#8221; flag which will utilize
+server side cursors. these are appropriate for fetching only partial
+results and are necessary for working with very large unbounded result
+sets. While we&#8217;d like this to be the default behavior, different
+environments seem to have different results and the causes have not been
+isolated so we are leaving the feature off by default for now. Uses an
+apparently undocumented psycopg2 behavior recently discovered on the
+psycopg mailing list.<a class="changeset-link reference internal" href="#change-1cd224ad7dc6c4a22f02a844273d939f">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-35"><span class="target" id="change-6f6b781d6e5399b6526088cc619cd843"><strong>[postgres] </strong></span>added &#8220;BIGSERIAL&#8221; support for postgres table with
+PGBigInteger/autoincrement<a class="changeset-link reference internal" href="#change-6f6b781d6e5399b6526088cc619cd843">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.4-36"><span class="target" id="change-61cfe585aaae9ecddaff0f20996405f7"><strong>[postgres] </strong></span>fixes to postgres reflection to better handle when schema names are
+present; thanks to jason (at) ncsmags.com<a class="changeset-link reference internal" href="#change-61cfe585aaae9ecddaff0f20996405f7">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/402">#402</a></p>
+</p>
+</li>
+<li><p id="change-0.3.4-37"><span class="target" id="change-d06299a138c88ba57c7c327e826b3f81"><strong>[extensions] </strong></span>added &#8220;validate=False&#8221; argument to assign_mapper, if True will ensure that
+only mapped attributes are named<a class="changeset-link reference internal" href="#change-d06299a138c88ba57c7c327e826b3f81">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/426">#426</a></p>
+</p>
+</li>
+<li><p id="change-0.3.4-38"><span class="target" id="change-7e48f7fba0d3f1b5bad84893f66dc9f4"><strong>[extensions] </strong></span>assign_mapper gets &#8220;options&#8221;, &#8220;instances&#8221; functions added (i.e.
+MyClass.instances())<a class="changeset-link reference internal" href="#change-7e48f7fba0d3f1b5bad84893f66dc9f4">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="change-0.3.3">
+<h2>0.3.3<a class="headerlink" href="#change-0.3.3" title="Permalink to this headline">¶</a></h2>
+Released: Fri Dec 15 2006<ul class="simple">
+<li><p id="change-0.3.3-0"><span class="target" id="change-5032f5e367ae143bbec87043ab8fcf11"></span>string-based FROM clauses fixed, i.e. select(..., from_obj=[&#8220;sometext&#8221;])<a class="changeset-link reference internal" href="#change-5032f5e367ae143bbec87043ab8fcf11">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.3-1"><span class="target" id="change-a496d8fae942c14d4523057bd979019c"></span>fixes to passive_deletes flag, lazy=None (noload) flag<a class="changeset-link reference internal" href="#change-a496d8fae942c14d4523057bd979019c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.3-2"><span class="target" id="change-30a2c69a9decacc368b9a7b6779980ec"></span>added example/docs for dealing with large collections<a class="changeset-link reference internal" href="#change-30a2c69a9decacc368b9a7b6779980ec">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.3-3"><span class="target" id="change-cc99c5f52ba79f63b5f7b50754788b0a"></span>added object_session() method to sqlalchemy namespace<a class="changeset-link reference internal" href="#change-cc99c5f52ba79f63b5f7b50754788b0a">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.3-4"><span class="target" id="change-80533f7c200e079d90597f6266ff66d5"></span>fixed QueuePool bug whereby its better able to reconnect to a database
+that was not reachable (thanks to SÃ©bastien Lelong), also fixed dispose()
+method<a class="changeset-link reference internal" href="#change-80533f7c200e079d90597f6266ff66d5">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.3-5"><span class="target" id="change-d1570d0ab054957641111d7e277d03b4"></span>patch that makes MySQL rowcount work correctly!<a class="changeset-link reference internal" href="#change-d1570d0ab054957641111d7e277d03b4">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/396">#396</a></p>
+</p>
+</li>
+<li><p id="change-0.3.3-6"><span class="target" id="change-2cadf5490827d447b1d4830a90b41caf"></span>fix to MySQL catch of 2006/2014 errors to properly re-raise OperationalError
+exception<a class="changeset-link reference internal" href="#change-2cadf5490827d447b1d4830a90b41caf">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.2">
+<h2>0.3.2<a class="headerlink" href="#change-0.3.2" title="Permalink to this headline">¶</a></h2>
+Released: Sun Dec 10 2006<ul class="simple">
+<li><p id="change-0.3.2-0"><span class="target" id="change-19098e0e6eed7c931125d7e25d812756"></span>major connection pool bug fixed.  fixes MySQL out of sync
+errors, will also prevent transactions getting rolled back
+accidentally in all DBs<a class="changeset-link reference internal" href="#change-19098e0e6eed7c931125d7e25d812756">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/387">#387</a></p>
+</p>
+</li>
+<li><p id="change-0.3.2-1"><span class="target" id="change-278ff1b4865a34c36458359bdba8e20e"></span>major speed enhancements vs. 0.3.1, to bring speed
+back to 0.2.8 levels<a class="changeset-link reference internal" href="#change-278ff1b4865a34c36458359bdba8e20e">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.2-2"><span class="target" id="change-da5c4522ae9018928c5a69dbe99fa7f3"></span>made conditional dozens of debug log calls that were
+time-intensive to generate log messages<a class="changeset-link reference internal" href="#change-da5c4522ae9018928c5a69dbe99fa7f3">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.2-3"><span class="target" id="change-47d47dccb2480566207c5fe438fcf435"></span>fixed bug in cascade rules whereby the entire object graph
+could be unnecessarily cascaded on the save/update cascade<a class="changeset-link reference internal" href="#change-47d47dccb2480566207c5fe438fcf435">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.2-4"><span class="target" id="change-d1b12f9efbb4d033df0a742d87c94ec6"></span>various speedups in attributes module<a class="changeset-link reference internal" href="#change-d1b12f9efbb4d033df0a742d87c94ec6">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.2-5"><span class="target" id="change-3c38a41db88ddb08db4d6f9d55194829"></span>identity map in Session is by default <em>no longer weak referencing</em>.
+to have it be weak referencing, use create_session(weak_identity_map=True)
+fixes<a class="changeset-link reference internal" href="#change-3c38a41db88ddb08db4d6f9d55194829">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/388">#388</a></p>
+</p>
+</li>
+<li><p id="change-0.3.2-6"><span class="target" id="change-79647e60f1175354aca8ce75bc921e74"></span>MySQL detects errors 2006 (server has gone away) and 2014
+(commands out of sync) and invalidates the connection on which it occured.<a class="changeset-link reference internal" href="#change-79647e60f1175354aca8ce75bc921e74">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.2-7"><span class="target" id="change-35fdc30fd93b0c3e1b37402908f76fd2"></span>MySQL bool type fix:<a class="changeset-link reference internal" href="#change-35fdc30fd93b0c3e1b37402908f76fd2">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/307">#307</a></p>
+</p>
+</li>
+<li><p id="change-0.3.2-8"><span class="target" id="change-1ee7b209987629c6f339a0dcc1d703a0"></span>postgres reflection fixes:<a class="changeset-link reference internal" href="#change-1ee7b209987629c6f339a0dcc1d703a0">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/382">#382</a>, <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/349">#349</a></p>
+</p>
+</li>
+<li><p id="change-0.3.2-9"><span class="target" id="change-fd7e2e948165b16a849ce49011d87d21"></span>added keywords for EXCEPT, INTERSECT, EXCEPT ALL, INTERSECT ALL<a class="changeset-link reference internal" href="#change-fd7e2e948165b16a849ce49011d87d21">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/247">#247</a></p>
+</p>
+</li>
+<li><p id="change-0.3.2-10"><span class="target" id="change-c52f4bfa0a28896df33156b19ff3ca89"></span>assign_mapper in assignmapper extension returns the created mapper<a class="changeset-link reference internal" href="#change-c52f4bfa0a28896df33156b19ff3ca89">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/2110">#2110</a></p>
+</p>
+</li>
+<li><p id="change-0.3.2-11"><span class="target" id="change-f6551d6f54899ff8108cbbbd26e5018c"></span>added label() function to Select class, when scalar=True is used
+to create a scalar subquery
+i.e. &#8220;select x, y, (select max(foo) from table) AS foomax from table&#8221;<a class="changeset-link reference internal" href="#change-f6551d6f54899ff8108cbbbd26e5018c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.2-12"><span class="target" id="change-9f53e9bcf5cece6ce6d03fb58eda20ad"></span>added onupdate and ondelete keyword arguments to ForeignKey; propagate
+to underlying ForeignKeyConstraint if present.  (dont propagate in the
+other direction, however)<a class="changeset-link reference internal" href="#change-9f53e9bcf5cece6ce6d03fb58eda20ad">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.2-13"><span class="target" id="change-8372c4057499c22e46cf0bcc739b695d"></span>fix to session.update() to preserve &#8220;dirty&#8221; status of incoming object<a class="changeset-link reference internal" href="#change-8372c4057499c22e46cf0bcc739b695d">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.2-14"><span class="target" id="change-a1e2bb60c3cd464a48cdfbff5d33f9c2"></span>sending a selectable to an IN via the in_() function no longer creates
+a &#8220;union&#8221; out of multiple selects; only one selectable to a the in_() function
+is allowed now (make a union yourself if union is needed)<a class="changeset-link reference internal" href="#change-a1e2bb60c3cd464a48cdfbff5d33f9c2">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.2-15"><span class="target" id="change-e009ef228c4e1a8a3e92bc728fbc438a"></span>improved support for disabling save-update cascade via cascade=&#8221;none&#8221; etc.<a class="changeset-link reference internal" href="#change-e009ef228c4e1a8a3e92bc728fbc438a">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.2-16"><span class="target" id="change-dcd5c21c1c376d26e9907a451ceb1ad7"></span>added &#8220;remote_side&#8221; argument to relation(), used only with self-referential
+mappers to force the direction of the parent/child relationship.  replaces
+the usage of the &#8220;foreignkey&#8221; parameter for &#8220;switching&#8221; the direction.
+&#8220;foreignkey&#8221; argument is deprecated for all uses and will eventually
+be replaced by an argument dedicated to ForeignKey specification on mappers.<a class="changeset-link reference internal" href="#change-dcd5c21c1c376d26e9907a451ceb1ad7">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.1">
+<h2>0.3.1<a class="headerlink" href="#change-0.3.1" title="Permalink to this headline">¶</a></h2>
+Released: Mon Nov 13 2006<div class="section" id="change-0.3.1-orm">
+<h3>orm<a class="headerlink" href="#change-0.3.1-orm" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.1-0"><span class="target" id="change-0af98bf52dddbf728106569a225ffa27"><strong>[orm] </strong></span>the &#8220;delete&#8221; cascade will load in all child objects, if they were not
+loaded already.  this can be turned off (i.e. the old behavior) by setting
+passive_deletes=True on a relation().<a class="changeset-link reference internal" href="#change-0af98bf52dddbf728106569a225ffa27">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.1-1"><span class="target" id="change-a23f03ece2ae82e1264ecacd54d01e12"><strong>[orm] </strong></span>adjustments to reworked eager query generation to not fail on circular
+eager-loaded relationships (like backrefs)<a class="changeset-link reference internal" href="#change-a23f03ece2ae82e1264ecacd54d01e12">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.1-2"><span class="target" id="change-201da868406f1523d1d4d0051049fbb3"><strong>[orm] </strong></span>fixed bug where eagerload() (nor lazyload()) option didn&#8217;t properly
+instruct the Query whether or not to use &#8220;nesting&#8221; when producing a
+LIMIT query.<a class="changeset-link reference internal" href="#change-201da868406f1523d1d4d0051049fbb3">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.1-3"><span class="target" id="change-ed4601755ccc028c0cda37fd8bc2343f"><strong>[orm] </strong></span>fixed bug in circular dependency sorting at flush time; if object A
+contained a cyclical many-to-one relationship to object B, and object B
+was just attached to object A, <em>but</em> object B itself wasnt changed,
+the many-to-one synchronize of B&#8217;s primary key attribute to A&#8217;s foreign key
+attribute wouldnt occur.<a class="changeset-link reference internal" href="#change-ed4601755ccc028c0cda37fd8bc2343f">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/360">#360</a></p>
+</p>
+</li>
+<li><p id="change-0.3.1-4"><span class="target" id="change-443db0da68194af1c486a31424626acc"><strong>[orm] </strong></span>implemented from_obj argument for query.count, improves count function
+on selectresults<a class="changeset-link reference internal" href="#change-443db0da68194af1c486a31424626acc">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/325">#325</a></p>
+</p>
+</li>
+<li><p id="change-0.3.1-5"><span class="target" id="change-6c3fe5348af079926eefaa5fe198132a"><strong>[orm] </strong></span>added an assertion within the &#8220;cascade&#8221; step of ORM relationships to check
+that the class of object attached to a parent object is appropriate
+(i.e. if A.items stores B objects, raise an error if a C is appended to A.items)<a class="changeset-link reference internal" href="#change-6c3fe5348af079926eefaa5fe198132a">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.1-6"><span class="target" id="change-3c54016dd3eb6240c61bdf6630fb6ba2"><strong>[orm] </strong></span>new extension sqlalchemy.ext.associationproxy, provides transparent
+&#8220;association object&#8221; mappings.  new example
+examples/association/proxied_association.py illustrates.<a class="changeset-link reference internal" href="#change-3c54016dd3eb6240c61bdf6630fb6ba2">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.1-7"><span class="target" id="change-2352347ba67e763e63b5ab5fee615fd0"><strong>[orm] </strong></span>improvement to single table inheritance to load full hierarchies beneath
+the target class<a class="changeset-link reference internal" href="#change-2352347ba67e763e63b5ab5fee615fd0">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.1-8"><span class="target" id="change-7c2c83368bc653695d50bf41a32ba122"><strong>[orm] </strong></span>fix to subtle condition in topological sort where a node could appear twice,
+for<a class="changeset-link reference internal" href="#change-7c2c83368bc653695d50bf41a32ba122">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/362">#362</a></p>
+</p>
+</li>
+<li><p id="change-0.3.1-9"><span class="target" id="change-21099b0b4cfd087d7544c0d5b29f20ad"><strong>[orm] </strong></span>additional rework to topological sort, refactoring, for<a class="changeset-link reference internal" href="#change-21099b0b4cfd087d7544c0d5b29f20ad">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/365">#365</a></p>
+</p>
+</li>
+<li><p id="change-0.3.1-10"><span class="target" id="change-c31972da5ddfab970d95b975b0de0f13"><strong>[orm] </strong></span>&#8220;delete-orphan&#8221; for a certain type can be set on more than one parent class;
+the instance is an &#8220;orphan&#8221; only if its not attached to <em>any</em> of those parents<a class="changeset-link reference internal" href="#change-c31972da5ddfab970d95b975b0de0f13">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.1-misc">
+<h3>misc<a class="headerlink" href="#change-0.3.1-misc" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.1-11"><span class="target" id="change-ae1c652969370d12b5391b3c25bc311b"><strong>[engine/pool] </strong></span>some new Pool utility classes, updated docs<a class="changeset-link reference internal" href="#change-ae1c652969370d12b5391b3c25bc311b">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.1-12"><span class="target" id="change-40bd8ced1a542293a3bee2e4e993b319"><strong>[engine/pool] </strong></span>&#8220;use_threadlocal&#8221; on Pool defaults to False (same as create_engine)<a class="changeset-link reference internal" href="#change-40bd8ced1a542293a3bee2e4e993b319">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.1-13"><span class="target" id="change-d05d5b0d7cbdb72d11dda30dba80e253"><strong>[engine/pool] </strong></span>fixed direct execution of Compiled objects<a class="changeset-link reference internal" href="#change-d05d5b0d7cbdb72d11dda30dba80e253">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.1-14"><span class="target" id="change-1885d87fb351efb5bff2f68a1b5f237e"><strong>[engine/pool] </strong></span>create_engine() reworked to be strict about incoming <a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs.  all keyword
+arguments must be consumed by one of the dialect, connection pool, and engine
+constructors, else a TypeError is thrown which describes the full set of
+invalid kwargs in relation to the selected dialect/pool/engine configuration.<a class="changeset-link reference internal" href="#change-1885d87fb351efb5bff2f68a1b5f237e">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.1-15"><span class="target" id="change-95a6b3fd67d1f8a92d5fc7d3c4a72cd3"><strong>[databases/types] </strong></span>MySQL catches exception on &#8220;describe&#8221; and reports as NoSuchTableError<a class="changeset-link reference internal" href="#change-95a6b3fd67d1f8a92d5fc7d3c4a72cd3">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.1-16"><span class="target" id="change-01a55d6e648e86ae237b8c9014765637"><strong>[databases/types] </strong></span>further fixes to sqlite booleans, weren&#8217;t working as defaults<a class="changeset-link reference internal" href="#change-01a55d6e648e86ae237b8c9014765637">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.1-17"><span class="target" id="change-4990b03a3ffa7973be6eaf89b54a64c2"><strong>[databases/types] </strong></span>fix to postgres sequence quoting when using schemas<a class="changeset-link reference internal" href="#change-4990b03a3ffa7973be6eaf89b54a64c2">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="change-0.3.0">
+<h2>0.3.0<a class="headerlink" href="#change-0.3.0" title="Permalink to this headline">¶</a></h2>
+Released: Sun Oct 22 2006<div class="section" id="change-0.3.0-general">
+<h3>general<a class="headerlink" href="#change-0.3.0-general" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.0-0"><span class="target" id="change-af1703046aac222edc8054620ba72d5b"><strong>[general] </strong></span>logging is now implemented via standard python &#8220;logging&#8221; module.
+&#8220;echo&#8221; keyword parameters are still functional but set/unset
+log levels for their respective classes/instances.  all logging
+can be controlled directly through the Python API by setting
+INFO and DEBUG levels for loggers in the &#8220;sqlalchemy&#8221; namespace.
+class-level logging is under &#8220;sqlalchemy.&lt;module&gt;.&lt;classname&gt;&#8221;,
+instance-level logging under &#8220;sqlalchemy.&lt;module&gt;.&lt;classname&gt;.0x..&lt;00-FF&gt;&#8221;.
+Test suite includes &#8220;&#8211;log-info&#8221; and &#8220;&#8211;log-debug&#8221; arguments
+which work independently of &#8211;verbose/&#8211;quiet.  Logging added
+to orm to allow tracking of mapper configurations, row iteration.<a class="changeset-link reference internal" href="#change-af1703046aac222edc8054620ba72d5b">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-1"><span class="target" id="change-5becb5a90dce00b288e48c42b5b11c91"><strong>[general] </strong></span>the documentation-generation system has been overhauled to be
+much simpler in design and more integrated with Markdown<a class="changeset-link reference internal" href="#change-5becb5a90dce00b288e48c42b5b11c91">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.0-orm">
+<h3>orm<a class="headerlink" href="#change-0.3.0-orm" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.0-2"><span class="target" id="change-4d0f18a84af312791a640dd1de2ac5aa"><strong>[orm] </strong></span>attribute tracking modified to be more intelligent about detecting
+changes, particularly with mutable types.  TypeEngine objects now
+take a greater role in defining how to compare two scalar instances,
+including the addition of a MutableType mixin which is implemented by
+PickleType.  unit-of-work now tracks the &#8220;dirty&#8221; list as an expression
+of all persistent objects where the attribute manager detects changes.
+The basic issue thats fixed is detecting changes on PickleType
+objects, but also generalizes type handling and &#8220;modified&#8221; object
+checking to be more complete and extensible.<a class="changeset-link reference internal" href="#change-4d0f18a84af312791a640dd1de2ac5aa">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-3"><span class="target" id="change-b455e30f2020397a52b52dee6104b5c3"><strong>[orm] </strong></span>a wide refactoring to &#8220;attribute loader&#8221; and &#8220;options&#8221; architectures.
+ColumnProperty and PropertyLoader define their loading behaivor via switchable
+&#8220;strategies&#8221;, and MapperOptions no longer use mapper/property copying
+in order to function; they are instead propagated via QueryContext
+and SelectionContext objects at query/instances time.
+All of the internal copying of mappers and properties that was used to handle
+inheritance as well as options() has been removed; the structure
+of mappers and properties is much simpler than before and is clearly laid out
+in the new &#8216;interfaces&#8217; module.<a class="changeset-link reference internal" href="#change-b455e30f2020397a52b52dee6104b5c3">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-4"><span class="target" id="change-1119b49161e5498c6ab5268241c9bc68"><strong>[orm] </strong></span>related to the mapper/property overhaul, internal refactoring to
+mapper instances() method to use a SelectionContext object to track
+state during the operation.
+SLIGHT API BREAKAGE: the append_result() and populate_instances()
+methods on MapperExtension have a slightly different method signature
+now as a result of the change; hoping that these methods are not
+in widespread use as of yet.<a class="changeset-link reference internal" href="#change-1119b49161e5498c6ab5268241c9bc68">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-5"><span class="target" id="change-b9edae4ebe585fc03a2663daead0be3c"><strong>[orm] </strong></span>instances() method moved to Query now, backwards-compatible
+version remains on Mapper.<a class="changeset-link reference internal" href="#change-b9edae4ebe585fc03a2663daead0be3c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-6"><span class="target" id="change-35f311fe6deb6c511ce9e34f3aba4864"><strong>[orm] </strong></span>added contains_eager() MapperOption, used in conjunction with
+instances() to specify properties that should be eagerly loaded
+from the result set, using their plain column names by default, or translated
+given an custom row-translation function.<a class="changeset-link reference internal" href="#change-35f311fe6deb6c511ce9e34f3aba4864">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-7"><span class="target" id="change-50bbbc3588a69af8445ccb96ccd2e5ce"><strong>[orm] </strong></span>more rearrangements of unit-of-work commit scheme to better allow
+dependencies within circular flushes to work properly...updated
+task traversal/logging implementation<a class="changeset-link reference internal" href="#change-50bbbc3588a69af8445ccb96ccd2e5ce">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-8"><span class="target" id="change-cc6b22ffd1c978ed11157bf9e14e6394"><strong>[orm] </strong></span>polymorphic mappers (i.e. using inheritance) now produces INSERT
+statements in order of tables across all inherited classes<a class="changeset-link reference internal" href="#change-cc6b22ffd1c978ed11157bf9e14e6394">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/321">#321</a></p>
+</p>
+</li>
+<li><p id="change-0.3.0-9"><span class="target" id="change-69a48fb25de0e1cd620693a836968e3d"><strong>[orm] </strong></span>added an automatic &#8220;row switch&#8221; feature to mapping, which will
+detect a pending instance/deleted instance pair with the same
+identity key and convert the INSERT/DELETE to a single UPDATE<a class="changeset-link reference internal" href="#change-69a48fb25de0e1cd620693a836968e3d">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-10"><span class="target" id="change-9741ba8323c434593dbd85ae32233bba"><strong>[orm] </strong></span>&#8220;association&#8221; mappings simplified to take advantage of
+automatic &#8220;row switch&#8221; feature<a class="changeset-link reference internal" href="#change-9741ba8323c434593dbd85ae32233bba">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-11"><span class="target" id="change-f970db37c47df342ea626e5d34c33557"><strong>[orm] </strong></span>&#8220;custom list classes&#8221; is now implemented via the &#8220;collection_class&#8221;
+keyword argument to relation().  the old way still works but is
+deprecated<a class="changeset-link reference internal" href="#change-f970db37c47df342ea626e5d34c33557">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/212">#212</a></p>
+</p>
+</li>
+<li><p id="change-0.3.0-12"><span class="target" id="change-0b4f7934178b19d2f4198f972fa48af0"><strong>[orm] </strong></span>added &#8220;viewonly&#8221; flag to relation(), allows construction of
+relations that have no effect on the flush() process.<a class="changeset-link reference internal" href="#change-0b4f7934178b19d2f4198f972fa48af0">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-13"><span class="target" id="change-89e8bd4b5f78c821a2184eda9d0b4596"><strong>[orm] </strong></span>added &#8220;lockmode&#8221; argument to base Query select/get functions,
+including &#8220;with_lockmode&#8221; function to get a Query copy that has
+a default locking mode.  Will translate &#8220;read&#8221;/&#8221;update&#8221;
+arguments into a for_update argument on the select side.<a class="changeset-link reference internal" href="#change-89e8bd4b5f78c821a2184eda9d0b4596">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/292">#292</a></p>
+</p>
+</li>
+<li><p id="change-0.3.0-14"><span class="target" id="change-0e58e5ab6f48202b49a15d78dac03244"><strong>[orm] </strong></span>implemented &#8220;version check&#8221; logic in Query/Mapper, used
+when version_id_col is in effect and query.with_lockmode()
+is used to get() an instance thats already loaded<a class="changeset-link reference internal" href="#change-0e58e5ab6f48202b49a15d78dac03244">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-15"><span class="target" id="change-db567762bd8f003f9bf446dc80e93356"><strong>[orm] </strong></span>post_update behavior improved; does a better job at not
+updating too many rows, updates only required columns<a class="changeset-link reference internal" href="#change-db567762bd8f003f9bf446dc80e93356">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/208">#208</a></p>
+</p>
+</li>
+<li><p id="change-0.3.0-16"><span class="target" id="change-ed17766eeb0f7e0ffae4b5a8d65e19ba"><strong>[orm] </strong></span>adjustments to eager loading so that its &#8220;eager chain&#8221; is
+kept separate from the normal mapper setup, thereby
+preventing conflicts with lazy loader operation, fixes<a class="changeset-link reference internal" href="#change-ed17766eeb0f7e0ffae4b5a8d65e19ba">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/308">#308</a></p>
+</p>
+</li>
+<li><p id="change-0.3.0-17"><span class="target" id="change-49870ec4b2e0423340358dea26b3babf"><strong>[orm] </strong></span>fix to deferred group loading<a class="changeset-link reference internal" href="#change-49870ec4b2e0423340358dea26b3babf">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-18"><span class="target" id="change-9b6964ae2926bcd79206eacf3b9f3cfd"><strong>[orm] </strong></span>session.flush() wont close a connection it opened<a class="changeset-link reference internal" href="#change-9b6964ae2926bcd79206eacf3b9f3cfd">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/346">#346</a></p>
+</p>
+</li>
+<li><p id="change-0.3.0-19"><span class="target" id="change-805e0f356e88803a0f83d386731283b0"><strong>[orm] </strong></span>added &#8220;batch=True&#8221; flag to mapper; if False, save_obj
+will fully save one object at a time including calls
+to before_XXXX and after_XXXX<a class="changeset-link reference internal" href="#change-805e0f356e88803a0f83d386731283b0">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-20"><span class="target" id="change-f2876d14278453a3a9e07c35b3fc23d6"><strong>[orm] </strong></span>added &#8220;column_prefix=None&#8221; argument to mapper; prepends the
+given string (typically &#8216;_&#8217;) to column-based attributes automatically
+set up from the mapper&#8217;s Table<a class="changeset-link reference internal" href="#change-f2876d14278453a3a9e07c35b3fc23d6">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-21"><span class="target" id="change-84a0aa83db4fbe7fa685c9586be1c4ec"><strong>[orm] </strong></span>specifying joins in the from_obj argument of query.select() will
+replace the main table of the query, if the table is somewhere within
+the given from_obj.  this makes it possible to produce custom joins and
+outerjoins in queries without the main table getting added twice.<a class="changeset-link reference internal" href="#change-84a0aa83db4fbe7fa685c9586be1c4ec">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/315">#315</a></p>
+</p>
+</li>
+<li><p id="change-0.3.0-22"><span class="target" id="change-ccb145193bd44d06f18079179309f197"><strong>[orm] </strong></span>eagerloading is adjusted to more thoughtfully attach its LEFT OUTER JOINs
+to the given query, looking for custom &#8220;FROM&#8221; clauses that may have
+already been set up.<a class="changeset-link reference internal" href="#change-ccb145193bd44d06f18079179309f197">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-23"><span class="target" id="change-63a7d34aabebf51b4547b9939aee9ea7"><strong>[orm] </strong></span>added join_to and outerjoin_to transformative methods to SelectResults,
+to build up join/outerjoin conditions based on property names. also
+added select_from to explicitly set from_obj parameter.<a class="changeset-link reference internal" href="#change-63a7d34aabebf51b4547b9939aee9ea7">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-24"><span class="target" id="change-c1c88b8cfd3e533c3299e6380b4c2363"><strong>[orm] </strong></span>removed &#8220;is_primary&#8221; flag from mapper.<a class="changeset-link reference internal" href="#change-c1c88b8cfd3e533c3299e6380b4c2363">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.0-sql">
+<h3>sql<a class="headerlink" href="#change-0.3.0-sql" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.0-25"><span class="target" id="change-e5f40f680103943b465258a215ef6f9e"><strong>[sql] [construction] </strong></span>changed &#8220;for_update&#8221; parameter to accept False/True/&#8221;nowait&#8221;
+and &#8220;read&#8221;, the latter two of which are interpreted only by
+Oracle and Mysql<a class="changeset-link reference internal" href="#change-e5f40f680103943b465258a215ef6f9e">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/292">#292</a></p>
+</p>
+</li>
+<li><p id="change-0.3.0-26"><span class="target" id="change-3abbda64974ee3c2264a57b840bd8421"><strong>[sql] [construction] </strong></span>added extract() function to sql dialect
+(SELECT extract(field FROM expr))<a class="changeset-link reference internal" href="#change-3abbda64974ee3c2264a57b840bd8421">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-27"><span class="target" id="change-121c9f650291edb4ca7b8ffa8139c66b"><strong>[sql] [construction] </strong></span>BooleanExpression includes new &#8220;negate&#8221; argument to specify
+the appropriate negation operator if one is available.<a class="changeset-link reference internal" href="#change-121c9f650291edb4ca7b8ffa8139c66b">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-28"><span class="target" id="change-9350ceaebf6175edafc4765a8f79bd9b"><strong>[sql] [construction] </strong></span>calling a negation on an &#8220;IN&#8221; or &#8220;IS&#8221; clause will result in
+&#8220;NOT IN&#8221;, &#8220;IS NOT&#8221; (as opposed to NOT (x IN y)).<a class="changeset-link reference internal" href="#change-9350ceaebf6175edafc4765a8f79bd9b">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-29"><span class="target" id="change-22c4e15de46bb1d96abbdf555f8dc4a7"><strong>[sql] [construction] </strong></span>Function objects know what to do in a FROM clause now.  their
+behavior should be the same, except now you can also do things like
+select([&#8216;*&#8217;], from_obj=[func.my_function()]) to get multiple
+columns from the result, or even use sql.column() constructs to name the
+return columns<a class="changeset-link reference internal" href="#change-22c4e15de46bb1d96abbdf555f8dc4a7">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/172">#172</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.0-schema">
+<h3>schema<a class="headerlink" href="#change-0.3.0-schema" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.0-30"><span class="target" id="change-4df510b9c3361af772c20d1ad5825ea4"><strong>[schema] </strong></span>a fair amount of cleanup to the schema package, removal of ambiguous
+methods, methods that are no longer needed.  slightly more constrained
+useage, greater emphasis on explicitness<a class="changeset-link reference internal" href="#change-4df510b9c3361af772c20d1ad5825ea4">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-31"><span class="target" id="change-7e3d79a0f25e4a5cfff24316d2cf0887"><strong>[schema] </strong></span>the &#8220;primary_key&#8221; attribute of Table and other selectables becomes
+a setlike ColumnCollection object; is ordered but not numerically
+indexed.  a comparison clause between two pks that are derived from the
+same underlying tables (i.e. such as two Alias objects) can be generated
+via table1.primary_key==table2.primary_key<a class="changeset-link reference internal" href="#change-7e3d79a0f25e4a5cfff24316d2cf0887">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-32"><span class="target" id="change-1f5f61d9a455f45e8e7957b4a802259c"><strong>[schema] </strong></span>ForeignKey(Constraint) supports &#8220;use_alter=True&#8221;, to create/drop a foreign key
+via ALTER.  this allows circular foreign key relationships to be set up.<a class="changeset-link reference internal" href="#change-1f5f61d9a455f45e8e7957b4a802259c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-33"><span class="target" id="change-07dabb3b17789490c2f1f3c1325d7f94"><strong>[schema] </strong></span>append_item() methods removed from Table and Column; preferably
+construct Table/Column/related objects inline, but if needed use
+append_column(), append_foreign_key(), append_constraint(), etc.<a class="changeset-link reference internal" href="#change-07dabb3b17789490c2f1f3c1325d7f94">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-34"><span class="target" id="change-9297cc5781aef837ddcf8a66d489adac"><strong>[schema] </strong></span>table.create() no longer returns the Table object, instead has no
+return value.  the usual case is that tables are created via metadata,
+which is preferable since it will handle table dependencies.<a class="changeset-link reference internal" href="#change-9297cc5781aef837ddcf8a66d489adac">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-35"><span class="target" id="change-96cef28bc60b163b11d7748202f7927d"><strong>[schema] </strong></span>added UniqueConstraint (goes at Table level), CheckConstraint
+(goes at Table or Column level).<a class="changeset-link reference internal" href="#change-96cef28bc60b163b11d7748202f7927d">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-36"><span class="target" id="change-f11c7c40de054e42f985d34823335728"><strong>[schema] </strong></span>index=False/unique=True on Column now creates a UniqueConstraint,
+index=True/unique=False creates a plain Index,
+index=True/unique=True on Column creates a unique Index.  &#8216;index&#8217;
+and &#8216;unique&#8217; keyword arguments to column are now boolean only; for
+explcit names and groupings of indexes or unique constraints, use the
+UniqueConstraint/Index constructs explicitly.<a class="changeset-link reference internal" href="#change-f11c7c40de054e42f985d34823335728">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-37"><span class="target" id="change-504cbc530860d0c4286f50b29cc1df63"><strong>[schema] </strong></span>added autoincrement=True to Column; will disable schema generation
+of SERIAL/AUTO_INCREMENT/identity seq for postgres/mysql/mssql if
+explicitly set to False<a class="changeset-link reference internal" href="#change-504cbc530860d0c4286f50b29cc1df63">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-38"><span class="target" id="change-c835aa697ef27bc1779955d5c07a05f1"><strong>[schema] </strong></span>TypeEngine objects now have methods to deal with copying and comparing
+values of their specific type.  Currently used by the ORM, see below.<a class="changeset-link reference internal" href="#change-c835aa697ef27bc1779955d5c07a05f1">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-39"><span class="target" id="change-935239bc03f9354863c60df9010bef03"><strong>[schema] </strong></span>fixed condition that occurred during reflection when a primary key
+column was explciitly overridden, where the PrimaryKeyConstraint would
+get both the reflected and the programmatic column doubled up<a class="changeset-link reference internal" href="#change-935239bc03f9354863c60df9010bef03">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-40"><span class="target" id="change-fed9bf9740d5a682cebb46515151e5c0"><strong>[schema] </strong></span>the &#8220;foreign_key&#8221; attribute on Column and ColumnElement in general
+is deprecated, in favor of the &#8220;foreign_keys&#8221; list/set-based attribute,
+which takes into account multiple foreign keys on one column.
+&#8220;foreign_key&#8221; will return the first element in the &#8220;foreign_keys&#8221; list/set
+or None if the list is empty.<a class="changeset-link reference internal" href="#change-fed9bf9740d5a682cebb46515151e5c0">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.0-sqlite">
+<h3>sqlite<a class="headerlink" href="#change-0.3.0-sqlite" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.0-41"><span class="target" id="change-73aea24b040bca4e9965ccbb6e349046"><strong>[sqlite] </strong></span>sqlite boolean datatype converts False/True to 0/1 by default<a class="changeset-link reference internal" href="#change-73aea24b040bca4e9965ccbb6e349046">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-42"><span class="target" id="change-2f2f6303c04b763ae32a23ad61552cf4"><strong>[sqlite] </strong></span>fixes to Date/Time (SLDate/SLTime) types; works as good as postgres
+now<a class="changeset-link reference internal" href="#change-2f2f6303c04b763ae32a23ad61552cf4">(link)</a><p> <a class="reference external" href="http://www.sqlalchemy.org/trac/ticket/335">#335</a></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.0-oracle">
+<h3>oracle<a class="headerlink" href="#change-0.3.0-oracle" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.0-43"><span class="target" id="change-2a9e63a93ef8e8feadccbfb766be4727"><strong>[oracle] </strong></span>Oracle has experimental support for cx_Oracle.TIMESTAMP, which requires
+a setinputsizes() call on the cursor that is now enabled via the
+&#8216;auto_setinputsizes&#8217; flag to the oracle dialect.<a class="changeset-link reference internal" href="#change-2a9e63a93ef8e8feadccbfb766be4727">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.0-firebird">
+<h3>firebird<a class="headerlink" href="#change-0.3.0-firebird" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.0-44"><span class="target" id="change-a1b63a91c9fe5f9b5cae296b49617e99"><strong>[firebird] </strong></span>aliases do not use &#8220;AS&#8221;<a class="changeset-link reference internal" href="#change-a1b63a91c9fe5f9b5cae296b49617e99">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-45"><span class="target" id="change-d6929c3d1968bd8c70fc395ea5abac4e"><strong>[firebird] </strong></span>correctly raises NoSuchTableError when reflecting non-existent table<a class="changeset-link reference internal" href="#change-d6929c3d1968bd8c70fc395ea5abac4e">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+<div class="section" id="change-0.3.0-misc">
+<h3>misc<a class="headerlink" href="#change-0.3.0-misc" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p id="change-0.3.0-46"><span class="target" id="change-fce7c38172fd247996365a12bbad8a3c"><strong>[ms-sql] </strong></span>fixes bug 261 (table reflection broken for MS-SQL case-sensitive
+databases)<a class="changeset-link reference internal" href="#change-fce7c38172fd247996365a12bbad8a3c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-47"><span class="target" id="change-5c03c1b73b7683cc5c95d8f6dcbff900"><strong>[ms-sql] </strong></span>can now specify port for pymssql<a class="changeset-link reference internal" href="#change-5c03c1b73b7683cc5c95d8f6dcbff900">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-48"><span class="target" id="change-d61a87077e1d1c9fa96868d8e8805a87"><strong>[ms-sql] </strong></span>introduces new &#8220;auto_identity_insert&#8221; option for auto-switching
+between &#8220;SET IDENTITY_INSERT&#8221; mode when values specified for IDENTITY columns<a class="changeset-link reference internal" href="#change-d61a87077e1d1c9fa96868d8e8805a87">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-49"><span class="target" id="change-b7bc176c6d0fced17db9766f866ca8d9"><strong>[ms-sql] </strong></span>now supports multi-column foreign keys<a class="changeset-link reference internal" href="#change-b7bc176c6d0fced17db9766f866ca8d9">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-50"><span class="target" id="change-f2463d5087105bc305f2098f3a932ea4"><strong>[ms-sql] </strong></span>fix to reflecting date/datetime columns<a class="changeset-link reference internal" href="#change-f2463d5087105bc305f2098f3a932ea4">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-51"><span class="target" id="change-b0212da21088f78c1fb2b5c69f08802a"><strong>[ms-sql] </strong></span>NCHAR and NVARCHAR type support added<a class="changeset-link reference internal" href="#change-b0212da21088f78c1fb2b5c69f08802a">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-52"><span class="target" id="change-784d08fb847e35d6d1df60cc5b77a74c"><strong>[connections/pooling/execution] </strong></span>connection pool tracks open cursors and automatically closes them
+if connection is returned to pool with cursors still opened.  Can be
+affected by options which cause it to raise an error instead, or to
+do nothing.  fixes issues with MySQL, others<a class="changeset-link reference internal" href="#change-784d08fb847e35d6d1df60cc5b77a74c">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-53"><span class="target" id="change-e20535e655cd212df3c56a61f9fc778f"><strong>[connections/pooling/execution] </strong></span>fixed bug where Connection wouldnt lose its Transaction
+after commit/rollback<a class="changeset-link reference internal" href="#change-e20535e655cd212df3c56a61f9fc778f">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-54"><span class="target" id="change-f646180e65ac4eacb62bc3ff6b69286e"><strong>[connections/pooling/execution] </strong></span>added scalar() method to ComposedSQLEngine, ResultProxy<a class="changeset-link reference internal" href="#change-f646180e65ac4eacb62bc3ff6b69286e">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-55"><span class="target" id="change-1753263c929a352b09f567f6469bcbe3"><strong>[connections/pooling/execution] </strong></span>ResultProxy will close() the underlying cursor when the ResultProxy
+itself is closed.  this will auto-close cursors for ResultProxy objects
+that have had all their rows fetched (or had scalar() called).<a class="changeset-link reference internal" href="#change-1753263c929a352b09f567f6469bcbe3">(link)</a><p></p>
+</p>
+</li>
+<li><p id="change-0.3.0-56"><span class="target" id="change-8b8beaee4be0988cd69dfbdb5a8603e0"><strong>[connections/pooling/execution] </strong></span>ResultProxy.fetchall() internally uses DBAPI fetchall() for better efficiency,
+added to mapper iteration as well (courtesy Michael Twomey)<a class="changeset-link reference internal" href="#change-8b8beaee4be0988cd69dfbdb5a8603e0">(link)</a><p></p>
+</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+    </div>
+
+</div>
+
+<div id="docs-bottom-navigation" class="docs-navigation-links">
+        Previous:
+        <a href="changelog_04.html" title="previous chapter">0.4 Changelog</a>
+        Next:
+        <a href="changelog_02.html" title="next chapter">0.2 Changelog</a>
+
+    <div id="docs-copyright">
+        &copy; <a href="../copyright.html">Copyright</a> 2007-2013, the SQLAlchemy authors and contributors.
+        Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+</div>
+
+</div>
+
+        
+    </body>
+</html>
+
+

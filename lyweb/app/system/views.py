@@ -17,8 +17,8 @@ from app.system.forms import BaseinfoForm, DBForm, \
 
 from app.auth.models import User, Group
 
-from ytool.ini import ConfigINI
-from ytool.pagination import pagination
+from yweb.utils.ini import OpenINI
+from yweb.utils.pagination import pagination
 
 from email.Utils import parseaddr, formataddr
 #from yweb.utils.mail import LyMail, validate_email
@@ -43,7 +43,7 @@ class DBEdit(RequestHandler):
 
     @has_permission('admin')
     def prepare(self):
-        self.cf = ConfigINI(settings.sitecfg, 'db')
+        self.cf = OpenINI(settings.sitecfg, 'db')
 
     def get(self):
 
@@ -86,7 +86,7 @@ class CLCEdit(RequestHandler):
 
     @has_permission('admin')
     def prepare(self):
-        self.cf = ConfigINI(settings.sitecfg, 'clc')
+        self.cf = OpenINI(settings.sitecfg, 'clc')
 
     def get(self):
 
@@ -123,7 +123,7 @@ class BaseinfoEdit(RequestHandler):
     @has_permission('admin')
     def prepare(self):
 
-        self.cf = ConfigINI(settings.sitecfg, 'base')
+        self.cf = OpenINI(settings.sitecfg, 'base')
 
     def get(self):
 

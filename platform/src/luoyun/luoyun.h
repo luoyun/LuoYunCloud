@@ -333,9 +333,11 @@ typedef struct NodeCtrlInstance_t {
     char *ins_name;
     int   ins_vcpu;
     int   ins_mem;
+    int   ins_extsize;
     char *ins_mac;
     char *ins_ip;
     char *ins_domain;     /* domain name used by libvirt */
+    char *ins_json;
     int   app_id;
     char *app_name;
     char *app_uri;
