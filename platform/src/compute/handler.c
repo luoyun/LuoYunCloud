@@ -812,7 +812,7 @@ static char * __domain_xml(NodeCtrlInstance * ci, int hypervisor, int fullvirt)
             goto out;
         }
         int size_g = (int)(statbuf.st_size>>30);
-        if (truncate(path, (off_t)(size_g+ci->ins_extsize)<<30)) {
+        if (ci->ins_extsize > size_g && truncate(path, (off_t)(ci->ins_extsize)<<30)) {
             logerror(_("error in %s(%d), %s(%d).\n"), __func__, __LINE__, strerror(errno), errno);
             goto out;
         }
