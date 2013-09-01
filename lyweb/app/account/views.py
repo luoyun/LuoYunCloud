@@ -608,7 +608,8 @@ class QQLogin(AccountRequestHandler, QQAuth2Minix):
 
     def _on_auth(self, session):
         if not session:
-            raise HTTPError(500, "QQ auth failed")
+            return self.write( _('QQ auth failed') )
+#            raise HTTPError(500, "QQ auth failed")
 
         openid = session.get('openid', None)
         if not openid:
