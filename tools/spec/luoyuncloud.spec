@@ -3,7 +3,7 @@
 
 Name: luoyuncloud
 Version: 0.6.4
-Release: 1%{?dist}
+Release: 5%{?dist}
 Summary: the Cloud Computing software that can be used to build IaaS, SaaS or PaaS platforms
 Group: Server/Cloud
 License: GPLv2+
@@ -169,7 +169,7 @@ id luoyun &> /dev/null || useradd luoyun -s /sbin/nologin
 
 
 %changelog
-* Fri Aug 22 2013 Li Jian <lijian@luoyun.co> - 0.6.4-1
+* Fri Aug 22 2013 Li Jian <lijian@luoyun.co> - 0.6.4-5
 - build for 0.6.4
 
 * Thu Aug 08 2013 Dongwu Zeng <dongwu@luoyun.co> - 0.6-1

@@ -535,6 +535,7 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
     int len = strlen(c->node_data_dir); 
     c->app_data_dir = malloc(len + 15);
     c->ins_data_dir = malloc(len + 15);
+    c->trash_data_dir = malloc(len + 15);
     if (c->app_data_dir == NULL || c->ins_data_dir == NULL)
         return NODE_CONFIG_RET_ERR_NOMEM;
     sprintf(c->app_data_dir, "%s/appliances", c->node_data_dir);
@@ -553,6 +554,11 @@ int node_config(int argc, char *argv[], NodeConfig *c, NodeSysConfig *s)
     }
     if (__clean_lockfile(c->ins_data_dir) != 0) {
         logsimple(_("failed cleaning directory of %s\n"), c->ins_data_dir);
+        return NODE_CONFIG_RET_ERR_CMD;
+    }
+    sprintf(c->trash_data_dir, "%s/trash", c->node_data_dir);
+    if (lyutil_create_dir(c->trash_data_dir) != 0) {
+        logsimple(_("failed creating directory of %s\n"), c->trash_data_dir);
         return NODE_CONFIG_RET_ERR_CMD;
     }
 
