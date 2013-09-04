@@ -134,11 +134,12 @@ class Upload(AppRequestHandler):
         A = self.db.query(Appliance).filter_by(
             checksum = fhash ).first()
 
-        if not ( A.user_id == self.current_user.id or
-                 self.has_permission('admin') ):
-            return self.done( _('Appliance exists, but you have not any permission to management it.') )
+        if A:
+            if not ( A.user_id == self.current_user.id or
+                     self.has_permission('admin') ):
+                return self.done( _('Appliance exists, but you have not any permission to management it.') )
 
-        if not A:
+        else:
             
             # copy the upfile from fpath to LuoYun System
             msg = self.save_upfile(fpath, fhash)
