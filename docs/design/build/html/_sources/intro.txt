@@ -1,0 +1,61 @@
+===============================
+LuoYunCloud 自定义通信机制
+===============================
+
+如图所示，LuoYunCloud 平台中，在多处都使用了自定义的通信机制：
+
+.. image:: images/lyc_message_used.png
+
+
+消息格式
+----------
+
+LuoYunCloud 中自定义消息格式如图所示：
+
+.. image:: images/lyc_message_format.png
+
+消息之间的格式如图：
+
+.. image:: images/lyc_message_interspace.png
+
+
+几个 ASCII 特殊字符
+
+====  ======  ======
+值    缩写     含义
+====  ======  ======
+000   NUL     (null)
+001   SOH     (start of heading)
+002   STX     (start of text)
+003   ETX     (end of text)
+004   EOT     (end of transmission)
+====  ======  ======
+
+
+消息类型(4B)
+~~~~~~~~~~~~~~~~
+
+================ ======
+N/A              含义
+================ ======
+NODE             NODE 注册
+NODE             NODE 消息
+CLC              CLC 消息
+WEB              WEB 消息
+================ ======
+
+消息体数据类型(1B)
+~~~~~~~~~~~~~~~~~~~~~~
+
+JSON
+  使用 JSON 格式
+
+JSON_GZIP
+  gzip 压缩后的 JSON 格式
+
+XML
+  XML 格式
+
+XML_GZIP
+  gzip 压缩后的 XML 格式
+
