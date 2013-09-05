@@ -3,7 +3,7 @@
 
 Name: luoyuncloud
 Version: 0.6.4
-Release: 5%{?dist}
+Release: 8%{?dist}
 Summary: the Cloud Computing software that can be used to build IaaS, SaaS or PaaS platforms
 Group: Server/Cloud
 License: GPLv2+
@@ -117,7 +117,7 @@ popd
 
 # install web
 cp -rf lyweb %{buildroot}/opt/LuoYun/web
-ln -sf /opt/LuoYun/bin/luoyun-service %{buildroot}/etc/init.d/lyweb
+ln -sf /opt/LuoYun/bin/lyweb %{buildroot}/etc/init.d/lyweb
 #python %{buildroot}/opt/LuoYun/web/manage.py --i18n
 pushd %{buildroot}/opt/LuoYun/web/
 chmod u+x site.py
@@ -154,7 +154,7 @@ id luoyun &> /dev/null || useradd luoyun -s /sbin/nologin
 %files web
 %defattr(-,root,root,-)
 /etc/init.d/lyweb
-/etc/init/lyweb.conf
+#/etc/init/lyweb.conf
 %{LUOYUN_HOME}bin/lyweb
 %{LUOYUN_HOME}bin/luoyun-service
 %{LUOYUN_HOME}install/install-web.sh
@@ -169,6 +169,9 @@ id luoyun &> /dev/null || useradd luoyun -s /sbin/nologin
 
 
 %changelog
+* Thu Sep 05 2013 Li Jian <lijian@luoyun.co> - 0.6.4-8
+- self control of lyweb init script
+
 * Fri Aug 22 2013 Li Jian <lijian@luoyun.co> - 0.6.4-5
 - build for 0.6.4
 
