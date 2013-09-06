@@ -103,6 +103,17 @@ Appliances
    appliances/howto_use_virt-manager
 
 
+桌面虚拟化
+==============================
+.. toctree::
+   :maxdepth: 2
+
+   desktop_virtualization/spice_connection
+
+   
+
+
+
 
 Nginx 的配置管理
 ===============================
