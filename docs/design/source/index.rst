@@ -16,3 +16,7 @@ Contents:
    lyclc
    ref
    linux_system_status_check
+
+   libvirt/index
+   zmq/index
+   api/index

@@ -183,6 +183,7 @@ INSTANCE_DELETED_STATUS = 100
 app = [
     'app.auth',
     'yweb.contrib.session',
+    'app.api',
     'app.registration',
     'app.account',
     'app.home',
