@@ -31,7 +31,7 @@ class Group(ORMBase):
 
     __tablename__ = 'auth_group'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence('auth_group_id_seq'), primary_key=True)
     name = Column( String(30) )
     description = Column( Text() )
 
@@ -54,7 +54,7 @@ class User(ORMBase):
 
     __tablename__ = 'auth_user'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence('auth_user_id_seq'), primary_key=True)
     username   = Column( String(30) )
     password   = Column( String(142) )
     email      = Column( String(64) )
