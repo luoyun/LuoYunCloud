@@ -6,6 +6,11 @@ from wtforms import BooleanField, TextField, \
 from wtforms.validators import ValidationError
 
 
+
+class GroupSelectForm(Form):
+    group = SelectField( _('Group') )
+
+
 def password_confirm(form, field):
     if field.data != form.password_confirm.data:
         raise ValidationError('password confirm failed')
@@ -37,6 +42,7 @@ class GroupForm(Form):
 
 class UserGroupEditForm(Form):
     groups = SelectMultipleField( _('Groups') )
+
 
 
 class ResourceForm(Form):

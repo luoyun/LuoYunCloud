@@ -16,6 +16,8 @@ handlers = [
     url(r'/admin', admin.Index, name='admin:index'),
 
     url(r'/admin/account', admin.AccountIndex, name='admin:account'),
+    url(r'/admin/account/group_merge', group.GroupMerge, name='admin:account:group_merge'),
+
 
     # User
     url(r'/admin/user', user.Index, name='admin:user'),

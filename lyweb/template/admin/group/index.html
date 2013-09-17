@@ -36,6 +36,7 @@
 
     <td>
       <a href="${ reverse_url('admin:group') }?id=${ G.id }&action=edit">${ _("Edit") }</a>
+      <a href="${ reverse_url('admin:account:group_merge') }?id=${ G.id }">${ _("Merge Group") }</a>
       % if G.islocked:
       ${ _("locked") }
       % else:

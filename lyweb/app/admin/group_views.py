@@ -5,13 +5,67 @@ from lycustom import RequestHandler
 from tornado.web import authenticated, asynchronous
 
 from app.auth.models import User, Group, Permission
-from app.admin.forms import GroupForm
+from app.admin.forms import GroupForm, GroupSelectForm
 
 from lycustom import has_permission
 from settings import ADMIN_USER_LIST_PAGE_SIZE as USER_PS
 
 from sqlalchemy.sql.expression import asc, desc
 
+
+
+class GroupMerge(RequestHandler):
+
+    template_path = 'admin/account/group_merge.html'
+
+    @has_permission('admin')
+    def prepare(self):
+
+        ID = self.get_argument_int('id', None)
+        if not ID:
+            return self.finish( _('Give me group id please.') )
+
+        G = self.db.query(Group).get( ID  )
+        if not G:
+            return self.finish( _('Can not find group %s') % ID )
+
+        group_choices = []
+        for g in self.db.query(Group).all():
+            group_choices.append( (str(g.id), g.name) )
+
+        form = GroupSelectForm(self)
+        form.group.choices = group_choices
+
+        self.prepare_kwargs['GROUP'] = G
+        self.prepare_kwargs['form'] = form
+
+    def get(self):
+        self.render()
+
+    def post(self):
+
+        G = self.prepare_kwargs['GROUP']
+        form = self.prepare_kwargs['form']
+
+        if form.validate():
+
+            new_group_id = self.get_int( form.group.data )
+
+            from app.auth.models import user_groups
+            from sqlalchemy.sql import select
+
+            s = user_groups.update().where(
+                user_groups.c.group_id == G.id).values(
+                group_id = new_group_id )
+
+            result = self.db.execute(s)
+
+            self.db.commit()
+
+            url = self.reverse_url('admin:group')
+            return self.redirect( url )
+
+        self.render()
 
 
 class GroupManagement(RequestHandler):
