@@ -205,7 +205,10 @@ class MyInstanceList(ApiRequestHandler):
                         'summary': I.summary,
                         'status': I.status,
                         'status_string': I.status_string,
-                        })
+                        'vdi_type': 1,
+                        'vdi_host': I.node.ip,
+                        'vdi_port': I.vdi_port
+                        } )
 
             d = { 'desc': 'List %s instances' % len(IL),
                   'list': data }

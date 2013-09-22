@@ -67,6 +67,80 @@ API 提供自定程序与 LuoYunCloud 进行交互。基本设计原则如下：
     }
 
 
+
+获取用户虚拟机列表
+===================
+
+- URL: /api/myun/instance
+- method: POST
+- request args ::
+
+    sepa: Number  # 一次列出多少项， 默认 10
+    p: Number     # 当前页 
+
+- return ::
+
+    {
+        code: 数字,
+        desc: 补充描述返回信息,
+        list: [ { id: 虚拟机 ID,
+                  name: 虚拟机名字,
+                  summary: String,
+                  status: Number,
+                  status_string: String,
+                  vdi_type: 1,          # 暂时为 1
+                  vdi_host: I.node.ip,  # vdi host
+                  vdi_port: I.vdi_port  # vdi port
+                 },
+                 ...
+              ]
+    }
+
+
+示例 ( get_my_instances.py ) ::
+
+  #!/usr/bin/env python 
+  # _*_ coding: utf-8 _*_ 
+
+  import base64 
+  import urllib 
+  import httplib 
+  import sys
+ 
+  api = "/api/myun/instance"
+  session_key = 'be26574d62df76b1b131984cc8b9c85cf6ea1496'
+  host = '127.0.0.1'
+
+  params = urllib.urlencode({'session_key': session_key,
+                             'sepa': 2, 'p': 1})
+  auth = base64.b64encode('cleartext username'+ ':'+ 'cleartext passwords') 
+  headers = {"Authorization": "Basic "+ auth,
+             'Content-Type': 'application/x-www-form-urlencoded',
+             'User-Agent': 'LYC Client' }
+
+  conn = httplib.HTTPConnection( host )
+  conn.request("POST", api, params, headers)
+  response = conn.getresponse()
+
+  print response.read().strip()
+
+
+用法 ::
+
+  $ python get_my_instances.py 
+  {"code": 0, "list": [{\
+   "status": 2, "vdi_port": null, "vdi_host": "10.0.0.2", \
+   "name": "LuoYunCloud \u90ae\u4ef6\u670d\u52a1\u5668", \
+   "vdi_type": 1, "status_string": "instance is stopped", \
+   "id": 798, "summary": null}, \
+  {"status": 2, "vdi_port": null, "vdi_host": "10.0.0.2", \
+   "name": "Gluster Node 3", "vdi_type": 1, \
+   "status_string": "instance is stopped", \
+   "id": 1403, "summary": null}], \
+   "desc": "List 2 instances"}
+
+
+
 获取虚拟机基本信息
 ===================
 
@@ -128,72 +202,3 @@ API 提供自定程序与 LuoYunCloud 进行交互。基本设计原则如下：
   {"code": 1, "desc": "Instance %s is someone else's"}
 
 
-
-获取用户虚拟机列表
-===================
-
-- URL: /api/myun/instance
-- method: POST
-- request args ::
-
-    sepa: Number  # 一次列出多少项， 默认 10
-    p: Number     # 当前页 
-
-- return ::
-
-    {
-        code: 数字,
-        desc: 补充描述返回信息,
-        list: [ { id: 虚拟机 ID,
-                  name: 虚拟机名字,
-                  summary: String,
-                  status: Number,
-                  status_string: String,
-                 },
-                 ...
-              ]
-    }
-
-
-示例 ( get_my_instances.py ) ::
-
-  #!/usr/bin/env python 
-  # _*_ coding: utf-8 _*_ 
-
-  import base64 
-  import urllib 
-  import httplib 
-  import sys
- 
-  api = "/api/myun/instance"
-  session_key = 'be26574d62df76b1b131984cc8b9c85cf6ea1496'
-  host = '127.0.0.1'
-
-  params = urllib.urlencode({'session_key': session_key,
-                             'sepa': 2, 'p': 1})
-  auth = base64.b64encode('cleartext username'+ ':'+ 'cleartext passwords') 
-  headers = {"Authorization": "Basic "+ auth,
-             'Content-Type': 'application/x-www-form-urlencoded',
-             'User-Agent': 'LYC Client' }
-
-  conn = httplib.HTTPConnection( host )
-  conn.request("POST", api, params, headers)
-  response = conn.getresponse()
-
-  print response.read().strip()
-
-
-用法 ::
-
-  $ python get_my_instances.py 
-  {"code": 0, "list": [\
-   {"status": 2, "summary": null, "id": 2252, \
-    "status_string": "instance is stopped", \
-    "name": "openerp7 img gz"}, \
-   {"status": 1, "summary": null, "id": 2492, \
-    "status_string": "new instance that hasn't run once", \
-    "name": "gallery3"}, \
-   {"status": 1, "summary": null, "id": 2493, \
-    "status_string": "new instance that hasn't run once", \
-    "name": "ubuntu 12.04 64\u4f4d\u7248"}\
-  ], "desc": "List 3 instances"}
