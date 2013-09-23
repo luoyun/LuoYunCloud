@@ -88,9 +88,9 @@ API 提供自定程序与 LuoYunCloud 进行交互。基本设计原则如下：
                   summary: String,
                   status: Number,
                   status_string: String,
-                  vdi_type: 1,          # 暂时为 1
-                  vdi_host: I.node.ip,  # vdi host
-                  vdi_port: I.vdi_port  # vdi port
+                  vdi_type: Number, # 暂时为 1
+                  vdi_host: String, # vdi host
+                  vdi_port: Number  # vdi port
                  },
                  ...
               ]

@@ -170,8 +170,8 @@ class InstanceBaseinfo(ApiRequestHandler):
         d = { 'desc': 'Information about %s' % I.name,
               'instance_id': I.id,
               'vdi_type': 1,
-              'host': I.node.ip,
               'port': I.vdi_port }
+        d['host'] = I.node.ip if I.node else ''
 
         self.write_success( **d )
 
@@ -206,7 +206,7 @@ class MyInstanceList(ApiRequestHandler):
                         'status': I.status,
                         'status_string': I.status_string,
                         'vdi_type': 1,
-                        'vdi_host': I.node.ip,
+                        'vdi_host': I.node.ip if I.node else '',
                         'vdi_port': I.vdi_port
                         } )
 
