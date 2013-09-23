@@ -1,0 +1,21 @@
+<%inherit file="/admin/account/base.html" />
+
+<%block name="innav">
+<li>${ _("Merge Group") }</li>
+</%block>
+
+<%block name="submain">
+
+<div>
+  <form method="POST">${ xsrf_form_html() }
+    ${ _("Merge") }
+    <a class="btn" href="${ reverse_url('admin:group') }?id=${ GROUP.id }">${ GROUP.name }</a>
+    ${ _("To") }
+    ${ form.group() }
+    ${ form.html_errors( form.group.errors ) }
+    <br>
+    <button type="submit" class="btn">${ _("Save") }</button>
+  </form>
+</div>
+
+</%block>
