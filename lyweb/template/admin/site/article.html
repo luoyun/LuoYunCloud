@@ -1,0 +1,88 @@
+<%inherit file="base.html"/>
+
+<%block name="mainbody">
+
+<div>
+  % if languages:
+  <select class="language-select">
+	<option value="all">${ _("All") }</option>
+	% for L in languages:
+	<option value="${ L.codename }" ${ b2s(L.codename == cur_locale, 'selected="selected"') }>${ L.name }</option>
+	% endfor
+  </select>
+  % endif
+
+  % if entry:
+  <p>${ _("Articles In Entry: ") } ${ entry.slug }</p>
+  % endif
+</div>
+
+<table class="table table-hover" id="entry-list">
+  <thead>
+    <tr>
+	  <th></th>
+      <th>ID</th>
+      <th>${ _("Entry") }</th>
+      <th>${ _("Name") }</th>
+      <th>${ _("Language") }</th>
+      <th>${ _("Created") }</th>
+      <th>${ _("Updated") }</th>
+    </tr>
+  </thead>
+  <tbody>
+	% for A in articles:
+    <tr class="item" id="item${ A.id }">
+	  <td><input type="checkbox" name="checkbox" id="checkbox${ A.id }"></td>
+      <td class="item-id">${ A.id }</td>
+	  <td><a href="/${ A.entry.slug }" target="_blank">${ A.entry.slug }</a></td>
+      <td>${ A.name }</td>
+	  <td>${ A.language.name }</td>
+	  <td>${ ftime(A.created) }</td>
+	  <td>${ ftime(A.updated) }</td>
+    </tr>
+	% endfor
+  </tbody>
+</table>
+
+<div>
+  <div class="btn-group">
+	<a class="btn"><input type="checkbox" name="checkbox_all"></a>
+	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+      <span class="caret"></span>
+	</a>
+	<ul class="dropdown-menu">
+	  <li><a href="" class="select-all">${ _("Select All") }</a></li>
+	  <li><a href="" class="unselect-all">${ _("Unselect All") }</a></li>
+	</ul>
+  </div>
+  <a href="" role="button" class="btn action-edit support-one disabled"><i class="icon-pencil"></i> ${ _("Edit") }</a>
+  <a href="" role="button" class="btn action-delete support-nonzero disabled"><i class="icon-trash"></i> ${ _("Delete") }</a>
+  <a class="btn" href="${ reverse_url('admin:site:article:add') }">${ _("New Article") }</a>
+</div>
+
+<div id="delete-warning" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+    <h3 id="myModalLabel">${ _("Delete Confirm") }</h3>
+  </div>
+  <div class="modal-body">
+    <p>${ _("Are you sure to delete these entries ?") }</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">${ _("Close") }</button>
+    <button class="btn btn-primary delete-confirm">${ _("Delete") }</button>
+  </div>
+</div>
+
+<script type="text/javascript" src="${ theme_url('js/admin/site.js') }"></script>
+<script type="text/javascript" src="${ theme_url('js/admin/site-article.js') }"></script>
+<script type="text/javascript">
+  binding_checkbox();
+  binding_language_select('/admin/site/article?language=');
+
+  binding_action_edit();
+  binding_action_delete();
+</script>
+
+
+</%block>

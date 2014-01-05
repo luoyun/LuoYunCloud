@@ -1,0 +1,75 @@
+<%inherit file="base.html"/>
+
+<%block name="mainbody">
+
+<table class="table table-hover" id="entry-list">
+  <thead>
+    <tr>
+	  <th></th>
+      <th>ID</th>
+      <th>${ _("Slug") }</th>
+	  <td>${ _("View") }</th>
+      <th>${ _("Articles") }</th>
+      <th>${ _("Created") }</th>
+      <th>${ _("Updated") }</th>
+    </tr>
+  </thead>
+  <tbody>
+	% for item in entries:
+    <tr class="item" id="item${ item.id }">
+	  <td><input type="checkbox" name="checkbox" id="checkbox${ item.id }"></td>
+      <td class="item-id">${ item.id }</td>
+	  <td>${ item.slug }</td>
+	  <td><a href="/${ item.slug }" target="_blank">/${ item.slug }</a></td>
+	  <td>
+		% if len(item.articles):
+		<a href="${ reverse_url('admin:site:article') }?entry=${ item.id }">${ len(item.articles) }</a>
+		% endif
+	  </td>
+	  <td>${ ftime(item.created) }</td>
+	  <td>${ ftime(item.updated) }</td>
+    </tr>
+	% endfor
+  </tbody>
+</table>
+
+<div>
+  <div class="btn-group">
+	<a class="btn"><input type="checkbox" name="checkbox_all"></a>
+	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+      <span class="caret"></span>
+	</a>
+	<ul class="dropdown-menu">
+	  <li><a href="" class="select-all">${ _("Select All") }</a></li>
+	  <li><a href="" class="unselect-all">${ _("Unselect All") }</a></li>
+	</ul>
+  </div>
+  <a href="" role="button" class="btn action-edit support-one disabled"><i class="icon-pencil"></i> ${ _("Edit") }</a>
+  <a href="" role="button" class="btn action-delete support-nonzero disabled"><i class="icon-trash"></i> ${ _("Delete") }</a>
+  <a class="btn" href="${ reverse_url('admin:site:entry:add') }"><i class="icon-plus"></i> ${ _("New") }</a>
+</div>
+
+<div id="delete-warning" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+    <h3 id="myModalLabel">${ _("Delete Confirm") }</h3>
+  </div>
+  <div class="modal-body">
+    <p>${ _("Are you sure to delete these items ?") }</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">${ _("Close") }</button>
+    <button class="btn btn-primary delete-confirm">${ _("Delete") }</button>
+  </div>
+</div>
+
+<script type="text/javascript" src="${ theme_url('js/admin/site.js') }"></script>
+<script type="text/javascript" src="${ theme_url('js/admin/site-entry.js') }"></script>
+<script type="text/javascript">
+  binding_checkbox();
+  binding_action_edit();
+  binding_action_delete();
+</script>
+
+
+</%block>

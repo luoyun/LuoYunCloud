@@ -1,0 +1,34 @@
+<%inherit file="base.html"/>
+
+<%block name="mainbody">
+
+<div>
+  <form method="POST">${ xsrf_form_html() }
+	<fieldset>
+	  <legend>${ _("New Navigation") }</legend>
+	  ${ form.language.label } ${ form.language() }
+	  ${ form.html_errors(form.language.errors) }
+
+	  ${ form.name.label } ${ form.name() }
+	  ${ form.html_errors(form.name.errors) }
+
+	  ${ form.type.label } ${ form.type() }
+	  ${ form.html_errors(form.type.errors) }
+
+	  ${ form.target.label } ${ form.target() }
+	  ${ form.html_errors(form.target.errors) }
+
+	  ${ form.summary.label } ${ form.summary() }
+	  ${ form.html_errors(form.summary.errors) }
+
+	  <label for="isnewopen">
+		<input id="isnewopen" type="checkbox" name="isnewopen">
+		${ _("Open with new windows") }
+	  </label>
+	  <button type="submit" class="btn">${ _("Submit") }</button>
+	</fieldset>
+  </form>
+
+</div>
+
+</%block>

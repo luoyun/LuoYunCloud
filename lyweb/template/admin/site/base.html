@@ -1,0 +1,27 @@
+<%inherit file="../admin_base.html"/>
+
+<%block name="content">
+<div class="container-fluid">
+  <div class="row-fluid">
+
+	<div class="span2">
+	  <div class="decorate-box">
+		<div class="head">
+		  <h4>${ _("Site Configure") }</h4>
+		</div>
+		<div class="body">
+		  <ul class="nav nav-list">
+			<li><a href="${ reverse_url('admin:site:nav') }">${ _("Navigation") }</a></li>
+			<li><a href="${ reverse_url('admin:site:entry') }">${ _("Site Entry") }</a></li>
+			<li><a href="${ reverse_url('admin:site:article') }">${ _("Site Article") }</a></li>
+		  </ul>
+		</div>
+	  </div>
+	</div>
+
+	<div class="span10">
+	  <%block name="mainbody"/>
+	</div>
+  </div>
+</div>
+</%block>
