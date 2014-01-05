@@ -36,8 +36,14 @@ class LyRequestHandler(RequestHandler):
     lookup = TemplateLookup([ TEMPLATE_DIR ],
                             input_encoding="utf-8")
 
-    def render(self, template_name, **kwargs):
+    title = _('Home')
+    template_path = None
+
+    def render(self, template_name = None, **kwargs):
         """ Redefine the render """
+
+        if not template_name:
+            template_name = self.template_path
 
         t = self.lookup.get_template(template_name)
 

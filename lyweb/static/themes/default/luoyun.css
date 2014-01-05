@@ -1,18 +1,13 @@
-@import "reset.css";
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0 none;margin:0;padding:0;vertical-align:baseline;}
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0 none;font:;margin:0;padding:0;vertical-align:baseline;}
 *{word-wrap:break-word;font-family:DejaVu Sans, Microsoft YaHei;}
 article,aside,details,figcaption,figure,footer,header,hgroup,masthead,menu,nav,section{display:block;}
-body{line-height:1;font-size:14px;color:#444444;}
+body{line-height:1;}
 ol,ul{list-style:none outside none;}
 blockquote,q{quotes:none;}
 blockquote:before,blockquote:after,q:before,q:after{content:none;}
-table{}
+table{border-collapse:collapse;border-spacing:0;}
 b,strong{font-weight:700;}
 abbr,acronym{border-bottom:1px dotted;}
-.c:after{clear:both;content:".";display:block;height:0;visibility:hidden;}
-.c{display:inline-block;}
-* html .c{height:1%;}
-.c{display:block;}
 pre{overflow:auto;overflow-y:hidden;}
 a{outline:none;}
 #http404{margin:220px auto;width:360px;}
@@ -106,6 +101,10 @@ a.no-text-decoration{text-decoration:none;}
 .clearfix{display:inline-block;}
 * html .clearfix{height:1%;}
 .clearfix{display:block;}
+.c:after{clear:both;content:".";display:block;height:0;visibility:hidden;}
+.c{display:inline-block;}
+* html .c{height:1%;}
+.c{display:block;}
 .ly-btn2{font:15px Calibri,Arial,sans-serif;text-shadow:1px 1px 0 rgba(255, 255, 255, 0.4);text-decoration:none !important;white-space:nowrap;display:inline-block;vertical-align:baseline;position:relative;cursor:pointer;padding:10px 20px;background-repeat:no-repeat;background-position:bottom left;background-image:url('button_bg.png');background-position:bottom left, top right, 0 0, 0 0;background-clip:border-box;-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px;-moz-box-shadow:0 0 1px #fff inset;-webkit-box-shadow:0 0 1px #fff inset;box-shadow:0 0 1px #fff inset;-webkit-transition:background-position 1s;-moz-transition:background-position 1s;transition:background-position 1s;}
 .ly-btn2:hover{background-position:top left;background-position:top left, bottom right, 0 0, 0 0;}
 .ly-btn2:active{bottom:-1px;}

@@ -31,12 +31,16 @@ class Application(tornado.web.Application):
 
     _cur_unique_id = 0
 
+    _supported_languages = {}
+    _supported_languages_list = None
+
     def __init__(self):
 
         # Clc connect
         self.clcstream = None
         # SQLAlchemy connect
         self.db2 = lyorm.dbsession
+        self.db = self.db2
 
         # TEST db connect
         try:
@@ -65,6 +69,34 @@ class Application(tornado.web.Application):
         # This is error handlers
         from app.install.urls import handlers as install_handlers
         tornado.web.Application.__init__(self, install_handlers, **app_settings)
+
+    @property
+    def supported_languages(self):
+        if not self._supported_languages:
+            self._supported_languages = self.get_supported_languages()
+
+        return self._supported_languages
+
+    @property
+    def supported_languages_list(self):
+        if not self._supported_languages_list:
+            self._supported_languages_list = self.get_supported_languages().values()
+
+        return self._supported_languages_list
+
+
+    def get_supported_languages(self):
+
+        supported_languages = {}
+
+        from app.language.models import Language
+        for codename, x in self.settings["LANGUAGES"]:
+            L = self.db.query(Language).filter_by(
+                codename = codename ).first()
+            if not L: continue
+            supported_languages[codename] = L
+
+        return supported_languages
 
 
     def get_unique_id(self):

@@ -19,38 +19,50 @@ gettext.install( 'app', settings.I18N_PATH, unicode=False )
 
 
 
-def default_value(dbsession):
+def default_value(db):
 
-    from app.account.models import Group
-    if dbsession.query(Group).count() > 0:
-        print '[W] db is init already, do not init now.'
-        return
+    from yweb.locale import LANGUAGES
+    from app.language.models import Language
+
+#    from app.account.models import Group
+#    if db.query(Group).count() > 0:
+#        print '[W] db is init already, do not init now.'
+#        return
+
+    # languages
+    for L in LANGUAGES:
+        lang = db.query(Language).filter_by(codename = L['codename']).first()
+        if lang: continue
+        lang = Language( name = L['name'],
+                         name_en = L['name_en'],
+                         codename = L['codename'] )
+        db.add(lang)
 
     # Permission
     from app.account.models import Permission
     for codename, name in settings.default_permission:
-        p = dbsession.query(Permission).filter_by(codename = codename).first()
+        p = db.query(Permission).filter_by(codename = codename).first()
         if p:
             print '[W] permission codename exist: %s' % codename
         else:
             p = Permission(codename = codename, name = name)
-            dbsession.add(p)
+            db.add(p)
 
     # Group
     from app.account.models import Group
     for name in settings.default_group:
-        g = dbsession.query(Group).filter_by(name=name).first()
+        g = db.query(Group).filter_by(name=name).first()
         if g:
             print '[W] group exist: %s' % name
         else:
             # Group created defaultly is locked.
             g = Group(name = name, islocked = True)
-            dbsession.add(g)
+            db.add(g)
 
     # User
     from app.account.models import User
     for username, password in settings.default_user:
-        u = dbsession.query(User).filter_by(username=username).first()
+        u = db.query(User).filter_by(username=username).first()
         if u:
             print '[W] user exist: %s' % username
         else:
@@ -58,26 +70,26 @@ def default_value(dbsession):
             hsh = encrypt_password(salt, password)
             enc_password = "%s$%s" % (salt, hsh)
             u = User(username = username, password = enc_password)
-            dbsession.add(u)
-            dbsession.commit()
+            db.add(u)
+            db.commit()
 
         if not u.profile:
             from app.account.models import UserProfile
             profile = UserProfile(u, email = '%s@localhost' % u.username)
-            dbsession.add(profile)
+            db.add(profile)
 
 
     # User Group
     for groupname, username in settings.default_user_group:
-        u = dbsession.query(User).filter_by(username=username).first()
-        g = dbsession.query(Group).filter_by(name=groupname).first()
+        u = db.query(User).filter_by(username=username).first()
+        g = db.query(Group).filter_by(name=groupname).first()
         if u and (g not in u.groups):
             u.groups.append(g)
 
     # Group Permission
     for groupname, codename in settings.default_group_permission:
-        g = dbsession.query(Group).filter_by(name=groupname).first()
-        p = dbsession.query(Permission).filter_by(codename=codename).first()
+        g = db.query(Group).filter_by(name=groupname).first()
+        p = db.query(Permission).filter_by(codename=codename).first()
         if p not in g.permissions:
             g.permissions.append(p)
 
@@ -85,29 +97,29 @@ def default_value(dbsession):
     # Appliance Catalog
     from app.appliance.models import ApplianceCatalog
     for name, summary in settings.default_appliance_catalog:
-        c = dbsession.query(ApplianceCatalog).filter_by(name=name).first()
+        c = db.query(ApplianceCatalog).filter_by(name=name).first()
         if c:
             print '[W] appliance catalog exist: %s' % name
         else:
             c = ApplianceCatalog(name=name, summary=summary)
-            dbsession.add(c)
-            dbsession.commit()
+            db.add(c)
+            db.commit()
 
 
     # Wiki Catalog
     from app.wiki.models import WikiCatalog
     for name, summary in settings.default_wiki_catalog:
-        c = dbsession.query(WikiCatalog).filter_by(name=name).first()
+        c = db.query(WikiCatalog).filter_by(name=name).first()
         if c:
             print '[W] wiki catalog exist: %s' % name
         else:
             c = WikiCatalog(name=name, summary=summary)
-            dbsession.add(c)
-            dbsession.commit()
+            db.add(c)
+            db.commit()
         
 
 
-    dbsession.commit()
+    db.commit()
 
 
 

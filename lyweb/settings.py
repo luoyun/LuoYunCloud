@@ -156,6 +156,9 @@ app = [
     'app.system',
     'app.message',
     'app.myun',
+
+    'app.language',
+    'app.site',
     ]
 
 

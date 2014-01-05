@@ -17,6 +17,8 @@ from app.message.urls import handlers as message_urls
 from app.system.urls import handlers as system_urls
 from app.myun.urls import handlers as myun_urls
 
+from app.site.urls import handlers as site_urls
+
 curdir = os.path.dirname(__file__)
 
 import settings
@@ -60,9 +62,12 @@ def get_home_hander():
     return Index
 
 
-handlers =  message_urls + account_urls + admin_urls + appliance_urls + wiki_urls + instance_urls + job_urls + node_urls + system_urls + myun_urls + home_urls + [
+handlers =  message_urls + account_urls + admin_urls + \
+    appliance_urls + wiki_urls + instance_urls + \
+    job_urls + node_urls + system_urls + myun_urls + \
+    home_urls + site_urls + [
 
-    (r'/', get_home_hander(), dict(title=_("LuoYun Cloud Home"))),
+#    (r'/', get_home_hander(), dict(title=_("LuoYun Cloud Home"))),
     (r'/BingSiteAuth.xml', tornado.web.RedirectHandler, {'url': '/static/BingSiteAuth.xml'}),
 
     (r'/(.*)', LyNotFoundHandler),

@@ -6,6 +6,7 @@ from lycustom import LyRequestHandler
 from tornado.web import authenticated
 
 from sqlalchemy.sql.expression import asc, desc
+from sqlalchemy import and_
 
 from app.instance.models import Instance
 from app.appliance.models import Appliance
@@ -18,6 +19,29 @@ import settings
 
 from lycustom import has_permission
 
+from ..site.models import SiteEntry, SiteArticle
+from ..language.models import Language
+
+
+class Index(LyRequestHandler):
+
+    def get(self):
+
+        E = self.db.query(SiteEntry).filter_by(slug='home').first()
+        L = self.db.query(Language).filter_by(
+            codename = self.locale.code ).first()
+        if E and L:
+            A = self.db.query(SiteArticle).filter(
+                and_( SiteArticle.entry_id == E.id,
+                      SiteArticle.language_id == L.id ) ).first()
+        else: A = None
+
+        if A:
+            d = {'mainbody': A.body_html}
+        else:
+            d = {'mainbody': _('Please set the site article for entry "home" first.') }
+
+        self.render('home/index.html', **d)
 
 
 class SetLocale(LyRequestHandler):

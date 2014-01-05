@@ -4,14 +4,11 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="SHORTCUT ICON" href="${ static_url('favicon.ico') }" />
+    <link href="${ static_url('bootstrap/css/bootstrap.min.css') }" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="${ static_url('bootstrap/css/bootstrap-responsive.min.css') }" type="text/css">
+    <link rel="stylesheet" href="${ theme_url('css/main.css') }" />
     <link rel="stylesheet" href="${ theme_url('luoyun.css') }" />
-    <script type="text/javascript" src="${ static_url('js/json2.js') }"></script>
-    <script type="text/javascript" src="${ static_url('js/jquery-1.9.1.min.js') }"></script>
-    <script type="text/javascript" src="${ static_url('js/common.js') }"></script>
     <link rel="stylesheet" href="${ static_url('js/notify/ui.notify.css') }" />
-    <script type="text/javascript" src="${ static_url('js/notify/jquery.notify.js') }"></script>
-##    <link rel="stylesheet" href="${ static_url('js/jquery-ui/css/redmond/jquery-ui-1.9.1.custom.min.css') }" />
-##    <script type="text/javascript" src="${ static_url('js/jquery-ui/js/jquery-ui-1.9.1.custom.min.js') }"></script>
     <%block name="head"/>
     <title>
 % if title:
@@ -22,6 +19,13 @@ ${ _("LuoYunCloud") }
   </head>
 
   <body>
+    <script type="text/javascript" src="${ static_url('js/json2.js') }"></script>
+    <script type="text/javascript" src="${ static_url('js/jquery-1.9.1.min.js') }"></script>
+    <script type="text/javascript" src="${ static_url('js/jquery-migrate-1.2.1.min.js') }"></script>
+    <script type="text/javascript" src="${ static_url('bootstrap/js/bootstrap.min.js') }"></script>
+    <script type="text/javascript" src="${ theme_url('js/site.js') }"></script>
+    <script type="text/javascript" src="${ static_url('js/common.js') }"></script>
+##    <script type="text/javascript" src="${ static_url('js/notify/jquery.notify.js') }"></script>
 
     <div id="pager">
 
@@ -74,7 +78,7 @@ ${ _("LuoYunCloud") }
 	</div>
       </div>
 
-      <div id="main" class="luoyun-min-height">
+      <div id="main" class="container-fluid luoyun-min-height">
         <%block name="main"/>
         <div id="lyentry">
           <%block name="lyentry"/>
@@ -84,6 +88,7 @@ ${ _("LuoYunCloud") }
       <div id="footer">
         <div id="footer-wrap">
           <span id="powered-by"><span class="text">${ _("Powered by") }</span><a href="http://www.luoyun.co" target="_blank">${ _("LuoYun") }</a></span>
+          <script src="http://s9.cnzz.com/stat.php?id=5389244&web_id=5389244&show=pic1" language="JavaScript"></script>
 
           <span id="select-language">
             % if locale.code == 'en_US':
@@ -102,7 +107,7 @@ ${ _("LuoYunCloud") }
     <div id="gotop" style="display: none;">${ _("Go TOP") }</div>
 
   <script type="text/javascript">
-    lySetCurrentNavigator();
+//    lySetCurrentNavigator();
 //    BackTop('gotop');
     showHide( "#ly-account-menu" );
   </script>

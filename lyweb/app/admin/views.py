@@ -37,7 +37,6 @@ class Index(LyRequestHandler):
             desc(Job.id) ).limit(10)
 
         ud = self._get_data()
-        print 'ud = ', ud
 
         d = { 'title': self.trans(_('Admin Console')),
               'human_size': human_size,
@@ -54,8 +53,6 @@ class Index(LyRequestHandler):
               'TOTAL_CPU': ud['TOTAL_CPU'],
               'USED_CPU': ud['USED_CPU'],
               'USED_CPU_P': ud['USED_CPU'] * 100.0 / ud['TOTAL_CPU']}
-
-        print 'd["USED_MEMORY_P"] = ', d["USED_MEMORY_P"]
 
         d.update( self._get_data() )
 
