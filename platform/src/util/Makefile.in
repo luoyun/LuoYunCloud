@@ -52,7 +52,7 @@ libutil_a_LIBADD =
 am_libutil_a_OBJECTS = disk.$(OBJEXT) download.$(OBJEXT) \
 	misc.$(OBJEXT) logging.$(OBJEXT) md5.$(OBJEXT) lyxml.$(OBJEXT) \
 	lyxml_data.$(OBJEXT) lypacket.$(OBJEXT) lyauth.$(OBJEXT) \
-	lyutil.$(OBJEXT)
+	base64.$(OBJEXT) lyutil.$(OBJEXT)
 libutil_a_OBJECTS = $(am_libutil_a_OBJECTS)
 PROGRAMS = $(noinst_PROGRAMS)
 am_test_OBJECTS = test.$(OBJEXT)
@@ -190,6 +190,7 @@ libutil_a_SOURCES = $(top_srcdir)/config.h list.h \
                     lyxml.c lyxml.h lyxml_data.c \
                     lypacket.c lypacket.h \
                     lyauth.c lyauth.h \
+                    base64.c base64.h \
                     lyutil.c lyutil.h
 
 test_SOURCES = test.c 
@@ -249,6 +250,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/base64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/disk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/download.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logging.Po@am__quote@

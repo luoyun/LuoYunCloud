@@ -57,9 +57,9 @@ int node_schedule(int node_id)
         }
 
         if (nf->cpu_commit >= nf->cpu_vlimit || nf->mem_commit >= nf->mem_vlimit) {
-            logdebug("%s:%d %d %d %d\n", __func__,
-                      nf->cpu_commit, nf->cpu_vlimit,
-                      nf->mem_commit, nf->mem_vlimit);
+            logwarn(_("node no resource in %s:%d %d %d %d\n"), __func__,
+                     nf->cpu_commit, nf->cpu_vlimit,
+                     nf->mem_commit, nf->mem_vlimit);
             return NODE_SCHEDULE_NODE_BUSY;
         }
 
@@ -68,7 +68,7 @@ int node_schedule(int node_id)
 
     int ent_curr = -1;
     int ent_id = NODE_SCHEDULE_NODE_UNAVAIL;
-    int cpu_avail_max = 0;
+    int mem_avail_max = 0;
     while(1) {
         LYNodeData * nd = ly_entity_data_next(LY_ENTITY_NODE, &ent_curr);
         if (nd == NULL)
@@ -102,9 +102,9 @@ int node_schedule(int node_id)
             continue;
         }
 
-        int cpu_avail = nf->cpu_vlimit - nf->cpu_commit;
-        if (cpu_avail > cpu_avail_max) {
-            cpu_avail_max = cpu_avail;
+        int mem_avail = nf->mem_vlimit - nf->mem_commit;
+        if (mem_avail > mem_avail_max) {
+            mem_avail_max = mem_avail;
             ent_id = ent_curr;
         }
     }

@@ -46,6 +46,7 @@ void *ly_entity_data(int id);
 void *ly_entity_data_next(unsigned char type, int * id);
 AuthConfig *ly_entity_auth(int id);
 int ly_entity_find_by_db(int ent_type, int db_id);
+int ly_entity_head(int ent_type);
 int ly_entity_is_online(int id);
 int ly_entity_is_authenticated(int id);
 int ly_entity_is_registered(int id);

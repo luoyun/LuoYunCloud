@@ -447,8 +447,7 @@ int db_job_get_all(void)
                  "extract(epoch FROM started), "
                  "target_type, target_id, action "
                  "from job "
-                 "where (status >= %d and status < %d) or (status >= %d and status < %d);",
-                 LY_S_INITIATED, LY_S_RUNNING_LAST_STATUS,
+                 "where status >= %d and status < %d;",
                  LY_S_PENDING, LY_S_PENDING_LAST_STATUS) >= LINE_MAX) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
         return -1;
@@ -619,7 +618,8 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
         return -1;
     }
 
-    char s_key[128], s_ip[100], s_status[20], s_node_id[20];
+    unsigned long sum1 = 0, sum2 = 0;
+    char s_key[256], s_ip[100], s_status[20], s_node_id[20];
     s_key[0] = '\0';
     s_ip[0] = '\0';
     s_node_id[0] = '\0';
@@ -652,7 +652,6 @@ int db_instance_update_status(int instance_id, InstanceInfo * ii, int node_id)
             }
             int gport = 0;
             unsigned long pre1 = 0, pre2 = 0;
-            unsigned long sum1 = 0, sum2 = 0;
             if (ptr[1])
                 gport = atoi(ptr[1]);
             if (ptr[2])

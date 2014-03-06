@@ -9,6 +9,7 @@ libutil_a_SOURCES = $(top_srcdir)/config.h list.h \
                     lyxml.c lyxml.h lyxml_data.c \
                     lypacket.c lypacket.h \
                     lyauth.c lyauth.h \
+                    base64.c base64.h \
                     lyutil.c lyutil.h
 
 noinst_PROGRAMS = test 
