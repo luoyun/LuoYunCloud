@@ -493,7 +493,8 @@ static int __node_info_update(xmlDoc * doc, xmlNode * node,
     LYNodeData * nd = ly_entity_data(ent_id);
     if (nd == NULL) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-        goto failed;
+        *j_status = LY_S_FINISHED_FAILURE;
+        return 0;
     }
     NodeInfo * nf = &nd->node;
 
@@ -666,8 +667,9 @@ static int __node_resource_update(xmlDoc * doc, xmlNode * node, int ent_id)
     LYNodeData * nd = ly_entity_data(ent_id);
     if (nd == NULL) {
         logerror(_("error in %s(%d)\n"), __func__, __LINE__);
-        goto failed;
+        return -1;;
     }
+
     NodeInfo * nf = &nd->node;
 
     /* Create xpath evaluation context */
